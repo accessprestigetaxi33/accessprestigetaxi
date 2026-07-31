@@ -126,7 +126,7 @@ export const Route = createFileRoute("/api/public/reviews")({
           await sendPushToAudience("chauffeur", {
             title: `⭐ Nouvel avis ${stars}`,
             body: excerpt ? `${authorName} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »` : `${authorName} vient de laisser un avis.`,
-            url: "/driver?token=DSF234",
+            url: "/driver",
             tag: `new-review-${inserted.id}`,
           });
         } catch (error) {
