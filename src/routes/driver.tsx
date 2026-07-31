@@ -352,6 +352,7 @@ function DriverPage() {
   const [error, setError] = useState<string | null>(null);
   const [driverLabel, setDriverLabel] = useState("");
 
+
   useEffect(() => {
     setDriverLabel(getDriverName());
   }, []);
@@ -468,10 +469,10 @@ function DriverPage() {
     );
   }
 
-  return <DriverApp />;
+  return <DriverApp driverLabel={driverLabel} />;
 }
 
-function DriverApp() {
+function DriverApp({ driverLabel }: { driverLabel?: string }) {
   const [tab, setTab] = useState<Tab>("courses");
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
@@ -594,7 +595,7 @@ function DriverApp() {
       <div className="drv-root">
         <div className="drv-header">
           <span style={{ fontSize: 26 }}>🚕</span>
-          <h1>Espace José</h1>
+          <h1>{driverLabel ? `Espace ${driverLabel}` : "Espace chauffeur"}</h1>
 
           {installPrompt && (
             <button
