@@ -5,6 +5,8 @@ import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { createReservationPublic, getTaxiAvailability } from "@/lib/reservation-create.functions";
+import { unsubscribePush } from "@/lib/push.functions";
 import { broadcastDriverFeed } from "@/lib/suivi-broadcast";
 import {
   calculerPrix,
@@ -1430,13 +1432,8 @@ function ReservationPage() {
   useEffect(() => {
     const check = async () => {
       try {
-        const { data, error } = await supabase
-          .from("reservations")
-          .select("id", { count: "exact", head: false })
-          .in("status", ["accepted", "en_route", "arrived"])
-          .limit(1);
-        if (error) throw error;
-        setTaxiAvailable(!data || data.length === 0);
+        const res = await getTaxiAvailability();
+        setTaxiAvailable(!!res?.available);
       } catch {
         setTaxiAvailable(null);
       }
@@ -1542,41 +1539,28 @@ function ReservationPage() {
       const fullName = `${f.prenom} ${f.nom}`.trim();
       const pickupIsoFinal = f.date && f.heure ? toParisIso(f.date, f.heure) : new Date().toISOString();
 
-      const { data: inserted, error } = await supabase
-        .from("reservations")
-        .insert({
-          // NOT NULL columns
+      const inserted = await createReservationPublic({
+        data: {
           nom: fullName,
           telephone: f.phone,
-          email: f.email,
+          email: f.email || null,
           depart: f.depart,
           arrivee: f.destination,
           pickup_datetime: pickupIsoFinal,
           passagers: f.passagers,
-          service_type: "standard",
-          status: "pending",
-          // Optional / mirror columns
+          bagages: f.bagages,
           suivi_id: suiviId,
-          client_name: fullName,
-          client_phone: f.phone,
-          client_email: f.email,
-          destination: f.destination,
           distance_km: distanceKm,
           duree_s: dureeS > 0 ? dureeS : null,
-
-          nb_passagers: f.passagers,
-          bagages: f.bagages,
           paiement: f.paiement,
           tarif_jour: tarifJour,
           prix_estime: calculerPrixMixteLocal(distanceKm, new Date(pickupIsoFinal).getTime(), dureeS),
-          source: "form",
-          lang: lang as any,
+          lang: (lang === "en" ? "en" : "fr") as "fr" | "en",
           message: f.message.trim() || null,
-        })
-        .select("id,suivi_id")
-        .single();
-
-      if (error) throw error;
+          service_type: "standard",
+          source: "form",
+        },
+      });
 
       gaEvent("reservation_confirmed", {
         reservation_id: inserted?.id,
@@ -2594,11 +2578,9 @@ function ReservationPage() {
                   // ── UNSUBSCRIBE ──
                   const loadingId = toast.loading(t("reserver.notif.disabling_loading"));
                   try {
-                    const { error } = await supabase
-                      .from("push_subscriptions")
-                      .delete()
-                      .eq("audience", "client")
-                      .eq("user_agent", navigator.userAgent.slice(0, 500));
+                    const fcm = await getFcmToken().catch(() => null);
+                    const error = fcm ? null : new Error("no-token");
+                    if (fcm) await unsubscribePush({ data: { fcm_token: fcm } });
 
                     toast.dismiss(loadingId);
                     if (error) {
