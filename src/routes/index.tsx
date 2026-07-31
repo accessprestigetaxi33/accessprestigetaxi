@@ -24,7 +24,12 @@ const COPY = {
     lead:
       "Deux chauffeurs, deux Audi Q6 e-tron. Un service de taxi haut de gamme, silencieux et zéro émission, disponible 7j/7 et 24h/24.",
     ctaBook: "Réserver ma course",
-    ctaCall: "Appeler un chauffeur",
+    ctaCall: "Appeler",
+    callPrefix: "Appeler",
+    driversEyebrow: "Nos deux chauffeurs",
+    driversTitle: "Patricia & Alain, à votre service",
+    driversLead:
+      "Deux chauffeurs indépendants, une même exigence : ponctualité, discrétion et confort en Audi Q6 e-tron 100 % électrique, en Charente et Charente-Maritime.",
     scroll: "Découvrir",
     stats: [
       { v: "2", l: "chauffeurs dédiés" },
@@ -58,7 +63,12 @@ const COPY = {
     lead:
       "Two drivers, two Audi Q6 e-tron. A premium, silent, zero-emission taxi service available 24/7.",
     ctaBook: "Book a ride",
-    ctaCall: "Call a driver",
+    ctaCall: "Call",
+    callPrefix: "Call",
+    driversEyebrow: "Our two drivers",
+    driversTitle: "Patricia & Alain, at your service",
+    driversLead:
+      "Two independent drivers, one shared standard: punctuality, discretion and comfort in a fully electric Audi Q6 e-tron, across Charente and Charente-Maritime.",
     scroll: "Explore",
     stats: [
       { v: "2", l: "dedicated drivers" },
@@ -118,10 +128,27 @@ export const Route = createFileRoute("/")({
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
           slogan: "Votre mobilité, notre priorité",
-          areaServed: ["Charente", "Charente-Maritime", "France"],
-          telephone: ["+33650260015", "+33650321923"],
+          areaServed: [
+            { "@type": "AdministrativeArea", name: "Charente" },
+            { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+          ],
+          telephone: DRIVERS.map((d) => d.intl),
           availableLanguage: ["fr", "en"],
           openingHours: "Mo-Su 00:00-23:59",
+          employee: DRIVERS.map((d) => ({
+            "@type": "Person",
+            name: d.name,
+            jobTitle: "Chauffeur de taxi",
+            telephone: d.intl,
+          })),
+          contactPoint: DRIVERS.map((d) => ({
+            "@type": "ContactPoint",
+            name: d.name,
+            telephone: d.intl,
+            contactType: "reservations",
+            areaServed: ["Charente", "Charente-Maritime"],
+            availableLanguage: ["fr", "en"],
+          })),
         }),
       },
     ],
@@ -170,11 +197,16 @@ function Index() {
               <a
                 key={d.tel}
                 href={`tel:${d.tel}`}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3.5 text-sm font-semibold text-foreground transition hover:border-primary"
+                aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
+                className="inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl border border-border px-5 py-3 text-sm font-semibold text-foreground transition hover:border-primary"
               >
-                <Phone className="h-4 w-4 text-primary" />
-                <span className="uppercase tracking-wider">{d.name}</span>
-                <span className="text-muted-foreground">{d.display}</span>
+                <Phone className="h-4 w-4 shrink-0 text-primary" />
+                <span className="flex flex-col items-start leading-tight">
+                  <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    {c.callPrefix} {d.name}
+                  </span>
+                  <span className="text-sm font-semibold tabular-nums text-foreground">{d.display}</span>
+                </span>
               </a>
             ))}
           </div>
@@ -207,6 +239,48 @@ function Index() {
                 <s.icon className="h-6 w-6 text-primary" />
                 <h3 className="mt-4 font-display text-lg font-semibold text-card-foreground">{s.t}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DRIVERS */}
+      <section id="chauffeurs" className="border-t border-border bg-card/40 py-20">
+        <div className="mx-auto max-w-5xl px-5">
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.driversEyebrow}</p>
+          <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            {c.driversTitle}
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {c.driversLead}
+          </p>
+
+          <div className="mt-12 grid gap-5 sm:grid-cols-2">
+            {DRIVERS.map((d) => (
+              <article key={d.tel} className="rounded-2xl border border-border bg-card p-6 sm:p-7">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40 font-display text-lg font-semibold text-primary">
+                    {d.name.charAt(0)}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-xl font-semibold text-card-foreground">{d.name}</h3>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Audi Q6 e-tron</p>
+                  </div>
+                </div>
+                <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                  {lang === "en" ? d.bio.en : d.bio.fr}
+                </p>
+                <a
+                  href={`tel:${d.tel}`}
+                  aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
+                  className="mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90"
+                >
+                  <Phone className="h-4 w-4 shrink-0" />
+                  <span className="tabular-nums">
+                    {c.callPrefix} {d.name} · {d.display}
+                  </span>
+                </a>
               </article>
             ))}
           </div>
