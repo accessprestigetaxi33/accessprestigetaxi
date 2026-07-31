@@ -15,12 +15,14 @@ import {
 import { useI18n } from "@/i18n/I18nProvider";
 import logoLockup from "@/assets/apt-hero-banner.png";
 
-const PHONE = "0673072322";
-const PHONE_DISPLAY = "06 73 07 23 22";
+const DRIVERS = [
+  { name: "Patricia", tel: "0650260015", display: "06 50 26 00 15" },
+  { name: "Alain", tel: "0650321923", display: "06 50 32 19 23" },
+] as const;
 
 const COPY = {
   fr: {
-    kicker: "100 % électrique · Bordeaux & Gironde",
+    kicker: "100 % électrique · Charente & Charente-Maritime",
     tagline: "Votre mobilité, notre priorité",
     lead:
       "Deux chauffeurs, deux Audi Q6 e-tron. Un service de taxi haut de gamme, silencieux et zéro émission, disponible 7j/7 et 24h/24.",
@@ -54,7 +56,7 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "100% electric · Bordeaux & Gironde",
+    kicker: "100% electric · Charente & Charente-Maritime",
     tagline: "Your mobility, our priority",
     lead:
       "Two drivers, two Audi Q6 e-tron. A premium, silent, zero-emission taxi service available 24/7.",
@@ -118,8 +120,8 @@ export const Route = createFileRoute("/")({
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
           slogan: "Votre mobilité, notre priorité",
-          areaServed: "Bordeaux, Gironde, France",
-          telephone: "+33673072322",
+          areaServed: ["Charente", "Charente-Maritime", "France"],
+          telephone: ["+33650260015", "+33650321923"],
           availableLanguage: ["fr", "en"],
           openingHours: "Mo-Su 00:00-23:59",
         }),
@@ -166,12 +168,17 @@ function Index() {
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href={`tel:${PHONE}`}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-foreground transition hover:border-primary"
-            >
-              <Phone className="h-4 w-4 text-primary" /> {PHONE_DISPLAY}
-            </a>
+            {DRIVERS.map((d) => (
+              <a
+                key={d.tel}
+                href={`tel:${d.tel}`}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3.5 text-sm font-semibold text-foreground transition hover:border-primary"
+              >
+                <Phone className="h-4 w-4 text-primary" />
+                <span className="uppercase tracking-wider">{d.name}</span>
+                <span className="text-muted-foreground">{d.display}</span>
+              </a>
+            ))}
           </div>
 
           <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
