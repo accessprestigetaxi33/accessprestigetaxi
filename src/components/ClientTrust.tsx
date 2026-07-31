@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BadgeCheck, Quote, ShieldCheck, Star, Sparkles, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/i18n/I18nProvider";
 
 type Review = {
@@ -26,6 +27,8 @@ const COPY = {
       { icon: Sparkles, t: "Confort 100 % électrique", d: "Audi Q6 e-tron silencieuses, eau, chargeurs et Wi-Fi à bord." },
     ],
     verified: "Avis vérifié",
+    safety: "Sécurité, assurance & garanties",
+    moderation: "Chaque avis est relu par Patricia et Alain avant publication.",
   },
   en: {
     eyebrow: "Reviews & reassurance",
@@ -41,6 +44,8 @@ const COPY = {
       { icon: Sparkles, t: "100% electric comfort", d: "Silent Audi Q6 e-tron with water, chargers and on-board Wi-Fi." },
     ],
     verified: "Verified review",
+    safety: "Safety, insurance & guarantees",
+    moderation: "Every review is checked by Patricia and Alain before publication.",
   },
 } as const;
 
@@ -82,9 +87,36 @@ export function ClientTrust() {
   const count = reviews.length;
   const average = count ? reviews.reduce((s, r) => s + (r.note || 0), 0) / count : 5;
 
+  const jsonLd =
+    count > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "TaxiService",
+          name: "Access Prestige Taxi",
+          areaServed: ["Charente", "Charente-Maritime"],
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: average.toFixed(1),
+            reviewCount: count,
+            bestRating: "5",
+            worstRating: "1",
+          },
+          review: withText.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author_name?.trim() || "Client" },
+            datePublished: (r.created_at || "").slice(0, 10),
+            reviewBody: r.commentaire,
+            reviewRating: { "@type": "Rating", ratingValue: r.note, bestRating: "5", worstRating: "1" },
+          })),
+        }
+      : null;
+
   return (
     <section className="border-t border-border py-20">
       <div className="mx-auto max-w-6xl px-5">
+        {jsonLd && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        )}
         <div className="text-center">
           <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
           <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.title}</h2>
@@ -135,6 +167,13 @@ export function ClientTrust() {
             </div>
           ))}
         </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          {c.moderation}{" "}
+          <Link to="/securite" className="font-semibold text-primary underline">
+            {c.safety}
+          </Link>
+        </p>
       </div>
     </section>
   );
