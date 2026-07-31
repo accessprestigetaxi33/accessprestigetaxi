@@ -168,12 +168,17 @@ function Index() {
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href={`tel:${PHONE}`}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-foreground transition hover:border-primary"
-            >
-              <Phone className="h-4 w-4 text-primary" /> {PHONE_DISPLAY}
-            </a>
+            {DRIVERS.map((d) => (
+              <a
+                key={d.tel}
+                href={`tel:${d.tel}`}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3.5 text-sm font-semibold text-foreground transition hover:border-primary"
+              >
+                <Phone className="h-4 w-4 text-primary" />
+                <span className="uppercase tracking-wider">{d.name}</span>
+                <span className="text-muted-foreground">{d.display}</span>
+              </a>
+            ))}
           </div>
 
           <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
