@@ -13,6 +13,7 @@ import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
+import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
 import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
 
@@ -372,6 +373,7 @@ function DriverPage() {
           setDriverLabel(res.driver || "");
           setDriverId(res.driverId || "");
           setStatus("granted");
+          gaEvent("driver_login", { driver: res.driver || "inconnu" });
           return true;
         }
 
@@ -712,6 +714,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
               className={`drv-tab${tab === t ? " active" : ""}`}
               onClick={() => {
                 setTab(t);
+                gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
                 // Reset optimiste du badge chat à l'ouverture de l'onglet ;
                 // le prochain refresh Realtime/reconcile remettra la vraie valeur.
                 if (t === "courses") setUnreadChat(0);
@@ -851,6 +854,7 @@ function CoursesTab({
     async (id: string, driver: "patricia" | "alain") => {
       try {
         await setCourseDriverFn({ data: { token: getDriverToken(), reservation_id: id, driver } });
+        gaEvent("driver_course_assigned", { driver, reservation_id: id });
         toast.success(`Course transférée à ${driver === "patricia" ? "Patricia" : "Alain"}`);
         load();
       } catch {
@@ -1707,6 +1711,7 @@ function CourseCard({
         onRefresh();
         return;
       }
+      gaEvent("driver_course_status", { status: nextStatus, reservation_id: resa.id });
       broadcastSuiviUpdate(resa.id, `status:${nextStatus}`);
       try {
         await notifyStatus({ data: { reservation_id: resa.id, status: nextStatus as any } });
