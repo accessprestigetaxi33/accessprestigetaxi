@@ -10,9 +10,9 @@ export type ClientFavorite = {
   sort_order: number;
 };
 
-const ListSchema = z.object({ account_id: z.string().uuid() });
+const ListSchema = z.object({ token: z.string().min(32).max(128) });
 const UpsertSchema = z.object({
-  account_id: z.string().uuid(),
+  token: z.string().min(32).max(128),
   id: z.string().uuid().optional(),
   label: z.string().trim().min(1).max(40),
   address: z.string().trim().min(2).max(300),
@@ -20,18 +20,20 @@ const UpsertSchema = z.object({
   sort_order: z.number().int().min(0).max(999).optional(),
 });
 const DeleteSchema = z.object({
-  account_id: z.string().uuid(),
+  token: z.string().min(32).max(128),
   id: z.string().uuid(),
 });
 
 export const listClientFavorites = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ListSchema.parse(input))
   .handler(async ({ data }): Promise<ClientFavorite[]> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("client_favorites")
       .select("id, client_id, label, address, icon, sort_order")
-      .eq("client_id", data.account_id)
+      .eq("client_id", identity.account_id)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (error) throw new Error("LIST_FAILED");
@@ -41,6 +43,8 @@ export const listClientFavorites = createServerFn({ method: "POST" })
 export const upsertClientFavorite = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => UpsertSchema.parse(input))
   .handler(async ({ data }): Promise<ClientFavorite> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.id) {
       const { data: row, error } = await supabaseAdmin
@@ -52,7 +56,7 @@ export const upsertClientFavorite = createServerFn({ method: "POST" })
           sort_order: data.sort_order ?? 0,
         })
         .eq("id", data.id)
-        .eq("client_id", data.account_id)
+        .eq("client_id", identity.account_id)
         .select("id, client_id, label, address, icon, sort_order")
         .single();
       if (error || !row) throw new Error("UPDATE_FAILED");
@@ -61,7 +65,7 @@ export const upsertClientFavorite = createServerFn({ method: "POST" })
     const { data: row, error } = await supabaseAdmin
       .from("client_favorites")
       .insert({
-        client_id: data.account_id,
+        client_id: identity.account_id,
         label: data.label,
         address: data.address,
         icon: data.icon ?? null,
@@ -76,12 +80,14 @@ export const upsertClientFavorite = createServerFn({ method: "POST" })
 export const deleteClientFavorite = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => DeleteSchema.parse(input))
   .handler(async ({ data }) => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("client_favorites")
       .delete()
       .eq("id", data.id)
-      .eq("client_id", data.account_id);
+      .eq("client_id", identity.account_id);
     if (error) throw new Error("DELETE_FAILED");
     return { ok: true };
   });

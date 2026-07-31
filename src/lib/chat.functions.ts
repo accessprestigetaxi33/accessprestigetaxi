@@ -30,9 +30,9 @@ const sendSchema = z.object({
 });
 
 const clientSendSchema = sendSchema.extend({
-  account_id: z.string().uuid(),
-  phone: z.string().trim().max(40).optional().nullable(),
-  email: z.string().trim().toLowerCase().max(255).optional().nullable(),
+  // Jeton de session client vérifié côté serveur (jamais d'identifiant de compte
+  // envoyé par le navigateur : cela permettrait de lire/écrire chez autrui).
+  token: z.string().min(32).max(128),
 });
 
 function normalizePhone(p?: string | null): string | null {
@@ -73,11 +73,9 @@ const PUSH_THROTTLE_MS = 8000;
 export const sendClientMessage = createServerFn({ method: "POST" })
   .inputValidator((input) => clientSendSchema.parse(input))
   .handler(async ({ data }) => {
-    await assertClientOwnsReservation(data.reservation_id, {
-      account_id: data.account_id,
-      phone: data.phone ?? null,
-      email: data.email ?? null,
-    });
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
+    await assertClientOwnsReservation(data.reservation_id, identity);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Récupère nom client pour le titre push
@@ -108,7 +106,7 @@ export const sendClientMessage = createServerFn({ method: "POST" })
         await sendPushToAudience("chauffeur", {
           title: `💬 Message de ${clientName}`,
           body: data.content.slice(0, 100),
-          url: "/driver?token=DSF234",
+          url: "/driver",
           tag: `chat-driver-resa-${data.reservation_id}-${Date.now()}`,
           requireInteraction: false,
         });
@@ -368,7 +366,7 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
       await sendPushToAudience("chauffeur", {
         title: `💬 Message de ${clientName}`,
         body: data.content.slice(0, 100),
-        url: "/driver?token=DSF234",
+        url: "/driver",
         tag: `chat-driver-resa-${r.id}-${Date.now()}`,
         requireInteraction: false,
       });
@@ -439,28 +437,51 @@ export type AdminDirectThread = {
   unread_chauffeur: number;
 };
 
-const directSendSchema = z.object({
-  client_account_id: z.string().uuid(),
+// Accès au fil direct : soit une session client vérifiée (le compte est dérivé
+// du jeton), soit le jeton chauffeur (le compte ciblé est alors explicite).
+const directAuthSchema = z.object({
+  role: z.enum(["client", "chauffeur"]),
+  token: z.string().min(8).max(200),
+  client_account_id: z.string().uuid().optional(),
+});
+
+async function resolveDirectAccount(input: {
+  role: "client" | "chauffeur";
+  token: string;
+  client_account_id?: string;
+}): Promise<string> {
+  if (input.role === "client") {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    return (await requireClientSession(input.token)).account_id;
+  }
+  const { assertDriverToken } = await import("@/lib/driver-auth.server");
+  assertDriverToken(input.token);
+  if (!input.client_account_id) throw new Error("BAD_REQUEST");
+  return input.client_account_id;
+}
+
+const directSendSchema = directAuthSchema.extend({
   content: z.string().trim().min(1).max(2000),
 });
 
 export const sendDirectClientMessage = createServerFn({ method: "POST" })
-  .inputValidator((input) => directSendSchema.parse(input))
+  .inputValidator((input) => directSendSchema.extend({ role: z.literal("client") }).parse(input))
   .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Récupère nom client pour le titre push
     const { data: acct } = await supabaseAdmin
       .from("client_accounts")
       .select("client_name, email")
-      .eq("id", data.client_account_id)
+      .eq("id", accountId)
       .maybeSingle();
     const clientName = (acct as any)?.client_name || (acct as any)?.email || "Client";
 
     const { data: row, error } = await supabaseAdmin
       .from("direct_messages")
       .insert({
-        client_account_id: data.client_account_id,
+        client_account_id: accountId,
         sender: "client",
         content: data.content,
         read_by_client: true,
@@ -476,8 +497,8 @@ export const sendDirectClientMessage = createServerFn({ method: "POST" })
       await sendPushToAudience("chauffeur", {
         title: `💬 Message de ${clientName}`,
         body: data.content.slice(0, 100),
-        url: "/driver?token=DSF234",
-        tag: `chat-driver-direct-${data.client_account_id}-${Date.now()}`,
+        url: "/driver",
+        tag: `chat-driver-direct-${accountId}-${Date.now()}`,
         requireInteraction: false,
       });
     } catch (e) {
@@ -488,13 +509,14 @@ export const sendDirectClientMessage = createServerFn({ method: "POST" })
   });
 
 export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
-  .inputValidator((input) => directSendSchema.parse(input))
+  .inputValidator((input) => directSendSchema.extend({ role: z.literal("chauffeur") }).parse(input))
   .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
       .from("direct_messages")
       .insert({
-        client_account_id: data.client_account_id,
+        client_account_id: accountId,
         sender: "chauffeur",
         content: data.content,
         read_by_client: false,
@@ -513,10 +535,10 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
           title: "💬 José a répondu à votre message",
           body: data.content.slice(0, 100),
           url: "/client/chat",
-          tag: `chat-client-direct-${data.client_account_id}`,
+          tag: `chat-client-direct-${accountId}`,
           requireInteraction: false,
         },
-        { accountId: data.client_account_id },
+        { accountId },
       );
     } catch (e) {
       console.warn("[chat] push client (direct) failed (non-blocking)", e);
@@ -529,18 +551,19 @@ export const listDirectMessages = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z
       .object({
-        client_account_id: z.string().uuid(),
         before: z.string().datetime().optional(),
         limit: z.number().int().min(1).max(100).optional(),
       })
+      .merge(directAuthSchema)
       .parse(input),
   )
   .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin
       .from("direct_messages")
       .select("id,client_account_id,sender,content,read_by_client,read_by_chauffeur,created_at")
-      .eq("client_account_id", data.client_account_id)
+      .eq("client_account_id", accountId)
       .order("created_at", { ascending: false })
       .limit(data.limit ?? 30);
     if (data.before) q = q.lt("created_at", data.before);
@@ -551,9 +574,10 @@ export const listDirectMessages = createServerFn({ method: "POST" })
 
 export const markDirectMessagesRead = createServerFn({ method: "POST" })
   .inputValidator((input) =>
-    z.object({ client_account_id: z.string().uuid(), role: z.enum(["client", "chauffeur"]) }).parse(input),
+    directAuthSchema.parse(input),
   )
   .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const peer = data.role === "client" ? "chauffeur" : "client";
     const patch = data.role === "client" ? { read_by_client: true } : { read_by_chauffeur: true };
@@ -561,7 +585,7 @@ export const markDirectMessagesRead = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from("direct_messages")
       .update(patch)
-      .eq("client_account_id", data.client_account_id)
+      .eq("client_account_id", accountId)
       .eq("sender", peer)
       .eq(readCol, false);
     if (error) throw new Error(error.message);

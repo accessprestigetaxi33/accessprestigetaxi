@@ -50,12 +50,10 @@ function ClientFactures() {
     setLoading(true);
     try {
       const [comp, data] = await Promise.all([
-        getClientCompanyInfo({ data: { account_id: session.id } }),
+        getClientCompanyInfo({ data: { token: session.token } }),
         listCompletedForBilling({
           data: {
-            account_id: session.id,
-            phone: session.phone,
-            email: session.email,
+            token: session.token,
             from: new Date(year, 0, 1).toISOString(),
             to: new Date(year + 1, 0, 1).toISOString(),
           },
