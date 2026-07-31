@@ -176,7 +176,7 @@ export function onForegroundMessage(callback: (payload: any) => void): () => voi
  */
 export function setupForegroundNotifications(): () => void {
   return onForegroundMessage((payload) => {
-    const title = payload.notification?.title ?? "Taxi City Bordeaux";
+    const title = payload.notification?.title ?? "Access Prestige Taxi";
     const options = {
       body: payload.notification?.body ?? "",
       icon: payload.notification?.icon ?? "/favicon.ico",

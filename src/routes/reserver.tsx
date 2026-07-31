@@ -981,6 +981,7 @@ function ReservationPage() {
   const d = DICTS[lang];
   const t = (k: string) => d[k] ?? DICTS["fr"][k] ?? k;
   const dir = lang === "ar" ? "rtl" : "ltr";
+  const u = lang === "en" ? UI.en : UI.fr;
 
   const pickupIso = f.date && f.heure ? toParisIso(f.date, f.heure) : null;
 

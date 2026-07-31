@@ -6,7 +6,7 @@ import { BulletedList } from "@/components/BulletedList";
 const SERVICES_TITLE = "Services Access Prestige Taxi : Aéroport, Gare, CPAM & Mariages";
 const SERVICES_DESC =
   "Découvrez nos services de taxi en Charente & Charente-Maritime : transferts aéroport, gare, transport conventionné CPAM, mariages, business, longues distances.";
-const SERVICES_URL = "https://taxicitybordeaux.fr/services";
+const SERVICES_URL = "https://accessprestigetaxi.lovable.app/services";
 
 const SERVICES_FAQ = [
   {

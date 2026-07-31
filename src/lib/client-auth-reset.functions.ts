@@ -19,7 +19,7 @@ async function sha256Hex(input: string): Promise<string> {
 const RequestSchema = z.object({ email: emailSchema });
 const ResetSchema = z.object({ token: z.string().min(16).max(128), password: passwordSchema });
 
-const APP_URL = "https://taxicitybordeaux.fr";
+const APP_URL = "https://accessprestigetaxi.lovable.app";
 
 /**
  * Requests a password reset.
@@ -63,7 +63,7 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
     const resetUrl = `${APP_URL}/client/reset-password?token=${token}`;
     const name = account.client_name || "Client VIP";
 
-    const subject = "🔑 Réinitialisation de votre mot de passe — Taxi City Bordeaux";
+    const subject = "🔑 Réinitialisation de votre mot de passe — Access Prestige Taxi";
     const html = `<!doctype html><html><body style="font-family:Arial,sans-serif;background:#fff;color:#111;">
 <div style="max-width:560px;padding:24px;margin:0 auto;">
   <div style="text-align:center;margin-bottom:24px;">
@@ -78,7 +78,7 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
   <p style="font-size:12px;color:#999;line-height:1.5;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet email — votre mot de passe ne sera pas modifié.</p>
 </div></body></html>`;
 
-    const text = `Réinitialisation de votre mot de passe Taxi City Bordeaux\n\nBonjour ${name},\n\nUtilisez ce lien (valable 30 min) pour choisir un nouveau mot de passe :\n${resetUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
+    const text = `Réinitialisation de votre mot de passe Access Prestige Taxi\n\nBonjour ${name},\n\nUtilisez ce lien (valable 30 min) pour choisir un nouveau mot de passe :\n${resetUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.`;
 
     try {
       const messageId = `reset-${account.id}-${Date.now()}`;
@@ -94,9 +94,9 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
         payload: {
           message_id: messageId,
           to: account.email,
-          from: "Taxi City Bordeaux <noreply@notify.taxicitybordeaux.fr>",
+          from: "Access Prestige Taxi <noreply@notify.accessprestigetaxi.lovable.app>",
           reply_to: "taxi.city033@gmail.com",
-          sender_domain: "notify.taxicitybordeaux.fr",
+          sender_domain: "notify.accessprestigetaxi.lovable.app",
           subject,
           html,
           text,

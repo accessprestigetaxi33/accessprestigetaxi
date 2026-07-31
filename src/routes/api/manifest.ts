@@ -11,7 +11,7 @@ export const Route = createFileRoute("/api/manifest")({
 
         const manifest = {
           id: isDriver ? "/driver" : "/",
-          name: "Taxi City Bordeaux",
+          name: "Access Prestige Taxi",
           short_name: isDriver ? "TCB Chauffeur" : "Taxi Bordeaux",
           description: "Réservez votre taxi à Bordeaux",
           start_url: isDriver ? "/driver" : "/",

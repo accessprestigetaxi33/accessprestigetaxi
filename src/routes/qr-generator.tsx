@@ -8,7 +8,7 @@ import logoSrc from "@/assets/tcb-logo-badge.png";
 export const Route = createFileRoute("/qr-generator")({
   head: () => ({
     meta: [
-      { title: "Générateur QR — Taxi City Bordeaux" },
+      { title: "Générateur QR — Access Prestige Taxi" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -44,12 +44,12 @@ type Form = {
 
 const DEFAULTS: Form = {
   mode: "url",
-  url: "https://taxicitybordeaux.fr/carte",
+  url: "https://accessprestigetaxi.lovable.app/carte",
   name: "Josè",
-  phone: "0673072322",
+  phone: "0650260015",
   email: "taxi.city033@gmail.com",
-  site: "https://taxicitybordeaux.fr",
-  org: "Taxi City Bordeaux",
+  site: "https://accessprestigetaxi.lovable.app",
+  org: "Access Prestige Taxi",
 };
 
 function buildPayload(f: Form): string {
@@ -308,7 +308,7 @@ function QrGeneratorPage() {
           Outil interne
         </p>
         <h1 style={{ fontFamily: "'Syne','Playfair Display',serif", fontSize: 32, margin: "6px 0 24px" }}>
-          Générateur QR — Taxi City Bordeaux
+          Générateur QR — Access Prestige Taxi
         </h1>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start" }}>

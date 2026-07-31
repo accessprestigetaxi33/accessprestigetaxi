@@ -19,8 +19,8 @@ const LOCAL_COPY = {
 } as const;
 
 // ─── Config tarifs ────────────────────────────────────────────
-const PHONE = "0673072322";
-const PHONE_DISPLAY = "06 73 07 23 22";
+const PHONE = "0650260015";
+const PHONE_DISPLAY = "06 50 26 00 15";
 
 const PICKUP_FEE = 2.83;
 const RATE_DAY = 2.16; // 7h–19h

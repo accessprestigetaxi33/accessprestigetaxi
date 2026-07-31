@@ -36,7 +36,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
   const { lang } = useI18n();
   const isEn = lang === "en";
   const peerRole = role === "client" ? "chauffeur" : "client";
-  const title = peerName || (role === "client" ? "José 🚖" : "Client");
+  const title = peerName || (role === "client" ? "Patricia 🚖" : "Client");
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);

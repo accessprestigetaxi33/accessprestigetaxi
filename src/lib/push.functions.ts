@@ -144,10 +144,10 @@ export const notifyNewReview = createServerFn({ method: "POST" })
   });
 
 // URL de prod hardcodée — process.env.APP_URL est vide en contexte serveur Lovable
-const APP_URL = "https://taxicitybordeaux.fr";
+const APP_URL = "https://accessprestigetaxi.lovable.app";
 
 // Appelée depuis reserver.tsx après l'insert d'une nouvelle réservation.
-// Envoie push FCM à admin + chauffeur ET email à José via le bridge Lovable
+// Envoie push FCM à admin + chauffeur ET email à Patricia via le bridge Lovable
 // (même bridge que notify-reservation.ts, qui est prouvé fonctionnel).
 export const notifyNewReservation = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ reservation_id: z.string().uuid() }).parse(input))
@@ -180,7 +180,7 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
     // "Nouvelle résa") sur le téléphone du chauffeur.
     const chauffeurResult = { sent: 0, removed: 0, skipped: "sent-by-db-trigger" as const };
 
-    // ── Email à José via le bridge Lovable (même que notify-reservation.ts) ─
+    // ── Email à Patricia via le bridge Lovable (même que notify-reservation.ts) ─
     let emailSent = false;
     try {
       const { serviceKey } = getTaxiSupabaseConfig();
@@ -377,7 +377,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
         "client",
         {
           title: "✅ Course confirmée",
-          body: `José a confirmé votre course : ${trajet}.`,
+          body: `Patricia a confirmé votre course : ${trajet}.`,
           url,
           tag: `client-accepted-${r.id}`,
           requireInteraction: false,
@@ -418,7 +418,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
         "client",
         {
           title: "🏁 Course terminée",
-          body: "Merci pour votre trajet avec Taxi City Bordeaux.",
+          body: "Merci pour votre trajet avec Access Prestige Taxi.",
           url,
           tag: `client-completed-${r.id}`,
           requireInteraction: false,
@@ -432,12 +432,12 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     let smsBody: string | null = null;
     if (smsPhone && data.status === "en_route") {
       smsBody = encodeURIComponent(
-        `Bonjour ${clientName},\nVotre taxi arrive vers vous !\n${r.depart}\n📲 Suivez en direct : ${APP_URL}${url}\nTel: 06 73 07 23 22`,
+        `Bonjour ${clientName},\nVotre taxi arrive vers vous !\n${r.depart}\n📲 Suivez en direct : ${APP_URL}${url}\nTel: 06 50 26 00 15`,
       );
     }
     if (smsPhone && data.status === "arrived") {
       smsBody = encodeURIComponent(
-        `Bonjour ${clientName},\nVotre taxi est arrive ! Il vous attend au point de prise en charge.\nTel: 06 73 07 23 22`,
+        `Bonjour ${clientName},\nVotre taxi est arrive ! Il vous attend au point de prise en charge.\nTel: 06 50 26 00 15`,
       );
     }
 
@@ -483,7 +483,7 @@ export const updateReservationRoute = createServerFn({ method: "POST" })
 
     // Autorisation 2/2 (gating serveur) : la course DOIT être acceptée par l'admin.
     // Tant que le statut n'est pas 'accepted' (ou en cours après acceptation),
-    // José ne peut pas modifier le trajet/prix — même si l'UI a un bug.
+    // Patricia ne peut pas modifier le trajet/prix — même si l'UI a un bug.
     const allowedStatuses = ["accepted", "en_route", "arrived"];
     const currentStatus = String((r as any).status ?? "").toLowerCase();
     if (!allowedStatuses.includes(currentStatus)) {

@@ -131,7 +131,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   const testNotification = useCallback(async () => {
     if (status !== "granted") return;
     const reg = await navigator.serviceWorker.ready;
-    reg.showNotification("🚕 Test — Taxi City Bordeaux", {
+    reg.showNotification("🚕 Test — Access Prestige Taxi", {
       body: "Les notifications sont bien activées !",
       icon: "/favicon.ico",
     });

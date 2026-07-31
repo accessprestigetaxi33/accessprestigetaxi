@@ -47,7 +47,7 @@ export function LocalSeoPage({ landingKey }: { landingKey: LandingKey }) {
       </Link>
 
       <header className="mt-6 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Taxi City Bordeaux</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Access Prestige Taxi</p>
         <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{c.title}</h1>
         <p className="mx-auto mt-4 max-w-2xl whitespace-pre-line text-sm text-muted-foreground sm:text-base">
           {c.intro}
@@ -61,7 +61,7 @@ export function LocalSeoPage({ landingKey }: { landingKey: LandingKey }) {
             {c.ctaBook}
           </Link>
           <a
-            href="tel:+33673072322"
+            href="tel:+33650260015"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 font-semibold sm:w-auto"
           >
             <Phone className="h-4 w-4" />

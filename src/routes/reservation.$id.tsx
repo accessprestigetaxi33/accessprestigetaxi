@@ -55,7 +55,7 @@ function ConfirmationPage() {
   const fetchReservation = useServerFn(getReservationPublic);
   const cancelReservation = useServerFn(cancelReservationPublic);
 
-  // Écoute Realtime : si José change le statut de la course, mettre à jour la page
+  // Écoute Realtime : si Patricia change le statut de la course, mettre à jour la page
   // et rediriger vers /fin/$id lorsque la course est terminée.
   useEffect(() => {
     const channel = (supabase as any)
@@ -180,7 +180,7 @@ function ConfirmationPage() {
         <p className="mt-1 text-xs text-muted-foreground">{t("conf.ref.note")}</p>
       </div>
 
-      {/* suivi Realtime actif — le client sera redirigé vers /fin/$id dès que José termine la course */}
+      {/* suivi Realtime actif — le client sera redirigé vers /fin/$id dès que Patricia termine la course */}
 
       <div className="mt-6 rounded-2xl border border-border bg-card p-6 space-y-4">
         <h2 className="font-display text-lg font-semibold">{t("conf.summary")}</h2>
@@ -226,10 +226,10 @@ function ConfirmationPage() {
             <MessageCircle className="h-5 w-5" /> {t("conf.wa")}
           </a>
           <a
-            href="tel:0673072322"
+            href="tel:0650260015"
             className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-background px-5 py-3 font-semibold transition hover:border-primary"
           >
-            <Phone className="h-5 w-5" /> 06 73 07 23 22
+            <Phone className="h-5 w-5" /> 06 50 26 00 15
           </a>
         </div>
       )}

@@ -6,7 +6,7 @@ const cleanEnv = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 
 // Priorité au connecteur Google Maps Platform : en mode custom, c'est cette
-// variable qui contient la clé autorisée pour taxicitybordeaux.fr. L'ancienne
+// variable qui contient la clé autorisée pour accessprestigetaxi.lovable.app. L'ancienne
 // VITE_GOOGLE_MAPS_API_KEY reste en fallback pour éviter un écran noir si elle
 // est la seule présente.
 const CONNECTOR_BROWSER_KEY = cleanEnv(import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY);
@@ -20,7 +20,7 @@ export const GOOGLE_MAPS_API_KEY: string | undefined = GOOGLE_MAPS_API_KEYS[0];
 
 export function getGoogleMapsApiKeysForCurrentHost(): string[] {
   // La clé .env du projet (VITE_GOOGLE_MAPS_API_KEY) est toujours prioritaire :
-  // c'est elle qui porte les restrictions HTTP referrer pour taxicitybordeaux.fr.
+  // c'est elle qui porte les restrictions HTTP referrer pour accessprestigetaxi.lovable.app.
   // La clé du connecteur Lovable (limitée à *.lovable.app / *.lovableproject.com)
   // ne sert que de filet de secours sur les domaines de preview.
   const ordered = [PROJECT_BROWSER_KEY, CONNECTOR_BROWSER_KEY];
