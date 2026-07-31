@@ -27,3 +27,26 @@ export function broadcastSuiviUpdate(reservationId: string | null | undefined, k
     console.warn("[suivi-broadcast] failed", e);
   }
 }
+
+/** Prévient les tableaux de bord chauffeur ouverts qu'une résa vient d'arriver. */
+export function broadcastDriverFeed(kind: string = "reservation") {
+  try {
+    const ch = (supabase as any).channel("driver-feed-emit", {
+      config: { broadcast: { self: false, ack: false } },
+    });
+    ch.subscribe((status: string) => {
+      if (status !== "SUBSCRIBED") return;
+      try {
+        ch.send({ type: "broadcast", event: "reservation", payload: { kind, at: Date.now() } });
+      } catch {}
+      setTimeout(() => {
+        try {
+          supabase.removeChannel(ch);
+        } catch {}
+      }, 800);
+    });
+  } catch (e) {
+    console.warn("[driver-feed] broadcast failed", e);
+  }
+}
+
