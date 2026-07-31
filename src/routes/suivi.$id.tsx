@@ -393,6 +393,8 @@ function AnonChat({
   onUnreadChange?: (n: number) => void;
 }) {
   const t = useT();
+  const { lang } = useI18n();
+  const u = lang === "en" ? UI.en : UI.fr;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -556,7 +558,7 @@ function AnonChat({
                 {msg.content}
               </div>
               <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "3px", padding: "0 4px" }}>
-                {mine ? t("suivi.chat_you") || "Vous" : "José"}
+                {mine ? t("suivi.chat_you") || u.you : "José"}
               </div>
             </div>
           );
@@ -1548,6 +1550,7 @@ function SuiviPage() {
   const { id } = Route.useParams();
   const { lang: locale } = useI18n();
   const t = useT();
+  const u = locale === "en" ? UI.en : UI.fr;
   const [reservation, setReservation] = useState<Reservation | null>(null);
   // ⚠️ IMPORTANT : le vrai id (clé primaire) de la réservation, résolu après
   // chargement. L'URL /suivi/$id peut contenir soit le vrai id, soit le
@@ -2316,7 +2319,7 @@ function SuiviPage() {
                 <span>🔴</span> {t("suivi.arrivee_label")}
               </div>
               <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a", marginTop: "2px" }}>
-                {reservation.destination || reservation.arrivee || "À définir"}
+                {reservation.destination || reservation.arrivee || u.tbd}
               </div>
             </div>
           </div>
