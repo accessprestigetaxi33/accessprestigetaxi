@@ -365,6 +365,67 @@ function Index() {
         </div>
       </section>
 
+      {/* DESTINATIONS */}
+      <section className="border-t border-border bg-background py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.destEyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.destTitle}</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.destLead}</p>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {c.destinations.map((d) => (
+              <Link
+                key={`${d.from}-${d.to}`}
+                to="/reservation"
+                className="group flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-4 transition hover:border-primary/60"
+              >
+                <span className="flex flex-col items-center gap-1 pt-1">
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <span className="h-6 w-px bg-border" />
+                  <span className="h-2 w-2 rounded-full border border-primary" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-card-foreground">{d.from}</span>
+                  <span className="block truncate text-sm font-semibold text-card-foreground">{d.to}</span>
+                  <span className="mt-1 block text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                    {d.meta}
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-primary opacity-0 transition group-hover:opacity-100" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BEST-SELLERS */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.bestEyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.bestTitle}</h2>
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {c.best.map((b) => (
+              <article
+                key={b.n}
+                className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 pt-8"
+              >
+                <span className="absolute right-4 top-2 font-display text-5xl font-semibold text-primary/15">
+                  {b.n}
+                </span>
+                <h3 className="font-display text-lg font-semibold text-card-foreground">{b.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
+                <Link
+                  to="/reservation"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                >
+                  {c.ctaBook} <ArrowRight className="h-4 w-4" />
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* WHY */}
       <section className="border-t border-border py-20">
         <div className="mx-auto max-w-5xl px-5">
