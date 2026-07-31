@@ -1,1 +1,0 @@
-DROP TRIGGER IF EXISTS notify_admin_on_new_reservation ON public.reservations;
