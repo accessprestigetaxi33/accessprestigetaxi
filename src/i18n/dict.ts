@@ -28,6 +28,7 @@ const fr: Dict = {
   // Common / nav / header
   "nav.home": "Accueil",
   "nav.services": "Services",
+  "nav.blog": "Guide Charente",
   "nav.tarifs": "Tarifs",
   "nav.about": "À propos",
   "nav.contact": "Contact",
@@ -1157,6 +1158,7 @@ const fr: Dict = {
 const en: Dict = {
   "nav.home": "Home",
   "nav.services": "Services",
+  "nav.blog": "Charente guide",
   "nav.tarifs": "Pricing",
   "nav.about": "About",
   "nav.contact": "Contact",
@@ -2254,6 +2256,7 @@ const en: Dict = {
 const es: Dict = {
   "nav.home": "Inicio",
   "nav.services": "Servicios",
+  "nav.blog": "Guía Charente",
   "nav.tarifs": "Tarifas",
   "nav.about": "Nosotros",
   "nav.contact": "Contacto",
@@ -3357,6 +3360,7 @@ const es: Dict = {
 const it: Dict = {
   "nav.home": "Home",
   "nav.services": "Servizi",
+  "nav.blog": "Guida Charente",
   "nav.tarifs": "Tariffe",
   "nav.about": "Chi siamo",
   "nav.contact": "Contatti",
@@ -4463,6 +4467,7 @@ const it: Dict = {
 const ar: Dict = {
   "nav.home": "الرئيسية",
   "nav.services": "الخدمات",
+  "nav.blog": "دليل شارانت",
   "nav.tarifs": "الأسعار",
   "nav.about": "من نحن",
   "nav.contact": "اتصل بنا",
@@ -5552,6 +5557,7 @@ const pt: Dict = {
   // Common / nav / header
   "nav.home": "Início",
   "nav.services": "Serviços",
+  "nav.blog": "Guide Charente",
   "nav.tarifs": "Tarifas",
   "nav.about": "Sobre",
   "nav.contact": "Contacto",
