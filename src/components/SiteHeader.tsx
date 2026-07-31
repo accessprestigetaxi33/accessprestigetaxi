@@ -1,7 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Phone, Menu, X, UserCircle2 } from "lucide-react";
 import { useState } from "react";
-import logo from "@/assets/tcb-logo-badge.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
@@ -27,21 +26,13 @@ export function SiteHeader() {
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between">
         <Link
           to="/"
-          className="site-header-logo flex min-w-0 shrink-0 items-center overflow-hidden"
+          className="flex min-w-0 shrink-0 items-center leading-none"
           onClick={() => setOpen(false)}
-          aria-label="Taxi City Bordeaux"
+          aria-label="Access Prestige Taxi"
         >
-          <img
-            src={logo}
-            alt="Taxi City Bordeaux"
-            width={1200}
-            height={896}
-            decoding="async"
-            loading="eager"
-            fetchPriority="high"
-            className="site-header-logo-img rounded-md"
-          />
-          <span className="sr-only">Taxi City Bordeaux</span>
+          <span className="whitespace-nowrap font-display text-[13px] font-semibold uppercase tracking-[0.14em] text-foreground sm:text-base sm:tracking-[0.2em]">
+            Access <span className="text-primary">Prestige</span> Taxi
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
