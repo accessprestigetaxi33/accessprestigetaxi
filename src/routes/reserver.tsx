@@ -27,10 +27,10 @@ import { ListeningOverlay } from "@/components/ListeningOverlay";
 import { DICTS, LANGUAGES, type Lang } from "@/i18n/dict";
 import { useI18n } from "@/i18n/I18nProvider";
 
-const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Taxi City Bordeaux";
+const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Access Prestige Taxi";
 const RESERVER_DESC =
   "Réservez votre taxi à Bordeaux en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
-const RESERVER_URL = "https://taxicitybordeaux.fr/reserver";
+const RESERVER_URL = "https://accessprestigetaxi.lovable.app/reserver";
 
 export const Route = createFileRoute("/reserver")({
   head: () => ({
@@ -1420,7 +1420,7 @@ function ReservationPage() {
   // ── Push client retirée ──────────────────────────────────────────────────
   // Le client n'est plus notifié par push. Toutes les étapes sont visibles
   // en temps réel sur /suivi/$id (bandeau d'étapes + statut). On garde
-  // uniquement la push chauffeur (José) à la création (notifyNewReservation).
+  // uniquement la push chauffeur (Patricia) à la création (notifyNewReservation).
 
   // ── Soumission ────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
@@ -1599,10 +1599,10 @@ function ReservationPage() {
       }
 
 
-      // ── Notifier le chauffeur José (push FCM + email) ─────────────────────
+      // ── Notifier le chauffeur Patricia (push FCM + email) ─────────────────────
       // On attend la fin avant de naviguer : sinon le navigateur peut tuer
       // la requête en cours lors du changement de page (notamment sur mobile),
-      // ce qui explique que José ne recevait plus de push ni d'email.
+      // ce qui explique que Patricia ne recevait plus de push ni d'email.
       // Timeout 8s pour ne pas bloquer en cas d'erreur réseau.
       try {
         await Promise.race([

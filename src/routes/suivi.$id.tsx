@@ -38,7 +38,7 @@ import { getTaxiSupabase } from "@/lib/taxi-supabase";
 export const Route = createFileRoute("/suivi/$id")({
   head: () => ({
     meta: [
-      { title: "Suivi de votre taxi — Taxi City Bordeaux" },
+      { title: "Suivi de votre taxi — Access Prestige Taxi" },
       { name: "robots", content: "noindex" },
       {
         name: "viewport",
@@ -63,7 +63,7 @@ const UI = {
   },
 } as const;
 
-const JOSE_PHONE = "0673072322";
+const JOSE_PHONE = "0650260015";
 // Délai d'expiration du lien de suivi après la fin de la course (en jours)
 const SUIVI_EXPIRY_DAYS = 30;
 
@@ -558,7 +558,7 @@ function AnonChat({
                 {msg.content}
               </div>
               <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "3px", padding: "0 4px" }}>
-                {mine ? t("suivi.chat_you") || u.you : "José"}
+                {mine ? t("suivi.chat_you") || u.you : "Patricia"}
               </div>
             </div>
           );
@@ -626,13 +626,13 @@ function generateICS(reservation: any, t: (k: string) => string): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Taxi City Bordeaux//FR",
+    "PRODID:-//Access Prestige Taxi//FR",
     "BEGIN:VEVENT",
-    `UID:tcb-${reservation.id}@taxicitybordeaux.fr`,
+    `UID:tcb-${reservation.id}@accessprestigetaxi.lovable.app`,
     `DTSTAMP:${fmt(new Date())}`,
     `DTSTART:${fmt(start)}`,
     `DTEND:${fmt(end)}`,
-    `SUMMARY:🚕 Taxi City Bordeaux`,
+    `SUMMARY:🚕 Access Prestige Taxi`,
     `DESCRIPTION:${labelDepart} : ${reservation.depart}\n${labelArrivee} : ${reservation.destination ?? reservation.arrivee ?? ""}`,
     `LOCATION:${reservation.depart}`,
     "END:VEVENT",
@@ -739,7 +739,7 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
   .btn { display: inline-block; margin: 20px 8px 0; padding: 10px 24px; background: #1d4ed8; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 </style></head><body>
 <div class="header">
-  <div class="brand">🚕 Taxi City Bordeaux<small>taxicitybordeaux.fr · 06 73 07 23 22</small></div>
+  <div class="brand">🚕 Access Prestige Taxi<small>accessprestigetaxi.lovable.app · 06 50 26 00 15</small></div>
   <div class="meta"><strong>${labelReceiptTitle}</strong>N° ${reservation.id.slice(-8).toUpperCase()}<br/>${dateStr}</div>
 </div>
 <h2>${labelDetailsTitle}</h2>
@@ -1928,7 +1928,7 @@ function SuiviPage() {
         {/* Bouton retour vers site */}
         <div style={{ marginBottom: "12px" }}>
           <a
-            href="https://taxicitybordeaux.fr"
+            href="https://accessprestigetaxi.lovable.app"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -1943,7 +1943,7 @@ function SuiviPage() {
               textDecoration: "none",
             }}
           >
-            ← Taxi City Bordeaux
+            ← Access Prestige Taxi
           </a>
         </div>
 
@@ -2428,7 +2428,7 @@ function SuiviPage() {
                 </span>
               </a>
               <a
-                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour José`)}`}
+                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour Patricia`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
