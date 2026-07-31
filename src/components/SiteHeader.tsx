@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
 
 const PHONE = "0650260015";
-const PHONE_DISPLAY = "06 73 07 23 22";
+const PHONE_DISPLAY = "06 50 26 00 15";
 
 export function SiteHeader() {
   const t = useT();
