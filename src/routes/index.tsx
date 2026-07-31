@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
-import logoLockup from "@/assets/apt-logo-lockup.png";
+import logoLockup from "@/assets/apt-logo-lockup.png.asset.json";
 
 const PHONE = "0673072322";
 const PHONE_DISPLAY = "06 73 07 23 22";
