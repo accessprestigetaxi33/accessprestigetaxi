@@ -21,9 +21,9 @@ export type RecurringRide = {
   updated_at: string;
 };
 
-const ListSchema = z.object({ account_id: z.string().uuid() });
+const ListSchema = z.object({ token: z.string().min(32).max(128) });
 const CreateSchema = z.object({
-  account_id: z.string().uuid(),
+  token: z.string().min(32).max(128),
   label: z.string().trim().min(1).max(80),
   depart: z.string().trim().min(1).max(500),
   destination: z.string().trim().min(1).max(500),
@@ -35,8 +35,8 @@ const CreateSchema = z.object({
   paiement: z.enum(["cb", "especes"]),
   message: z.string().trim().max(500).optional(),
 });
-const ToggleSchema = z.object({ account_id: z.string().uuid(), id: z.string().uuid(), active: z.boolean() });
-const DeleteSchema = z.object({ account_id: z.string().uuid(), id: z.string().uuid() });
+const ToggleSchema = z.object({ token: z.string().min(32).max(128), id: z.string().uuid(), active: z.boolean() });
+const DeleteSchema = z.object({ token: z.string().min(32).max(128), id: z.string().uuid() });
 
 /** Returns the next ISO datetime (UTC) for a weekly day_of_week + hour:minute in Europe/Paris.
  *  Approximation: we use server's local TZ as a proxy; UTC offset is handled by Postgres on insert.
@@ -63,11 +63,13 @@ function computeNextRun(day: number, hour: number, minute: number): Date {
 export const listRecurringRides = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ListSchema.parse(input))
   .handler(async ({ data }): Promise<RecurringRide[]> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .select("*")
-      .eq("client_account_id", data.account_id)
+      .eq("client_account_id", identity.account_id)
       .order("day_of_week", { ascending: true })
       .order("hour", { ascending: true });
     if (error) throw new Error(error.message);
@@ -77,12 +79,14 @@ export const listRecurringRides = createServerFn({ method: "POST" })
 export const createRecurringRide = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CreateSchema.parse(input))
   .handler(async ({ data }): Promise<RecurringRide> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const next = computeNextRun(data.day_of_week, data.hour, data.minute);
     const { data: row, error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .insert({
-        client_account_id: data.account_id,
+        client_account_id: identity.account_id,
         label: data.label,
         depart: data.depart,
         destination: data.destination,
@@ -105,12 +109,14 @@ export const createRecurringRide = createServerFn({ method: "POST" })
 export const toggleRecurringRide = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ToggleSchema.parse(input))
   .handler(async ({ data }) => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .update({ active: data.active })
       .eq("id", data.id)
-      .eq("client_account_id", data.account_id);
+      .eq("client_account_id", identity.account_id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -118,12 +124,14 @@ export const toggleRecurringRide = createServerFn({ method: "POST" })
 export const deleteRecurringRide = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => DeleteSchema.parse(input))
   .handler(async ({ data }) => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .delete()
       .eq("id", data.id)
-      .eq("client_account_id", data.account_id);
+      .eq("client_account_id", identity.account_id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

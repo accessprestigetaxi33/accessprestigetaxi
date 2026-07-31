@@ -22,9 +22,7 @@ export type ClientReservation = {
 };
 
 const IdentitySchema = z.object({
-  account_id: z.string().uuid(),
-  phone: z.string().trim().max(40).optional().nullable(),
-  email: z.string().trim().toLowerCase().max(255).optional().nullable(),
+  token: z.string().min(32).max(128),
 });
 
 function normalizePhone(p?: string | null): string | null {
@@ -36,6 +34,8 @@ function normalizePhone(p?: string | null): string | null {
 export const listClientReservations = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => IdentitySchema.parse(input))
   .handler(async ({ data }): Promise<ClientReservation[]> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const cols =
@@ -44,9 +44,9 @@ export const listClientReservations = createServerFn({ method: "POST" })
     const { data: byAccount } = await supabaseAdmin
       .from("reservations")
       .select(cols)
-      .eq("client_account_id", data.account_id);
+      .eq("client_account_id", identity.account_id);
 
-    const phoneTail = normalizePhone(data.phone);
+    const phoneTail = normalizePhone(identity.phone);
     let byPhone: any[] = [];
     if (phoneTail) {
       const { data: rows } = await supabaseAdmin
@@ -58,12 +58,12 @@ export const listClientReservations = createServerFn({ method: "POST" })
     }
 
     let byEmail: any[] = [];
-    if (data.email) {
+    if (identity.email) {
       const { data: rows } = await supabaseAdmin
         .from("reservations")
         .select(cols)
         .is("client_account_id", null)
-        .or(`client_email.eq.${data.email},email.eq.${data.email}`);
+        .or(`client_email.eq.${identity.email},email.eq.${identity.email}`);
       byEmail = rows ?? [];
     }
 
@@ -132,7 +132,9 @@ const UpdateTimeSchema = IdentitySchema.extend({
 export const updateReservationTime = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => UpdateTimeSchema.parse(input))
   .handler(async ({ data }) => {
-    const r = await assertOwnership(data.reservation_id, data);
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
+    const r = await assertOwnership(data.reservation_id, identity);
     if (!["nouvelle", "pending", "accepted", "en_route", "arrived"].includes(r.status)) {
       throw new Error("STATUS_LOCKED");
     }
@@ -172,7 +174,9 @@ const CancelSchema = IdentitySchema.extend({
 export const cancelClientReservation = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CancelSchema.parse(input))
   .handler(async ({ data }) => {
-    const r = await assertOwnership(data.reservation_id, data);
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
+    const r = await assertOwnership(data.reservation_id, identity);
     if (!["nouvelle", "pending", "accepted"].includes(r.status)) {
       throw new Error("STATUS_LOCKED");
     }
@@ -201,7 +205,9 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
 export const requestPhoneCancellation = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CancelSchema.parse(input))
   .handler(async ({ data }) => {
-    await assertOwnership(data.reservation_id, data);
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
+    await assertOwnership(data.reservation_id, identity);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("reservations")

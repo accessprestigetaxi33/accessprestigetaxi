@@ -19,17 +19,19 @@ export type InvoiceRow = {
 };
 
 const IdentitySchema = z.object({
-  account_id: z.string().uuid(),
+  token: z.string().min(32).max(128),
 });
 
 export const getClientCompanyInfo = createServerFn({ method: "POST" })
   .inputValidator((input) => IdentitySchema.parse(input))
   .handler(async ({ data }): Promise<CompanyInfo> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
       .from("client_accounts")
       .select("company_name,siret,tva_intracom,billing_address")
-      .eq("id", data.account_id)
+      .eq("id", identity.account_id)
       .maybeSingle();
     return {
       company_name: (row as any)?.company_name ?? null,
@@ -40,7 +42,7 @@ export const getClientCompanyInfo = createServerFn({ method: "POST" })
   });
 
 const UpdateSchema = z.object({
-  account_id: z.string().uuid(),
+  token: z.string().min(32).max(128),
   company_name: z.string().trim().max(200).nullable(),
   siret: z.string().trim().max(50).nullable(),
   tva_intracom: z.string().trim().max(50).nullable(),
@@ -50,6 +52,8 @@ const UpdateSchema = z.object({
 export const updateClientCompanyInfo = createServerFn({ method: "POST" })
   .inputValidator((input) => UpdateSchema.parse(input))
   .handler(async ({ data }) => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("client_accounts")
@@ -59,15 +63,13 @@ export const updateClientCompanyInfo = createServerFn({ method: "POST" })
         tva_intracom: data.tva_intracom || null,
         billing_address: data.billing_address || null,
       })
-      .eq("id", data.account_id);
+      .eq("id", identity.account_id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
 const BillingListSchema = z.object({
-  account_id: z.string().uuid(),
-  phone: z.string().trim().max(40).optional().nullable(),
-  email: z.string().trim().toLowerCase().max(255).optional().nullable(),
+  token: z.string().min(32).max(128),
   from: z.string(), // ISO
   to: z.string(), // ISO
 });
@@ -81,20 +83,22 @@ function normalizePhone(p?: string | null): string | null {
 export const listCompletedForBilling = createServerFn({ method: "POST" })
   .inputValidator((input) => BillingListSchema.parse(input))
   .handler(async ({ data }): Promise<InvoiceRow[]> => {
+    const { requireClientSession } = await import("@/lib/client-session.server");
+    const identity = await requireClientSession(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cols =
       "id, pickup_datetime, depart, arrivee, destination, status, prix_estime, paiement, tracking_id, client_account_id, client_phone, telephone, client_email, email";
 
     const orParts: string[] = [];
-    orParts.push(`client_account_id.eq.${data.account_id}`);
-    const phoneTail = normalizePhone(data.phone);
+    orParts.push(`client_account_id.eq.${identity.account_id}`);
+    const phoneTail = normalizePhone(identity.phone);
     if (phoneTail) {
       orParts.push(`client_phone.ilike.%${phoneTail}`);
       orParts.push(`telephone.ilike.%${phoneTail}`);
     }
-    if (data.email) {
-      orParts.push(`client_email.eq.${data.email}`);
-      orParts.push(`email.eq.${data.email}`);
+    if (identity.email) {
+      orParts.push(`client_email.eq.${identity.email}`);
+      orParts.push(`email.eq.${identity.email}`);
     }
 
     const { data: rows } = await supabaseAdmin
