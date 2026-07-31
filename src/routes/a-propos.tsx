@@ -18,7 +18,7 @@ export const Route = createFileRoute("/a-propos")({
       { property: "og:url", content: ABOUT_URL },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: ABOUT_URL }],
+    links: seoLinks("/a-propos"),
   }),
   component: AboutPage,
 });

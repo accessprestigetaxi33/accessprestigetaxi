@@ -18,7 +18,7 @@ export const Route = createFileRoute("/mentions-legales")({
       { property: "og:type", content: "website" },
       { name: "robots", content: "index,follow" },
     ],
-    links: [{ rel: "canonical", href: URL }],
+    links: seoLinks("/mentions-legales"),
   }),
   component: MentionsLegalesPage,
 });

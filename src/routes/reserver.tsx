@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -48,7 +49,7 @@ export const Route = createFileRoute("/reserver")({
       },
       { name: "theme-color", content: "#1a1209" },
     ],
-    links: [{ rel: "canonical", href: RESERVER_URL }],
+    links: seoLinks("/reserver"),
   }),
   component: ReservationPage,
 });

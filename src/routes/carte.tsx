@@ -17,7 +17,7 @@ export const Route = createFileRoute("/carte")({
       { property: "og:url", content: CARTE_URL },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: CARTE_URL }],
+    links: seoLinks("/carte"),
   }),
   component: CartePage,
 });

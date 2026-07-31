@@ -33,7 +33,7 @@ export const Route = createFileRoute("/services")({
       { property: "og:url", content: SERVICES_URL },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: SERVICES_URL }],
+    links: seoLinks("/services"),
     scripts: [
       {
         type: "application/ld+json",

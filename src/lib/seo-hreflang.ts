@@ -9,3 +9,12 @@ export function hreflangLinks(url: string) {
     { rel: "alternate" as const, hrefLang: "x-default", href: url },
   ];
 }
+
+export const SITE_URL = "https://accessprestigetaxi.lovable.app";
+
+/** Canonical absolu + alternates hreflang (fr/en + x-default) pour une page. */
+export function seoLinks(path: string) {
+  const clean = path === "/" ? "" : path.replace(/\/+$/, "");
+  const url = `${SITE_URL}${clean}` || `${SITE_URL}/`;
+  return [{ rel: "canonical" as const, href: url }, ...hreflangLinks(url)];
+}
