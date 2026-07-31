@@ -472,10 +472,11 @@ function DriverPage() {
     );
   }
 
-  return <DriverApp driverLabel={driverLabel} />;
+  return <DriverApp driverLabel={driverLabel} driverId={driverId} />;
 }
 
-function DriverApp({ driverLabel }: { driverLabel?: string }) {
+function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?: string }) {
+
   const [tab, setTab] = useState<Tab>("courses");
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
