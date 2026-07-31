@@ -489,6 +489,9 @@ function Index() {
         </div>
       </section>
 
+      {/* AVIS & RÉASSURANCE */}
+      <ClientTrust />
+
       {/* AVIS */}
       <section className="border-t border-border bg-card/40 py-20">
         <div className="mx-auto max-w-2xl px-5">
