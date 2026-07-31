@@ -12,6 +12,8 @@ import { broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
 import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
+import { verifyDriverToken } from "@/lib/driver-auth.functions";
+import { getDriverToken, setDriverToken, clearDriverToken } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
   getUnreadCountsForReservations,
@@ -19,7 +21,8 @@ import {
 } from "@/lib/chat.functions";
 
 // ── Token guard ────────────────────────────────────────────────────────────
-const DRIVER_TOKEN = "DSF234";
+// Aucun secret en dur : le jeton saisi (ou passé en ?token=) est validé côté
+// serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
 type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "simulateur";
@@ -343,22 +346,49 @@ function isToday(iso: string) {
 // ── Main component ─────────────────────────────────────────────────────────
 function DriverPage() {
   const { token } = Route.useSearch();
+  const verify = useServerFn(verifyDriverToken);
+  const [status, setStatus] = useState<"checking" | "denied" | "granted">("checking");
+  const [input, setInput] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const tryToken = useCallback(
+    async (candidate: string): Promise<boolean> => {
+      if (!candidate) return false;
+      try {
+        const res = await verify({ data: { token: candidate } });
+        if (res?.ok) {
+          setDriverToken(candidate);
+          setStatus("granted");
+          return true;
+        }
+      } catch {
+        /* ignore */
+      }
+      return false;
+    },
+    [verify],
+  );
 
   useEffect(() => {
-    if (token === DRIVER_TOKEN) {
-      localStorage.setItem("driver_token", token);
-    }
-  }, [token]);
+    let cancelled = false;
+    (async () => {
+      const candidates = [token, getDriverToken()].filter(Boolean) as string[];
+      for (const c of candidates) {
+        const ok = await tryToken(c);
+        if (cancelled) return;
+        if (ok) return;
+      }
+      if (!cancelled) {
+        clearDriverToken();
+        setStatus("denied");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, tryToken]);
 
   // ── Fix conflit manifest PWA ────────────────────────────────────────────
-  // __root.tsx injecte inconditionnellement <link rel="manifest" href="/manifest.json">
-  // sur TOUTES les routes, y compris /driver qui ajoute le sien
-  // (/api/manifest?role=driver). iOS Safari retient le PREMIER <link
-  // rel="manifest"> du DOM — donc le manifest global (start_url "/") gagne
-  // et "Ajouter à l'écran d'accueil" installe la homepage au lieu du driver.
-  // On supprime ici toute balise manifest autre que celle de /driver dès le
-  // montage, pour qu'il n'en reste qu'une seule quand l'utilisateur ouvre le
-  // menu de partage iOS.
   useEffect(() => {
     const links = Array.from(document.querySelectorAll('link[rel="manifest"]')) as HTMLLinkElement[];
     const keep = links.find((l) => l.href.includes("/api/manifest"));
@@ -367,10 +397,7 @@ function DriverPage() {
     });
   }, []);
 
-  const savedToken = typeof window !== "undefined" ? localStorage.getItem("driver_token") : null;
-  const validToken = token === DRIVER_TOKEN || savedToken === DRIVER_TOKEN;
-
-  if (!validToken) {
+  if (status !== "granted") {
     return (
       <div
         style={{
@@ -380,11 +407,55 @@ function DriverPage() {
           height: "100dvh",
           fontFamily: "DM Sans,sans-serif",
           color: "#64748b",
+          padding: 24,
         }}
       >
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", maxWidth: 320, width: "100%" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-          <div style={{ fontSize: 16, fontWeight: 600 }}>Accès non autorisé</div>
+          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>
+            {status === "checking" ? "Vérification…" : "Espace chauffeur"}
+          </div>
+          {status === "denied" && (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setError(null);
+                const ok = await tryToken(input.trim());
+                if (!ok) setError("Code invalide");
+              }}
+              style={{ display: "grid", gap: 10 }}
+            >
+              <input
+                type="password"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Code d'accès"
+                autoComplete="current-password"
+                style={{
+                  padding: "12px 14px",
+                  borderRadius: 10,
+                  border: "1px solid #cbd5e1",
+                  fontSize: 16,
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  padding: "12px 14px",
+                  borderRadius: 10,
+                  border: "none",
+                  background: "#0B0B0D",
+                  color: "#C6A24A",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  cursor: "pointer",
+                }}
+              >
+                Se connecter
+              </button>
+              {error && <div style={{ color: "#dc2626", fontSize: 13 }}>{error}</div>}
+            </form>
+          )}
         </div>
       </div>
     );
@@ -460,7 +531,7 @@ function DriverApp() {
   useEffect(() => {
     const load = async () => {
       try {
-        const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(DRIVER_TOKEN)}`);
+        const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
         if (!response.ok) return;
         const result = await response.json();
         setPendingAvis(result.pending.length);
@@ -2175,7 +2246,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
 
   const load = useCallback(async () => {
     try {
-      const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(DRIVER_TOKEN)}`);
+      const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "chargement impossible");
       setPending(result.pending ?? []);
@@ -2211,7 +2282,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
     try {
       const response = await fetch("/api/public/reviews", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-driver-token": DRIVER_TOKEN },
+        headers: { "Content-Type": "application/json", "x-driver-token": getDriverToken() },
         body: JSON.stringify({ id, status: action }),
       });
       const result = await response.json().catch(() => ({}));
@@ -2231,7 +2302,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
     try {
       const response = await fetch("/api/public/reviews", {
         method: "DELETE",
-        headers: { "Content-Type": "application/json", "x-driver-token": DRIVER_TOKEN },
+        headers: { "Content-Type": "application/json", "x-driver-token": getDriverToken() },
         body: JSON.stringify({ id }),
       });
       const result = await response.json().catch(() => ({}));
@@ -3565,7 +3636,7 @@ function PushDiagnostic() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await fetchFailures({ data: { pin: DRIVER_TOKEN, only_price_update: false, limit: 30 } });
+      const res = await fetchFailures({ data: { pin: getDriverToken(), only_price_update: false, limit: 30 } });
       setRows((res as any)?.failures ?? []);
     } catch {
       setRows([]);

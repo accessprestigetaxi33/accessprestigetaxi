@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-const DRIVER_TOKEN = "DSF234";
-
 const submitSchema = z.object({
   reservation_id: z.string().uuid().optional().nullable(),
   author_name: z.string().trim().min(1).max(80).optional().nullable(),
@@ -25,9 +23,13 @@ function tokenFrom(request: Request) {
 }
 
 function assertDriver(request: Request) {
-  const expected = (process.env.DRIVER_PANEL_TOKEN || DRIVER_TOKEN).trim();
-  if (tokenFrom(request) !== expected) return false;
-  return true;
+  const expected = (process.env.DRIVER_PANEL_TOKEN || "").trim();
+  if (!expected) return false;
+  const provided = tokenFrom(request).trim();
+  if (provided.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < provided.length; i++) diff |= provided.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
 }
 
 export const Route = createFileRoute("/api/public/reviews")({
