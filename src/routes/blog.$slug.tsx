@@ -85,7 +85,8 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogArticle() {
-  const { entry } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const entry = getGuideEntry(slug) as GuideEntry;
   const { lang } = useI18n();
   const isEn = lang === "en";
   const c = isEn ? COPY.en : COPY.fr;
