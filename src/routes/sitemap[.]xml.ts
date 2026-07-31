@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://taxicitybordeaux.fr";
+const BASE_URL = "https://accessprestigetaxi.lovable.app";
+
+import { GUIDE_ENTRIES } from "@/data/guide-charente";
 
 interface SitemapEntry {
   path: string;
@@ -16,6 +18,12 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/services", changefreq: "monthly", priority: "0.9" },
+          { path: "/blog", changefreq: "weekly", priority: "0.9" },
+          ...GUIDE_ENTRIES.map((e) => ({
+            path: `/blog/${e.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.7",
+          })),
           { path: "/reserver", changefreq: "monthly", priority: "0.9" },
           // Pages SEO locales (mots-clés à fort volume)
           { path: "/taxi-aeroport-bordeaux-merignac", changefreq: "monthly", priority: "0.9" },
