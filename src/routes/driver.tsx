@@ -436,7 +436,7 @@ function DriverPage() {
                 type="password"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Code d'accès"
+                placeholder="Code d'accès (Patricia ou Alain)"
                 autoComplete="current-password"
                 style={{
                   padding: "12px 14px",
