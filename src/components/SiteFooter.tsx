@@ -165,7 +165,7 @@ export function SiteFooter() {
           </p>
           <div style={{ marginTop: 14, display: "flex", gap: 10 }}>
             <a
-              href="mailto:taxi.city033@gmail.com"
+              href="mailto:taxipatricia@gmail.com"
               aria-label="Email"
               className="footer-social-btn"
               style={{ border: "1px solid #94a3b840" }}
@@ -183,7 +183,7 @@ export function SiteFooter() {
               { to: "/", label: "Accueil" },
               { to: "/services", label: "Services" },
               { to: "/blog", label: "Guide Charente" },
-              { to: "/reserver", label: "Réserver" },
+              { to: "/reservation", label: "Réserver" },
               { to: "/a-propos", label: "À propos" },
               { to: "/contact", label: "Contact" },
             ].map((l) => (
@@ -200,27 +200,11 @@ export function SiteFooter() {
         <div>
           <h3 className="footer-col-title">Nos courses</h3>
           <ul className="footer-ul">
-            <li>
-              <Link to="/taxi-aeroport-bordeaux-merignac" className="footer-link">
-                ✈️ Taxi aéroport Mérignac
-              </Link>
-            </li>
-            <li>
-              <Link to="/taxi-gare-saint-jean-bordeaux" className="footer-link">
-                🚉 Taxi gare Saint-Jean
-              </Link>
-            </li>
-            <li>
-              <Link to="/taxi-bordeaux-arcachon" className="footer-link">
-                🏖️ Taxi Bordeaux ↔ Arcachon
-              </Link>
-            </li>
-            <li>
-              <Link to="/taxi-conventionne-bordeaux" className="footer-link">
-                🏥 Taxi conventionné CPAM
-              </Link>
-            </li>
-            <li className="footer-li-text">🍷 Vignobles & châteaux</li>
+            <li className="footer-li-text">🏥 Transport conventionné CPAM</li>
+            <li className="footer-li-text">🚉 Gares d'Angoulême & La Rochelle</li>
+            <li className="footer-li-text">✈️ Aéroports La Rochelle & Bordeaux</li>
+            <li className="footer-li-text">🍇 Cognac, Jarnac & vignobles</li>
+            <li className="footer-li-text">🏖️ Royan, Île de Ré & Oléron</li>
           </ul>
         </div>
 
@@ -229,13 +213,18 @@ export function SiteFooter() {
           <h3 className="footer-col-title">Contact</h3>
           <ul className="footer-ul">
             <li>
-              <a href="tel:0673072322" className="footer-link">
-                📞 06 73 07 23 22
+              <a href="tel:0650260015" className="footer-link">
+                📞 Patricia · 06 50 26 00 15
               </a>
             </li>
             <li>
-              <a href="mailto:taxi.city033@gmail.com" className="footer-link" style={{ wordBreak: "break-all" }}>
-                ✉️ taxi.city033@gmail.com
+              <a href="tel:0650321923" className="footer-link">
+                📞 Alain · 06 50 32 19 23
+              </a>
+            </li>
+            <li>
+              <a href="mailto:taxipatricia@gmail.com" className="footer-link" style={{ wordBreak: "break-all" }}>
+                ✉️ taxipatricia@gmail.com
               </a>
             </li>
             <li className="footer-li-text">📍 Charente & Charente-Maritime</li>
@@ -244,6 +233,7 @@ export function SiteFooter() {
 
         </div>
       </div>
+
 
       {/* Bottom bar */}
       <div className="footer-bottom">
