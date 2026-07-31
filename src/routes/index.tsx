@@ -18,6 +18,8 @@ import { DRIVERS } from "@/data/drivers";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
+import { DESTINATIONS } from "@/data/destinations";
+
 
 const BLOG_PICKS = ["hotel", "restaurant", "visite"]
   .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
