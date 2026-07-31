@@ -560,6 +560,36 @@ export type Database = {
         }
         Relationships: []
       }
+      driver_profiles: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id: string
+          name: string
+          phone?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       driver_rotation: {
         Row: {
           id: number

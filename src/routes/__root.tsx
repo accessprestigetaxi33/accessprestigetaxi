@@ -132,7 +132,7 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // L'espace chauffeur est une application plein écran (PWA) : pas de header
   // ni de footer du site public, comme sur la version d'origine.
-  const standalone = pathname.startsWith("/driver");
+  const standalone = pathname.startsWith("/driver") || pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
