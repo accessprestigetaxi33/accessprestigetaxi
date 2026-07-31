@@ -2428,13 +2428,13 @@ function SuiviPage() {
                 }}
               >
                 <Phone size={16} />
-                <span style={{ flex: 1 }}>{t("suivi.call_jose")}</span>
+                <span style={{ flex: 1 }}>{`${t("suivi.call_jose").replace(/Patricia/g, assignedDriver.name)}`}</span>
                 <span style={{ fontSize: "12px", opacity: 0.8, fontWeight: 400 }}>
                   {josePhone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
                 </span>
               </a>
               <a
-                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour Patricia`)}`}
+                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour ${assignedDriver.name}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -2455,7 +2455,7 @@ function SuiviPage() {
                 }}
               >
                 <MessageCircle size={16} />
-                {t("suivi.whatsapp_jose")}
+                {t("suivi.whatsapp_jose").replace(/Patricia/g, assignedDriver.name)}
               </a>
             </div>
           </div>
