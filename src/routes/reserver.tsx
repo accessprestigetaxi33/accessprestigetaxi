@@ -57,7 +57,7 @@ export const Route = createFileRoute("/reserver")({
   component: ReservationPage,
 });
 
-const BORDEAUX_CENTER: [number, number] = [44.8378, -0.5792];
+const SERVICE_CENTER: [number, number] = [45.6486, 0.1562]; // Angoulême, Charente
 const NAMED_PLACE_REGEX =
   /aeroport|airport|gare|station|hopital|clinique|universite|fac|campus|centre commercial|centre|stade|mairie|hotel de ville|prefecture|sous prefecture|eglise|cathedrale|basilique|chateau|lycee|college|ecole|musee|theatre|opera|cinema|parc|jardin|plage|port|marina|zoo|monument|lieu dit|lieu-dit|supermarche|hypermarche|supermarket|magasin|commerce|marche|carrefour|leclerc|lidl|aldi|auchan|intermarche|super u|hyper u|casino|monoprix|franprix|biocoop|grand frais|picard|decathlon|ikea|fnac|darty|leroy merlin|castorama|brico|mcdo|mcdonald|kfc|burger king|quick|subway|starbucks|pizza/i;
 function isNamedPlaceQuery(value: string): boolean {
@@ -153,7 +153,7 @@ const UI = {
 } as const;
 
 const MAX_AUTO_GEO_ACCURACY_M = 1500;
-const MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM = 130;
+const MAX_AUTO_GEO_DISTANCE_KM = 130;
 
 interface FormState {
   depart: string;
@@ -726,8 +726,8 @@ function getAutoGeoRejectionReason(pos: GeolocationPosition, lang: Lang, allowAp
   if (!allowApproximate && accuracy > MAX_AUTO_GEO_ACCURACY_M) {
     return lang === "en" ? UI.en.geoImprecise(Math.round(accuracy)) : UI.fr.geoImprecise(Math.round(accuracy));
   }
-  const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [lat, lng]);
-  if (distanceFromBordeaux > MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
+  const distanceFromCenter = distanceKmBetween(SERVICE_CENTER, [lat, lng]);
+  if (distanceFromCenter > MAX_AUTO_GEO_DISTANCE_KM) {
     return lang === "en" ? UI.en.geoIncoherent : UI.fr.geoIncoherent;
   }
   return null;
@@ -1245,8 +1245,8 @@ function ReservationPage() {
     const tryIpFallback = async (fallbackMessage: string, fallbackKind: GeolocStatus = "error") => {
       const ip = await ipGeolocate();
       if (ip) {
-        const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [ip.lat, ip.lng]);
-        if (distanceFromBordeaux <= MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
+        const distanceFromCenter = distanceKmBetween(SERVICE_CENTER, [ip.lat, ip.lng]);
+        if (distanceFromCenter <= MAX_AUTO_GEO_DISTANCE_KM) {
           if (!automatic) toast.info(lang === "en" ? UI.en.gpsUnavailableIp : UI.fr.gpsUnavailableIp);
           await applyPosition(ip.lat, ip.lng, "ip");
           return;
@@ -1345,7 +1345,7 @@ function ReservationPage() {
     if (!value) return;
     setCalcLoading(true);
     setSearchingDepart(true);
-    const origin = fromCoord ?? BORDEAUX_CENTER;
+    const origin = fromCoord ?? SERVICE_CENTER;
     const namedPlace = isNamedPlaceQuery(value);
 
     const canonical = findCanonicalPlace(value, origin);
@@ -1453,7 +1453,7 @@ function ReservationPage() {
       }
     }
 
-    const origin = resolvedFromCoord ?? BORDEAUX_CENTER;
+    const origin = resolvedFromCoord ?? SERVICE_CENTER;
 
     // Lieu canonique connu (coordonnées vérifiées) en priorité.
     const canonical = findCanonicalPlace(value, origin);
