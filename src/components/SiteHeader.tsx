@@ -31,7 +31,7 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label="Access Prestige Taxi"
         >
-          <span className="truncate font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground xs:text-[13px] sm:text-base sm:tracking-[0.2em]">
+          <span className="truncate font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-base sm:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
           </span>
         </Link>
