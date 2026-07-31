@@ -145,7 +145,7 @@ function Index() {
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 pb-20 pt-14 text-center sm:pt-20">
           <img
             src={logoLockup}
-            alt="Access Prestige Taxi — Audi Q6 e-tron, taxi 100 % électrique à Bordeaux"
+            alt="Access Prestige Taxi — Audi Q6 e-tron, taxi 100 % électrique en Charente"
             width={1536}
             height={500}
             fetchPriority="high"
