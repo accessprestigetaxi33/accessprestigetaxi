@@ -12,7 +12,7 @@ import { broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
 import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
-import { verifyDriverToken } from "@/lib/driver-auth.functions";
+import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
 import { getDriverToken, setDriverToken, clearDriverToken } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
@@ -3084,8 +3084,12 @@ function VisitorCounter({
         const cutoff = new Date(Date.now() - CUTOFF_MS).toISOString();
         await (supabase as any).from("active_visitors").delete().lt("last_seen", cutoff);
       }
-      const { data } = await (supabase as any).rpc("get_active_visitor_count", { p_scope: scope });
-      setCount(typeof data === "number" ? data : 0);
+      try {
+        const res = await getActiveVisitorCount({ data: { token: getDriverToken(), scope } });
+        setCount(res?.count ?? 0);
+      } catch {
+        setCount(0);
+      }
     };
 
     fetchCount();
