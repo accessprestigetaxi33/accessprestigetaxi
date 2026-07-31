@@ -63,6 +63,8 @@ const UI = {
   },
 } as const;
 
+import { DRIVERS } from "@/data/drivers";
+
 const JOSE_PHONE = "0650260015";
 // Délai d'expiration du lien de suivi après la fin de la course (en jours)
 const SUIVI_EXPIRY_DAYS = 30;
