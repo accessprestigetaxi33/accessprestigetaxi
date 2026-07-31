@@ -770,46 +770,63 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
 function CoursesTab({
   onBadgeChange,
   onChatBadge,
+  driverId,
 }: {
   onBadgeChange: (n: number) => void;
   onChatBadge?: (n: number) => void;
+  driverId?: string;
 }) {
   const [courses, setCourses] = useState<Resa[]>([]);
   const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
+  const [onlyMine, setOnlyMine] = useState(true);
   const listUnreadResasFn = useServerFn(listReservationsWithUnreadChauffeur);
   const getUnreadFn = useServerFn(getUnreadCountsForReservations);
+  const listCoursesFn = useServerFn(listDriverCourses);
+  const setCourseDriverFn = useServerFn(setCourseDriver);
+  // Ids déjà vus : sert à ne notifier que les VRAIES nouvelles demandes.
+  const seenPendingRef = useRef<Set<string> | null>(null);
+
+  const isAdmin = !driverId || driverId === "admin";
+  const mineOf = useCallback(
+    (r: Resa) => isAdmin || (r as any).assigned_driver === driverId,
+    [isAdmin, driverId],
+  );
 
   const load = useCallback(async () => {
-    const activeStatuses = ["pending", "accepted", "en_route", "arrived"];
-    const [activeRes, unreadIds] = await Promise.all([
-      (supabase as any)
-        .from("reservations")
-        .select(
-          "id,depart,destination,pickup_datetime,status,prix_estime,distance_km,client_name,client_phone,client_email,suivi_id,message",
-        )
-        .in("status", activeStatuses)
-        .order("pickup_datetime", { ascending: true }),
-      listUnreadResasFn().catch(() => [] as string[]),
-    ]);
-    const activeList: Resa[] = activeRes?.data ?? [];
-    const activeIds = new Set(activeList.map((r) => r.id));
-    const extraIds = (unreadIds as string[]).filter((id) => !activeIds.has(id));
-    let extraList: Resa[] = [];
-    if (extraIds.length > 0) {
-      const { data: extra } = await (supabase as any)
-        .from("reservations")
-        .select(
-          "id,depart,destination,pickup_datetime,status,prix_estime,distance_km,client_name,client_phone,client_email,suivi_id,message",
-        )
-        .in("id", extraIds);
-      extraList = extra ?? [];
+    const unreadIds = await listUnreadResasFn().catch(() => [] as string[]);
+    let res: any;
+    try {
+      res = await listCoursesFn({
+        data: { token: getDriverToken(), extra_ids: (unreadIds as string[]).slice(0, 50) },
+      });
+    } catch {
+      setLoading(false);
+      return;
     }
-    const list: Resa[] = [...activeList, ...extraList];
+    const list: Resa[] = (res?.courses ?? []) as Resa[];
     setCourses(list);
     setLoading(false);
-    onBadgeChange(list.filter((r) => r.status === "pending").length);
+
+    // Notification in-app des nouvelles demandes qui me sont attribuées.
+    const pendingMine = list.filter((r) => r.status === "pending" && mineOf(r));
+    if (seenPendingRef.current === null) {
+      seenPendingRef.current = new Set(pendingMine.map((r) => r.id));
+    } else {
+      for (const r of pendingMine) {
+        if (seenPendingRef.current.has(r.id)) continue;
+        seenPendingRef.current.add(r.id);
+        toast.success(`🚕 Nouvelle course${isAdmin ? "" : " pour toi"}`, {
+          description: `${r.client_name || "Client"} — ${r.depart} → ${r.destination || "—"}`,
+          duration: 10000,
+        });
+        try {
+          (navigator as any)?.vibrate?.([120, 60, 120]);
+        } catch {}
+      }
+    }
+    onBadgeChange(pendingMine.length);
 
     // COUNT SQL agrégé pour prioriser les cartes + indicateurs
     try {
@@ -821,7 +838,22 @@ function CoursesTab({
     } catch {
       // pas bloquant : les cartes gardent leur ordre par défaut
     }
-  }, [onBadgeChange, onChatBadge, listUnreadResasFn, getUnreadFn]);
+  }, [onBadgeChange, onChatBadge, listUnreadResasFn, getUnreadFn, listCoursesFn, mineOf, isAdmin]);
+
+  const reassign = useCallback(
+    async (id: string, driver: "patricia" | "alain") => {
+      try {
+        await setCourseDriverFn({ data: { token: getDriverToken(), reservation_id: id, driver } });
+        toast.success(`Course transférée à ${driver === "patricia" ? "Patricia" : "Alain"}`);
+        load();
+      } catch {
+        toast.error("Transfert impossible");
+      }
+    },
+    [setCourseDriverFn, load],
+  );
+
+
 
   // Refresh debouncé : coalesce les bursts Realtime (INSERT + UPDATE
   // read_by_*) en un seul appel batch après 300 ms d'inactivité. Immédiat
