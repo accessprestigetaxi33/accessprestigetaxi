@@ -1093,7 +1093,7 @@ function ReservationPage() {
     const automatic = options?.automatic === true;
     setGeolocLoading(true);
     setGeolocStatus("loading");
-    setGeolocStatusMsg(automatic ? "Détection automatique du départ…" : "Localisation en cours…");
+    setGeolocStatusMsg(automatic ? (lang === "en" ? UI.en.detectingAuto : UI.fr.detectingAuto) : (lang === "en" ? UI.en.locating : UI.fr.locating));
 
     const applyPosition = async (lat: number, lng: number, source: "gps" | "approx" | "ip" = "gps") => {
       let adresse = await reverseGeocode(lat, lng).catch(() => null);
@@ -1115,12 +1115,12 @@ function ReservationPage() {
         setGeolocStatus("ip");
         setGeolocStatusMsg(
           source === "ip"
-            ? "Position approximative (via IP) — vous pouvez préciser l'adresse"
-            : "Position approximative détectée — vérifiez l'adresse de départ",
+            ? lang === "en" ? UI.en.approxIp : UI.fr.approxIp
+            : lang === "en" ? UI.en.approxDetected : UI.fr.approxDetected,
         );
       } else {
         setGeolocStatus("success");
-        setGeolocStatusMsg("Position GPS détectée — modifiable si besoin");
+        setGeolocStatusMsg(lang === "en" ? UI.en.gpsDetected : UI.fr.gpsDetected);
       }
       if (!automatic || source === "gps") toast.success(t("res.geo.btn") + " ✓");
       setGeolocLoading(false);
@@ -1141,7 +1141,7 @@ function ReservationPage() {
       if (ip) {
         const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [ip.lat, ip.lng]);
         if (distanceFromBordeaux <= MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
-          if (!automatic) toast.info("Position GPS indisponible — position approximative via IP.");
+          if (!automatic) toast.info(lang === "en" ? UI.en.gpsUnavailableIp : UI.fr.gpsUnavailableIp);
           await applyPosition(ip.lat, ip.lng, "ip");
           return;
         }
@@ -1150,18 +1150,18 @@ function ReservationPage() {
     };
 
     if (typeof window !== "undefined" && !window.isSecureContext && window.location.hostname !== "localhost") {
-      void tryIpFallback("La géolocalisation GPS nécessite HTTPS. Saisissez l’adresse exacte de départ.");
+      void tryIpFallback(lang === "en" ? UI.en.httpsRequired : UI.fr.httpsRequired);
       return;
     }
 
     if (!navigator.geolocation) {
-      void tryIpFallback("Géolocalisation non disponible sur cet appareil");
+      void tryIpFallback(lang === "en" ? UI.en.geoNotAvailable : UI.fr.geoNotAvailable);
       return;
     }
 
     const geoErrorMessage = (err?: GeolocationPositionError) => {
       if (!err) {
-        return "GPS trop long à répondre. Saisissez l'adresse exacte de départ.";
+        return lang === "en" ? UI.en.gpsTimeout : UI.fr.gpsTimeout;
       }
       return describeGeoError(err);
     };
@@ -1195,7 +1195,7 @@ function ReservationPage() {
             void tryIpFallback(reason);
             return;
           }
-          if (!automatic) toast.info("Position approximative détectée — vous pouvez préciser l'adresse.");
+          if (!automatic) toast.info(lang === "en" ? UI.en.approxDetectedRefine : UI.fr.approxDetectedRefine);
           const source = cached.coords.accuracy > MAX_AUTO_GEO_ACCURACY_M ? "approx" : "gps";
           void applyPosition(cached.coords.latitude, cached.coords.longitude, source);
         },
@@ -1281,7 +1281,7 @@ function ReservationPage() {
         setSearchingDepart(false);
         setDepartChoices(close.slice(0, 4));
         setFromCoord(null);
-        setErrors((prev) => ({ ...prev, depart: "Plusieurs lieux trouvés — choisissez le bon" }));
+        setErrors((prev) => ({ ...prev, depart: lang === "en" ? UI.en.multiplePlaces : UI.fr.multiplePlaces }));
         return;
       }
     }
@@ -1314,11 +1314,11 @@ function ReservationPage() {
     if (closeChoices.length) {
       setDepartChoices(closeChoices);
       setFromCoord(null);
-      setErrors((prev) => ({ ...prev, depart: "Sélectionnez une adresse dans la liste" }));
+      setErrors((prev) => ({ ...prev, depart: lang === "en" ? UI.en.selectFromList : UI.fr.selectFromList }));
     } else {
       setDepartChoices([]);
       setFromCoord(null);
-      setErrors((prev) => ({ ...prev, depart: "Adresse introuvable — précisez la ville ou le lieu" }));
+      setErrors((prev) => ({ ...prev, depart: lang === "en" ? UI.en.addressNotFound : UI.fr.addressNotFound }));
     }
   }, [f.depart, fromCoord]);
 
@@ -1385,7 +1385,7 @@ function ReservationPage() {
       setToCoord(null);
       setErrors((prev) => ({
         ...prev,
-        destination: "Adresse introuvable — précisez la ville ou le lieu",
+        destination: lang === "en" ? UI.en.addressNotFound : UI.fr.addressNotFound,
       }));
     }
   }, [f.destination, f.depart, fromCoord]);
@@ -1502,7 +1502,7 @@ function ReservationPage() {
           Math.sin(dLng / 2) ** 2;
       distanceKm = parseFloat((R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.3).toFixed(2));
       dureeS = roundSecondsToMinute((distanceKm / 30) * 3600); // ~30 km/h en ville
-      toast.warning("Distance estimée (GPS indisponible) — le prix peut être ajusté par le taxi.");
+      toast.warning(lang === "en" ? UI.en.distanceEstimated : UI.fr.distanceEstimated);
     }
 
     setSending(true);
@@ -1577,8 +1577,7 @@ function ReservationPage() {
       // ⚠️ Push client retirée — le client est notifié visuellement sur /suivi/$id.
 
       toast.success(`${t("conf.ok.title")} ${f.prenom}`, {
-        description:
-          "Un email de confirmation vous a été envoyé. Pensez à vérifier vos spams si vous ne le trouvez pas.",
+        description: lang === "en" ? UI.en.confirmEmailSent : UI.fr.confirmEmailSent,
         duration: 8000,
       });
       setSending(false);
