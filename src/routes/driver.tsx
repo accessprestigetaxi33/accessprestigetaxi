@@ -520,24 +520,35 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
     return () => document.removeEventListener("visibilitychange", refresh);
   }, [subscribePush]);
 
-  // Rafraîchissement badge courses
+  // Rafraîchissement badge courses (via serveur : anon n'a aucun accès en
+  // lecture aux réservations — RLS PII).
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
-      const { count } = await (supabase as any)
-        .from("reservations")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "pending");
-      setNewCount(count ?? 0);
+      try {
+        const res: any = await listCoursesFn({ data: { token: getDriverToken() } });
+        if (cancelled) return;
+        const mine = (res?.courses ?? []).filter(
+          (c: any) => c.status === "pending" && (!driverId || driverId === "admin" || c.assigned_driver === driverId),
+        );
+        setNewCount(mine.length);
+      } catch {
+        /* réessai au prochain tick */
+      }
     };
     load();
-    const ch = (supabase as any)
-      .channel("drv-badge")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, load)
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
+    const poll = setInterval(load, 12000);
+    const onVis = () => {
+      if (!document.hidden) load();
     };
-  }, []);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [listCoursesFn, driverId]);
+
 
   // Badge avis en attente + toast in-app à chaque nouvel avis
   useEffect(() => {
