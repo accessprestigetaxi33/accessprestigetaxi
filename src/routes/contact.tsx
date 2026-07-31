@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { Phone, Mail, MapPin, MessageCircle, Clock } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 

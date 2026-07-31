@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
 

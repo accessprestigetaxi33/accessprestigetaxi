@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { useI18n } from "@/i18n/I18nProvider";
 
 const SITE = "https://accessprestigetaxi.lovable.app";

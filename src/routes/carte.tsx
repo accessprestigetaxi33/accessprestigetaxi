@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.png";
 
