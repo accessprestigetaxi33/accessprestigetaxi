@@ -384,6 +384,97 @@ function Index() {
         </div>
       </section>
 
+      {/* COMMENT ÇA MARCHE */}
+      <section className="border-t border-border bg-card/40 py-20">
+        <div className="mx-auto max-w-5xl px-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.howEyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.howTitle}</h2>
+          <ol className="mt-10 grid gap-6 sm:grid-cols-3">
+            {c.how.map((h) => (
+              <li key={h.s} className="relative rounded-2xl border border-border bg-background p-6">
+                <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
+                <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ESPACE CLIENT */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-5xl px-5">
+          <div className="grid items-center gap-8 rounded-3xl border border-primary/30 bg-card p-7 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.clientEyebrow}</p>
+              <h2 className="mt-3 font-display text-2xl font-semibold text-foreground sm:text-3xl">{c.clientTitle}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.clientText}</p>
+            </div>
+            <Link
+              to="/client/login"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
+            >
+              {c.clientCta} <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* AVIS */}
+      <section className="border-t border-border bg-card/40 py-20">
+        <div className="mx-auto max-w-2xl px-5">
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
+          <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            {c.reviewTitle}
+          </h2>
+          <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
+          <div className="mt-8 rounded-2xl border border-border bg-background p-6">
+            <ReviewForm />
+          </div>
+        </div>
+      </section>
+
+      {/* BLOG */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.blogEyebrow}</p>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.blogTitle}</h2>
+              <p className="mt-3 text-sm text-muted-foreground">{c.blogText}</p>
+            </div>
+            <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">
+              {c.blogCta} →
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+            {BLOG_PICKS.map((e) => (
+              <Link
+                key={e.slug}
+                to="/blog/$slug"
+                params={{ slug: e.slug }}
+                className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
+              >
+                <img
+                  src={e.photos[0]}
+                  alt={`${e.name} — ${e.city}`}
+                  loading="lazy"
+                  className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                />
+                <div className="p-5">
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
+                  <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                    {lang === "en" ? e.en.teaser : e.fr.teaser}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="border-t border-border py-20">
         <div className="mx-auto max-w-3xl px-5 text-center">
