@@ -61,7 +61,7 @@ function ClientTrajets() {
     setLoading(true);
     try {
       const data = await listClientReservations({
-        data: { account_id: session.id, phone: session.phone, email: session.email },
+        data: { token: session.token },
       });
       setRows(data.filter((r) => ACTIVE.has(r.status)));
     } catch {

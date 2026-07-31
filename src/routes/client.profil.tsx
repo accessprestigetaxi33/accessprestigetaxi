@@ -67,7 +67,7 @@ function ClientProfil() {
     if (!session) return;
     setLoading(true);
     try {
-      const data = await listClientFavorites({ data: { account_id: session.id } });
+      const data = await listClientFavorites({ data: { token: session.token } });
       setFavorites(data);
     } catch {
       toast.error("Impossible de charger vos favoris");
@@ -89,7 +89,7 @@ function ClientProfil() {
     try {
       await upsertClientFavorite({
         data: {
-          account_id: session.id,
+          token: session.token,
           label: formLabel.trim() || "Adresse",
           address: formAddress.trim(),
           icon: formIcon,
@@ -112,7 +112,7 @@ function ClientProfil() {
     if (!session) return;
     if (!confirm("Supprimer cette adresse favorite ?")) return;
     try {
-      await deleteClientFavorite({ data: { account_id: session.id, id } });
+      await deleteClientFavorite({ data: { token: session.token, id } });
       refresh();
     } catch {
       toast.error("Échec de la suppression");
@@ -288,9 +288,9 @@ function ClientProfil() {
           )}
         </section>
 
-        <RecurringRidesSection accountId={session.id} />
+        <RecurringRidesSection token={session.token} />
 
-        <CompanyInfoSection accountId={session.id} />
+        <CompanyInfoSection token={session.token} />
 
         <button
           onClick={logout}
@@ -307,7 +307,7 @@ function ClientProfil() {
 
 const DAYS = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 
-function RecurringRidesSection({ accountId }: { accountId: string }) {
+function RecurringRidesSection({ token }: { token: string }) {
   const t = useT();
   const [rides, setRides] = useState<RecurringRide[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -329,14 +329,14 @@ function RecurringRidesSection({ accountId }: { accountId: string }) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await listRecurringRides({ data: { account_id: accountId } });
+      const data = await listRecurringRides({ data: { token } });
       setRides(data);
     } catch {
       toast.error(t("profil.recurring.toast.load_failed"));
     } finally {
       setLoading(false);
     }
-  }, [accountId]);
+  }, [token]);
 
   useEffect(() => {
     refresh();
@@ -349,7 +349,7 @@ function RecurringRidesSection({ accountId }: { accountId: string }) {
     }
     setBusy(true);
     try {
-      await createRecurringRide({ data: { account_id: accountId, ...form } });
+      await createRecurringRide({ data: { token, ...form } });
       toast.success(t("profil.recurring.toast.created"));
       setAdding(false);
       setForm({
@@ -374,7 +374,7 @@ function RecurringRidesSection({ accountId }: { accountId: string }) {
 
   async function onToggle(r: RecurringRide) {
     try {
-      await toggleRecurringRide({ data: { account_id: accountId, id: r.id, active: !r.active } });
+      await toggleRecurringRide({ data: { token, id: r.id, active: !r.active } });
       refresh();
     } catch {
       toast.error(t("profil.recurring.toast.failed"));
@@ -384,7 +384,7 @@ function RecurringRidesSection({ accountId }: { accountId: string }) {
   async function onDelete(id: string) {
     if (!confirm(t("profil.recurring.confirm_delete"))) return;
     try {
-      await deleteRecurringRide({ data: { account_id: accountId, id } });
+      await deleteRecurringRide({ data: { token, id } });
       refresh();
     } catch {
       toast.error(t("profil.recurring.toast.failed"));
@@ -588,7 +588,7 @@ function RecurringRidesSection({ accountId }: { accountId: string }) {
   );
 }
 
-function CompanyInfoSection({ accountId }: { accountId: string }) {
+function CompanyInfoSection({ token }: { token: string }) {
   const t = useT();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -603,7 +603,7 @@ function CompanyInfoSection({ accountId }: { accountId: string }) {
     setLoading(true);
     try {
       const { getClientCompanyInfo } = await import("@/lib/client-billing.functions");
-      const data = await getClientCompanyInfo({ data: { account_id: accountId } });
+      const data = await getClientCompanyInfo({ data: { token } });
       setCompany({
         company_name: data.company_name ?? "",
         siret: data.siret ?? "",
@@ -615,7 +615,7 @@ function CompanyInfoSection({ accountId }: { accountId: string }) {
     } finally {
       setLoading(false);
     }
-  }, [accountId]);
+  }, [token]);
 
   useEffect(() => {
     refresh();
@@ -627,7 +627,7 @@ function CompanyInfoSection({ accountId }: { accountId: string }) {
       const { updateClientCompanyInfo } = await import("@/lib/client-billing.functions");
       await updateClientCompanyInfo({
         data: {
-          account_id: accountId,
+          token,
           company_name: company.company_name.trim() || null,
           siret: company.siret.trim() || null,
           tva_intracom: company.tva_intracom.trim() || null,

@@ -85,7 +85,7 @@ function ClientDashboard() {
   useEffect(() => {
     if (!ready || !session) return;
     setLoading(true);
-    listClientReservations({ data: { account_id: session.id, phone: session.phone, email: session.email } })
+    listClientReservations({ data: { token: session.token } })
       .then(setRows)
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -102,7 +102,7 @@ function ClientDashboard() {
         { event: "UPDATE", schema: "public", table: "reservations", filter: `id=in.(${ids.join(",")})` },
         () => {
           if (!session) return;
-          listClientReservations({ data: { account_id: session.id, phone: session.phone, email: session.email } })
+          listClientReservations({ data: { token: session.token } })
             .then(setRows)
             .catch(() => {});
         },

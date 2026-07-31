@@ -49,7 +49,7 @@ function ClientChatPage() {
           className="flex flex-col overflow-hidden rounded-2xl border border-white/10"
           style={{ height: "calc(100dvh - 240px)", minHeight: 360 }}
         >
-          <DirectChatPanel accountId={session.id} role="client" peerName="José 🚖" />
+          <DirectChatPanel accountId={session.id} authToken={session.token} role="client" peerName="José 🚖" />
         </div>
       </div>
       <ClientBottomNav />
