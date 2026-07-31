@@ -48,7 +48,7 @@ const COPY = {
   },
 } as const;
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
   head: () => ({
     meta: [

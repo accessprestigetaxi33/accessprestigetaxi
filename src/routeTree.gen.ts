@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AProposRouteImport } from './routes/a-propos'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CarteRouteImport } from './routes/carte'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -23,6 +22,7 @@ import { Route as ReserverRouteImport } from './routes/reserver'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ClientChatRouteImport } from './routes/client.chat'
 import { Route as ClientDashboardRouteImport } from './routes/client.dashboard'
 import { Route as ClientFacturesRouteImport } from './routes/client.factures'
@@ -56,11 +56,6 @@ const IndexRoute = IndexRouteImport.update({
 const AProposRoute = AProposRouteImport.update({
   id: '/a-propos',
   path: '/a-propos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarteRoute = CarteRouteImport.update({
@@ -116,6 +111,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ApiManifestRoute = ApiManifestRouteImport.update({
   id: '/api/manifest',
   path: '/api/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientChatRoute = ClientChatRouteImport.update({
@@ -247,7 +247,6 @@ const ApiPublicHooksRideRemindersTickRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
-  '/blog': typeof BlogRoute
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
@@ -272,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -287,7 +287,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
-  '/blog': typeof BlogRoute
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
@@ -312,6 +311,7 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/blog': typeof BlogIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -328,7 +328,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
-  '/blog': typeof BlogRoute
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
@@ -353,6 +352,7 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -370,7 +370,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/a-propos'
-    | '/blog'
     | '/carte'
     | '/confidentialite'
     | '/contact'
@@ -395,6 +394,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/blog/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -410,7 +410,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/a-propos'
-    | '/blog'
     | '/carte'
     | '/confidentialite'
     | '/contact'
@@ -435,6 +434,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/blog'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -450,7 +450,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/a-propos'
-    | '/blog'
     | '/carte'
     | '/confidentialite'
     | '/contact'
@@ -475,6 +474,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/blog/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -491,7 +491,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AProposRoute: typeof AProposRoute
-  BlogRoute: typeof BlogRoute
   CarteRoute: typeof CarteRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
@@ -515,6 +514,7 @@ export interface RootRouteChildren {
   CourseIdRoute: typeof CourseIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   SuiviIdRoute: typeof SuiviIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
   ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
@@ -541,13 +541,6 @@ declare module '@tanstack/react-router' {
       path: '/a-propos'
       fullPath: '/a-propos'
       preLoaderRoute: typeof AProposRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carte': {
@@ -625,6 +618,13 @@ declare module '@tanstack/react-router' {
       path: '/api/manifest'
       fullPath: '/api/manifest'
       preLoaderRoute: typeof ApiManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client/chat': {
@@ -824,7 +824,6 @@ const ApiPublicContactRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AProposRoute: AProposRoute,
-  BlogRoute: BlogRoute,
   CarteRoute: CarteRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
@@ -848,6 +847,7 @@ const rootRouteChildren: RootRouteChildren = {
   CourseIdRoute: CourseIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   SuiviIdRoute: SuiviIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
   ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
