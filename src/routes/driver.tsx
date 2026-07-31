@@ -924,18 +924,25 @@ function CoursesTab({
       if (e.key === "drv-chat-read-bump") scheduleLoad(true);
     };
     window.addEventListener("storage", onStorage);
-    // Reconciliation périodique (5 min) : filet de sécurité, plus rare
-    // maintenant que le badge est mis à jour incrémentalement.
-    const reconcile = setInterval(() => scheduleLoad(), 300000);
+    // Temps réel : les réservations ne sont pas lisibles en anon (RLS PII),
+    // donc postgres_changes ne délivre rien ici. On combine un canal
+    // Broadcast (émis à la création d'une résa) + un poll court de secours.
+    const feed = (supabase as any)
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, () => scheduleLoad(true))
+      .subscribe();
+    const reconcile = setInterval(() => scheduleLoad(), 10000);
     return () => {
       unsubBc();
       clearInterval(reconcile);
+      supabase.removeChannel(feed);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("focus", onVis);
       window.removeEventListener("storage", onStorage);
       if (scheduleRef.current.timer) clearTimeout(scheduleRef.current.timer);
     };
   }, [scheduleLoad, applyDelta]);
+
 
   // Canal Realtime dédié aux réservations visibles — recréé quand la liste
   // change (visibleKey). Filtre `reservation_id=in.(...)` côté serveur.
