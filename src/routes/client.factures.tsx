@@ -54,8 +54,6 @@ function ClientFactures() {
         listCompletedForBilling({
           data: {
             token: session.token,
-            phone: session.phone,
-            email: session.email,
             from: new Date(year, 0, 1).toISOString(),
             to: new Date(year + 1, 0, 1).toISOString(),
           },

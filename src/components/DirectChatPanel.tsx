@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Send, X, Loader2, Check, CheckCheck, ChevronUp, Search, Download } from "lucide-react";
+import { getDriverToken } from "@/lib/driver-token";
 import { supabase } from "@/integrations/supabase/client";
 import {
   sendDirectClientMessage,
@@ -14,6 +15,8 @@ import { useI18n, useT } from "@/i18n/I18nProvider";
 
 type Props = {
   accountId: string;
+  /** Jeton de session client (role="client") ; le jeton chauffeur est lu localement. */
+  authToken?: string;
   role: "client" | "chauffeur";
   onClose?: () => void;
   peerName?: string;
@@ -29,7 +32,11 @@ const MSG_COLS = "id,client_account_id,sender,content,read_by_client,read_by_cha
 const OFFLINE_QUEUE_KEY = (rid: string, role: string) => `chat:offline:${role}:${rid}`;
 type OfflineMsg = { tempId: string; content: string; at: number };
 
-export function DirectChatPanel({ accountId, role, onClose, peerName }: Props) {
+export function DirectChatPanel({ accountId, authToken, role, onClose, peerName }: Props) {
+  const auth = () =>
+    role === "client"
+      ? { role: "client" as const, token: authToken ?? "" }
+      : { role: "chauffeur" as const, token: getDriverToken(), client_account_id: accountId };
   const t = useT();
   const { lang } = useI18n();
   const locale =
@@ -75,7 +82,7 @@ export function DirectChatPanel({ accountId, role, onClose, peerName }: Props) {
   // Mark peer's unread messages as read (via server fn — RLS locks anon).
   const markRead = useCallback(async () => {
     try {
-      await markDirectMessagesRead({ data: { client_account_id: accountId, role } });
+      await markDirectMessagesRead({ data: auth() });
     } catch (e) {
       console.warn("[chat] markRead failed", e);
     }
@@ -106,7 +113,7 @@ export function DirectChatPanel({ accountId, role, onClose, peerName }: Props) {
     (async () => {
       try {
         const rows = await listDirectMessages({
-          data: { client_account_id: accountId, limit: PAGE_SIZE },
+          data: { ...auth(), limit: PAGE_SIZE },
         });
         if (cancelled) return;
         setMessages(rows);
@@ -136,7 +143,7 @@ export function DirectChatPanel({ accountId, role, onClose, peerName }: Props) {
     }
     try {
       const older = await listDirectMessages({
-        data: { client_account_id: accountId, before: oldest.created_at, limit: PAGE_SIZE },
+        data: { ...auth(), before: oldest.created_at, limit: PAGE_SIZE },
       });
       setMessages((prev) => [...older, ...prev]);
       setHasMore(older.length >= PAGE_SIZE);
@@ -206,7 +213,7 @@ export function DirectChatPanel({ accountId, role, onClose, peerName }: Props) {
       if (stop || document.hidden) return;
       try {
         const latest = await listDirectMessages({
-          data: { client_account_id: accountId, limit: PAGE_SIZE },
+          data: { ...auth(), limit: PAGE_SIZE },
         });
         if (stop || latest.length === 0) return;
         setMessages((prev) => {
@@ -313,9 +320,9 @@ export function DirectChatPanel({ accountId, role, onClose, peerName }: Props) {
   const sendOne = useCallback(
     async (content: string) => {
       if (role === "client") {
-        return await sendDirectClientMessage({ data: { client_account_id: accountId, content } });
+        return await sendDirectClientMessage({ data: { role: "client", token: authToken ?? "", content } });
       }
-      return await sendDirectChauffeurMessage({ data: { client_account_id: accountId, content } });
+      return await sendDirectChauffeurMessage({ data: { role: "chauffeur", token: getDriverToken(), client_account_id: accountId, content } });
     },
     [accountId, role, peerOnline],
   );
