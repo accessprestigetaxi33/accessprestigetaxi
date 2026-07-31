@@ -478,8 +478,9 @@ function DriverPage() {
 }
 
 function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?: string }) {
-
+  const listCoursesFn = useServerFn(listDriverCourses);
   const [tab, setTab] = useState<Tab>("courses");
+
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
