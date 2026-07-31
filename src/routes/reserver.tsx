@@ -31,9 +31,9 @@ import { ListeningOverlay } from "@/components/ListeningOverlay";
 import { DICTS, LANGUAGES, type Lang } from "@/i18n/dict";
 import { useI18n } from "@/i18n/I18nProvider";
 
-const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Access Prestige Taxi";
+const RESERVER_TITLE = "Réserver un taxi en Charente & Charente-Maritime — Access Prestige Taxi";
 const RESERVER_DESC =
-  "Réservez votre taxi à Bordeaux en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
+  "Réservez votre taxi en Charente et Charente-Maritime en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
 const RESERVER_URL = "https://accessprestigetaxi.lovable.app/reserver";
 
 export const Route = createFileRoute("/reserver")({
@@ -72,7 +72,7 @@ const UI = {
     geoInvalid: "Position invalide. Saisissez l\u2019adresse de départ manuellement.",
     geoImprecise: (m: number) =>
       `Signal GPS trop imprécis (${m} m). Saisissez l\u2019adresse exacte pour éviter une mauvaise prise en charge.`,
-    geoIncoherent: "Position incohérente avec la zone de Bordeaux. Saisissez l\u2019adresse exacte de départ.",
+    geoIncoherent: "Position incohérente avec la zone Charente / Charente-Maritime. Saisissez l\u2019adresse exacte de départ.",
     detectingAuto: "Détection automatique du départ…",
     locating: "Localisation en cours…",
     approxIp: "Position approximative (via IP) — vous pouvez préciser l'adresse",
@@ -104,7 +104,7 @@ const UI = {
     hiddenButtonDebug: "Bouton caché",
     listeningLabel: "Je vous écoute…",
     dictateDestinationLabel: "Dictez la destination",
-    listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à aéroport de Bordeaux »",
+    listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à gare d\u2019Angoulême »",
     listeningHintDest: "Dites uniquement votre destination. Touchez « Arrêter » pour valider.",
   },
   en: {
@@ -115,7 +115,7 @@ const UI = {
     geoInvalid: "Invalid position. Please enter the pickup address manually.",
     geoImprecise: (m: number) =>
       `GPS signal too imprecise (${m} m). Enter the exact address to avoid a wrong pickup point.`,
-    geoIncoherent: "Position inconsistent with the Bordeaux area. Please enter the exact pickup address.",
+    geoIncoherent: "Position inconsistent with the Charente area. Please enter the exact pickup address.",
     detectingAuto: "Automatically detecting pickup location…",
     locating: "Locating…",
     approxIp: "Approximate position (via IP) — you can refine the address",
@@ -147,7 +147,7 @@ const UI = {
     hiddenButtonDebug: "Button hidden",
     listeningLabel: "Listening…",
     dictateDestinationLabel: "Dictate destination",
-    listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Bordeaux airport »",
+    listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Angoulême station »",
     listeningHintDest: "Say only your destination. Tap « Stop » to confirm.",
   },
 } as const;
@@ -631,13 +631,22 @@ async function searchNearbyAddressChoices(
 
   const normalizedQ = normalizeAddressText(query);
   const extraVariants: string[] = [];
+  if (/aeroport|airport/.test(normalizedQ) && /angouleme|cognac|champniers/.test(normalizedQ)) {
+    extraVariants.push("Aéroport d'Angoulême-Cognac", "Angouleme Cognac Airport");
+  }
+  if (/aeroport|airport/.test(normalizedQ) && /rochelle|ile de re/.test(normalizedQ)) {
+    extraVariants.push("Aéroport de La Rochelle-Île de Ré", "La Rochelle Airport");
+  }
   if (/aeroport|airport/.test(normalizedQ) && /bordeaux|merignac|bod/.test(normalizedQ)) {
     extraVariants.push("Aéroport de Bordeaux-Mérignac", "Bordeaux-Mérignac Airport", "BOD Bordeaux");
   }
-  if (/gare|saint.jean|st.jean/.test(normalizedQ)) {
-    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux", "Bordeaux Saint-Jean");
+  if (/gare/.test(normalizedQ) && /angouleme|charente/.test(normalizedQ)) {
+    extraVariants.push("Gare d'Angoulême", "Gare Angoulême Charente");
   }
-  const variants = [...new Set([query, `${query}, Gironde`, ...extraVariants])];
+  if (/gare/.test(normalizedQ) && /saint.jean|st.jean|bordeaux/.test(normalizedQ)) {
+    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux");
+  }
+  const variants = [...new Set([query, `${query}, Charente`, `${query}, Charente-Maritime`, ...extraVariants])];
   const groups = await Promise.all(variants.map((v) => searchAddress(v, 6).catch(() => [])));
   const googleChoices = groups.flat().map((item) => ({
     label: shortLabel(item.label),
@@ -671,13 +680,22 @@ async function searchNearbyAddressChoicesStreaming(
 
   const normalizedQ = normalizeAddressText(query);
   const extraVariants: string[] = [];
+  if (/aeroport|airport/.test(normalizedQ) && /angouleme|cognac|champniers/.test(normalizedQ)) {
+    extraVariants.push("Aéroport d'Angoulême-Cognac", "Angouleme Cognac Airport");
+  }
+  if (/aeroport|airport/.test(normalizedQ) && /rochelle|ile de re/.test(normalizedQ)) {
+    extraVariants.push("Aéroport de La Rochelle-Île de Ré", "La Rochelle Airport");
+  }
   if (/aeroport|airport/.test(normalizedQ) && /bordeaux|merignac|bod/.test(normalizedQ)) {
     extraVariants.push("Aéroport de Bordeaux-Mérignac", "Bordeaux-Mérignac Airport", "BOD Bordeaux");
   }
-  if (/gare|saint.jean|st.jean/.test(normalizedQ)) {
-    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux", "Bordeaux Saint-Jean");
+  if (/gare/.test(normalizedQ) && /angouleme|charente/.test(normalizedQ)) {
+    extraVariants.push("Gare d'Angoulême", "Gare Angoulême Charente");
   }
-  const variants = [...new Set([query, `${query}, Gironde`, ...extraVariants])];
+  if (/gare/.test(normalizedQ) && /saint.jean|st.jean|bordeaux/.test(normalizedQ)) {
+    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux");
+  }
+  const variants = [...new Set([query, `${query}, Charente`, `${query}, Charente-Maritime`, ...extraVariants])];
 
   const groups = await Promise.all(variants.map((v) => searchAddress(v, 6).catch(() => [])));
   const googleChoices = groups.flat().map((item) => ({
