@@ -197,13 +197,13 @@ function shortLabel(label: string): string {
   if (isNamedPlace) {
     // Cherche la ville : première partie qui ne contient pas de chiffre et n'est pas un code postal ni une région connue
     const skipWords =
-      /gironde|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|département|region|^\d{5}$/i;
+      /gironde|charente|charente-maritime|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|département|region|^\d{5}$/i;
     const ville = parts.slice(1).find((p) => !skipWords.test(p) && !/^\d/.test(p));
     return ville ? `${parts[0]}, ${ville}` : parts[0];
   }
 
   // Adresse classique : rue + ville (ignore code postal, département, région, France)
-  const skipWords = /gironde|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|^\d{5}$/i;
+  const skipWords = /gironde|charente|charente-maritime|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|^\d{5}$/i;
   const kept = parts.filter((p) => !skipWords.test(p));
   return kept.slice(0, 2).join(", ");
 }
@@ -235,7 +235,9 @@ async function geocodeFullAddress(address: string): Promise<{ coord: [number, nu
   // Variantes spécifiques pour les lieux nommés courants
   const namedPlaceVariants: string[] = [];
   if (/aeroport|airport/.test(normalized)) {
-    if (/bordeaux|merignac|bod/.test(normalized)) {
+    if (/angouleme|cognac|champniers|brie/.test(normalized)) {
+      namedPlaceVariants.push("Aéroport d'Angoulême-Cognac, Champniers", "Angouleme Cognac Airport");
+    } else if (/bordeaux|merignac|bod/.test(normalized)) {
       namedPlaceVariants.push(
         "Aéroport de Bordeaux-Mérignac",
         "Bordeaux-Mérignac Airport",
@@ -253,7 +255,9 @@ async function geocodeFullAddress(address: string): Promise<{ coord: [number, nu
     }
   }
   if (/gare/.test(normalized)) {
-    if (/bordeaux|saint.jean/.test(normalized)) {
+    if (/angouleme/.test(normalized)) {
+      namedPlaceVariants.push("Gare d'Angoulême, Charente");
+    } else if (/bordeaux|saint.jean/.test(normalized)) {
       namedPlaceVariants.push("Gare de Bordeaux-Saint-Jean");
     } else {
       const cityToken = normalized
@@ -274,8 +278,9 @@ async function geocodeFullAddress(address: string): Promise<{ coord: [number, nu
     short,
     short + ", France",
     parts[0] + ", France",
-    parts[0] + ", Bordeaux, France",
-    parts[0] + ", Gironde, France",
+    parts[0] + ", Angoulême, France",
+    parts[0] + ", Charente, France",
+    parts[0] + ", Charente-Maritime, France",
   ].filter((v, i, arr) => v.length > 2 && arr.indexOf(v) === i);
 
   for (const query of attempts) {
