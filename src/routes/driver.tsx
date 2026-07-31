@@ -28,7 +28,7 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "simulateur";
+type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -706,7 +706,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "simulateur"] as Tab[]).map((t) => (
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map((t) => (
             <button
               key={t}
               className={`drv-tab${tab === t ? " active" : ""}`}
@@ -733,6 +733,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                 )}
                 {t === "clients" && <IconUsers />}
                 {t === "stats" && <IconChart />}
+                {t === "historique" && <IconCalendar />}
                 {t === "simulateur" && <IconCalc />}
               </div>
               <span>
@@ -743,6 +744,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                     avis: "Avis",
                     clients: "Clients",
                     stats: "Stats",
+                    historique: "Historique",
                     simulateur: "Simu",
                   }[t]
                 }
@@ -760,6 +762,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
           {tab === "clients" && <ClientsTab />}
           {tab === "stats" && <StatsTab />}
+          {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
         </div>
       </div>
