@@ -22,7 +22,7 @@ const DRIVERS = [
 
 const COPY = {
   fr: {
-    kicker: "100 % électrique · Bordeaux & Gironde",
+    kicker: "100 % électrique · Charente & Charente-Maritime",
     tagline: "Votre mobilité, notre priorité",
     lead:
       "Deux chauffeurs, deux Audi Q6 e-tron. Un service de taxi haut de gamme, silencieux et zéro émission, disponible 7j/7 et 24h/24.",
@@ -56,7 +56,7 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "100% electric · Bordeaux & Gironde",
+    kicker: "100% electric · Charente & Charente-Maritime",
     tagline: "Your mobility, our priority",
     lead:
       "Two drivers, two Audi Q6 e-tron. A premium, silent, zero-emission taxi service available 24/7.",
@@ -120,8 +120,8 @@ export const Route = createFileRoute("/")({
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
           slogan: "Votre mobilité, notre priorité",
-          areaServed: "Bordeaux, Gironde, France",
-          telephone: "+33673072322",
+          areaServed: ["Charente", "Charente-Maritime", "France"],
+          telephone: ["+33650260015", "+33650321923"],
           availableLanguage: ["fr", "en"],
           openingHours: "Mo-Su 00:00-23:59",
         }),
