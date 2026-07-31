@@ -1562,7 +1562,11 @@ function SuiviPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showRecurring, setShowRecurring] = useState(false);
-  const josePhone = JOSE_PHONE;
+  const assignedDriver =
+    DRIVERS.find(
+      (d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase(),
+    ) ?? DRIVERS[0];
+  const josePhone = assignedDriver?.tel ?? JOSE_PHONE;
   const [pushDismissed, setPushDismissed] = useState(false);
   const { status: pushStatus, subscribe: pushSubscribe } = usePushNotifications();
   const [pushActivatedHere, setPushActivatedHere] = useState(false);
