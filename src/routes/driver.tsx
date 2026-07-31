@@ -3863,41 +3863,47 @@ function SimulateurTab() {
   );
 }
 
+const DRIVER_LABEL: Record<string, string> = {
+  patricia: "Patricia",
+  alain: "Alain",
+  non_attribuee: "Non attribuée",
+};
+
 function StatsTab() {
-  const [stats, setStats] = useState({ revenus: 0, courses: 0, km: 0, note: 0, semCourses: 0, semRevenus: 0 });
+  const getStats = useServerFn(getDriverStats);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState(30);
+
+  const load = useCallback(async () => {
+    try {
+      const res = await getStats({ data: { token: getDriverToken(), days } });
+      setData(res);
+    } catch {
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [getStats, days]);
 
   useEffect(() => {
-    (async () => {
-      const monday = new Date();
-      monday.setDate(monday.getDate() - monday.getDay() + 1);
-      monday.setHours(0, 0, 0, 0);
-
-      const [{ data: semData }, { data: avisData }] = await Promise.all([
-        (supabase as any)
-          .from("reservations")
-          .select("prix_estime,distance_km,pickup_datetime,date_heure")
-          .gte("pickup_datetime", monday.toISOString())
-          .in("status", ["terminee", "completed"]),
-        (supabase as any).from("avis").select("note").eq("status", "approved"),
-      ]);
-
-      const sem: any[] = semData ?? [];
-      const revenus = sem.reduce((s: number, r: any) => s + (r.prix_estime ?? 0), 0);
-      const km = sem.reduce((s: number, r: any) => s + (r.distance_km ?? 0), 0);
-      const note = avisData?.length ? avisData.reduce((s: number, a: any) => s + a.note, 0) / avisData.length : 0;
-
-      setStats({
-        revenus: Math.round(revenus),
-        courses: sem.length,
-        km: Math.round(km),
-        note: Math.round(note * 10) / 10,
-        semCourses: sem.length,
-        semRevenus: Math.round(revenus),
-      });
-      setLoading(false);
-    })();
-  }, []);
+    setLoading(true);
+    load();
+    const t = setInterval(load, 15000);
+    const ch = (supabase as any)
+      .channel("drv-stats")
+      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .subscribe();
+    const onVis = () => {
+      if (!document.hidden) load();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      clearInterval(t);
+      supabase.removeChannel(ch);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [load]);
 
   if (loading)
     return (
@@ -3906,70 +3912,131 @@ function StatsTab() {
       </div>
     );
 
-  const days = ["L", "M", "M", "J", "V", "S", "D"];
-  const today = new Date().getDay();
-  const todayIdx = today === 0 ? 6 : today - 1;
+  if (!data)
+    return (
+      <div className="drv-empty">
+        <div style={{ fontSize: 14 }}>Statistiques indisponibles</div>
+      </div>
+    );
+
+  const maxDay = Math.max(1, ...data.byDay.map((d: any) => d.count));
+  const fmtMin = (v: number | null) => (v == null ? "—" : v >= 60 ? `${Math.round(v / 6) / 10} h` : `${v} min`);
 
   return (
     <>
-      <p className="drv-section">Cette semaine</p>
+      <div style={{ display: "flex", gap: 6, padding: "10px 0 2px", overflowX: "auto" }}>
+        {[7, 30, 90].map((d) => (
+          <button
+            key={d}
+            onClick={() => setDays(d)}
+            style={{
+              padding: "7px 14px",
+              borderRadius: 999,
+              border: "1px solid " + (days === d ? "#0B0B0D" : "#cbd5e1"),
+              background: days === d ? "#0B0B0D" : "#fff",
+              color: days === d ? "#C6A24A" : "#334155",
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: "pointer",
+              minHeight: 36,
+            }}
+          >
+            {d} jours
+          </button>
+        ))}
+        <span style={{ marginLeft: "auto", alignSelf: "center", fontSize: 11, color: "#94a3b8" }}>⏱ temps réel</span>
+      </div>
+
+      <p className="drv-section">Vue d'ensemble</p>
       <div className="drv-stat-grid">
         <div className="drv-stat">
+          <div className="drv-stat-lbl">Demandes</div>
+          <div className="drv-stat-val">{data.global.total}</div>
+          <div className="drv-stat-sub">{days} derniers jours</div>
+        </div>
+        <div className="drv-stat">
+          <div className="drv-stat-lbl">Courses terminées</div>
+          <div className="drv-stat-val">{data.global.completed}</div>
+          <div className="drv-stat-sub">{data.global.km} km</div>
+        </div>
+        <div className="drv-stat">
           <div className="drv-stat-lbl">Revenus</div>
-          <div className="drv-stat-val">{stats.revenus} €</div>
-          <div className="drv-stat-sub">semaine en cours</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Courses</div>
-          <div className="drv-stat-val">{stats.courses}</div>
-          <div className="drv-stat-sub">cette semaine</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Km parcourus</div>
-          <div className="drv-stat-val">{stats.km}</div>
-          <div className="drv-stat-sub">km cette semaine</div>
+          <div className="drv-stat-val">{data.global.revenue} €</div>
+          <div className="drv-stat-sub">courses terminées</div>
         </div>
         <div className="drv-stat">
           <div className="drv-stat-lbl">Note moyenne</div>
-          <div className="drv-stat-val">{stats.note > 0 ? stats.note : "—"}</div>
+          <div className="drv-stat-val">{data.note > 0 ? data.note : "—"}</div>
           <div className="drv-stat-sub" style={{ color: "#f59e0b" }}>
-            {stats.note > 0 ? "★ sur 5" : "Pas encore d'avis"}
+            {data.note > 0 ? "★ sur 5" : "Pas encore d'avis"}
           </div>
         </div>
       </div>
 
-      {/* Barre jours de la semaine */}
-      <p className="drv-section">Jours de la semaine</p>
+      <p className="drv-section">Par chauffeur</p>
+      {data.drivers
+        .filter((d: any) => d.total > 0 || d.driver !== "non_attribuee")
+        .map((d: any) => (
+          <div className="drv-card" key={d.driver} style={{ marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <span
+                style={{
+                  fontSize: 12.5,
+                  fontWeight: 800,
+                  padding: "4px 10px",
+                  borderRadius: 999,
+                  background: d.driver === "patricia" ? "#fdf2f8" : d.driver === "alain" ? "#eff6ff" : "#f1f5f9",
+                  color: d.driver === "patricia" ? "#9d174d" : d.driver === "alain" ? "#1d4ed8" : "#475569",
+                }}
+              >
+                👤 {DRIVER_LABEL[d.driver]}
+              </span>
+              <span style={{ fontSize: 12, color: "#64748b", fontWeight: 700 }}>{d.total} demande(s)</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+              {[
+                { l: "Taux d'acceptation", v: `${d.acceptanceRate}%` },
+                { l: "Terminées", v: String(d.completed) },
+                { l: "Délai d'acceptation", v: fmtMin(d.avgAcceptMinutes) },
+                { l: "Durée moyenne course", v: fmtMin(d.avgTripMinutes) },
+                { l: "En attente", v: String(d.pending) },
+                { l: "Revenus", v: `${d.revenue} €` },
+              ].map((c) => (
+                <div key={c.l} style={{ background: "#f8fafc", borderRadius: 10, padding: "8px 10px" }}>
+                  <div style={{ fontSize: 10.5, color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>
+                    {c.l}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: "#0f172a" }}>{c.v}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 8, height: 6, background: "#e2e8f0", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ width: `${d.acceptanceRate}%`, height: "100%", background: "#16a34a" }} />
+            </div>
+          </div>
+        ))}
+
+      <p className="drv-section">7 derniers jours</p>
       <div className="drv-card">
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 60, marginBottom: 6 }}>
-          {days.map((d, i) => (
-            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 70, marginBottom: 6 }}>
+          {data.byDay.map((d: any) => (
+            <div key={d.date} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+              <div style={{ textAlign: "center", fontSize: 10.5, color: "#0f172a", fontWeight: 700 }}>{d.count}</div>
               <div
                 style={{
-                  flex: 1,
                   width: "100%",
                   borderRadius: "4px 4px 0 0",
-                  background: i === todayIdx ? "#0f172a" : "#e2e8f0",
-                  minHeight: i === todayIdx ? 40 : 20,
-                  alignSelf: "flex-end",
+                  background: "#0f172a",
+                  height: `${Math.max(6, (d.count / maxDay) * 52)}px`,
                 }}
               />
             </div>
           ))}
         </div>
         <div style={{ display: "flex", gap: 6 }}>
-          {days.map((d, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                textAlign: "center",
-                fontSize: 11,
-                color: i === todayIdx ? "#0f172a" : "#94a3b8",
-                fontWeight: i === todayIdx ? 700 : 400,
-              }}
-            >
-              {d}
+          {data.byDay.map((d: any) => (
+            <div key={d.date} style={{ flex: 1, textAlign: "center", fontSize: 10.5, color: "#94a3b8" }}>
+              {new Date(d.date).toLocaleDateString("fr-FR", { weekday: "short" }).slice(0, 3)}
             </div>
           ))}
         </div>
@@ -3987,6 +4054,138 @@ function StatsTab() {
     </>
   );
 }
+
+// ── Onglet Historique : demandes, attributions et statuts horodatés ────────
+function HistoriqueTab({ driverId }: { driverId?: string }) {
+  const listEvents = useServerFn(listReservationEvents);
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "patricia" | "alain">(
+    driverId === "patricia" || driverId === "alain" ? (driverId as any) : "all",
+  );
+
+  const load = useCallback(async () => {
+    try {
+      const res = await listEvents({ data: { token: getDriverToken(), limit: 120, driver: filter } });
+      setRows((res as any)?.events ?? []);
+    } catch {
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [listEvents, filter]);
+
+  useEffect(() => {
+    setLoading(true);
+    load();
+    const t = setInterval(load, 20000);
+    const ch = (supabase as any)
+      .channel("drv-history")
+      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .subscribe();
+    return () => {
+      clearInterval(t);
+      supabase.removeChannel(ch);
+    };
+  }, [load]);
+
+  const eventLabel = (e: any) => {
+    if (e.event_type === "created") return "🆕 Nouvelle demande";
+    if (e.event_type === "assigned")
+      return `↔ Attribuée à ${DRIVER_LABEL[e.to_value] ?? e.to_value ?? "—"}${e.from_value ? ` (avant : ${DRIVER_LABEL[e.from_value] ?? e.from_value})` : ""}`;
+    const map: Record<string, string> = {
+      accepted: "✅ Acceptée",
+      en_route: "🚖 En route",
+      arrived: "📍 Prise en charge",
+      completed: "🏁 Terminée",
+      terminee: "🏁 Terminée",
+      cancelled: "✖ Annulée / refusée",
+    };
+    return map[e.to_value] ?? `Statut : ${e.to_value}`;
+  };
+
+  return (
+    <>
+      <div style={{ display: "flex", gap: 6, padding: "10px 0 2px" }}>
+        {(
+          [
+            { k: "all", l: "Tout" },
+            { k: "patricia", l: "Patricia" },
+            { k: "alain", l: "Alain" },
+          ] as const
+        ).map((o) => (
+          <button
+            key={o.k}
+            onClick={() => setFilter(o.k as any)}
+            style={{
+              flex: 1,
+              padding: "8px 10px",
+              borderRadius: 999,
+              border: "1px solid " + (filter === o.k ? "#0B0B0D" : "#cbd5e1"),
+              background: filter === o.k ? "#0B0B0D" : "#fff",
+              color: filter === o.k ? "#C6A24A" : "#334155",
+              fontSize: 12.5,
+              fontWeight: 700,
+              cursor: "pointer",
+              minHeight: 38,
+            }}
+          >
+            {o.l}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="drv-empty">
+          <div style={{ fontSize: 14 }}>Chargement…</div>
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="drv-empty">
+          <div style={{ fontSize: 14 }}>Aucun évènement pour le moment</div>
+        </div>
+      ) : (
+        <div className="drv-card">
+          {rows.map((e) => (
+            <div key={e.id} style={{ padding: "9px 0", borderBottom: "1px solid #f1f5f9" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{eventLabel(e)}</span>
+                <span style={{ fontSize: 11, color: "#94a3b8", whiteSpace: "nowrap" }}>
+                  {new Date(e.created_at).toLocaleString("fr-FR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+                {e.client_name ? `${e.client_name} · ` : ""}
+                {e.depart ?? "—"} → {e.destination ?? "—"}
+              </div>
+              {e.driver && (
+                <span
+                  style={{
+                    display: "inline-block",
+                    marginTop: 4,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    background: e.driver === "patricia" ? "#fdf2f8" : "#eff6ff",
+                    color: e.driver === "patricia" ? "#9d174d" : "#1d4ed8",
+                  }}
+                >
+                  👤 {DRIVER_LABEL[e.driver] ?? e.driver}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 
 // ── Mini diagnostic des échecs push (remplace l'ancien lien /admin/dashboard) ──
 function PushDiagnostic() {
