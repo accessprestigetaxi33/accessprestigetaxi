@@ -13,7 +13,7 @@ import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
-import { getDriverToken, setDriverToken, clearDriverToken } from "@/lib/driver-token";
+import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
   getUnreadCountsForReservations,
@@ -350,6 +350,12 @@ function DriverPage() {
   const [status, setStatus] = useState<"checking" | "denied" | "granted">("checking");
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [driverLabel, setDriverLabel] = useState("");
+
+
+  useEffect(() => {
+    setDriverLabel(getDriverName());
+  }, []);
 
   const tryToken = useCallback(
     async (candidate: string): Promise<boolean> => {
@@ -358,6 +364,8 @@ function DriverPage() {
         const res = await verify({ data: { token: candidate } });
         if (res?.ok) {
           setDriverToken(candidate);
+          setDriverName(res.driver || "");
+          setDriverLabel(res.driver || "");
           setStatus("granted");
           return true;
         }
@@ -429,7 +437,7 @@ function DriverPage() {
                 type="password"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Code d'accès"
+                placeholder="Code d'accès (Patricia ou Alain)"
                 autoComplete="current-password"
                 style={{
                   padding: "12px 14px",
@@ -461,10 +469,10 @@ function DriverPage() {
     );
   }
 
-  return <DriverApp />;
+  return <DriverApp driverLabel={driverLabel} />;
 }
 
-function DriverApp() {
+function DriverApp({ driverLabel }: { driverLabel?: string }) {
   const [tab, setTab] = useState<Tab>("courses");
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
@@ -587,7 +595,7 @@ function DriverApp() {
       <div className="drv-root">
         <div className="drv-header">
           <span style={{ fontSize: 26 }}>🚕</span>
-          <h1>Espace José</h1>
+          <h1>{driverLabel ? `Espace ${driverLabel}` : "Espace chauffeur"}</h1>
 
           {installPrompt && (
             <button

@@ -7,8 +7,9 @@ const TokenSchema = z.object({ token: z.string().trim().min(1).max(200) });
 export const verifyDriverToken = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => TokenSchema.parse(input))
   .handler(async ({ data }) => {
-    const { isDriverToken } = await import("@/lib/driver-auth.server");
-    return { ok: isDriverToken(data.token) };
+    const { resolveDriverIdentity } = await import("@/lib/driver-auth.server");
+    const identity = resolveDriverIdentity(data.token);
+    return { ok: identity !== null, driver: identity?.name ?? null, driverId: identity?.id ?? null };
   });
 
 /** Compteur de visiteurs actifs — réservé au tableau de bord chauffeur. */
