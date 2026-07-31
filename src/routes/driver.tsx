@@ -781,6 +781,9 @@ function CoursesTab({
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [onlyMine, setOnlyMine] = useState(true);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "accepted" | "en_route" | "arrived" | "done">("all");
+  const [dateFilter, setDateFilter] = useState("");
   const listUnreadResasFn = useServerFn(listReservationsWithUnreadChauffeur);
   const getUnreadFn = useServerFn(getUnreadCountsForReservations);
   const listCoursesFn = useServerFn(listDriverCourses);
