@@ -351,11 +351,12 @@ function DriverPage() {
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [driverLabel, setDriverLabel] = useState("");
-
+  const [driverId, setDriverId] = useState<string>("");
 
   useEffect(() => {
     setDriverLabel(getDriverName());
   }, []);
+
 
   const tryToken = useCallback(
     async (candidate: string): Promise<boolean> => {
