@@ -141,6 +141,8 @@ function RootComponent() {
           <SiteFooter />
         </div>
         <Toaster />
+        <AnalyticsTracker />
+
       </I18nProvider>
     </QueryClientProvider>
   );
