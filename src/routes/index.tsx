@@ -38,7 +38,7 @@ const COPY = {
     services: [
       { icon: Stethoscope, t: "Transport conventionné", d: "Trajets médicaux assis, prise en charge simplifiée." },
       { icon: PlaneTakeoff, t: "Gares & aéroports", d: "Suivi des vols et des trains, accueil en gare." },
-      { icon: BriefcaseBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, факture entreprise." },
+      { icon: BriefcaseBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       { icon: Sparkles, t: "Conciergerie", d: "Courses, livraisons et mises à disposition sur mesure." },
       { icon: BatteryCharging, t: "100 % électrique", d: "Audi Q6 e-tron : silence, confort et zéro émission." },
       { icon: Clock, t: "Disponible 24h/24", d: "Réservation immédiate ou planifiée, 7 jours sur 7." },
