@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { broadcastDriverFeed } from "@/lib/suivi-broadcast";
 import {
   calculerPrix,
   calculerPrixMixte,
@@ -1310,6 +1311,9 @@ function ReservationPage() {
           .in("status", ["accepted", "en_route", "arrived"])
           .limit(1);
         if (error) throw error;
+
+      // Réveille instantanément les tableaux de bord chauffeur ouverts.
+      broadcastDriverFeed("reservation");
         setTaxiAvailable(!data || data.length === 0);
       } catch {
         setTaxiAvailable(null);
