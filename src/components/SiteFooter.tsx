@@ -182,6 +182,7 @@ export function SiteFooter() {
             {[
               { to: "/", label: "Accueil" },
               { to: "/services", label: "Services" },
+              { to: "/blog", label: "Guide Charente" },
               { to: "/reserver", label: "Réserver" },
               { to: "/a-propos", label: "À propos" },
               { to: "/contact", label: "Contact" },
