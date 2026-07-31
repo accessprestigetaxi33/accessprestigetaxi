@@ -15,6 +15,14 @@ import {
 import { useI18n } from "@/i18n/I18nProvider";
 import logoLockup from "@/assets/apt-hero-banner.png";
 import { DRIVERS } from "@/data/drivers";
+import { ReviewForm } from "@/components/ReviewForm";
+import { GUIDE_ENTRIES } from "@/data/guide-charente";
+
+const BLOG_PICKS = ["hotel", "restaurant", "visite"]
+  .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
+  .filter((e): e is (typeof GUIDE_ENTRIES)[number] => Boolean(e));
+
+
 
 
 const COPY = {
@@ -54,8 +62,47 @@ const COPY = {
       { icon: Users, t: "Deux chauffeurs, un standard", d: "Même exigence de confort et de discrétion." },
       { icon: ShieldCheck, t: "Prix annoncé, prix tenu", d: "Estimation transparente avant le départ." },
     ],
+    destEyebrow: "Destinations",
+    destTitle: "Là où l'on vous emmène",
+    destLead:
+      "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
+    destinations: [
+      { from: "Angoulême", to: "Gare TGV Angoulême", meta: "≈ 10 min · centre-ville" },
+      { from: "Cognac", to: "Aéroport Bordeaux-Mérignac", meta: "≈ 1 h 40 · vol suivi" },
+      { from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · pont inclus" },
+      { from: "Saintes", to: "Royan", meta: "≈ 45 min · côte de Beauté" },
+      { from: "Jarnac", to: "Chais & vignobles", meta: "Mise à disposition" },
+      { from: "Domicile", to: "Hôpital / clinique", meta: "Conventionné CPAM" },
+    ],
+    bestEyebrow: "Les best-sellers",
+    bestTitle: "Nos courses les plus demandées",
+    best: [
+      { n: "01", t: "Transferts gare & aéroport", d: "Accueil pancarte, suivi du train ou du vol, bagages pris en charge." },
+      { n: "02", t: "Trajets médicaux conventionnés", d: "Dialyse, chimiothérapie, consultations : prise en charge simplifiée." },
+      { n: "03", t: "Journée vignobles & cognac", d: "Mise à disposition à l'heure, itinéraire libre, chauffeur dédié." },
+    ],
+    howEyebrow: "Comment ça marche",
+    howTitle: "Trois étapes, une minute",
+    how: [
+      { s: "1", t: "Vous décrivez le trajet", d: "À la voix ou à l'écrit : départ, arrivée, date et heure." },
+      { s: "2", t: "Nous confirmons", d: "Prix annoncé et chauffeur assigné, confirmation par e-mail." },
+      { s: "3", t: "Vous suivez la course", d: "Lien de suivi en temps réel, puis reçu détaillé à l'arrivée." },
+    ],
+    clientEyebrow: "Espace client",
+    clientTitle: "Vos courses, vos factures, au même endroit",
+    clientText:
+      "Créez votre espace pour retrouver l'historique de vos trajets, télécharger vos factures, enregistrer vos adresses favorites et programmer vos courses récurrentes.",
+    clientCta: "Accéder à l'espace client",
+    reviewEyebrow: "Vos avis",
+    reviewTitle: "Déposez votre avis",
+    reviewText: "Votre retour aide Patricia et Alain à faire encore mieux. Merci pour votre confiance.",
+    blogEyebrow: "Le blog",
+    blogTitle: "Guide Charente & Charente-Maritime",
+    blogText: "Restaurants, hôtels, randonnées et lieux à visiter — repérés par vos chauffeurs.",
+    blogCta: "Voir tout le guide",
     ctaTitle: "Prêt à réserver votre course ?",
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
+
   },
   en: {
     kicker: "100% electric · Charente & Charente-Maritime",
@@ -93,8 +140,46 @@ const COPY = {
       { icon: Users, t: "Two drivers, one standard", d: "The same demand for comfort and discretion." },
       { icon: ShieldCheck, t: "Quoted price, final price", d: "Transparent estimate before departure." },
     ],
+    destEyebrow: "Destinations",
+    destTitle: "Where we take you",
+    destLead: "A few routes our clients book every day — arriving smoothly is our job.",
+    destinations: [
+      { from: "Angoulême", to: "Angoulême TGV station", meta: "≈ 10 min · city centre" },
+      { from: "Cognac", to: "Bordeaux-Mérignac airport", meta: "≈ 1 h 40 · flight tracked" },
+      { from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · bridge included" },
+      { from: "Saintes", to: "Royan", meta: "≈ 45 min · Atlantic coast" },
+      { from: "Jarnac", to: "Cellars & vineyards", meta: "Hourly hire" },
+      { from: "Home", to: "Hospital / clinic", meta: "Medical transport" },
+    ],
+    bestEyebrow: "Best-sellers",
+    bestTitle: "Our most requested rides",
+    best: [
+      { n: "01", t: "Station & airport transfers", d: "Meet & greet, train or flight tracking, luggage handled." },
+      { n: "02", t: "Covered medical trips", d: "Dialysis, chemotherapy, appointments: simplified coverage." },
+      { n: "03", t: "Vineyard & cognac day", d: "Hourly hire, free itinerary, dedicated driver." },
+    ],
+    howEyebrow: "How it works",
+    howTitle: "Three steps, one minute",
+    how: [
+      { s: "1", t: "Describe your ride", d: "By voice or typing: pickup, drop-off, date and time." },
+      { s: "2", t: "We confirm", d: "Quoted price and assigned driver, confirmed by email." },
+      { s: "3", t: "Track your ride", d: "Live tracking link, then a detailed receipt on arrival." },
+    ],
+    clientEyebrow: "Client area",
+    clientTitle: "Your rides and invoices in one place",
+    clientText:
+      "Create your account to find your ride history, download invoices, save favourite addresses and schedule recurring rides.",
+    clientCta: "Go to the client area",
+    reviewEyebrow: "Your reviews",
+    reviewTitle: "Leave a review",
+    reviewText: "Your feedback helps Patricia and Alain do even better. Thank you for your trust.",
+    blogEyebrow: "The blog",
+    blogTitle: "Charente & Charente-Maritime guide",
+    blogText: "Restaurants, hotels, hikes and places to visit — picked by your drivers.",
+    blogCta: "See the full guide",
     ctaTitle: "Ready to book your ride?",
     ctaText: "Book in under a minute, by voice or by typing.",
+
   },
 } as const;
 
@@ -288,6 +373,67 @@ function Index() {
         </div>
       </section>
 
+      {/* DESTINATIONS */}
+      <section className="border-t border-border bg-background py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.destEyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.destTitle}</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.destLead}</p>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {c.destinations.map((d) => (
+              <Link
+                key={`${d.from}-${d.to}`}
+                to="/reservation"
+                className="group flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-4 transition hover:border-primary/60"
+              >
+                <span className="flex flex-col items-center gap-1 pt-1">
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <span className="h-6 w-px bg-border" />
+                  <span className="h-2 w-2 rounded-full border border-primary" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-card-foreground">{d.from}</span>
+                  <span className="block truncate text-sm font-semibold text-card-foreground">{d.to}</span>
+                  <span className="mt-1 block text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                    {d.meta}
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-primary opacity-0 transition group-hover:opacity-100" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BEST-SELLERS */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.bestEyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.bestTitle}</h2>
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {c.best.map((b) => (
+              <article
+                key={b.n}
+                className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 pt-8"
+              >
+                <span className="absolute right-4 top-2 font-display text-5xl font-semibold text-primary/15">
+                  {b.n}
+                </span>
+                <h3 className="font-display text-lg font-semibold text-card-foreground">{b.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
+                <Link
+                  to="/reservation"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                >
+                  {c.ctaBook} <ArrowRight className="h-4 w-4" />
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* WHY */}
       <section className="border-t border-border py-20">
         <div className="mx-auto max-w-5xl px-5">
@@ -302,6 +448,97 @@ function Index() {
                 <h3 className="mt-3 font-display text-lg font-semibold text-foreground">{w.t}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{w.d}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* COMMENT ÇA MARCHE */}
+      <section className="border-t border-border bg-card/40 py-20">
+        <div className="mx-auto max-w-5xl px-5">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.howEyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.howTitle}</h2>
+          <ol className="mt-10 grid gap-6 sm:grid-cols-3">
+            {c.how.map((h) => (
+              <li key={h.s} className="relative rounded-2xl border border-border bg-background p-6">
+                <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
+                <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ESPACE CLIENT */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-5xl px-5">
+          <div className="grid items-center gap-8 rounded-3xl border border-primary/30 bg-card p-7 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.clientEyebrow}</p>
+              <h2 className="mt-3 font-display text-2xl font-semibold text-foreground sm:text-3xl">{c.clientTitle}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.clientText}</p>
+            </div>
+            <Link
+              to="/client/login"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
+            >
+              {c.clientCta} <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* AVIS */}
+      <section className="border-t border-border bg-card/40 py-20">
+        <div className="mx-auto max-w-2xl px-5">
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
+          <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            {c.reviewTitle}
+          </h2>
+          <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
+          <div className="mt-8 rounded-2xl border border-border bg-background p-6">
+            <ReviewForm />
+          </div>
+        </div>
+      </section>
+
+      {/* BLOG */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.blogEyebrow}</p>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.blogTitle}</h2>
+              <p className="mt-3 text-sm text-muted-foreground">{c.blogText}</p>
+            </div>
+            <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">
+              {c.blogCta} →
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+            {BLOG_PICKS.map((e) => (
+              <Link
+                key={e.slug}
+                to="/blog/$slug"
+                params={{ slug: e.slug }}
+                className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
+              >
+                <img
+                  src={e.photos[0]}
+                  alt={`${e.name} — ${e.city}`}
+                  loading="lazy"
+                  className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                />
+                <div className="p-5">
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
+                  <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                    {lang === "en" ? e.en.teaser : e.fr.teaser}
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
