@@ -14,16 +14,374 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cta_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          has_draft: boolean | null
+          id: string
+          lang: string | null
+          page: string | null
+          referrer: string | null
+          user_agent: string | null
+          variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          has_draft?: boolean | null
+          id?: string
+          lang?: string | null
+          page?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          has_draft?: boolean | null
+          id?: string
+          lang?: string | null
+          page?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          variant?: string | null
+        }
+        Relationships: []
+      }
+      driver_gps: {
+        Row: {
+          accuracy: number | null
+          heading: number | null
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          speed: number | null
+          updated_at: string
+        }
+        Insert: {
+          accuracy?: number | null
+          heading?: number | null
+          id: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          speed?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accuracy?: number | null
+          heading?: number | null
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          speed?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      driver_location: {
+        Row: {
+          accuracy: number | null
+          heading: number | null
+          id: string
+          is_online: boolean
+          latitude: number
+          longitude: number
+          speed: number | null
+          updated_at: string
+        }
+        Insert: {
+          accuracy?: number | null
+          heading?: number | null
+          id?: string
+          is_online?: boolean
+          latitude: number
+          longitude: number
+          speed?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accuracy?: number | null
+          heading?: number | null
+          id?: string
+          is_online?: boolean
+          latitude?: number
+          longitude?: number
+          speed?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_send_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          message_id: string | null
+          metadata: Json | null
+          recipient_email: string
+          status: string
+          template_name: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json | null
+          recipient_email: string
+          status: string
+          template_name: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json | null
+          recipient_email?: string
+          status?: string
+          template_name?: string
+        }
+        Relationships: []
+      }
+      email_send_state: {
+        Row: {
+          auth_email_ttl_minutes: number
+          batch_size: number
+          id: number
+          retry_after_until: string | null
+          send_delay_ms: number
+          transactional_email_ttl_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          auth_email_ttl_minutes?: number
+          batch_size?: number
+          id?: number
+          retry_after_until?: string | null
+          send_delay_ms?: number
+          transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          auth_email_ttl_minutes?: number
+          batch_size?: number
+          id?: number
+          retry_after_until?: string | null
+          send_delay_ms?: number
+          transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_unsubscribe_tokens: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
+      reservations: {
+        Row: {
+          arrivee: string
+          bagages: number
+          created_at: string
+          depart: string
+          email: string | null
+          id: string
+          message: string | null
+          nom: string
+          passagers: number
+          pickup_datetime: string
+          service_type: string
+          status: string
+          telephone: string
+        }
+        Insert: {
+          arrivee: string
+          bagages?: number
+          created_at?: string
+          depart: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          nom: string
+          passagers?: number
+          pickup_datetime: string
+          service_type?: string
+          status?: string
+          telephone: string
+        }
+        Update: {
+          arrivee?: string
+          bagages?: number
+          created_at?: string
+          depart?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          nom?: string
+          passagers?: number
+          pickup_datetime?: string
+          service_type?: string
+          status?: string
+          telephone?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          approved: boolean
+          created_at: string
+          id: string
+          name: string
+          rating: number
+          text: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          rating: number
+          text: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          rating?: number
+          text?: string
+        }
+        Relationships: []
+      }
+      suppressed_emails: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          metadata: Json | null
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json | null
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cancel_reservation_public: { Args: { p_id: string }; Returns: boolean }
+      delete_email: {
+        Args: { message_id: number; queue_name: string }
+        Returns: boolean
+      }
+      enqueue_email: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      get_reservation_public: {
+        Args: { p_id: string }
+        Returns: {
+          arrivee: string
+          bagages: number
+          created_at: string
+          depart: string
+          email: string
+          id: string
+          message: string
+          nom: string
+          passagers: number
+          pickup_datetime: string
+          service_type: string
+          status: string
+          telephone: string
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      move_to_dlq: {
+        Args: {
+          dlq_name: string
+          message_id: number
+          payload: Json
+          source_queue: string
+        }
+        Returns: number
+      }
+      read_email_batch: {
+        Args: { batch_size: number; queue_name: string; vt: number }
+        Returns: {
+          message: Json
+          msg_id: number
+          read_ct: number
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +508,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
