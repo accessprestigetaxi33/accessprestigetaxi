@@ -15,8 +15,10 @@ import {
 import { useI18n } from "@/i18n/I18nProvider";
 import logoLockup from "@/assets/apt-hero-banner.png";
 
-const PHONE = "0673072322";
-const PHONE_DISPLAY = "06 73 07 23 22";
+const DRIVERS = [
+  { name: "Patricia", tel: "0650260015", display: "06 50 26 00 15" },
+  { name: "Alain", tel: "0650321923", display: "06 50 32 19 23" },
+] as const;
 
 const COPY = {
   fr: {
