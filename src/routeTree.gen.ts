@@ -35,6 +35,7 @@ import { Route as ClientResetPasswordRouteImport } from './routes/client.reset-p
 import { Route as ClientTrajetsRouteImport } from './routes/client.trajets'
 import { Route as CourseIdRouteImport } from './routes/course.$id'
 import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
+import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as ReservationIdRouteImport } from './routes/reservation.$id'
 import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
@@ -180,6 +181,11 @@ const DestinationsIndexRoute = DestinationsIndexRouteImport.update({
   path: '/destinations/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DestinationsSlugRoute = DestinationsSlugRouteImport.update({
+  id: '/destinations/$slug',
+  path: '/destinations/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/client/reset-password': typeof ClientResetPasswordRoute
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/client/reset-password': typeof ClientResetPasswordRoute
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
@@ -366,6 +374,7 @@ export interface FileRoutesById {
   '/client/reset-password': typeof ClientResetPasswordRoute
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
@@ -410,6 +419,7 @@ export interface FileRouteTypes {
     | '/client/reset-password'
     | '/client/trajets'
     | '/course/$id'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
@@ -452,6 +462,7 @@ export interface FileRouteTypes {
     | '/client/reset-password'
     | '/client/trajets'
     | '/course/$id'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
@@ -494,6 +505,7 @@ export interface FileRouteTypes {
     | '/client/reset-password'
     | '/client/trajets'
     | '/course/$id'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
@@ -537,6 +549,7 @@ export interface RootRouteChildren {
   ClientResetPasswordRoute: typeof ClientResetPasswordRoute
   ClientTrajetsRoute: typeof ClientTrajetsRoute
   CourseIdRoute: typeof CourseIdRoute
+  DestinationsSlugRoute: typeof DestinationsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   SuiviIdRoute: typeof SuiviIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -737,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DestinationsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/destinations/$slug': {
+      id: '/destinations/$slug'
+      path: '/destinations/$slug'
+      fullPath: '/destinations/$slug'
+      preLoaderRoute: typeof DestinationsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
       path: '/email/unsubscribe'
@@ -886,6 +906,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClientResetPasswordRoute: ClientResetPasswordRoute,
   ClientTrajetsRoute: ClientTrajetsRoute,
   CourseIdRoute: CourseIdRoute,
+  DestinationsSlugRoute: DestinationsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   SuiviIdRoute: SuiviIdRoute,
   BlogIndexRoute: BlogIndexRoute,
