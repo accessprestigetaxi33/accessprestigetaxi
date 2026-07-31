@@ -141,7 +141,7 @@ function Index() {
 
         <div className="mx-auto flex max-w-4xl flex-col items-center px-5 pb-20 pt-14 text-center sm:pt-20">
           <img
-            src={logoLockup}
+            src={logoLockup.url}
             alt="Access Prestige Taxi — taxi 100 % électrique à Bordeaux"
             width={1184}
             height={695}
