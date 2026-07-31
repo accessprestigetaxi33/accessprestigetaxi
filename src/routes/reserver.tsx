@@ -786,8 +786,18 @@ function ReservationPage() {
       return;
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      toast.error(
+        lang === "en"
+          ? "Voice input is not supported by this browser — please type your addresses."
+          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
+        { duration: 7000 },
+      );
+      return;
+    }
+    gaEvent("reservation_voice_start");
     const recog = new SR();
-    recog.lang = "fr-FR";
+    recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
     recog.interimResults = false;
     recog.maxAlternatives = 1;
@@ -846,8 +856,18 @@ function ReservationPage() {
       return;
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      toast.error(
+        lang === "en"
+          ? "Voice input is not supported by this browser — please type your addresses."
+          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
+        { duration: 7000 },
+      );
+      return;
+    }
+    gaEvent("reservation_voice_start");
     const recog = new SR();
-    recog.lang = "fr-FR";
+    recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
     recog.interimResults = false;
     recog.maxAlternatives = 1;
