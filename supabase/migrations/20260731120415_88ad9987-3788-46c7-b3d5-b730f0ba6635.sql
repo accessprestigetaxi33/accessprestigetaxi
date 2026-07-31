@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.log_reservation_event() FROM PUBLIC, anon, authenticated;
