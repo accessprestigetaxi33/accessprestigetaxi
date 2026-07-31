@@ -1311,9 +1311,6 @@ function ReservationPage() {
           .in("status", ["accepted", "en_route", "arrived"])
           .limit(1);
         if (error) throw error;
-
-      // Réveille instantanément les tableaux de bord chauffeur ouverts.
-      broadcastDriverFeed("reservation");
         setTaxiAvailable(!data || data.length === 0);
       } catch {
         setTaxiAvailable(null);
@@ -1454,6 +1451,9 @@ function ReservationPage() {
         .single();
 
       if (error) throw error;
+
+      // Réveille instantanément les tableaux de bord chauffeur ouverts.
+      broadcastDriverFeed("reservation");
 
       // Si le navigateur est déjà en "granted", on ré-attache immédiatement
       // l'abonnement push client à la réservation créée. Sinon le bouton peut
