@@ -178,7 +178,8 @@ function Index() {
 
 
           <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary">
-            <BatteryCharging className="h-3.5 w-3.5" /> {c.kicker}
+            <BatteryCharging className="hidden h-3.5 w-3.5 sm:inline-block" />
+            <span className="text-[10px] leading-relaxed sm:text-[11px]">{c.kicker}</span>
           </p>
 
           <h1 className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground sm:text-5xl">

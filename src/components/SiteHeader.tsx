@@ -81,19 +81,19 @@ export function SiteHeader() {
           </Link>
         </div>
 
-        <div className="site-header-mobile-actions flex min-w-0 shrink-0 items-center gap-1.5 md:hidden">
+        <div className="site-header-mobile-actions flex min-w-0 shrink-0 items-center gap-1 md:hidden">
           {DRIVERS.map((d) => (
             <a
               key={d.tel}
               href={`tel:${d.tel}`}
               aria-label={`Appeler ${d.name} au ${d.display}`}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-md bg-primary px-2 text-[11px] font-bold uppercase text-primary-foreground"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-md bg-primary px-1.5 text-[10px] font-bold uppercase tracking-tight text-primary-foreground xs:px-2 xs:text-[11px]"
             >
               <Phone className="h-3.5 w-3.5" />
               {d.name}
             </a>
           ))}
-          <ThemeToggle className="h-10 w-10 shrink-0" />
+          <ThemeToggle className="hidden h-10 w-10 shrink-0 sm:inline-flex" />
           <LanguageSwitcher className="site-header-language shrink-0" />
           <button
             type="button"
