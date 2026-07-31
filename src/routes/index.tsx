@@ -95,18 +95,19 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Access Prestige Taxi — Taxi 100 % électrique à Bordeaux" },
+      { title: "Access Prestige Taxi — Taxi 100 % électrique en Charente" },
       {
         name: "description",
         content:
-          "Taxi haut de gamme 100 % électrique à Bordeaux et en Gironde. Deux chauffeurs, Audi Q6 e-tron, transport conventionné, gares & aéroports, 7j/7 24h/24.",
+          "Taxi haut de gamme 100 % électrique en Charente et Charente-Maritime. Deux chauffeurs, Audi Q6 e-tron, transport conventionné, gares & aéroports, 7j/7 24h/24.",
       },
-      { property: "og:title", content: "Access Prestige Taxi — Taxi 100 % électrique à Bordeaux" },
+      { property: "og:title", content: "Access Prestige Taxi — Taxi 100 % électrique en Charente" },
       {
         property: "og:description",
         content:
-          "Votre mobilité, notre priorité. Réservation rapide, vocale ou écrite, en véhicule 100 % électrique à Bordeaux.",
+          "Votre mobilité, notre priorité. Réservation rapide, vocale ou écrite, en véhicule 100 % électrique en Charente & Charente-Maritime.",
       },
+
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
