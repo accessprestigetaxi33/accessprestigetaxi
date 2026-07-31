@@ -111,7 +111,7 @@ function BlogArticle() {
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
 
-        <div className="mx-auto -mt-12 max-w-3xl px-4 sm:-mt-20 sm:px-6">
+        <div className="mx-auto mt-6 max-w-3xl px-4 sm:-mt-20 sm:px-6">
           <Link
             to="/blog"
             className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-primary"
