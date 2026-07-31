@@ -2571,7 +2571,7 @@ function ReservationPage() {
         </div>
 
         {/* ── Bouton notifs client — simple carte dans la page ── */}
-        {"Notification" in window ? (
+        {typeof window !== "undefined" && "Notification" in window ? (
           <div
             style={{
               background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,249,247,0.95) 100%)",
