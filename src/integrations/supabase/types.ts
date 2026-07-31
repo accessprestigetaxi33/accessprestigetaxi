@@ -791,6 +791,53 @@ export type Database = {
           },
         ]
       }
+      reservation_events: {
+        Row: {
+          client_name: string | null
+          created_at: string
+          depart: string | null
+          destination: string | null
+          driver: string | null
+          event_type: string
+          from_value: string | null
+          id: string
+          reservation_id: string
+          to_value: string | null
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string
+          depart?: string | null
+          destination?: string | null
+          driver?: string | null
+          event_type: string
+          from_value?: string | null
+          id?: string
+          reservation_id: string
+          to_value?: string | null
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string
+          depart?: string | null
+          destination?: string | null
+          driver?: string | null
+          event_type?: string
+          from_value?: string | null
+          id?: string
+          reservation_id?: string
+          to_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservation_events_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservation_messages: {
         Row: {
           content: string

@@ -14,6 +14,7 @@ import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
+import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
@@ -27,7 +28,7 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "simulateur";
+type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -705,7 +706,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "simulateur"] as Tab[]).map((t) => (
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map((t) => (
             <button
               key={t}
               className={`drv-tab${tab === t ? " active" : ""}`}
@@ -732,6 +733,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                 )}
                 {t === "clients" && <IconUsers />}
                 {t === "stats" && <IconChart />}
+                {t === "historique" && <IconCalendar />}
                 {t === "simulateur" && <IconCalc />}
               </div>
               <span>
@@ -742,6 +744,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                     avis: "Avis",
                     clients: "Clients",
                     stats: "Stats",
+                    historique: "Historique",
                     simulateur: "Simu",
                   }[t]
                 }
@@ -759,6 +762,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
           {tab === "clients" && <ClientsTab />}
           {tab === "stats" && <StatsTab />}
+          {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
         </div>
       </div>
@@ -781,6 +785,9 @@ function CoursesTab({
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [onlyMine, setOnlyMine] = useState(true);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "accepted" | "en_route" | "arrived" | "done">("all");
+  const [dateFilter, setDateFilter] = useState("");
   const listUnreadResasFn = useServerFn(listReservationsWithUnreadChauffeur);
   const getUnreadFn = useServerFn(getUnreadCountsForReservations);
   const listCoursesFn = useServerFn(listDriverCourses);
@@ -996,8 +1003,29 @@ function CoursesTab({
     return String(a.pickup_datetime ?? "").localeCompare(String(b.pickup_datetime ?? ""));
   };
 
-  const visible = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
+  const base = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
+  const q = query.trim().toLowerCase();
+  const visible = base.filter((r) => {
+    if (q) {
+      const hay = [r.depart, r.destination, (r as any).arrivee, r.client_name, (r as any).client_phone]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (dateFilter) {
+      const d = String(r.pickup_datetime ?? "").slice(0, 10);
+      if (d !== dateFilter) return false;
+    }
+    if (statusFilter !== "all") {
+      if (statusFilter === "done") {
+        if (["pending", "accepted", "en_route", "arrived"].includes(r.status)) return false;
+      } else if (r.status !== statusFilter) return false;
+    }
+    return true;
+  });
   const otherCount = courses.length - courses.filter(mineOf).length;
+  const filtersActive = !!q || !!dateFilter || statusFilter !== "all";
 
   const nouvelles = visible.filter((r) => r.status === "pending").sort(sortByPriority);
   const encours = visible
@@ -1007,35 +1035,88 @@ function CoursesTab({
     .filter((r) => !["pending", "accepted", "en_route", "arrived"].includes(r.status))
     .sort(sortByPriority);
 
-  const filterBar = !isAdmin ? (
-    <div style={{ display: "flex", gap: 8, padding: "10px 0 2px" }}>
-      {(
-        [
-          { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
-          { key: false, label: `Toutes (${courses.length})` },
-        ] as const
-      ).map((o) => (
-        <button
-          key={String(o.key)}
-          onClick={() => setOnlyMine(o.key)}
+  const chip = (active: boolean): React.CSSProperties => ({
+    padding: "7px 12px",
+    borderRadius: 999,
+    border: "1px solid " + (active ? "#0B0B0D" : "#cbd5e1"),
+    background: active ? "#0B0B0D" : "#fff",
+    color: active ? "#C6A24A" : "#334155",
+    fontSize: 12,
+    fontWeight: 700,
+    cursor: "pointer",
+    minHeight: 36,
+    whiteSpace: "nowrap",
+  });
+
+  const filterBar = (
+    <div style={{ padding: "10px 0 2px" }}>
+      {!isAdmin && (
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          {(
+            [
+              { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
+              { key: false, label: `Toutes (${courses.length})` },
+            ] as const
+          ).map((o) => (
+            <button key={String(o.key)} onClick={() => setOnlyMine(o.key)} style={{ ...chip(onlyMine === o.key), flex: 1 }}>
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="🔎 Client, départ, destination…"
           style={{
             flex: 1,
-            padding: "8px 10px",
-            borderRadius: 999,
-            border: "1px solid " + (onlyMine === o.key ? "#0B0B0D" : "#cbd5e1"),
-            background: onlyMine === o.key ? "#0B0B0D" : "#fff",
-            color: onlyMine === o.key ? "#C6A24A" : "#334155",
-            fontSize: 12.5,
-            fontWeight: 700,
-            cursor: "pointer",
-            minHeight: 38,
+            minWidth: 0,
+            border: "1px solid #cbd5e1",
+            borderRadius: 12,
+            padding: "9px 12px",
+            fontSize: 13,
+            minHeight: 40,
           }}
-        >
-          {o.label}
-        </button>
-      ))}
+        />
+        <input
+          type="date"
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+          style={{ border: "1px solid #cbd5e1", borderRadius: 12, padding: "9px 10px", fontSize: 13, minHeight: 40 }}
+        />
+      </div>
+      <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
+        {(
+          [
+            { k: "all", l: "Tous" },
+            { k: "pending", l: "En attente" },
+            { k: "accepted", l: "Acceptées" },
+            { k: "en_route", l: "En route" },
+            { k: "arrived", l: "Sur place" },
+            { k: "done", l: "Terminées / autres" },
+          ] as const
+        ).map((o) => (
+          <button key={o.k} onClick={() => setStatusFilter(o.k as any)} style={chip(statusFilter === o.k)}>
+            {o.l}
+          </button>
+        ))}
+        {filtersActive && (
+          <button
+            onClick={() => {
+              setQuery("");
+              setDateFilter("");
+              setStatusFilter("all");
+            }}
+            style={{ ...chip(false), borderColor: "#fecaca", color: "#b91c1c" }}
+          >
+            ✖ Réinitialiser
+          </button>
+        )}
+      </div>
     </div>
-  ) : null;
+  );
+
 
   const renderCard = (r: Resa) => {
     const assigned = (r as any).assigned_driver as string | undefined;
@@ -1671,6 +1752,72 @@ function CourseCard({
         <span>📍 {resa.depart}</span>
         <span>🏁 {resa.destination}</span>
       </div>
+
+      {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
+      {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
+        (() => {
+          const qb: React.CSSProperties = {
+            flex: "1 1 auto",
+            minWidth: 120,
+            borderRadius: 12,
+            padding: "11px 10px",
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: "pointer",
+            minHeight: 44,
+          };
+          return (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+              {resa.status === "pending" && (
+                <>
+                  <button
+                    onClick={handleAccept}
+                    disabled={busy}
+                    style={{ ...qb, background: "#0B0B0D", border: "2px solid #0B0B0D", color: "#C6A24A" }}
+                  >
+                    {busy ? "…" : "✅ Accepter"}
+                  </button>
+                  <button
+                    onClick={handleRefuse}
+                    disabled={busy}
+                    style={{ ...qb, background: "#fff", border: "2px solid #fecaca", color: "#b91c1c" }}
+                  >
+                    ✖ Refuser
+                  </button>
+                </>
+              )}
+              {resa.status === "accepted" && (
+                <button
+                  onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
+                  disabled={progressing}
+                  style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
+                >
+                  {progressing ? "…" : "🚖 Je pars"}
+                </button>
+              )}
+              {(resa.status === "accepted" || resa.status === "en_route") && (
+                <button
+                  onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
+                  disabled={progressing}
+                  style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
+                >
+                  {progressing ? "…" : "✅ Prise en charge"}
+                </button>
+              )}
+              {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                <button
+                  onClick={handleComplete}
+                  disabled={completing}
+                  style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
+                >
+                  {completing ? "…" : "🏁 Terminée"}
+                </button>
+              )}
+            </div>
+          );
+        })()}
+
+
 
       {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
       {resa.message && resa.message.trim().length > 0 && (
@@ -3720,41 +3867,47 @@ function SimulateurTab() {
   );
 }
 
+const DRIVER_LABEL: Record<string, string> = {
+  patricia: "Patricia",
+  alain: "Alain",
+  non_attribuee: "Non attribuée",
+};
+
 function StatsTab() {
-  const [stats, setStats] = useState({ revenus: 0, courses: 0, km: 0, note: 0, semCourses: 0, semRevenus: 0 });
+  const getStats = useServerFn(getDriverStats);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState(30);
+
+  const load = useCallback(async () => {
+    try {
+      const res = await getStats({ data: { token: getDriverToken(), days } });
+      setData(res);
+    } catch {
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [getStats, days]);
 
   useEffect(() => {
-    (async () => {
-      const monday = new Date();
-      monday.setDate(monday.getDate() - monday.getDay() + 1);
-      monday.setHours(0, 0, 0, 0);
-
-      const [{ data: semData }, { data: avisData }] = await Promise.all([
-        (supabase as any)
-          .from("reservations")
-          .select("prix_estime,distance_km,pickup_datetime,date_heure")
-          .gte("pickup_datetime", monday.toISOString())
-          .in("status", ["terminee", "completed"]),
-        (supabase as any).from("avis").select("note").eq("status", "approved"),
-      ]);
-
-      const sem: any[] = semData ?? [];
-      const revenus = sem.reduce((s: number, r: any) => s + (r.prix_estime ?? 0), 0);
-      const km = sem.reduce((s: number, r: any) => s + (r.distance_km ?? 0), 0);
-      const note = avisData?.length ? avisData.reduce((s: number, a: any) => s + a.note, 0) / avisData.length : 0;
-
-      setStats({
-        revenus: Math.round(revenus),
-        courses: sem.length,
-        km: Math.round(km),
-        note: Math.round(note * 10) / 10,
-        semCourses: sem.length,
-        semRevenus: Math.round(revenus),
-      });
-      setLoading(false);
-    })();
-  }, []);
+    setLoading(true);
+    load();
+    const t = setInterval(load, 15000);
+    const ch = (supabase as any)
+      .channel("drv-stats")
+      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .subscribe();
+    const onVis = () => {
+      if (!document.hidden) load();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      clearInterval(t);
+      supabase.removeChannel(ch);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [load]);
 
   if (loading)
     return (
@@ -3763,70 +3916,131 @@ function StatsTab() {
       </div>
     );
 
-  const days = ["L", "M", "M", "J", "V", "S", "D"];
-  const today = new Date().getDay();
-  const todayIdx = today === 0 ? 6 : today - 1;
+  if (!data)
+    return (
+      <div className="drv-empty">
+        <div style={{ fontSize: 14 }}>Statistiques indisponibles</div>
+      </div>
+    );
+
+  const maxDay = Math.max(1, ...data.byDay.map((d: any) => d.count));
+  const fmtMin = (v: number | null) => (v == null ? "—" : v >= 60 ? `${Math.round(v / 6) / 10} h` : `${v} min`);
 
   return (
     <>
-      <p className="drv-section">Cette semaine</p>
+      <div style={{ display: "flex", gap: 6, padding: "10px 0 2px", overflowX: "auto" }}>
+        {[7, 30, 90].map((d) => (
+          <button
+            key={d}
+            onClick={() => setDays(d)}
+            style={{
+              padding: "7px 14px",
+              borderRadius: 999,
+              border: "1px solid " + (days === d ? "#0B0B0D" : "#cbd5e1"),
+              background: days === d ? "#0B0B0D" : "#fff",
+              color: days === d ? "#C6A24A" : "#334155",
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: "pointer",
+              minHeight: 36,
+            }}
+          >
+            {d} jours
+          </button>
+        ))}
+        <span style={{ marginLeft: "auto", alignSelf: "center", fontSize: 11, color: "#94a3b8" }}>⏱ temps réel</span>
+      </div>
+
+      <p className="drv-section">Vue d'ensemble</p>
       <div className="drv-stat-grid">
         <div className="drv-stat">
+          <div className="drv-stat-lbl">Demandes</div>
+          <div className="drv-stat-val">{data.global.total}</div>
+          <div className="drv-stat-sub">{days} derniers jours</div>
+        </div>
+        <div className="drv-stat">
+          <div className="drv-stat-lbl">Courses terminées</div>
+          <div className="drv-stat-val">{data.global.completed}</div>
+          <div className="drv-stat-sub">{data.global.km} km</div>
+        </div>
+        <div className="drv-stat">
           <div className="drv-stat-lbl">Revenus</div>
-          <div className="drv-stat-val">{stats.revenus} €</div>
-          <div className="drv-stat-sub">semaine en cours</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Courses</div>
-          <div className="drv-stat-val">{stats.courses}</div>
-          <div className="drv-stat-sub">cette semaine</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Km parcourus</div>
-          <div className="drv-stat-val">{stats.km}</div>
-          <div className="drv-stat-sub">km cette semaine</div>
+          <div className="drv-stat-val">{data.global.revenue} €</div>
+          <div className="drv-stat-sub">courses terminées</div>
         </div>
         <div className="drv-stat">
           <div className="drv-stat-lbl">Note moyenne</div>
-          <div className="drv-stat-val">{stats.note > 0 ? stats.note : "—"}</div>
+          <div className="drv-stat-val">{data.note > 0 ? data.note : "—"}</div>
           <div className="drv-stat-sub" style={{ color: "#f59e0b" }}>
-            {stats.note > 0 ? "★ sur 5" : "Pas encore d'avis"}
+            {data.note > 0 ? "★ sur 5" : "Pas encore d'avis"}
           </div>
         </div>
       </div>
 
-      {/* Barre jours de la semaine */}
-      <p className="drv-section">Jours de la semaine</p>
+      <p className="drv-section">Par chauffeur</p>
+      {data.drivers
+        .filter((d: any) => d.total > 0 || d.driver !== "non_attribuee")
+        .map((d: any) => (
+          <div className="drv-card" key={d.driver} style={{ marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <span
+                style={{
+                  fontSize: 12.5,
+                  fontWeight: 800,
+                  padding: "4px 10px",
+                  borderRadius: 999,
+                  background: d.driver === "patricia" ? "#fdf2f8" : d.driver === "alain" ? "#eff6ff" : "#f1f5f9",
+                  color: d.driver === "patricia" ? "#9d174d" : d.driver === "alain" ? "#1d4ed8" : "#475569",
+                }}
+              >
+                👤 {DRIVER_LABEL[d.driver]}
+              </span>
+              <span style={{ fontSize: 12, color: "#64748b", fontWeight: 700 }}>{d.total} demande(s)</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+              {[
+                { l: "Taux d'acceptation", v: `${d.acceptanceRate}%` },
+                { l: "Terminées", v: String(d.completed) },
+                { l: "Délai d'acceptation", v: fmtMin(d.avgAcceptMinutes) },
+                { l: "Durée moyenne course", v: fmtMin(d.avgTripMinutes) },
+                { l: "En attente", v: String(d.pending) },
+                { l: "Revenus", v: `${d.revenue} €` },
+              ].map((c) => (
+                <div key={c.l} style={{ background: "#f8fafc", borderRadius: 10, padding: "8px 10px" }}>
+                  <div style={{ fontSize: 10.5, color: "#64748b", fontWeight: 700, textTransform: "uppercase" }}>
+                    {c.l}
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: "#0f172a" }}>{c.v}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 8, height: 6, background: "#e2e8f0", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ width: `${d.acceptanceRate}%`, height: "100%", background: "#16a34a" }} />
+            </div>
+          </div>
+        ))}
+
+      <p className="drv-section">7 derniers jours</p>
       <div className="drv-card">
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 60, marginBottom: 6 }}>
-          {days.map((d, i) => (
-            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 70, marginBottom: 6 }}>
+          {data.byDay.map((d: any) => (
+            <div key={d.date} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+              <div style={{ textAlign: "center", fontSize: 10.5, color: "#0f172a", fontWeight: 700 }}>{d.count}</div>
               <div
                 style={{
-                  flex: 1,
                   width: "100%",
                   borderRadius: "4px 4px 0 0",
-                  background: i === todayIdx ? "#0f172a" : "#e2e8f0",
-                  minHeight: i === todayIdx ? 40 : 20,
-                  alignSelf: "flex-end",
+                  background: "#0f172a",
+                  height: `${Math.max(6, (d.count / maxDay) * 52)}px`,
                 }}
               />
             </div>
           ))}
         </div>
         <div style={{ display: "flex", gap: 6 }}>
-          {days.map((d, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1,
-                textAlign: "center",
-                fontSize: 11,
-                color: i === todayIdx ? "#0f172a" : "#94a3b8",
-                fontWeight: i === todayIdx ? 700 : 400,
-              }}
-            >
-              {d}
+          {data.byDay.map((d: any) => (
+            <div key={d.date} style={{ flex: 1, textAlign: "center", fontSize: 10.5, color: "#94a3b8" }}>
+              {new Date(d.date).toLocaleDateString("fr-FR", { weekday: "short" }).slice(0, 3)}
             </div>
           ))}
         </div>
@@ -3844,6 +4058,138 @@ function StatsTab() {
     </>
   );
 }
+
+// ── Onglet Historique : demandes, attributions et statuts horodatés ────────
+function HistoriqueTab({ driverId }: { driverId?: string }) {
+  const listEvents = useServerFn(listReservationEvents);
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "patricia" | "alain">(
+    driverId === "patricia" || driverId === "alain" ? (driverId as any) : "all",
+  );
+
+  const load = useCallback(async () => {
+    try {
+      const res = await listEvents({ data: { token: getDriverToken(), limit: 120, driver: filter } });
+      setRows((res as any)?.events ?? []);
+    } catch {
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [listEvents, filter]);
+
+  useEffect(() => {
+    setLoading(true);
+    load();
+    const t = setInterval(load, 20000);
+    const ch = (supabase as any)
+      .channel("drv-history")
+      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .subscribe();
+    return () => {
+      clearInterval(t);
+      supabase.removeChannel(ch);
+    };
+  }, [load]);
+
+  const eventLabel = (e: any) => {
+    if (e.event_type === "created") return "🆕 Nouvelle demande";
+    if (e.event_type === "assigned")
+      return `↔ Attribuée à ${DRIVER_LABEL[e.to_value] ?? e.to_value ?? "—"}${e.from_value ? ` (avant : ${DRIVER_LABEL[e.from_value] ?? e.from_value})` : ""}`;
+    const map: Record<string, string> = {
+      accepted: "✅ Acceptée",
+      en_route: "🚖 En route",
+      arrived: "📍 Prise en charge",
+      completed: "🏁 Terminée",
+      terminee: "🏁 Terminée",
+      cancelled: "✖ Annulée / refusée",
+    };
+    return map[e.to_value] ?? `Statut : ${e.to_value}`;
+  };
+
+  return (
+    <>
+      <div style={{ display: "flex", gap: 6, padding: "10px 0 2px" }}>
+        {(
+          [
+            { k: "all", l: "Tout" },
+            { k: "patricia", l: "Patricia" },
+            { k: "alain", l: "Alain" },
+          ] as const
+        ).map((o) => (
+          <button
+            key={o.k}
+            onClick={() => setFilter(o.k as any)}
+            style={{
+              flex: 1,
+              padding: "8px 10px",
+              borderRadius: 999,
+              border: "1px solid " + (filter === o.k ? "#0B0B0D" : "#cbd5e1"),
+              background: filter === o.k ? "#0B0B0D" : "#fff",
+              color: filter === o.k ? "#C6A24A" : "#334155",
+              fontSize: 12.5,
+              fontWeight: 700,
+              cursor: "pointer",
+              minHeight: 38,
+            }}
+          >
+            {o.l}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="drv-empty">
+          <div style={{ fontSize: 14 }}>Chargement…</div>
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="drv-empty">
+          <div style={{ fontSize: 14 }}>Aucun évènement pour le moment</div>
+        </div>
+      ) : (
+        <div className="drv-card">
+          {rows.map((e) => (
+            <div key={e.id} style={{ padding: "9px 0", borderBottom: "1px solid #f1f5f9" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{eventLabel(e)}</span>
+                <span style={{ fontSize: 11, color: "#94a3b8", whiteSpace: "nowrap" }}>
+                  {new Date(e.created_at).toLocaleString("fr-FR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+                {e.client_name ? `${e.client_name} · ` : ""}
+                {e.depart ?? "—"} → {e.destination ?? "—"}
+              </div>
+              {e.driver && (
+                <span
+                  style={{
+                    display: "inline-block",
+                    marginTop: 4,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    background: e.driver === "patricia" ? "#fdf2f8" : "#eff6ff",
+                    color: e.driver === "patricia" ? "#9d174d" : "#1d4ed8",
+                  }}
+                >
+                  👤 {DRIVER_LABEL[e.driver] ?? e.driver}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 
 // ── Mini diagnostic des échecs push (remplace l'ancien lien /admin/dashboard) ──
 function PushDiagnostic() {
