@@ -99,7 +99,7 @@ function DestinationPage() {
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
           areaServed: ["Charente", "Charente-Maritime"],
-          telephone: DRIVERS.map((d) => d.phoneIntl),
+          telephone: DRIVERS.map((d) => d.intl),
         },
         areaServed: dest.dept,
         description: c.metaDescription,
@@ -151,8 +151,8 @@ function DestinationPage() {
         </Link>
         {DRIVERS.map((d) => (
           <a
-            key={d.phone}
-            href={`tel:${d.phoneIntl}`}
+            key={d.tel}
+            href={`tel:${d.intl}`}
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border px-5 py-3.5 text-sm font-semibold transition hover:border-primary/60"
           >
             <Phone className="h-4 w-4 text-primary" /> {u.call} {d.name}
