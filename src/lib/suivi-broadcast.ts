@@ -31,7 +31,7 @@ export function broadcastSuiviUpdate(reservationId: string | null | undefined, k
 /** Prévient les tableaux de bord chauffeur ouverts qu'une résa vient d'arriver. */
 export function broadcastDriverFeed(kind: string = "reservation") {
   try {
-    const ch = (supabase as any).channel("driver-feed-emit", {
+    const ch = (supabase as any).channel("driver-feed", {
       config: { broadcast: { self: false, ack: false } },
     });
     ch.subscribe((status: string) => {
