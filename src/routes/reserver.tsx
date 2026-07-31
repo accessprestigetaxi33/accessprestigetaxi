@@ -1690,7 +1690,7 @@ function ReservationPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
             <button
               onClick={() => navigate({ to: "/" })}
-              aria-label="Retour au site"
+              aria-label={lang === "en" ? UI.en.backToSite : UI.fr.backToSite}
               style={{
                 background: "rgba(201,168,76,0.15)",
                 border: "1px solid rgba(201,168,76,0.35)",
@@ -1893,7 +1893,7 @@ function ReservationPage() {
                 <button
                   type="button"
                   onClick={fromCoord ? startVoiceRecognition : startVoiceRecognitionBoth}
-                  title={fromCoord ? "Dictez uniquement la destination" : "Dictez le trajet complet"}
+                  title={fromCoord ? (lang === "en" ? UI.en.dictateDestOnly : UI.fr.dictateDestOnly) : (lang === "en" ? UI.en.dictateFullTrip : UI.fr.dictateFullTrip)}
                   style={{
                     background: voiceBothListening || voiceListening ? "rgba(220,38,38,0.08)" : "rgba(201,168,76,0.1)",
                     border: `1.5px solid ${voiceBothListening || voiceListening ? "rgba(220,38,38,0.4)" : "rgba(201,168,76,0.5)"}`,
@@ -1911,10 +1911,10 @@ function ReservationPage() {
                   }}
                 >
                   {voiceBothListening || voiceListening
-                    ? "⏹ J'écoute…"
+                    ? (lang === "en" ? UI.en.listening : UI.fr.listening)
                     : fromCoord
-                      ? "🎤 Destination"
-                      : "🎤 Dicter le trajet"}
+                      ? (lang === "en" ? UI.en.dictateDestBtn : UI.fr.dictateDestBtn)
+                      : (lang === "en" ? UI.en.dictateTripBtn : UI.fr.dictateTripBtn)}
                 </button>
               </div>
 
@@ -1948,7 +1948,7 @@ function ReservationPage() {
                         if (departDebounceRef.current) clearTimeout(departDebounceRef.current);
                       }}
                       onBlur={resolveDepartAddress}
-                      placeholder="Adresse de départ"
+                      placeholder={lang === "en" ? UI.en.departPlaceholder : UI.fr.departPlaceholder}
                       autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
@@ -1979,7 +1979,7 @@ function ReservationPage() {
                         fontSize: 16,
                         fontWeight: 700,
                       }}
-                      aria-label="Me géolocaliser"
+                      aria-label={lang === "en" ? UI.en.geolocateAria : UI.fr.geolocateAria}
                     >
                       {geolocLoading ? "⏳" : "📍"}
                     </button>
@@ -2041,7 +2041,7 @@ function ReservationPage() {
                             textDecoration: "underline",
                           }}
                         >
-                          Modifier
+                          {lang === "en" ? UI.en.edit : UI.fr.edit}
                         </button>
                       )}
                     </div>
@@ -2277,8 +2277,8 @@ function ReservationPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
-                    { k: "prenom" as const, label: t("res.loc.firstname"), ph: "Jean", icon: "👤" },
-                    { k: "nom" as const, label: t("res.loc.lastname"), ph: "Dupont", icon: "👤" },
+                    { k: "prenom" as const, label: t("res.loc.firstname"), ph: u.firstNamePh, icon: "👤" },
+                    { k: "nom" as const, label: t("res.loc.lastname"), ph: u.lastNamePh, icon: "👤" },
                   ].map(({ k, label, ph, icon }) => (
                     <div key={k}>
                       <label
@@ -2315,7 +2315,7 @@ function ReservationPage() {
                 </div>
                 {[
                   { k: "phone" as const, label: t("res.loc.phone"), ph: "06 12 34 56 78", type: "tel", icon: "📱" },
-                  { k: "email" as const, label: t("res.loc.email"), ph: "jean@exemple.fr", type: "email", icon: "✉️" },
+                  { k: "email" as const, label: t("res.loc.email"), ph: u.emailPh, type: "email", icon: "✉️" },
                 ].map(({ k, label, ph, type, icon }) => (
                   <div key={k}>
                     <label
@@ -2647,18 +2647,14 @@ function ReservationPage() {
           </div>
         ) : (
           <div style={{ fontSize: 11, color: "#999", padding: "8px 16px", textAlign: "center" }}>
-            ⚠️ Bouton caché: pushStatus={pushStatus} | Notification={String("Notification" in window)}
+            ⚠️ {u.hiddenButtonDebug}: pushStatus={pushStatus} | Notification={String("Notification" in window)}
           </div>
         )}
       </div>
       <ListeningOverlay
         open={anyListening}
-        label={voiceBothListening ? "Je vous écoute…" : "Dictez la destination"}
-        hint={
-          voiceBothListening
-            ? "Dites votre trajet, ex : « 12 rue de la République à aéroport de Bordeaux »"
-            : "Dites uniquement votre destination. Touchez « Arrêter » pour valider."
-        }
+        label={voiceBothListening ? u.listeningLabel : u.dictateDestinationLabel}
+        hint={voiceBothListening ? u.listeningHintBoth : u.listeningHintDest}
         onCancel={stopAllListening}
       />
     </div>
