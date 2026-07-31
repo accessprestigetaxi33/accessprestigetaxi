@@ -5,8 +5,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
 
-const PHONE = "0650260015";
-const PHONE_DISPLAY = "06 50 26 00 15";
+import { DRIVERS } from "@/data/drivers";
 
 export function SiteHeader() {
   const t = useT();
@@ -53,12 +52,20 @@ export function SiteHeader() {
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
           <LanguageSwitcher />
-          <a
-            href={`tel:${PHONE}`}
-            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-semibold transition hover:border-primary"
-          >
-            <Phone className="h-4 w-4 text-primary" /> {PHONE_DISPLAY}
-          </a>
+          {DRIVERS.map((d) => (
+            <a
+              key={d.tel}
+              href={`tel:${d.tel}`}
+              aria-label={`Appeler ${d.name} au ${d.display}`}
+              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-semibold transition hover:border-primary lg:text-sm"
+            >
+              <Phone className="h-4 w-4 shrink-0 text-primary" />
+              <span className="flex flex-col items-start leading-tight">
+                <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">{d.name}</span>
+                <span className="tabular-nums">{d.display}</span>
+              </span>
+            </a>
+          ))}
           <Link
             to="/client/login"
             aria-label="Espace client"
@@ -74,15 +81,21 @@ export function SiteHeader() {
           </Link>
         </div>
 
-        <div className="site-header-mobile-actions flex min-w-0 shrink-0 items-center gap-1.5 md:hidden">
-          <a
-            href={`tel:${PHONE}`}
-            aria-label="Appeler"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"
-          >
-            <Phone className="h-4 w-4" />
-          </a>
-          <ThemeToggle className="h-10 w-10 shrink-0" />
+        <div className="site-header-mobile-actions flex min-w-0 shrink-0 items-center gap-1 md:hidden">
+          {DRIVERS.map((d) => (
+            <a
+              key={d.tel}
+              href={`tel:${d.tel}`}
+              aria-label={`Appeler ${d.name} au ${d.display}`}
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-md bg-primary px-1.5 text-[10px] font-bold uppercase tracking-tight text-primary-foreground xs:px-2 xs:text-[11px]"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              {d.name}
+            </a>
+          ))}
+          <span className="hidden sm:contents">
+            <ThemeToggle className="h-10 w-10 shrink-0" />
+          </span>
           <LanguageSwitcher className="site-header-language shrink-0" />
           <button
             type="button"
@@ -111,12 +124,19 @@ export function SiteHeader() {
               </Link>
             ))}
             <div className="mt-4 mb-3 flex flex-col gap-2.5">
-              <a
-                href={`tel:${PHONE}`}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-base font-semibold"
-              >
-                <Phone className="h-5 w-5 text-primary" /> {PHONE_DISPLAY}
-              </a>
+              {DRIVERS.map((d) => (
+                <a
+                  key={d.tel}
+                  href={`tel:${d.tel}`}
+                  aria-label={`Appeler ${d.name} au ${d.display}`}
+                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-base font-semibold"
+                >
+                  <Phone className="h-5 w-5 shrink-0 text-primary" />
+                  <span className="tabular-nums">
+                    {d.name} · {d.display}
+                  </span>
+                </a>
+              ))}
               <Link
                 to="/client/login"
                 onClick={() => setOpen(false)}
