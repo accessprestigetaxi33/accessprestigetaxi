@@ -15,6 +15,14 @@ import {
 import { useI18n } from "@/i18n/I18nProvider";
 import logoLockup from "@/assets/apt-hero-banner.png";
 import { DRIVERS } from "@/data/drivers";
+import { ReviewForm } from "@/components/ReviewForm";
+import { GUIDE_ENTRIES } from "@/data/guide-charente";
+
+const BLOG_PICKS = ["hotel", "restaurant", "visite"]
+  .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
+  .filter((e): e is (typeof GUIDE_ENTRIES)[number] => Boolean(e));
+
+
 
 
 const COPY = {
