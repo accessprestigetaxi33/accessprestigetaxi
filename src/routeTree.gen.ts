@@ -19,6 +19,7 @@ import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
 import { Route as ReservationRouteImport } from './routes/reservation'
 import { Route as ReserverRouteImport } from './routes/reserver'
+import { Route as SecuriteRouteImport } from './routes/securite'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
@@ -99,6 +100,11 @@ const ReservationRoute = ReservationRouteImport.update({
 const ReserverRoute = ReserverRouteImport.update({
   id: '/reserver',
   path: '/reserver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecuriteRoute = SecuriteRouteImport.update({
+  id: '/securite',
+  path: '/securite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
+  '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
+  '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -360,6 +368,7 @@ export interface FileRoutesById {
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
+  '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -405,6 +414,7 @@ export interface FileRouteTypes {
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
+    | '/securite'
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
@@ -448,6 +458,7 @@ export interface FileRouteTypes {
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
+    | '/securite'
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
@@ -491,6 +502,7 @@ export interface FileRouteTypes {
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
+    | '/securite'
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
@@ -535,6 +547,7 @@ export interface RootRouteChildren {
   QrGeneratorRoute: typeof QrGeneratorRoute
   ReservationRoute: typeof ReservationRouteWithChildren
   ReserverRoute: typeof ReserverRoute
+  SecuriteRoute: typeof SecuriteRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiManifestRoute: typeof ApiManifestRoute
@@ -636,6 +649,13 @@ declare module '@tanstack/react-router' {
       path: '/reserver'
       fullPath: '/reserver'
       preLoaderRoute: typeof ReserverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/securite': {
+      id: '/securite'
+      path: '/securite'
+      fullPath: '/securite'
+      preLoaderRoute: typeof SecuriteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -892,6 +912,7 @@ const rootRouteChildren: RootRouteChildren = {
   QrGeneratorRoute: QrGeneratorRoute,
   ReservationRoute: ReservationRouteWithChildren,
   ReserverRoute: ReserverRoute,
+  SecuriteRoute: SecuriteRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiManifestRoute: ApiManifestRoute,
