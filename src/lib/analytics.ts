@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { gaEvent } from "@/lib/ga4";
 
 const SESSION_KEY = "apt.analytics.sid";
 
@@ -32,6 +33,9 @@ export type AnalyticsEvent =
  */
 export function trackEvent(event: AnalyticsEvent, meta?: Record<string, unknown>): void {
   if (typeof window === "undefined") return;
+
+  // Miroir Google Analytics 4 (no-op si GA n'est pas configuré)
+  gaEvent(event.slice(0, 40).replace(/[^a-zA-Z0-9_]/g, "_"), meta as Record<string, unknown>);
 
   const page =
     window.location.pathname +
