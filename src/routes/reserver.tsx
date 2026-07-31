@@ -5,6 +5,8 @@ import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { createReservationPublic, getTaxiAvailability } from "@/lib/reservation-create.functions";
+import { unsubscribePush } from "@/lib/push.functions";
 import { broadcastDriverFeed } from "@/lib/suivi-broadcast";
 import {
   calculerPrix,
@@ -29,9 +31,9 @@ import { ListeningOverlay } from "@/components/ListeningOverlay";
 import { DICTS, LANGUAGES, type Lang } from "@/i18n/dict";
 import { useI18n } from "@/i18n/I18nProvider";
 
-const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Access Prestige Taxi";
+const RESERVER_TITLE = "Réserver un taxi en Charente & Charente-Maritime — Access Prestige Taxi";
 const RESERVER_DESC =
-  "Réservez votre taxi à Bordeaux en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
+  "Réservez votre taxi en Charente et Charente-Maritime en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
 const RESERVER_URL = "https://accessprestigetaxi.lovable.app/reserver";
 
 export const Route = createFileRoute("/reserver")({
@@ -55,7 +57,7 @@ export const Route = createFileRoute("/reserver")({
   component: ReservationPage,
 });
 
-const BORDEAUX_CENTER: [number, number] = [44.8378, -0.5792];
+const SERVICE_CENTER: [number, number] = [45.6486, 0.1562]; // Angoulême, Charente
 const NAMED_PLACE_REGEX =
   /aeroport|airport|gare|station|hopital|clinique|universite|fac|campus|centre commercial|centre|stade|mairie|hotel de ville|prefecture|sous prefecture|eglise|cathedrale|basilique|chateau|lycee|college|ecole|musee|theatre|opera|cinema|parc|jardin|plage|port|marina|zoo|monument|lieu dit|lieu-dit|supermarche|hypermarche|supermarket|magasin|commerce|marche|carrefour|leclerc|lidl|aldi|auchan|intermarche|super u|hyper u|casino|monoprix|franprix|biocoop|grand frais|picard|decathlon|ikea|fnac|darty|leroy merlin|castorama|brico|mcdo|mcdonald|kfc|burger king|quick|subway|starbucks|pizza/i;
 function isNamedPlaceQuery(value: string): boolean {
@@ -70,7 +72,7 @@ const UI = {
     geoInvalid: "Position invalide. Saisissez l\u2019adresse de départ manuellement.",
     geoImprecise: (m: number) =>
       `Signal GPS trop imprécis (${m} m). Saisissez l\u2019adresse exacte pour éviter une mauvaise prise en charge.`,
-    geoIncoherent: "Position incohérente avec la zone de Bordeaux. Saisissez l\u2019adresse exacte de départ.",
+    geoIncoherent: "Position incohérente avec la zone Charente / Charente-Maritime. Saisissez l\u2019adresse exacte de départ.",
     detectingAuto: "Détection automatique du départ…",
     locating: "Localisation en cours…",
     approxIp: "Position approximative (via IP) — vous pouvez préciser l'adresse",
@@ -102,7 +104,7 @@ const UI = {
     hiddenButtonDebug: "Bouton caché",
     listeningLabel: "Je vous écoute…",
     dictateDestinationLabel: "Dictez la destination",
-    listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à aéroport de Bordeaux »",
+    listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à gare d\u2019Angoulême »",
     listeningHintDest: "Dites uniquement votre destination. Touchez « Arrêter » pour valider.",
   },
   en: {
@@ -113,7 +115,7 @@ const UI = {
     geoInvalid: "Invalid position. Please enter the pickup address manually.",
     geoImprecise: (m: number) =>
       `GPS signal too imprecise (${m} m). Enter the exact address to avoid a wrong pickup point.`,
-    geoIncoherent: "Position inconsistent with the Bordeaux area. Please enter the exact pickup address.",
+    geoIncoherent: "Position inconsistent with the Charente area. Please enter the exact pickup address.",
     detectingAuto: "Automatically detecting pickup location…",
     locating: "Locating…",
     approxIp: "Approximate position (via IP) — you can refine the address",
@@ -145,13 +147,13 @@ const UI = {
     hiddenButtonDebug: "Button hidden",
     listeningLabel: "Listening…",
     dictateDestinationLabel: "Dictate destination",
-    listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Bordeaux airport »",
+    listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Angoulême station »",
     listeningHintDest: "Say only your destination. Tap « Stop » to confirm.",
   },
 } as const;
 
 const MAX_AUTO_GEO_ACCURACY_M = 1500;
-const MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM = 130;
+const MAX_AUTO_GEO_DISTANCE_KM = 130;
 
 interface FormState {
   depart: string;
@@ -195,13 +197,13 @@ function shortLabel(label: string): string {
   if (isNamedPlace) {
     // Cherche la ville : première partie qui ne contient pas de chiffre et n'est pas un code postal ni une région connue
     const skipWords =
-      /gironde|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|département|region|^\d{5}$/i;
+      /gironde|charente|charente-maritime|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|département|region|^\d{5}$/i;
     const ville = parts.slice(1).find((p) => !skipWords.test(p) && !/^\d/.test(p));
     return ville ? `${parts[0]}, ${ville}` : parts[0];
   }
 
   // Adresse classique : rue + ville (ignore code postal, département, région, France)
-  const skipWords = /gironde|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|^\d{5}$/i;
+  const skipWords = /gironde|charente|charente-maritime|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|^\d{5}$/i;
   const kept = parts.filter((p) => !skipWords.test(p));
   return kept.slice(0, 2).join(", ");
 }
@@ -233,7 +235,9 @@ async function geocodeFullAddress(address: string): Promise<{ coord: [number, nu
   // Variantes spécifiques pour les lieux nommés courants
   const namedPlaceVariants: string[] = [];
   if (/aeroport|airport/.test(normalized)) {
-    if (/bordeaux|merignac|bod/.test(normalized)) {
+    if (/angouleme|cognac|champniers|brie/.test(normalized)) {
+      namedPlaceVariants.push("Aéroport d'Angoulême-Cognac, Champniers", "Angouleme Cognac Airport");
+    } else if (/bordeaux|merignac|bod/.test(normalized)) {
       namedPlaceVariants.push(
         "Aéroport de Bordeaux-Mérignac",
         "Bordeaux-Mérignac Airport",
@@ -251,7 +255,9 @@ async function geocodeFullAddress(address: string): Promise<{ coord: [number, nu
     }
   }
   if (/gare/.test(normalized)) {
-    if (/bordeaux|saint.jean/.test(normalized)) {
+    if (/angouleme/.test(normalized)) {
+      namedPlaceVariants.push("Gare d'Angoulême, Charente");
+    } else if (/bordeaux|saint.jean/.test(normalized)) {
       namedPlaceVariants.push("Gare de Bordeaux-Saint-Jean");
     } else {
       const cityToken = normalized
@@ -272,8 +278,9 @@ async function geocodeFullAddress(address: string): Promise<{ coord: [number, nu
     short,
     short + ", France",
     parts[0] + ", France",
-    parts[0] + ", Bordeaux, France",
-    parts[0] + ", Gironde, France",
+    parts[0] + ", Angoulême, France",
+    parts[0] + ", Charente, France",
+    parts[0] + ", Charente-Maritime, France",
   ].filter((v, i, arr) => v.length > 2 && arr.indexOf(v) === i);
 
   for (const query of attempts) {
@@ -414,6 +421,78 @@ const CANONICAL_PLACES: Array<{
   coord: [number, number]; // [lat, lng]
   subPlaces?: Array<{ label: string; coord: [number, number] }>;
 }> = [
+  // ── Charente (16) ──────────────────────────────────────────────────────────
+  {
+    match: /gare.*(angouleme|angoulême)|(angouleme|angoulême).*gare/,
+    label: "Gare d'Angoulême, Place de la Gare, 16000 Angoulême",
+    coord: [45.6553, 0.1626],
+    subPlaces: [
+      { label: "Gare d'Angoulême — Parvis / arrêt taxis, 16000 Angoulême", coord: [45.6553, 0.1626] },
+      { label: "Gare d'Angoulême — Dépose-minute, 16000 Angoulême", coord: [45.6549, 0.1633] },
+    ],
+  },
+  {
+    match: /(aeroport|airport).*(angouleme|angoulême|cognac|brie|champniers)|(angouleme|angoulême|cognac).*(aeroport|airport)/,
+    label: "Aéroport d'Angoulême-Cognac, 249 Rue Jean Mermoz, 16430 Champniers",
+    coord: [45.7291, 0.2205],
+  },
+  {
+    match: /gare.*cognac|cognac.*gare/,
+    label: "Gare de Cognac, Place de la Gare, 16100 Cognac",
+    coord: [45.6846, -0.3259],
+  },
+  {
+    match: /(hopital|hôpital|chu|ch).*(girac|angouleme|angoulême)|girac/,
+    label: "Centre hospitalier d'Angoulême — Girac, 16470 Saint-Michel",
+    coord: [45.6353, 0.1197],
+  },
+  {
+    match: /(cite|cité).*(bande dessinee|bande dessinée|bd)|musee.*bande/,
+    label: "Cité internationale de la BD, 121 Rue de Bordeaux, 16000 Angoulême",
+    coord: [45.6494, 0.1494],
+  },
+  // ── Charente-Maritime (17) ─────────────────────────────────────────────────
+  {
+    match: /gare.*(la rochelle|rochelle)|(la rochelle|rochelle).*gare/,
+    label: "Gare de La Rochelle-Ville, Boulevard Maréchal Joffre, 17000 La Rochelle",
+    coord: [46.1531, -1.1454],
+  },
+  {
+    match: /(aeroport|airport).*(rochelle|ile de re|île de ré)|^lrh$/,
+    label: "Aéroport de La Rochelle-Île de Ré, Rue du Jura, 17000 La Rochelle",
+    coord: [46.1792, -1.1953],
+  },
+  {
+    match: /gare.*saintes|saintes.*gare/,
+    label: "Gare de Saintes, Avenue de la Marne, 17100 Saintes",
+    coord: [45.7462, -0.636],
+  },
+  {
+    match: /gare.*rochefort|rochefort.*gare/,
+    label: "Gare de Rochefort, Avenue Wilson, 17300 Rochefort",
+    coord: [45.9414, -0.9615],
+  },
+  {
+    match: /gare.*royan|royan.*gare/,
+    label: "Gare de Royan, Place de la Gare, 17200 Royan",
+    coord: [45.6262, -1.0171],
+  },
+  {
+    match: /(zoo|palmyre)/,
+    label: "Zoo de La Palmyre, 6 Avenue de Royan, 17570 Les Mathes",
+    coord: [45.6939, -1.1774],
+  },
+  {
+    match: /(ile|île).*(oleron|oléron)|oleron|oléron/,
+    label: "Île d'Oléron (Saint-Pierre-d'Oléron), 17310",
+    coord: [45.9459, -1.3116],
+  },
+  {
+    match: /(ile|île).*(de re|de ré)|saint.martin.de.re/,
+    label: "Saint-Martin-de-Ré, Île de Ré, 17410",
+    coord: [46.2019, -1.3667],
+  },
+  // ── Hors département, destinations longue distance fréquentes ──────────────
   {
     match: /(aeroport|airport).*(bordeaux|merignac|bod)|^bod$|merignac.*(aeroport|airport)/,
     label: "Aéroport de Bordeaux-Mérignac (Terminal), 33700 Mérignac",
@@ -421,49 +500,30 @@ const CANONICAL_PLACES: Array<{
     subPlaces: [
       { label: "Aéroport Bordeaux-Mérignac — Hall A (Départs), 33700 Mérignac", coord: [44.8295, -0.7166] },
       { label: "Aéroport Bordeaux-Mérignac — Hall B (Arrivées), 33700 Mérignac", coord: [44.8281, -0.715] },
-      { label: "Aéroport Bordeaux-Mérignac — Parking P1, 33700 Mérignac", coord: [44.8275, -0.7138] },
       { label: "Aéroport Bordeaux-Mérignac — Terminal Billi (low-cost), 33700 Mérignac", coord: [44.8235, -0.7193] },
     ],
   },
   {
-    match: /gare.*(saint.jean|st.jean|bordeaux)|bordeaux.*(saint.jean|st.jean).*gare|gare.*bordeaux/,
+    match: /gare.*(bordeaux|saint.jean|st.jean)|bordeaux.*gare/,
     label: "Gare de Bordeaux-Saint-Jean, Rue Charles Domercq, 33800 Bordeaux",
     coord: [44.8259, -0.5564],
-    subPlaces: [
-      { label: "Gare Saint-Jean — Parvis principal (Rue Charles Domercq), 33800 Bordeaux", coord: [44.8259, -0.5564] },
-      {
-        label: "Gare Saint-Jean — Sortie Belcier (Rue Amédée Saint-Germain), 33800 Bordeaux",
-        coord: [44.8243, -0.5554],
-      },
-      { label: "Gare Saint-Jean — Dépose-minute (Rue Charles Domercq), 33800 Bordeaux", coord: [44.8262, -0.5572] },
-      { label: "Gare Saint-Jean — Arrêt taxis (Parvis Louis Armand), 33800 Bordeaux", coord: [44.8256, -0.5568] },
-    ],
   },
   {
-    match: /place.*(quinconces|kinconce)/,
-    label: "Place des Quinconces, 33000 Bordeaux",
-    coord: [44.8444, -0.5739],
+    match: /futuroscope/,
+    label: "Futuroscope, Avenue René Monory, 86360 Chasseneuil-du-Poitou",
+    coord: [46.6704, 0.3701],
   },
   {
-    match: /(matmut|stade.*atlantique|stade.*bordeaux)/,
-    label: "Matmut Atlantique, Cours Jules Ladoumègue, 33300 Bordeaux",
-    coord: [44.8959, -0.5614],
+    match: /gare.*poitiers|poitiers.*gare/,
+    label: "Gare de Poitiers, Boulevard du Grand Cerf, 86000 Poitiers",
+    coord: [46.5822, 0.3333],
   },
   {
-    match: /cite.*du.*vin|cité.*du.*vin/,
-    label: "La Cité du Vin, Esplanade de Pontac, 33300 Bordeaux",
-    coord: [44.8627, -0.5505],
+    match: /gare.*niort|niort.*gare/,
+    label: "Gare de Niort, Rue Mazagran, 79000 Niort",
+    coord: [46.3175, -0.4626],
   },
-  {
-    match: /bordeaux.lac|lac.*bordeaux/,
-    label: "Bordeaux Lac, 33300 Bordeaux",
-    coord: [44.8861, -0.5836],
-  },
-  {
-    match: /meriadeck|mériadeck/,
-    label: "Mériadeck, 33000 Bordeaux",
-    coord: [44.8389, -0.5836],
-  },
+
 ];
 
 function findCanonicalPlace(query: string, origin: [number, number]): AddressChoice | null {
@@ -571,13 +631,22 @@ async function searchNearbyAddressChoices(
 
   const normalizedQ = normalizeAddressText(query);
   const extraVariants: string[] = [];
+  if (/aeroport|airport/.test(normalizedQ) && /angouleme|cognac|champniers/.test(normalizedQ)) {
+    extraVariants.push("Aéroport d'Angoulême-Cognac", "Angouleme Cognac Airport");
+  }
+  if (/aeroport|airport/.test(normalizedQ) && /rochelle|ile de re/.test(normalizedQ)) {
+    extraVariants.push("Aéroport de La Rochelle-Île de Ré", "La Rochelle Airport");
+  }
   if (/aeroport|airport/.test(normalizedQ) && /bordeaux|merignac|bod/.test(normalizedQ)) {
     extraVariants.push("Aéroport de Bordeaux-Mérignac", "Bordeaux-Mérignac Airport", "BOD Bordeaux");
   }
-  if (/gare|saint.jean|st.jean/.test(normalizedQ)) {
-    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux", "Bordeaux Saint-Jean");
+  if (/gare/.test(normalizedQ) && /angouleme|charente/.test(normalizedQ)) {
+    extraVariants.push("Gare d'Angoulême", "Gare Angoulême Charente");
   }
-  const variants = [...new Set([query, `${query}, Gironde`, ...extraVariants])];
+  if (/gare/.test(normalizedQ) && /saint.jean|st.jean|bordeaux/.test(normalizedQ)) {
+    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux");
+  }
+  const variants = [...new Set([query, `${query}, Charente`, `${query}, Charente-Maritime`, ...extraVariants])];
   const groups = await Promise.all(variants.map((v) => searchAddress(v, 6).catch(() => [])));
   const googleChoices = groups.flat().map((item) => ({
     label: shortLabel(item.label),
@@ -611,13 +680,22 @@ async function searchNearbyAddressChoicesStreaming(
 
   const normalizedQ = normalizeAddressText(query);
   const extraVariants: string[] = [];
+  if (/aeroport|airport/.test(normalizedQ) && /angouleme|cognac|champniers/.test(normalizedQ)) {
+    extraVariants.push("Aéroport d'Angoulême-Cognac", "Angouleme Cognac Airport");
+  }
+  if (/aeroport|airport/.test(normalizedQ) && /rochelle|ile de re/.test(normalizedQ)) {
+    extraVariants.push("Aéroport de La Rochelle-Île de Ré", "La Rochelle Airport");
+  }
   if (/aeroport|airport/.test(normalizedQ) && /bordeaux|merignac|bod/.test(normalizedQ)) {
     extraVariants.push("Aéroport de Bordeaux-Mérignac", "Bordeaux-Mérignac Airport", "BOD Bordeaux");
   }
-  if (/gare|saint.jean|st.jean/.test(normalizedQ)) {
-    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux", "Bordeaux Saint-Jean");
+  if (/gare/.test(normalizedQ) && /angouleme|charente/.test(normalizedQ)) {
+    extraVariants.push("Gare d'Angoulême", "Gare Angoulême Charente");
   }
-  const variants = [...new Set([query, `${query}, Gironde`, ...extraVariants])];
+  if (/gare/.test(normalizedQ) && /saint.jean|st.jean|bordeaux/.test(normalizedQ)) {
+    extraVariants.push("Gare de Bordeaux-Saint-Jean", "Gare Saint Jean Bordeaux");
+  }
+  const variants = [...new Set([query, `${query}, Charente`, `${query}, Charente-Maritime`, ...extraVariants])];
 
   const groups = await Promise.all(variants.map((v) => searchAddress(v, 6).catch(() => [])));
   const googleChoices = groups.flat().map((item) => ({
@@ -648,8 +726,8 @@ function getAutoGeoRejectionReason(pos: GeolocationPosition, lang: Lang, allowAp
   if (!allowApproximate && accuracy > MAX_AUTO_GEO_ACCURACY_M) {
     return lang === "en" ? UI.en.geoImprecise(Math.round(accuracy)) : UI.fr.geoImprecise(Math.round(accuracy));
   }
-  const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [lat, lng]);
-  if (distanceFromBordeaux > MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
+  const distanceFromCenter = distanceKmBetween(SERVICE_CENTER, [lat, lng]);
+  if (distanceFromCenter > MAX_AUTO_GEO_DISTANCE_KM) {
     return lang === "en" ? UI.en.geoIncoherent : UI.fr.geoIncoherent;
   }
   return null;
@@ -1167,8 +1245,8 @@ function ReservationPage() {
     const tryIpFallback = async (fallbackMessage: string, fallbackKind: GeolocStatus = "error") => {
       const ip = await ipGeolocate();
       if (ip) {
-        const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [ip.lat, ip.lng]);
-        if (distanceFromBordeaux <= MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
+        const distanceFromCenter = distanceKmBetween(SERVICE_CENTER, [ip.lat, ip.lng]);
+        if (distanceFromCenter <= MAX_AUTO_GEO_DISTANCE_KM) {
           if (!automatic) toast.info(lang === "en" ? UI.en.gpsUnavailableIp : UI.fr.gpsUnavailableIp);
           await applyPosition(ip.lat, ip.lng, "ip");
           return;
@@ -1267,7 +1345,7 @@ function ReservationPage() {
     if (!value) return;
     setCalcLoading(true);
     setSearchingDepart(true);
-    const origin = fromCoord ?? BORDEAUX_CENTER;
+    const origin = fromCoord ?? SERVICE_CENTER;
     const namedPlace = isNamedPlaceQuery(value);
 
     const canonical = findCanonicalPlace(value, origin);
@@ -1375,7 +1453,7 @@ function ReservationPage() {
       }
     }
 
-    const origin = resolvedFromCoord ?? BORDEAUX_CENTER;
+    const origin = resolvedFromCoord ?? SERVICE_CENTER;
 
     // Lieu canonique connu (coordonnées vérifiées) en priorité.
     const canonical = findCanonicalPlace(value, origin);
@@ -1430,13 +1508,8 @@ function ReservationPage() {
   useEffect(() => {
     const check = async () => {
       try {
-        const { data, error } = await supabase
-          .from("reservations")
-          .select("id", { count: "exact", head: false })
-          .in("status", ["accepted", "en_route", "arrived"])
-          .limit(1);
-        if (error) throw error;
-        setTaxiAvailable(!data || data.length === 0);
+        const res = await getTaxiAvailability();
+        setTaxiAvailable(!!res?.available);
       } catch {
         setTaxiAvailable(null);
       }
@@ -1542,41 +1615,28 @@ function ReservationPage() {
       const fullName = `${f.prenom} ${f.nom}`.trim();
       const pickupIsoFinal = f.date && f.heure ? toParisIso(f.date, f.heure) : new Date().toISOString();
 
-      const { data: inserted, error } = await supabase
-        .from("reservations")
-        .insert({
-          // NOT NULL columns
+      const inserted = await createReservationPublic({
+        data: {
           nom: fullName,
           telephone: f.phone,
-          email: f.email,
+          email: f.email || null,
           depart: f.depart,
           arrivee: f.destination,
           pickup_datetime: pickupIsoFinal,
           passagers: f.passagers,
-          service_type: "standard",
-          status: "pending",
-          // Optional / mirror columns
+          bagages: f.bagages,
           suivi_id: suiviId,
-          client_name: fullName,
-          client_phone: f.phone,
-          client_email: f.email,
-          destination: f.destination,
           distance_km: distanceKm,
           duree_s: dureeS > 0 ? dureeS : null,
-
-          nb_passagers: f.passagers,
-          bagages: f.bagages,
           paiement: f.paiement,
           tarif_jour: tarifJour,
           prix_estime: calculerPrixMixteLocal(distanceKm, new Date(pickupIsoFinal).getTime(), dureeS),
-          source: "form",
-          lang: lang as any,
+          lang: (lang === "en" ? "en" : "fr") as "fr" | "en",
           message: f.message.trim() || null,
-        })
-        .select("id,suivi_id")
-        .single();
-
-      if (error) throw error;
+          service_type: "standard",
+          source: "form",
+        },
+      });
 
       gaEvent("reservation_confirmed", {
         reservation_id: inserted?.id,
@@ -2594,11 +2654,9 @@ function ReservationPage() {
                   // ── UNSUBSCRIBE ──
                   const loadingId = toast.loading(t("reserver.notif.disabling_loading"));
                   try {
-                    const { error } = await supabase
-                      .from("push_subscriptions")
-                      .delete()
-                      .eq("audience", "client")
-                      .eq("user_agent", navigator.userAgent.slice(0, 500));
+                    const fcm = await getFcmToken().catch(() => null);
+                    const error = fcm ? null : new Error("no-token");
+                    if (fcm) await unsubscribePush({ data: { fcm_token: fcm } });
 
                     toast.dismiss(loadingId);
                     if (error) {

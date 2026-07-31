@@ -15,6 +15,11 @@ import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
 import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
+import {
+  driverUpdateReservation,
+  driverListReservations,
+  driverDeleteClient,
+} from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
@@ -1462,15 +1467,10 @@ function CourseCard({
         updates.distance_km = chosen.distanceKm;
         updates.prix_estime = chosen.prix_estime;
       }
-      const { data: updated, error } = await (supabase as any)
-        .from("reservations")
-        .update(updates)
-        .eq("id", resa.id)
-        .neq("status", "accepted")
-        .select("id")
-        .maybeSingle();
-      if (error) throw error;
-      if (!updated) {
+      const upRes = await driverUpdateReservation({
+        data: { token: getDriverToken(), reservation_id: resa.id, patch: updates, not_status: "accepted" },
+      });
+      if (!upRes.changed) {
         toast("Action déjà prise en compte");
         onRefresh();
         return;
@@ -1495,8 +1495,9 @@ function CourseCard({
     if (!confirm("Refuser cette course ?")) return;
     setBusy(true);
     try {
-      const { error } = await (supabase as any).from("reservations").update({ status: "cancelled" }).eq("id", resa.id);
-      if (error) throw error;
+      await driverUpdateReservation({
+        data: { token: getDriverToken(), reservation_id: resa.id, patch: { status: "cancelled" } },
+      });
       broadcastSuiviUpdate(resa.id, "cancelled");
       toast("Course refusée");
       onRefresh();
@@ -1517,11 +1518,13 @@ function CourseCard({
     }
     setItinSaving(true);
     try {
-      const { error } = await (supabase as any)
-        .from("reservations")
-        .update({ distance_km: chosen.distanceKm, prix_estime: chosen.prix_estime })
-        .eq("id", resa.id);
-      if (error) throw error;
+      await driverUpdateReservation({
+        data: {
+          token: getDriverToken(),
+          reservation_id: resa.id,
+          patch: { distance_km: chosen.distanceKm, prix_estime: chosen.prix_estime },
+        },
+      });
       broadcastSuiviUpdate(resa.id, "route");
       toast.success(`Itinéraire mis à jour — ${chosen.distanceKm} km · ${chosen.prix_estime.toFixed(2)} €`);
       onRefresh();
@@ -1597,7 +1600,9 @@ function CourseCard({
         setCustomPrixSending(false);
       }
     }
-    await (supabase as any).from("reservations").update({ prix_estime: val }).eq("id", resa.id);
+    await driverUpdateReservation({
+      data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val } },
+    });
     broadcastSuiviUpdate(resa.id, "price");
     onRefresh();
   };
@@ -1610,11 +1615,13 @@ function CourseCard({
     if (!newDatetime) return;
     setChangeHeureSending(true);
     try {
-      const { error } = await (supabase as any)
-        .from("reservations")
-        .update({ date_heure: newDatetime })
-        .eq("id", resa.id);
-      if (error) throw error;
+      await driverUpdateReservation({
+        data: {
+          token: getDriverToken(),
+          reservation_id: resa.id,
+          patch: { pickup_datetime: new Date(newDatetime).toISOString() },
+        },
+      });
       broadcastSuiviUpdate(resa.id, "reschedule");
       const email = resa.client_email || resa.email;
       const name = resa.client_name || "Client";
@@ -1662,15 +1669,10 @@ function CourseCard({
     if (!claimAction(actionKey)) return;
     setCompleting(true);
     try {
-      const { data: updated, error } = await (supabase as any)
-        .from("reservations")
-        .update({ status: "completed" })
-        .eq("id", resa.id)
-        .neq("status", "completed")
-        .select("id")
-        .maybeSingle();
-      if (error) throw error;
-      if (!updated) {
+      const cRes = await driverUpdateReservation({
+        data: { token: getDriverToken(), reservation_id: resa.id, patch: { status: "completed" }, not_status: "completed" },
+      });
+      if (!cRes.changed) {
         toast("Action déjà prise en compte");
         onRefresh();
         return;
@@ -1698,15 +1700,15 @@ function CourseCard({
     if (!claimAction(actionKey)) return;
     setProgressing(true);
     try {
-      const { data: updated, error } = await (supabase as any)
-        .from("reservations")
-        .update({ status: nextStatus })
-        .eq("id", resa.id)
-        .neq("status", nextStatus)
-        .select("id")
-        .maybeSingle();
-      if (error) throw error;
-      if (!updated) {
+      const pRes = await driverUpdateReservation({
+        data: {
+          token: getDriverToken(),
+          reservation_id: resa.id,
+          patch: { status: nextStatus as any },
+          not_status: nextStatus,
+        },
+      });
+      if (!pRes.changed) {
         toast("Action déjà prise en compte");
         onRefresh();
         return;
@@ -1998,11 +2000,13 @@ function CourseCard({
                       window.localStorage.setItem(routeStorageKey, String(i));
                     } catch {}
                     try {
-                      const { error } = await (supabase as any)
-                        .from("reservations")
-                        .update({ distance_km: r.distanceKm, prix_estime: r.prix_estime })
-                        .eq("id", resa.id);
-                      if (error) throw error;
+                      await driverUpdateReservation({
+                        data: {
+                          token: getDriverToken(),
+                          reservation_id: resa.id,
+                          patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
+                        },
+                      });
                       toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
                       onRefresh();
                     } catch (e: any) {
@@ -2471,14 +2475,8 @@ function PlanningTab() {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const { data } = await (supabase as any)
-      .from("reservations")
-      .select("id,depart,destination,pickup_datetime,date_heure,status,prix_estime,distance_km")
-      .gte("pickup_datetime", today.toISOString())
-      .lt("pickup_datetime", tomorrow.toISOString())
-      .not("status", "eq", "cancelled")
-      .order("pickup_datetime", { ascending: true });
-    setCourses(data ?? []);
+    const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "planning" } });
+    setCourses((res?.rows ?? []) as Resa[]);
     setLoading(false);
   }, []);
 
@@ -2769,14 +2767,9 @@ function ClientsTab() {
   const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
-    const [{ data }, { data: clientsRows }] = await Promise.all([
-      (supabase as any)
-        .from("reservations")
-        .select("client_name,client_phone,depart,destination,prix_estime,pickup_datetime,date_heure,status")
-        .not("client_phone", "is", null)
-        .order("pickup_datetime", { ascending: false }),
-      (supabase as any).from("clients").select("id,phone"),
-    ]);
+    const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "clients" } });
+    const data: any[] = res?.rows ?? [];
+    const clientsRows: any[] = res?.clients ?? [];
 
     const normalize = (p: string) => p.replace(/[^0-9]/g, "").replace(/^0/, "33");
     const idByPhone = new Map<string, string>();
@@ -2839,25 +2832,7 @@ function ClientsTab() {
     if (!confirm(`Supprimer ${c.name} et toutes ses courses ? Action irréversible.`)) return;
     setDeletingPhone(c.phone);
     try {
-      const normalize = (p: string) => p.replace(/[^0-9]/g, "").replace(/^0/, "33");
-      const target = normalize(c.phone);
-      const { data: allResas } = await (supabase as any).from("reservations").select("id,client_phone,telephone");
-      const idsToDelete = (allResas ?? [])
-        .filter((r: any) => {
-          const p1 = r.client_phone ? normalize(r.client_phone) : "";
-          const p2 = r.telephone ? normalize(r.telephone) : "";
-          return p1 === target || p2 === target;
-        })
-        .map((r: any) => r.id);
-      if (idsToDelete.length > 0) {
-        await (supabase as any).from("avis").update({ reservation_id: null }).in("reservation_id", idsToDelete);
-        const { error: delErr } = await (supabase as any).from("reservations").delete().in("id", idsToDelete);
-        if (delErr) throw delErr;
-      }
-      if (c.id) {
-        const { error } = await (supabase as any).from("clients").delete().eq("id", c.id);
-        if (error) throw error;
-      }
+      await driverDeleteClient({ data: { token: getDriverToken(), phone: c.phone, client_id: c.id ?? null } });
       toast.success("Client supprimé");
       load();
     } catch (e: any) {
