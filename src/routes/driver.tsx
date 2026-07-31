@@ -367,9 +367,11 @@ function DriverPage() {
           setDriverToken(candidate);
           setDriverName(res.driver || "");
           setDriverLabel(res.driver || "");
+          setDriverId(res.driverId || "");
           setStatus("granted");
           return true;
         }
+
       } catch {
         /* ignore */
       }
