@@ -14,6 +14,7 @@ import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
+import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
