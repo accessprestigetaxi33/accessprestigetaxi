@@ -34,6 +34,7 @@ import { Route as ClientProfilRouteImport } from './routes/client.profil'
 import { Route as ClientResetPasswordRouteImport } from './routes/client.reset-password'
 import { Route as ClientTrajetsRouteImport } from './routes/client.trajets'
 import { Route as CourseIdRouteImport } from './routes/course.$id'
+import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as ReservationIdRouteImport } from './routes/reservation.$id'
 import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
@@ -174,6 +175,11 @@ const CourseIdRoute = CourseIdRouteImport.update({
   path: '/course/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DestinationsIndexRoute = DestinationsIndexRouteImport.update({
+  id: '/destinations/',
+  path: '/destinations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
@@ -279,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/destinations/': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -320,6 +327,7 @@ export interface FileRoutesByTo {
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
   '/blog': typeof BlogIndexRoute
+  '/destinations': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -362,6 +370,7 @@ export interface FileRoutesById {
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/destinations/': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -405,6 +414,7 @@ export interface FileRouteTypes {
     | '/reservation/$id'
     | '/suivi/$id'
     | '/blog/'
+    | '/destinations/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -446,6 +456,7 @@ export interface FileRouteTypes {
     | '/reservation/$id'
     | '/suivi/$id'
     | '/blog'
+    | '/destinations'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -487,6 +498,7 @@ export interface FileRouteTypes {
     | '/reservation/$id'
     | '/suivi/$id'
     | '/blog/'
+    | '/destinations/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -528,6 +540,7 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   SuiviIdRoute: typeof SuiviIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  DestinationsIndexRoute: typeof DestinationsIndexRoute
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
   ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
@@ -717,6 +730,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CourseIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/destinations/': {
+      id: '/destinations/'
+      path: '/destinations'
+      fullPath: '/destinations/'
+      preLoaderRoute: typeof DestinationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
       path: '/email/unsubscribe'
@@ -869,6 +889,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   SuiviIdRoute: SuiviIdRoute,
   BlogIndexRoute: BlogIndexRoute,
+  DestinationsIndexRoute: DestinationsIndexRoute,
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
   ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
