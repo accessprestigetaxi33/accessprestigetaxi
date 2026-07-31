@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { Plane, Train, Briefcase, Wrench, ShieldCheck, MapPin, Users, Clock, HelpCircle } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
 import { BulletedList } from "@/components/BulletedList";
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/services")({
       { property: "og:url", content: SERVICES_URL },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: SERVICES_URL }],
+    links: seoLinks("/services"),
     scripts: [
       {
         type: "application/ld+json",

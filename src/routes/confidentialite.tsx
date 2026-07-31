@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { useI18n } from "@/i18n/I18nProvider";
 
 const SITE = "https://accessprestigetaxi.lovable.app";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/confidentialite")({
       { property: "og:type", content: "website" },
       { name: "robots", content: "index,follow" },
     ],
-    links: [{ rel: "canonical", href: URL }],
+    links: seoLinks("/confidentialite"),
   }),
   component: ConfidentialitePage,
 });

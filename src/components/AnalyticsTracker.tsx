@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { trackEvent } from "@/lib/analytics";
+import { initGA, gaPageView } from "@/lib/ga4";
 
 const BOOKING_PATHS = ["/reservation", "/reserver"];
 
@@ -17,6 +18,8 @@ export function AnalyticsTracker() {
   useEffect(() => {
     if (lastPath.current === pathname) return;
     lastPath.current = pathname;
+    initGA();
+    gaPageView(pathname);
     trackEvent("page_view");
   }, [pathname]);
 

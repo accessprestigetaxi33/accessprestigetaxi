@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import {
   ArrowRight,
   BatteryCharging,
@@ -207,7 +208,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: seoLinks("/"),
     scripts: [
       {
         type: "application/ld+json",

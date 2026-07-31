@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowRight, MapPin } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DESTINATIONS } from "@/data/destinations";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/destinations/")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: `${SITE}/destinations` }],
+    links: seoLinks("/destinations"),
   }),
   component: DestinationsIndex,
 });

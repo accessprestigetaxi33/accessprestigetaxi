@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { useMemo, useState } from "react";
 import { ArrowRight, MapPin, Star, UtensilsCrossed, BedDouble, Footprints, Landmark } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -68,7 +69,7 @@ export const Route = createFileRoute("/blog/")({
       { property: "og:url", content: "/blog" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/blog" }],
+    links: seoLinks("/blog"),
   }),
 });
 

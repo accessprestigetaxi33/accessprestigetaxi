@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowRight, Check, Clock, MapPin, Phone, Route as RouteIcon } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DESTINATIONS, getDestination } from "@/data/destinations";
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/destinations/$slug")({
         { name: "twitter:title", content: dest.en.metaTitle },
         { name: "twitter:description", content: dest.en.metaDescription },
       ],
-      links: [{ rel: "canonical", href: url }],
+      links: seoLinks(`/destinations/${params.slug}`),
     };
   },
   notFoundComponent: () => {

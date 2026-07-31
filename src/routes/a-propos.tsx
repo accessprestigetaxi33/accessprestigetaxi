@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
 
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/a-propos")({
       { property: "og:url", content: ABOUT_URL },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: ABOUT_URL }],
+    links: seoLinks("/a-propos"),
   }),
   component: AboutPage,
 });

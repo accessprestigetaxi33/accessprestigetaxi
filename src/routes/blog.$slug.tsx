@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowLeft, ArrowRight, MapPin, Phone, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { GUIDE_ENTRIES, GUIDE_CATEGORIES, getGuideEntry, type GuideEntry } from "@/data/guide-charente";
@@ -59,7 +60,7 @@ export const Route = createFileRoute("/blog/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:image", content: e.photos[0] },
       ],
-      links: [{ rel: "canonical", href: `/blog/${e.slug}` }],
+      links: seoLinks(`/blog/${e.slug}`),
       scripts: [
         {
           type: "application/ld+json",

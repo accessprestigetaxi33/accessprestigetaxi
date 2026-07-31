@@ -1,4 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
+import { gaEvent } from "@/lib/ga4";
 import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -48,7 +50,7 @@ export const Route = createFileRoute("/reserver")({
       },
       { name: "theme-color", content: "#1a1209" },
     ],
-    links: [{ rel: "canonical", href: RESERVER_URL }],
+    links: seoLinks("/reserver"),
   }),
   component: ReservationPage,
 });
@@ -725,6 +727,11 @@ function toParisIso(date: string, heure: string): string {
 
 function ReservationPage() {
   const navigate = useNavigate();
+  // GA4 : début du tunnel de réservation
+  useEffect(() => {
+    gaEvent("reservation_start", { page: "/reserver" });
+  }, []);
+
   const [today, setToday] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
@@ -779,8 +786,18 @@ function ReservationPage() {
       return;
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      toast.error(
+        lang === "en"
+          ? "Voice input is not supported by this browser — please type your addresses."
+          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
+        { duration: 7000 },
+      );
+      return;
+    }
+    gaEvent("reservation_voice_start");
     const recog = new SR();
-    recog.lang = "fr-FR";
+    recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
     recog.interimResults = false;
     recog.maxAlternatives = 1;
@@ -839,8 +856,18 @@ function ReservationPage() {
       return;
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      toast.error(
+        lang === "en"
+          ? "Voice input is not supported by this browser — please type your addresses."
+          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
+        { duration: 7000 },
+      );
+      return;
+    }
+    gaEvent("reservation_voice_start");
     const recog = new SR();
-    recog.lang = "fr-FR";
+    recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
     recog.interimResults = false;
     recog.maxAlternatives = 1;
@@ -1507,6 +1534,7 @@ function ReservationPage() {
     }
 
     setSending(true);
+    gaEvent("reservation_submit", { depart: f.depart, destination: f.destination, passagers: f.passagers });
 
     try {
       const suiviId = newSuiviId();
@@ -1549,6 +1577,13 @@ function ReservationPage() {
         .single();
 
       if (error) throw error;
+
+      gaEvent("reservation_confirmed", {
+        reservation_id: inserted?.id,
+        distance_km: distanceKm,
+        value: calculerPrixMixteLocal(distanceKm, new Date(pickupIsoFinal).getTime(), dureeS),
+        currency: "EUR",
+      });
 
       // Réveille instantanément les tableaux de bord chauffeur ouverts.
       broadcastDriverFeed("reservation");

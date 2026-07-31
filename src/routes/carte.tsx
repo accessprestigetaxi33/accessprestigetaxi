@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.png";
 
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/carte")({
       { property: "og:url", content: CARTE_URL },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: CARTE_URL }],
+    links: seoLinks("/carte"),
   }),
   component: CartePage,
 });

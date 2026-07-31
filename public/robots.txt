@@ -12,3 +12,12 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /driver
+Disallow: /client
+Disallow: /suivi/
+Disallow: /course/
+Disallow: /reservation/
+Disallow: /qr-generator
+
+
+Sitemap: https://accessprestigetaxi.lovable.app/sitemap.xml
