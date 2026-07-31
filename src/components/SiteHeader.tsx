@@ -26,15 +26,12 @@ export function SiteHeader() {
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between">
         <Link
           to="/"
-          className="site-header-logo flex min-w-0 shrink-0 flex-col justify-center overflow-hidden leading-none"
+          className="flex min-w-0 shrink-0 items-center leading-none"
           onClick={() => setOpen(false)}
           aria-label="Access Prestige Taxi"
         >
-          <span className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-foreground sm:text-base">
+          <span className="whitespace-nowrap font-display text-[13px] font-semibold uppercase tracking-[0.14em] text-foreground sm:text-base sm:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
-          </span>
-          <span className="mt-1 hidden text-[9px] uppercase tracking-[0.3em] text-muted-foreground sm:block">
-            100 % électrique · Bordeaux
           </span>
         </Link>
 
