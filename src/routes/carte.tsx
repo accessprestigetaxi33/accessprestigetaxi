@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.png";
 
 const CARTE_URL = "https://taxicitybordeaux.fr/carte";
-const CARTE_TITLE = "Taxi City Bordeaux — Contact rapide";
+const CARTE_TITLE = "Access Prestige Taxi — Contact rapide";
 const CARTE_DESC =
-  "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Taxi City Bordeaux en un clic.";
+  "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Access Prestige Taxi en un clic.";
 
 export const Route = createFileRoute("/carte")({
   head: () => ({
@@ -24,8 +24,8 @@ export const Route = createFileRoute("/carte")({
 
 // Contact unique — modifie ici pour changer partout
 const CONTACT = {
-  name: "José — Taxi City Bordeaux",
-  org: "Taxi City Bordeaux",
+  name: "Access Prestige Taxi",
+  org: "Access Prestige Taxi",
   tel: "+33673072322",
   telDisplay: "06\u00A073\u00A007\u00A023\u00A022",
   email: "taxi.city033@gmail.com",
@@ -65,7 +65,7 @@ type Dict = {
 
 const T: Record<Lang, Dict> = {
   fr: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Appeler",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -74,11 +74,11 @@ const T: Record<Lang, Dict> = {
     website: "Site web",
     addContact: "Ajouter aux contacts",
     waMessage: "Bonjour José, je souhaite réserver un taxi.",
-    footer: "Taxi conventionné · Bordeaux et Métropole · 7j/7",
+    footer: "Taxi conventionné · Charente & Charente-Maritime · 7j/7",
     languageLabel: "Langue",
   },
   en: {
-    tag: "Bordeaux Taxi",
+    tag: "Access Prestige Taxi",
     call: "Call",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -87,7 +87,7 @@ const T: Record<Lang, Dict> = {
     website: "Website",
     addContact: "Add to contacts",
     waMessage: "Hello José, I would like to book a taxi.",
-    footer: "Licensed taxi · Bordeaux & Metro area · 7 days a week",
+    footer: "Licensed taxi · Charente & Charente-Maritime · 7 days a week",
     languageLabel: "Language",
   },
   es: {
@@ -104,7 +104,7 @@ const T: Record<Lang, Dict> = {
     languageLabel: "Idioma",
   },
   de: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Anrufen",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -113,11 +113,11 @@ const T: Record<Lang, Dict> = {
     website: "Webseite",
     addContact: "Zu Kontakten hinzufügen",
     waMessage: "Hallo José, ich möchte ein Taxi buchen.",
-    footer: "Konzessioniertes Taxi · Bordeaux & Metropolregion · 7 Tage",
+    footer: "Konzessioniertes Taxi · Charente & Charente-Maritime · 7 Tage",
     languageLabel: "Sprache",
   },
   it: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Chiama",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -126,7 +126,7 @@ const T: Record<Lang, Dict> = {
     website: "Sito web",
     addContact: "Aggiungi ai contatti",
     waMessage: "Salve José, vorrei prenotare un taxi.",
-    footer: "Taxi autorizzato · Bordeaux e area metropolitana · 7 giorni",
+    footer: "Taxi autorizzato · Charente & Charente-Maritime · 7 giorni",
     languageLabel: "Lingua",
   },
   pt: {
@@ -143,7 +143,7 @@ const T: Record<Lang, Dict> = {
     languageLabel: "Idioma",
   },
   nl: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Bellen",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -152,7 +152,7 @@ const T: Record<Lang, Dict> = {
     website: "Website",
     addContact: "Toevoegen aan contacten",
     waMessage: "Hallo José, ik wil graag een taxi reserveren.",
-    footer: "Erkende taxi · Bordeaux en omgeving · 7 dagen",
+    footer: "Erkende taxi · Charente & Charente-Maritime · 7 dagen",
     languageLabel: "Taal",
   },
   ar: {
@@ -293,7 +293,7 @@ function CartePage() {
 
         <img
           src={logoSrc}
-          alt="Taxi City Bordeaux"
+          alt="Access Prestige Taxi"
           style={{
             width: 240,
             maxWidth: "80%",

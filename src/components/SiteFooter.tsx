@@ -1,7 +1,69 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { useI18n } from "@/i18n/I18nProvider";
+
+const COPY = {
+  fr: {
+    tagline: "Votre taxi conventionné 100 % électrique en Charente & Charente-Maritime. Disponible 7j/7 — 24h/24.",
+    navTitle: "Navigation",
+    nav: [
+      { to: "/", label: "Accueil" },
+      { to: "/services", label: "Services" },
+      { to: "/blog", label: "Guide Charente" },
+      { to: "/reservation", label: "Réserver" },
+      { to: "/a-propos", label: "À propos" },
+      { to: "/contact", label: "Contact" },
+    ],
+    ridesTitle: "Nos courses",
+    rides: [
+      "🏥 Transport conventionné CPAM",
+      "🚉 Gares d'Angoulême & La Rochelle",
+      "✈️ Aéroports La Rochelle & Bordeaux",
+      "🍇 Cognac, Jarnac & vignobles",
+      "🏖️ Royan, Île de Ré & Oléron",
+    ],
+    contactTitle: "Contact",
+    zone: "📍 Charente & Charente-Maritime",
+    hours: "🕒 7j/7 · 24h/24",
+    rights: "Tous droits réservés.",
+    security: "Sécurité & garanties",
+    destinations: "Destinations",
+    legal: "Mentions légales",
+    privacy: "Confidentialité",
+  },
+  en: {
+    tagline: "Your fully electric, medically-approved taxi service across Charente & Charente-Maritime. Available 7 days a week, 24 hours a day.",
+    navTitle: "Navigation",
+    nav: [
+      { to: "/", label: "Home" },
+      { to: "/services", label: "Services" },
+      { to: "/blog", label: "Charente Guide" },
+      { to: "/reservation", label: "Book" },
+      { to: "/a-propos", label: "About" },
+      { to: "/contact", label: "Contact" },
+    ],
+    ridesTitle: "Our rides",
+    rides: [
+      "🏥 CPAM medical transport",
+      "🚉 Angoulême & La Rochelle stations",
+      "✈️ La Rochelle & Bordeaux airports",
+      "🍇 Cognac, Jarnac & vineyards",
+      "🏖️ Royan, Île de Ré & Oléron",
+    ],
+    contactTitle: "Contact",
+    zone: "📍 Charente & Charente-Maritime",
+    hours: "🕒 7 days a week · 24/7",
+    rights: "All rights reserved.",
+    security: "Safety & guarantees",
+    destinations: "Destinations",
+    legal: "Legal notice",
+    privacy: "Privacy policy",
+  },
+} as const;
 
 export function SiteFooter() {
   const { pathname } = useLocation();
+  const { lang } = useI18n();
+  const c = COPY[lang === "en" ? "en" : "fr"];
 
   if (
     pathname.startsWith("/admin") ||
@@ -161,7 +223,7 @@ export function SiteFooter() {
             🚕 Access Prestige Taxi
           </div>
           <p style={{ fontSize: 14, lineHeight: 1.6, color: "#94a3b8", margin: 0, maxWidth: 280 }}>
-            Votre taxi conventionné 100 % électrique en Charente & Charente-Maritime. Disponible 7j/7 — 24h/24.
+            {c.tagline}
           </p>
           <div style={{ marginTop: 14, display: "flex", gap: 10 }}>
             <a
@@ -177,16 +239,9 @@ export function SiteFooter() {
 
         {/* Navigation */}
         <div>
-          <h3 className="footer-col-title">Navigation</h3>
+          <h3 className="footer-col-title">{c.navTitle}</h3>
           <ul className="footer-ul">
-            {[
-              { to: "/", label: "Accueil" },
-              { to: "/services", label: "Services" },
-              { to: "/blog", label: "Guide Charente" },
-              { to: "/reservation", label: "Réserver" },
-              { to: "/a-propos", label: "À propos" },
-              { to: "/contact", label: "Contact" },
-            ].map((l) => (
+            {c.nav.map((l) => (
               <li key={l.to}>
                 <Link to={l.to} className="footer-link">
                   {l.label}
@@ -198,19 +253,17 @@ export function SiteFooter() {
 
         {/* Services */}
         <div>
-          <h3 className="footer-col-title">Nos courses</h3>
+          <h3 className="footer-col-title">{c.ridesTitle}</h3>
           <ul className="footer-ul">
-            <li className="footer-li-text">🏥 Transport conventionné CPAM</li>
-            <li className="footer-li-text">🚉 Gares d'Angoulême & La Rochelle</li>
-            <li className="footer-li-text">✈️ Aéroports La Rochelle & Bordeaux</li>
-            <li className="footer-li-text">🍇 Cognac, Jarnac & vignobles</li>
-            <li className="footer-li-text">🏖️ Royan, Île de Ré & Oléron</li>
+            {c.rides.map((r) => (
+              <li key={r} className="footer-li-text">{r}</li>
+            ))}
           </ul>
         </div>
 
         {/* Contact */}
         <div>
-          <h3 className="footer-col-title">Contact</h3>
+          <h3 className="footer-col-title">{c.contactTitle}</h3>
           <ul className="footer-ul">
             <li>
               <a href="tel:0650260015" className="footer-link">
@@ -227,8 +280,8 @@ export function SiteFooter() {
                 ✉️ taxipatricia@gmail.com
               </a>
             </li>
-            <li className="footer-li-text">📍 Charente & Charente-Maritime</li>
-            <li className="footer-li-text">🕒 7j/7 · 24h/24</li>
+            <li className="footer-li-text">{c.zone}</li>
+            <li className="footer-li-text">{c.hours}</li>
           </ul>
 
         </div>
@@ -237,19 +290,19 @@ export function SiteFooter() {
 
       {/* Bottom bar */}
       <div className="footer-bottom">
-        <div>© {year} Access Prestige Taxi. Tous droits réservés.</div>
+        <div>© {year} Access Prestige Taxi. {c.rights}</div>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
           <Link to="/securite" className="footer-link-sm">
-            Sécurité & garanties
+            {c.security}
           </Link>
           <Link to="/destinations" className="footer-link-sm">
-            Destinations
+            {c.destinations}
           </Link>
           <Link to="/mentions-legales" className="footer-link-sm">
-            Mentions légales
+            {c.legal}
           </Link>
           <Link to="/confidentialite" className="footer-link-sm">
-            Confidentialité
+            {c.privacy}
           </Link>
         </div>
       </div>

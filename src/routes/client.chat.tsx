@@ -8,7 +8,7 @@ import { useT } from "@/i18n/I18nProvider";
 
 export const Route = createFileRoute("/client/chat")({
   head: () => ({
-    meta: [{ title: "Chat — Taxi City Bordeaux" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Chat — Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
   }),
   component: ClientChatPage,
 });
@@ -49,7 +49,7 @@ function ClientChatPage() {
           className="flex flex-col overflow-hidden rounded-2xl border border-white/10"
           style={{ height: "calc(100dvh - 240px)", minHeight: 360 }}
         >
-          <DirectChatPanel accountId={session.id} authToken={session.token} role="client" peerName="José 🚖" />
+          <DirectChatPanel accountId={session.id} authToken={session.token} role="client" peerName="Access Prestige Taxi 🚖" />
         </div>
       </div>
       <ClientBottomNav />

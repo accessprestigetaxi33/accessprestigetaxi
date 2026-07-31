@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useI18n } from "@/i18n/I18nProvider";
 import { Send, Loader2, CheckCheck, Check } from "lucide-react";
 import {
   listReservationMessages,
@@ -18,7 +19,24 @@ type Props = {
   onUnreadChange?: (n: number) => void;
 };
 
+const COPY = {
+  fr: {
+    empty: "Aucun message pour l'instant.",
+    placeholder: "Répondre au client…",
+    send: "Envoyer",
+    sendFailed: "Envoi impossible, réessaie.",
+  },
+  en: {
+    empty: "No messages yet.",
+    placeholder: "Reply to the client…",
+    send: "Send",
+    sendFailed: "Could not send, please try again.",
+  },
+} as const;
+
 export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
+  const { lang } = useI18n();
+  const c = lang === "en" ? COPY.en : COPY.fr;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -103,7 +121,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
       setInput("");
     } catch (e) {
       console.error("[inline-chat] send failed", e);
-      alert("Envoi impossible, réessaie.");
+      alert(c.sendFailed);
     } finally {
       setSending(false);
     }
@@ -139,7 +157,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
         )}
         {!loading && messages.length === 0 && (
           <div style={{ textAlign: "center", padding: 12, color: "#888", fontSize: 12 }}>
-            Aucun message pour l'instant.
+            {c.empty}
           </div>
         )}
         {messages.map((m) => {
@@ -180,7 +198,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
                     color: mine ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0.45)",
                   }}
                 >
-                  {new Date(m.created_at).toLocaleTimeString("fr-FR", {
+                  {new Date(m.created_at).toLocaleTimeString(lang === "en" ? "en-GB" : "fr-FR", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
@@ -213,7 +231,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
               send();
             }
           }}
-          placeholder="Répondre au client…"
+          placeholder={c.placeholder}
           rows={1}
           style={{
             flex: 1,
@@ -245,7 +263,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
             opacity: sending || !input.trim() ? 0.5 : 1,
             flexShrink: 0,
           }}
-          aria-label="Envoyer"
+          aria-label={c.send}
         >
           {sending ? (
             <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} />

@@ -9,26 +9,60 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getClientSession, clearClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
 import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
-import { useT } from "@/i18n/I18nProvider";
+import { useI18n, useT } from "@/i18n/I18nProvider";
+import { DRIVERS } from "@/data/drivers";
 import logo from "@/assets/tcb-logo-badge.png";
 import { supabase } from "@/integrations/supabase/client";
 
 const ACTIVE_STATUSES = new Set(["nouvelle", "pending", "accepted", "en_route", "arrived"]);
 
-const STATUS_META: Record<string, { label: string; bg: string; fg: string }> = {
-  nouvelle: { label: "En attente", bg: "rgba(234,179,8,0.15)", fg: "#facc15" },
-  pending: { label: "En attente", bg: "rgba(234,179,8,0.15)", fg: "#facc15" },
-  accepted: { label: "Confirmée", bg: "rgba(34,197,94,0.15)", fg: "#4ade80" },
-  en_route: { label: "En route", bg: "rgba(59,130,246,0.18)", fg: "#60a5fa" },
-  arrived: { label: "Arrivé", bg: "rgba(99,102,241,0.18)", fg: "#a5b4fc" },
-  completed: { label: "Terminée", bg: "rgba(148,163,184,0.18)", fg: "#cbd5e1" },
-  cancelled: { label: "Annulée", bg: "rgba(239,68,68,0.18)", fg: "#fca5a5" },
-  refused: { label: "Refusée", bg: "rgba(239,68,68,0.18)", fg: "#fca5a5" },
+const STATUS_META: Record<string, { label: { fr: string; en: string }; bg: string; fg: string }> = {
+  nouvelle: { label: { fr: "En attente", en: "Pending" }, bg: "rgba(234,179,8,0.15)", fg: "#facc15" },
+  pending: { label: { fr: "En attente", en: "Pending" }, bg: "rgba(234,179,8,0.15)", fg: "#facc15" },
+  accepted: { label: { fr: "Confirmée", en: "Confirmed" }, bg: "rgba(34,197,94,0.15)", fg: "#4ade80" },
+  en_route: { label: { fr: "En route", en: "On the way" }, bg: "rgba(59,130,246,0.18)", fg: "#60a5fa" },
+  arrived: { label: { fr: "Arrivé", en: "Arrived" }, bg: "rgba(99,102,241,0.18)", fg: "#a5b4fc" },
+  completed: { label: { fr: "Terminée", en: "Completed" }, bg: "rgba(148,163,184,0.18)", fg: "#cbd5e1" },
+  cancelled: { label: { fr: "Annulée", en: "Cancelled" }, bg: "rgba(239,68,68,0.18)", fg: "#fca5a5" },
+  refused: { label: { fr: "Refusée", en: "Refused" }, bg: "rgba(239,68,68,0.18)", fg: "#fca5a5" },
 };
 
-function fmtDate(iso: string) {
+const COPY = {
+  fr: {
+    eyebrow: "Espace client",
+    hello: (n: string) => `Bonjour ${n} 👋`,
+    activeRide: "Course en cours",
+    track: "Suivre en direct",
+    details: "Détails",
+    book: "Réserver une course",
+    call: (n: string, p: string) => `Appeler ${n} — ${p}`,
+    trips: "Mes trajets actifs",
+    history: "Historique des courses",
+    chat: "Écrire à mon chauffeur",
+    profile: "Mon profil",
+    backSite: "← Site",
+    you: "vous",
+  },
+  en: {
+    eyebrow: "Client area",
+    hello: (n: string) => `Hello ${n} 👋`,
+    activeRide: "Ride in progress",
+    track: "Track live",
+    details: "Details",
+    book: "Book a ride",
+    call: (n: string, p: string) => `Call ${n} — ${p}`,
+    trips: "My active rides",
+    history: "Ride history",
+    chat: "Message my driver",
+    profile: "My profile",
+    backSite: "← Website",
+    you: "there",
+  },
+} as const;
+
+function fmtDate(iso: string, lang: string = "fr") {
   try {
-    return new Date(iso).toLocaleString("fr-FR", {
+    return new Date(iso).toLocaleString(lang === "en" ? "en-GB" : "fr-FR", {
       dateStyle: "medium",
       timeStyle: "short",
       timeZone: "Europe/Paris",
@@ -55,7 +89,7 @@ const css = `
 export const Route = createFileRoute("/client/dashboard")({
   head: () => ({
     meta: [
-      { title: "Mon espace client — Taxi City Bordeaux" },
+      { title: "Mon espace client — Access Prestige Taxi" },
       { name: "robots", content: "noindex" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0f172a" },
@@ -67,6 +101,8 @@ export const Route = createFileRoute("/client/dashboard")({
 function ClientDashboard() {
   const navigate = useNavigate();
   const t = useT();
+  const { lang } = useI18n();
+  const c = lang === "en" ? COPY.en : COPY.fr;
   const [session, setSession] = useState<ClientSession | null>(null);
   const [ready, setReady] = useState(false);
   const [rows, setRows] = useState<ClientReservation[] | null>(null);
@@ -113,7 +149,7 @@ function ClientDashboard() {
     };
   }, [session, rows]);
 
-  const greeting = useMemo(() => session?.name?.split(" ")[0] || "vous", [session]);
+  const greeting = useMemo(() => session?.name?.split(" ")[0] || c.you, [session]);
   const activeRide = rows?.find((r) => ACTIVE_STATUSES.has(r.status));
   const nextRide = rows?.find((r) => ["pending", "accepted"].includes(r.status));
 
@@ -126,7 +162,7 @@ function ClientDashboard() {
         {/* Header */}
         <div className="cd-header">
           <a href="/" style={{ display: "flex", alignItems: "center" }}>
-            <img src={logo} alt="Taxi City Bordeaux" style={{ height: 36, borderRadius: 6 }} />
+            <img src={logo} alt="Access Prestige Taxi" style={{ height: 36, borderRadius: 6 }} />
           </a>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <LanguageSwitcher />
@@ -145,7 +181,7 @@ function ClientDashboard() {
                 border: "1px solid rgba(255,255,255,0.1)",
               }}
             >
-              ← Site
+              {c.backSite}
             </a>
           </div>
         </div>
@@ -181,12 +217,12 @@ function ClientDashboard() {
                 margin: "0 0 6px",
               }}
             >
-              Espace client
+              {c.eyebrow}
             </p>
             <h1
               style={{ color: "#fff", fontSize: 24, fontWeight: 800, margin: "0 0 20px", fontFamily: "'Syne', serif" }}
             >
-              Bonjour {greeting} 👋
+              {c.hello(greeting)}
             </h1>
 
             {/* Carte présentation */}
@@ -200,7 +236,7 @@ function ClientDashboard() {
               }}
             >
               <p style={{ color: "rgba(255,255,255,0.72)", fontSize: 14, lineHeight: 1.75, margin: "0 0 10px" }}>
-                {t("client.dashboard.welcome_intro")} <strong style={{ color: "#E8C96D" }}>Taxi City Bordeaux</strong>.
+                {t("client.dashboard.welcome_intro")} <strong style={{ color: "#E8C96D" }}>Access Prestige Taxi</strong>.
                 {" "}{t("client.dashboard.welcome_centralized")}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }}>
@@ -237,7 +273,7 @@ function ClientDashboard() {
                   marginBottom: 10,
                 }}
               >
-                Course en cours
+                {c.activeRide}
               </p>
               <div
                 style={{
@@ -260,10 +296,10 @@ function ClientDashboard() {
                       color: STATUS_META[activeRide.status]?.fg,
                     }}
                   >
-                    {STATUS_META[activeRide.status]?.label || activeRide.status}
+                    {STATUS_META[activeRide.status]?.label[lang === "en" ? "en" : "fr"] || activeRide.status}
                   </span>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
-                    {fmtDate(activeRide.pickup_datetime)}
+                    {fmtDate(activeRide.pickup_datetime, lang)}
                   </span>
                 </div>
                 <div style={{ fontSize: 13, color: "#fff", marginBottom: 10, lineHeight: 1.4 }}>
@@ -289,7 +325,7 @@ function ClientDashboard() {
                         border: "1px solid rgba(232,201,109,0.25)",
                       }}
                     >
-                      <Eye style={{ width: 13, height: 13 }} /> Suivre en direct
+                      <Eye style={{ width: 13, height: 13 }} /> {c.track}
                     </Link>
                   )}
                   <Link
@@ -307,7 +343,7 @@ function ClientDashboard() {
                       border: "1px solid rgba(255,255,255,0.1)",
                     }}
                   >
-                    Détails
+                    {c.details}
                   </Link>
                 </div>
               </div>
@@ -332,10 +368,10 @@ function ClientDashboard() {
                 textDecoration: "none",
               }}
             >
-              <Plus style={{ width: 16, height: 16 }} /> Réserver une course
+              <Plus style={{ width: 16, height: 16 }} /> {c.book}
             </Link>
             <a
-              href="tel:0673072322"
+              href={`tel:${DRIVERS[0].tel}`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -351,21 +387,21 @@ function ClientDashboard() {
                 textDecoration: "none",
               }}
             >
-              <Phone style={{ width: 16, height: 16 }} /> Appeler José — 06 73 07 23 22
+              <Phone style={{ width: 16, height: 16 }} /> {c.call(DRIVERS[0].name, DRIVERS[0].display)}
             </a>
           </div>
 
           {/* Raccourcis onglets */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
             {[
-              { to: "/client/trajets", icon: <Car style={{ width: 16, height: 16 }} />, label: "Mes trajets actifs" },
+              { to: "/client/trajets", icon: <Car style={{ width: 16, height: 16 }} />, label: c.trips },
               {
                 to: "/client/historique",
                 icon: <History style={{ width: 16, height: 16 }} />,
-                label: "Historique des courses",
+                label: c.history,
               },
-              { to: "/client/chat", icon: <MessageCircle style={{ width: 16, height: 16 }} />, label: "Écrire à José" },
-              { to: "/client/profil", icon: <User style={{ width: 16, height: 16 }} />, label: "Mon profil" },
+              { to: "/client/chat", icon: <MessageCircle style={{ width: 16, height: 16 }} />, label: c.chat },
+              { to: "/client/profil", icon: <User style={{ width: 16, height: 16 }} />, label: c.profile },
             ].map((item) => (
               <Link
                 key={item.to}

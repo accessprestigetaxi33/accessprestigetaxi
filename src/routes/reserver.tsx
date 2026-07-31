@@ -25,6 +25,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { ListeningOverlay } from "@/components/ListeningOverlay";
 
 import { DICTS, LANGUAGES, type Lang } from "@/i18n/dict";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Taxi City Bordeaux";
 const RESERVER_DESC =
@@ -885,7 +886,9 @@ function ReservationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [lang, setLang] = useState<Lang>("fr");
+  // Langue synchronisée avec le sélecteur global du site (I18nProvider) :
+  // le formulaire ne garde plus un état isolé qui restait en français.
+  const { lang, setLang } = useI18n();
   const d = DICTS[lang];
   const t = (k: string) => d[k] ?? DICTS["fr"][k] ?? k;
   const dir = lang === "ar" ? "rtl" : "ltr";
@@ -895,14 +898,19 @@ function ReservationPage() {
   // ── Tarification Paris : règle unique demandée
   //    7h-19h = Jour, 19h-7h = Nuit, dimanche/jour férié = Nuit, toujours en heure Europe/Paris. ──
   function getTarifMotif(iso: string | null): { isJour: boolean; label: string; motif: string } {
-    if (!iso) return { isJour: true, label: "Tarif jour", motif: "Heure de Paris" };
+    const en = lang === "en";
+    const dayLabel = en ? "Day rate" : "Tarif jour";
+    const nightLabel = en ? "Night rate" : "Tarif nuit";
+    const parisTime = en ? "Paris time" : "Heure de Paris";
+    if (!iso) return { isJour: true, label: dayLabel, motif: parisTime };
     const p = partsParis(iso);
-    if (p.weekday === "Sun") return { isJour: false, label: "Tarif nuit", motif: "Dimanche" };
-    if (estJourFerieFR(p.year, p.month, p.day)) return { isJour: false, label: "Tarif nuit", motif: "Jour férié" };
-    const hStr = `${p.hour}h${String(p.minute).padStart(2, "0")}`;
+    if (p.weekday === "Sun") return { isJour: false, label: nightLabel, motif: en ? "Sunday" : "Dimanche" };
+    if (estJourFerieFR(p.year, p.month, p.day))
+      return { isJour: false, label: nightLabel, motif: en ? "Public holiday" : "Jour férié" };
+    const hStr = en ? `${String(p.hour).padStart(2, "0")}:${String(p.minute).padStart(2, "0")}` : `${p.hour}h${String(p.minute).padStart(2, "0")}`;
     const h = p.hour + p.minute / 60;
-    if (h >= 19 || h < 7) return { isJour: false, label: "Tarif nuit", motif: `Heure de Paris (${hStr})` };
-    return { isJour: true, label: "Tarif jour", motif: `Heure de Paris (${hStr})` };
+    if (h >= 19 || h < 7) return { isJour: false, label: nightLabel, motif: `${parisTime} (${hStr})` };
+    return { isJour: true, label: dayLabel, motif: `${parisTime} (${hStr})` };
   }
 
   const TARIF_JOUR_KM = 2.16;
@@ -1611,7 +1619,7 @@ function ReservationPage() {
                 fontFamily: "'DM Sans', sans-serif",
               }}
             >
-              ← Retour
+              {lang === "en" ? "← Back" : "← Retour"}
             </button>
             <select
               value={lang}

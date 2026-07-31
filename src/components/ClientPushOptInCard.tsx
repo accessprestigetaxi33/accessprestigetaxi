@@ -2,11 +2,46 @@ import { Bell, BellOff, BellRing, Loader2, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { useT } from "@/i18n/I18nProvider";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type ClientPushOptInCardProps = {
   clientAccountId?: string | null;
 };
+
+const COPY = {
+  fr: {
+    iosInstallToast:
+      "Sur iPhone, installez d'abord l'app : Safari → Partager → Sur l'écran d'accueil, puis rouvrez depuis l'icône.",
+    deniedToast: "Notifications refusées dans les réglages du navigateur.",
+    tokenMissingToast: "Token FCM introuvable — vérifiez que l'app est installée sur l'écran d'accueil (iOS)",
+    genericErrorToast: (msg: string) => `Erreur : ${msg}`,
+    unknownError: "inconnue",
+    iosInstallTitle: "Installation requise sur iPhone",
+    iosInstallDesc: (
+      <>
+        Ouvrez ce site dans <b>Safari</b> → touchez <b>Partager</b> → <b>Sur l'écran d'accueil</b>. Ensuite ouvrez
+        l'app depuis l'icône pour activer les notifications.
+      </>
+    ),
+    reenroll: "Réparer / réinscrire cet appareil",
+  },
+  en: {
+    iosInstallToast:
+      "On iPhone, first install the app: Safari → Share → Add to Home Screen, then reopen it from the icon.",
+    deniedToast: "Notifications were denied in your browser settings.",
+    tokenMissingToast: "FCM token not found — make sure the app is installed on the home screen (iOS)",
+    genericErrorToast: (msg: string) => `Error: ${msg}`,
+    unknownError: "unknown",
+    iosInstallTitle: "Installation required on iPhone",
+    iosInstallDesc: (
+      <>
+        Open this site in <b>Safari</b> → tap <b>Share</b> → <b>Add to Home Screen</b>. Then open the app from the
+        icon to enable notifications.
+      </>
+    ),
+    reenroll: "Repair / re-register this device",
+  },
+} as const;
 
 function detectIOS(): boolean {
   if (typeof navigator === "undefined") return false;
@@ -24,7 +59,8 @@ function isStandalone(): boolean {
 }
 
 export function ClientPushOptInCard({ clientAccountId }: ClientPushOptInCardProps) {
-  const t = useT();
+  const { t, lang } = useI18n();
+  const c = COPY[lang === "en" ? "en" : "fr"];
   const { status, subscribe } = usePushNotifications({ clientAccountId });
   const [busy, setBusy] = useState(false);
   const [ios, setIos] = useState(false);
@@ -39,7 +75,7 @@ export function ClientPushOptInCard({ clientAccountId }: ClientPushOptInCardProp
 
   async function enable() {
     if (iosNeedsInstall) {
-      toast.error("Sur iPhone, installez d'abord l'app : Safari → Partager → Sur l'écran d'accueil, puis rouvrez depuis l'icône.");
+      toast.error(c.iosInstallToast);
       return;
     }
     setBusy(true);
@@ -52,13 +88,13 @@ export function ClientPushOptInCard({ clientAccountId }: ClientPushOptInCardProp
       if (ok) {
         toast.success(t("client.push.toast_ok"));
       } else if (typeof Notification !== "undefined" && Notification.permission === "denied") {
-        toast.error("Notifications refusées dans les réglages du navigateur.");
+        toast.error(c.deniedToast);
       } else {
-        toast.error("Token FCM introuvable — vérifiez que l'app est installée sur l'écran d'accueil (iOS)");
+        toast.error(c.tokenMissingToast);
       }
     } catch (e: any) {
       console.error("[push client] fatal", e);
-      toast.error(`Erreur : ${e?.message || "inconnue"}`);
+      toast.error(c.genericErrorToast(e?.message || c.unknownError));
     } finally {
       setBusy(false);
     }
@@ -91,11 +127,8 @@ export function ClientPushOptInCard({ clientAccountId }: ClientPushOptInCardProp
             <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-400/30 bg-amber-500/10 p-2.5 text-[11px] text-amber-100">
               <Smartphone className="h-4 w-4 shrink-0" />
               <div>
-                <div className="font-semibold">Installation requise sur iPhone</div>
-                <div className="mt-0.5 opacity-80">
-                  Ouvrez ce site dans <b>Safari</b> → touchez <b>Partager</b> → <b>Sur l'écran d'accueil</b>.
-                  Ensuite ouvrez l'app depuis l'icône pour activer les notifications.
-                </div>
+                <div className="font-semibold">{c.iosInstallTitle}</div>
+                <div className="mt-0.5 opacity-80">{c.iosInstallDesc}</div>
               </div>
             </div>
           ) : isUnsupported ? (
@@ -125,7 +158,7 @@ export function ClientPushOptInCard({ clientAccountId }: ClientPushOptInCardProp
                 </>
               ) : (
                 <>
-                  <Bell className="h-3.5 w-3.5" /> {isGranted ? "Réparer / réinscrire cet appareil" : t("client.push.enable_btn")}
+                  <Bell className="h-3.5 w-3.5" /> {isGranted ? c.reenroll : t("client.push.enable_btn")}
                 </>
               )}
             </button>

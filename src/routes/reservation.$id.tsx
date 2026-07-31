@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/reservation/$id")({
   head: () => ({
-    meta: [{ title: "Confirmation – Taxi City Bordeaux" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Confirmation – Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
   }),
   component: ConfirmationPage,
 });
@@ -189,11 +189,12 @@ function ConfirmationPage() {
           label={t("conf.row.pickup")}
           value={(() => {
             const iso = reservation.pickup_datetime;
+            const locale = lang === "en" ? "en-GB" : "fr-FR";
             if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
               const [y, m, d] = iso.split("-").map(Number);
-              return new Date(y, m - 1, d).toLocaleDateString("fr-FR", { dateStyle: "full" });
+              return new Date(y, m - 1, d).toLocaleDateString(locale, { dateStyle: "full" });
             }
-            return new Date(iso).toLocaleString("fr-FR", {
+            return new Date(iso).toLocaleString(locale, {
               dateStyle: "full",
               timeStyle: "short",
               timeZone: "Europe/Paris",
