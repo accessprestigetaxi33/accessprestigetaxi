@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
-import logoLockup from "@/assets/apt-logo-lockup.png";
+import logoLockup from "@/assets/apt-logo-lockup.png.asset.json";
 
 const PHONE = "0673072322";
 const PHONE_DISPLAY = "06 73 07 23 22";
@@ -141,12 +141,13 @@ function Index() {
 
         <div className="mx-auto flex max-w-4xl flex-col items-center px-5 pb-20 pt-14 text-center sm:pt-20">
           <img
-            src={logoLockup}
+            src={logoLockup.url}
             alt="Access Prestige Taxi — taxi 100 % électrique à Bordeaux"
-            width={1184}
-            height={695}
+            width={583}
+            height={375}
             fetchPriority="high"
-            className="w-full max-w-md drop-shadow-[0_20px_60px_rgba(0,0,0,0.55)] sm:max-w-lg"
+            className="w-full max-w-md rounded-2xl drop-shadow-[0_20px_60px_rgba(0,0,0,0.55)] sm:max-w-lg"
+
           />
 
           <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary">
