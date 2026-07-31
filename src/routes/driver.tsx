@@ -996,40 +996,125 @@ function CoursesTab({
     return String(a.pickup_datetime ?? "").localeCompare(String(b.pickup_datetime ?? ""));
   };
 
-  const nouvelles = courses.filter((r) => r.status === "pending").sort(sortByPriority);
-  const encours = courses
+  const visible = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
+  const otherCount = courses.length - courses.filter(mineOf).length;
+
+  const nouvelles = visible.filter((r) => r.status === "pending").sort(sortByPriority);
+  const encours = visible
     .filter((r) => r.status === "accepted" || r.status === "en_route" || r.status === "arrived")
     .sort(sortByPriority);
-  const followups = courses
+  const followups = visible
     .filter((r) => !["pending", "accepted", "en_route", "arrived"].includes(r.status))
     .sort(sortByPriority);
 
-  if (courses.length === 0)
+  const filterBar = !isAdmin ? (
+    <div style={{ display: "flex", gap: 8, padding: "10px 0 2px" }}>
+      {(
+        [
+          { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
+          { key: false, label: `Toutes (${courses.length})` },
+        ] as const
+      ).map((o) => (
+        <button
+          key={String(o.key)}
+          onClick={() => setOnlyMine(o.key)}
+          style={{
+            flex: 1,
+            padding: "8px 10px",
+            borderRadius: 999,
+            border: "1px solid " + (onlyMine === o.key ? "#0B0B0D" : "#cbd5e1"),
+            background: onlyMine === o.key ? "#0B0B0D" : "#fff",
+            color: onlyMine === o.key ? "#C6A24A" : "#334155",
+            fontSize: 12.5,
+            fontWeight: 700,
+            cursor: "pointer",
+            minHeight: 38,
+          }}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  ) : null;
+
+  const renderCard = (r: Resa) => {
+    const assigned = (r as any).assigned_driver as string | undefined;
+    const other = assigned === "patricia" ? "alain" : "patricia";
     return (
-      <div className="drv-empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-          <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-        <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune course en attente</div>
-        <div style={{ fontSize: 12, marginTop: 4 }}>Tout est à jour ✓</div>
+      <div key={r.id}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8,
+            margin: "8px 2px -4px",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 11.5,
+              fontWeight: 800,
+              letterSpacing: 0.3,
+              padding: "3px 9px",
+              borderRadius: 999,
+              background: assigned === "patricia" ? "#fdf2f8" : "#eff6ff",
+              color: assigned === "patricia" ? "#9d174d" : "#1d4ed8",
+              border: "1px solid " + (assigned === "patricia" ? "#fbcfe8" : "#bfdbfe"),
+            }}
+          >
+            {assigned ? `👤 ${assigned === "patricia" ? "Patricia" : "Alain"}` : "👤 Non attribuée"}
+          </span>
+          {["pending", "accepted"].includes(r.status) && (
+            <button
+              onClick={() => reassign(r.id, other as "patricia" | "alain")}
+              style={{
+                background: "transparent",
+                border: "1px solid #cbd5e1",
+                borderRadius: 8,
+                padding: "4px 9px",
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: "#334155",
+                cursor: "pointer",
+              }}
+            >
+              ↔ Passer à {other === "patricia" ? "Patricia" : "Alain"}
+            </button>
+          )}
+        </div>
+        <CourseCard
+          resa={r}
+          onRefresh={load}
+          expanded={selected === r.id}
+          onToggle={() => setSelected((s) => (s === r.id ? null : r.id))}
+          unreadByChauffeur={unreadMap[r.id]?.unread_chauffeur ?? 0}
+          unreadByClient={unreadMap[r.id]?.unread_client ?? 0}
+        />
       </div>
     );
+  };
 
-  const renderCard = (r: Resa) => (
-    <CourseCard
-      key={r.id}
-      resa={r}
-      onRefresh={load}
-      expanded={selected === r.id}
-      onToggle={() => setSelected((s) => (s === r.id ? null : r.id))}
-      unreadByChauffeur={unreadMap[r.id]?.unread_chauffeur ?? 0}
-      unreadByClient={unreadMap[r.id]?.unread_client ?? 0}
-    />
-  );
+  if (visible.length === 0)
+    return (
+      <>
+        {filterBar}
+        <div className="drv-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune course en attente</div>
+          <div style={{ fontSize: 12, marginTop: 4 }}>
+            {onlyMine && otherCount > 0 ? `${otherCount} course(s) pour l'autre chauffeur` : "Tout est à jour ✓"}
+          </div>
+        </div>
+      </>
+    );
 
   return (
     <>
+      {filterBar}
       {nouvelles.length > 0 && (
         <>
           <p className="drv-section">Nouvelles demandes</p>
@@ -1052,6 +1137,7 @@ function CoursesTab({
       )}
     </>
   );
+
 }
 
 // ── Course Card avec itinéraires Google Maps ───────────────────────────────
