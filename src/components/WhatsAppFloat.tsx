@@ -7,7 +7,7 @@ import { buildReservationMessage, whatsappLink } from "@/lib/whatsapp";
 import { useI18n } from "@/i18n/I18nProvider";
 import { trackCtaClick } from "@/lib/analytics";
 
-const PHONE = "0673072322";
+const PHONE = "0650260015";
 
 export function WhatsAppFloat() {
   const { t, lang } = useI18n();

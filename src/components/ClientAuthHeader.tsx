@@ -15,7 +15,7 @@ export function ClientAuthHeader({ backLabel = "Retour à l'accueil" }: { backLa
       <Link to="/">
         <img
           src={logo}
-          alt="Taxi City Bordeaux"
+          alt="Access Prestige Taxi"
           className="mb-6 h-16 w-16 rounded-xl object-contain shadow-2xl"
         />
       </Link>

@@ -1,6 +1,6 @@
 import type { Lang } from "@/i18n/dict";
 
-export const WHATSAPP_NUMBER = "33673072322"; // international format, no +
+export const WHATSAPP_NUMBER = "33650260015"; // international format, no +
 
 export type ReservationLite = {
   nom?: string;

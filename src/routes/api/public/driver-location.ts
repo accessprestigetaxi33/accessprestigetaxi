@@ -13,11 +13,11 @@ const Schema = z.object({
 });
 
 const ALLOWED_ORIGINS = new Set([
-  "https://taxicitybordeaux.fr",
-  "https://www.taxicitybordeaux.fr",
+  "https://accessprestigetaxi.lovable.app",
+  "https://www.accessprestigetaxi.lovable.app",
   "https://cloud-launchpad-hug.lovable.app",
 ]);
-const DEFAULT_ORIGIN = "https://taxicitybordeaux.fr";
+const DEFAULT_ORIGIN = "https://accessprestigetaxi.lovable.app";
 
 function corsFor(request: Request) {
   const origin = request.headers.get("origin") ?? "";

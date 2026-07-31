@@ -5,7 +5,7 @@ import { toast } from "sonner";
  * Prefers suivi_id (short opaque key), falls back to id.
  */
 export function buildSuiviUrl(opts: { suivi_id?: string | null; tracking_id?: string | null; id: string }): string {
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://taxicitybordeaux.fr";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://accessprestigetaxi.lovable.app";
   const key = opts.suivi_id || opts.tracking_id || opts.id;
   return `${origin}/suivi/${key}`;
 }
@@ -23,7 +23,7 @@ export async function shareRideTracking(opts: {
 }): Promise<void> {
   const url = buildSuiviUrl(opts);
   const dest = opts.destination || "votre destination";
-  const text = `Je suis en route avec Taxi City Bordeaux vers ${dest}. Suivez ma course en direct ici 👉 ${url}`;
+  const text = `Je suis en route avec Access Prestige Taxi vers ${dest}. Suivez ma course en direct ici 👉 ${url}`;
   const title = "Suivi de ma course en direct";
 
   try {

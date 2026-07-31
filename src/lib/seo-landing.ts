@@ -1,6 +1,6 @@
 // Contenu multilingue pour les 4 pages SEO locales (aéroport, gare, Arcachon, conventionné)
 // Langues : fr, en, es, pt, it, ar
-// FR = voix de José (première personne, artisan, ton humain)
+// FR = voix de Patricia (première personne, artisan, ton humain)
 
 import type { Lang } from "@/i18n/dict";
 
@@ -18,26 +18,26 @@ export type LandingContent = {
 
 // Traductions courtes des libellés CTA/FAQ commune
 const CTA: Record<Lang, { book: string; call: string; faqTitle: string }> = {
-  fr: { book: "Réserver ma course", call: "Appeler José", faqTitle: "Questions fréquentes" },
-  en: { book: "Book my ride", call: "Call José", faqTitle: "Frequently asked questions" },
-  es: { book: "Reservar mi trayecto", call: "Llamar a José", faqTitle: "Preguntas frecuentes" },
-  pt: { book: "Reservar a minha viagem", call: "Ligar ao José", faqTitle: "Perguntas frequentes" },
-  it: { book: "Prenota la corsa", call: "Chiama José", faqTitle: "Domande frequenti" },
+  fr: { book: "Réserver ma course", call: "Appeler Patricia", faqTitle: "Questions fréquentes" },
+  en: { book: "Book my ride", call: "Call Patricia", faqTitle: "Frequently asked questions" },
+  es: { book: "Reservar mi trayecto", call: "Llamar a Patricia", faqTitle: "Preguntas frecuentes" },
+  pt: { book: "Reservar a minha viagem", call: "Ligar ao Patricia", faqTitle: "Perguntas frequentes" },
+  it: { book: "Prenota la corsa", call: "Chiama Patricia", faqTitle: "Domande frequenti" },
   ar: { book: "احجز رحلتي", call: "اتصل بخوسيه", faqTitle: "الأسئلة الشائعة" },
 };
 
-// --------- FR (voix de José, humain, pas IA) ----------
+// --------- FR (voix de Patricia, humain, pas IA) ----------
 const FR: Record<LandingKey, LandingContent> = {
   airport: {
-    title: "Taxi aéroport de Bordeaux 24/7 : Réserver avec José",
+    title: "Taxi aéroport de Bordeaux 24/7 : Réserver avec Patricia",
     description:
-      "Réserver un taxi aéroport de Bordeaux : suivi de vol, prix annoncé à la réservation, véhicule 4 personnes maximum. José vous attend, jour & nuit. 06 73 07 23 22.",
+      "Réserver un taxi aéroport de Bordeaux : suivi de vol, prix annoncé à la réservation, véhicule 4 personnes maximum. Patricia vous attend, jour & nuit. 06 50 26 00 15.",
     intro:
-      "Bonjour, moi c'est José.\nJe fais la navette entre Bordeaux et l'aéroport de Bordeaux : le matin, la nuit, les jours fériés.\nVous me donnez votre numéro de vol, je suis l'atterrissage sur mon téléphone et je suis là quand vous sortez.\nPas d'attente, pas de mauvaise surprise sur le prix.",
+      "Bonjour, moi c'est Patricia.\nJe fais la navette entre Bordeaux et l'aéroport de Bordeaux : le matin, la nuit, les jours fériés.\nVous me donnez votre numéro de vol, je suis l'atterrissage sur mon téléphone et je suis là quand vous sortez.\nPas d'attente, pas de mauvaise surprise sur le prix.",
     sections: [
       {
         h: "Un retard ? Prévenez-moi tout de suite",
-        p: "Vous me passez le numéro de vol au moment de la réservation.\nSi votre vol est retardé, avancé, ou qu'une escale décale tout, prévenez-moi immédiatement par SMS ou par téléphone au 06 73 07 23 22 : j'ajuste l'heure de prise en charge tout de suite.",
+        p: "Vous me passez le numéro de vol au moment de la réservation.\nSi votre vol est retardé, avancé, ou qu'une escale décale tout, prévenez-moi immédiatement par SMS ou par téléphone au 06 50 26 00 15 : j'ajuste l'heure de prise en charge tout de suite.",
       },
       {
         h: "Le prix, vous le connaissez avant de monter",
@@ -55,7 +55,7 @@ const FR: Record<LandingKey, LandingContent> = {
       },
       {
         q: "Et si mon vol a du retard ?",
-        a: "En cas de retard, prévenez-moi tout de suite par SMS ou par téléphone au 06 73 07 23 22, j'ajuste l'heure de prise en charge.\nLe temps normal d'attente après l'atterrissage (récupération bagages, douane) est compris.",
+        a: "En cas de retard, prévenez-moi tout de suite par SMS ou par téléphone au 06 50 26 00 15, j'ajuste l'heure de prise en charge.\nLe temps normal d'attente après l'atterrissage (récupération bagages, douane) est compris.",
       },
       {
         q: "Vous prenez les réservations pour un vol à 5h du matin ?",
@@ -70,11 +70,11 @@ const FR: Record<LandingKey, LandingContent> = {
     ctaCall: CTA.fr.call,
   },
   station: {
-    title: "Taxi Bordeaux gare Saint-Jean : Réserver avec José 24/7",
+    title: "Taxi Bordeaux gare Saint-Jean : Réserver avec Patricia 24/7",
     description:
-      "Réserver un taxi à la gare Bordeaux Saint-Jean : José suit votre TGV, prise en charge au quai, véhicule 4 personnes maximum. 7j/7, 24h/24.",
+      "Réserver un taxi à la gare Bordeaux Saint-Jean : Patricia suit votre TGV, prise en charge au quai, véhicule 4 personnes maximum. 7j/7, 24h/24.",
     intro:
-      "Je m'appelle José et je viens régulièrement chercher mes clients à la gare Saint-Jean.\nQue vous descendiez d'un TGV Paris, d'un Ouigo ou d'un Intercités, je suis au point de rendez-vous qu'on aura fixé ensemble, pas besoin de tourner en rond avec vos valises pour me trouver.",
+      "Je m'appelle Patricia et je viens régulièrement chercher mes clients à la gare Saint-Jean.\nQue vous descendiez d'un TGV Paris, d'un Ouigo ou d'un Intercités, je suis au point de rendez-vous qu'on aura fixé ensemble, pas besoin de tourner en rond avec vos valises pour me trouver.",
     sections: [
       {
         h: "On se retrouve où vous voulez à la gare",
@@ -82,7 +82,7 @@ const FR: Record<LandingKey, LandingContent> = {
       },
       {
         h: "Un retard ? Prévenez-moi tout de suite",
-        p: "Retard SNCF, changement de voie de dernière minute, TGV qui arrive en avance : prévenez-moi immédiatement par SMS ou par téléphone au 06 73 07 23 22, j'ajuste l'heure de prise en charge.",
+        p: "Retard SNCF, changement de voie de dernière minute, TGV qui arrive en avance : prévenez-moi immédiatement par SMS ou par téléphone au 06 50 26 00 15, j'ajuste l'heure de prise en charge.",
       },
       {
         h: "De la gare à votre vraie destination",
@@ -113,7 +113,7 @@ const FR: Record<LandingKey, LandingContent> = {
   arcachon: {
     title: "Taxi Bordeaux Arcachon : Réserver pour Pyla & Cap-Ferret",
     description:
-      "Réserver un taxi Bordeaux → Arcachon, Pyla, Cap-Ferret : trajet direct, prix annoncé à la réservation, véhicule 4 personnes maximum pour familles et bagages. 06 73 07 23 22.",
+      "Réserver un taxi Bordeaux → Arcachon, Pyla, Cap-Ferret : trajet direct, prix annoncé à la réservation, véhicule 4 personnes maximum pour familles et bagages. 06 50 26 00 15.",
     intro:
       "Bordeaux ↔ Arcachon, je le fais souvent : pour des touristes qui veulent voir la Dune du Pyla, pour des familles qui vont à Cap-Ferret le week-end, pour nos locaux bordelais, pour des habitués qui prennent le TER trop lent avec les valises.",
     sections: [
@@ -154,9 +154,9 @@ const FR: Record<LandingKey, LandingContent> = {
   cpam: {
     title: "Taxi conventionné CPAM Bordeaux : Réserver, tiers payant, ALD",
     description:
-      "Réserver un taxi conventionné Bordeaux : tiers payant, ALD 100 %, dialyse, chimio. Véhicule 4 personnes maximum. 06 73 07 23 22.",
+      "Réserver un taxi conventionné Bordeaux : tiers payant, ALD 100 %, dialyse, chimio. Véhicule 4 personnes maximum. 06 50 26 00 15.",
     intro:
-      "Je suis José, taxi conventionné par l'Assurance Maladie à Bordeaux.\nConcrètement : si votre médecin vous a fait un bon de transport, vous n'avez rien à avancer.\nJe m'occupe de la facturation avec la CPAM et votre mutuelle.\nJe fais beaucoup de dialyse, de chimio, de consultations à l'hôpital.",
+      "Je suis Patricia, taxi conventionné par l'Assurance Maladie à Bordeaux.\nConcrètement : si votre médecin vous a fait un bon de transport, vous n'avez rien à avancer.\nJe m'occupe de la facturation avec la CPAM et votre mutuelle.\nJe fais beaucoup de dialyse, de chimio, de consultations à l'hôpital.",
     sections: [
       {
         h: "Le bon de transport, on s'occupe du reste",
@@ -182,7 +182,7 @@ const FR: Record<LandingKey, LandingContent> = {
       },
       {
         q: "Vous pouvez venir tous les lundis-mercredis-vendredis pour ma dialyse ?",
-        a: "C'est exactement ce que je fais pour plusieurs patients.\nOn fixe un planning ensemble, j'arrive toujours à la même heure, je vous ramène après la séance.\nAppelez-moi au 06 73 07 23 22 pour qu'on mette ça en place.",
+        a: "C'est exactement ce que je fais pour plusieurs patients.\nOn fixe un planning ensemble, j'arrive toujours à la même heure, je vous ramène après la séance.\nAppelez-moi au 06 50 26 00 15 pour qu'on mette ça en place.",
       },
       {
         q: "Vous transportez les personnes en fauteuil ?",
@@ -197,15 +197,15 @@ const FR: Record<LandingKey, LandingContent> = {
 // --------- EN ----------
 const EN: Record<LandingKey, LandingContent> = {
   airport: {
-    title: "Bordeaux Airport Taxi : Book with José 24/7",
+    title: "Bordeaux Airport Taxi : Book with Patricia 24/7",
     description:
-      "Book a Bordeaux airport taxi: live flight tracking, price quoted at booking, vehicle for up to 4 people. Available 24/7. Call +33 6 73 07 23 22.",
+      "Book a Bordeaux airport taxi: live flight tracking, price quoted at booking, vehicle for up to 4 people. Available 24/7. Call +33 6 50 26 00 15.",
     intro:
       "Book your taxi for Bordeaux airport in seconds.\nWe track your flight in real time and adjust the pickup time: your driver is waiting on arrival, even if the flight is delayed or early.",
     sections: [
       {
-        h: "Delayed flight? Let José know right away",
-        p: "Share your flight number when booking. If your flight is delayed or early, text or call José straight away at +33 6 73 07 23 22 so he can adjust the pickup time.",
+        h: "Delayed flight? Let Patricia know right away",
+        p: "Share your flight number when booking. If your flight is delayed or early, text or call Patricia straight away at +33 6 50 26 00 15 so she can adjust the pickup time.",
       },
       {
         h: "Price quoted upfront",
@@ -223,7 +223,7 @@ const EN: Record<LandingKey, LandingContent> = {
       },
       {
         q: "Will the taxi wait if my flight is delayed?",
-        a: "If your flight is delayed, text or call José right away at +33 6 73 07 23 22 so he can adjust the pickup time.\nA reasonable wait after landing is included.",
+        a: "If your flight is delayed, text or call Patricia right away at +33 6 50 26 00 15 so she can adjust the pickup time.\nA reasonable wait after landing is included.",
       },
       {
         q: "Can I book in advance for an early-morning flight?",
@@ -234,7 +234,7 @@ const EN: Record<LandingKey, LandingContent> = {
     ctaCall: CTA.en.call,
   },
   station: {
-    title: "Bordeaux Saint-Jean Station Taxi : Book with José 24/7",
+    title: "Bordeaux Saint-Jean Station Taxi : Book with Patricia 24/7",
     description:
       "Book a taxi at Bordeaux Saint-Jean station: live TGV tracking, platform pickup, vehicle for up to 4 people. 24/7 service.",
     intro:
@@ -245,8 +245,8 @@ const EN: Record<LandingKey, LandingContent> = {
         p: "Meeting point agreed at booking: drop-off zone, forecourt, or car park.\nYour driver locates you and calls if needed.",
       },
       {
-        h: "Delayed train? Let José know right away",
-        p: "Delay, early arrival, platform change: text or call José right away at +33 6 73 07 23 22 so he can adjust the pickup time.",
+        h: "Delayed train? Let Patricia know right away",
+        p: "Delay, early arrival, platform change: text or call Patricia right away at +33 6 50 26 00 15 so she can adjust the pickup time.",
       },
       {
         h: "To every destination",
@@ -264,7 +264,7 @@ const EN: Record<LandingKey, LandingContent> = {
       },
       {
         q: "Do you count waiting minutes if my train is late?",
-        a: "Not for standard delays: just text or call José right away and he'll adjust his arrival.\nExtended waits may be billed at the regulated rate.",
+        a: "Not for standard delays: just text or call Patricia right away and he'll adjust his arrival.\nExtended waits may be billed at the regulated rate.",
       },
     ],
     ctaBook: CTA.en.book,
@@ -349,15 +349,15 @@ const EN: Record<LandingKey, LandingContent> = {
 // --------- ES ----------
 const ES: Record<LandingKey, LandingContent> = {
   airport: {
-    title: "Taxi Burdeos aeropuerto : Reservar taxi con José 24/7",
+    title: "Taxi Burdeos aeropuerto : Reservar taxi con Patricia 24/7",
     description:
-      "Reservar taxi Burdeos aeropuerto: seguimiento de vuelo, precio indicado al reservar, vehículo hasta 4 personas. 24/7. +33 6 73 07 23 22.",
+      "Reservar taxi Burdeos aeropuerto: seguimiento de vuelo, precio indicado al reservar, vehículo hasta 4 personas. 24/7. +33 6 50 26 00 15.",
     intro:
       "Reserve su taxi al aeropuerto de Burdeos en segundos.\nSeguimos su vuelo en tiempo real y ajustamos la hora de recogida: su conductor le espera a la salida, incluso con retraso o adelanto.",
     sections: [
       {
-        h: "¿Vuelo con retraso? Avise a José enseguida",
-        p: "Comuníquenos su número de vuelo al reservar.\nSi su vuelo se retrasa o se adelanta, avise a José de inmediato por SMS o llamada al +33 6 73 07 23 22 para que ajuste la hora de recogida.",
+        h: "¿Vuelo con retraso? Avise a Patricia enseguida",
+        p: "Comuníquenos su número de vuelo al reservar.\nSi su vuelo se retrasa o se adelanta, avise a Patricia de inmediato por SMS o llamada al +33 6 50 26 00 15 para que ajuste la hora de recogida.",
       },
       {
         h: "Precio indicado por adelantado",
@@ -375,7 +375,7 @@ const ES: Record<LandingKey, LandingContent> = {
       },
       {
         q: "¿El taxi espera si mi vuelo se retrasa?",
-        a: "Si su vuelo se retrasa, avise a José de inmediato por SMS o llamada al +33 6 73 07 23 22 para que ajuste la hora de recogida.\nUna espera razonable tras el aterrizaje está incluida.",
+        a: "Si su vuelo se retrasa, avise a Patricia de inmediato por SMS o llamada al +33 6 50 26 00 15 para que ajuste la hora de recogida.\nUna espera razonable tras el aterrizaje está incluida.",
       },
       {
         q: "¿Puedo reservar por anticipado para un vuelo temprano?",
@@ -386,7 +386,7 @@ const ES: Record<LandingKey, LandingContent> = {
     ctaCall: CTA.es.call,
   },
   station: {
-    title: "Taxi Burdeos estación Saint-Jean : Reservar taxi con José 24/7",
+    title: "Taxi Burdeos estación Saint-Jean : Reservar taxi con Patricia 24/7",
     description:
       "Reservar taxi en la estación Burdeos Saint-Jean: seguimiento TGV, recogida en el andén, vehículo hasta 4 personas. 24/7.",
     intro:
@@ -397,8 +397,8 @@ const ES: Record<LandingKey, LandingContent> = {
         p: "Punto de encuentro acordado al reservar: zona de bajada, vestíbulo o aparcamiento.\nSu conductor le localiza y le llama si es necesario.",
       },
       {
-        h: "¿Tren con retraso? Avise a José enseguida",
-        p: "Retraso, adelanto, cambio de vía: avise a José por SMS o llamada al +33 6 73 07 23 22 para que ajuste la hora de recogida.",
+        h: "¿Tren con retraso? Avise a Patricia enseguida",
+        p: "Retraso, adelanto, cambio de vía: avise a Patricia por SMS o llamada al +33 6 50 26 00 15 para que ajuste la hora de recogida.",
       },
       {
         h: "A cualquier destino",
@@ -498,15 +498,15 @@ const ES: Record<LandingKey, LandingContent> = {
 // --------- PT ----------
 const PT: Record<LandingKey, LandingContent> = {
   airport: {
-    title: "Táxi Bordéus aeroporto : Reservar táxi com José 24/7",
+    title: "Táxi Bordéus aeroporto : Reservar táxi com Patricia 24/7",
     description:
-      "Reservar táxi Bordéus aeroporto: seguimento de voo, preço indicado na reserva, veículo até 4 pessoas. 24/7. +33 6 73 07 23 22.",
+      "Reservar táxi Bordéus aeroporto: seguimento de voo, preço indicado na reserva, veículo até 4 pessoas. 24/7. +33 6 50 26 00 15.",
     intro:
       "Reserve o seu táxi para o aeroporto de Bordéus em segundos.\nSeguimos o seu voo em tempo real e ajustamos a hora de recolha automaticamente.",
     sections: [
       {
-        h: "Voo atrasado? Avise o José de imediato",
-        p: "Indique o número do voo na reserva.\nSe o voo atrasar ou adiantar, avise o José de imediato por SMS ou telefone para o +33 6 73 07 23 22 para que ajuste a hora de recolha.",
+        h: "Voo atrasado? Avise o Patricia de imediato",
+        p: "Indique o número do voo na reserva.\nSe o voo atrasar ou adiantar, avise o Patricia de imediato por SMS ou telefone para o +33 6 50 26 00 15 para que ajuste a hora de recolha.",
       },
       {
         h: "Preço indicado antecipadamente",
@@ -521,7 +521,7 @@ const PT: Record<LandingKey, LandingContent> = {
       },
       {
         q: "O táxi espera se o meu voo atrasar?",
-        a: "Se o voo atrasar, avise o José de imediato por SMS ou telefone para o +33 6 73 07 23 22 para que ajuste a hora de recolha.\nUma espera razoável após aterragem está incluída.",
+        a: "Se o voo atrasar, avise o Patricia de imediato por SMS ou telefone para o +33 6 50 26 00 15 para que ajuste a hora de recolha.\nUma espera razoável após aterragem está incluída.",
       },
       {
         q: "Posso reservar com antecedência para um voo de madrugada?",
@@ -532,7 +532,7 @@ const PT: Record<LandingKey, LandingContent> = {
     ctaCall: CTA.pt.call,
   },
   station: {
-    title: "Táxi Bordéus estação Saint-Jean : Reservar táxi com José 24/7",
+    title: "Táxi Bordéus estação Saint-Jean : Reservar táxi com Patricia 24/7",
     description:
       "Reservar táxi na estação Bordéus Saint-Jean: seguimento TGV, recolha na plataforma, veículo até 4 pessoas. 24/7.",
     intro:
@@ -543,8 +543,8 @@ const PT: Record<LandingKey, LandingContent> = {
         p: "Ponto de encontro combinado na reserva: zona de largada, átrio principal ou parque.",
       },
       {
-        h: "Comboio atrasado? Avise o José de imediato",
-        p: "Atraso, adiantamento, mudança de via: avise o José por SMS ou telefone para o +33 6 73 07 23 22 para que ajuste a hora de recolha.",
+        h: "Comboio atrasado? Avise o Patricia de imediato",
+        p: "Atraso, adiantamento, mudança de via: avise o Patricia por SMS ou telefone para o +33 6 50 26 00 15 para que ajuste a hora de recolha.",
       },
       {
         h: "Para todos os destinos",
@@ -644,15 +644,15 @@ const PT: Record<LandingKey, LandingContent> = {
 // --------- IT ----------
 const IT: Record<LandingKey, LandingContent> = {
   airport: {
-    title: "Taxi Bordeaux aeroporto : Prenotare taxi con José 24/7",
+    title: "Taxi Bordeaux aeroporto : Prenotare taxi con Patricia 24/7",
     description:
-      "Prenotare un taxi Bordeaux aeroporto: monitoraggio volo, prezzo indicato alla prenotazione, veicolo fino a 4 persone. 24/7. +33 6 73 07 23 22.",
+      "Prenotare un taxi Bordeaux aeroporto: monitoraggio volo, prezzo indicato alla prenotazione, veicolo fino a 4 persone. 24/7. +33 6 50 26 00 15.",
     intro:
       "Prenoti il taxi per l'aeroporto di Bordeaux in pochi secondi.\nMonitoriamo il volo in tempo reale e adattiamo l'orario di ritiro automaticamente.",
     sections: [
       {
-        h: "Volo in ritardo? Avvisi subito José",
-        p: "Ci comunichi il numero di volo alla prenotazione.\nSe il volo è in ritardo o in anticipo, avvisi subito José via SMS o telefono al +33 6 73 07 23 22 in modo che possa adattare l'orario di ritiro.",
+        h: "Volo in ritardo? Avvisi subito Patricia",
+        p: "Ci comunichi il numero di volo alla prenotazione.\nSe il volo è in ritardo o in anticipo, avvisi subito Patricia via SMS o telefono al +33 6 50 26 00 15 in modo che possa adattare l'orario di ritiro.",
       },
       {
         h: "Prezzo indicato in anticipo",
@@ -667,7 +667,7 @@ const IT: Record<LandingKey, LandingContent> = {
       },
       {
         q: "Il taxi aspetta se il mio volo è in ritardo?",
-        a: "Se il volo è in ritardo, avvisi subito José via SMS o telefono al +33 6 73 07 23 22 in modo che possa adattare l'orario.\nUn'attesa ragionevole dopo l'atterraggio è inclusa.",
+        a: "Se il volo è in ritardo, avvisi subito Patricia via SMS o telefono al +33 6 50 26 00 15 in modo che possa adattare l'orario.\nUn'attesa ragionevole dopo l'atterraggio è inclusa.",
       },
       {
         q: "Posso prenotare in anticipo per un volo mattutino?",
@@ -678,7 +678,7 @@ const IT: Record<LandingKey, LandingContent> = {
     ctaCall: CTA.it.call,
   },
   station: {
-    title: "Taxi Bordeaux stazione Saint-Jean : Prenotare taxi con José 24/7",
+    title: "Taxi Bordeaux stazione Saint-Jean : Prenotare taxi con Patricia 24/7",
     description:
       "Prenotare un taxi alla stazione Bordeaux Saint-Jean: monitoraggio TGV, ritiro sul binario, veicolo fino a 4 persone. 24/7.",
     intro:
@@ -689,8 +689,8 @@ const IT: Record<LandingKey, LandingContent> = {
         p: "Punto d'incontro concordato: zona di sosta, atrio o parcheggio.\nL'autista la localizza e la chiama se necessario.",
       },
       {
-        h: "Treno in ritardo? Avvisi subito José",
-        p: "Ritardo, anticipo, cambio binario: avvisi José via SMS o telefono al +33 6 73 07 23 22 in modo che possa adattare l'orario di ritiro.",
+        h: "Treno in ritardo? Avvisi subito Patricia",
+        p: "Ritardo, anticipo, cambio binario: avvisi Patricia via SMS o telefono al +33 6 50 26 00 15 in modo che possa adattare l'orario di ritiro.",
       },
       {
         h: "Verso ogni destinazione",
@@ -792,12 +792,12 @@ const AR: Record<LandingKey, LandingContent> = {
   airport: {
     title: "سيارة أجرة مطار بوردو : احجز تاكسي مع خوسيه 24/7",
     description:
-      "احجز سيارة أجرة مطار بوردو: متابعة الرحلة، سعر يُذكر عند الحجز، مركبة حتى 4 أشخاص. 24/7. +33 6 73 07 23 22.",
+      "احجز سيارة أجرة مطار بوردو: متابعة الرحلة، سعر يُذكر عند الحجز، مركبة حتى 4 أشخاص. 24/7. +33 6 50 26 00 15.",
     intro: "احجز سيارة أجرة إلى مطار بوردو في ثوان.\nنتابع رحلتك في الوقت الفعلي ونضبط موعد الاستلام تلقائيًا.",
     sections: [
       {
         h: "تأخرت رحلتك؟ أخبر خوسيه فورًا",
-        p: "زودنا برقم الرحلة عند الحجز.\nإذا تأخرت رحلتك أو وصلت مبكرًا، أخبر خوسيه فورًا عبر رسالة نصية أو مكالمة هاتفية على 0033673072322 ليضبط موعد الاستلام.",
+        p: "زودنا برقم الرحلة عند الحجز.\nإذا تأخرت رحلتك أو وصلت مبكرًا، أخبر خوسيه فورًا عبر رسالة نصية أو مكالمة هاتفية على 0033650260015 ليضبط موعد الاستلام.",
       },
       { h: "سعر يُذكر مسبقًا", p: "لا مفاجآت.\nتعرف تقدير السعر قبل الركوب." },
       { h: "أمتعة وعائلات", p: "مركبة واسعة، مقعد أطفال عند الطلب، حتى 4 أشخاص مع الأمتعة." },
@@ -809,7 +809,7 @@ const AR: Record<LandingKey, LandingContent> = {
       },
       {
         q: "هل تنتظر السيارة إذا تأخرت رحلتي؟",
-        a: "إذا تأخرت رحلتك، أخبر خوسيه فورًا عبر رسالة نصية أو مكالمة هاتفية على 0033673072322 ليضبط موعد الاستلام.\nانتظار معقول بعد الهبوط مشمول.",
+        a: "إذا تأخرت رحلتك، أخبر خوسيه فورًا عبر رسالة نصية أو مكالمة هاتفية على 0033650260015 ليضبط موعد الاستلام.\nانتظار معقول بعد الهبوط مشمول.",
       },
       { q: "هل يمكنني الحجز مسبقًا لرحلة مبكرة؟", a: "بالتأكيد.\nنقبل الحجوزات على مدار الساعة." },
     ],
@@ -824,7 +824,7 @@ const AR: Record<LandingKey, LandingContent> = {
       { h: "الاستلام في سان-جان", p: "نقطة اللقاء متفق عليها عند الحجز." },
       {
         h: "القطار متأخر؟ أخبر خوسيه فورًا",
-        p: "تأخير أو تقديم أو تغيير الرصيف: أخبر خوسيه عبر رسالة نصية أو مكالمة هاتفية على 0033673072322 ليضبط موعد الاستلام.",
+        p: "تأخير أو تقديم أو تغيير الرصيف: أخبر خوسيه عبر رسالة نصية أو مكالمة هاتفية على 0033650260015 ليضبط موعد الاستلام.",
       },
       { h: "إلى جميع الوجهات", p: "من سان-جان إلى فندقك، Cité du Vin، مطار بوردو، أركاشون، سانت-إميليون." },
     ],

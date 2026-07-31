@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Send, X, Loader2, Check, CheckCheck, ChevronUp, Search, Download, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useT } from "@/i18n/I18nProvider";
+import { useT, useI18n } from "@/i18n/I18nProvider";
 import {
   sendClientMessage,
   sendChauffeurMessage,
@@ -33,8 +33,10 @@ type OfflineMsg = { tempId: string; content: string; at: number };
 
 export function ChatPanel({ reservationId, role, onClose, peerName, clientToken }: Props) {
   const t = useT();
+  const { lang } = useI18n();
+  const isEn = lang === "en";
   const peerRole = role === "client" ? "chauffeur" : "client";
-  const title = peerName || (role === "client" ? "José 🚖" : "Client");
+  const title = peerName || (role === "client" ? "Patricia 🚖" : "Client");
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -382,10 +384,10 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
   }
 
   const statusLabel = useMemo(() => {
-    if (peerTyping) return "Écrit…";
-    if (peerOnline) return "En ligne";
-    return "Hors ligne";
-  }, [peerOnline, peerTyping]);
+    if (peerTyping) return isEn ? "Typing…" : "Écrit…";
+    if (peerOnline) return isEn ? "Online" : "En ligne";
+    return isEn ? "Offline" : "Hors ligne";
+  }, [peerOnline, peerTyping, isEn]);
 
   const statusColor = peerOnline || peerTyping ? "text-emerald-400" : "text-white/40";
 
@@ -483,9 +485,9 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
             <button
               onClick={onClose}
               className="mr-2 inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[12px] font-semibold text-black transition active:scale-95"
-              aria-label="Retour driver"
+              aria-label={isEn ? "Back to driver view" : "Retour driver"}
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> Retour driver
+              <ArrowLeft className="h-3.5 w-3.5" /> {isEn ? "Back to driver" : "Retour driver"}
             </button>
           )}
           <div className="min-w-0 flex-1">
@@ -712,7 +714,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                 send();
               }
             }}
-            placeholder={isDriver ? "Répondre au client…" : t("chat.input_ph")}
+            placeholder={isDriver ? (isEn ? "Reply to the client…" : "Répondre au client…") : t("chat.input_ph")}
             rows={1}
             className={
               isDriver

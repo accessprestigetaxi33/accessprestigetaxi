@@ -101,7 +101,7 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
           ...reservation,
           lang: normalizePushLang((reservation as any).lang),
           phone: reservation.telephone,
-          admin_url: "https://taxicitybordeaux.fr/admin/dashboard",
+          admin_url: "https://accessprestigetaxi.lovable.app/admin/dashboard",
         };
         const template = TEMPLATES[TEMPLATE_NAME];
         if (!template || !template.to) {
@@ -110,7 +110,7 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         const recipient = template.to;
         const idempotencyKey = `reservation-${reservationId}`;
 
-        const EMAIL_BRIDGE_URL = "https://taxicitybordeaux.fr/lovable/email/transactional/send";
+        const EMAIL_BRIDGE_URL = "https://accessprestigetaxi.lovable.app/lovable/email/transactional/send";
         console.log("[notify-reservation] → bridge:", EMAIL_BRIDGE_URL, "reservation:", reservationId);
 
         let emailQueued = false;

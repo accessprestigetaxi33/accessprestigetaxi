@@ -1,13 +1,26 @@
 import { useEffect, useRef, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Calculator, Phone, ArrowRight, Info, MapPin, Loader2, Clock } from "lucide-react";
-import { useT } from "@/i18n/I18nProvider";
+import { useI18n } from "@/i18n/I18nProvider";
 import { getDistanceAndDurationKm } from "@/lib/googleRoute";
 import { searchAddress } from "@/lib/googleGeocode";
 
+const LOCAL_COPY = {
+  fr: {
+    useMyPosition: "📍 Utiliser ma position",
+    geoError: "Impossible d'obtenir votre position",
+    geoUsed: "Position utilisée comme origine",
+  },
+  en: {
+    useMyPosition: "📍 Use my location",
+    geoError: "Unable to get your location",
+    geoUsed: "Location used as pickup point",
+  },
+} as const;
+
 // ─── Config tarifs ────────────────────────────────────────────
-const PHONE = "0673072322";
-const PHONE_DISPLAY = "06 73 07 23 22";
+const PHONE = "0650260015";
+const PHONE_DISPLAY = "06 50 26 00 15";
 
 const PICKUP_FEE = 2.83;
 const RATE_DAY = 2.16; // 7h–19h
@@ -202,7 +215,8 @@ function formatDuration(sec: number): string {
 
 // ─── Composant principal ──────────────────────────────────────
 export function FareSimulator() {
-  const t = useT();
+  const { t, lang } = useI18n();
+  const lc = LOCAL_COPY[lang === "en" ? "en" : "fr"];
 
   const [fromCoord, setFromCoord] = useState<[number, number] | null>(null);
   const [toCoord, setToCoord] = useState<[number, number] | null>(null);
@@ -248,11 +262,11 @@ export function FareSimulator() {
       });
     });
     if (!pos) {
-      setGeoMsg("Impossible d'obtenir votre position");
+      setGeoMsg(lc.geoError);
       return;
     }
     setFromCoord([pos.coords.longitude, pos.coords.latitude]);
-    setGeoMsg("Position utilisée comme origine");
+    setGeoMsg(lc.geoUsed);
     setTimeout(() => setGeoMsg(null), 3000);
   };
 
@@ -280,7 +294,7 @@ export function FareSimulator() {
               onClick={handleUseMyPosition}
               className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-primary"
             >
-              📍 Utiliser ma position
+              {lc.useMyPosition}
             </button>
             {geoMsg && <div style={{ color: "#94a3b8", fontSize: 13 }}>{geoMsg}</div>}
           </div>

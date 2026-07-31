@@ -72,6 +72,9 @@ const COPY = {
       ["Réclamation", "Par e-mail ou téléphone, réponse sous 48 h ouvrées"],
     ],
     more: "Voir aussi",
+    legalLink: "Mentions légales",
+    privacyLink: "Confidentialité",
+    destinationsLink: "Destinations",
     cta: "Réserver une course",
   },
   en: {
@@ -119,6 +122,9 @@ const COPY = {
       ["Complaints", "By email or phone, answered within 48 working hours"],
     ],
     more: "See also",
+    legalLink: "Legal notice",
+    privacyLink: "Privacy",
+    destinationsLink: "Destinations",
     cta: "Book a ride",
   },
 } as const;
@@ -185,13 +191,13 @@ function SecuritePage() {
         <h2 className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.more}</h2>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
           <Link to="/mentions-legales" className="inline-flex items-center gap-2 text-primary underline">
-            <FileText className="h-4 w-4" /> Mentions légales
+            <FileText className="h-4 w-4" /> {c.legalLink}
           </Link>
           <Link to="/confidentialite" className="inline-flex items-center gap-2 text-primary underline">
-            <ShieldCheck className="h-4 w-4" /> Confidentialité
+            <ShieldCheck className="h-4 w-4" /> {c.privacyLink}
           </Link>
           <Link to="/destinations" className="inline-flex items-center gap-2 text-primary underline">
-            <MapPin className="h-4 w-4" /> Destinations
+            <MapPin className="h-4 w-4" /> {c.destinationsLink}
           </Link>
         </div>
         <Link

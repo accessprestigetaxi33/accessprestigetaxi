@@ -54,7 +54,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
                 ? "ar"
                 : "fr-FR";
   const peerRole = role === "client" ? "chauffeur" : "client";
-  const title = peerName || (role === "client" ? "José 🚖" : "Client");
+  const title = peerName || (role === "client" ? "Access Prestige Taxi 🚖" : "Client");
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);

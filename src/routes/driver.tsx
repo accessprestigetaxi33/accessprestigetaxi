@@ -96,7 +96,7 @@ export const Route = createFileRoute("/driver")({
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Espace José" },
+      { name: "apple-mobile-web-app-title", content: "Espace Patricia" },
     ],
     links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
   }),
@@ -1463,7 +1463,7 @@ function CourseCard({
     const trajet = `${resa.depart} → ${resa.destination || "—"}`;
     const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
     const trackingLine = trackUrl ? `\nRetrouvez votre course ici : ${trackUrl}` : "";
-    const msg = `Bonjour ${name}, le prix de votre course Taxi City Bordeaux (${trajet}) est de ${val.toFixed(2)} €. Merci.${trackingLine}`;
+    const msg = `Bonjour ${name}, le prix de votre course Access Prestige Taxi (${trajet}) est de ${val.toFixed(2)} €. Merci.${trackingLine}`;
 
     if (canal === "sms") {
       if (!phone) {
@@ -1672,7 +1672,7 @@ function CourseCard({
         <span>🏁 {resa.destination}</span>
       </div>
 
-      {/* Demande spéciale client — toujours visible pour que José la voie tout de suite */}
+      {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
       {resa.message && resa.message.trim().length > 0 && (
         <div
           style={{
@@ -1880,11 +1880,11 @@ function CourseCard({
               const phone = resa.client_phone;
               const mail = resa.client_email || resa.email;
               const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
-              const greet = `Bonjour ${resa.client_name || ""}, votre taxi Taxi City Bordeaux.`;
+              const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
               const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
               const mailBody = trackUrl
-                ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nTaxi City Bordeaux`
-                : `Bonjour ${resa.client_name || ""},\n\nTaxi City Bordeaux`;
+                ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nAccess Prestige Taxi`
+                : `Bonjour ${resa.client_name || ""},\n\nAccess Prestige Taxi`;
               if (!phone && !mail) return null;
               const contactBtn: React.CSSProperties = {
                 flex: "1 1 auto",
@@ -1929,7 +1929,7 @@ function CourseCard({
                   )}
                   {mail && (
                     <a
-                      href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Taxi City Bordeaux")}&body=${encodeURIComponent(mailBody)}`}
+                      href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
                       style={{ ...contactBtn, background: "#fffbeb", borderColor: "#fde68a", color: "#92400e" }}
                     >
                       ✉️ Email

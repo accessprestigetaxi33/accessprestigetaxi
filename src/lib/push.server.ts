@@ -21,7 +21,7 @@ type ServiceAccount = {
   token_uri?: string;
 };
 
-const APP_URL = "https://taxicitybordeaux.fr";
+const APP_URL = "https://accessprestigetaxi.lovable.app";
 
 let cachedAccount: ServiceAccount | null = null;
 let cachedToken: { token: string; exp: number } | null = null;

@@ -35,19 +35,31 @@ export const Route = createFileRoute("/destinations/$slug")({
       links: [{ rel: "canonical", href: url }],
     };
   },
-  notFoundComponent: () => (
-    <div className="mx-auto max-w-2xl px-5 py-20 text-center">
-      <h1 className="font-display text-2xl font-semibold">Destination introuvable</h1>
-      <Link to="/destinations" className="mt-4 inline-block text-primary underline">
-        Voir toutes les destinations
-      </Link>
-    </div>
-  ),
-  errorComponent: () => (
-    <div className="mx-auto max-w-2xl px-5 py-20 text-center">
-      <h1 className="font-display text-2xl font-semibold">Page indisponible</h1>
-    </div>
-  ),
+  notFoundComponent: () => {
+    const { lang } = useI18n();
+    const isEn = lang === "en";
+    return (
+      <div className="mx-auto max-w-2xl px-5 py-20 text-center">
+        <h1 className="font-display text-2xl font-semibold">
+          {isEn ? "Destination not found" : "Destination introuvable"}
+        </h1>
+        <Link to="/destinations" className="mt-4 inline-block text-primary underline">
+          {isEn ? "See all destinations" : "Voir toutes les destinations"}
+        </Link>
+      </div>
+    );
+  },
+  errorComponent: () => {
+    const { lang } = useI18n();
+    const isEn = lang === "en";
+    return (
+      <div className="mx-auto max-w-2xl px-5 py-20 text-center">
+        <h1 className="font-display text-2xl font-semibold">
+          {isEn ? "Page unavailable" : "Page indisponible"}
+        </h1>
+      </div>
+    );
+  },
   component: DestinationPage,
 });
 

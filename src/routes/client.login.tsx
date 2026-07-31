@@ -32,11 +32,11 @@ const css = `
 export const Route = createFileRoute("/client/login")({
   head: () => ({
     meta: [
-      { title: "Mon Espace Client — Taxi City Bordeaux" },
+      { title: "Mon Espace Client — Access Prestige Taxi" },
       {
         name: "description",
         content:
-          "Connectez-vous à votre espace client Taxi City Bordeaux pour suivre vos courses et gérer vos réservations.",
+          "Connectez-vous à votre espace client Access Prestige Taxi pour suivre vos courses et gérer vos réservations.",
       },
       { name: "robots", content: "noindex" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },

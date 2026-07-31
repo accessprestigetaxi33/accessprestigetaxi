@@ -152,7 +152,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
         await sendPushToAudience(
           "client",
           {
-            title: "💬 José a répondu à votre message",
+            title: "💬 Patricia a répondu à votre message",
             body: data.content.slice(0, 100),
             url: `/suivi/${suiviId}`,
             tag: `chat-client-resa-${data.reservation_id}`,
@@ -416,7 +416,7 @@ export const seedReservationSpecialRequest = createServerFn({ method: "POST" })
     return { ok: true, skipped: false } as const;
   });
 
-// ─── Chat général client ↔ José (sans réservation) ───────────────────────────
+// ─── Chat général client ↔ Patricia (sans réservation) ───────────────────────────
 
 export type DirectMessage = {
   id: string;
@@ -532,7 +532,7 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
       await sendPushToAudience(
         "client",
         {
-          title: "💬 José a répondu à votre message",
+          title: "💬 Patricia a répondu à votre message",
           body: data.content.slice(0, 100),
           url: "/client/chat",
           tag: `chat-client-direct-${accountId}`,
@@ -626,7 +626,7 @@ export const listAdminDirectThreads = createServerFn({ method: "GET" }).handler(
     .sort((a, b) => b.last_message_at.localeCompare(a.last_message_at));
 });
 
-// ─── Vue FUSIONNÉE pour José (espace chauffeur) ──────────────────────────────
+// ─── Vue FUSIONNÉE pour Patricia (espace chauffeur) ──────────────────────────────
 // Agrège direct_messages (par compte client) et reservation_messages (par
 // course) en UN seul thread par client. Sert uniquement côté driver — le
 // client reste sur ses 2 UI séparées (/suivi/$id pour la course, /client/chat

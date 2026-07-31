@@ -3,8 +3,8 @@ import { Phone, MessageCircle, MapPin, Clock, ShieldCheck } from "lucide-react";
 import logo from "@/assets/tcb-logo-badge.png";
 import { useT } from "@/i18n/I18nProvider";
 
-const PHONE = "0673072322";
-const PHONE_DISPLAY = "06 73 07 23 22";
+const PHONE = "0650260015";
+const PHONE_DISPLAY = "06 50 26 00 15";
 const WHATSAPP = `https://wa.me/33${PHONE.replace(/^0/, "")}`;
 
 export function Footer() {
@@ -39,8 +39,8 @@ export function Footer() {
               to="/"
               className="inline-flex touch-manipulation items-center gap-2.5 [-webkit-tap-highlight-color:transparent]"
             >
-              <img src={logo} alt="Taxi City Bordeaux" className="h-10 w-10 rounded-full object-cover" />
-              <span className="font-display text-lg font-bold">Taxi City Bordeaux</span>
+              <img src={logo} alt="Access Prestige Taxi" className="h-10 w-10 rounded-full object-cover" />
+              <span className="font-display text-lg font-bold">Access Prestige Taxi</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">{t("footer.tagline")}</p>
 
@@ -133,7 +133,7 @@ export function Footer() {
         {/* BOTTOM BAR */}
         <div className="mt-10 flex flex-col items-center gap-3 border-t border-border pt-6 text-center text-xs text-muted-foreground sm:mt-12 sm:flex-row sm:justify-between sm:text-left sm:pt-8">
           <p>
-            © {year} Taxi City Bordeaux — {t("footer.rights")}
+            © {year} Access Prestige Taxi — {t("footer.rights")}
           </p>
           <div className="flex items-center gap-4">
             {legalLinks.map((l) => (

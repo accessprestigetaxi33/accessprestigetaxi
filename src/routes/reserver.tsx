@@ -25,11 +25,12 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { ListeningOverlay } from "@/components/ListeningOverlay";
 
 import { DICTS, LANGUAGES, type Lang } from "@/i18n/dict";
+import { useI18n } from "@/i18n/I18nProvider";
 
-const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Taxi City Bordeaux";
+const RESERVER_TITLE = "Réserver un taxi à Bordeaux — Access Prestige Taxi";
 const RESERVER_DESC =
   "Réservez votre taxi à Bordeaux en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
-const RESERVER_URL = "https://taxicitybordeaux.fr/reserver";
+const RESERVER_URL = "https://accessprestigetaxi.lovable.app/reserver";
 
 export const Route = createFileRoute("/reserver")({
   head: () => ({
@@ -58,6 +59,95 @@ const NAMED_PLACE_REGEX =
 function isNamedPlaceQuery(value: string): boolean {
   return NAMED_PLACE_REGEX.test(normalizeAddressText(value));
 }
+const UI = {
+  fr: {
+    micDenied: "Accès au micro refusé. Autorisez-le dans les réglages du navigateur.",
+    noVoice: "Aucune voix détectée. Réessayez en parlant plus fort.",
+    noMic: "Aucun micro détecté sur cet appareil.",
+    micNetwork: "Réseau indisponible pour la dictée. Vérifiez votre connexion.",
+    geoInvalid: "Position invalide. Saisissez l\u2019adresse de départ manuellement.",
+    geoImprecise: (m: number) =>
+      `Signal GPS trop imprécis (${m} m). Saisissez l\u2019adresse exacte pour éviter une mauvaise prise en charge.`,
+    geoIncoherent: "Position incohérente avec la zone de Bordeaux. Saisissez l\u2019adresse exacte de départ.",
+    detectingAuto: "Détection automatique du départ…",
+    locating: "Localisation en cours…",
+    approxIp: "Position approximative (via IP) — vous pouvez préciser l'adresse",
+    approxDetected: "Position approximative détectée — vérifiez l'adresse de départ",
+    gpsDetected: "Position GPS détectée — modifiable si besoin",
+    gpsUnavailableIp: "Position GPS indisponible — position approximative via IP.",
+    httpsRequired: "La géolocalisation GPS nécessite HTTPS. Saisissez l\u2019adresse exacte de départ.",
+    geoNotAvailable: "Géolocalisation non disponible sur cet appareil",
+    gpsTimeout: "GPS trop long à répondre. Saisissez l'adresse exacte de départ.",
+    approxDetectedRefine: "Position approximative détectée — vous pouvez préciser l'adresse.",
+    multiplePlaces: "Plusieurs lieux trouvés — choisissez le bon",
+    selectFromList: "Sélectionnez une adresse dans la liste",
+    addressNotFound: "Adresse introuvable — précisez la ville ou le lieu",
+    distanceEstimated: "Distance estimée (GPS indisponible) — le prix peut être ajusté par le taxi.",
+    confirmEmailSent:
+      "Un email de confirmation vous a été envoyé. Pensez à vérifier vos spams si vous ne le trouvez pas.",
+    backToSite: "Retour au site",
+    dictateDestOnly: "Dictez uniquement la destination",
+    dictateFullTrip: "Dictez le trajet complet",
+    listening: "⏹ J'écoute…",
+    dictateDestBtn: "🎤 Destination",
+    dictateTripBtn: "🎤 Dicter le trajet",
+    departPlaceholder: "Adresse de départ",
+    geolocateAria: "Me géolocaliser",
+    edit: "Modifier",
+    firstNamePh: "Jean",
+    lastNamePh: "Dupont",
+    emailPh: "jean@exemple.fr",
+    hiddenButtonDebug: "Bouton caché",
+    listeningLabel: "Je vous écoute…",
+    dictateDestinationLabel: "Dictez la destination",
+    listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à aéroport de Bordeaux »",
+    listeningHintDest: "Dites uniquement votre destination. Touchez « Arrêter » pour valider.",
+  },
+  en: {
+    micDenied: "Microphone access denied. Allow it in your browser settings.",
+    noVoice: "No voice detected. Try speaking louder.",
+    noMic: "No microphone detected on this device.",
+    micNetwork: "Network unavailable for dictation. Check your connection.",
+    geoInvalid: "Invalid position. Please enter the pickup address manually.",
+    geoImprecise: (m: number) =>
+      `GPS signal too imprecise (${m} m). Enter the exact address to avoid a wrong pickup point.`,
+    geoIncoherent: "Position inconsistent with the Bordeaux area. Please enter the exact pickup address.",
+    detectingAuto: "Automatically detecting pickup location…",
+    locating: "Locating…",
+    approxIp: "Approximate position (via IP) — you can refine the address",
+    approxDetected: "Approximate position detected — please check the pickup address",
+    gpsDetected: "GPS position detected — editable if needed",
+    gpsUnavailableIp: "GPS position unavailable — approximate position via IP.",
+    httpsRequired: "GPS geolocation requires HTTPS. Please enter the exact pickup address.",
+    geoNotAvailable: "Geolocation not available on this device",
+    gpsTimeout: "GPS took too long to respond. Please enter the exact pickup address.",
+    approxDetectedRefine: "Approximate position detected — you can refine the address.",
+    multiplePlaces: "Several places found — choose the right one",
+    selectFromList: "Select an address from the list",
+    addressNotFound: "Address not found — specify the city or place",
+    distanceEstimated: "Estimated distance (GPS unavailable) — the price may be adjusted by the driver.",
+    confirmEmailSent:
+      "A confirmation email has been sent to you. Please check your spam folder if you can't find it.",
+    backToSite: "Back to site",
+    dictateDestOnly: "Dictate destination only",
+    dictateFullTrip: "Dictate the full trip",
+    listening: "⏹ Listening…",
+    dictateDestBtn: "🎤 Destination",
+    dictateTripBtn: "🎤 Dictate trip",
+    departPlaceholder: "Pickup address",
+    geolocateAria: "Locate me",
+    edit: "Edit",
+    firstNamePh: "John",
+    lastNamePh: "Doe",
+    emailPh: "john@example.com",
+    hiddenButtonDebug: "Button hidden",
+    listeningLabel: "Listening…",
+    dictateDestinationLabel: "Dictate destination",
+    listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Bordeaux airport »",
+    listeningHintDest: "Say only your destination. Tap « Stop » to confirm.",
+  },
+} as const;
+
 const MAX_AUTO_GEO_ACCURACY_M = 1500;
 const MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM = 130;
 
@@ -546,19 +636,19 @@ function requestBrowserPosition(options: PositionOptions): Promise<GeolocationPo
   });
 }
 
-function getAutoGeoRejectionReason(pos: GeolocationPosition, allowApproximate = false): string | null {
+function getAutoGeoRejectionReason(pos: GeolocationPosition, lang: Lang, allowApproximate = false): string | null {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
   const accuracy = pos.coords.accuracy;
   if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(accuracy)) {
-    return "Position invalide. Saisissez l’adresse de départ manuellement.";
+    return lang === "en" ? UI.en.geoInvalid : UI.fr.geoInvalid;
   }
   if (!allowApproximate && accuracy > MAX_AUTO_GEO_ACCURACY_M) {
-    return `Signal GPS trop imprécis (${Math.round(accuracy)} m). Saisissez l’adresse exacte pour éviter une mauvaise prise en charge.`;
+    return lang === "en" ? UI.en.geoImprecise(Math.round(accuracy)) : UI.fr.geoImprecise(Math.round(accuracy));
   }
   const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [lat, lng]);
   if (distanceFromBordeaux > MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
-    return "Position incohérente avec la zone de Bordeaux. Saisissez l’adresse exacte de départ.";
+    return lang === "en" ? UI.en.geoIncoherent : UI.fr.geoIncoherent;
   }
   return null;
 }
@@ -704,13 +794,13 @@ function ReservationPage() {
       voiceRecogRef.current = null;
       const code = e?.error as string | undefined;
       if (code === "not-allowed" || code === "service-not-allowed") {
-        toast.error("Accès au micro refusé. Autorisez-le dans les réglages du navigateur.", { duration: 6000 });
+        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
       } else if (code === "no-speech") {
-        toast.info("Aucune voix détectée. Réessayez en parlant plus fort.");
+        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
       } else if (code === "audio-capture") {
-        toast.error("Aucun micro détecté sur cet appareil.");
+        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
       } else if (code === "network") {
-        toast.error("Réseau indisponible pour la dictée. Vérifiez votre connexion.");
+        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
       }
     };
     recog.onresult = (event: any) => {
@@ -764,13 +854,13 @@ function ReservationPage() {
       voiceBothRecogRef.current = null;
       const code = e?.error as string | undefined;
       if (code === "not-allowed" || code === "service-not-allowed") {
-        toast.error("Accès au micro refusé. Autorisez-le dans les réglages du navigateur.", { duration: 6000 });
+        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
       } else if (code === "no-speech") {
-        toast.info("Aucune voix détectée. Réessayez en parlant plus fort.");
+        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
       } else if (code === "audio-capture") {
-        toast.error("Aucun micro détecté sur cet appareil.");
+        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
       } else if (code === "network") {
-        toast.error("Réseau indisponible pour la dictée. Vérifiez votre connexion.");
+        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
       }
     };
     recog.onresult = (event: any) => {
@@ -885,24 +975,32 @@ function ReservationPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [lang, setLang] = useState<Lang>("fr");
+  // Langue synchronisée avec le sélecteur global du site (I18nProvider) :
+  // le formulaire ne garde plus un état isolé qui restait en français.
+  const { lang, setLang } = useI18n();
   const d = DICTS[lang];
   const t = (k: string) => d[k] ?? DICTS["fr"][k] ?? k;
   const dir = lang === "ar" ? "rtl" : "ltr";
+  const u = lang === "en" ? UI.en : UI.fr;
 
   const pickupIso = f.date && f.heure ? toParisIso(f.date, f.heure) : null;
 
   // ── Tarification Paris : règle unique demandée
   //    7h-19h = Jour, 19h-7h = Nuit, dimanche/jour férié = Nuit, toujours en heure Europe/Paris. ──
   function getTarifMotif(iso: string | null): { isJour: boolean; label: string; motif: string } {
-    if (!iso) return { isJour: true, label: "Tarif jour", motif: "Heure de Paris" };
+    const en = lang === "en";
+    const dayLabel = en ? "Day rate" : "Tarif jour";
+    const nightLabel = en ? "Night rate" : "Tarif nuit";
+    const parisTime = en ? "Paris time" : "Heure de Paris";
+    if (!iso) return { isJour: true, label: dayLabel, motif: parisTime };
     const p = partsParis(iso);
-    if (p.weekday === "Sun") return { isJour: false, label: "Tarif nuit", motif: "Dimanche" };
-    if (estJourFerieFR(p.year, p.month, p.day)) return { isJour: false, label: "Tarif nuit", motif: "Jour férié" };
-    const hStr = `${p.hour}h${String(p.minute).padStart(2, "0")}`;
+    if (p.weekday === "Sun") return { isJour: false, label: nightLabel, motif: en ? "Sunday" : "Dimanche" };
+    if (estJourFerieFR(p.year, p.month, p.day))
+      return { isJour: false, label: nightLabel, motif: en ? "Public holiday" : "Jour férié" };
+    const hStr = en ? `${String(p.hour).padStart(2, "0")}:${String(p.minute).padStart(2, "0")}` : `${p.hour}h${String(p.minute).padStart(2, "0")}`;
     const h = p.hour + p.minute / 60;
-    if (h >= 19 || h < 7) return { isJour: false, label: "Tarif nuit", motif: `Heure de Paris (${hStr})` };
-    return { isJour: true, label: "Tarif jour", motif: `Heure de Paris (${hStr})` };
+    if (h >= 19 || h < 7) return { isJour: false, label: nightLabel, motif: `${parisTime} (${hStr})` };
+    return { isJour: true, label: dayLabel, motif: `${parisTime} (${hStr})` };
   }
 
   const TARIF_JOUR_KM = 2.16;
@@ -996,7 +1094,7 @@ function ReservationPage() {
     const automatic = options?.automatic === true;
     setGeolocLoading(true);
     setGeolocStatus("loading");
-    setGeolocStatusMsg(automatic ? "Détection automatique du départ…" : "Localisation en cours…");
+    setGeolocStatusMsg(automatic ? (lang === "en" ? UI.en.detectingAuto : UI.fr.detectingAuto) : (lang === "en" ? UI.en.locating : UI.fr.locating));
 
     const applyPosition = async (lat: number, lng: number, source: "gps" | "approx" | "ip" = "gps") => {
       let adresse = await reverseGeocode(lat, lng).catch(() => null);
@@ -1018,12 +1116,12 @@ function ReservationPage() {
         setGeolocStatus("ip");
         setGeolocStatusMsg(
           source === "ip"
-            ? "Position approximative (via IP) — vous pouvez préciser l'adresse"
-            : "Position approximative détectée — vérifiez l'adresse de départ",
+            ? lang === "en" ? UI.en.approxIp : UI.fr.approxIp
+            : lang === "en" ? UI.en.approxDetected : UI.fr.approxDetected,
         );
       } else {
         setGeolocStatus("success");
-        setGeolocStatusMsg("Position GPS détectée — modifiable si besoin");
+        setGeolocStatusMsg(lang === "en" ? UI.en.gpsDetected : UI.fr.gpsDetected);
       }
       if (!automatic || source === "gps") toast.success(t("res.geo.btn") + " ✓");
       setGeolocLoading(false);
@@ -1044,7 +1142,7 @@ function ReservationPage() {
       if (ip) {
         const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [ip.lat, ip.lng]);
         if (distanceFromBordeaux <= MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
-          if (!automatic) toast.info("Position GPS indisponible — position approximative via IP.");
+          if (!automatic) toast.info(lang === "en" ? UI.en.gpsUnavailableIp : UI.fr.gpsUnavailableIp);
           await applyPosition(ip.lat, ip.lng, "ip");
           return;
         }
@@ -1053,18 +1151,18 @@ function ReservationPage() {
     };
 
     if (typeof window !== "undefined" && !window.isSecureContext && window.location.hostname !== "localhost") {
-      void tryIpFallback("La géolocalisation GPS nécessite HTTPS. Saisissez l’adresse exacte de départ.");
+      void tryIpFallback(lang === "en" ? UI.en.httpsRequired : UI.fr.httpsRequired);
       return;
     }
 
     if (!navigator.geolocation) {
-      void tryIpFallback("Géolocalisation non disponible sur cet appareil");
+      void tryIpFallback(lang === "en" ? UI.en.geoNotAvailable : UI.fr.geoNotAvailable);
       return;
     }
 
     const geoErrorMessage = (err?: GeolocationPositionError) => {
       if (!err) {
-        return "GPS trop long à répondre. Saisissez l'adresse exacte de départ.";
+        return lang === "en" ? UI.en.gpsTimeout : UI.fr.gpsTimeout;
       }
       return describeGeoError(err);
     };
@@ -1076,7 +1174,7 @@ function ReservationPage() {
     // n'apparaît jamais et le call timeout silencieusement. On ouvre donc la requête GPS ici,
     // puis on chaîne les fallbacks via callbacks (pas d'await avant getCurrentPosition).
     const onFirstSuccess = (precise: GeolocationPosition) => {
-      const reason = getAutoGeoRejectionReason(precise, true);
+      const reason = getAutoGeoRejectionReason(precise, lang, true);
       if (reason) {
         void tryIpFallback(reason);
         return;
@@ -1093,12 +1191,12 @@ function ReservationPage() {
       // Retry rapide avec cache autorisé — ré-invoqué dans le même tick, gesture toujours valide via la permission accordée précédemment.
       navigator.geolocation.getCurrentPosition(
         (cached) => {
-          const reason = getAutoGeoRejectionReason(cached, true);
+          const reason = getAutoGeoRejectionReason(cached, lang, true);
           if (reason) {
             void tryIpFallback(reason);
             return;
           }
-          if (!automatic) toast.info("Position approximative détectée — vous pouvez préciser l'adresse.");
+          if (!automatic) toast.info(lang === "en" ? UI.en.approxDetectedRefine : UI.fr.approxDetectedRefine);
           const source = cached.coords.accuracy > MAX_AUTO_GEO_ACCURACY_M ? "approx" : "gps";
           void applyPosition(cached.coords.latitude, cached.coords.longitude, source);
         },
@@ -1184,7 +1282,7 @@ function ReservationPage() {
         setSearchingDepart(false);
         setDepartChoices(close.slice(0, 4));
         setFromCoord(null);
-        setErrors((prev) => ({ ...prev, depart: "Plusieurs lieux trouvés — choisissez le bon" }));
+        setErrors((prev) => ({ ...prev, depart: lang === "en" ? UI.en.multiplePlaces : UI.fr.multiplePlaces }));
         return;
       }
     }
@@ -1217,11 +1315,11 @@ function ReservationPage() {
     if (closeChoices.length) {
       setDepartChoices(closeChoices);
       setFromCoord(null);
-      setErrors((prev) => ({ ...prev, depart: "Sélectionnez une adresse dans la liste" }));
+      setErrors((prev) => ({ ...prev, depart: lang === "en" ? UI.en.selectFromList : UI.fr.selectFromList }));
     } else {
       setDepartChoices([]);
       setFromCoord(null);
-      setErrors((prev) => ({ ...prev, depart: "Adresse introuvable — précisez la ville ou le lieu" }));
+      setErrors((prev) => ({ ...prev, depart: lang === "en" ? UI.en.addressNotFound : UI.fr.addressNotFound }));
     }
   }, [f.depart, fromCoord]);
 
@@ -1288,7 +1386,7 @@ function ReservationPage() {
       setToCoord(null);
       setErrors((prev) => ({
         ...prev,
-        destination: "Adresse introuvable — précisez la ville ou le lieu",
+        destination: lang === "en" ? UI.en.addressNotFound : UI.fr.addressNotFound,
       }));
     }
   }, [f.destination, f.depart, fromCoord]);
@@ -1322,7 +1420,7 @@ function ReservationPage() {
   // ── Push client retirée ──────────────────────────────────────────────────
   // Le client n'est plus notifié par push. Toutes les étapes sont visibles
   // en temps réel sur /suivi/$id (bandeau d'étapes + statut). On garde
-  // uniquement la push chauffeur (José) à la création (notifyNewReservation).
+  // uniquement la push chauffeur (Patricia) à la création (notifyNewReservation).
 
   // ── Soumission ────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
@@ -1405,7 +1503,7 @@ function ReservationPage() {
           Math.sin(dLng / 2) ** 2;
       distanceKm = parseFloat((R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.3).toFixed(2));
       dureeS = roundSecondsToMinute((distanceKm / 30) * 3600); // ~30 km/h en ville
-      toast.warning("Distance estimée (GPS indisponible) — le prix peut être ajusté par le taxi.");
+      toast.warning(lang === "en" ? UI.en.distanceEstimated : UI.fr.distanceEstimated);
     }
 
     setSending(true);
@@ -1480,8 +1578,7 @@ function ReservationPage() {
       // ⚠️ Push client retirée — le client est notifié visuellement sur /suivi/$id.
 
       toast.success(`${t("conf.ok.title")} ${f.prenom}`, {
-        description:
-          "Un email de confirmation vous a été envoyé. Pensez à vérifier vos spams si vous ne le trouvez pas.",
+        description: lang === "en" ? UI.en.confirmEmailSent : UI.fr.confirmEmailSent,
         duration: 8000,
       });
       setSending(false);
@@ -1502,10 +1599,10 @@ function ReservationPage() {
       }
 
 
-      // ── Notifier le chauffeur José (push FCM + email) ─────────────────────
+      // ── Notifier le chauffeur Patricia (push FCM + email) ─────────────────────
       // On attend la fin avant de naviguer : sinon le navigateur peut tuer
       // la requête en cours lors du changement de page (notamment sur mobile),
-      // ce qui explique que José ne recevait plus de push ni d'email.
+      // ce qui explique que Patricia ne recevait plus de push ni d'email.
       // Timeout 8s pour ne pas bloquer en cas d'erreur réseau.
       try {
         await Promise.race([
@@ -1594,7 +1691,7 @@ function ReservationPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
             <button
               onClick={() => navigate({ to: "/" })}
-              aria-label="Retour au site"
+              aria-label={lang === "en" ? UI.en.backToSite : UI.fr.backToSite}
               style={{
                 background: "rgba(201,168,76,0.15)",
                 border: "1px solid rgba(201,168,76,0.35)",
@@ -1611,7 +1708,7 @@ function ReservationPage() {
                 fontFamily: "'DM Sans', sans-serif",
               }}
             >
-              ← Retour
+              {lang === "en" ? "← Back" : "← Retour"}
             </button>
             <select
               value={lang}
@@ -1797,7 +1894,7 @@ function ReservationPage() {
                 <button
                   type="button"
                   onClick={fromCoord ? startVoiceRecognition : startVoiceRecognitionBoth}
-                  title={fromCoord ? "Dictez uniquement la destination" : "Dictez le trajet complet"}
+                  title={fromCoord ? (lang === "en" ? UI.en.dictateDestOnly : UI.fr.dictateDestOnly) : (lang === "en" ? UI.en.dictateFullTrip : UI.fr.dictateFullTrip)}
                   style={{
                     background: voiceBothListening || voiceListening ? "rgba(220,38,38,0.08)" : "rgba(201,168,76,0.1)",
                     border: `1.5px solid ${voiceBothListening || voiceListening ? "rgba(220,38,38,0.4)" : "rgba(201,168,76,0.5)"}`,
@@ -1815,10 +1912,10 @@ function ReservationPage() {
                   }}
                 >
                   {voiceBothListening || voiceListening
-                    ? "⏹ J'écoute…"
+                    ? (lang === "en" ? UI.en.listening : UI.fr.listening)
                     : fromCoord
-                      ? "🎤 Destination"
-                      : "🎤 Dicter le trajet"}
+                      ? (lang === "en" ? UI.en.dictateDestBtn : UI.fr.dictateDestBtn)
+                      : (lang === "en" ? UI.en.dictateTripBtn : UI.fr.dictateTripBtn)}
                 </button>
               </div>
 
@@ -1852,7 +1949,7 @@ function ReservationPage() {
                         if (departDebounceRef.current) clearTimeout(departDebounceRef.current);
                       }}
                       onBlur={resolveDepartAddress}
-                      placeholder="Adresse de départ"
+                      placeholder={lang === "en" ? UI.en.departPlaceholder : UI.fr.departPlaceholder}
                       autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
@@ -1883,7 +1980,7 @@ function ReservationPage() {
                         fontSize: 16,
                         fontWeight: 700,
                       }}
-                      aria-label="Me géolocaliser"
+                      aria-label={lang === "en" ? UI.en.geolocateAria : UI.fr.geolocateAria}
                     >
                       {geolocLoading ? "⏳" : "📍"}
                     </button>
@@ -1945,7 +2042,7 @@ function ReservationPage() {
                             textDecoration: "underline",
                           }}
                         >
-                          Modifier
+                          {lang === "en" ? UI.en.edit : UI.fr.edit}
                         </button>
                       )}
                     </div>
@@ -2181,8 +2278,8 @@ function ReservationPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
-                    { k: "prenom" as const, label: t("res.loc.firstname"), ph: "Jean", icon: "👤" },
-                    { k: "nom" as const, label: t("res.loc.lastname"), ph: "Dupont", icon: "👤" },
+                    { k: "prenom" as const, label: t("res.loc.firstname"), ph: u.firstNamePh, icon: "👤" },
+                    { k: "nom" as const, label: t("res.loc.lastname"), ph: u.lastNamePh, icon: "👤" },
                   ].map(({ k, label, ph, icon }) => (
                     <div key={k}>
                       <label
@@ -2219,7 +2316,7 @@ function ReservationPage() {
                 </div>
                 {[
                   { k: "phone" as const, label: t("res.loc.phone"), ph: "06 12 34 56 78", type: "tel", icon: "📱" },
-                  { k: "email" as const, label: t("res.loc.email"), ph: "jean@exemple.fr", type: "email", icon: "✉️" },
+                  { k: "email" as const, label: t("res.loc.email"), ph: u.emailPh, type: "email", icon: "✉️" },
                 ].map(({ k, label, ph, type, icon }) => (
                   <div key={k}>
                     <label
@@ -2551,18 +2648,14 @@ function ReservationPage() {
           </div>
         ) : (
           <div style={{ fontSize: 11, color: "#999", padding: "8px 16px", textAlign: "center" }}>
-            ⚠️ Bouton caché: pushStatus={pushStatus} | Notification={String("Notification" in window)}
+            ⚠️ {u.hiddenButtonDebug}: pushStatus={pushStatus} | Notification={String("Notification" in window)}
           </div>
         )}
       </div>
       <ListeningOverlay
         open={anyListening}
-        label={voiceBothListening ? "Je vous écoute…" : "Dictez la destination"}
-        hint={
-          voiceBothListening
-            ? "Dites votre trajet, ex : « 12 rue de la République à aéroport de Bordeaux »"
-            : "Dites uniquement votre destination. Touchez « Arrêter » pour valider."
-        }
+        label={voiceBothListening ? u.listeningLabel : u.dictateDestinationLabel}
+        hint={voiceBothListening ? u.listeningHintBoth : u.listeningHintDest}
         onCancel={stopAllListening}
       />
     </div>

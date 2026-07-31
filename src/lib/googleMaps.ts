@@ -98,7 +98,7 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
         };
         (win as any).gm_authFailure = () => {
           fail(
-            "Google Maps refuse la clé sur ce domaine. Vérifie les restrictions HTTP taxicitybordeaux.fr/* et *.taxicitybordeaux.fr/*.",
+            "Google Maps refuse la clé sur ce domaine. Vérifie les restrictions HTTP accessprestigetaxi.lovable.app/* et *.accessprestigetaxi.lovable.app/*.",
           );
         };
 

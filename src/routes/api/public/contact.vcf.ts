@@ -4,12 +4,12 @@ import { createHash } from "crypto";
 const VCARD = [
   "BEGIN:VCARD",
   "VERSION:3.0",
-  "FN:José — Taxi City Bordeaux",
-  "N:José;Taxi City Bordeaux;;;",
-  "ORG:Taxi City Bordeaux",
-  "TEL;TYPE=CELL,VOICE,PREF:+33673072322",
+  "FN:Patricia — Access Prestige Taxi",
+  "N:Patricia;Access Prestige Taxi;;;",
+  "ORG:Access Prestige Taxi",
+  "TEL;TYPE=CELL,VOICE,PREF:+33650260015",
   "EMAIL;TYPE=INTERNET,PREF:taxi.city033@gmail.com",
-  "URL:https://taxicitybordeaux.fr",
+  "URL:https://accessprestigetaxi.lovable.app",
   "END:VCARD",
   "",
 ].join("\r\n");

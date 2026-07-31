@@ -3,10 +3,10 @@ import { Plane, Train, Briefcase, Wrench, ShieldCheck, MapPin, Users, Clock, Hel
 import { useT } from "@/i18n/I18nProvider";
 import { BulletedList } from "@/components/BulletedList";
 
-const SERVICES_TITLE = "Services Taxi Bordeaux : Aéroport, Gare, CPAM & Mariages";
+const SERVICES_TITLE = "Services Access Prestige Taxi : Aéroport, Gare, CPAM & Mariages";
 const SERVICES_DESC =
-  "Découvrez nos services taxi à Bordeaux : transferts aéroport Mérignac, gare Saint-Jean, transport conventionné CPAM, mariages, business, longues distances.";
-const SERVICES_URL = "https://taxicitybordeaux.fr/services";
+  "Découvrez nos services de taxi en Charente & Charente-Maritime : transferts aéroport, gare, transport conventionné CPAM, mariages, business, longues distances.";
+const SERVICES_URL = "https://accessprestigetaxi.lovable.app/services";
 
 const SERVICES_FAQ = [
   {

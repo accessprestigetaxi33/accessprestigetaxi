@@ -66,7 +66,7 @@ export const Route = createFileRoute("/api/public/notify-reservation-client")({
         }
 
         const idempotencyKey = `client-confirm-${data.reservation_id}`;
-        const EMAIL_BRIDGE_URL = "https://taxicitybordeaux.fr/lovable/email/transactional/send";
+        const EMAIL_BRIDGE_URL = "https://accessprestigetaxi.lovable.app/lovable/email/transactional/send";
 
         log("sending", { bridge: EMAIL_BRIDGE_URL, template: TEMPLATE_NAME });
 

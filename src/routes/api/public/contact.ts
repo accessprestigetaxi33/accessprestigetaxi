@@ -4,9 +4,9 @@ import { render } from '@react-email/components'
 import { z } from 'zod'
 import { TEMPLATES } from '@/lib/email-templates/registry'
 
-const SITE_NAME = 'Taxi City Bordeaux'
-const SENDER_DOMAIN = 'notify.taxicitybordeaux.fr'
-const FROM_DOMAIN = 'taxicitybordeaux.fr'
+const SITE_NAME = 'Access Prestige Taxi'
+const SENDER_DOMAIN = 'notify.accessprestigetaxi.lovable.app'
+const FROM_DOMAIN = 'accessprestigetaxi.lovable.app'
 const TEMPLATE_NAME = 'contact-message'
 
 const schema = z.object({

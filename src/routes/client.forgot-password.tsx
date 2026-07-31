@@ -9,7 +9,7 @@ import { useT } from "@/i18n/I18nProvider";
 export const Route = createFileRoute("/client/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Mot de passe oublié — Taxi City Bordeaux" },
+      { title: "Mot de passe oublié — Access Prestige Taxi" },
       { name: "robots", content: "noindex" },
     ],
   }),

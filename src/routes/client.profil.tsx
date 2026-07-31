@@ -24,7 +24,7 @@ import {
 
 export const Route = createFileRoute("/client/profil")({
   head: () => ({
-    meta: [{ title: "Mon profil — Taxi City Bordeaux" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Mon profil — Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
   }),
   component: ClientProfil,
 });

@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.png";
 
-const CARTE_URL = "https://taxicitybordeaux.fr/carte";
-const CARTE_TITLE = "Taxi City Bordeaux — Contact rapide";
+const CARTE_URL = "https://accessprestigetaxi.lovable.app/carte";
+const CARTE_TITLE = "Access Prestige Taxi — Contact rapide";
 const CARTE_DESC =
-  "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Taxi City Bordeaux en un clic.";
+  "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Access Prestige Taxi en un clic.";
 
 export const Route = createFileRoute("/carte")({
   head: () => ({
@@ -24,12 +24,12 @@ export const Route = createFileRoute("/carte")({
 
 // Contact unique — modifie ici pour changer partout
 const CONTACT = {
-  name: "José — Taxi City Bordeaux",
-  org: "Taxi City Bordeaux",
-  tel: "+33673072322",
+  name: "Access Prestige Taxi",
+  org: "Access Prestige Taxi",
+  tel: "+33650260015",
   telDisplay: "06\u00A073\u00A007\u00A023\u00A022",
   email: "taxi.city033@gmail.com",
-  site: "https://taxicitybordeaux.fr",
+  site: "https://accessprestigetaxi.lovable.app",
   reserve: "/reserver",
 };
 
@@ -65,7 +65,7 @@ type Dict = {
 
 const T: Record<Lang, Dict> = {
   fr: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Appeler",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -73,12 +73,12 @@ const T: Record<Lang, Dict> = {
     reserve: "Réserver en ligne",
     website: "Site web",
     addContact: "Ajouter aux contacts",
-    waMessage: "Bonjour José, je souhaite réserver un taxi.",
-    footer: "Taxi conventionné · Bordeaux et Métropole · 7j/7",
+    waMessage: "Bonjour Patricia, je souhaite réserver un taxi.",
+    footer: "Taxi conventionné · Charente & Charente-Maritime · 7j/7",
     languageLabel: "Langue",
   },
   en: {
-    tag: "Bordeaux Taxi",
+    tag: "Access Prestige Taxi",
     call: "Call",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -86,8 +86,8 @@ const T: Record<Lang, Dict> = {
     reserve: "Book online",
     website: "Website",
     addContact: "Add to contacts",
-    waMessage: "Hello José, I would like to book a taxi.",
-    footer: "Licensed taxi · Bordeaux & Metro area · 7 days a week",
+    waMessage: "Hello Patricia, I would like to book a taxi.",
+    footer: "Licensed taxi · Charente & Charente-Maritime · 7 days a week",
     languageLabel: "Language",
   },
   es: {
@@ -99,12 +99,12 @@ const T: Record<Lang, Dict> = {
     reserve: "Reservar en línea",
     website: "Sitio web",
     addContact: "Añadir a contactos",
-    waMessage: "Hola José, quisiera reservar un taxi.",
+    waMessage: "Hola Patricia, quisiera reservar un taxi.",
     footer: "Taxi autorizado · Burdeos y área metropolitana · 7 días",
     languageLabel: "Idioma",
   },
   de: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Anrufen",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -112,12 +112,12 @@ const T: Record<Lang, Dict> = {
     reserve: "Online buchen",
     website: "Webseite",
     addContact: "Zu Kontakten hinzufügen",
-    waMessage: "Hallo José, ich möchte ein Taxi buchen.",
-    footer: "Konzessioniertes Taxi · Bordeaux & Metropolregion · 7 Tage",
+    waMessage: "Hallo Patricia, ich möchte ein Taxi buchen.",
+    footer: "Konzessioniertes Taxi · Charente & Charente-Maritime · 7 Tage",
     languageLabel: "Sprache",
   },
   it: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Chiama",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -125,8 +125,8 @@ const T: Record<Lang, Dict> = {
     reserve: "Prenota online",
     website: "Sito web",
     addContact: "Aggiungi ai contatti",
-    waMessage: "Salve José, vorrei prenotare un taxi.",
-    footer: "Taxi autorizzato · Bordeaux e area metropolitana · 7 giorni",
+    waMessage: "Salve Patricia, vorrei prenotare un taxi.",
+    footer: "Taxi autorizzato · Charente & Charente-Maritime · 7 giorni",
     languageLabel: "Lingua",
   },
   pt: {
@@ -138,12 +138,12 @@ const T: Record<Lang, Dict> = {
     reserve: "Reservar online",
     website: "Site",
     addContact: "Adicionar aos contactos",
-    waMessage: "Olá José, gostaria de reservar um táxi.",
+    waMessage: "Olá Patricia, gostaria de reservar um táxi.",
     footer: "Táxi licenciado · Bordéus e área metropolitana · 7 dias",
     languageLabel: "Idioma",
   },
   nl: {
-    tag: "Taxi Bordeaux",
+    tag: "Access Prestige Taxi",
     call: "Bellen",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -151,8 +151,8 @@ const T: Record<Lang, Dict> = {
     reserve: "Online reserveren",
     website: "Website",
     addContact: "Toevoegen aan contacten",
-    waMessage: "Hallo José, ik wil graag een taxi reserveren.",
-    footer: "Erkende taxi · Bordeaux en omgeving · 7 dagen",
+    waMessage: "Hallo Patricia, ik wil graag een taxi reserveren.",
+    footer: "Erkende taxi · Charente & Charente-Maritime · 7 dagen",
     languageLabel: "Taal",
   },
   ar: {
@@ -177,7 +177,7 @@ const T: Record<Lang, Dict> = {
     reserve: "在线预订",
     website: "网站",
     addContact: "添加到通讯录",
-    waMessage: "您好 José，我想预订一辆出租车。",
+    waMessage: "您好 Patricia，我想预订一辆出租车。",
     footer: "特许出租车 · 波尔多及大都会区 · 全年无休",
     languageLabel: "语言",
   },
@@ -190,7 +190,7 @@ const T: Record<Lang, Dict> = {
     reserve: "オンライン予約",
     website: "ウェブサイト",
     addContact: "連絡先に追加",
-    waMessage: "こんにちは José、タクシーを予約したいです。",
+    waMessage: "こんにちは Patricia、タクシーを予約したいです。",
     footer: "認可タクシー · ボルドー・メトロポール · 年中無休",
     languageLabel: "言語",
   },
@@ -203,7 +203,7 @@ const T: Record<Lang, Dict> = {
     reserve: "Заказать онлайн",
     website: "Сайт",
     addContact: "Добавить в контакты",
-    waMessage: "Здравствуйте, José, я хотел бы заказать такси.",
+    waMessage: "Здравствуйте, Patricia, я хотел бы заказать такси.",
     footer: "Лицензированное такси · Бордо и метрополия · 7 дней",
     languageLabel: "Язык",
   },
@@ -293,7 +293,7 @@ function CartePage() {
 
         <img
           src={logoSrc}
-          alt="Taxi City Bordeaux"
+          alt="Access Prestige Taxi"
           style={{
             width: 240,
             maxWidth: "80%",
@@ -308,7 +308,7 @@ function CartePage() {
             {t.tag}
           </div>
           <h1 style={{ fontFamily: "'Syne','Playfair Display',serif", fontSize: 26, margin: "6px 0 2px" }}>
-            José
+            Patricia
           </h1>
           <div style={{ fontSize: 16, marginTop: 8, fontWeight: 600, whiteSpace: "nowrap", direction: "ltr" }}>
             {CONTACT.telDisplay}

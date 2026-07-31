@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, MessageCircle, Clock } from "lucide-react";
-import { useT } from "@/i18n/I18nProvider";
+import { useT, useI18n } from "@/i18n/I18nProvider";
 
-const CONTACT_TITLE = "Contact : Taxi City Bordeaux";
+const CONTACT_TITLE = "Contact : Access Prestige Taxi";
 const CONTACT_DESC =
-  "Contactez Taxi City Bordeaux : 06 73 07 23 22, taxi.city033@gmail.com. Interventions à Bordeaux et dans toute la Gironde.";
-const CONTACT_URL = "https://taxicitybordeaux.fr/contact";
+  "Contactez Access Prestige Taxi : 06 50 26 00 15, taxi.city033@gmail.com. Interventions en Charente & Charente-Maritime.";
+const CONTACT_URL = "https://accessprestigetaxi.lovable.app/contact";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -22,8 +22,31 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
+const COPY = {
+  fr: {
+    whatsappTitle: "WhatsApp",
+    whatsappHeadline: "Discutons sur WhatsApp",
+    whatsappSub: "Messagerie instantanée",
+    zoneTitle: "Zone d'intervention",
+    zoneMain: "Charente & Charente-Maritime",
+    zoneSub: "Tout le département (16 & 17)",
+    zoneLong: "Longues distances sur toute la France et en Europe sur réservation.",
+  },
+  en: {
+    whatsappTitle: "WhatsApp",
+    whatsappHeadline: "Chat with us on WhatsApp",
+    whatsappSub: "Instant messaging",
+    zoneTitle: "Service area",
+    zoneMain: "Charente & Charente-Maritime",
+    zoneSub: "The whole area (16 & 17)",
+    zoneLong: "Long-distance trips throughout France and Europe by reservation.",
+  },
+} as const;
+
 function ContactPage() {
   const t = useT();
+  const { lang } = useI18n();
+  const c = lang === "en" ? COPY.en : COPY.fr;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:py-14 md:py-16">
@@ -36,28 +59,28 @@ function ContactPage() {
       {/* Contact cards: 1-col on mobile, 2-col on md */}
       <div className="mt-8 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6">
         <a
-          href="tel:0673072322"
+          href="tel:0650260015"
           className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <Phone className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
           <div>
             <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{t("contact.phone")}</h2>
-            <p className="text-xl font-bold text-primary sm:mt-1 sm:text-2xl">06 73 07 23 22</p>
+            <p className="text-xl font-bold text-primary sm:mt-1 sm:text-2xl">06 50 26 00 15</p>
             <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{t("contact.phone.sub")}</p>
           </div>
         </a>
 
         <a
-          href="https://wa.me/33673072322"
+          href="https://wa.me/33650260015"
           target="_blank"
           rel="noopener noreferrer"
           className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <MessageCircle className="h-7 w-7 shrink-0 text-green-500 sm:h-8 sm:w-8" />
           <div>
-            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">WhatsApp</h2>
-            <p className="font-semibold text-green-500 sm:mt-1 sm:text-lg">Discutons sur WhatsApp</p>
-            <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">Messagerie instantanée</p>
+            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{c.whatsappTitle}</h2>
+            <p className="font-semibold text-green-500 sm:mt-1 sm:text-lg">{c.whatsappHeadline}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{c.whatsappSub}</p>
           </div>
         </a>
 
@@ -76,11 +99,11 @@ function ContactPage() {
         <div className="flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-col sm:items-start sm:p-6">
           <MapPin className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
           <div>
-            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">Zone d'intervention</h2>
-            <p className="font-semibold sm:mt-1">Bordeaux &amp; Métropole</p>
-            <p className="text-sm text-muted-foreground">Toute la Gironde (33)</p>
+            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{c.zoneTitle}</h2>
+            <p className="font-semibold sm:mt-1">{c.zoneMain}</p>
+            <p className="text-sm text-muted-foreground">{c.zoneSub}</p>
             <p className="mt-1 text-sm text-muted-foreground sm:mt-2">
-              Longues distances sur toute la France et en Europe sur réservation.
+              {c.zoneLong}
             </p>
           </div>
         </div>
