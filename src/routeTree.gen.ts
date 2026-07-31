@@ -43,6 +43,7 @@ import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
 import { Route as ApiAdminSendCourseEmailRouteImport } from './routes/api/admin/send-course-email'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicDriverLocationRouteImport } from './routes/api/public/driver-location'
+import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
 import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/public/notify-reservation'
 import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
 import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
@@ -222,6 +223,11 @@ const ApiPublicDriverLocationRoute = ApiPublicDriverLocationRouteImport.update({
   path: '/api/public/driver-location',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
+  id: '/api/public/geocode',
+  path: '/api/public/geocode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicNotifyReservationRoute =
   ApiPublicNotifyReservationRouteImport.update({
     id: '/api/public/notify-reservation',
@@ -303,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
+  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
+  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
+  '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
@@ -438,6 +447,7 @@ export interface FileRouteTypes {
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
+    | '/api/public/geocode'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
+    | '/api/public/geocode'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
@@ -526,6 +537,7 @@ export interface FileRouteTypes {
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
+    | '/api/public/geocode'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
@@ -570,6 +582,7 @@ export interface RootRouteChildren {
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
   ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
+  ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
   ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
   ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
   ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
@@ -819,6 +832,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDriverLocationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/geocode': {
+      id: '/api/public/geocode'
+      path: '/api/public/geocode'
+      fullPath: '/api/public/geocode'
+      preLoaderRoute: typeof ApiPublicGeocodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/notify-reservation': {
       id: '/api/public/notify-reservation'
       path: '/api/public/notify-reservation'
@@ -935,6 +955,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
   ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
+  ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
   ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
   ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
   ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,

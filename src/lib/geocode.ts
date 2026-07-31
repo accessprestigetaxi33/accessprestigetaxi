@@ -1,16 +1,11 @@
 // src/lib/geocode.ts
-// Toutes les requêtes Nominatim passent par l'Edge Function Supabase
-// pour éviter les blocages CORS depuis le navigateur.
+// Toutes les requêtes Nominatim passent par notre route serveur /api/public/geocode
+// (évite les blocages CORS depuis le navigateur).
 
-const SUPABASE_URL = "https://auiagkpdpnfqxfngisfc.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF1aWFna3BkcG5mcXhmbmdpc2ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzU2NzUsImV4cCI6MjA5NDAxMTY3NX0.MkW2KzCYHvQ0GEjjP3_puf3PkCHWaYcvW2bI1ctTuJU";
-
-const EDGE = `${SUPABASE_URL}/functions/v1/geocode`;
+const EDGE = "/api/public/geocode";
 
 const HEADERS = {
   "Content-Type": "application/json",
-  Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
 };
 
 export type Coord = { lat: number; lng: number };
