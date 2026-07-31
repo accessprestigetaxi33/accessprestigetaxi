@@ -93,7 +93,9 @@ export function SiteHeader() {
               {d.name}
             </a>
           ))}
-          <ThemeToggle className="hidden h-10 w-10 shrink-0 sm:inline-flex" />
+          <span className="hidden sm:contents">
+            <ThemeToggle className="h-10 w-10 shrink-0" />
+          </span>
           <LanguageSwitcher className="site-header-language shrink-0" />
           <button
             type="button"
