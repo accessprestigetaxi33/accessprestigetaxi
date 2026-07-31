@@ -727,6 +727,11 @@ function toParisIso(date: string, heure: string): string {
 
 function ReservationPage() {
   const navigate = useNavigate();
+  // GA4 : début du tunnel de réservation
+  useEffect(() => {
+    gaEvent("reservation_start", { page: "/reserver" });
+  }, []);
+
   const [today, setToday] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
