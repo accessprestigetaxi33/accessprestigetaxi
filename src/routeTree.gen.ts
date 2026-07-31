@@ -22,6 +22,8 @@ import { Route as ReserverRouteImport } from './routes/reserver'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ClientChatRouteImport } from './routes/client.chat'
 import { Route as ClientDashboardRouteImport } from './routes/client.dashboard'
 import { Route as ClientFacturesRouteImport } from './routes/client.factures'
@@ -110,6 +112,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ApiManifestRoute = ApiManifestRouteImport.update({
   id: '/api/manifest',
   path: '/api/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientChatRoute = ClientChatRouteImport.update({
@@ -252,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
   '/client/dashboard': typeof ClientDashboardRoute
   '/client/factures': typeof ClientFacturesRoute
@@ -265,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -291,6 +305,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
   '/client/dashboard': typeof ClientDashboardRoute
   '/client/factures': typeof ClientFacturesRoute
@@ -304,6 +319,7 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/blog': typeof BlogIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -331,6 +347,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
   '/client/dashboard': typeof ClientDashboardRoute
   '/client/factures': typeof ClientFacturesRoute
@@ -344,6 +361,7 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/blog/': typeof BlogIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -372,6 +390,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
+    | '/blog/$slug'
     | '/client/chat'
     | '/client/dashboard'
     | '/client/factures'
@@ -385,6 +404,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/blog/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -411,6 +431,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
+    | '/blog/$slug'
     | '/client/chat'
     | '/client/dashboard'
     | '/client/factures'
@@ -424,6 +445,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/blog'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -450,6 +472,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
+    | '/blog/$slug'
     | '/client/chat'
     | '/client/dashboard'
     | '/client/factures'
@@ -463,6 +486,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/blog/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -490,6 +514,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiManifestRoute: typeof ApiManifestRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   ClientChatRoute: typeof ClientChatRoute
   ClientDashboardRoute: typeof ClientDashboardRoute
   ClientFacturesRoute: typeof ClientFacturesRoute
@@ -502,6 +527,7 @@ export interface RootRouteChildren {
   CourseIdRoute: typeof CourseIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   SuiviIdRoute: typeof SuiviIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
   ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
@@ -605,6 +631,20 @@ declare module '@tanstack/react-router' {
       path: '/api/manifest'
       fullPath: '/api/manifest'
       preLoaderRoute: typeof ApiManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client/chat': {
@@ -815,6 +855,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiManifestRoute: ApiManifestRoute,
+  BlogSlugRoute: BlogSlugRoute,
   ClientChatRoute: ClientChatRoute,
   ClientDashboardRoute: ClientDashboardRoute,
   ClientFacturesRoute: ClientFacturesRoute,
@@ -827,6 +868,7 @@ const rootRouteChildren: RootRouteChildren = {
   CourseIdRoute: CourseIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   SuiviIdRoute: SuiviIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
   ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,

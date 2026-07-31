@@ -17,6 +17,7 @@ export function SiteHeader() {
   const links = [
     { to: "/", label: t("nav.home") },
     { to: "/services", label: t("nav.services") },
+    { to: "/blog", label: t("nav.blog") },
     { to: "/a-propos", label: t("nav.about") },
     { to: "/contact", label: t("nav.contact") },
   ] as const;
@@ -26,11 +27,11 @@ export function SiteHeader() {
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between">
         <Link
           to="/"
-          className="flex min-w-0 shrink-0 items-center leading-none"
+          className="flex min-w-0 items-center leading-none"
           onClick={() => setOpen(false)}
           aria-label="Access Prestige Taxi"
         >
-          <span className="whitespace-nowrap font-display text-[13px] font-semibold uppercase tracking-[0.14em] text-foreground sm:text-base sm:tracking-[0.2em]">
+          <span className="truncate font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-base sm:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
           </span>
         </Link>
