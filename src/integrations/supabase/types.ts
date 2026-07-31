@@ -560,6 +560,24 @@ export type Database = {
         }
         Relationships: []
       }
+      driver_rotation: {
+        Row: {
+          id: number
+          last_driver: string
+          updated_at: string
+        }
+        Insert: {
+          id: number
+          last_driver?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          last_driver?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -814,6 +832,7 @@ export type Database = {
       reservations: {
         Row: {
           arrivee: string
+          assigned_driver: string | null
           bagages: number
           client_account_id: string | null
           client_email: string | null
@@ -854,6 +873,7 @@ export type Database = {
         }
         Insert: {
           arrivee: string
+          assigned_driver?: string | null
           bagages?: number
           client_account_id?: string | null
           client_email?: string | null
@@ -894,6 +914,7 @@ export type Database = {
         }
         Update: {
           arrivee?: string
+          assigned_driver?: string | null
           bagages?: number
           client_account_id?: string | null
           client_email?: string | null
@@ -1087,6 +1108,7 @@ export type Database = {
         Args: { p_key: string }
         Returns: {
           arrivee: string
+          assigned_driver: string | null
           bagages: number
           client_account_id: string | null
           client_email: string | null
