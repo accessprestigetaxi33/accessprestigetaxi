@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { seoLinks } from "@/lib/seo-hreflang";
 import { BadgeCheck, FileText, MapPin, Phone, ShieldCheck, Sparkles, Clock } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/securite")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: `${SITE}/securite` }],
+    links: seoLinks("/securite"),
   }),
   component: SecuritePage,
 });
