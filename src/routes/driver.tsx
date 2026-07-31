@@ -751,7 +751,10 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
         </div>
 
         <div className="drv-body">
-          {tab === "courses" && <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} />}
+          {tab === "courses" && (
+            <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
+          )}
+
           {tab === "planning" && <PlanningTab />}
           {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
           {tab === "clients" && <ClientsTab />}
