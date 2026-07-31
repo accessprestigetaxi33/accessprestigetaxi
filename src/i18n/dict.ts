@@ -1,15 +1,26 @@
-export const LANGUAGES = [
+// Toutes les traductions existent encore en interne, mais le site n'expose
+// que le français et l'anglais dans le sélecteur de langue.
+const ALL_LANGUAGES = [
   { code: "fr", label: "Français", flag: "🇫🇷" },
   { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+  { code: "pt", label: "Português", flag: "🇵🇹" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "ar", label: "العربية", flag: "🇸🇦" },
 ] as const;
 
+export type Lang = (typeof ALL_LANGUAGES)[number]["code"];
 
-export type Lang = (typeof LANGUAGES)[number]["code"];
+/** Langues proposées à l'utilisateur : FR / EN uniquement. */
+export const LANGUAGES = ALL_LANGUAGES.filter(
+  (l) => l.code === "fr" || l.code === "en",
+) as unknown as readonly { code: Lang; label: string; flag: string }[];
 
 // Langues écrites de droite à gauche
 export const RTL_LANGS: ReadonlySet<Lang> = new Set<Lang>(["ar"]);
 export const isRtl = (l: Lang) => RTL_LANGS.has(l);
 export const dirOf = (l: Lang): "rtl" | "ltr" => (isRtl(l) ? "rtl" : "ltr");
+
 
 type Dict = Record<string, string>;
 
