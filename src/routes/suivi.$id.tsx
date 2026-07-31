@@ -63,6 +63,8 @@ const UI = {
   },
 } as const;
 
+import { DRIVERS } from "@/data/drivers";
+
 const JOSE_PHONE = "0650260015";
 // Délai d'expiration du lien de suivi après la fin de la course (en jours)
 const SUIVI_EXPIRY_DAYS = 30;
@@ -1562,7 +1564,11 @@ function SuiviPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showRecurring, setShowRecurring] = useState(false);
-  const josePhone = JOSE_PHONE;
+  const assignedDriver =
+    DRIVERS.find(
+      (d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase(),
+    ) ?? DRIVERS[0];
+  const josePhone = assignedDriver?.tel ?? JOSE_PHONE;
   const [pushDismissed, setPushDismissed] = useState(false);
   const { status: pushStatus, subscribe: pushSubscribe } = usePushNotifications();
   const [pushActivatedHere, setPushActivatedHere] = useState(false);
@@ -2422,13 +2428,13 @@ function SuiviPage() {
                 }}
               >
                 <Phone size={16} />
-                <span style={{ flex: 1 }}>{t("suivi.call_jose")}</span>
+                <span style={{ flex: 1 }}>{`${t("suivi.call_jose").replace(/Patricia/g, assignedDriver.name)}`}</span>
                 <span style={{ fontSize: "12px", opacity: 0.8, fontWeight: 400 }}>
                   {josePhone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
                 </span>
               </a>
               <a
-                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour Patricia`)}`}
+                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour ${assignedDriver.name}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -2449,7 +2455,7 @@ function SuiviPage() {
                 }}
               >
                 <MessageCircle size={16} />
-                {t("suivi.whatsapp_jose")}
+                {t("suivi.whatsapp_jose").replace(/Patricia/g, assignedDriver.name)}
               </a>
             </div>
           </div>
