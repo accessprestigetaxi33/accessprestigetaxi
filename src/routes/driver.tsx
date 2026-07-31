@@ -2242,6 +2242,7 @@ function PlanningTab() {
 function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   const [pending, setPending] = useState<Avis[]>([]);
   const [published, setPublished] = useState<Avis[]>([]);
+  const [flagged, setFlagged] = useState<Avis[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -2251,6 +2252,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
       if (!response.ok) throw new Error(result.error || "chargement impossible");
       setPending(result.pending ?? []);
       setPublished(result.published ?? []);
+      setFlagged(result.flagged ?? []);
       onBadgeChange((result.pending ?? []).length);
     } catch (e: any) {
       toast.error("Impossible de charger les avis : " + (e.message ?? e));
@@ -2277,7 +2279,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
     };
   }, [load]);
 
-  const moderate = async (id: string, action: "approved" | "refused") => {
+  const moderate = async (id: string, action: "approved" | "refused" | "flagged" | "pending") => {
     setBusy(id);
     try {
       const response = await fetch("/api/public/reviews", {
@@ -2287,7 +2289,15 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "modération impossible");
-      toast.success(action === "approved" ? "Avis publié ✓" : "Avis refusé");
+      toast.success(
+        action === "approved"
+          ? "Avis publié ✓"
+          : action === "flagged"
+            ? "Avis signalé et retiré du site"
+            : action === "pending"
+              ? "Avis remis en attente"
+              : "Avis refusé",
+      );
       load();
     } catch (e: any) {
       toast.error("Erreur : " + (e.message ?? e));
@@ -2341,6 +2351,41 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 <button className="drv-btn-primary" disabled={!!busy} onClick={() => moderate(a.id, "approved")}>
                   {busy === a.id ? "…" : "Publier sur le site"}
                 </button>
+                <button
+                  className="drv-btn-danger"
+                  disabled={!!busy}
+                  onClick={() => moderate(a.id, "flagged")}
+                  title="Signaler comme abusif"
+                >
+                  {busy === a.id ? "…" : "⚑ Signaler"}
+                </button>
+              </div>
+            </div>
+          ))}
+          <hr className="drv-divider" />
+        </>
+      )}
+
+      {flagged.length > 0 && (
+        <>
+          <p className="drv-section">Avis signalés ({flagged.length})</p>
+          {flagged.map((a) => (
+            <div key={a.id} className="drv-card">
+              <div className="drv-row">
+                <span className="drv-name">{a.author_name || "Anonyme"}</span>
+                <span className="drv-badge-pill drv-badge-amber">Signalé</span>
+              </div>
+              <div style={{ marginBottom: 6 }}>
+                <Stars n={a.note} />
+              </div>
+              <p style={{ fontSize: 13, color: "#334155", margin: "0 0 12px", lineHeight: 1.5 }}>"{a.commentaire}"</p>
+              <div className="drv-btns">
+                <button className="drv-btn-danger" disabled={!!busy} onClick={() => removeAvis(a.id)}>
+                  {busy === a.id ? "…" : "Supprimer"}
+                </button>
+                <button className="drv-btn-primary" disabled={!!busy} onClick={() => moderate(a.id, "pending")}>
+                  {busy === a.id ? "…" : "Remettre en attente"}
+                </button>
               </div>
             </div>
           ))}
@@ -2379,6 +2424,22 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 }}
               >
                 {busy === a.id ? "…" : "🗑 Supprimer"}
+              </button>
+              <button
+                onClick={() => moderate(a.id, "flagged")}
+                disabled={busy === a.id}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#b45309",
+                  fontSize: 11.5,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: 0,
+                  marginLeft: 12,
+                }}
+              >
+                {busy === a.id ? "…" : "⚑ Signaler"}
               </button>
             </div>
           ))}

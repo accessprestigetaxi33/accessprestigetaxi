@@ -18,6 +18,8 @@ import { DRIVERS } from "@/data/drivers";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
+import { DESTINATIONS } from "@/data/destinations";
+
 
 const BLOG_PICKS = ["hotel", "restaurant", "visite"]
   .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
@@ -382,10 +384,11 @@ function Index() {
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.destLead}</p>
 
           <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {c.destinations.map((d) => (
+            {c.destinations.map((d, i) => (
               <Link
                 key={`${d.from}-${d.to}`}
-                to="/reservation"
+                to="/destinations/$slug"
+                params={{ slug: DESTINATIONS[i]?.slug ?? DESTINATIONS[0].slug }}
                 className="group flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-4 transition hover:border-primary/60"
               >
                 <span className="flex flex-col items-center gap-1 pt-1">
@@ -404,6 +407,15 @@ function Index() {
               </Link>
             ))}
           </div>
+
+          <Link
+            to="/destinations"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline"
+          >
+            {lang === "en" ? "See all destinations" : "Voir toutes les destinations"}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+
         </div>
       </section>
 

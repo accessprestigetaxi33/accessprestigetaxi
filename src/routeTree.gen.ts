@@ -19,6 +19,7 @@ import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
 import { Route as ReservationRouteImport } from './routes/reservation'
 import { Route as ReserverRouteImport } from './routes/reserver'
+import { Route as SecuriteRouteImport } from './routes/securite'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
@@ -34,6 +35,8 @@ import { Route as ClientProfilRouteImport } from './routes/client.profil'
 import { Route as ClientResetPasswordRouteImport } from './routes/client.reset-password'
 import { Route as ClientTrajetsRouteImport } from './routes/client.trajets'
 import { Route as CourseIdRouteImport } from './routes/course.$id'
+import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
+import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as ReservationIdRouteImport } from './routes/reservation.$id'
 import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
@@ -97,6 +100,11 @@ const ReservationRoute = ReservationRouteImport.update({
 const ReserverRoute = ReserverRouteImport.update({
   id: '/reserver',
   path: '/reserver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecuriteRoute = SecuriteRouteImport.update({
+  id: '/securite',
+  path: '/securite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -172,6 +180,16 @@ const ClientTrajetsRoute = ClientTrajetsRouteImport.update({
 const CourseIdRoute = CourseIdRouteImport.update({
   id: '/course/$id',
   path: '/course/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DestinationsIndexRoute = DestinationsIndexRouteImport.update({
+  id: '/destinations/',
+  path: '/destinations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DestinationsSlugRoute = DestinationsSlugRouteImport.update({
+  id: '/destinations/$slug',
+  path: '/destinations/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
@@ -261,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
+  '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -275,10 +294,12 @@ export interface FileRoutesByFullPath {
   '/client/reset-password': typeof ClientResetPasswordRoute
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/destinations/': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -302,6 +323,7 @@ export interface FileRoutesByTo {
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
+  '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -316,10 +338,12 @@ export interface FileRoutesByTo {
   '/client/reset-password': typeof ClientResetPasswordRoute
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
   '/blog': typeof BlogIndexRoute
+  '/destinations': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -344,6 +368,7 @@ export interface FileRoutesById {
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
+  '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -358,10 +383,12 @@ export interface FileRoutesById {
   '/client/reset-password': typeof ClientResetPasswordRoute
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
+  '/destinations/$slug': typeof DestinationsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/destinations/': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
@@ -387,6 +414,7 @@ export interface FileRouteTypes {
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
+    | '/securite'
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
@@ -401,10 +429,12 @@ export interface FileRouteTypes {
     | '/client/reset-password'
     | '/client/trajets'
     | '/course/$id'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
     | '/blog/'
+    | '/destinations/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -428,6 +458,7 @@ export interface FileRouteTypes {
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
+    | '/securite'
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
@@ -442,10 +473,12 @@ export interface FileRouteTypes {
     | '/client/reset-password'
     | '/client/trajets'
     | '/course/$id'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
     | '/blog'
+    | '/destinations'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -469,6 +502,7 @@ export interface FileRouteTypes {
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
+    | '/securite'
     | '/services'
     | '/sitemap.xml'
     | '/api/manifest'
@@ -483,10 +517,12 @@ export interface FileRouteTypes {
     | '/client/reset-password'
     | '/client/trajets'
     | '/course/$id'
+    | '/destinations/$slug'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
     | '/blog/'
+    | '/destinations/'
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
@@ -511,6 +547,7 @@ export interface RootRouteChildren {
   QrGeneratorRoute: typeof QrGeneratorRoute
   ReservationRoute: typeof ReservationRouteWithChildren
   ReserverRoute: typeof ReserverRoute
+  SecuriteRoute: typeof SecuriteRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiManifestRoute: typeof ApiManifestRoute
@@ -525,9 +562,11 @@ export interface RootRouteChildren {
   ClientResetPasswordRoute: typeof ClientResetPasswordRoute
   ClientTrajetsRoute: typeof ClientTrajetsRoute
   CourseIdRoute: typeof CourseIdRoute
+  DestinationsSlugRoute: typeof DestinationsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   SuiviIdRoute: typeof SuiviIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  DestinationsIndexRoute: typeof DestinationsIndexRoute
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
   ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
@@ -610,6 +649,13 @@ declare module '@tanstack/react-router' {
       path: '/reserver'
       fullPath: '/reserver'
       preLoaderRoute: typeof ReserverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/securite': {
+      id: '/securite'
+      path: '/securite'
+      fullPath: '/securite'
+      preLoaderRoute: typeof SecuriteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -715,6 +761,20 @@ declare module '@tanstack/react-router' {
       path: '/course/$id'
       fullPath: '/course/$id'
       preLoaderRoute: typeof CourseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/destinations/': {
+      id: '/destinations/'
+      path: '/destinations'
+      fullPath: '/destinations/'
+      preLoaderRoute: typeof DestinationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/destinations/$slug': {
+      id: '/destinations/$slug'
+      path: '/destinations/$slug'
+      fullPath: '/destinations/$slug'
+      preLoaderRoute: typeof DestinationsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/email/unsubscribe': {
@@ -852,6 +912,7 @@ const rootRouteChildren: RootRouteChildren = {
   QrGeneratorRoute: QrGeneratorRoute,
   ReservationRoute: ReservationRouteWithChildren,
   ReserverRoute: ReserverRoute,
+  SecuriteRoute: SecuriteRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiManifestRoute: ApiManifestRoute,
@@ -866,9 +927,11 @@ const rootRouteChildren: RootRouteChildren = {
   ClientResetPasswordRoute: ClientResetPasswordRoute,
   ClientTrajetsRoute: ClientTrajetsRoute,
   CourseIdRoute: CourseIdRoute,
+  DestinationsSlugRoute: DestinationsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   SuiviIdRoute: SuiviIdRoute,
   BlogIndexRoute: BlogIndexRoute,
+  DestinationsIndexRoute: DestinationsIndexRoute,
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
   ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
