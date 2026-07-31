@@ -19,4 +19,25 @@ export function setDriverToken(token: string) {
 export function clearDriverToken() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(KEY);
+  localStorage.removeItem("driver_name");
+}
+
+const NAME_KEY = "driver_name";
+
+export function getDriverName(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return localStorage.getItem(NAME_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+export function setDriverName(name: string) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(NAME_KEY, name);
+  } catch {
+    /* ignore */
+  }
 }

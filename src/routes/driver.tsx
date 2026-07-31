@@ -13,7 +13,7 @@ import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
-import { getDriverToken, setDriverToken, clearDriverToken } from "@/lib/driver-token";
+import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
   getUnreadCountsForReservations,
@@ -350,6 +350,11 @@ function DriverPage() {
   const [status, setStatus] = useState<"checking" | "denied" | "granted">("checking");
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [driverLabel, setDriverLabel] = useState("");
+
+  useEffect(() => {
+    setDriverLabel(getDriverName());
+  }, []);
 
   const tryToken = useCallback(
     async (candidate: string): Promise<boolean> => {
@@ -358,6 +363,8 @@ function DriverPage() {
         const res = await verify({ data: { token: candidate } });
         if (res?.ok) {
           setDriverToken(candidate);
+          setDriverName(res.driver || "");
+          setDriverLabel(res.driver || "");
           setStatus("granted");
           return true;
         }
