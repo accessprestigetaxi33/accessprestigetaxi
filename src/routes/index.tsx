@@ -139,16 +139,16 @@ function Index() {
         <div className="absolute inset-0 -z-10 bg-[var(--gradient-dark,linear-gradient(180deg,#0b0b0d,#111014))]" />
         <div className="absolute inset-x-0 top-0 -z-10 h-[420px] bg-[radial-gradient(ellipse_at_50%_0%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_70%)]" />
 
-        <div className="mx-auto flex max-w-4xl flex-col items-center px-5 pb-20 pt-14 text-center sm:pt-20">
+        <div className="mx-auto flex max-w-5xl flex-col items-center px-5 pb-20 pt-14 text-center sm:pt-20">
           <img
-            src={logoLockup.url}
-            alt="Access Prestige Taxi — taxi 100 % électrique à Bordeaux"
-            width={583}
-            height={375}
+            src={logoLockup}
+            alt="Access Prestige Taxi — Audi Q6 e-tron, taxi 100 % électrique à Bordeaux"
+            width={1536}
+            height={500}
             fetchPriority="high"
-            className="w-full max-w-md rounded-2xl drop-shadow-[0_20px_60px_rgba(0,0,0,0.55)] sm:max-w-lg"
-
+            className="w-full rounded-2xl drop-shadow-[0_20px_60px_rgba(0,0,0,0.55)]"
           />
+
 
           <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary">
             <BatteryCharging className="h-3.5 w-3.5" /> {c.kicker}
