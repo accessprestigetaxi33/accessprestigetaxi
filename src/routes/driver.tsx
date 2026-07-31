@@ -999,8 +999,29 @@ function CoursesTab({
     return String(a.pickup_datetime ?? "").localeCompare(String(b.pickup_datetime ?? ""));
   };
 
-  const visible = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
+  const base = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
+  const q = query.trim().toLowerCase();
+  const visible = base.filter((r) => {
+    if (q) {
+      const hay = [r.depart, r.destination, (r as any).arrivee, r.client_name, (r as any).client_phone]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (dateFilter) {
+      const d = String(r.pickup_datetime ?? "").slice(0, 10);
+      if (d !== dateFilter) return false;
+    }
+    if (statusFilter !== "all") {
+      if (statusFilter === "done") {
+        if (["pending", "accepted", "en_route", "arrived"].includes(r.status)) return false;
+      } else if (r.status !== statusFilter) return false;
+    }
+    return true;
+  });
   const otherCount = courses.length - courses.filter(mineOf).length;
+  const filtersActive = !!q || !!dateFilter || statusFilter !== "all";
 
   const nouvelles = visible.filter((r) => r.status === "pending").sort(sortByPriority);
   const encours = visible
@@ -1010,35 +1031,88 @@ function CoursesTab({
     .filter((r) => !["pending", "accepted", "en_route", "arrived"].includes(r.status))
     .sort(sortByPriority);
 
-  const filterBar = !isAdmin ? (
-    <div style={{ display: "flex", gap: 8, padding: "10px 0 2px" }}>
-      {(
-        [
-          { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
-          { key: false, label: `Toutes (${courses.length})` },
-        ] as const
-      ).map((o) => (
-        <button
-          key={String(o.key)}
-          onClick={() => setOnlyMine(o.key)}
+  const chip = (active: boolean): React.CSSProperties => ({
+    padding: "7px 12px",
+    borderRadius: 999,
+    border: "1px solid " + (active ? "#0B0B0D" : "#cbd5e1"),
+    background: active ? "#0B0B0D" : "#fff",
+    color: active ? "#C6A24A" : "#334155",
+    fontSize: 12,
+    fontWeight: 700,
+    cursor: "pointer",
+    minHeight: 36,
+    whiteSpace: "nowrap",
+  });
+
+  const filterBar = (
+    <div style={{ padding: "10px 0 2px" }}>
+      {!isAdmin && (
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          {(
+            [
+              { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
+              { key: false, label: `Toutes (${courses.length})` },
+            ] as const
+          ).map((o) => (
+            <button key={String(o.key)} onClick={() => setOnlyMine(o.key)} style={{ ...chip(onlyMine === o.key), flex: 1 }}>
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="🔎 Client, départ, destination…"
           style={{
             flex: 1,
-            padding: "8px 10px",
-            borderRadius: 999,
-            border: "1px solid " + (onlyMine === o.key ? "#0B0B0D" : "#cbd5e1"),
-            background: onlyMine === o.key ? "#0B0B0D" : "#fff",
-            color: onlyMine === o.key ? "#C6A24A" : "#334155",
-            fontSize: 12.5,
-            fontWeight: 700,
-            cursor: "pointer",
-            minHeight: 38,
+            minWidth: 0,
+            border: "1px solid #cbd5e1",
+            borderRadius: 12,
+            padding: "9px 12px",
+            fontSize: 13,
+            minHeight: 40,
           }}
-        >
-          {o.label}
-        </button>
-      ))}
+        />
+        <input
+          type="date"
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+          style={{ border: "1px solid #cbd5e1", borderRadius: 12, padding: "9px 10px", fontSize: 13, minHeight: 40 }}
+        />
+      </div>
+      <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
+        {(
+          [
+            { k: "all", l: "Tous" },
+            { k: "pending", l: "En attente" },
+            { k: "accepted", l: "Acceptées" },
+            { k: "en_route", l: "En route" },
+            { k: "arrived", l: "Sur place" },
+            { k: "done", l: "Terminées / autres" },
+          ] as const
+        ).map((o) => (
+          <button key={o.k} onClick={() => setStatusFilter(o.k as any)} style={chip(statusFilter === o.k)}>
+            {o.l}
+          </button>
+        ))}
+        {filtersActive && (
+          <button
+            onClick={() => {
+              setQuery("");
+              setDateFilter("");
+              setStatusFilter("all");
+            }}
+            style={{ ...chip(false), borderColor: "#fecaca", color: "#b91c1c" }}
+          >
+            ✖ Réinitialiser
+          </button>
+        )}
+      </div>
     </div>
-  ) : null;
+  );
+
 
   const renderCard = (r: Resa) => {
     const assigned = (r as any).assigned_driver as string | undefined;
