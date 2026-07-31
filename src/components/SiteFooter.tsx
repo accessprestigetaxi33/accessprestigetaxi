@@ -239,6 +239,12 @@ export function SiteFooter() {
       <div className="footer-bottom">
         <div>© {year} Access Prestige Taxi. Tous droits réservés.</div>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+          <Link to="/securite" className="footer-link-sm">
+            Sécurité & garanties
+          </Link>
+          <Link to="/destinations" className="footer-link-sm">
+            Destinations
+          </Link>
           <Link to="/mentions-legales" className="footer-link-sm">
             Mentions légales
           </Link>

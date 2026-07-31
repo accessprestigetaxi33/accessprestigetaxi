@@ -4,6 +4,7 @@ import type {} from "@tanstack/react-start";
 const BASE_URL = "https://accessprestigetaxi.lovable.app";
 
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
+import { DESTINATIONS } from "@/data/destinations";
 
 interface SitemapEntry {
   path: string;
@@ -25,11 +26,14 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.7",
           })),
           { path: "/reserver", changefreq: "monthly", priority: "0.9" },
-          // Pages SEO locales (mots-clés à fort volume)
-          { path: "/taxi-aeroport-bordeaux-merignac", changefreq: "monthly", priority: "0.9" },
-          { path: "/taxi-gare-saint-jean-bordeaux", changefreq: "monthly", priority: "0.9" },
-          { path: "/taxi-bordeaux-arcachon", changefreq: "monthly", priority: "0.8" },
-          { path: "/taxi-conventionne-bordeaux", changefreq: "monthly", priority: "0.8" },
+          // Pages destinations SEO (Charente & Charente-Maritime)
+          { path: "/destinations", changefreq: "monthly", priority: "0.9" },
+          ...DESTINATIONS.map((d) => ({
+            path: `/destinations/${d.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.8",
+          })),
+          { path: "/securite", changefreq: "yearly", priority: "0.5" },
           { path: "/a-propos", changefreq: "monthly", priority: "0.7" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
           { path: "/carte", changefreq: "monthly", priority: "0.5" },

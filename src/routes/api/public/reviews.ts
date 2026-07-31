@@ -10,7 +10,7 @@ const submitSchema = z.object({
 
 const moderateSchema = z.object({
   id: z.string().uuid(),
-  status: z.enum(["approved", "refused"]),
+  status: z.enum(["approved", "refused", "flagged", "pending"]),
 });
 
 const deleteSchema = z.object({
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/api/public/reviews")({
         if (!assertDriver(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
         const columns = "id,author_name,note,commentaire,created_at,status,reservation_id,chauffeur_id";
-        const [{ data: pending, error: pendingError }, { data: published, error: publishedError }] = await Promise.all([
+        const [{ data: pending, error: pendingError }, { data: published, error: publishedError }, { data: flagged }] = await Promise.all([
           supabase.from("avis").select(columns).eq("status", "pending").order("created_at", { ascending: false }),
           supabase
             .from("avis")
@@ -65,11 +65,12 @@ export const Route = createFileRoute("/api/public/reviews")({
             .eq("status", "approved")
             .order("created_at", { ascending: false })
             .limit(20),
+          supabase.from("avis").select(columns).eq("status", "flagged").order("created_at", { ascending: false }),
         ]);
 
         if (pendingError) return Response.json({ error: pendingError.message }, { status: 500 });
         if (publishedError) return Response.json({ error: publishedError.message }, { status: 500 });
-        return Response.json({ pending: pending ?? [], published: published ?? [] });
+        return Response.json({ pending: pending ?? [], published: published ?? [], flagged: flagged ?? [] });
       },
 
       POST: async ({ request }) => {
