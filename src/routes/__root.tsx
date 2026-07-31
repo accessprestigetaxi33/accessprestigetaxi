@@ -81,14 +81,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Access Prestige Taxi — Taxi 100 % électrique à Bordeaux" },
+      {
+        name: "description",
+        content:
+          "Taxi de prestige 100 % électrique à Bordeaux et en Gironde. Réservation rapide 7j/7, 24h/24.",
+      },
+      { name: "author", content: "Access Prestige Taxi" },
+      { property: "og:site_name", content: "Access Prestige Taxi" },
+      { property: "og:title", content: "Access Prestige Taxi" },
+      {
+        property: "og:description",
+        content: "Votre mobilité, notre priorité — taxi 100 % électrique à Bordeaux.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
