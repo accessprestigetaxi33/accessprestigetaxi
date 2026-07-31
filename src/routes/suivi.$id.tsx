@@ -52,6 +52,17 @@ export const Route = createFileRoute("/suivi/$id")({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────
+const UI = {
+  fr: {
+    you: "Vous",
+    tbd: "À définir",
+  },
+  en: {
+    you: "You",
+    tbd: "To be determined",
+  },
+} as const;
+
 const JOSE_PHONE = "0673072322";
 // Délai d'expiration du lien de suivi après la fin de la course (en jours)
 const SUIVI_EXPIRY_DAYS = 30;
