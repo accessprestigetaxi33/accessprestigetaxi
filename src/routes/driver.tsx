@@ -1672,6 +1672,72 @@ function CourseCard({
         <span>🏁 {resa.destination}</span>
       </div>
 
+      {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
+      {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
+        (() => {
+          const qb: React.CSSProperties = {
+            flex: "1 1 auto",
+            minWidth: 120,
+            borderRadius: 12,
+            padding: "11px 10px",
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: "pointer",
+            minHeight: 44,
+          };
+          return (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+              {resa.status === "pending" && (
+                <>
+                  <button
+                    onClick={handleAccept}
+                    disabled={busy}
+                    style={{ ...qb, background: "#0B0B0D", border: "2px solid #0B0B0D", color: "#C6A24A" }}
+                  >
+                    {busy ? "…" : "✅ Accepter"}
+                  </button>
+                  <button
+                    onClick={handleRefuse}
+                    disabled={busy}
+                    style={{ ...qb, background: "#fff", border: "2px solid #fecaca", color: "#b91c1c" }}
+                  >
+                    ✖ Refuser
+                  </button>
+                </>
+              )}
+              {resa.status === "accepted" && (
+                <button
+                  onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
+                  disabled={progressing}
+                  style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
+                >
+                  {progressing ? "…" : "🚖 Je pars"}
+                </button>
+              )}
+              {(resa.status === "accepted" || resa.status === "en_route") && (
+                <button
+                  onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
+                  disabled={progressing}
+                  style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
+                >
+                  {progressing ? "…" : "✅ Prise en charge"}
+                </button>
+              )}
+              {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                <button
+                  onClick={handleComplete}
+                  disabled={completing}
+                  style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
+                >
+                  {completing ? "…" : "🏁 Terminée"}
+                </button>
+              )}
+            </div>
+          );
+        })()}
+
+
+
       {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
       {resa.message && resa.message.trim().length > 0 && (
         <div
