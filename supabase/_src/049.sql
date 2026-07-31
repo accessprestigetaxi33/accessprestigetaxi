@@ -1,1 +1,0 @@
-DROP TRIGGER IF EXISTS notify_reservation_http_on_insert ON public.reservations;

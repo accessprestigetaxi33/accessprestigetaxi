@@ -1,1 +1,0 @@
-ALTER TABLE public.reservations ADD COLUMN IF NOT EXISTS duree_s integer;

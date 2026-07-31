@@ -1,1 +1,0 @@
-ALTER TABLE public.reservations ADD COLUMN IF NOT EXISTS phone_cancel_requested_at timestamptz;
