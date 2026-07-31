@@ -15,6 +15,7 @@ import { I18nProvider } from "@/i18n/I18nProvider";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 function NotFoundComponent() {
   return (
