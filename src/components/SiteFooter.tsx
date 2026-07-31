@@ -158,10 +158,10 @@ export function SiteFooter() {
               marginBottom: 10,
             }}
           >
-            🚕 Taxi City Bordeaux
+            🚕 Access Prestige Taxi
           </div>
           <p style={{ fontSize: 14, lineHeight: 1.6, color: "#94a3b8", margin: 0, maxWidth: 280 }}>
-            Votre taxi conventionné à Bordeaux et en Gironde. Disponible 7j/7 — 24h/24.
+            Votre taxi conventionné 100 % électrique en Charente & Charente-Maritime. Disponible 7j/7 — 24h/24.
           </p>
           <div style={{ marginTop: 14, display: "flex", gap: 10 }}>
             <a
@@ -238,7 +238,7 @@ export function SiteFooter() {
                 ✉️ taxi.city033@gmail.com
               </a>
             </li>
-            <li className="footer-li-text">📍 Bordeaux & Gironde</li>
+            <li className="footer-li-text">📍 Charente & Charente-Maritime</li>
             <li className="footer-li-text">🕒 7j/7 · 24h/24</li>
           </ul>
 
@@ -247,7 +247,7 @@ export function SiteFooter() {
 
       {/* Bottom bar */}
       <div className="footer-bottom">
-        <div>© {year} Taxi City Bordeaux. Tous droits réservés.</div>
+        <div>© {year} Access Prestige Taxi. Tous droits réservés.</div>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
           <Link to="/mentions-legales" className="footer-link-sm">
             Mentions légales
