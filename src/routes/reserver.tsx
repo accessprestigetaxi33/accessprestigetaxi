@@ -416,6 +416,78 @@ const CANONICAL_PLACES: Array<{
   coord: [number, number]; // [lat, lng]
   subPlaces?: Array<{ label: string; coord: [number, number] }>;
 }> = [
+  // ── Charente (16) ──────────────────────────────────────────────────────────
+  {
+    match: /gare.*(angouleme|angoulême)|(angouleme|angoulême).*gare/,
+    label: "Gare d'Angoulême, Place de la Gare, 16000 Angoulême",
+    coord: [45.6553, 0.1626],
+    subPlaces: [
+      { label: "Gare d'Angoulême — Parvis / arrêt taxis, 16000 Angoulême", coord: [45.6553, 0.1626] },
+      { label: "Gare d'Angoulême — Dépose-minute, 16000 Angoulême", coord: [45.6549, 0.1633] },
+    ],
+  },
+  {
+    match: /(aeroport|airport).*(angouleme|angoulême|cognac|brie|champniers)|(angouleme|angoulême|cognac).*(aeroport|airport)/,
+    label: "Aéroport d'Angoulême-Cognac, 249 Rue Jean Mermoz, 16430 Champniers",
+    coord: [45.7291, 0.2205],
+  },
+  {
+    match: /gare.*cognac|cognac.*gare/,
+    label: "Gare de Cognac, Place de la Gare, 16100 Cognac",
+    coord: [45.6846, -0.3259],
+  },
+  {
+    match: /(hopital|hôpital|chu|ch).*(girac|angouleme|angoulême)|girac/,
+    label: "Centre hospitalier d'Angoulême — Girac, 16470 Saint-Michel",
+    coord: [45.6353, 0.1197],
+  },
+  {
+    match: /(cite|cité).*(bande dessinee|bande dessinée|bd)|musee.*bande/,
+    label: "Cité internationale de la BD, 121 Rue de Bordeaux, 16000 Angoulême",
+    coord: [45.6494, 0.1494],
+  },
+  // ── Charente-Maritime (17) ─────────────────────────────────────────────────
+  {
+    match: /gare.*(la rochelle|rochelle)|(la rochelle|rochelle).*gare/,
+    label: "Gare de La Rochelle-Ville, Boulevard Maréchal Joffre, 17000 La Rochelle",
+    coord: [46.1531, -1.1454],
+  },
+  {
+    match: /(aeroport|airport).*(rochelle|ile de re|île de ré)|^lrh$/,
+    label: "Aéroport de La Rochelle-Île de Ré, Rue du Jura, 17000 La Rochelle",
+    coord: [46.1792, -1.1953],
+  },
+  {
+    match: /gare.*saintes|saintes.*gare/,
+    label: "Gare de Saintes, Avenue de la Marne, 17100 Saintes",
+    coord: [45.7462, -0.636],
+  },
+  {
+    match: /gare.*rochefort|rochefort.*gare/,
+    label: "Gare de Rochefort, Avenue Wilson, 17300 Rochefort",
+    coord: [45.9414, -0.9615],
+  },
+  {
+    match: /gare.*royan|royan.*gare/,
+    label: "Gare de Royan, Place de la Gare, 17200 Royan",
+    coord: [45.6262, -1.0171],
+  },
+  {
+    match: /(zoo|palmyre)/,
+    label: "Zoo de La Palmyre, 6 Avenue de Royan, 17570 Les Mathes",
+    coord: [45.6939, -1.1774],
+  },
+  {
+    match: /(ile|île).*(oleron|oléron)|oleron|oléron/,
+    label: "Île d'Oléron (Saint-Pierre-d'Oléron), 17310",
+    coord: [45.9459, -1.3116],
+  },
+  {
+    match: /(ile|île).*(de re|de ré)|saint.martin.de.re/,
+    label: "Saint-Martin-de-Ré, Île de Ré, 17410",
+    coord: [46.2019, -1.3667],
+  },
+  // ── Hors département, destinations longue distance fréquentes ──────────────
   {
     match: /(aeroport|airport).*(bordeaux|merignac|bod)|^bod$|merignac.*(aeroport|airport)/,
     label: "Aéroport de Bordeaux-Mérignac (Terminal), 33700 Mérignac",
@@ -423,49 +495,30 @@ const CANONICAL_PLACES: Array<{
     subPlaces: [
       { label: "Aéroport Bordeaux-Mérignac — Hall A (Départs), 33700 Mérignac", coord: [44.8295, -0.7166] },
       { label: "Aéroport Bordeaux-Mérignac — Hall B (Arrivées), 33700 Mérignac", coord: [44.8281, -0.715] },
-      { label: "Aéroport Bordeaux-Mérignac — Parking P1, 33700 Mérignac", coord: [44.8275, -0.7138] },
       { label: "Aéroport Bordeaux-Mérignac — Terminal Billi (low-cost), 33700 Mérignac", coord: [44.8235, -0.7193] },
     ],
   },
   {
-    match: /gare.*(saint.jean|st.jean|bordeaux)|bordeaux.*(saint.jean|st.jean).*gare|gare.*bordeaux/,
+    match: /gare.*(bordeaux|saint.jean|st.jean)|bordeaux.*gare/,
     label: "Gare de Bordeaux-Saint-Jean, Rue Charles Domercq, 33800 Bordeaux",
     coord: [44.8259, -0.5564],
-    subPlaces: [
-      { label: "Gare Saint-Jean — Parvis principal (Rue Charles Domercq), 33800 Bordeaux", coord: [44.8259, -0.5564] },
-      {
-        label: "Gare Saint-Jean — Sortie Belcier (Rue Amédée Saint-Germain), 33800 Bordeaux",
-        coord: [44.8243, -0.5554],
-      },
-      { label: "Gare Saint-Jean — Dépose-minute (Rue Charles Domercq), 33800 Bordeaux", coord: [44.8262, -0.5572] },
-      { label: "Gare Saint-Jean — Arrêt taxis (Parvis Louis Armand), 33800 Bordeaux", coord: [44.8256, -0.5568] },
-    ],
   },
   {
-    match: /place.*(quinconces|kinconce)/,
-    label: "Place des Quinconces, 33000 Bordeaux",
-    coord: [44.8444, -0.5739],
+    match: /futuroscope/,
+    label: "Futuroscope, Avenue René Monory, 86360 Chasseneuil-du-Poitou",
+    coord: [46.6704, 0.3701],
   },
   {
-    match: /(matmut|stade.*atlantique|stade.*bordeaux)/,
-    label: "Matmut Atlantique, Cours Jules Ladoumègue, 33300 Bordeaux",
-    coord: [44.8959, -0.5614],
+    match: /gare.*poitiers|poitiers.*gare/,
+    label: "Gare de Poitiers, Boulevard du Grand Cerf, 86000 Poitiers",
+    coord: [46.5822, 0.3333],
   },
   {
-    match: /cite.*du.*vin|cité.*du.*vin/,
-    label: "La Cité du Vin, Esplanade de Pontac, 33300 Bordeaux",
-    coord: [44.8627, -0.5505],
+    match: /gare.*niort|niort.*gare/,
+    label: "Gare de Niort, Rue Mazagran, 79000 Niort",
+    coord: [46.3175, -0.4626],
   },
-  {
-    match: /bordeaux.lac|lac.*bordeaux/,
-    label: "Bordeaux Lac, 33300 Bordeaux",
-    coord: [44.8861, -0.5836],
-  },
-  {
-    match: /meriadeck|mériadeck/,
-    label: "Mériadeck, 33000 Bordeaux",
-    coord: [44.8389, -0.5836],
-  },
+
 ];
 
 function findCanonicalPlace(query: string, origin: [number, number]): AddressChoice | null {
