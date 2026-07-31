@@ -16,6 +16,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 import logoLockup from "@/assets/apt-hero-banner.png";
 import { DRIVERS } from "@/data/drivers";
 import { ReviewForm } from "@/components/ReviewForm";
+import { ClientTrust } from "@/components/ClientTrust";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 
 const BLOG_PICKS = ["hotel", "restaurant", "visite"]
@@ -488,6 +489,9 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {/* AVIS & RÉASSURANCE */}
+      <ClientTrust />
 
       {/* AVIS */}
       <section className="border-t border-border bg-card/40 py-20">
