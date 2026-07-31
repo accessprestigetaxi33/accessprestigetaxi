@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, MapPin, Phone, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
-import { GUIDE_ENTRIES, GUIDE_CATEGORIES, getGuideEntry } from "@/data/guide-charente";
+import { GUIDE_ENTRIES, GUIDE_CATEGORIES, getGuideEntry, type GuideEntry } from "@/data/guide-charente";
 
 const PHONE = "0673072322";
 const PHONE_DISPLAY = "06 73 07 23 22";
