@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { broadcastDriverFeed } from "@/lib/suivi-broadcast";
 import {
   calculerPrix,
   calculerPrixMixte,
@@ -1450,6 +1451,9 @@ function ReservationPage() {
         .single();
 
       if (error) throw error;
+
+      // Réveille instantanément les tableaux de bord chauffeur ouverts.
+      broadcastDriverFeed("reservation");
 
       // Si le navigateur est déjà en "granted", on ré-attache immédiatement
       // l'abonnement push client à la réservation créée. Sinon le bouton peut

@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         const supabase = getTaxiSupabaseAdmin();
 
         const BASE_COLUMNS =
-          "id, nom, client_name, telephone, client_phone, email, pickup_datetime, depart, arrivee, destination, passagers, bagages, service_type, suivi_id, client_account_id";
+          "id, nom, client_name, telephone, client_phone, email, pickup_datetime, depart, arrivee, destination, passagers, bagages, service_type, suivi_id, client_account_id, assigned_driver";
 
         let reservation: any = null;
         let lookupError: any = null;
@@ -143,10 +143,13 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         // Push chauffeur — envoyé ici (côté serveur, à la création de
         // la résa) pour ne plus dépendre d'un onglet dashboard ouvert.
         const clientName = reservation.client_name || reservation.nom || "Client";
+        const assignedRaw = String((reservation as any).assigned_driver || "");
+        const assignedLabel =
+          assignedRaw === "patricia" ? "Patricia" : assignedRaw === "alain" ? "Alain" : "";
         const trajet = `${reservation.depart} → ${reservation.arrivee || reservation.destination || "—"}`;
         try {
           const chauffeurResult = await sendPushToAudience("chauffeur", {
-            title: "🚕 Nouvelle résa",
+            title: assignedLabel ? `🚕 Nouvelle résa — ${assignedLabel}` : "🚕 Nouvelle résa",
             body: `${clientName} — ${trajet}`,
             url: "/driver",
             tag: `chauffeur-res-${reservationId}`,

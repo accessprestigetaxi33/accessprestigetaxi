@@ -13,6 +13,8 @@ import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
+import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
+
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
@@ -351,11 +353,12 @@ function DriverPage() {
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [driverLabel, setDriverLabel] = useState("");
-
+  const [driverId, setDriverId] = useState<string>("");
 
   useEffect(() => {
     setDriverLabel(getDriverName());
   }, []);
+
 
   const tryToken = useCallback(
     async (candidate: string): Promise<boolean> => {
@@ -366,9 +369,11 @@ function DriverPage() {
           setDriverToken(candidate);
           setDriverName(res.driver || "");
           setDriverLabel(res.driver || "");
+          setDriverId(res.driverId || "");
           setStatus("granted");
           return true;
         }
+
       } catch {
         /* ignore */
       }
@@ -469,11 +474,13 @@ function DriverPage() {
     );
   }
 
-  return <DriverApp driverLabel={driverLabel} />;
+  return <DriverApp driverLabel={driverLabel} driverId={driverId} />;
 }
 
-function DriverApp({ driverLabel }: { driverLabel?: string }) {
+function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?: string }) {
+  const listCoursesFn = useServerFn(listDriverCourses);
   const [tab, setTab] = useState<Tab>("courses");
+
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
@@ -516,24 +523,35 @@ function DriverApp({ driverLabel }: { driverLabel?: string }) {
     return () => document.removeEventListener("visibilitychange", refresh);
   }, [subscribePush]);
 
-  // Rafraîchissement badge courses
+  // Rafraîchissement badge courses (via serveur : anon n'a aucun accès en
+  // lecture aux réservations — RLS PII).
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
-      const { count } = await (supabase as any)
-        .from("reservations")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "pending");
-      setNewCount(count ?? 0);
+      try {
+        const res: any = await listCoursesFn({ data: { token: getDriverToken() } });
+        if (cancelled) return;
+        const mine = (res?.courses ?? []).filter(
+          (c: any) => c.status === "pending" && (!driverId || driverId === "admin" || c.assigned_driver === driverId),
+        );
+        setNewCount(mine.length);
+      } catch {
+        /* réessai au prochain tick */
+      }
     };
     load();
-    const ch = (supabase as any)
-      .channel("drv-badge")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, load)
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
+    const poll = setInterval(load, 12000);
+    const onVis = () => {
+      if (!document.hidden) load();
     };
-  }, []);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [listCoursesFn, driverId]);
+
 
   // Badge avis en attente + toast in-app à chaque nouvel avis
   useEffect(() => {
@@ -733,7 +751,10 @@ function DriverApp({ driverLabel }: { driverLabel?: string }) {
         </div>
 
         <div className="drv-body">
-          {tab === "courses" && <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} />}
+          {tab === "courses" && (
+            <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
+          )}
+
           {tab === "planning" && <PlanningTab />}
           {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
           {tab === "clients" && <ClientsTab />}
@@ -749,46 +770,63 @@ function DriverApp({ driverLabel }: { driverLabel?: string }) {
 function CoursesTab({
   onBadgeChange,
   onChatBadge,
+  driverId,
 }: {
   onBadgeChange: (n: number) => void;
   onChatBadge?: (n: number) => void;
+  driverId?: string;
 }) {
   const [courses, setCourses] = useState<Resa[]>([]);
   const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
+  const [onlyMine, setOnlyMine] = useState(true);
   const listUnreadResasFn = useServerFn(listReservationsWithUnreadChauffeur);
   const getUnreadFn = useServerFn(getUnreadCountsForReservations);
+  const listCoursesFn = useServerFn(listDriverCourses);
+  const setCourseDriverFn = useServerFn(setCourseDriver);
+  // Ids déjà vus : sert à ne notifier que les VRAIES nouvelles demandes.
+  const seenPendingRef = useRef<Set<string> | null>(null);
+
+  const isAdmin = !driverId || driverId === "admin";
+  const mineOf = useCallback(
+    (r: Resa) => isAdmin || (r as any).assigned_driver === driverId,
+    [isAdmin, driverId],
+  );
 
   const load = useCallback(async () => {
-    const activeStatuses = ["pending", "accepted", "en_route", "arrived"];
-    const [activeRes, unreadIds] = await Promise.all([
-      (supabase as any)
-        .from("reservations")
-        .select(
-          "id,depart,destination,pickup_datetime,status,prix_estime,distance_km,client_name,client_phone,client_email,suivi_id,message",
-        )
-        .in("status", activeStatuses)
-        .order("pickup_datetime", { ascending: true }),
-      listUnreadResasFn().catch(() => [] as string[]),
-    ]);
-    const activeList: Resa[] = activeRes?.data ?? [];
-    const activeIds = new Set(activeList.map((r) => r.id));
-    const extraIds = (unreadIds as string[]).filter((id) => !activeIds.has(id));
-    let extraList: Resa[] = [];
-    if (extraIds.length > 0) {
-      const { data: extra } = await (supabase as any)
-        .from("reservations")
-        .select(
-          "id,depart,destination,pickup_datetime,status,prix_estime,distance_km,client_name,client_phone,client_email,suivi_id,message",
-        )
-        .in("id", extraIds);
-      extraList = extra ?? [];
+    const unreadIds = await listUnreadResasFn().catch(() => [] as string[]);
+    let res: any;
+    try {
+      res = await listCoursesFn({
+        data: { token: getDriverToken(), extra_ids: (unreadIds as string[]).slice(0, 50) },
+      });
+    } catch {
+      setLoading(false);
+      return;
     }
-    const list: Resa[] = [...activeList, ...extraList];
+    const list: Resa[] = (res?.courses ?? []) as Resa[];
     setCourses(list);
     setLoading(false);
-    onBadgeChange(list.filter((r) => r.status === "pending").length);
+
+    // Notification in-app des nouvelles demandes qui me sont attribuées.
+    const pendingMine = list.filter((r) => r.status === "pending" && mineOf(r));
+    if (seenPendingRef.current === null) {
+      seenPendingRef.current = new Set(pendingMine.map((r) => r.id));
+    } else {
+      for (const r of pendingMine) {
+        if (seenPendingRef.current.has(r.id)) continue;
+        seenPendingRef.current.add(r.id);
+        toast.success(`🚕 Nouvelle course${isAdmin ? "" : " pour toi"}`, {
+          description: `${r.client_name || "Client"} — ${r.depart} → ${r.destination || "—"}`,
+          duration: 10000,
+        });
+        try {
+          (navigator as any)?.vibrate?.([120, 60, 120]);
+        } catch {}
+      }
+    }
+    onBadgeChange(pendingMine.length);
 
     // COUNT SQL agrégé pour prioriser les cartes + indicateurs
     try {
@@ -800,7 +838,22 @@ function CoursesTab({
     } catch {
       // pas bloquant : les cartes gardent leur ordre par défaut
     }
-  }, [onBadgeChange, onChatBadge, listUnreadResasFn, getUnreadFn]);
+  }, [onBadgeChange, onChatBadge, listUnreadResasFn, getUnreadFn, listCoursesFn, mineOf, isAdmin]);
+
+  const reassign = useCallback(
+    async (id: string, driver: "patricia" | "alain") => {
+      try {
+        await setCourseDriverFn({ data: { token: getDriverToken(), reservation_id: id, driver } });
+        toast.success(`Course transférée à ${driver === "patricia" ? "Patricia" : "Alain"}`);
+        load();
+      } catch {
+        toast.error("Transfert impossible");
+      }
+    },
+    [setCourseDriverFn, load],
+  );
+
+
 
   // Refresh debouncé : coalesce les bursts Realtime (INSERT + UPDATE
   // read_by_*) en un seul appel batch après 300 ms d'inactivité. Immédiat
@@ -871,18 +924,25 @@ function CoursesTab({
       if (e.key === "drv-chat-read-bump") scheduleLoad(true);
     };
     window.addEventListener("storage", onStorage);
-    // Reconciliation périodique (5 min) : filet de sécurité, plus rare
-    // maintenant que le badge est mis à jour incrémentalement.
-    const reconcile = setInterval(() => scheduleLoad(), 300000);
+    // Temps réel : les réservations ne sont pas lisibles en anon (RLS PII),
+    // donc postgres_changes ne délivre rien ici. On combine un canal
+    // Broadcast (émis à la création d'une résa) + un poll court de secours.
+    const feed = (supabase as any)
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, () => scheduleLoad(true))
+      .subscribe();
+    const reconcile = setInterval(() => scheduleLoad(), 10000);
     return () => {
       unsubBc();
       clearInterval(reconcile);
+      supabase.removeChannel(feed);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("focus", onVis);
       window.removeEventListener("storage", onStorage);
       if (scheduleRef.current.timer) clearTimeout(scheduleRef.current.timer);
     };
   }, [scheduleLoad, applyDelta]);
+
 
   // Canal Realtime dédié aux réservations visibles — recréé quand la liste
   // change (visibleKey). Filtre `reservation_id=in.(...)` côté serveur.
@@ -936,40 +996,125 @@ function CoursesTab({
     return String(a.pickup_datetime ?? "").localeCompare(String(b.pickup_datetime ?? ""));
   };
 
-  const nouvelles = courses.filter((r) => r.status === "pending").sort(sortByPriority);
-  const encours = courses
+  const visible = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
+  const otherCount = courses.length - courses.filter(mineOf).length;
+
+  const nouvelles = visible.filter((r) => r.status === "pending").sort(sortByPriority);
+  const encours = visible
     .filter((r) => r.status === "accepted" || r.status === "en_route" || r.status === "arrived")
     .sort(sortByPriority);
-  const followups = courses
+  const followups = visible
     .filter((r) => !["pending", "accepted", "en_route", "arrived"].includes(r.status))
     .sort(sortByPriority);
 
-  if (courses.length === 0)
+  const filterBar = !isAdmin ? (
+    <div style={{ display: "flex", gap: 8, padding: "10px 0 2px" }}>
+      {(
+        [
+          { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
+          { key: false, label: `Toutes (${courses.length})` },
+        ] as const
+      ).map((o) => (
+        <button
+          key={String(o.key)}
+          onClick={() => setOnlyMine(o.key)}
+          style={{
+            flex: 1,
+            padding: "8px 10px",
+            borderRadius: 999,
+            border: "1px solid " + (onlyMine === o.key ? "#0B0B0D" : "#cbd5e1"),
+            background: onlyMine === o.key ? "#0B0B0D" : "#fff",
+            color: onlyMine === o.key ? "#C6A24A" : "#334155",
+            fontSize: 12.5,
+            fontWeight: 700,
+            cursor: "pointer",
+            minHeight: 38,
+          }}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  ) : null;
+
+  const renderCard = (r: Resa) => {
+    const assigned = (r as any).assigned_driver as string | undefined;
+    const other = assigned === "patricia" ? "alain" : "patricia";
     return (
-      <div className="drv-empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-          <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-        <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune course en attente</div>
-        <div style={{ fontSize: 12, marginTop: 4 }}>Tout est à jour ✓</div>
+      <div key={r.id}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8,
+            margin: "8px 2px -4px",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 11.5,
+              fontWeight: 800,
+              letterSpacing: 0.3,
+              padding: "3px 9px",
+              borderRadius: 999,
+              background: assigned === "patricia" ? "#fdf2f8" : "#eff6ff",
+              color: assigned === "patricia" ? "#9d174d" : "#1d4ed8",
+              border: "1px solid " + (assigned === "patricia" ? "#fbcfe8" : "#bfdbfe"),
+            }}
+          >
+            {assigned ? `👤 ${assigned === "patricia" ? "Patricia" : "Alain"}` : "👤 Non attribuée"}
+          </span>
+          {["pending", "accepted"].includes(r.status) && (
+            <button
+              onClick={() => reassign(r.id, other as "patricia" | "alain")}
+              style={{
+                background: "transparent",
+                border: "1px solid #cbd5e1",
+                borderRadius: 8,
+                padding: "4px 9px",
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: "#334155",
+                cursor: "pointer",
+              }}
+            >
+              ↔ Passer à {other === "patricia" ? "Patricia" : "Alain"}
+            </button>
+          )}
+        </div>
+        <CourseCard
+          resa={r}
+          onRefresh={load}
+          expanded={selected === r.id}
+          onToggle={() => setSelected((s) => (s === r.id ? null : r.id))}
+          unreadByChauffeur={unreadMap[r.id]?.unread_chauffeur ?? 0}
+          unreadByClient={unreadMap[r.id]?.unread_client ?? 0}
+        />
       </div>
     );
+  };
 
-  const renderCard = (r: Resa) => (
-    <CourseCard
-      key={r.id}
-      resa={r}
-      onRefresh={load}
-      expanded={selected === r.id}
-      onToggle={() => setSelected((s) => (s === r.id ? null : r.id))}
-      unreadByChauffeur={unreadMap[r.id]?.unread_chauffeur ?? 0}
-      unreadByClient={unreadMap[r.id]?.unread_client ?? 0}
-    />
-  );
+  if (visible.length === 0)
+    return (
+      <>
+        {filterBar}
+        <div className="drv-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune course en attente</div>
+          <div style={{ fontSize: 12, marginTop: 4 }}>
+            {onlyMine && otherCount > 0 ? `${otherCount} course(s) pour l'autre chauffeur` : "Tout est à jour ✓"}
+          </div>
+        </div>
+      </>
+    );
 
   return (
     <>
+      {filterBar}
       {nouvelles.length > 0 && (
         <>
           <p className="drv-section">Nouvelles demandes</p>
@@ -992,6 +1137,7 @@ function CoursesTab({
       )}
     </>
   );
+
 }
 
 // ── Course Card avec itinéraires Google Maps ───────────────────────────────
