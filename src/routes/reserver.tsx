@@ -636,19 +636,19 @@ function requestBrowserPosition(options: PositionOptions): Promise<GeolocationPo
   });
 }
 
-function getAutoGeoRejectionReason(pos: GeolocationPosition, allowApproximate = false): string | null {
+function getAutoGeoRejectionReason(pos: GeolocationPosition, lang: Lang, allowApproximate = false): string | null {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
   const accuracy = pos.coords.accuracy;
   if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(accuracy)) {
-    return "Position invalide. Saisissez l’adresse de départ manuellement.";
+    return lang === "en" ? UI.en.geoInvalid : UI.fr.geoInvalid;
   }
   if (!allowApproximate && accuracy > MAX_AUTO_GEO_ACCURACY_M) {
-    return `Signal GPS trop imprécis (${Math.round(accuracy)} m). Saisissez l’adresse exacte pour éviter une mauvaise prise en charge.`;
+    return lang === "en" ? UI.en.geoImprecise(Math.round(accuracy)) : UI.fr.geoImprecise(Math.round(accuracy));
   }
   const distanceFromBordeaux = distanceKmBetween(BORDEAUX_CENTER, [lat, lng]);
   if (distanceFromBordeaux > MAX_AUTO_GEO_DISTANCE_FROM_BORDEAUX_KM) {
-    return "Position incohérente avec la zone de Bordeaux. Saisissez l’adresse exacte de départ.";
+    return lang === "en" ? UI.en.geoIncoherent : UI.fr.geoIncoherent;
   }
   return null;
 }
@@ -794,13 +794,13 @@ function ReservationPage() {
       voiceRecogRef.current = null;
       const code = e?.error as string | undefined;
       if (code === "not-allowed" || code === "service-not-allowed") {
-        toast.error("Accès au micro refusé. Autorisez-le dans les réglages du navigateur.", { duration: 6000 });
+        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
       } else if (code === "no-speech") {
-        toast.info("Aucune voix détectée. Réessayez en parlant plus fort.");
+        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
       } else if (code === "audio-capture") {
-        toast.error("Aucun micro détecté sur cet appareil.");
+        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
       } else if (code === "network") {
-        toast.error("Réseau indisponible pour la dictée. Vérifiez votre connexion.");
+        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
       }
     };
     recog.onresult = (event: any) => {
@@ -854,13 +854,13 @@ function ReservationPage() {
       voiceBothRecogRef.current = null;
       const code = e?.error as string | undefined;
       if (code === "not-allowed" || code === "service-not-allowed") {
-        toast.error("Accès au micro refusé. Autorisez-le dans les réglages du navigateur.", { duration: 6000 });
+        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
       } else if (code === "no-speech") {
-        toast.info("Aucune voix détectée. Réessayez en parlant plus fort.");
+        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
       } else if (code === "audio-capture") {
-        toast.error("Aucun micro détecté sur cet appareil.");
+        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
       } else if (code === "network") {
-        toast.error("Réseau indisponible pour la dictée. Vérifiez votre connexion.");
+        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
       }
     };
     recog.onresult = (event: any) => {
@@ -1173,7 +1173,7 @@ function ReservationPage() {
     // n'apparaît jamais et le call timeout silencieusement. On ouvre donc la requête GPS ici,
     // puis on chaîne les fallbacks via callbacks (pas d'await avant getCurrentPosition).
     const onFirstSuccess = (precise: GeolocationPosition) => {
-      const reason = getAutoGeoRejectionReason(precise, true);
+      const reason = getAutoGeoRejectionReason(precise, lang, true);
       if (reason) {
         void tryIpFallback(reason);
         return;
@@ -1190,7 +1190,7 @@ function ReservationPage() {
       // Retry rapide avec cache autorisé — ré-invoqué dans le même tick, gesture toujours valide via la permission accordée précédemment.
       navigator.geolocation.getCurrentPosition(
         (cached) => {
-          const reason = getAutoGeoRejectionReason(cached, true);
+          const reason = getAutoGeoRejectionReason(cached, lang, true);
           if (reason) {
             void tryIpFallback(reason);
             return;
