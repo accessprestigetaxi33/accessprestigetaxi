@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
+import { gaEvent } from "@/lib/ga4";
 import { useServerFn } from "@tanstack/react-start";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -1508,6 +1509,7 @@ function ReservationPage() {
     }
 
     setSending(true);
+    gaEvent("reservation_submit", { depart: f.depart, destination: f.destination, passagers: f.passagers });
 
     try {
       const suiviId = newSuiviId();
@@ -1550,6 +1552,13 @@ function ReservationPage() {
         .single();
 
       if (error) throw error;
+
+      gaEvent("reservation_confirmed", {
+        reservation_id: inserted?.id,
+        distance_km: distanceKm,
+        value: calculerPrixMixteLocal(distanceKm, new Date(pickupIsoFinal).getTime(), dureeS),
+        currency: "EUR",
+      });
 
       // Réveille instantanément les tableaux de bord chauffeur ouverts.
       broadcastDriverFeed("reservation");
