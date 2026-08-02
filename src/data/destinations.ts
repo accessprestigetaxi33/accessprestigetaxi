@@ -476,7 +476,7 @@ export const DESTINATIONS: Destination[] = [
       sections: [
         {
           h: "Établissements desservis",
-          p: "CH d'Angoulême-Girac, clinique Saint-Joseph, centres de dialyse, CHU de Poitiers et de Bordeaux, hôpital de Saintes, de Cognac et de La Rochelle.",
+          p: "Groupe hospitalier de La Rochelle-Ré-Aunis, hôpital de Rochefort, de Saintes, de Royan, de Jonzac, centres de dialyse et CHU de Poitiers ou Bordeaux.",
         },
         {
           h: "Traitements réguliers",
@@ -515,7 +515,7 @@ export const DESTINATIONS: Destination[] = [
       sections: [
         {
           h: "Facilities we serve",
-          p: "Angoulême-Girac hospital, Saint-Joseph clinic, dialysis centres, Poitiers and Bordeaux teaching hospitals, Saintes, Cognac and La Rochelle hospitals.",
+          p: "La Rochelle-Ré-Aunis hospital group, Rochefort, Saintes, Royan and Jonzac hospitals, dialysis centres and the Poitiers or Bordeaux teaching hospitals.",
         },
         {
           h: "Regular treatments",
