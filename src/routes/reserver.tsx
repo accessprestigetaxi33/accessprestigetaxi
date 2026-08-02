@@ -31,9 +31,9 @@ import { ListeningOverlay } from "@/components/ListeningOverlay";
 import { DICTS, LANGUAGES, type Lang } from "@/i18n/dict";
 import { useI18n } from "@/i18n/I18nProvider";
 
-const RESERVER_TITLE = "Réserver un taxi en Charente & Charente-Maritime — Access Prestige Taxi";
+const RESERVER_TITLE = "Réserver un taxi en Charente-Maritime — Access Prestige Taxi";
 const RESERVER_DESC =
-  "Réservez votre taxi en Charente et Charente-Maritime en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
+  "Réservez votre taxi en Charente-Maritime en ligne en 2 minutes : départ, destination, date — tarif estimé en direct et confirmation immédiate.";
 const RESERVER_URL = "https://accessprestigetaxi.lovable.app/reserver";
 
 export const Route = createFileRoute("/reserver")({
@@ -72,7 +72,7 @@ const UI = {
     geoInvalid: "Position invalide. Saisissez l\u2019adresse de départ manuellement.",
     geoImprecise: (m: number) =>
       `Signal GPS trop imprécis (${m} m). Saisissez l\u2019adresse exacte pour éviter une mauvaise prise en charge.`,
-    geoIncoherent: "Position incohérente avec la zone Charente / Charente-Maritime. Saisissez l\u2019adresse exacte de départ.",
+    geoIncoherent: "Position incohérente avec la zone Charente-Maritime-Maritime. Saisissez l\u2019adresse exacte de départ.",
     detectingAuto: "Détection automatique du départ…",
     locating: "Localisation en cours…",
     approxIp: "Position approximative (via IP) — vous pouvez préciser l'adresse",

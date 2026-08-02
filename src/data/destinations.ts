@@ -13,7 +13,7 @@ export type Destination = {
   slug: string;
   from: string;
   to: string;
-  dept: "Charente" | "Charente-Maritime";
+  dept: "Charente-Maritime";
   distanceKm: number;
   durationMin: number;
   priceFrom: number;
@@ -23,175 +23,175 @@ export type Destination = {
 
 export const DESTINATIONS: Destination[] = [
   {
-    slug: "taxi-angouleme-gare-tgv",
-    from: "Angoulême",
-    to: "Gare TGV d'Angoulême",
-    dept: "Charente",
-    distanceKm: 4,
-    durationMin: 10,
-    priceFrom: 15,
+    slug: "taxi-la-rochelle-aeroport",
+    from: "La Rochelle",
+    to: "Aéroport La Rochelle-Île de Ré",
+    dept: "Charente-Maritime",
+    distanceKm: 5,
+    durationMin: 12,
+    priceFrom: 20,
     fr: {
-      title: "Angoulême → Gare TGV",
-      h1: "Taxi Angoulême – Gare TGV d'Angoulême",
-      metaTitle: "Taxi Angoulême Gare TGV — Access Prestige Taxi 100 % électrique",
+      title: "La Rochelle → Aéroport",
+      h1: "Taxi La Rochelle – Aéroport La Rochelle-Île de Ré",
+      metaTitle: "Taxi aéroport La Rochelle-Île de Ré — Access Prestige Taxi",
       metaDescription:
-        "Transfert taxi entre Angoulême et la gare TGV en Audi Q6 e-tron. Prise en charge à domicile, suivi du train, prix annoncé à l'avance. Réservation en 1 minute.",
+        "Transfert taxi entre La Rochelle et l\u2019aéroport La Rochelle-Île de Ré : suivi des vols, prix annoncé, BMW iX1 électrique ou van 7 places. 5j/7, 8h-20h.",
       lead:
-        "La gare d'Angoulême place Paris à 1 h 45 et Bordeaux à 35 minutes : autant dire que la moindre minute compte. Nous surveillons l'horaire réel de votre train et nous vous déposons au plus près du hall départ.",
+        "L\u2019aéroport La Rochelle-Île de Ré est à douze minutes du Vieux-Port. Nous suivons l\u2019horaire réel de votre vol et vous déposons devant le hall départ, bagages portés.",
       sections: [
         {
-          h: "Un transfert calé sur votre train",
-          p: "Vous nous donnez le numéro ou l'heure de votre TGV : nous calculons l'heure de prise en charge, marge bagages comprise. En cas de retard annoncé, le créneau est ajusté sans frais et vous êtes prévenu par SMS ou e-mail.",
+          h: "Vols suivis en temps réel",
+          p: "Londres, Dublin, Bruxelles, Lyon ou Porto : nous contrôlons l\u2019horaire d\u2019atterrissage avant de partir, et l\u2019attente est offerte pendant les trente premières minutes après l\u2019heure d\u2019arrivée réelle.",
         },
         {
-          h: "Angoulême intra-muros et communes voisines",
-          p: "Plateau, Saint-Cybard, Ma Campagne, L'Houmeau, mais aussi Soyaux, Gond-Pontouvre, La Couronne, Saint-Yrieix et Champniers : la course reste courte, le confort identique.",
+          h: "Deux véhicules, deux usages",
+          p: "La BMW iX1 100 % électrique de Patricia pour quatre passagers, le van Mercedes d\u2019Alain jusqu\u2019à sept personnes avec valises, planches ou matériel professionnel.",
         },
         {
-          h: "Silence électrique dès le matin",
-          p: "Nos deux Audi Q6 e-tron partent chargées, chauffées ou climatisées avant votre arrivée. Aucun bruit de moteur pour un départ à 6 h, et zéro émission dans la ville classée patrimoine.",
+          h: "Toute l\u2019agglomération",
+          p: "Lagord, Puilboreau, Aytré, Angoulins, Châtelaillon, Nieul-sur-Mer ou Dompierre : nous venons vous chercher à domicile, à l\u2019hôtel ou au bureau.",
         },
       ],
       bullets: [
-        "Prise en charge à domicile, à l'hôtel ou en entreprise",
-        "Suivi du train en temps réel, attente incluse",
-        "Aide aux bagages et accès quai facilité",
-        "Paiement carte, espèces ou facture entreprise",
+        "Suivi du vol et attente offerte 30 minutes",
+        "Sièges bébé et rehausseurs enfants sur demande",
+        "Van jusqu\u2019à 7 personnes pour les groupes",
+        "Facture entreprise et paiement par carte",
       ],
       faq: [
         {
-          q: "Combien de temps faut-il prévoir entre le centre d'Angoulême et la gare ?",
-          a: "Comptez 8 à 12 minutes selon l'heure. Nous prévoyons systématiquement une marge de 10 minutes avant l'ouverture des portes du train.",
+          q: "Prenez-vous les vols très matinaux ?",
+          a: "Nous roulons de 8h à 20h, du lundi au vendredi. Pour un vol plus tôt, appelez-nous : nous cherchons une solution avec vous.",
         },
         {
-          q: "Puis-je réserver un taxi de nuit pour un premier train ?",
-          a: "Oui, nos deux chauffeurs assurent les départs très tôt le matin sur réservation la veille.",
+          q: "Combien de bagages puis-je emporter ?",
+          a: "Quatre valises en BMW iX1, jusqu\u2019à sept passagers et leurs bagages dans le van Mercedes.",
         },
       ],
     },
     en: {
-      title: "Angoulême → TGV station",
-      h1: "Taxi Angoulême – Angoulême TGV station",
-      metaTitle: "Taxi Angoulême to TGV station — Access Prestige Taxi, all electric",
+      title: "La Rochelle → Airport",
+      h1: "Taxi La Rochelle – La Rochelle-Île de Ré airport",
+      metaTitle: "La Rochelle-Île de Ré airport taxi — Access Prestige Taxi",
       metaDescription:
-        "Electric taxi transfer between Angoulême and the TGV station. Door-to-door pickup, live train tracking and a price quoted upfront. Book in one minute.",
+        "Taxi transfer between La Rochelle and La Rochelle-Île de Ré airport: flight tracking, quoted price, electric BMW iX1 or 7-seat van. 5 days a week, 8am-8pm.",
       lead:
-        "Angoulême station puts Paris 1 h 45 away and Bordeaux 35 minutes away, so every minute counts. We track your actual train time and drop you right by the departure hall.",
+        "La Rochelle-Île de Ré airport is twelve minutes from the Old Port. We track your actual flight time and drop you at the departures hall, luggage carried.",
       sections: [
         {
-          h: "A transfer built around your train",
-          p: "Give us your train number or departure time and we work backwards to the pickup slot, luggage margin included. If the train is delayed we shift the slot at no extra cost and let you know.",
+          h: "Flights tracked live",
+          p: "London, Dublin, Brussels, Lyon or Porto: we check the landing time before leaving, and the first thirty minutes of waiting after the actual arrival time are free.",
         },
         {
-          h: "Angoulême and nearby towns",
-          p: "Plateau, Saint-Cybard, Ma Campagne, L'Houmeau, plus Soyaux, Gond-Pontouvre, La Couronne, Saint-Yrieix and Champniers: a short ride with the same level of comfort.",
+          h: "Two vehicles, two uses",
+          p: "Patricia\u2019s fully electric BMW iX1 for four passengers, Alain\u2019s Mercedes van for up to seven people with suitcases, boards or work equipment.",
         },
         {
-          h: "Electric silence, even at dawn",
-          p: "Both Audi Q6 e-tron leave fully charged and pre-conditioned. No engine noise for a 6 a.m. departure and zero emissions in the heritage city centre.",
+          h: "The whole urban area",
+          p: "Lagord, Puilboreau, Aytré, Angoulins, Châtelaillon, Nieul-sur-Mer or Dompierre: we collect you at home, at your hotel or at the office.",
         },
       ],
       bullets: [
-        "Pickup at home, hotel or office",
-        "Live train tracking, waiting time included",
-        "Luggage assistance to the platform",
-        "Card, cash or company invoice",
+        "Flight tracking with 30 minutes of free waiting",
+        "Baby and booster seats on request",
+        "Van for up to 7 passengers",
+        "Company invoicing and card payment",
       ],
       faq: [
         {
-          q: "How long from Angoulême city centre to the station?",
-          a: "Between 8 and 12 minutes depending on traffic. We always add a 10-minute buffer before boarding closes.",
+          q: "Do you cover very early flights?",
+          a: "We drive from 8am to 8pm, Monday to Friday. For an earlier flight, call us and we will look for a solution.",
         },
         {
-          q: "Can I book a night taxi for the first train?",
-          a: "Yes — both drivers cover very early departures when booked the day before.",
+          q: "How much luggage can I bring?",
+          a: "Four suitcases in the BMW iX1; up to seven passengers and their luggage in the Mercedes van.",
         },
       ],
     },
   },
   {
-    slug: "taxi-cognac-aeroport-bordeaux",
-    from: "Cognac",
-    to: "Aéroport Bordeaux-Mérignac",
-    dept: "Charente",
-    distanceKm: 135,
-    durationMin: 100,
-    priceFrom: 210,
+    slug: "taxi-rochefort-gare-la-rochelle",
+    from: "Rochefort",
+    to: "Gare de La Rochelle",
+    dept: "Charente-Maritime",
+    distanceKm: 32,
+    durationMin: 35,
+    priceFrom: 65,
     fr: {
-      title: "Cognac → Aéroport Bordeaux-Mérignac",
-      h1: "Taxi Cognac – Aéroport de Bordeaux-Mérignac",
-      metaTitle: "Taxi Cognac Aéroport Bordeaux-Mérignac — transfert 100 % électrique",
+      title: "Rochefort → Gare de La Rochelle",
+      h1: "Taxi Rochefort – Gare TGV de La Rochelle",
+      metaTitle: "Taxi Rochefort gare de La Rochelle — transfert TGV 5j/7",
       metaDescription:
-        "Transfert taxi Cognac ↔ aéroport Bordeaux-Mérignac en Audi Q6 e-tron : vol suivi, accueil pancarte, tarif ferme annoncé avant le départ.",
+        "Taxi entre Rochefort, Tonnay-Charente, Fouras et la gare TGV de La Rochelle. Suivi du train, prix ferme annoncé, van 7 places disponible. 8h-20h.",
       lead:
-        "Environ 1 h 40 de route entre les chais de Cognac et le hall B de Mérignac. Nous suivons votre numéro de vol : si l'avion prend du retard, nous décalons l'accueil sans supplément.",
+        "Trente-cinq minutes séparent l\u2019arsenal de Rochefort du hall de la gare de La Rochelle, d\u2019où partent les TGV pour Poitiers, Paris et Nantes. Nous surveillons l\u2019horaire réel du train.",
       sections: [
         {
-          h: "Longue distance sans stress",
-          p: "Le trajet passe par la N10 puis la rocade bordelaise. Nous partons avec la marge nécessaire aux heures de pointe et vous déposons au terminal exact de votre compagnie.",
+          h: "Départ à l\u2019heure, même à l\u2019heure de pointe",
+          p: "Nous intégrons le trafic de la rocade et le pont de Tonnay-Charente dans le calcul du départ : vous arrivez quinze minutes avant le train, pas deux minutes après.",
         },
         {
-          h: "Voyage d'affaires et maisons de cognac",
-          p: "Accueil pancarte au niveau arrivées, prise en charge de vos visiteurs, facturation entreprise mensuelle : les maisons de négoce et leurs invités internationaux voyagent en discrétion.",
+          h: "Tout le bassin de Rochefort",
+          p: "Tonnay-Charente, Échillais, Soubise, Fouras, Saint-Agnant, Port-des-Barques et Vergeroux sont desservis au même tarif annoncé à l\u2019avance.",
         },
         {
-          h: "Autonomie et confort",
-          p: "L'Audi Q6 e-tron couvre l'aller-retour sans recharge intermédiaire. À bord : Wi-Fi, chargeurs USB-C, eau et sièges chauffants pour arriver reposé.",
+          h: "Groupes et familles",
+          p: "Le van Mercedes emmène jusqu\u2019à sept personnes avec leurs valises : idéal pour les départs en famille ou les équipes en déplacement.",
         },
       ],
       bullets: [
-        "Suivi du vol en temps réel, attente offerte 45 min",
-        "Grand coffre : valises, golf, matériel professionnel",
-        "Tarif ferme communiqué avant la réservation",
-        "Également au départ de Jarnac, Segonzac et Châteaubernard",
+        "Suivi du TGV et ajustement de l\u2019heure de départ",
+        "Prix ferme annoncé à la réservation",
+        "Sièges bébé et rehausseurs enfants sur demande",
+        "Van jusqu\u2019à 7 personnes pour les groupes",
       ],
       faq: [
         {
-          q: "Combien coûte un taxi Cognac – aéroport de Bordeaux ?",
-          a: "Le tarif dépend de l'heure (jour/nuit) et du jour de la semaine. L'estimation exacte s'affiche pendant la réservation et reste ferme.",
+          q: "Et si mon train a du retard au retour ?",
+          a: "Nous suivons l\u2019horaire réel : le chauffeur se présente à l\u2019arrivée effective, sans supplément d\u2019attente.",
         },
         {
-          q: "Que se passe-t-il si mon vol atterrit en retard ?",
-          a: "Nous suivons le vol : l'accueil est décalé automatiquement, avec 45 minutes d'attente incluses après l'atterrissage.",
+          q: "Peut-on réserver un aller-retour ?",
+          a: "Oui, dans le même formulaire : indiquez l\u2019heure du retour, nous bloquons le créneau.",
         },
       ],
     },
     en: {
-      title: "Cognac → Bordeaux-Mérignac airport",
-      h1: "Taxi Cognac – Bordeaux-Mérignac airport",
-      metaTitle: "Taxi Cognac to Bordeaux airport — all-electric private transfer",
+      title: "Rochefort → La Rochelle station",
+      h1: "Taxi Rochefort – La Rochelle TGV station",
+      metaTitle: "Rochefort to La Rochelle station taxi — TGV transfer, 5 days a week",
       metaDescription:
-        "Cognac ↔ Bordeaux-Mérignac airport transfer in an Audi Q6 e-tron: flight tracking, meet & greet, fixed price confirmed before departure.",
+        "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station. Train tracking, fixed quoted price, 7-seat van available. 8am-8pm.",
       lead:
-        "Roughly 1 h 40 between the Cognac cellars and Mérignac. We track your flight number, so a delayed landing simply shifts the meeting time at no extra charge.",
+        "Thirty-five minutes separate the Rochefort arsenal from La Rochelle station, where TGV trains leave for Poitiers, Paris and Nantes. We track the real train time.",
       sections: [
         {
-          h: "Long distance, zero stress",
-          p: "The route follows the N10 and the Bordeaux ring road. We leave with enough margin for rush hour and drop you at your airline's terminal.",
+          h: "On time, even at rush hour",
+          p: "We factor in ring-road traffic and the Tonnay-Charente bridge: you arrive fifteen minutes before the train, not two minutes after it.",
         },
         {
-          h: "Business travel and cognac houses",
-          p: "Name-board welcome in arrivals, guest pickups and monthly company invoicing: trading houses and their international visitors travel discreetly.",
+          h: "The whole Rochefort area",
+          p: "Tonnay-Charente, Échillais, Soubise, Fouras, Saint-Agnant, Port-des-Barques and Vergeroux are served at the same pre-quoted fare.",
         },
         {
-          h: "Range and comfort",
-          p: "The Audi Q6 e-tron covers the round trip without a charging stop. On board: Wi-Fi, USB-C chargers, water and heated seats.",
+          h: "Groups and families",
+          p: "The Mercedes van carries up to seven people with luggage — ideal for family departures or teams travelling together.",
         },
       ],
       bullets: [
-        "Live flight tracking, 45 minutes of free waiting",
-        "Large boot: suitcases, golf bags, professional gear",
-        "Fixed price confirmed before you book",
-        "Also from Jarnac, Segonzac and Châteaubernard",
+        "TGV tracking with adjusted departure time",
+        "Fixed price quoted at booking",
+        "Baby and booster seats on request",
+        "Van for up to 7 passengers",
       ],
       faq: [
         {
-          q: "How much is a taxi from Cognac to Bordeaux airport?",
-          a: "It depends on day/night rates and the day of the week. The exact estimate appears during booking and stays firm.",
+          q: "What if my return train is late?",
+          a: "We follow the live schedule: your driver is there at the actual arrival, with no waiting surcharge.",
         },
         {
-          q: "What if my flight lands late?",
-          a: "We track the flight and shift the meeting time automatically, with 45 minutes of waiting included after landing.",
+          q: "Can I book a return trip?",
+          a: "Yes, in the same form: give us the return time and we hold the slot.",
         },
       ],
     },
@@ -371,104 +371,104 @@ export const DESTINATIONS: Destination[] = [
     },
   },
   {
-    slug: "taxi-jarnac-vignobles-cognac",
-    from: "Jarnac",
-    to: "Chais & vignobles",
-    dept: "Charente",
-    distanceKm: 60,
-    durationMin: 240,
-    priceFrom: 240,
+    slug: "taxi-groupe-7-places-charente-maritime",
+    from: "Groupe",
+    to: "Van 7 places",
+    dept: "Charente-Maritime",
+    distanceKm: 0,
+    durationMin: 60,
+    priceFrom: 0,
     fr: {
-      title: "Jarnac → Chais & vignobles",
-      h1: "Journée vignobles et chais de Cognac avec chauffeur",
-      metaTitle: "Mise à disposition chauffeur vignobles Cognac & Jarnac — 100 % électrique",
+      title: "Groupes → Van 7 places",
+      h1: "Transport de groupe jusqu\u2019à 7 personnes en Charente-Maritime",
+      metaTitle: "Taxi van 7 places Charente-Maritime — transport de groupe",
       metaDescription:
-        "Mise à disposition à l'heure pour visiter les chais de Cognac, Jarnac et Segonzac. Chauffeur privé en Audi Q6 e-tron, itinéraire libre, dégustation en toute sécurité.",
+        "Transport de groupe en Charente-Maritime : van Mercedes jusqu\u2019à 7 passagers avec bagages. Mariages, séminaires, familles, aéroport. 5j/7, 8h-20h.",
       lead:
-        "Dégustations et conduite ne font pas bon ménage. Nous restons à votre disposition à l'heure : vous choisissez les maisons, nous gérons les routes de vignes.",
+        "Le van Mercedes d\u2019Alain accueille jusqu\u2019à sept passagers avec leurs bagages : un seul véhicule, un seul tarif, pas de convoi de voitures à coordonner.",
       sections: [
         {
-          h: "Itinéraire libre, à l'heure",
-          p: "Demi-journée ou journée complète : le chauffeur vous attend entre chaque visite, transporte vos achats et adapte le programme si une dégustation s'éternise.",
+          h: "Familles, amis, équipes",
+          p: "Départ en vacances vers l\u2019île de Ré ou Oléron, séminaire à La Rochelle, mariage à Saintes, sortie de groupe sur la côte : sept places assises et une soute pour les valises.",
         },
         {
-          h: "Grande Champagne et Borderies",
-          p: "Jarnac, Segonzac, Bourg-Charente, Bouteville, Ars, Cherves-Richemont : les grandes maisons comme les propriétés familiales sont accessibles dans la journée.",
+          h: "Enfants bienvenus",
+          p: "Sièges bébé, sièges enfant et rehausseurs sont fournis gratuitement sur demande à la réservation, dans les deux véhicules.",
         },
         {
-          h: "Un véhicule discret et silencieux",
-          p: "L'Audi Q6 e-tron n'émet ni bruit ni odeur d'échappement dans les cours de chais : un détail que les maîtres de chai apprécient.",
+          h: "Mise à disposition à l\u2019heure",
+          p: "Pour une journée de visites, un salon professionnel ou une tournée de dégustation, le van reste à votre disposition avec chauffeur, itinéraire libre.",
         },
       ],
       bullets: [
-        "Tarification horaire claire, sans surprise",
-        "Transport sécurisé des bouteilles achetées",
-        "Prise en charge à l'hôtel, à la gare ou à l'aéroport",
-        "Chauffeur francophone et anglophone",
+        "Jusqu\u2019à 7 passagers et leurs bagages",
+        "Sièges bébé et rehausseurs enfants gratuits",
+        "Devis groupe annoncé avant le départ",
+        "Mise à disposition à l\u2019heure ou à la journée",
       ],
       faq: [
         {
-          q: "Réservez-vous les visites de chais ?",
-          a: "Nous pouvons vous orienter vers les maisons ouvertes à la visite, mais les réservations restent à votre nom.",
+          q: "Peut-on transporter plus de sept personnes ?",
+          a: "Au-delà de sept passagers, nous organisons deux véhicules : appelez-nous pour caler les horaires.",
         },
         {
-          q: "Quelle est la durée minimale d'une mise à disposition ?",
-          a: "La demi-journée, soit quatre heures, week-ends compris.",
+          q: "Les sièges enfants sont-ils facturés ?",
+          a: "Non, sièges bébé et rehausseurs sont fournis gratuitement, il suffit de les demander à la réservation.",
         },
       ],
     },
     en: {
-      title: "Jarnac → Cellars & vineyards",
-      h1: "Cognac vineyard and cellar day with a private driver",
-      metaTitle: "Private driver for Cognac & Jarnac vineyards — fully electric",
+      title: "Groups → 7-seat van",
+      h1: "Group transport for up to 7 people in Charente-Maritime",
+      metaTitle: "7-seat van taxi Charente-Maritime — group transport",
       metaDescription:
-        "Hourly private driver to visit the cellars of Cognac, Jarnac and Segonzac. Audi Q6 e-tron, free itinerary, safe tastings.",
+        "Group transport in Charente-Maritime: Mercedes van for up to 7 passengers with luggage. Weddings, conferences, families, airport. 5 days a week, 8am-8pm.",
       lead:
-        "Tasting and driving don't mix. We stay at your disposal by the hour: you pick the houses, we handle the vineyard roads.",
+        "Alain\u2019s Mercedes van carries up to seven passengers with luggage: one vehicle, one fare, no convoy of cars to coordinate.",
       sections: [
         {
-          h: "Free itinerary, by the hour",
-          p: "Half day or full day: the driver waits between visits, carries your purchases and adapts if a tasting runs long.",
+          h: "Families, friends, teams",
+          p: "Holiday departures to Île de Ré or Oléron, a conference in La Rochelle, a wedding in Saintes, a group day on the coast: seven seats and a boot for the suitcases.",
         },
         {
-          h: "Grande Champagne and Borderies",
-          p: "Jarnac, Segonzac, Bourg-Charente, Bouteville, Ars, Cherves-Richemont: both big houses and family estates fit into a single day.",
+          h: "Children welcome",
+          p: "Baby seats, child seats and boosters are provided free on request at booking, in both vehicles.",
         },
         {
-          h: "A quiet, discreet car",
-          p: "The Audi Q6 e-tron brings no noise and no exhaust fumes into the cellar courtyards — something cellar masters appreciate.",
+          h: "Hourly hire",
+          p: "For a day of visits, a trade show or a tasting tour, the van stays at your disposal with its driver and a free itinerary.",
         },
       ],
       bullets: [
-        "Clear hourly pricing, no surprises",
-        "Safe transport for the bottles you buy",
-        "Pickup at your hotel, station or airport",
-        "French and English speaking driver",
+        "Up to 7 passengers and their luggage",
+        "Free baby and booster seats",
+        "Group quote confirmed before departure",
+        "Hourly or full-day hire",
       ],
       faq: [
         {
-          q: "Do you book the cellar tours?",
-          a: "We can point you to houses open to visitors, but bookings stay in your name.",
+          q: "Can you carry more than seven people?",
+          a: "Beyond seven passengers we arrange two vehicles — call us to set the timings.",
         },
         {
-          q: "What is the minimum hire?",
-          a: "Half a day — four hours — weekends included.",
+          q: "Are child seats charged?",
+          a: "No, baby seats and boosters are provided free; just ask when booking.",
         },
       ],
     },
   },
   {
-    slug: "taxi-conventionne-charente",
+    slug: "taxi-conventionne-charente-maritime",
     from: "Domicile",
     to: "Hôpital / clinique",
-    dept: "Charente",
+    dept: "Charente-Maritime",
     distanceKm: 30,
     durationMin: 40,
     priceFrom: 0,
     fr: {
       title: "Domicile → Hôpital / clinique",
-      h1: "Taxi conventionné CPAM en Charente & Charente-Maritime",
-      metaTitle: "Taxi conventionné CPAM Charente & Charente-Maritime — transport médical assis",
+      h1: "Taxi conventionné CPAM en Charente-Maritime",
+      metaTitle: "Taxi conventionné CPAM Charente-Maritime — transport médical assis",
       metaDescription:
         "Transport médical assis conventionné CPAM : dialyse, chimiothérapie, consultations. Prise en charge à domicile en véhicule électrique, tiers payant.",
       lead:
@@ -476,7 +476,7 @@ export const DESTINATIONS: Destination[] = [
       sections: [
         {
           h: "Établissements desservis",
-          p: "CH d'Angoulême-Girac, clinique Saint-Joseph, centres de dialyse, CHU de Poitiers et de Bordeaux, hôpital de Saintes, de Cognac et de La Rochelle.",
+          p: "Groupe hospitalier de La Rochelle-Ré-Aunis, hôpital de Rochefort, de Saintes, de Royan, de Jonzac, centres de dialyse et CHU de Poitiers ou Bordeaux.",
         },
         {
           h: "Traitements réguliers",
@@ -506,8 +506,8 @@ export const DESTINATIONS: Destination[] = [
     },
     en: {
       title: "Home → Hospital / clinic",
-      h1: "Covered medical taxi in Charente & Charente-Maritime",
-      metaTitle: "Covered medical taxi Charente & Charente-Maritime — seated patient transport",
+      h1: "Covered medical taxi in Charente-Maritime",
+      metaTitle: "Covered medical taxi Charente-Maritime — seated patient transport",
       metaDescription:
         "Seated medical transport covered by French health insurance: dialysis, chemotherapy, appointments. Door-to-door electric vehicle, no upfront payment.",
       lead:
@@ -515,7 +515,7 @@ export const DESTINATIONS: Destination[] = [
       sections: [
         {
           h: "Facilities we serve",
-          p: "Angoulême-Girac hospital, Saint-Joseph clinic, dialysis centres, Poitiers and Bordeaux teaching hospitals, Saintes, Cognac and La Rochelle hospitals.",
+          p: "La Rochelle-Ré-Aunis hospital group, Rochefort, Saintes, Royan and Jonzac hospitals, dialysis centres and the Poitiers or Bordeaux teaching hospitals.",
         },
         {
           h: "Regular treatments",

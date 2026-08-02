@@ -75,7 +75,7 @@ const T: Record<Lang, Dict> = {
     website: "Site web",
     addContact: "Ajouter aux contacts",
     waMessage: "Bonjour Patricia, je souhaite réserver un taxi.",
-    footer: "Taxi conventionné · Charente & Charente-Maritime · 7j/7",
+    footer: "Taxi conventionné · Charente-Maritime · 5j/7 · 8h-20h",
     languageLabel: "Langue",
   },
   en: {
@@ -88,7 +88,7 @@ const T: Record<Lang, Dict> = {
     website: "Website",
     addContact: "Add to contacts",
     waMessage: "Hello Patricia, I would like to book a taxi.",
-    footer: "Licensed taxi · Charente & Charente-Maritime · 7 days a week",
+    footer: "Licensed taxi · Charente-Maritime · 7 days a week",
     languageLabel: "Language",
   },
   es: {
@@ -114,7 +114,7 @@ const T: Record<Lang, Dict> = {
     website: "Webseite",
     addContact: "Zu Kontakten hinzufügen",
     waMessage: "Hallo Patricia, ich möchte ein Taxi buchen.",
-    footer: "Konzessioniertes Taxi · Charente & Charente-Maritime · 7 Tage",
+    footer: "Konzessioniertes Taxi · Charente-Maritime · 7 Tage",
     languageLabel: "Sprache",
   },
   it: {
@@ -127,7 +127,7 @@ const T: Record<Lang, Dict> = {
     website: "Sito web",
     addContact: "Aggiungi ai contatti",
     waMessage: "Salve Patricia, vorrei prenotare un taxi.",
-    footer: "Taxi autorizzato · Charente & Charente-Maritime · 7 giorni",
+    footer: "Taxi autorizzato · Charente-Maritime · 7 giorni",
     languageLabel: "Lingua",
   },
   pt: {
@@ -153,7 +153,7 @@ const T: Record<Lang, Dict> = {
     website: "Website",
     addContact: "Toevoegen aan contacten",
     waMessage: "Hallo Patricia, ik wil graag een taxi reserveren.",
-    footer: "Erkende taxi · Charente & Charente-Maritime · 7 dagen",
+    footer: "Erkende taxi · Charente-Maritime · 7 dagen",
     languageLabel: "Taal",
   },
   ar: {

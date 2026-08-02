@@ -5,7 +5,7 @@ import { useT, useI18n } from "@/i18n/I18nProvider";
 
 const CONTACT_TITLE = "Contact : Access Prestige Taxi";
 const CONTACT_DESC =
-  "Contactez Access Prestige Taxi : 06 50 26 00 15, taxi.city033@gmail.com. Interventions en Charente & Charente-Maritime.";
+  "Contactez Access Prestige Taxi : 06 50 26 00 15, taxi.city033@gmail.com. Interventions en Charente-Maritime.";
 const CONTACT_URL = "https://accessprestigetaxi.lovable.app/contact";
 
 export const Route = createFileRoute("/contact")({
@@ -29,7 +29,7 @@ const COPY = {
     whatsappHeadline: "Discutons sur WhatsApp",
     whatsappSub: "Messagerie instantanée",
     zoneTitle: "Zone d'intervention",
-    zoneMain: "Charente & Charente-Maritime",
+    zoneMain: "Charente-Maritime",
     zoneSub: "Tout le département (16 & 17)",
     zoneLong: "Longues distances sur toute la France et en Europe sur réservation.",
   },
@@ -38,7 +38,7 @@ const COPY = {
     whatsappHeadline: "Chat with us on WhatsApp",
     whatsappSub: "Instant messaging",
     zoneTitle: "Service area",
-    zoneMain: "Charente & Charente-Maritime",
+    zoneMain: "Charente-Maritime",
     zoneSub: "The whole area (16 & 17)",
     zoneLong: "Long-distance trips throughout France and Europe by reservation.",
   },

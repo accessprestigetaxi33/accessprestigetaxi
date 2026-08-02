@@ -35,7 +35,7 @@ const COPY = {
     ),
     publisherItems: [
       <><strong>Access Prestige Taxi</strong> — Patricia & Alain, artisans taxi indépendants</>,
-      <>Zone d'activité&nbsp;: Charente (16) et Charente-Maritime (17), France</>,
+      <>Zone d'activité&nbsp;: Charente-Maritime (17), France</>,
       <>Téléphone&nbsp;: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
         <a href="tel:+33650321923" className="text-primary hover:underline">06 50 32 19 23</a> (Alain)</>,
       <>Email&nbsp;: <a href="mailto:taxipatricia@gmail.com" className="text-primary hover:underline">taxipatricia@gmail.com</a></>,
@@ -71,7 +71,7 @@ const COPY = {
     ),
     publisherItems: [
       <><strong>Access Prestige Taxi</strong> — Patricia & Alain, independent licensed taxi drivers</>,
-      <>Service area: Charente (16) and Charente-Maritime (17), France</>,
+      <>Service area: Charente-Maritime (17), France</>,
       <>Phone: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
         <a href="tel:+33650321923" className="text-primary hover:underline">06 50 32 19 23</a> (Alain)</>,
       <>Email: <a href="mailto:taxipatricia@gmail.com" className="text-primary hover:underline">taxipatricia@gmail.com</a></>,
@@ -88,7 +88,7 @@ const COPY = {
       "All content on this website (text, images, logos, graphics, source code) is protected by copyright. Any reproduction, representation, modification or use, in whole or in part, without prior written permission is prohibited.",
     liabilityTitle: "Liability",
     liabilityText:
-      "The information published (fares, availability, estimates) is provided for guidance only. The approved taxi meter is authoritative for final billing, in accordance with applicable regulations (prefectoral orders for Charente and Charente-Maritime).",
+      "The information published (fares, availability, estimates) is provided for guidance only. The approved taxi meter is authoritative for final billing, in accordance with applicable regulations (prefectoral orders for Charente-Maritime).",
     contactTitle: "Contact",
     contactText: (
       <>

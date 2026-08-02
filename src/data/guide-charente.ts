@@ -1,9 +1,9 @@
-// Guide Charente & Charente-Maritime — contenu éditorial du blog
+// Guide Charente-Maritime-Maritime — contenu éditorial du blog
 // Restaurants, hôtels (étoilés), randonnées et lieux à visiter.
 // Photos : Wikimedia Commons (licences libres), 3 par article.
 
 export type GuideCategory = "restaurant" | "hotel" | "randonnee" | "visite";
-export type Dept = "16" | "17";
+export type Dept = "17";
 
 export type GuideEntry = {
   slug: string;
@@ -143,96 +143,6 @@ const P = {
 const trio = (a: readonly string[]): [string, string, string] => [a[0], a[1], a[2]];
 
 export const GUIDE_ENTRIES: GuideEntry[] = [
-  // ────────────── RESTAURANTS ──────────────
-  {
-    slug: "les-sources-de-fontbelle-angouleme",
-    category: "restaurant",
-    dept: "16",
-    name: "Les Sources de Fontbelle",
-    city: "Angoulême",
-    michelin: 1,
-    facts: [
-      { fr: "Cuisine gastronomique charentaise", en: "Charente fine dining" },
-      { fr: "Une étoile Michelin", en: "One Michelin star" },
-      { fr: "≈ 1 h 15 de Bordeaux", en: "≈ 1 h 15 from Bordeaux" },
-    ],
-    fr: {
-      teaser:
-        "La table étoilée d'Angoulême : produits charentais, sauces d'orfèvre et une salle contemporaine posée au pied du plateau.",
-      history:
-        "Angoulême, capitale historique de l'Angoumois, a bâti sa prospérité sur le papier et l'imprimerie avant de devenir la capitale mondiale de la bande dessinée. Le quartier de Fontbelle, en contrebas des remparts élevés au XIIIᵉ siècle, tirait son nom des sources qui alimentaient autrefois les moulins à papier de la Charente. C'est dans cette mémoire d'eau vive que la maison puise son identité : une cuisine de terroir — beurre de Charente-Poitou, agneau du Poitou, cagouilles, pineau et cognac — travaillée avec la précision d'un atelier d'orfèvre.",
-      tips:
-        "Réservez le déjeuner en semaine pour le menu du marché. Le stationnement est difficile sur le plateau : nos chauffeurs vous déposent devant la porte et reviennent vous chercher à l'heure convenue.",
-    },
-    en: {
-      teaser:
-        "Angoulême's Michelin-starred table: Charente produce, masterful sauces and a contemporary dining room below the old town.",
-      history:
-        "Angoulême, historic capital of the Angoumois, built its wealth on paper and printing before becoming the world capital of comics. The Fontbelle district, below ramparts raised in the 13th century, took its name from the springs that once powered the paper mills of the Charente. That memory of running water shapes the kitchen: regional produce — Charente-Poitou butter, Poitou lamb, snails, pineau and cognac — handled with a jeweller's precision.",
-      tips:
-        "Book a weekday lunch for the market menu. Parking on the plateau is difficult: our drivers drop you at the door and return at the agreed time.",
-    },
-    photos: trio(P.angouleme),
-  },
-  {
-    slug: "la-ribaudiere-bourg-charente",
-    category: "restaurant",
-    dept: "16",
-    name: "La Ribaudière",
-    city: "Bourg-Charente",
-    michelin: 1,
-    facts: [
-      { fr: "Terrasse au bord du fleuve Charente", en: "Terrace on the Charente river" },
-      { fr: "Une étoile Michelin", en: "One Michelin star" },
-      { fr: "À 10 min de Cognac", en: "10 min from Cognac" },
-    ],
-    fr: {
-      teaser:
-        "Une villa contemporaine posée sur la rive, un jardin qui descend jusqu'à l'eau et une cuisine de rivière d'une grande finesse.",
-      history:
-        "Bourg-Charente est dominé par son château Renaissance et son église romane du XIIᵉ siècle, sentinelles d'un fleuve qui fut, jusqu'au XIXᵉ siècle, l'autoroute des eaux-de-vie. Les gabares y descendaient les barriques vers Tonnay-Charente et l'Atlantique — un trafic qui a fait la fortune des maisons de cognac voisines. La table s'est installée sur cette rive marchande, face aux prairies inondables, et cuisine ce que le fleuve et le vignoble apportent : anguille, sandre, caviar de Gironde, pineau des Charentes.",
-      tips:
-        "Demandez une table côté jardin au coucher du soleil. Accord cognac-dessert incontournable — d'où l'intérêt d'un chauffeur pour le retour.",
-    },
-    en: {
-      teaser:
-        "A contemporary villa on the riverbank, a garden sloping to the water and refined river cuisine.",
-      history:
-        "Bourg-Charente is watched over by its Renaissance château and 12th-century Romanesque church, sentinels of a river that was, until the 19th century, the motorway of brandy. Flat-bottomed gabares carried barrels down to Tonnay-Charente and the Atlantic, building the fortunes of the neighbouring cognac houses. The restaurant sits on that merchant bank, facing the water meadows, and cooks what river and vineyard provide: eel, pike-perch, Gironde caviar and pineau des Charentes.",
-      tips:
-        "Ask for a garden-side table at sunset. The cognac-and-dessert pairing is a must — all the more reason to have a driver for the way home.",
-    },
-    photos: trio(P.bourgCharente),
-  },
-  {
-    slug: "tables-de-jarnac",
-    category: "restaurant",
-    dept: "16",
-    name: "Les tables des quais",
-    city: "Jarnac",
-    facts: [
-      { fr: "Bistronomie et produits locaux", en: "Bistronomy, local produce" },
-      { fr: "Vue sur les quais de la Charente", en: "Views over the Charente quays" },
-      { fr: "Idéal après une visite de chai", en: "Ideal after a cellar visit" },
-    ],
-    fr: {
-      teaser:
-        "Sur les quais de Jarnac, des tables sans façon où l'on mange le fleuve, la ferme et le potager, verre de pineau à la main.",
-      history:
-        "Jarnac doit sa notoriété à deux choses : le « coup de Jarnac », porté en 1547 lors d'un duel resté légendaire, et les grandes maisons de cognac installées le long du fleuve depuis le XVIIIᵉ siècle. Ville natale de François Mitterrand, elle a gardé ses quais de pierre blanche, ses chais aux toits noircis par le « champignon des anges » — cette moisissure qui se nourrit des vapeurs d'alcool — et une douceur de vivre très charentaise.",
-      tips:
-        "Enchaînez avec la maison natale de François Mitterrand puis une promenade en gabare. Nous vous attendons au pied de l'embarcadère.",
-    },
-    en: {
-      teaser:
-        "On the Jarnac quays, unfussy tables serving the river, the farm and the kitchen garden, glass of pineau in hand.",
-      history:
-        "Jarnac is known for two things: the infamous 1547 duel that gave French the phrase 'coup de Jarnac', and the great cognac houses lining the river since the 18th century. Birthplace of President François Mitterrand, it has kept its pale stone quays, its cellars blackened by the 'angels' fungus' that feeds on alcohol vapours, and a very Charentais gentleness of life.",
-      tips:
-        "Follow up with Mitterrand's birthplace and a gabare river cruise. We wait for you at the landing stage.",
-    },
-    photos: trio(P.jarnac),
-  },
   {
     slug: "christopher-coutanceau-la-rochelle",
     category: "restaurant",
@@ -320,98 +230,6 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
         "Wear closed shoes: the channels are muddy. A driver means you can taste the wine without counting glasses.",
     },
     photos: trio(P.oleron),
-  },
-
-  // ────────────── HÔTELS ──────────────
-  {
-    slug: "chais-monnet-cognac",
-    category: "hotel",
-    dept: "16",
-    name: "Chais Monnet & Spa",
-    city: "Cognac",
-    stars: 5,
-    facts: [
-      { fr: "Hôtel 5 étoiles", en: "5-star hotel" },
-      { fr: "Spa, piscines, jazz club", en: "Spa, pools, jazz club" },
-      { fr: "Ancien chai de 1838", en: "Former 1838 cognac cellar" },
-    ],
-    fr: {
-      teaser:
-        "Un chai du XIXᵉ siècle transformé en palace contemporain : charpentes cathédrale, spa, jazz club et table gastronomique.",
-      history:
-        "Jean Monnet — père du négoce familial et grand-oncle du « père de l'Europe » — fonde sa maison de cognac en 1838 sur ce site de deux hectares en plein centre-ville. Les chais, avec leur charpente en carène de bateau, ont vieilli des eaux-de-vie pendant plus d'un siècle avant d'être laissés à l'abandon. Restaurés à partir de 2013 dans le respect des pierres et des poutres d'origine, ils abritent depuis 2018 l'un des rares 5 étoiles de Charente, où la mémoire du cognac se lit dans chaque volume.",
-      tips:
-        "La visite du chai cathédrale se fait même sans être client. Trajet gare de Cognac ou aéroport d'Angoulême assuré par nos chauffeurs.",
-    },
-    en: {
-      teaser:
-        "A 19th-century cognac warehouse turned contemporary palace: cathedral timbers, spa, jazz club and a gastronomic table.",
-      history:
-        "Jean Monnet — head of the family trade and great-uncle of the 'father of Europe' — founded his cognac house here in 1838, on a two-hectare site in the town centre. The cellars, with their upturned-hull roof frames, aged eaux-de-vie for over a century before falling derelict. Restored from 2013 with respect for the original stone and beams, since 2018 they have housed one of Charente's rare 5-star hotels.",
-      tips:
-        "The cathedral cellar can be visited even by non-guests. We handle transfers from Cognac station or Angoulême airport.",
-    },
-    photos: trio(P.chais),
-  },
-  {
-    slug: "hotel-saint-gelais-angouleme",
-    category: "hotel",
-    dept: "16",
-    name: "Hôtel Saint-Gelais",
-    city: "Angoulême",
-    stars: 4,
-    facts: [
-      { fr: "Hôtel 4 étoiles", en: "4-star hotel" },
-      { fr: "Hôtel particulier du XVIIIᵉ", en: "18th-century mansion" },
-      { fr: "Intra-muros, sur le plateau", en: "Inside the ramparts" },
-    ],
-    fr: {
-      teaser:
-        "Un hôtel particulier du plateau, cour pavée, jardin clos et douze chambres au calme absolu.",
-      history:
-        "La famille de Saint-Gelais, seigneurs de Lusignan, a marqué l'Angoumois dès le XVᵉ siècle ; Mellin de Saint-Gelais fut le poète officiel de François Iᵉʳ. L'hôtel occupe une demeure du XVIIIᵉ siècle bâtie en pierre de taille blonde, typique de l'urbanisme du plateau, à deux pas de la cathédrale Saint-Pierre et de ses 75 personnages sculptés en façade. Les remparts qui l'entourent offrent aujourd'hui l'une des plus belles promenades panoramiques du Sud-Ouest.",
-      tips:
-        "Idéal pendant le Festival de la BD (janvier) : réservez très tôt, et prévoyez un transfert, la ville haute est fermée à la circulation.",
-    },
-    en: {
-      teaser:
-        "A mansion on the upper town, paved courtyard, walled garden and twelve wonderfully quiet rooms.",
-      history:
-        "The Saint-Gelais family, lords of Lusignan, shaped the Angoumois from the 15th century; Mellin de Saint-Gelais was official poet to François I. The hotel occupies an 18th-century house of pale ashlar stone, typical of the plateau, steps from Saint-Pierre cathedral and the 75 carved figures on its façade. The surrounding ramparts offer one of south-west France's finest panoramic walks.",
-      tips:
-        "Ideal during the January comics festival: book far ahead and plan a transfer, as the upper town closes to traffic.",
-    },
-    photos: trio(P.angoulemeVille),
-  },
-  {
-    slug: "maison-hote-vallee-eaux-claires",
-    category: "hotel",
-    dept: "16",
-    name: "Logis de la Vallée des Eaux Claires",
-    city: "Puymoyen",
-    stars: 3,
-    facts: [
-      { fr: "Logis 3 étoiles / chambres d'hôtes", en: "3-star logis / guest rooms" },
-      { fr: "Au départ des sentiers", en: "At the trailheads" },
-      { fr: "10 min d'Angoulême", en: "10 min from Angoulême" },
-    ],
-    fr: {
-      teaser:
-        "Une maison de pierre au fond d'un vallon calcaire, à cinq minutes des falaises et des anciens moulins à papier.",
-      history:
-        "La vallée des Eaux Claires, creusée par un ruisseau affluent de la Charente, a fait vivre pendant cinq siècles les moulins à papier d'Angoumois : on y fabriquait dès le XVᵉ siècle un papier réputé jusqu'en Hollande, exporté par le fleuve. Les falaises calcaires abritent des abris sous roche occupés dès la préhistoire, et le site du Roc, classé, reste un haut lieu de l'escalade charentaise.",
-      tips:
-        "Parfait pour un week-end randonnée. Nos chauffeurs assurent la navette depuis la gare TGV d'Angoulême (2 h de Paris).",
-    },
-    en: {
-      teaser:
-        "A stone house at the end of a limestone valley, five minutes from the cliffs and the old paper mills.",
-      history:
-        "The Eaux Claires valley, carved by a tributary of the Charente, powered the Angoumois paper mills for five centuries: from the 15th century it produced paper prized as far as Holland and shipped down the river. The limestone cliffs shelter rock overhangs occupied since prehistory, and the listed Roc site remains a landmark for Charente climbers.",
-      tips:
-        "Perfect for a hiking weekend. We shuttle from Angoulême TGV station (2 h from Paris).",
-    },
-    photos: trio(P.eauxClaires),
   },
   {
     slug: "hotel-la-monnaie-la-rochelle",
@@ -503,95 +321,6 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     },
     photos: trio(P.saintes),
   },
-
-  // ────────────── RANDONNÉES ──────────────
-  {
-    slug: "foret-de-la-braconne",
-    category: "randonnee",
-    dept: "16",
-    name: "Forêt de la Braconne",
-    city: "Brie / Jauldes",
-    facts: [
-      { fr: "Boucles de 5 à 18 km", en: "Loops from 5 to 18 km" },
-      { fr: "Difficulté facile à moyenne", en: "Easy to moderate" },
-      { fr: "20 min d'Angoulême", en: "20 min from Angoulême" },
-    ],
-    fr: {
-      teaser:
-        "4 000 hectares de chênes et de hêtres percés de gouffres spectaculaires : la grande forêt d'Angoulême.",
-      history:
-        "Ancienne forêt royale, la Braconne doit son relief à un sous-sol karstique : la Grande Fosse, la Fosse Limousine et la Fosse Mobile sont d'immenses effondrements circulaires creusés par la dissolution du calcaire, longtemps entourés de légendes de diables et de fées. Pendant la Seconde Guerre mondiale, la forêt abrita un vaste dépôt de munitions et servit de refuge aux maquis charentais. Elle est aujourd'hui gérée par l'ONF et sillonnée de sentiers balisés.",
-      tips:
-        "La Fosse Mobile est le plus impressionnant des gouffres. Prévoyez de l'eau : aucun commerce sur place.",
-    },
-    en: {
-      teaser:
-        "4,000 hectares of oak and beech punctured by spectacular sinkholes: Angoulême's great forest.",
-      history:
-        "A former royal forest, the Braconne owes its relief to karst geology: the Grande Fosse, Fosse Limousine and Fosse Mobile are vast circular collapses carved by dissolving limestone, long surrounded by tales of devils and fairies. During the Second World War the forest held a huge munitions depot and sheltered the Charente resistance. It is now managed by the national forestry office and criss-crossed with waymarked trails.",
-      tips:
-        "The Fosse Mobile is the most impressive sinkhole. Bring water: there are no shops.",
-    },
-    photos: trio(P.braconne),
-  },
-  {
-    slug: "vallee-des-eaux-claires",
-    category: "randonnee",
-    dept: "16",
-    name: "Vallée des Eaux Claires",
-    city: "Puymoyen",
-    facts: [
-      { fr: "Boucle de 8 km, 2 h 30", en: "8 km loop, 2 h 30" },
-      { fr: "Falaises, moulins, sources", en: "Cliffs, mills, springs" },
-      { fr: "10 min d'Angoulême", en: "10 min from Angoulême" },
-    ],
-    fr: {
-      teaser:
-        "Falaises calcaires, ruisseau limpide et moulins à papier : la randonnée la plus photogénique d'Angoumois.",
-      history:
-        "Le vallon fut, du XVᵉ au XIXᵉ siècle, l'un des grands centres papetiers d'Europe : une vingtaine de moulins y battaient le chiffon pour produire un papier d'une blancheur recherchée par les imprimeurs hollandais. Le moulin du Verger, en activité depuis 1539, fabrique encore du papier à la main. Plus haut, les abris sous roche du Roc livrent des vestiges du Paléolithique, et les parois attirent les grimpeurs depuis les années 1950.",
-      tips:
-        "Chaussures antidérapantes : la roche est glissante après la pluie. Départ conseillé au parking du Roc.",
-    },
-    en: {
-      teaser:
-        "Limestone cliffs, a clear stream and paper mills: the most photogenic walk in the Angoumois.",
-      history:
-        "From the 15th to the 19th century this valley was one of Europe's great papermaking centres: some twenty mills beat rags into a paper whose whiteness Dutch printers prized. The Moulin du Verger, running since 1539, still makes paper by hand. Higher up, the Roc rock shelters have yielded Palaeolithic remains, and the walls have drawn climbers since the 1950s.",
-      tips:
-        "Wear grippy shoes: the rock is slippery after rain. Start from the Roc car park.",
-    },
-    photos: trio(P.eauxClaires),
-  },
-  {
-    slug: "boucle-de-la-charente-jarnac",
-    category: "randonnee",
-    dept: "16",
-    name: "Boucle de la Charente",
-    city: "Jarnac / Bourg-Charente",
-    facts: [
-      { fr: "12 km le long du fleuve", en: "12 km along the river" },
-      { fr: "Plat, accessible en famille", en: "Flat, family-friendly" },
-      { fr: "Chais et écluses sur le parcours", en: "Cellars and locks en route" },
-    ],
-    fr: {
-      teaser:
-        "Un chemin de halage entre vignes de cognac, écluses et îles boisées : la Charente à hauteur d'eau.",
-      history:
-        "Henri IV appelait la Charente « le plus beau ruisseau du royaume ». Canalisée dès le XVIIᵉ siècle puis équipée d'écluses au XIXᵉ, elle a porté les gabares chargées de barriques jusqu'à l'Atlantique. Le chemin de halage, où des hommes et des bœufs tiraient les bateaux à contre-courant, est aujourd'hui un sentier ombragé qui relie les villages viticoles. Les prairies inondables alentour abritent loutres, hérons et une flore protégée.",
-      tips:
-        "Combinez la marche avec une visite de chai et un retour en taxi : pas besoin de revenir au point de départ.",
-    },
-    en: {
-      teaser:
-        "A towpath between cognac vines, locks and wooded islands: the Charente at water level.",
-      history:
-        "Henri IV called the Charente 'the loveliest stream in the kingdom'. Canalised from the 17th century and locked in the 19th, it carried barrel-laden gabares to the Atlantic. The towpath, where men and oxen hauled boats upstream, is now a shaded trail linking wine villages. The surrounding flood meadows shelter otters, herons and protected plants.",
-      tips:
-        "Combine the walk with a cellar visit and a taxi back: no need to return to your starting point.",
-    },
-    photos: trio(P.jarnac),
-  },
   {
     slug: "sentier-des-douaniers-ile-de-re",
     category: "randonnee",
@@ -678,124 +407,6 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
         "Swimming on the Grande Côte is dangerous (rip channels): use supervised beaches. Lighthouse climb is ticketed.",
     },
     photos: trio(P.laCoubre),
-  },
-
-  // ────────────── À VISITER ──────────────
-  {
-    slug: "angouleme-remparts-et-bd",
-    category: "visite",
-    dept: "16",
-    name: "Angoulême, remparts et bande dessinée",
-    city: "Angoulême",
-    facts: [
-      { fr: "Cathédrale romane du XIIᵉ siècle", en: "12th-century Romanesque cathedral" },
-      { fr: "Murs peints BD dans toute la ville", en: "Comic murals across the city" },
-      { fr: "Festival international en janvier", en: "International festival in January" },
-    ],
-    fr: {
-      teaser:
-        "Une ville-balcon ceinte de remparts, une cathédrale sculptée et vingt-cinq murs peints signés des plus grands auteurs.",
-      history:
-        "Perchée sur un éperon calcaire dominant la Charente, Angoulême est occupée depuis l'Antiquité et fut le siège d'un puissant comté au Moyen Âge. Sa cathédrale Saint-Pierre, consacrée en 1128, présente une façade unique en France : plus de 70 personnages sculptés y racontent l'Ascension et le Jugement dernier. Les remparts, reconstruits aux XVIᵉ et XVIIᵉ siècles, offrent un chemin de ronde de 3 km. Depuis 1974, le Festival international de la bande dessinée a fait de la ville la capitale mondiale du 9ᵉ art, avec son musée et ses murs peints.",
-      tips:
-        "Commencez par le rempart Desaix au coucher du soleil, puis descendez au musée de la BD par la passerelle.",
-    },
-    en: {
-      teaser:
-        "A balcony city ringed by ramparts, a carved cathedral and twenty-five murals by leading comic artists.",
-      history:
-        "Perched on a limestone spur above the Charente, Angoulême has been settled since antiquity and was the seat of a powerful medieval county. Saint-Pierre cathedral, consecrated in 1128, has a façade unique in France: over 70 carved figures tell the Ascension and Last Judgement. The ramparts, rebuilt in the 16th and 17th centuries, form a 3 km walkway. Since 1974 the International Comics Festival has made the city the world capital of the ninth art, with its museum and painted walls.",
-      tips:
-        "Start on the Desaix rampart at sunset, then walk down to the comics museum via the footbridge.",
-    },
-    photos: trio(P.angouleme),
-  },
-  {
-    slug: "cognac-chais-et-quais",
-    category: "visite",
-    dept: "16",
-    name: "Cognac, chais et quais",
-    city: "Cognac",
-    facts: [
-      { fr: "Maisons Hennessy, Martell, Rémy Martin", en: "Hennessy, Martell, Rémy Martin" },
-      { fr: "Château de François Iᵉʳ (1494)", en: "François I's castle (1494)" },
-      { fr: "Visites de chais toute l'année", en: "Cellar tours all year" },
-    ],
-    fr: {
-      teaser:
-        "La capitale mondiale de l'eau-de-vie : chais noircis, quais de pierre et dégustations dans des caves centenaires.",
-      history:
-        "Cognac naît du commerce du sel puis du vin, expédiés par la Charente vers l'Europe du Nord. Au XVIIᵉ siècle, les négociants hollandais font distiller le vin pour le conserver pendant les traversées : le brandewijn, « vin brûlé », devient le cognac. François Iᵉʳ y naît en 1494 dans le château des Valois, qui abrite aujourd'hui un chai. Les murs des maisons de négoce sont noircis par Baudoinia compniacensis, le « champignon des anges », qui se nourrit des vapeurs d'alcool s'échappant des fûts.",
-      tips:
-        "Deux visites de chais suffisent dans une journée. Dégustation oblige : confiez la conduite à nos chauffeurs.",
-    },
-    en: {
-      teaser:
-        "The world capital of brandy: blackened cellars, stone quays and tastings in century-old cellars.",
-      history:
-        "Cognac grew on the salt and then wine trade shipped down the Charente to northern Europe. In the 17th century Dutch merchants had the wine distilled so it would survive the voyage: brandewijn, 'burnt wine', became cognac. François I was born here in 1494 in the Valois castle, which now houses a cellar. The merchant houses' walls are blackened by Baudoinia compniacensis, the 'angels' fungus', feeding on alcohol vapours escaping the barrels.",
-      tips:
-        "Two cellar tours are plenty in a day. Tastings included: leave the driving to us.",
-    },
-    photos: trio(P.cognac),
-  },
-  {
-    slug: "aubeterre-sur-dronne",
-    category: "visite",
-    dept: "16",
-    name: "Aubeterre-sur-Dronne",
-    city: "Aubeterre-sur-Dronne",
-    facts: [
-      { fr: "Plus Beaux Villages de France", en: "One of France's most beautiful villages" },
-      { fr: "Église monolithe du XIIᵉ siècle", en: "12th-century monolithic church" },
-      { fr: "1 h 45 de Bordeaux", en: "1 h 45 from Bordeaux" },
-    ],
-    fr: {
-      teaser:
-        "Un village blanc accroché à sa falaise et, creusée dans la roche, une église souterraine de 20 mètres de haut.",
-      history:
-        "L'église Saint-Jean d'Aubeterre est l'une des plus grandes églises monolithes d'Europe : entièrement taillée dans le calcaire au XIIᵉ siècle, sur un sanctuaire du VIIᵉ, elle abrite un reliquaire monolithe hexagonal, une nécropole de sarcophages creusés à même le sol et une galerie supérieure. Le village, dont le nom vient d'alba terra — « terre blanche » —, fut une étape sur le chemin de Saint-Jacques et conserve ses ruelles en escalier, son église haute Saint-Jacques et ses maisons de pierre claire.",
-      tips:
-        "L'église est fraîche : prévoyez une veste. Le village se visite à pied, les rues sont très pentues.",
-    },
-    en: {
-      teaser:
-        "A white village clinging to its cliff and, carved into the rock, a 20-metre-high underground church.",
-      history:
-        "Saint-Jean of Aubeterre is one of Europe's largest monolithic churches: cut entirely from limestone in the 12th century over a 7th-century sanctuary, it holds a hexagonal monolithic reliquary, a necropolis of floor-hewn sarcophagi and an upper gallery. The village — from alba terra, 'white earth' — was a stop on the way to Santiago and keeps its stepped lanes, upper Saint-Jacques church and pale stone houses.",
-      tips:
-        "The church is cool: bring a jacket. The village is walked on foot; streets are steep.",
-    },
-    photos: trio(P.aubeterre),
-  },
-  {
-    slug: "confolens-cite-medievale",
-    category: "visite",
-    dept: "16",
-    name: "Confolens, cité médiévale",
-    city: "Confolens",
-    facts: [
-      { fr: "Pont Vieux du XIIIᵉ siècle", en: "13th-century Old Bridge" },
-      { fr: "Festival de folklore en août", en: "Folklore festival in August" },
-      { fr: "Maisons à pans de bois", en: "Half-timbered houses" },
-    ],
-    fr: {
-      teaser:
-        "Deux rivières, un pont médiéval et des maisons à colombages : la Charente limousine dans sa version carte postale.",
-      history:
-        "Confolens — confluentes, le confluent de la Vienne et du Goire — s'est développée autour d'un château comtal et d'un pont de pierre bâti au XIIIᵉ siècle, longtemps le seul passage de la Vienne sur des dizaines de kilomètres. La ville basse a gardé ses maisons à pans de bois des XVᵉ-XVIᵉ siècles, ses hôtels particuliers et sa tour de l'horloge. Depuis 1958, son Festival international de folklore réunit chaque août des troupes du monde entier.",
-      tips:
-        "Vue idéale sur le Pont Vieux depuis la rive droite en fin d'après-midi.",
-    },
-    en: {
-      teaser:
-        "Two rivers, a medieval bridge and half-timbered houses: the Limousin Charente at its most picturesque.",
-      history:
-        "Confolens — confluentes, where the Vienne meets the Goire — grew around a count's castle and a 13th-century stone bridge, long the only crossing of the Vienne for miles. The lower town keeps its 15th-16th-century timber-framed houses, mansions and clock tower. Since 1958 its International Folklore Festival has drawn troupes from around the world every August.",
-      tips:
-        "The best view of the Old Bridge is from the right bank in late afternoon.",
-    },
-    photos: trio(P.confolens),
   },
   {
     slug: "corderie-royale-rochefort",
@@ -971,6 +582,3226 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     },
     photos: trio(P.chatelaillon),
   },
+  {
+    slug: "visiter-la-rochelle",
+    category: "visite",
+    dept: "17",
+    name: "Visiter La Rochelle",
+    city: "La Rochelle",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 0 km de La Rochelle", en: "≈ 0 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Les tours du Vieux-Port, l'hôtel de ville Renaissance, le Muséum et l'Aquarium se visitent à pied en une journée.",
+      history: "Port fortifié dès le XIIᵉ siècle, La Rochelle fut la place forte protestante assiégée par Richelieu en 1627-1628. Ses trois tours médiévales — Saint-Nicolas, la Chaîne et la Lanterne — gardent encore l'entrée du Vieux-Port, bordé d'arcades du XVIIIᵉ siècle bâties par les armateurs du commerce atlantique.",
+      tips: "Nos deux chauffeurs desservent La Rochelle 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Old Port towers, the Renaissance city hall, the natural history museum and the Aquarium all fit into one walking day.",
+      history: "A fortified port since the 12th century, La Rochelle was the Protestant stronghold besieged by Richelieu in 1627-28. Its three medieval towers — Saint-Nicolas, the Chain and the Lantern — still guard the Old Port, lined with 18th-century arcades built by Atlantic trading shipowners.",
+      tips: "Our two drivers serve La Rochelle 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/021_-_CityMobyl2_-_La_Rochelle.jpg/1920px-021_-_CityMobyl2_-_La_Rochelle.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/1023_-_La_Coursive_%28entr%C3%A9e_principale%29_-_La_Rochelle.jpg/1920px-1023_-_La_Coursive_%28entr%C3%A9e_principale%29_-_La_Rochelle.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/17300-La_Rochelle-argile.jpg/1920px-17300-La_Rochelle-argile.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-la-rochelle",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à La Rochelle",
+    city: "La Rochelle",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 0 km de La Rochelle", en: "≈ 0 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Le sentier du littoral file des Minimes à Aytré : 8 km de front de mer, plage de la Concurrence et pointe des Minimes.",
+      history: "Port fortifié dès le XIIᵉ siècle, La Rochelle fut la place forte protestante assiégée par Richelieu en 1627-1628. Ses trois tours médiévales — Saint-Nicolas, la Chaîne et la Lanterne — gardent encore l'entrée du Vieux-Port, bordé d'arcades du XVIIIᵉ siècle bâties par les armateurs du commerce atlantique.",
+      tips: "Nos deux chauffeurs desservent La Rochelle 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The coastal path runs from Les Minimes to Aytré: 8 km of seafront, Concurrence beach and the Minimes headland.",
+      history: "A fortified port since the 12th century, La Rochelle was the Protestant stronghold besieged by Richelieu in 1627-28. Its three medieval towers — Saint-Nicolas, the Chain and the Lantern — still guard the Old Port, lined with 18th-century arcades built by Atlantic trading shipowners.",
+      tips: "Our two drivers serve La Rochelle 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/369_-_Mairie_-_Lhoumeau.jpg/1920px-369_-_Mairie_-_Lhoumeau.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/805_-_Porte_Maubec_%28int%C3%A9rieur%29_-_La_Rochelle.jpg/1920px-805_-_Porte_Maubec_%28int%C3%A9rieur%29_-_La_Rochelle.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/809_-_Vestiges_de_la_porte_de_Cougnes_-_La_Rochelle.jpg/1920px-809_-_Vestiges_de_la_porte_de_Cougnes_-_La_Rochelle.jpg"],
+  },
+  {
+    slug: "ou-manger-a-la-rochelle",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à La Rochelle",
+    city: "La Rochelle",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 0 km de La Rochelle", en: "≈ 0 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Poissons de la criée, huîtres de Marennes-Oléron, mouclade charentaise et cagouilles : la cuisine rochelaise est maritime et beurrée.",
+      history: "Port fortifié dès le XIIᵉ siècle, La Rochelle fut la place forte protestante assiégée par Richelieu en 1627-1628. Ses trois tours médiévales — Saint-Nicolas, la Chaîne et la Lanterne — gardent encore l'entrée du Vieux-Port, bordé d'arcades du XVIIIᵉ siècle bâties par les armateurs du commerce atlantique.",
+      tips: "Nos deux chauffeurs desservent La Rochelle 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Fish from the auction hall, Marennes-Oléron oysters, mouclade and snails: La Rochelle's cooking is maritime and buttery.",
+      history: "A fortified port since the 12th century, La Rochelle was the Protestant stronghold besieged by Richelieu in 1627-28. Its three medieval towers — Saint-Nicolas, the Chain and the Lantern — still guard the Old Port, lined with 18th-century arcades built by Atlantic trading shipowners.",
+      tips: "Our two drivers serve La Rochelle 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/921_-_Th%C3%A9atre_Verdi%C3%A8re_-_La_Rochelle.jpg/1920px-921_-_Th%C3%A9atre_Verdi%C3%A8re_-_La_Rochelle.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/959_-_Clo%C3%AEtre_des_Dames_Blanches_-_La_Rochelle.jpg/1920px-959_-_Clo%C3%AEtre_des_Dames_Blanches_-_La_Rochelle.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/021_-_CityMobyl2_-_La_Rochelle.jpg/1920px-021_-_CityMobyl2_-_La_Rochelle.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-la-rochelle",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à La Rochelle",
+    city: "La Rochelle",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 0 km de La Rochelle", en: "≈ 0 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 4 et 5 étoiles dans les hôtels particuliers du centre, 3 étoiles autour des Minimes, chambres d'hôtes dans les rues à arcades.",
+      history: "Port fortifié dès le XIIᵉ siècle, La Rochelle fut la place forte protestante assiégée par Richelieu en 1627-1628. Ses trois tours médiévales — Saint-Nicolas, la Chaîne et la Lanterne — gardent encore l'entrée du Vieux-Port, bordé d'arcades du XVIIIᵉ siècle bâties par les armateurs du commerce atlantique.",
+      tips: "Nos deux chauffeurs desservent La Rochelle 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Four- and five-star hotels in the historic mansions of the centre, three-star addresses around Les Minimes, guesthouses in the arcaded streets.",
+      history: "A fortified port since the 12th century, La Rochelle was the Protestant stronghold besieged by Richelieu in 1627-28. Its three medieval towers — Saint-Nicolas, the Chain and the Lantern — still guard the Old Port, lined with 18th-century arcades built by Atlantic trading shipowners.",
+      tips: "Our two drivers serve La Rochelle 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/1023_-_La_Coursive_%28entr%C3%A9e_principale%29_-_La_Rochelle.jpg/1920px-1023_-_La_Coursive_%28entr%C3%A9e_principale%29_-_La_Rochelle.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/17300-La_Rochelle-argile.jpg/1920px-17300-La_Rochelle-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/369_-_Mairie_-_Lhoumeau.jpg/1920px-369_-_Mairie_-_Lhoumeau.jpg"],
+  },
+  {
+    slug: "visiter-rochefort",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Rochefort",
+    city: "Rochefort",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Corderie royale, maison de Pierre Loti, pont transbordeur du Martrou et musée de la Marine.",
+      history: "Rochefort est une ville née d'une décision : en 1666, Colbert y implante l'arsenal de la Marine royale. La Corderie royale, longue de 374 mètres, y produisait tous les cordages de la flotte ; la frégate Hermione y a été reconstruite entre 1997 et 2014.",
+      tips: "Nos deux chauffeurs desservent Rochefort 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Corderie Royale, Pierre Loti's house, the Martrou transporter bridge and the naval museum.",
+      history: "Rochefort was born of a decision: in 1666 Colbert founded the royal naval arsenal here. The 374-metre Corderie Royale made all the fleet's ropes; the frigate Hermione was rebuilt here between 1997 and 2014.",
+      tips: "Our two drivers serve Rochefort 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/077_-_Eglise_Notre-Dame_-_Rochefort.jpg/1920px-077_-_Eglise_Notre-Dame_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/7/7c/077_-_Tour_des_signaux_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/079_-_Eglise_Notre-Dame_vieille_paroisse_-_Rochefort.jpg/1920px-079_-_Eglise_Notre-Dame_vieille_paroisse_-_Rochefort.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-rochefort",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Rochefort",
+    city: "Rochefort",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucle des bords de Charente jusqu'au pont transbordeur, prolongée par la digue de Soubise.",
+      history: "Rochefort est une ville née d'une décision : en 1666, Colbert y implante l'arsenal de la Marine royale. La Corderie royale, longue de 374 mètres, y produisait tous les cordages de la flotte ; la frégate Hermione y a été reconstruite entre 1997 et 2014.",
+      tips: "Nos deux chauffeurs desservent Rochefort 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "A loop along the Charente riverbank to the transporter bridge, extended by the Soubise dyke.",
+      history: "Rochefort was born of a decision: in 1666 Colbert founded the royal naval arsenal here. The 374-metre Corderie Royale made all the fleet's ropes; the frigate Hermione was rebuilt here between 1997 and 2014.",
+      tips: "Our two drivers serve Rochefort 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/079_-_Porte_de_la_pr%C3%A9fecture_maritime_-_Rochefort.jpg/1920px-079_-_Porte_de_la_pr%C3%A9fecture_maritime_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/084_-_Eglise_Saint-Louis_-_Rochefort.jpg/1920px-084_-_Eglise_Saint-Louis_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/089_-_Chapelle_de_la_Cabane_Carr%C3%A9e_-_Rochefort.jpg/1920px-089_-_Chapelle_de_la_Cabane_Carr%C3%A9e_-_Rochefort.jpg"],
+  },
+  {
+    slug: "ou-manger-a-rochefort",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Rochefort",
+    city: "Rochefort",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Bistrots de l'arsenal, cuisine de la Charente : anguilles, éclade de moules, melon charentais.",
+      history: "Rochefort est une ville née d'une décision : en 1666, Colbert y implante l'arsenal de la Marine royale. La Corderie royale, longue de 374 mètres, y produisait tous les cordages de la flotte ; la frégate Hermione y a été reconstruite entre 1997 et 2014.",
+      tips: "Nos deux chauffeurs desservent Rochefort 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Arsenal bistros and river cooking: eels, pine-needle grilled mussels, Charentais melon.",
+      history: "Rochefort was born of a decision: in 1666 Colbert founded the royal naval arsenal here. The 374-metre Corderie Royale made all the fleet's ropes; the frigate Hermione was rebuilt here between 1997 and 2014.",
+      tips: "Our two drivers serve Rochefort 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/102_-_Fa%C3%A7ade_du_th%C3%A9atre_-_Rochefort.jpg/1920px-102_-_Fa%C3%A7ade_du_th%C3%A9atre_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/102_-_Temple_Protestant_-_Rochefort.jpg/1920px-102_-_Temple_Protestant_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/077_-_Eglise_Notre-Dame_-_Rochefort.jpg/1920px-077_-_Eglise_Notre-Dame_-_Rochefort.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-rochefort",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Rochefort",
+    city: "Rochefort",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles autour de la place Colbert, thermes et résidences 4 étoiles près du Martrou.",
+      history: "Rochefort est une ville née d'une décision : en 1666, Colbert y implante l'arsenal de la Marine royale. La Corderie royale, longue de 374 mètres, y produisait tous les cordages de la flotte ; la frégate Hermione y a été reconstruite entre 1997 et 2014.",
+      tips: "Nos deux chauffeurs desservent Rochefort 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels around Place Colbert, spa and four-star residences near Le Martrou.",
+      history: "Rochefort was born of a decision: in 1666 Colbert founded the royal naval arsenal here. The 374-metre Corderie Royale made all the fleet's ropes; the frigate Hermione was rebuilt here between 1997 and 2014.",
+      tips: "Our two drivers serve Rochefort 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/7/7c/077_-_Tour_des_signaux_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/079_-_Eglise_Notre-Dame_vieille_paroisse_-_Rochefort.jpg/1920px-079_-_Eglise_Notre-Dame_vieille_paroisse_-_Rochefort.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/079_-_Porte_de_la_pr%C3%A9fecture_maritime_-_Rochefort.jpg/1920px-079_-_Porte_de_la_pr%C3%A9fecture_maritime_-_Rochefort.jpg"],
+  },
+  {
+    slug: "visiter-saintes",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saintes",
+    city: "Saintes",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Arc de Germanicus, amphithéâtre gallo-romain, Abbaye aux Dames et cathédrale Saint-Pierre.",
+      history: "Mediolanum Santonum fut capitale de l'Aquitaine romaine : l'arc de Germanicus (19 apr. J.-C.) et l'amphithéâtre creusé dans le vallon en témoignent. L'Abbaye aux Dames, fondée en 1047, formait les filles de la noblesse et accueille aujourd'hui un festival de musique classique réputé.",
+      tips: "Nos deux chauffeurs desservent Saintes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Arch of Germanicus, the Gallo-Roman amphitheatre, the Abbaye aux Dames and Saint-Pierre cathedral.",
+      history: "Mediolanum Santonum was the capital of Roman Aquitaine: the Arch of Germanicus (AD 19) and the amphitheatre carved into the valley remain. The Abbaye aux Dames, founded in 1047, educated noblewomen and now hosts a renowned classical music festival.",
+      tips: "Our two drivers serve Saintes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/6/6b/-25ansparcantonPC.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/17415-Saintes-argile.jpg/1920px-17415-Saintes-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Amphith%C3%A9%C3%A2tre_Saintes_inond%C3%A9_%281982%29.jpg/1920px-Amphith%C3%A9%C3%A2tre_Saintes_inond%C3%A9_%281982%29.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saintes",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saintes",
+    city: "Saintes",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Les quais de Charente jusqu'au parc de Fontbedeau, puis la vallée vers Chaniers et ses moulins.",
+      history: "Mediolanum Santonum fut capitale de l'Aquitaine romaine : l'arc de Germanicus (19 apr. J.-C.) et l'amphithéâtre creusé dans le vallon en témoignent. L'Abbaye aux Dames, fondée en 1047, formait les filles de la noblesse et accueille aujourd'hui un festival de musique classique réputé.",
+      tips: "Nos deux chauffeurs desservent Saintes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Charente quays to Fontbedeau park, then the valley towards Chaniers and its mills.",
+      history: "Mediolanum Santonum was the capital of Roman Aquitaine: the Arch of Germanicus (AD 19) and the amphitheatre carved into the valley remain. The Abbaye aux Dames, founded in 1047, educated noblewomen and now hosts a renowned classical music festival.",
+      tips: "Our two drivers serve Saintes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/9/95/Ancienne_chapelle_des_b%C3%A9n%C3%A9dictins.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Basilique_Saint-Eutrope_de_Saintes.jpg/1920px-Basilique_Saint-Eutrope_de_Saintes.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Bateau-mouche_Saintes.jpg/1920px-Bateau-mouche_Saintes.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saintes",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saintes",
+    city: "Saintes",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Tables de marché, pineau des Charentes et grillons charentais, marché couvert le mercredi et le samedi.",
+      history: "Mediolanum Santonum fut capitale de l'Aquitaine romaine : l'arc de Germanicus (19 apr. J.-C.) et l'amphithéâtre creusé dans le vallon en témoignent. L'Abbaye aux Dames, fondée en 1047, formait les filles de la noblesse et accueille aujourd'hui un festival de musique classique réputé.",
+      tips: "Nos deux chauffeurs desservent Saintes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Market-driven tables, pineau des Charentes and potted pork, covered market on Wednesday and Saturday.",
+      history: "Mediolanum Santonum was the capital of Roman Aquitaine: the Arch of Germanicus (AD 19) and the amphitheatre carved into the valley remain. The Abbaye aux Dames, founded in 1047, educated noblewomen and now hosts a renowned classical music festival.",
+      tips: "Our two drivers serve Saintes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Boiffiers.jpg/1920px-Boiffiers.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Bus_de_Saintes.jpg/1920px-Bus_de_Saintes.jpg", "https://upload.wikimedia.org/wikipedia/commons/6/6b/-25ansparcantonPC.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-saintes",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saintes",
+    city: "Saintes",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 et 4 étoiles dans les demeures de la rive droite, dont un domaine hôtelier en parc boisé.",
+      history: "Mediolanum Santonum fut capitale de l'Aquitaine romaine : l'arc de Germanicus (19 apr. J.-C.) et l'amphithéâtre creusé dans le vallon en témoignent. L'Abbaye aux Dames, fondée en 1047, formait les filles de la noblesse et accueille aujourd'hui un festival de musique classique réputé.",
+      tips: "Nos deux chauffeurs desservent Saintes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three- and four-star hotels in right-bank townhouses, including a country-house hotel set in woodland.",
+      history: "Mediolanum Santonum was the capital of Roman Aquitaine: the Arch of Germanicus (AD 19) and the amphitheatre carved into the valley remain. The Abbaye aux Dames, founded in 1047, educated noblewomen and now hosts a renowned classical music festival.",
+      tips: "Our two drivers serve Saintes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/17415-Saintes-argile.jpg/1920px-17415-Saintes-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Amphith%C3%A9%C3%A2tre_Saintes_inond%C3%A9_%281982%29.jpg/1920px-Amphith%C3%A9%C3%A2tre_Saintes_inond%C3%A9_%281982%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/9/95/Ancienne_chapelle_des_b%C3%A9n%C3%A9dictins.jpg"],
+  },
+  {
+    slug: "visiter-royan",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Royan",
+    city: "Royan",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Église Notre-Dame, marché central en coque de béton, front de mer et villas 1900 de Pontaillac.",
+      history: "Bombardée en janvier 1945, Royan a été rebâtie dans les années 1950 : elle est aujourd'hui l'un des plus grands ensembles d'architecture moderne de France, couronné par l'église Notre-Dame de Guillaume Gillet, un vaisseau de béton achevé en 1958.",
+      tips: "Nos deux chauffeurs desservent Royan 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Notre-Dame church, the concrete-shell central market, the seafront and the 1900s villas of Pontaillac.",
+      history: "Bombed in January 1945, Royan was rebuilt in the 1950s and is now one of France's largest sets of modernist architecture, crowned by Guillaume Gillet's Notre-Dame church, a concrete vessel completed in 1958.",
+      tips: "Our two drivers serve Royan 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/17306-Royan-Sols.png/1920px-17306-Royan-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/17306-Royan-argile.jpg/1920px-17306-Royan-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/1c/2001-12-Royan-Plage.JPG"],
+  },
+  {
+    slug: "randonnees-et-balades-a-royan",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Royan",
+    city: "Royan",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier des cinq plages : Grande Conche, Pigeonnier, Chay, Foncillon et Pontaillac.",
+      history: "Bombardée en janvier 1945, Royan a été rebâtie dans les années 1950 : elle est aujourd'hui l'un des plus grands ensembles d'architecture moderne de France, couronné par l'église Notre-Dame de Guillaume Gillet, un vaisseau de béton achevé en 1958.",
+      tips: "Nos deux chauffeurs desservent Royan 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The five-beaches path: Grande Conche, Pigeonnier, Chay, Foncillon and Pontaillac.",
+      history: "Bombed in January 1945, Royan was rebuilt in the 1950s and is now one of France's largest sets of modernist architecture, crowned by Guillaume Gillet's Notre-Dame church, a concrete vessel completed in 1958.",
+      tips: "Our two drivers serve Royan 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/2/20/BNMsFr2829Fol18Henry3LandsAquit.jpg", "https://upload.wikimedia.org/wikipedia/commons/c/c5/BR_151_-_PONTAILLAC_ROYAN_-_L%27arriv%C3%A9e_du_Tramway.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Boulevard_Briand.jpg/1920px-Boulevard_Briand.jpg"],
+  },
+  {
+    slug: "ou-manger-a-royan",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Royan",
+    city: "Royan",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Fruits de mer sur le port, glaces sur le front de mer, cagouilles et huîtres de la Seudre.",
+      history: "Bombardée en janvier 1945, Royan a été rebâtie dans les années 1950 : elle est aujourd'hui l'un des plus grands ensembles d'architecture moderne de France, couronné par l'église Notre-Dame de Guillaume Gillet, un vaisseau de béton achevé en 1958.",
+      tips: "Nos deux chauffeurs desservent Royan 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Seafood on the harbour, ice cream on the seafront, snails and Seudre oysters.",
+      history: "Bombed in January 1945, Royan was rebuilt in the 1950s and is now one of France's largest sets of modernist architecture, crowned by Guillaume Gillet's Notre-Dame church, a concrete vessel completed in 1958.",
+      tips: "Our two drivers serve Royan 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/CAREL.jpg/1920px-CAREL.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/b6/Cordouan.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/17306-Royan-Sols.png/1920px-17306-Royan-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-royan",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Royan",
+    city: "Royan",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 et 4 étoiles à Pontaillac et sur le front de mer, résidences familiales près de la Grande Conche.",
+      history: "Bombardée en janvier 1945, Royan a été rebâtie dans les années 1950 : elle est aujourd'hui l'un des plus grands ensembles d'architecture moderne de France, couronné par l'église Notre-Dame de Guillaume Gillet, un vaisseau de béton achevé en 1958.",
+      tips: "Nos deux chauffeurs desservent Royan 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three- and four-star hotels at Pontaillac and along the seafront, family residences near the Grande Conche.",
+      history: "Bombed in January 1945, Royan was rebuilt in the 1950s and is now one of France's largest sets of modernist architecture, crowned by Guillaume Gillet's Notre-Dame church, a concrete vessel completed in 1958.",
+      tips: "Our two drivers serve Royan 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/17306-Royan-argile.jpg/1920px-17306-Royan-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/1c/2001-12-Royan-Plage.JPG", "https://upload.wikimedia.org/wikipedia/commons/2/20/BNMsFr2829Fol18Henry3LandsAquit.jpg"],
+  },
+  {
+    slug: "visiter-saint-martin-de-re",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Martin-de-Ré",
+    city: "Saint-Martin-de-Ré",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Remparts Vauban, citadelle, clocher-observatoire et ruelles à roses trémières.",
+      history: "Vauban fortifie Saint-Martin après 1681 : ses remparts de 14 km, inscrits au patrimoine mondial de l'UNESCO depuis 2008, pouvaient abriter toute la population de l'île. Le port en forme de fer à cheval fut aussi le point de départ des bagnards vers la Guyane jusqu'en 1938.",
+      tips: "Nos deux chauffeurs desservent Saint-Martin-de-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Vauban's ramparts, the citadel, the observatory bell tower and lanes full of hollyhocks.",
+      history: "Vauban fortified Saint-Martin after 1681: its 14 km of ramparts, UNESCO-listed since 2008, could shelter the whole island's population. The horseshoe harbour was also the departure point for convicts bound for Guiana until 1938.",
+      tips: "Our two drivers serve Saint-Martin-de-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/17369-Saint-Martin-de-R%C3%A9-Sols.png/1920px-17369-Saint-Martin-de-R%C3%A9-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/176_-_Maison_de_la_Vinatrie_-_St_Martin_de_R%C3%A9.jpg/1920px-176_-_Maison_de_la_Vinatrie_-_St_Martin_de_R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/975_-_Porte_des_Campani_-_St_Martin_de_R%C3%A9.jpg/1920px-975_-_Porte_des_Campani_-_St_Martin_de_R%C3%A9.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-martin-de-re",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Martin-de-Ré",
+    city: "Saint-Martin-de-Ré",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Tour des fortifications puis piste côtière vers La Flotte et Loix, à plat, accessible à tous.",
+      history: "Vauban fortifie Saint-Martin après 1681 : ses remparts de 14 km, inscrits au patrimoine mondial de l'UNESCO depuis 2008, pouvaient abriter toute la population de l'île. Le port en forme de fer à cheval fut aussi le point de départ des bagnards vers la Guyane jusqu'en 1938.",
+      tips: "Nos deux chauffeurs desservent Saint-Martin-de-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "A circuit of the fortifications, then the flat coastal track to La Flotte and Loix, easy for everyone.",
+      history: "Vauban fortified Saint-Martin after 1681: its 14 km of ramparts, UNESCO-listed since 2008, could shelter the whole island's population. The horseshoe harbour was also the departure point for convicts bound for Guiana until 1938.",
+      tips: "Our two drivers serve Saint-Martin-de-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Bataille_navale_Re_1622.jpg/1920px-Bataille_navale_Re_1622.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/BeachCruiser-Saint-Martin-de-Re-byRundvald.jpg/1920px-BeachCruiser-Saint-Martin-de-Re-byRundvald.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Bombardement_d%27Olone_et_de_Saint-Martin-de-Re_en_1696.jpg/1920px-Bombardement_d%27Olone_et_de_Saint-Martin-de-Re_en_1696.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-martin-de-re",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Martin-de-Ré",
+    city: "Saint-Martin-de-Ré",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Huîtres de Ré, pommes de terre AOP, sel de l'île et carrelets du port.",
+      history: "Vauban fortifie Saint-Martin après 1681 : ses remparts de 14 km, inscrits au patrimoine mondial de l'UNESCO depuis 2008, pouvaient abriter toute la population de l'île. Le port en forme de fer à cheval fut aussi le point de départ des bagnards vers la Guyane jusqu'en 1938.",
+      tips: "Nos deux chauffeurs desservent Saint-Martin-de-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Ré oysters, PDO potatoes, island salt and fish from the harbour.",
+      history: "Vauban fortified Saint-Martin after 1681: its 14 km of ramparts, UNESCO-listed since 2008, could shelter the whole island's population. The horseshoe harbour was also the departure point for convicts bound for Guiana until 1938.",
+      tips: "Our two drivers serve Saint-Martin-de-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/9/91/Clerjotte_ile_de_Re_2.jpg", "https://upload.wikimedia.org/wikipedia/commons/f/ff/Colombages_%C3%A0_Saint-Martin-en-R%C3%A9.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/17369-Saint-Martin-de-R%C3%A9-Sols.png/1920px-17369-Saint-Martin-de-R%C3%A9-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-martin-de-re",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Martin-de-Ré",
+    city: "Saint-Martin-de-Ré",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 4 et 5 étoiles dans les demeures d'armateurs du port, maisons d'hôtes de charme dans les venelles.",
+      history: "Vauban fortifie Saint-Martin après 1681 : ses remparts de 14 km, inscrits au patrimoine mondial de l'UNESCO depuis 2008, pouvaient abriter toute la population de l'île. Le port en forme de fer à cheval fut aussi le point de départ des bagnards vers la Guyane jusqu'en 1938.",
+      tips: "Nos deux chauffeurs desservent Saint-Martin-de-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Four- and five-star hotels in the harbour's shipowner mansions, charming guesthouses in the lanes.",
+      history: "Vauban fortified Saint-Martin after 1681: its 14 km of ramparts, UNESCO-listed since 2008, could shelter the whole island's population. The horseshoe harbour was also the departure point for convicts bound for Guiana until 1938.",
+      tips: "Our two drivers serve Saint-Martin-de-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/176_-_Maison_de_la_Vinatrie_-_St_Martin_de_R%C3%A9.jpg/1920px-176_-_Maison_de_la_Vinatrie_-_St_Martin_de_R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/975_-_Porte_des_Campani_-_St_Martin_de_R%C3%A9.jpg/1920px-975_-_Porte_des_Campani_-_St_Martin_de_R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Bataille_navale_Re_1622.jpg/1920px-Bataille_navale_Re_1622.jpg"],
+  },
+  {
+    slug: "visiter-ars-en-re",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Ars-en-Ré",
+    city: "Ars-en-Ré",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Clocher Saint-Étienne, port de plaisance, marais salants et cabanes de sauniers.",
+      history: "Le clocher noir et blanc d'Ars, peint en 1840 comme amer pour les navigateurs, domine un village classé parmi les Plus Beaux Villages de France. Le bourg vécut du sel : les marais salants de Fier d'Ars sont exploités depuis le Moyen Âge.",
+      tips: "Nos deux chauffeurs desservent Ars-en-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Saint-Étienne steeple, the marina, the salt marshes and salt workers' huts.",
+      history: "Ars's black-and-white steeple, painted in 1840 as a seamark, rises over a village listed among France's Most Beautiful Villages. Salt made the town: the Fier d'Ars salt marshes have been worked since the Middle Ages.",
+      tips: "Our two drivers serve Ars-en-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/007_-_Eglise_Saint-Etienne_-_Ars_en_R%C3%A9.jpg/1920px-007_-_Eglise_Saint-Etienne_-_Ars_en_R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/009_-_Ancienne_raffinerie_%C3%A0_sel_-_Ars_en_R%C3%A9.jpg/1920px-009_-_Ancienne_raffinerie_%C3%A0_sel_-_Ars_en_R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/17019-Ars-en-R%C3%A9-Sols.png/1920px-17019-Ars-en-R%C3%A9-Sols.png"],
+  },
+  {
+    slug: "randonnees-et-balades-a-ars-en-re",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Ars-en-Ré",
+    city: "Ars-en-Ré",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucle des marais du Fier d'Ars, réserve ornithologique de Lilleau des Niges : flamants et avocettes.",
+      history: "Le clocher noir et blanc d'Ars, peint en 1840 comme amer pour les navigateurs, domine un village classé parmi les Plus Beaux Villages de France. Le bourg vécut du sel : les marais salants de Fier d'Ars sont exploités depuis le Moyen Âge.",
+      tips: "Nos deux chauffeurs desservent Ars-en-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Fier d'Ars marsh loop and the Lilleau des Niges bird reserve: flamingos and avocets.",
+      history: "Ars's black-and-white steeple, painted in 1840 as a seamark, rises over a village listed among France's Most Beautiful Villages. Salt made the town: the Fier d'Ars salt marshes have been worked since the Middle Ages.",
+      tips: "Our two drivers serve Ars-en-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/17019-Ars-en-R%C3%A9-argile.jpg/1920px-17019-Ars-en-R%C3%A9-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/9/9f/Clocher_Ars-en-R%C3%A9_018.jpg", "https://upload.wikimedia.org/wikipedia/commons/6/6d/Gare_Ars_en_R%C3%A9.jpg"],
+  },
+  {
+    slug: "ou-manger-a-ars-en-re",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Ars-en-Ré",
+    city: "Ars-en-Ré",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Fleur de sel, huîtres du Fier, glaces au caramel salé et poissons grillés du port.",
+      history: "Le clocher noir et blanc d'Ars, peint en 1840 comme amer pour les navigateurs, domine un village classé parmi les Plus Beaux Villages de France. Le bourg vécut du sel : les marais salants de Fier d'Ars sont exploités depuis le Moyen Âge.",
+      tips: "Nos deux chauffeurs desservent Ars-en-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Fleur de sel, Fier oysters, salted-caramel ice cream and grilled harbour fish.",
+      history: "Ars's black-and-white steeple, painted in 1840 as a seamark, rises over a village listed among France's Most Beautiful Villages. Salt made the town: the Fier d'Ars salt marshes have been worked since the Middle Ages.",
+      tips: "Our two drivers serve Ars-en-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/e/ec/Mairie_Ars_ile_de_Re.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Maison_Ars-en-R%C3%A9.jpg/1920px-Maison_Ars-en-R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/007_-_Eglise_Saint-Etienne_-_Ars_en_R%C3%A9.jpg/1920px-007_-_Eglise_Saint-Etienne_-_Ars_en_R%C3%A9.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-ars-en-re",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Ars-en-Ré",
+    city: "Ars-en-Ré",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Petits hôtels 3 et 4 étoiles à jardin, chambres d'hôtes dans les maisons de sauniers.",
+      history: "Le clocher noir et blanc d'Ars, peint en 1840 comme amer pour les navigateurs, domine un village classé parmi les Plus Beaux Villages de France. Le bourg vécut du sel : les marais salants de Fier d'Ars sont exploités depuis le Moyen Âge.",
+      tips: "Nos deux chauffeurs desservent Ars-en-Ré 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Small three- and four-star hotels with gardens, guesthouses in old salt workers' houses.",
+      history: "Ars's black-and-white steeple, painted in 1840 as a seamark, rises over a village listed among France's Most Beautiful Villages. Salt made the town: the Fier d'Ars salt marshes have been worked since the Middle Ages.",
+      tips: "Our two drivers serve Ars-en-Ré 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/009_-_Ancienne_raffinerie_%C3%A0_sel_-_Ars_en_R%C3%A9.jpg/1920px-009_-_Ancienne_raffinerie_%C3%A0_sel_-_Ars_en_R%C3%A9.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/17019-Ars-en-R%C3%A9-Sols.png/1920px-17019-Ars-en-R%C3%A9-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/17019-Ars-en-R%C3%A9-argile.jpg/1920px-17019-Ars-en-R%C3%A9-argile.jpg"],
+  },
+  {
+    slug: "visiter-la-flotte",
+    category: "visite",
+    dept: "17",
+    name: "Visiter La Flotte",
+    city: "La Flotte",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 27 km de La Rochelle", en: "≈ 27 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Marché médiéval, port à marée, ruines de l'abbaye des Châteliers face à la mer.",
+      history: "La Flotte-en-Ré, également classée Plus Beau Village de France, conserve un marché médiéval sous charpente et l'abbaye cistercienne des Châteliers, fondée en 1156 et ruinée par les troupes anglaises puis par les guerres de Religion.",
+      tips: "Nos deux chauffeurs desservent La Flotte 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The medieval market, the tidal harbour and the seafront ruins of Les Châteliers abbey.",
+      history: "La Flotte-en-Ré, also listed among France's Most Beautiful Villages, keeps a timber-framed medieval market and the Cistercian abbey of Les Châteliers, founded in 1156 and ruined by English troops and the Wars of Religion.",
+      tips: "Our two drivers serve La Flotte 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/002_-_March%C3%A9_m%C3%A9di%C3%A9val_-_La_Flotte.jpg/1920px-002_-_March%C3%A9_m%C3%A9di%C3%A9val_-_La_Flotte.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/004_-_Eglise_Sainte-Catherine_-_La_Flotte.jpg/1920px-004_-_Eglise_Sainte-Catherine_-_La_Flotte.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/106_-_Abbaye_des_Ch%C3%A2teliers_-_La_Flotte.jpg/1920px-106_-_Abbaye_des_Ch%C3%A2teliers_-_La_Flotte.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-la-flotte",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à La Flotte",
+    city: "La Flotte",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 27 km de La Rochelle", en: "≈ 27 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chemin côtier vers Rivedoux et le fort de La Prée, bastion de 1625.",
+      history: "La Flotte-en-Ré, également classée Plus Beau Village de France, conserve un marché médiéval sous charpente et l'abbaye cistercienne des Châteliers, fondée en 1156 et ruinée par les troupes anglaises puis par les guerres de Religion.",
+      tips: "Nos deux chauffeurs desservent La Flotte 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Coastal path towards Rivedoux and Fort de La Prée, a 1625 bastion.",
+      history: "La Flotte-en-Ré, also listed among France's Most Beautiful Villages, keeps a timber-framed medieval market and the Cistercian abbey of Les Châteliers, founded in 1156 and ruined by English troops and the Wars of Religion.",
+      tips: "Our two drivers serve La Flotte 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/17161-La_Flotte-Sols.png/1920px-17161-La_Flotte-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/c/cd/AbbayeNotreDamedeRe_01.JPG", "https://upload.wikimedia.org/wikipedia/commons/b/bb/Enseigne_mairie_La_Flotte.jpg"],
+  },
+  {
+    slug: "ou-manger-a-la-flotte",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à La Flotte",
+    city: "La Flotte",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 27 km de La Rochelle", en: "≈ 27 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Étals du marché couvert le matin, bars à huîtres du quai, tourteaux et bulots.",
+      history: "La Flotte-en-Ré, également classée Plus Beau Village de France, conserve un marché médiéval sous charpente et l'abbaye cistercienne des Châteliers, fondée en 1156 et ruinée par les troupes anglaises puis par les guerres de Religion.",
+      tips: "Nos deux chauffeurs desservent La Flotte 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Covered market stalls in the morning, oyster bars on the quay, crab and whelks.",
+      history: "La Flotte-en-Ré, also listed among France's Most Beautiful Villages, keeps a timber-framed medieval market and the Cistercian abbey of Les Châteliers, founded in 1156 and ruined by English troops and the Wars of Religion.",
+      tips: "Our two drivers serve La Flotte 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/1/19/Fortlapreelaflotte03.jpg", "https://upload.wikimedia.org/wikipedia/commons/0/01/Jetee_port_La_Flotte.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/002_-_March%C3%A9_m%C3%A9di%C3%A9val_-_La_Flotte.jpg/1920px-002_-_March%C3%A9_m%C3%A9di%C3%A9val_-_La_Flotte.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-la-flotte",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à La Flotte",
+    city: "La Flotte",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 27 km de La Rochelle", en: "≈ 27 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 et 4 étoiles à quelques mètres du port, souvent avec piscine et spa.",
+      history: "La Flotte-en-Ré, également classée Plus Beau Village de France, conserve un marché médiéval sous charpente et l'abbaye cistercienne des Châteliers, fondée en 1156 et ruinée par les troupes anglaises puis par les guerres de Religion.",
+      tips: "Nos deux chauffeurs desservent La Flotte 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three- and four-star hotels steps from the harbour, often with pool and spa.",
+      history: "La Flotte-en-Ré, also listed among France's Most Beautiful Villages, keeps a timber-framed medieval market and the Cistercian abbey of Les Châteliers, founded in 1156 and ruined by English troops and the Wars of Religion.",
+      tips: "Our two drivers serve La Flotte 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/004_-_Eglise_Sainte-Catherine_-_La_Flotte.jpg/1920px-004_-_Eglise_Sainte-Catherine_-_La_Flotte.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/106_-_Abbaye_des_Ch%C3%A2teliers_-_La_Flotte.jpg/1920px-106_-_Abbaye_des_Ch%C3%A2teliers_-_La_Flotte.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/17161-La_Flotte-Sols.png/1920px-17161-La_Flotte-Sols.png"],
+  },
+  {
+    slug: "visiter-saint-clement-des-baleines",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Clément-des-Baleines",
+    city: "Saint-Clément-des-Baleines",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 45 km de La Rochelle", en: "≈ 45 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Phare des Baleines, vieille tour de Vauban et estran rocheux de la Conche.",
+      history: "À la pointe ouest de Ré, le phare des Baleines, allumé en 1854, remplace la tour de Vauban de 1682 restée voisine. Ses 257 marches ouvrent sur le pertuis Breton, redouté des marins pour ses hauts-fonds.",
+      tips: "Nos deux chauffeurs desservent Saint-Clément-des-Baleines 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Baleines lighthouse, Vauban's old tower and the rocky Conche foreshore.",
+      history: "At Ré's western tip, the Baleines lighthouse, lit in 1854, replaced Vauban's 1682 tower which still stands beside it. Its 257 steps open onto the Pertuis Breton, feared by sailors for its shallows.",
+      tips: "Our two drivers serve Saint-Clément-des-Baleines 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/171_-_Eglise_Saint-Cl%C3%A9ment_-_St_Cl%C3%A9ment_des_Baleines.jpg/1920px-171_-_Eglise_Saint-Cl%C3%A9ment_-_St_Cl%C3%A9ment_des_Baleines.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/17318-Saint-Cl%C3%A9ment-des-Baleines-Sols.png/1920px-17318-Saint-Cl%C3%A9ment-des-Baleines-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/17318-Saint-Cl%C3%A9ment-des-Baleines-argile.jpg/1920px-17318-Saint-Cl%C3%A9ment-des-Baleines-argile.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-clement-des-baleines",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Clément-des-Baleines",
+    city: "Saint-Clément-des-Baleines",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 45 km de La Rochelle", en: "≈ 45 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier des douaniers le long des dunes, entre forêt du Lizay et plage de la Conche des Baleines.",
+      history: "À la pointe ouest de Ré, le phare des Baleines, allumé en 1854, remplace la tour de Vauban de 1682 restée voisine. Ses 257 marches ouvrent sur le pertuis Breton, redouté des marins pour ses hauts-fonds.",
+      tips: "Nos deux chauffeurs desservent Saint-Clément-des-Baleines 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The customs officers' path along the dunes, between the Lizay forest and Conche des Baleines beach.",
+      history: "At Ré's western tip, the Baleines lighthouse, lit in 1854, replaced Vauban's 1682 tower which still stands beside it. Its 257 steps open onto the Pertuis Breton, feared by sailors for its shallows.",
+      tips: "Our two drivers serve Saint-Clément-des-Baleines 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/174_-_Mairie_-_St_Cl%C3%A9ment_des_Baleines.jpg/1920px-174_-_Mairie_-_St_Cl%C3%A9ment_des_Baleines.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/220_-_Ancien_Phare_des_Baleines_-_St_Cl%C3%A9ment.jpg/1920px-220_-_Ancien_Phare_des_Baleines_-_St_Cl%C3%A9ment.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/609_-_La_c%C3%B4te_pr%C3%A8s_du_Phare_des_Baleines_-_St_Cl%C3%A9ment.jpg/1920px-609_-_La_c%C3%B4te_pr%C3%A8s_du_Phare_des_Baleines_-_St_Cl%C3%A9ment.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-clement-des-baleines",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Clément-des-Baleines",
+    city: "Saint-Clément-des-Baleines",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 45 km de La Rochelle", en: "≈ 45 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Restaurants de plage, moules-frites, poissons du pertuis grillés au feu de bois.",
+      history: "À la pointe ouest de Ré, le phare des Baleines, allumé en 1854, remplace la tour de Vauban de 1682 restée voisine. Ses 257 marches ouvrent sur le pertuis Breton, redouté des marins pour ses hauts-fonds.",
+      tips: "Nos deux chauffeurs desservent Saint-Clément-des-Baleines 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Beach restaurants, moules-frites and wood-fire grilled fish from the strait.",
+      history: "At Ré's western tip, the Baleines lighthouse, lit in 1854, replaced Vauban's 1682 tower which still stands beside it. Its 257 steps open onto the Pertuis Breton, feared by sailors for its shallows.",
+      tips: "Our two drivers serve Saint-Clément-des-Baleines 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/d/d8/Ile-de-Re_vue_du_ciel.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/171_-_Eglise_Saint-Cl%C3%A9ment_-_St_Cl%C3%A9ment_des_Baleines.jpg/1920px-171_-_Eglise_Saint-Cl%C3%A9ment_-_St_Cl%C3%A9ment_des_Baleines.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/17318-Saint-Cl%C3%A9ment-des-Baleines-Sols.png/1920px-17318-Saint-Cl%C3%A9ment-des-Baleines-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-clement-des-baleines",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Clément-des-Baleines",
+    city: "Saint-Clément-des-Baleines",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île de Ré", en: "Area: Île de Ré" },
+      { fr: "≈ 45 km de La Rochelle", en: "≈ 45 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles à l'orée de la forêt, campings haut de gamme et locations de charme.",
+      history: "À la pointe ouest de Ré, le phare des Baleines, allumé en 1854, remplace la tour de Vauban de 1682 restée voisine. Ses 257 marches ouvrent sur le pertuis Breton, redouté des marins pour ses hauts-fonds.",
+      tips: "Nos deux chauffeurs desservent Saint-Clément-des-Baleines 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels at the forest edge, upmarket campsites and character rentals.",
+      history: "At Ré's western tip, the Baleines lighthouse, lit in 1854, replaced Vauban's 1682 tower which still stands beside it. Its 257 steps open onto the Pertuis Breton, feared by sailors for its shallows.",
+      tips: "Our two drivers serve Saint-Clément-des-Baleines 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/17318-Saint-Cl%C3%A9ment-des-Baleines-argile.jpg/1920px-17318-Saint-Cl%C3%A9ment-des-Baleines-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/174_-_Mairie_-_St_Cl%C3%A9ment_des_Baleines.jpg/1920px-174_-_Mairie_-_St_Cl%C3%A9ment_des_Baleines.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/220_-_Ancien_Phare_des_Baleines_-_St_Cl%C3%A9ment.jpg/1920px-220_-_Ancien_Phare_des_Baleines_-_St_Cl%C3%A9ment.jpg"],
+  },
+  {
+    slug: "visiter-saint-pierre-d-oleron",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Pierre-d'Oléron",
+    city: "Saint-Pierre-d'Oléron",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 75 km de La Rochelle", en: "≈ 75 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Lanterne des morts, église Saint-Pierre, marché quotidien et maison des Aïeules.",
+      history: "Capitale historique d'Oléron, Saint-Pierre garde une lanterne des morts du XIIIᵉ siècle, unique sur l'île, et la maison des Aïeules où Pierre Loti repose au jardin. La ville commande depuis toujours les marais et les vignes de l'île.",
+      tips: "Nos deux chauffeurs desservent Saint-Pierre-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The lantern of the dead, Saint-Pierre church, the daily market and the Maison des Aïeules.",
+      history: "Oléron's historic capital, Saint-Pierre keeps a 13th-century lantern of the dead, unique on the island, and the Maison des Aïeules where Pierre Loti is buried in the garden. The town has always governed the island's marshes and vineyards.",
+      tips: "Our two drivers serve Saint-Pierre-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/17%2C_Ile_d%C2%B4Ol%C3%A9ron%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_kissenot._1914.jpg/1920px-17%2C_Ile_d%C2%B4Ol%C3%A9ron%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_kissenot._1914.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballet._V._1915.jpg/1920px-17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballet._V._1915.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballon._1915.jpg/1920px-17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballon._1915.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-pierre-d-oleron",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Pierre-d'Oléron",
+    city: "Saint-Pierre-d'Oléron",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 75 km de La Rochelle", en: "≈ 75 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Pistes cyclables et sentiers vers La Cotinière, premier port de pêche artisanal de la côte.",
+      history: "Capitale historique d'Oléron, Saint-Pierre garde une lanterne des morts du XIIIᵉ siècle, unique sur l'île, et la maison des Aïeules où Pierre Loti repose au jardin. La ville commande depuis toujours les marais et les vignes de l'île.",
+      tips: "Nos deux chauffeurs desservent Saint-Pierre-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Cycle tracks and paths to La Cotinière, the coast's leading small-scale fishing port.",
+      history: "Oléron's historic capital, Saint-Pierre keeps a 13th-century lantern of the dead, unique on the island, and the Maison des Aïeules where Pierre Loti is buried in the garden. The town has always governed the island's marshes and vineyards.",
+      tips: "Our two drivers serve Saint-Pierre-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/17385-Saint-Pierre-d%27Ol%C3%A9ron-Sols.png/1920px-17385-Saint-Pierre-d%27Ol%C3%A9ron-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/17385-Saint-Pierre-d%27Ol%C3%A9ron-argile.jpg/1920px-17385-Saint-Pierre-d%27Ol%C3%A9ron-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Borderie_saint_pierre_d%27oleron_moulin.jpg/1920px-Borderie_saint_pierre_d%27oleron_moulin.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-pierre-d-oleron",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Pierre-d'Oléron",
+    city: "Saint-Pierre-d'Oléron",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 75 km de La Rochelle", en: "≈ 75 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Criée de La Cotinière : soles, bars de ligne, langoustines ; huîtres et vins de pays d'Oléron.",
+      history: "Capitale historique d'Oléron, Saint-Pierre garde une lanterne des morts du XIIIᵉ siècle, unique sur l'île, et la maison des Aïeules où Pierre Loti repose au jardin. La ville commande depuis toujours les marais et les vignes de l'île.",
+      tips: "Nos deux chauffeurs desservent Saint-Pierre-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "La Cotinière fish auction: sole, line-caught bass, langoustines; oysters and island wines.",
+      history: "Oléron's historic capital, Saint-Pierre keeps a 13th-century lantern of the dead, unique on the island, and the Maison des Aïeules where Pierre Loti is buried in the garden. The town has always governed the island's marshes and vineyards.",
+      tips: "Our two drivers serve Saint-Pierre-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Brosen_windrose-fr.svg/1920px-Brosen_windrose-fr.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/City_locator_14.svg/1920px-City_locator_14.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/17%2C_Ile_d%C2%B4Ol%C3%A9ron%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_kissenot._1914.jpg/1920px-17%2C_Ile_d%C2%B4Ol%C3%A9ron%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_kissenot._1914.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-saint-pierre-d-oleron",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Pierre-d'Oléron",
+    city: "Saint-Pierre-d'Oléron",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 75 km de La Rochelle", en: "≈ 75 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles au bourg et sur la côte, résidences 4 étoiles avec spa vers La Cotinière.",
+      history: "Capitale historique d'Oléron, Saint-Pierre garde une lanterne des morts du XIIIᵉ siècle, unique sur l'île, et la maison des Aïeules où Pierre Loti repose au jardin. La ville commande depuis toujours les marais et les vignes de l'île.",
+      tips: "Nos deux chauffeurs desservent Saint-Pierre-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels in town and on the coast, four-star spa residences towards La Cotinière.",
+      history: "Oléron's historic capital, Saint-Pierre keeps a 13th-century lantern of the dead, unique on the island, and the Maison des Aïeules where Pierre Loti is buried in the garden. The town has always governed the island's marshes and vineyards.",
+      tips: "Our two drivers serve Saint-Pierre-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballet._V._1915.jpg/1920px-17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballet._V._1915.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballon._1915.jpg/1920px-17%2C_Ile_d%C2%B4Ol%C3%A9ron_Saint_Pierre%2C_Charente-Maritime%2C_coiffure_ol%C3%A9ronnaise_le_ballon._1915.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/17385-Saint-Pierre-d%27Ol%C3%A9ron-Sols.png/1920px-17385-Saint-Pierre-d%27Ol%C3%A9ron-Sols.png"],
+  },
+  {
+    slug: "visiter-le-chateau-d-oleron",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Le Château-d'Oléron",
+    city: "Le Château-d'Oléron",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Citadelle et remparts, port ostréicole aux cabanes colorées, marché sous halle.",
+      history: "La citadelle du Château, commencée sous Louis XIII et remaniée par Vauban, ferme l'entrée du pertuis de Maumusson. Les cabanes colorées du port ostréicole, autrefois lieux de tri des huîtres, abritent aujourd'hui des ateliers d'artistes.",
+      tips: "Nos deux chauffeurs desservent Le Château-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The citadel and ramparts, the oyster port with its coloured huts, the covered market.",
+      history: "The citadel of Le Château, begun under Louis XIII and reworked by Vauban, closes the Maumusson strait. The colourful huts of the oyster port, once sorting sheds, now house artists' studios.",
+      tips: "Our two drivers serve Le Château-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-Sols.png/1920px-17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-argile.jpg/1920px-17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/305_-_Eglise_Notre-Dame-de-l%27Assomption_-_Ch%C3%A2teau_d%27Ol%C3%A9ron.jpg/1920px-305_-_Eglise_Notre-Dame-de-l%27Assomption_-_Ch%C3%A2teau_d%27Ol%C3%A9ron.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-le-chateau-d-oleron",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Le Château-d'Oléron",
+    city: "Le Château-d'Oléron",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Tour des remparts et sentier des claires ostréicoles jusqu'à Ors.",
+      history: "La citadelle du Château, commencée sous Louis XIII et remaniée par Vauban, ferme l'entrée du pertuis de Maumusson. Les cabanes colorées du port ostréicole, autrefois lieux de tri des huîtres, abritent aujourd'hui des ateliers d'artistes.",
+      tips: "Nos deux chauffeurs desservent Le Château-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "A walk around the ramparts and along the oyster-bed path to Ors.",
+      history: "The citadel of Le Château, begun under Louis XIII and reworked by Vauban, closes the Maumusson strait. The colourful huts of the oyster port, once sorting sheds, now house artists' studios.",
+      tips: "Our two drivers serve Le Château-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/9/91/Alienor.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/1a/Ancienne_gare_de_La_Chevalerie.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/CabaneArtiste.jpg/1920px-CabaneArtiste.jpg"],
+  },
+  {
+    slug: "ou-manger-a-le-chateau-d-oleron",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Le Château-d'Oléron",
+    city: "Le Château-d'Oléron",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Dégustation d'huîtres fines de claire directement chez les ostréiculteurs du port.",
+      history: "La citadelle du Château, commencée sous Louis XIII et remaniée par Vauban, ferme l'entrée du pertuis de Maumusson. Les cabanes colorées du port ostréicole, autrefois lieux de tri des huîtres, abritent aujourd'hui des ateliers d'artistes.",
+      tips: "Nos deux chauffeurs desservent Le Château-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Tasting fines de claire oysters straight from the growers on the harbour.",
+      history: "The citadel of Le Château, begun under Louis XIII and reworked by Vauban, closes the Maumusson strait. The colourful huts of the oyster port, once sorting sheds, now house artists' studios.",
+      tips: "Our two drivers serve Le Château-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/e/e6/Cabanes_ostr%C3%A9icoles_au_Ch%C3%A2teau-d%27Ol%C3%A9ron.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Cabannes_de_p%C3%AAcheur.jpg/1920px-Cabannes_de_p%C3%AAcheur.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-Sols.png/1920px-17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-le-chateau-d-oleron",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Le Château-d'Oléron",
+    city: "Le Château-d'Oléron",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles et maisons d'hôtes dans les rues de la citadelle.",
+      history: "La citadelle du Château, commencée sous Louis XIII et remaniée par Vauban, ferme l'entrée du pertuis de Maumusson. Les cabanes colorées du port ostréicole, autrefois lieux de tri des huîtres, abritent aujourd'hui des ateliers d'artistes.",
+      tips: "Nos deux chauffeurs desservent Le Château-d'Oléron 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels and guesthouses in the citadel streets.",
+      history: "The citadel of Le Château, begun under Louis XIII and reworked by Vauban, closes the Maumusson strait. The colourful huts of the oyster port, once sorting sheds, now house artists' studios.",
+      tips: "Our two drivers serve Le Château-d'Oléron 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-argile.jpg/1920px-17093-Le_Ch%C3%A2teau-d%27Ol%C3%A9ron-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/305_-_Eglise_Notre-Dame-de-l%27Assomption_-_Ch%C3%A2teau_d%27Ol%C3%A9ron.jpg/1920px-305_-_Eglise_Notre-Dame-de-l%27Assomption_-_Ch%C3%A2teau_d%27Ol%C3%A9ron.jpg", "https://upload.wikimedia.org/wikipedia/commons/9/91/Alienor.jpg"],
+  },
+  {
+    slug: "visiter-saint-trojan-les-bains",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Trojan-les-Bains",
+    city: "Saint-Trojan-les-Bains",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 80 km de La Rochelle", en: "≈ 80 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Front de mer 1900, port de plaisance, petit train de la forêt et plage de Gatseau.",
+      history: "Station climatique dès 1900, Saint-Trojan est adossée à une forêt domaniale de 2 000 hectares plantée au XIXᵉ siècle pour fixer les dunes. Le petit train touristique y circule depuis 1963 jusqu'à la plage de Gatseau.",
+      tips: "Nos deux chauffeurs desservent Saint-Trojan-les-Bains 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The 1900s seafront, the marina, the forest train and Gatseau beach.",
+      history: "A climatic resort since 1900, Saint-Trojan backs onto a 2,000-hectare state forest planted in the 19th century to stabilise the dunes. Its little tourist train has run to Gatseau beach since 1963.",
+      tips: "Our two drivers serve Saint-Trojan-les-Bains 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/17411-Saint-Trojan-les-Bains-Sols.png/1920px-17411-Saint-Trojan-les-Bains-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/17411-Saint-Trojan-les-Bains-argile.jpg/1920px-17411-Saint-Trojan-les-Bains-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Arriv%C3%A9e_du_train_en_gare_de_Saint-Trojan-les-Bains.jpg/1920px-Arriv%C3%A9e_du_train_en_gare_de_Saint-Trojan-les-Bains.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-trojan-les-bains",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Trojan-les-Bains",
+    city: "Saint-Trojan-les-Bains",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 80 km de La Rochelle", en: "≈ 80 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentiers forestiers sous les pins maritimes, boucle des dunes jusqu'à la pointe de Manson.",
+      history: "Station climatique dès 1900, Saint-Trojan est adossée à une forêt domaniale de 2 000 hectares plantée au XIXᵉ siècle pour fixer les dunes. Le petit train touristique y circule depuis 1963 jusqu'à la plage de Gatseau.",
+      tips: "Nos deux chauffeurs desservent Saint-Trojan-les-Bains 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Forest trails under maritime pines and a dune loop to the Manson headland.",
+      history: "A climatic resort since 1900, Saint-Trojan backs onto a 2,000-hectare state forest planted in the 19th century to stabilise the dunes. Its little tourist train has run to Gatseau beach since 1963.",
+      tips: "Our two drivers serve Saint-Trojan-les-Bains 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/FR_17_Saint_Trojan_les_Bains_-_%C3%89glise.jpg/1920px-FR_17_Saint_Trojan_les_Bains_-_%C3%89glise.jpg", "https://upload.wikimedia.org/wikipedia/commons/a/af/M%C3%A9morial_d%C3%A9barquement_de_Gatseau.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Plage_de_Gatseau.JPG/1920px-Plage_de_Gatseau.JPG"],
+  },
+  {
+    slug: "ou-manger-a-saint-trojan-les-bains",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Trojan-les-Bains",
+    city: "Saint-Trojan-les-Bains",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 80 km de La Rochelle", en: "≈ 80 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Restaurants de plage, huîtres et pineau en apéritif face au pertuis.",
+      history: "Station climatique dès 1900, Saint-Trojan est adossée à une forêt domaniale de 2 000 hectares plantée au XIXᵉ siècle pour fixer les dunes. Le petit train touristique y circule depuis 1963 jusqu'à la plage de Gatseau.",
+      tips: "Nos deux chauffeurs desservent Saint-Trojan-les-Bains 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Beach restaurants, oysters and pineau as an aperitif facing the strait.",
+      history: "A climatic resort since 1900, Saint-Trojan backs onto a 2,000-hectare state forest planted in the 19th century to stabilise the dunes. Its little tourist train has run to Gatseau beach since 1963.",
+      tips: "Our two drivers serve Saint-Trojan-les-Bains 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/1/10/Plaque_historique_du_d%C3%A9barquement_sur_l%27%C3%AEle_d%27Ol%C3%A9ron.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Saint-Trojan-les-Bains_-_mairie_01.jpg/1920px-Saint-Trojan-les-Bains_-_mairie_01.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/17411-Saint-Trojan-les-Bains-Sols.png/1920px-17411-Saint-Trojan-les-Bains-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-trojan-les-bains",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Trojan-les-Bains",
+    city: "Saint-Trojan-les-Bains",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Île d'Oléron", en: "Area: Île d'Oléron" },
+      { fr: "≈ 80 km de La Rochelle", en: "≈ 80 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles à jardin, thalasso et résidences 4 étoiles en lisière de forêt.",
+      history: "Station climatique dès 1900, Saint-Trojan est adossée à une forêt domaniale de 2 000 hectares plantée au XIXᵉ siècle pour fixer les dunes. Le petit train touristique y circule depuis 1963 jusqu'à la plage de Gatseau.",
+      tips: "Nos deux chauffeurs desservent Saint-Trojan-les-Bains 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star garden hotels, thalassotherapy and four-star residences at the forest edge.",
+      history: "A climatic resort since 1900, Saint-Trojan backs onto a 2,000-hectare state forest planted in the 19th century to stabilise the dunes. Its little tourist train has run to Gatseau beach since 1963.",
+      tips: "Our two drivers serve Saint-Trojan-les-Bains 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/17411-Saint-Trojan-les-Bains-argile.jpg/1920px-17411-Saint-Trojan-les-Bains-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Arriv%C3%A9e_du_train_en_gare_de_Saint-Trojan-les-Bains.jpg/1920px-Arriv%C3%A9e_du_train_en_gare_de_Saint-Trojan-les-Bains.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/FR_17_Saint_Trojan_les_Bains_-_%C3%89glise.jpg/1920px-FR_17_Saint_Trojan_les_Bains_-_%C3%89glise.jpg"],
+  },
+  {
+    slug: "visiter-marennes-hiers-brouage",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Marennes-Hiers-Brouage",
+    city: "Marennes-Hiers-Brouage",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Citadelle de Brouage, halle aux vivres, clocher de Marennes et cité de l'huître.",
+      history: "Brouage, place forte du XVIIᵉ siècle bâtie en pleine mer et patrie de Samuel de Champlain, se retrouva enclavée quand le marais s'envasa. Marennes, elle, a donné son nom à la seule huître française bénéficiant d'une IGP : la Marennes-Oléron affinée en claires.",
+      tips: "Nos deux chauffeurs desservent Marennes-Hiers-Brouage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Brouage citadel, the victuals hall, Marennes bell tower and the oyster centre.",
+      history: "Brouage, a 17th-century fortress built in the open sea and birthplace of Samuel de Champlain, was stranded when the marsh silted up. Marennes gave its name to France's only PGI oyster: the Marennes-Oléron, finished in clay ponds.",
+      tips: "Our two drivers serve Marennes-Hiers-Brouage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/17219-Marennes-Hiers-Brouage-argile.jpg/1920px-17219-Marennes-Hiers-Brouage-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Blue_pencil.svg/1920px-Blue_pencil.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Brosen_windrose-fr.svg/1920px-Brosen_windrose-fr.svg.png"],
+  },
+  {
+    slug: "randonnees-et-balades-a-marennes-hiers-brouage",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Marennes-Hiers-Brouage",
+    city: "Marennes-Hiers-Brouage",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucle des marais de Brouage : 12 km plats entre claires, canaux et hérons.",
+      history: "Brouage, place forte du XVIIᵉ siècle bâtie en pleine mer et patrie de Samuel de Champlain, se retrouva enclavée quand le marais s'envasa. Marennes, elle, a donné son nom à la seule huître française bénéficiant d'une IGP : la Marennes-Oléron affinée en claires.",
+      tips: "Nos deux chauffeurs desservent Marennes-Hiers-Brouage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Brouage marsh loop: 12 flat kilometres between oyster ponds, canals and herons.",
+      history: "Brouage, a 17th-century fortress built in the open sea and birthplace of Samuel de Champlain, was stranded when the marsh silted up. Marennes gave its name to France's only PGI oyster: the Marennes-Oléron, finished in clay ponds.",
+      tips: "Our two drivers serve Marennes-Hiers-Brouage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/City_locator_14.svg/1920px-City_locator_14.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/France_-_17_-_Beaugeay_-_%C3%89glise_Saint_Germain.JPG/1920px-France_-_17_-_Beaugeay_-_%C3%89glise_Saint_Germain.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Info_Simple.svg/1920px-Info_Simple.svg.png"],
+  },
+  {
+    slug: "ou-manger-a-marennes-hiers-brouage",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Marennes-Hiers-Brouage",
+    city: "Marennes-Hiers-Brouage",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Huîtres fines et spéciales de claire, éclade de moules, sur les cabanes du chenal.",
+      history: "Brouage, place forte du XVIIᵉ siècle bâtie en pleine mer et patrie de Samuel de Champlain, se retrouva enclavée quand le marais s'envasa. Marennes, elle, a donné son nom à la seule huître française bénéficiant d'une IGP : la Marennes-Oléron affinée en claires.",
+      tips: "Nos deux chauffeurs desservent Marennes-Hiers-Brouage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Fines and spéciales de claire oysters, pine-needle mussels, in the channel-side huts.",
+      history: "Brouage, a 17th-century fortress built in the open sea and birthplace of Samuel de Champlain, was stranded when the marsh silted up. Marennes gave its name to France's only PGI oyster: the Marennes-Oléron, finished in clay ponds.",
+      tips: "Our two drivers serve Marennes-Hiers-Brouage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Marennes-Eglise.jpg/1920px-Marennes-Eglise.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/ba/Marennes-Hiers-Brouage_OSM_01.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/17219-Marennes-Hiers-Brouage-argile.jpg/1920px-17219-Marennes-Hiers-Brouage-argile.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-marennes-hiers-brouage",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Marennes-Hiers-Brouage",
+    city: "Marennes-Hiers-Brouage",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles à Marennes, chambres d'hôtes dans les fermes du marais.",
+      history: "Brouage, place forte du XVIIᵉ siècle bâtie en pleine mer et patrie de Samuel de Champlain, se retrouva enclavée quand le marais s'envasa. Marennes, elle, a donné son nom à la seule huître française bénéficiant d'une IGP : la Marennes-Oléron affinée en claires.",
+      tips: "Nos deux chauffeurs desservent Marennes-Hiers-Brouage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Two- and three-star hotels in Marennes, guesthouses in marsh farmhouses.",
+      history: "Brouage, a 17th-century fortress built in the open sea and birthplace of Samuel de Champlain, was stranded when the marsh silted up. Marennes gave its name to France's only PGI oyster: the Marennes-Oléron, finished in clay ponds.",
+      tips: "Our two drivers serve Marennes-Hiers-Brouage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Blue_pencil.svg/1920px-Blue_pencil.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Brosen_windrose-fr.svg/1920px-Brosen_windrose-fr.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/City_locator_14.svg/1920px-City_locator_14.svg.png"],
+  },
+  {
+    slug: "visiter-fouras",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Fouras",
+    city: "Fouras",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Fort Vauban et son musée, pointe de la Fumée, vue sur Fort Boyard et l'île d'Aix.",
+      history: "Presqu'île avancée dans l'estuaire, Fouras a vu Napoléon s'embarquer en 1815 avant sa reddition. Son donjon médiéval, remanié par Vauban, surveille la rade d'où part le bac pour l'île d'Aix et où se dresse Fort Boyard, achevé en 1857.",
+      tips: "Nos deux chauffeurs desservent Fouras 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Fort Vauban and its museum, the Pointe de la Fumée, views of Fort Boyard and Île d'Aix.",
+      history: "A peninsula reaching into the estuary, Fouras saw Napoleon embark in 1815 before his surrender. Its medieval keep, reworked by Vauban, watches the roadstead where the Île d'Aix ferry leaves and Fort Boyard, completed in 1857, stands offshore.",
+      tips: "Our two drivers serve Fouras 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/012_-_Grande_Plage_-_Fouras.jpg/1920px-012_-_Grande_Plage_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/16/097_-_Eglise_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/1013_-_Halte_ferroviaire_-_St_Laurent_de_la_Pr%C3%A9e.jpg/1920px-1013_-_Halte_ferroviaire_-_St_Laurent_de_la_Pr%C3%A9e.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-fouras",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Fouras",
+    city: "Fouras",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier des quatre plages jusqu'à la pointe de la Fumée, entre carrelets et parcs à huîtres.",
+      history: "Presqu'île avancée dans l'estuaire, Fouras a vu Napoléon s'embarquer en 1815 avant sa reddition. Son donjon médiéval, remanié par Vauban, surveille la rade d'où part le bac pour l'île d'Aix et où se dresse Fort Boyard, achevé en 1857.",
+      tips: "Nos deux chauffeurs desservent Fouras 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The four-beaches path to the Pointe de la Fumée, past fishing huts and oyster beds.",
+      history: "A peninsula reaching into the estuary, Fouras saw Napoleon embark in 1815 before his surrender. Its medieval keep, reworked by Vauban, watches the roadstead where the Île d'Aix ferry leaves and Fort Boyard, completed in 1857, stands offshore.",
+      tips: "Our two drivers serve Fouras 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/138_-_Halle_aux_poissons_-_Fouras.jpg/1920px-138_-_Halle_aux_poissons_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/150_-_Ch%C3%A2teau_Treuil-Bussac_-_Fouras.jpg/1920px-150_-_Ch%C3%A2teau_Treuil-Bussac_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/153_-_Plage_Nord_-_Fouras.jpg/1920px-153_-_Plage_Nord_-_Fouras.jpg"],
+  },
+  {
+    slug: "ou-manger-a-fouras",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Fouras",
+    city: "Fouras",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Huîtres de la Fumée, crevettes grises, restaurants de bord de plage.",
+      history: "Presqu'île avancée dans l'estuaire, Fouras a vu Napoléon s'embarquer en 1815 avant sa reddition. Son donjon médiéval, remanié par Vauban, surveille la rade d'où part le bac pour l'île d'Aix et où se dresse Fort Boyard, achevé en 1857.",
+      tips: "Nos deux chauffeurs desservent Fouras 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Fumée oysters, brown shrimp and beachside restaurants.",
+      history: "A peninsula reaching into the estuary, Fouras saw Napoleon embark in 1815 before his surrender. Its medieval keep, reworked by Vauban, watches the roadstead where the Île d'Aix ferry leaves and Fort Boyard, completed in 1857, stands offshore.",
+      tips: "Our two drivers serve Fouras 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/155_-_Villa_Plage_Nord_-_Fouras.jpg/1920px-155_-_Villa_Plage_Nord_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/f/f9/156_-_Villa_Plage_Nord_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/012_-_Grande_Plage_-_Fouras.jpg/1920px-012_-_Grande_Plage_-_Fouras.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-fouras",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Fouras",
+    city: "Fouras",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles familiaux, résidences face à la rade.",
+      history: "Presqu'île avancée dans l'estuaire, Fouras a vu Napoléon s'embarquer en 1815 avant sa reddition. Son donjon médiéval, remanié par Vauban, surveille la rade d'où part le bac pour l'île d'Aix et où se dresse Fort Boyard, achevé en 1857.",
+      tips: "Nos deux chauffeurs desservent Fouras 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Family two- and three-star hotels and residences facing the roadstead.",
+      history: "A peninsula reaching into the estuary, Fouras saw Napoleon embark in 1815 before his surrender. Its medieval keep, reworked by Vauban, watches the roadstead where the Île d'Aix ferry leaves and Fort Boyard, completed in 1857, stands offshore.",
+      tips: "Our two drivers serve Fouras 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/1/16/097_-_Eglise_-_Fouras.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/1013_-_Halte_ferroviaire_-_St_Laurent_de_la_Pr%C3%A9e.jpg/1920px-1013_-_Halte_ferroviaire_-_St_Laurent_de_la_Pr%C3%A9e.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/138_-_Halle_aux_poissons_-_Fouras.jpg/1920px-138_-_Halle_aux_poissons_-_Fouras.jpg"],
+  },
+  {
+    slug: "visiter-chatelaillon-plage",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Châtelaillon-Plage",
+    city: "Châtelaillon-Plage",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Front de mer, villas éclectiques, marché couvert et casino.",
+      history: "Capitale de l'Aunis au Xᵉ siècle, l'ancienne cité de Castrum Allionis a été engloutie par la mer ; la station renaît avec le chemin de fer et ses villas balnéaires 1900 alignées sur trois kilomètres de sable.",
+      tips: "Nos deux chauffeurs desservent Châtelaillon-Plage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The seafront, eclectic villas, the covered market and the casino.",
+      history: "Capital of the Aunis in the 10th century, the old town of Castrum Allionis was swallowed by the sea; the resort was reborn with the railway and its 1900s villas along three kilometres of sand.",
+      tips: "Our two drivers serve Châtelaillon-Plage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/5/57/003_Salles-sur-Mer_%28_17220_%29.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/1604_-_Claude_Chastillon_-_Ancienne_ville_et_forteresse_de_Ch%C3%A2telaillon.jpg/1920px-1604_-_Claude_Chastillon_-_Ancienne_ville_et_forteresse_de_Ch%C3%A2telaillon.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/17094-Ch%C3%A2telaillon-Plage-Sols.png/1920px-17094-Ch%C3%A2telaillon-Plage-Sols.png"],
+  },
+  {
+    slug: "randonnees-et-balades-a-chatelaillon-plage",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Châtelaillon-Plage",
+    city: "Châtelaillon-Plage",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Promenade littorale vers la pointe du Rocher et les marais d'Yves, réserve naturelle d'oiseaux.",
+      history: "Capitale de l'Aunis au Xᵉ siècle, l'ancienne cité de Castrum Allionis a été engloutie par la mer ; la station renaît avec le chemin de fer et ses villas balnéaires 1900 alignées sur trois kilomètres de sable.",
+      tips: "Nos deux chauffeurs desservent Châtelaillon-Plage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Coastal walk to the Pointe du Rocher and the Yves marshes bird reserve.",
+      history: "Capital of the Aunis in the 10th century, the old town of Castrum Allionis was swallowed by the sea; the resort was reborn with the railway and its 1900s villas along three kilometres of sand.",
+      tips: "Our two drivers serve Châtelaillon-Plage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/17094-Ch%C3%A2telaillon-Plage-argile.jpg/1920px-17094-Ch%C3%A2telaillon-Plage-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/202_-_Eglise_Saint-Etienne_-_Yves.jpg/1920px-202_-_Eglise_Saint-Etienne_-_Yves.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/282_-_Les_Boucholeurs_-_Chatelaillon.jpg/1920px-282_-_Les_Boucholeurs_-_Chatelaillon.jpg"],
+  },
+  {
+    slug: "ou-manger-a-chatelaillon-plage",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Châtelaillon-Plage",
+    city: "Châtelaillon-Plage",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Bars à huîtres du front de mer, poissons grillés, marché le matin.",
+      history: "Capitale de l'Aunis au Xᵉ siècle, l'ancienne cité de Castrum Allionis a été engloutie par la mer ; la station renaît avec le chemin de fer et ses villas balnéaires 1900 alignées sur trois kilomètres de sable.",
+      tips: "Nos deux chauffeurs desservent Châtelaillon-Plage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Seafront oyster bars, grilled fish and a morning market.",
+      history: "Capital of the Aunis in the 10th century, the old town of Castrum Allionis was swallowed by the sea; the resort was reborn with the railway and its 1900s villas along three kilometres of sand.",
+      tips: "Our two drivers serve Châtelaillon-Plage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/693_-_Eglise_de_Saint-Vivien_-_St_Vivien.jpg/1920px-693_-_Eglise_de_Saint-Vivien_-_St_Vivien.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/694_-_Casino_-_Ch%C3%A2telaillon.jpg/1920px-694_-_Casino_-_Ch%C3%A2telaillon.jpg", "https://upload.wikimedia.org/wikipedia/commons/5/57/003_Salles-sur-Mer_%28_17220_%29.JPG"],
+  },
+  {
+    slug: "ou-dormir-a-chatelaillon-plage",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Châtelaillon-Plage",
+    city: "Châtelaillon-Plage",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 et 4 étoiles avec spa marin face à la plage.",
+      history: "Capitale de l'Aunis au Xᵉ siècle, l'ancienne cité de Castrum Allionis a été engloutie par la mer ; la station renaît avec le chemin de fer et ses villas balnéaires 1900 alignées sur trois kilomètres de sable.",
+      tips: "Nos deux chauffeurs desservent Châtelaillon-Plage 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three- and four-star hotels with sea spa facing the beach.",
+      history: "Capital of the Aunis in the 10th century, the old town of Castrum Allionis was swallowed by the sea; the resort was reborn with the railway and its 1900s villas along three kilometres of sand.",
+      tips: "Our two drivers serve Châtelaillon-Plage 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/1604_-_Claude_Chastillon_-_Ancienne_ville_et_forteresse_de_Ch%C3%A2telaillon.jpg/1920px-1604_-_Claude_Chastillon_-_Ancienne_ville_et_forteresse_de_Ch%C3%A2telaillon.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/17094-Ch%C3%A2telaillon-Plage-Sols.png/1920px-17094-Ch%C3%A2telaillon-Plage-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/17094-Ch%C3%A2telaillon-Plage-argile.jpg/1920px-17094-Ch%C3%A2telaillon-Plage-argile.jpg"],
+  },
+  {
+    slug: "visiter-talmont-sur-gironde",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Talmont-sur-Gironde",
+    city: "Talmont-sur-Gironde",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Église Sainte-Radegonde, ruelles à roses trémières, remparts et carrelets sur pilotis.",
+      history: "Bastide fondée en 1284 par Édouard Iᵉʳ d'Angleterre, Talmont s'accroche à une falaise au-dessus de l'estuaire. Son église romane Sainte-Radegonde, du XIIᵉ siècle, servait d'amer aux pèlerins de Saint-Jacques embarqués sur la Gironde.",
+      tips: "Nos deux chauffeurs desservent Talmont-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Sainte-Radegonde church, hollyhock lanes, ramparts and stilted fishing huts.",
+      history: "A bastide founded in 1284 by Edward I of England, Talmont clings to a cliff above the estuary. Its 12th-century Romanesque church of Sainte-Radegonde served as a landmark for pilgrims sailing the Gironde.",
+      tips: "Our two drivers serve Talmont-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/17437-Talmont-sur-Gironde-Sols.png/1920px-17437-Talmont-sur-Gironde-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/17437-Talmont-sur-Gironde-argile.jpg/1920px-17437-Talmont-sur-Gironde-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Bastide_Talmont-sur-Gironde.jpg/1920px-Bastide_Talmont-sur-Gironde.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-talmont-sur-gironde",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Talmont-sur-Gironde",
+    city: "Talmont-sur-Gironde",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier de l'estuaire vers Barzan et le site gallo-romain du Fâ.",
+      history: "Bastide fondée en 1284 par Édouard Iᵉʳ d'Angleterre, Talmont s'accroche à une falaise au-dessus de l'estuaire. Son église romane Sainte-Radegonde, du XIIᵉ siècle, servait d'amer aux pèlerins de Saint-Jacques embarqués sur la Gironde.",
+      tips: "Nos deux chauffeurs desservent Talmont-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The estuary path towards Barzan and the Gallo-Roman site of Le Fâ.",
+      history: "A bastide founded in 1284 by Edward I of England, Talmont clings to a cliff above the estuary. Its 12th-century Romanesque church of Sainte-Radegonde served as a landmark for pilgrims sailing the Gironde.",
+      tips: "Our two drivers serve Talmont-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/4/4f/EdwardI-Cassell.jpg", "https://upload.wikimedia.org/wikipedia/commons/5/51/Remparttalmon2.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Talmont-sur-Gironde_17_Baie%26estuaire_2013.jpg/1920px-Talmont-sur-Gironde_17_Baie%26estuaire_2013.jpg"],
+  },
+  {
+    slug: "ou-manger-a-talmont-sur-gironde",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Talmont-sur-Gironde",
+    city: "Talmont-sur-Gironde",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Bars à vin, produits de l'estuaire et esturgeon fumé de Gironde.",
+      history: "Bastide fondée en 1284 par Édouard Iᵉʳ d'Angleterre, Talmont s'accroche à une falaise au-dessus de l'estuaire. Son église romane Sainte-Radegonde, du XIIᵉ siècle, servait d'amer aux pèlerins de Saint-Jacques embarqués sur la Gironde.",
+      tips: "Nos deux chauffeurs desservent Talmont-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Wine bars, estuary produce and smoked Gironde sturgeon.",
+      history: "A bastide founded in 1284 by Edward I of England, Talmont clings to a cliff above the estuary. Its 12th-century Romanesque church of Sainte-Radegonde served as a landmark for pilgrims sailing the Gironde.",
+      tips: "Our two drivers serve Talmont-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Talmont-sur-Gironde_17_%C3%89glise_chevet_2013.jpg/1920px-Talmont-sur-Gironde_17_%C3%89glise_chevet_2013.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Talmont-sur-Gironde_Cimeti%C3%A8re.jpg/1920px-Talmont-sur-Gironde_Cimeti%C3%A8re.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/17437-Talmont-sur-Gironde-Sols.png/1920px-17437-Talmont-sur-Gironde-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-talmont-sur-gironde",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Talmont-sur-Gironde",
+    city: "Talmont-sur-Gironde",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes du village, hôtels 3 étoiles à Meschers et Cozes.",
+      history: "Bastide fondée en 1284 par Édouard Iᵉʳ d'Angleterre, Talmont s'accroche à une falaise au-dessus de l'estuaire. Son église romane Sainte-Radegonde, du XIIᵉ siècle, servait d'amer aux pèlerins de Saint-Jacques embarqués sur la Gironde.",
+      tips: "Nos deux chauffeurs desservent Talmont-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Village guesthouses, three-star hotels in Meschers and Cozes.",
+      history: "A bastide founded in 1284 by Edward I of England, Talmont clings to a cliff above the estuary. Its 12th-century Romanesque church of Sainte-Radegonde served as a landmark for pilgrims sailing the Gironde.",
+      tips: "Our two drivers serve Talmont-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/17437-Talmont-sur-Gironde-argile.jpg/1920px-17437-Talmont-sur-Gironde-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Bastide_Talmont-sur-Gironde.jpg/1920px-Bastide_Talmont-sur-Gironde.jpg", "https://upload.wikimedia.org/wikipedia/commons/4/4f/EdwardI-Cassell.jpg"],
+  },
+  {
+    slug: "visiter-mornac-sur-seudre",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Mornac-sur-Seudre",
+    city: "Mornac-sur-Seudre",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Église romane fortifiée, halle, ruelles blanches et cabanes ostréicoles du chenal.",
+      history: "Classé Plus Beau Village de France, Mornac vit du sel et de l'huître depuis le Moyen Âge. Son église fortifiée du XIᵉ siècle et sa halle du XVIᵉ siècle veillent sur un port de chenal où les gabares chargeaient jadis le sel de la Seudre.",
+      tips: "Nos deux chauffeurs desservent Mornac-sur-Seudre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The fortified Romanesque church, the market hall, whitewashed lanes and oyster huts.",
+      history: "Listed among France's Most Beautiful Villages, Mornac has lived on salt and oysters since the Middle Ages. Its 11th-century fortified church and 16th-century market hall watch over a channel port where barges once loaded Seudre salt.",
+      tips: "Our two drivers serve Mornac-sur-Seudre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/17247-Mornac-sur-Seudre-Sols.png/1920px-17247-Mornac-sur-Seudre-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/17247-Mornac-sur-Seudre-argile.jpg/1920px-17247-Mornac-sur-Seudre-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/692_-_Eglise_Saint-Pierre_vue_arri%C3%A8re_-_Mornac_sur_Seudre.jpg/1920px-692_-_Eglise_Saint-Pierre_vue_arri%C3%A8re_-_Mornac_sur_Seudre.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-mornac-sur-seudre",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Mornac-sur-Seudre",
+    city: "Mornac-sur-Seudre",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucle des marais salants de la Seudre, embarquement possible en yole.",
+      history: "Classé Plus Beau Village de France, Mornac vit du sel et de l'huître depuis le Moyen Âge. Son église fortifiée du XIᵉ siècle et sa halle du XVIᵉ siècle veillent sur un port de chenal où les gabares chargeaient jadis le sel de la Seudre.",
+      tips: "Nos deux chauffeurs desservent Mornac-sur-Seudre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "A loop through the Seudre salt marshes, with rowing-boat trips available.",
+      history: "Listed among France's Most Beautiful Villages, Mornac has lived on salt and oysters since the Middle Ages. Its 11th-century fortified church and 16th-century market hall watch over a channel port where barges once loaded Seudre salt.",
+      tips: "Our two drivers serve Mornac-sur-Seudre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/695_-_Eglise_Saint-Pierre_nef_-_Mornac_sur_Seudre.jpg/1920px-695_-_Eglise_Saint-Pierre_nef_-_Mornac_sur_Seudre.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/697_-_Rue_ancienne_maisons_et_%C3%A9glise_-_Mornac_sur_Seudre.jpg/1920px-697_-_Rue_ancienne_maisons_et_%C3%A9glise_-_Mornac_sur_Seudre.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/699_-_Phare_m%C3%A9di%C3%A9val_-_Mornac_sur_Seudre.jpg/1920px-699_-_Phare_m%C3%A9di%C3%A9val_-_Mornac_sur_Seudre.jpg"],
+  },
+  {
+    slug: "ou-manger-a-mornac-sur-seudre",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Mornac-sur-Seudre",
+    city: "Mornac-sur-Seudre",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Huîtres de la Seudre en cabane, sel et salicorne.",
+      history: "Classé Plus Beau Village de France, Mornac vit du sel et de l'huître depuis le Moyen Âge. Son église fortifiée du XIᵉ siècle et sa halle du XVIᵉ siècle veillent sur un port de chenal où les gabares chargeaient jadis le sel de la Seudre.",
+      tips: "Nos deux chauffeurs desservent Mornac-sur-Seudre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Seudre oysters in the huts, salt and samphire.",
+      history: "Listed among France's Most Beautiful Villages, Mornac has lived on salt and oysters since the Middle Ages. Its 11th-century fortified church and 16th-century market hall watch over a channel port where barges once loaded Seudre salt.",
+      tips: "Our two drivers serve Mornac-sur-Seudre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Ch%C3%A2teau_de_Mornac-sur-Seudre.jpg/1920px-Ch%C3%A2teau_de_Mornac-sur-Seudre.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Eglise_de_Mornac3.jpg/1920px-Eglise_de_Mornac3.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/17247-Mornac-sur-Seudre-Sols.png/1920px-17247-Mornac-sur-Seudre-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-mornac-sur-seudre",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Mornac-sur-Seudre",
+    city: "Mornac-sur-Seudre",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes de charme, hôtels 3 étoiles à Saujon et Royan.",
+      history: "Classé Plus Beau Village de France, Mornac vit du sel et de l'huître depuis le Moyen Âge. Son église fortifiée du XIᵉ siècle et sa halle du XVIᵉ siècle veillent sur un port de chenal où les gabares chargeaient jadis le sel de la Seudre.",
+      tips: "Nos deux chauffeurs desservent Mornac-sur-Seudre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Charming guesthouses, three-star hotels in Saujon and Royan.",
+      history: "Listed among France's Most Beautiful Villages, Mornac has lived on salt and oysters since the Middle Ages. Its 11th-century fortified church and 16th-century market hall watch over a channel port where barges once loaded Seudre salt.",
+      tips: "Our two drivers serve Mornac-sur-Seudre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/17247-Mornac-sur-Seudre-argile.jpg/1920px-17247-Mornac-sur-Seudre-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/692_-_Eglise_Saint-Pierre_vue_arri%C3%A8re_-_Mornac_sur_Seudre.jpg/1920px-692_-_Eglise_Saint-Pierre_vue_arri%C3%A8re_-_Mornac_sur_Seudre.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/695_-_Eglise_Saint-Pierre_nef_-_Mornac_sur_Seudre.jpg/1920px-695_-_Eglise_Saint-Pierre_nef_-_Mornac_sur_Seudre.jpg"],
+  },
+  {
+    slug: "visiter-la-tremblade",
+    category: "visite",
+    dept: "17",
+    name: "Visiter La Tremblade",
+    city: "La Tremblade",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Phare de la Coubre, chenal ostréicole, plages sauvages de la Côte sauvage.",
+      history: "La Tremblade est la porte de la forêt de la Coubre, 8 000 hectares de pins plantés à partir de 1808 pour fixer les dunes les plus mobiles d'Europe. Son chenal de Ronce-les-Bains reste l'un des grands ports ostréicoles de la Seudre.",
+      tips: "Nos deux chauffeurs desservent La Tremblade 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Coubre lighthouse, the oyster channel and the wild beaches of the Côte Sauvage.",
+      history: "La Tremblade is the gateway to the Coubre forest, 8,000 hectares of pines planted from 1808 to fix Europe's most mobile dunes. Its Ronce-les-Bains channel remains a major Seudre oyster port.",
+      tips: "Our two drivers serve La Tremblade 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/17452-La_Tremblade-Sols.png/1920px-17452-La_Tremblade-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/17452-La_Tremblade-argile.jpg/1920px-17452-La_Tremblade-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Centre_de_secours_des_pompiers_de_La_Tremblade.jpg/1920px-Centre_de_secours_des_pompiers_de_La_Tremblade.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-la-tremblade",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à La Tremblade",
+    city: "La Tremblade",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Pistes forestières de la Coubre et sentier des dunes, 20 km praticables à pied ou à vélo.",
+      history: "La Tremblade est la porte de la forêt de la Coubre, 8 000 hectares de pins plantés à partir de 1808 pour fixer les dunes les plus mobiles d'Europe. Son chenal de Ronce-les-Bains reste l'un des grands ports ostréicoles de la Seudre.",
+      tips: "Nos deux chauffeurs desservent La Tremblade 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Coubre forest tracks and dune path, 20 km on foot or by bike.",
+      history: "La Tremblade is the gateway to the Coubre forest, 8,000 hectares of pines planted from 1808 to fix Europe's most mobile dunes. Its Ronce-les-Bains channel remains a major Seudre oyster port.",
+      tips: "Our two drivers serve La Tremblade 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/D25_pr%C3%A8s_du_Gardour.JPG/1920px-D25_pr%C3%A8s_du_Gardour.JPG", "https://upload.wikimedia.org/wikipedia/commons/0/08/Entr%C3%A9e_d%27Arvert_%28retouch%C3%A9e%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/2/26/Eugene_Smurgis.jpg"],
+  },
+  {
+    slug: "ou-manger-a-la-tremblade",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à La Tremblade",
+    city: "La Tremblade",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Huîtres de Ronce, moules de bouchot, restaurants de plage à la Côte sauvage.",
+      history: "La Tremblade est la porte de la forêt de la Coubre, 8 000 hectares de pins plantés à partir de 1808 pour fixer les dunes les plus mobiles d'Europe. Son chenal de Ronce-les-Bains reste l'un des grands ports ostréicoles de la Seudre.",
+      tips: "Nos deux chauffeurs desservent La Tremblade 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Ronce oysters, bouchot mussels and beach restaurants on the Côte Sauvage.",
+      history: "La Tremblade is the gateway to the Coubre forest, 8,000 hectares of pines planted from 1808 to fix Europe's most mobile dunes. Its Ronce-les-Bains channel remains a major Seudre oyster port.",
+      tips: "Our two drivers serve La Tremblade 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/9/90/Female_Pandion.jpg", "https://upload.wikimedia.org/wikipedia/commons/a/a9/Fran%C3%A7ois_F%C3%A9nelon.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/17452-La_Tremblade-Sols.png/1920px-17452-La_Tremblade-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-la-tremblade",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à La Tremblade",
+    city: "La Tremblade",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles à Ronce-les-Bains, campings haut de gamme sous les pins.",
+      history: "La Tremblade est la porte de la forêt de la Coubre, 8 000 hectares de pins plantés à partir de 1808 pour fixer les dunes les plus mobiles d'Europe. Son chenal de Ronce-les-Bains reste l'un des grands ports ostréicoles de la Seudre.",
+      tips: "Nos deux chauffeurs desservent La Tremblade 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels in Ronce-les-Bains, upmarket campsites under the pines.",
+      history: "La Tremblade is the gateway to the Coubre forest, 8,000 hectares of pines planted from 1808 to fix Europe's most mobile dunes. Its Ronce-les-Bains channel remains a major Seudre oyster port.",
+      tips: "Our two drivers serve La Tremblade 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/17452-La_Tremblade-argile.jpg/1920px-17452-La_Tremblade-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Centre_de_secours_des_pompiers_de_La_Tremblade.jpg/1920px-Centre_de_secours_des_pompiers_de_La_Tremblade.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/D25_pr%C3%A8s_du_Gardour.JPG/1920px-D25_pr%C3%A8s_du_Gardour.JPG"],
+  },
+  {
+    slug: "visiter-saint-palais-sur-mer",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Palais-sur-Mer",
+    city: "Saint-Palais-sur-Mer",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 110 km de La Rochelle", en: "≈ 110 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Conche du Platin, rochers du Puits de l'Auture, villas Belle Époque et parc du Golf.",
+      history: "Station née de la mode des bains de mer sous le Second Empire, Saint-Palais aligne villas Belle Époque et conches abritées. Le site du Puits de l'Auture et les rochers de la Grande Côte forment l'un des plus beaux couchers de soleil de l'Atlantique.",
+      tips: "Nos deux chauffeurs desservent Saint-Palais-sur-Mer 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Platin cove, the Puits de l'Auture rocks, Belle Époque villas and the golf park.",
+      history: "A resort born of the Second Empire seaside craze, Saint-Palais lines up Belle Époque villas and sheltered coves. The Puits de l'Auture and the Grande Côte rocks make one of the Atlantic's finest sunsets.",
+      tips: "Our two drivers serve Saint-Palais-sur-Mer 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/17380-Saint-Palais-sur-Mer-Sols.png/1920px-17380-Saint-Palais-sur-Mer-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/17380-Saint-Palais-sur-Mer-argile.jpg/1920px-17380-Saint-Palais-sur-Mer-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/8/89/Ancienne_%C3%A9glise_Saint_Pallais.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-palais-sur-mer",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Palais-sur-Mer",
+    city: "Saint-Palais-sur-Mer",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 110 km de La Rochelle", en: "≈ 110 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier de la Corniche jusqu'à la Grande Côte : 6 km de falaises basses et de pinèdes.",
+      history: "Station née de la mode des bains de mer sous le Second Empire, Saint-Palais aligne villas Belle Époque et conches abritées. Le site du Puits de l'Auture et les rochers de la Grande Côte forment l'un des plus beaux couchers de soleil de l'Atlantique.",
+      tips: "Nos deux chauffeurs desservent Saint-Palais-sur-Mer 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Corniche path to the Grande Côte: 6 km of low cliffs and pine woods.",
+      history: "A resort born of the Second Empire seaside craze, Saint-Palais lines up Belle Époque villas and sheltered coves. The Puits de l'Auture and the Grande Côte rocks make one of the Atlantic's finest sunsets.",
+      tips: "Our two drivers serve Saint-Palais-sur-Mer 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Armand_Guillaumin_-_Saint-Palais%2C_la_Pointe_de_la_Douane%2C_ao%C3%BBt_92%2C_10_heures_du_matin_-_PPP586_-_Mus%C3%A9e_des_Beaux-Arts_de_la_ville_de_Paris.jpg/1920px-Armand_Guillaumin_-_Saint-Palais%2C_la_Pointe_de_la_Douane%2C_ao%C3%BBt_92%2C_10_heures_du_matin_-_PPP586_-_Mus%C3%A9e_des_Beaux-Arts_de_la_ville_de_Paris.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Ecole_de_Saint-Palais.jpg/1920px-Ecole_de_Saint-Palais.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Eglise_de_Saint_Palais_sur_mer.jpg/1920px-Eglise_de_Saint_Palais_sur_mer.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-palais-sur-mer",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Palais-sur-Mer",
+    city: "Saint-Palais-sur-Mer",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 110 km de La Rochelle", en: "≈ 110 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Restaurants de bord de mer, plateaux de fruits de mer et poissons de la criée de Royan.",
+      history: "Station née de la mode des bains de mer sous le Second Empire, Saint-Palais aligne villas Belle Époque et conches abritées. Le site du Puits de l'Auture et les rochers de la Grande Côte forment l'un des plus beaux couchers de soleil de l'Atlantique.",
+      tips: "Nos deux chauffeurs desservent Saint-Palais-sur-Mer 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Seafront restaurants, seafood platters and fish from the Royan auction.",
+      history: "A resort born of the Second Empire seaside craze, Saint-Palais lines up Belle Époque villas and sheltered coves. The Puits de l'Auture and the Grande Côte rocks make one of the Atlantic's finest sunsets.",
+      tips: "Our two drivers serve Saint-Palais-sur-Mer 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/L%27oc%C3%A9an_%C3%A0_Saint-Palais.jpg/1920px-L%27oc%C3%A9an_%C3%A0_Saint-Palais.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Les-carrelets-de-Saint-Palais-sur-Mer-France-DSC_5021.jpg/1920px-Les-carrelets-de-Saint-Palais-sur-Mer-France-DSC_5021.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/17380-Saint-Palais-sur-Mer-Sols.png/1920px-17380-Saint-Palais-sur-Mer-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-palais-sur-mer",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Palais-sur-Mer",
+    city: "Saint-Palais-sur-Mer",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 110 km de La Rochelle", en: "≈ 110 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 et 4 étoiles avec vue mer, résidences familiales dans les pins.",
+      history: "Station née de la mode des bains de mer sous le Second Empire, Saint-Palais aligne villas Belle Époque et conches abritées. Le site du Puits de l'Auture et les rochers de la Grande Côte forment l'un des plus beaux couchers de soleil de l'Atlantique.",
+      tips: "Nos deux chauffeurs desservent Saint-Palais-sur-Mer 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three- and four-star sea-view hotels and family residences among the pines.",
+      history: "A resort born of the Second Empire seaside craze, Saint-Palais lines up Belle Époque villas and sheltered coves. The Puits de l'Auture and the Grande Côte rocks make one of the Atlantic's finest sunsets.",
+      tips: "Our two drivers serve Saint-Palais-sur-Mer 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/17380-Saint-Palais-sur-Mer-argile.jpg/1920px-17380-Saint-Palais-sur-Mer-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/8/89/Ancienne_%C3%A9glise_Saint_Pallais.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Armand_Guillaumin_-_Saint-Palais%2C_la_Pointe_de_la_Douane%2C_ao%C3%BBt_92%2C_10_heures_du_matin_-_PPP586_-_Mus%C3%A9e_des_Beaux-Arts_de_la_ville_de_Paris.jpg/1920px-Armand_Guillaumin_-_Saint-Palais%2C_la_Pointe_de_la_Douane%2C_ao%C3%BBt_92%2C_10_heures_du_matin_-_PPP586_-_Mus%C3%A9e_des_Beaux-Arts_de_la_ville_de_Paris.jpg"],
+  },
+  {
+    slug: "visiter-saint-georges-de-didonne",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Georges-de-Didonne",
+    city: "Saint-Georges-de-Didonne",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Phare de Saint-Georges, pointe de Suzac, parc de l'Estuaire et front de mer.",
+      history: "À l'embouchure de la Gironde, Saint-Georges garde son phare de 1901 et la pointe de Suzac, couverte de blockhaus du Mur de l'Atlantique. Sa plage de deux kilomètres, abritée par la pointe de Vallières, est l'une des plus sûres de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Saint-Georges-de-Didonne 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Saint-Georges lighthouse, Suzac headland, the Estuary park and the seafront.",
+      history: "At the mouth of the Gironde, Saint-Georges keeps its 1901 lighthouse and the Suzac headland, covered with Atlantic Wall bunkers. Its two-kilometre beach, sheltered by the Vallières point, is among the estuary's safest.",
+      tips: "Our two drivers serve Saint-Georges-de-Didonne 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/17333-Saint-Georges-de-Didonne-Sols.png/1920px-17333-Saint-Georges-de-Didonne-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/17333-Saint-Georges-de-Didonne-argile.jpg/1920px-17333-Saint-Georges-de-Didonne-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/a/a0/Aire_du_Poitevin-saintongeais.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-georges-de-didonne",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Georges-de-Didonne",
+    city: "Saint-Georges-de-Didonne",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier de l'estuaire de la pointe de Vallières au bois de Suzac, vue sur Cordouan.",
+      history: "À l'embouchure de la Gironde, Saint-Georges garde son phare de 1901 et la pointe de Suzac, couverte de blockhaus du Mur de l'Atlantique. Sa plage de deux kilomètres, abritée par la pointe de Vallières, est l'une des plus sûres de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Saint-Georges-de-Didonne 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Estuary path from Vallières point to Suzac wood, with views of Cordouan.",
+      history: "At the mouth of the Gironde, Saint-Georges keeps its 1901 lighthouse and the Suzac headland, covered with Atlantic Wall bunkers. Its two-kilometre beach, sheltered by the Vallières point, is among the estuary's safest.",
+      tips: "Our two drivers serve Saint-Georges-de-Didonne 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/7/77/Bundesarchiv_Bild_146-1985-039-04%2C_Frankreich%2C_deutsche_Soldaten_am_Strand.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Bus_Carabus.JPG/1920px-Bus_Carabus.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Ch%C3%A2teau_d%27eau_de_Suzac.JPG/1920px-Ch%C3%A2teau_d%27eau_de_Suzac.JPG"],
+  },
+  {
+    slug: "ou-manger-a-saint-georges-de-didonne",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Georges-de-Didonne",
+    city: "Saint-Georges-de-Didonne",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Cabanes à huîtres, glaciers du front de mer, cuisine de bord d'estuaire.",
+      history: "À l'embouchure de la Gironde, Saint-Georges garde son phare de 1901 et la pointe de Suzac, couverte de blockhaus du Mur de l'Atlantique. Sa plage de deux kilomètres, abritée par la pointe de Vallières, est l'une des plus sûres de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Saint-Georges-de-Didonne 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Oyster huts, seafront ice cream parlours and estuary cooking.",
+      history: "At the mouth of the Gironde, Saint-Georges keeps its 1901 lighthouse and the Suzac headland, covered with Atlantic Wall bunkers. Its two-kilometre beach, sheltered by the Vallières point, is among the estuary's safest.",
+      tips: "Our two drivers serve Saint-Georges-de-Didonne 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/a/ae/Colette_Besson_1.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Complexe_Colette_Besson.jpg/1920px-Complexe_Colette_Besson.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/17333-Saint-Georges-de-Didonne-Sols.png/1920px-17333-Saint-Georges-de-Didonne-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-georges-de-didonne",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Georges-de-Didonne",
+    city: "Saint-Georges-de-Didonne",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Côte de Beauté", en: "Area: Côte de Beauté" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles proches de la plage, résidences de vacances.",
+      history: "À l'embouchure de la Gironde, Saint-Georges garde son phare de 1901 et la pointe de Suzac, couverte de blockhaus du Mur de l'Atlantique. Sa plage de deux kilomètres, abritée par la pointe de Vallières, est l'une des plus sûres de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Saint-Georges-de-Didonne 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Two- and three-star hotels near the beach and holiday residences.",
+      history: "At the mouth of the Gironde, Saint-Georges keeps its 1901 lighthouse and the Suzac headland, covered with Atlantic Wall bunkers. Its two-kilometre beach, sheltered by the Vallières point, is among the estuary's safest.",
+      tips: "Our two drivers serve Saint-Georges-de-Didonne 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/17333-Saint-Georges-de-Didonne-argile.jpg/1920px-17333-Saint-Georges-de-Didonne-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/a/a0/Aire_du_Poitevin-saintongeais.jpg", "https://upload.wikimedia.org/wikipedia/commons/7/77/Bundesarchiv_Bild_146-1985-039-04%2C_Frankreich%2C_deutsche_Soldaten_am_Strand.jpg"],
+  },
+  {
+    slug: "visiter-meschers-sur-gironde",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Meschers-sur-Gironde",
+    city: "Meschers-sur-Gironde",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 100 km de La Rochelle", en: "≈ 100 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Grottes de Régulus et de Matata, port de plaisance, carrelets accrochés à la falaise.",
+      history: "Meschers est célèbre pour ses grottes creusées dans la falaise calcaire, habitées depuis la préhistoire, refuges de protestants puis de contrebandiers, et aujourd'hui aménagées en sites de visite au-dessus de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Meschers-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Régulus and Matata caves, the marina and fishing huts clinging to the cliff.",
+      history: "Meschers is famous for its caves cut into the limestone cliff, inhabited since prehistory, used as refuges by Protestants and smugglers, and now open to visitors above the estuary.",
+      tips: "Our two drivers serve Meschers-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/17230-Meschers-sur-Gironde-Sols.png/1920px-17230-Meschers-sur-Gironde-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/17230-Meschers-sur-Gironde-argile.jpg/1920px-17230-Meschers-sur-Gironde-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/d/dd/Allium_roseum_flor.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-meschers-sur-gironde",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Meschers-sur-Gironde",
+    city: "Meschers-sur-Gironde",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 100 km de La Rochelle", en: "≈ 100 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier des falaises vers Talmont : 7 km au-dessus de la Gironde.",
+      history: "Meschers est célèbre pour ses grottes creusées dans la falaise calcaire, habitées depuis la préhistoire, refuges de protestants puis de contrebandiers, et aujourd'hui aménagées en sites de visite au-dessus de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Meschers-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The cliff path to Talmont: 7 km above the Gironde.",
+      history: "Meschers is famous for its caves cut into the limestone cliff, inhabited since prehistory, used as refuges by Protestants and smugglers, and now open to visitors above the estuary.",
+      tips: "Our two drivers serve Meschers-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/f/f1/Arces_eglise.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Bateaux_%C3%A0_Meschers.jpg/1920px-Bateaux_%C3%A0_Meschers.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Blockhaus_%C3%A0_Suzac.JPG/1920px-Blockhaus_%C3%A0_Suzac.JPG"],
+  },
+  {
+    slug: "ou-manger-a-meschers-sur-gironde",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Meschers-sur-Gironde",
+    city: "Meschers-sur-Gironde",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 100 km de La Rochelle", en: "≈ 100 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Restaurants troglodytiques dans la falaise, poissons de l'estuaire, pibales en saison.",
+      history: "Meschers est célèbre pour ses grottes creusées dans la falaise calcaire, habitées depuis la préhistoire, refuges de protestants puis de contrebandiers, et aujourd'hui aménagées en sites de visite au-dessus de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Meschers-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Troglodyte cliff restaurants, estuary fish and elvers in season.",
+      history: "Meschers is famous for its caves cut into the limestone cliff, inhabited since prehistory, used as refuges by Protestants and smugglers, and now open to visitors above the estuary.",
+      tips: "Our two drivers serve Meschers-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Chateau_d%27eau_de_Meschers.jpg/1920px-Chateau_d%27eau_de_Meschers.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Cognac_glass.jpg/1920px-Cognac_glass.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/17230-Meschers-sur-Gironde-Sols.png/1920px-17230-Meschers-sur-Gironde-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-meschers-sur-gironde",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Meschers-sur-Gironde",
+    city: "Meschers-sur-Gironde",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Estuaire", en: "Area: Estuaire" },
+      { fr: "≈ 100 km de La Rochelle", en: "≈ 100 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles et chambres d'hôtes avec vue sur l'estuaire.",
+      history: "Meschers est célèbre pour ses grottes creusées dans la falaise calcaire, habitées depuis la préhistoire, refuges de protestants puis de contrebandiers, et aujourd'hui aménagées en sites de visite au-dessus de l'estuaire.",
+      tips: "Nos deux chauffeurs desservent Meschers-sur-Gironde 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels and guesthouses with estuary views.",
+      history: "Meschers is famous for its caves cut into the limestone cliff, inhabited since prehistory, used as refuges by Protestants and smugglers, and now open to visitors above the estuary.",
+      tips: "Our two drivers serve Meschers-sur-Gironde 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/17230-Meschers-sur-Gironde-argile.jpg/1920px-17230-Meschers-sur-Gironde-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/d/dd/Allium_roseum_flor.jpg", "https://upload.wikimedia.org/wikipedia/commons/f/f1/Arces_eglise.JPG"],
+  },
+  {
+    slug: "visiter-jonzac",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Jonzac",
+    city: "Jonzac",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Haute-Saintonge", en: "Area: Haute-Saintonge" },
+      { fr: "≈ 120 km de La Rochelle", en: "≈ 120 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Château, cloître des Carmes, moulin de Chez Bret et Antilles de Jonzac.",
+      history: "Jonzac est devenue station thermale en 1979 après le forage d'une eau chaude à 1 800 mètres de profondeur. Son château du XVᵉ siècle, aujourd'hui mairie et sous-préfecture, domine la Seugne et le vieux moulin à eau.",
+      tips: "Nos deux chauffeurs desservent Jonzac 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The castle, the Carmelite cloister, the Chez Bret mill and the Antilles water park.",
+      history: "Jonzac became a spa town in 1979 after hot water was drilled at 1,800 metres. Its 15th-century castle, now town hall and sub-prefecture, overlooks the Seugne and the old water mill.",
+      tips: "Our two drivers serve Jonzac 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/17197-Jonzac-Sols.png/1920px-17197-Jonzac-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/17197-Jonzac-argile.jpg/1920px-17197-Jonzac-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/A%C3%A9rodrome_Jonzac-Neulles3.JPG/1920px-A%C3%A9rodrome_Jonzac-Neulles3.JPG"],
+  },
+  {
+    slug: "randonnees-et-balades-a-jonzac",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Jonzac",
+    city: "Jonzac",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Haute-Saintonge", en: "Area: Haute-Saintonge" },
+      { fr: "≈ 120 km de La Rochelle", en: "≈ 120 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucle de la Seugne et vallée verdoyante vers Saint-Germain-de-Lusignan.",
+      history: "Jonzac est devenue station thermale en 1979 après le forage d'une eau chaude à 1 800 mètres de profondeur. Son château du XVᵉ siècle, aujourd'hui mairie et sous-préfecture, domine la Seugne et le vieux moulin à eau.",
+      tips: "Nos deux chauffeurs desservent Jonzac 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Seugne loop and green valley towards Saint-Germain-de-Lusignan.",
+      history: "Jonzac became a spa town in 1979 after hot water was drilled at 1,800 metres. Its 15th-century castle, now town hall and sub-prefecture, overlooks the Seugne and the old water mill.",
+      tips: "Our two drivers serve Jonzac 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Base_de_loisirs_de_Jonzac.JPG/1920px-Base_de_loisirs_de_Jonzac.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Champagnac.jpg/1920px-Champagnac.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Chateau_de_Jonzac.jpg/1920px-Chateau_de_Jonzac.jpg"],
+  },
+  {
+    slug: "ou-manger-a-jonzac",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Jonzac",
+    city: "Jonzac",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Haute-Saintonge", en: "Area: Haute-Saintonge" },
+      { fr: "≈ 120 km de La Rochelle", en: "≈ 120 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Cuisine de Haute-Saintonge : pineau, cognac, canard et melon.",
+      history: "Jonzac est devenue station thermale en 1979 après le forage d'une eau chaude à 1 800 mètres de profondeur. Son château du XVᵉ siècle, aujourd'hui mairie et sous-préfecture, domine la Seugne et le vieux moulin à eau.",
+      tips: "Nos deux chauffeurs desservent Jonzac 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Haute-Saintonge cooking: pineau, cognac, duck and melon.",
+      history: "Jonzac became a spa town in 1979 after hot water was drilled at 1,800 metres. Its 15th-century castle, now town hall and sub-prefecture, overlooks the Seugne and the old water mill.",
+      tips: "Our two drivers serve Jonzac 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cloitre_des_carmes_jonzac.jpg/1920px-Cloitre_des_carmes_jonzac.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Eglise_d%27Ozillac.jpg/1920px-Eglise_d%27Ozillac.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/17197-Jonzac-Sols.png/1920px-17197-Jonzac-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-jonzac",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Jonzac",
+    city: "Jonzac",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Haute-Saintonge", en: "Area: Haute-Saintonge" },
+      { fr: "≈ 120 km de La Rochelle", en: "≈ 120 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles et résidences thermales, chambres d'hôtes dans les logis.",
+      history: "Jonzac est devenue station thermale en 1979 après le forage d'une eau chaude à 1 800 mètres de profondeur. Son château du XVᵉ siècle, aujourd'hui mairie et sous-préfecture, domine la Seugne et le vieux moulin à eau.",
+      tips: "Nos deux chauffeurs desservent Jonzac 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels and spa residences, guesthouses in old manor houses.",
+      history: "Jonzac became a spa town in 1979 after hot water was drilled at 1,800 metres. Its 15th-century castle, now town hall and sub-prefecture, overlooks the Seugne and the old water mill.",
+      tips: "Our two drivers serve Jonzac 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/17197-Jonzac-argile.jpg/1920px-17197-Jonzac-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/A%C3%A9rodrome_Jonzac-Neulles3.JPG/1920px-A%C3%A9rodrome_Jonzac-Neulles3.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Base_de_loisirs_de_Jonzac.JPG/1920px-Base_de_loisirs_de_Jonzac.JPG"],
+  },
+  {
+    slug: "visiter-saint-jean-d-angely",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Jean-d'Angély",
+    city: "Saint-Jean-d'Angély",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Abbaye royale et tours inachevées, fontaine du Pilori, maisons à pans de bois.",
+      history: "Étape du chemin de Saint-Jacques inscrite à l'UNESCO, la ville s'est développée autour d'une abbaye royale fondée en 817 pour abriter une relique du chef de saint Jean-Baptiste. Ses tours inachevées, chantier arrêté à la Révolution, dominent encore le bourg.",
+      tips: "Nos deux chauffeurs desservent Saint-Jean-d'Angély 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The royal abbey and unfinished towers, the Pilori fountain and half-timbered houses.",
+      history: "A UNESCO-listed stop on the Santiago pilgrim route, the town grew around a royal abbey founded in 817 to house a relic of John the Baptist. Its unfinished towers, abandoned at the Revolution, still dominate the town.",
+      tips: "Our two drivers serve Saint-Jean-d'Angély 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/17347-Saint-Jean-d%27Ang%C3%A9ly-Sols.png/1920px-17347-Saint-Jean-d%27Ang%C3%A9ly-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/17347-Saint-Jean-d%27Ang%C3%A9ly-argile.jpg/1920px-17347-Saint-Jean-d%27Ang%C3%A9ly-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/e/e3/Beffroi_Saint-Jean-d%27Angely.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-jean-d-angely",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Jean-d'Angély",
+    city: "Saint-Jean-d'Angély",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chemin de halage de la Boutonne et boucle des prairies humides.",
+      history: "Étape du chemin de Saint-Jacques inscrite à l'UNESCO, la ville s'est développée autour d'une abbaye royale fondée en 817 pour abriter une relique du chef de saint Jean-Baptiste. Ses tours inachevées, chantier arrêté à la Révolution, dominent encore le bourg.",
+      tips: "Nos deux chauffeurs desservent Saint-Jean-d'Angély 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Boutonne towpath and a loop through the wet meadows.",
+      history: "A UNESCO-listed stop on the Santiago pilgrim route, the town grew around a royal abbey founded in 817 to house a relic of John the Baptist. Its unfinished towers, abandoned at the Revolution, still dominate the town.",
+      tips: "Our two drivers serve Saint-Jean-d'Angély 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/1/1a/Benedictines_St_Jean_dY.jpg", "https://upload.wikimedia.org/wikipedia/commons/e/e2/Ecluses_St_Jean_dY.jpg", "https://upload.wikimedia.org/wikipedia/commons/4/4a/Fontaine_du_Pilori_Saint-Jean-d%27Angely.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-jean-d-angely",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Jean-d'Angély",
+    city: "Saint-Jean-d'Angély",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Marché de Saintonge, chevreau, mojettes et cognac de Petite Champagne.",
+      history: "Étape du chemin de Saint-Jacques inscrite à l'UNESCO, la ville s'est développée autour d'une abbaye royale fondée en 817 pour abriter une relique du chef de saint Jean-Baptiste. Ses tours inachevées, chantier arrêté à la Révolution, dominent encore le bourg.",
+      tips: "Nos deux chauffeurs desservent Saint-Jean-d'Angély 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Saintonge market produce, kid goat, white beans and Petite Champagne cognac.",
+      history: "A UNESCO-listed stop on the Santiago pilgrim route, the town grew around a royal abbey founded in 817 to house a relic of John the Baptist. Its unfinished towers, abandoned at the Revolution, still dominate the town.",
+      tips: "Our two drivers serve Saint-Jean-d'Angély 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/0/03/Les_tours_Saint-Jean-d%27Angely.jpg", "https://upload.wikimedia.org/wikipedia/commons/9/9c/Maison_%C3%A0_colombage2_Saint-Jean-d%27Angely.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/17347-Saint-Jean-d%27Ang%C3%A9ly-Sols.png/1920px-17347-Saint-Jean-d%27Ang%C3%A9ly-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-jean-d-angely",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Jean-d'Angély",
+    city: "Saint-Jean-d'Angély",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles au centre, logis de charme dans la campagne alentour.",
+      history: "Étape du chemin de Saint-Jacques inscrite à l'UNESCO, la ville s'est développée autour d'une abbaye royale fondée en 817 pour abriter une relique du chef de saint Jean-Baptiste. Ses tours inachevées, chantier arrêté à la Révolution, dominent encore le bourg.",
+      tips: "Nos deux chauffeurs desservent Saint-Jean-d'Angély 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Two- and three-star hotels in the centre, charming inns in the surrounding countryside.",
+      history: "A UNESCO-listed stop on the Santiago pilgrim route, the town grew around a royal abbey founded in 817 to house a relic of John the Baptist. Its unfinished towers, abandoned at the Revolution, still dominate the town.",
+      tips: "Our two drivers serve Saint-Jean-d'Angély 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/17347-Saint-Jean-d%27Ang%C3%A9ly-argile.jpg/1920px-17347-Saint-Jean-d%27Ang%C3%A9ly-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/e/e3/Beffroi_Saint-Jean-d%27Angely.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/1a/Benedictines_St_Jean_dY.jpg"],
+  },
+  {
+    slug: "visiter-pons",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Pons",
+    city: "Pons",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 85 km de La Rochelle", en: "≈ 85 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Donjon, hôpital des pèlerins, jardin de l'hôtel de ville et château d'Usson.",
+      history: "Le donjon de Pons, élevé vers 1187 par les puissants sires de Pons, reste l'un des mieux conservés du Sud-Ouest. L'hôpital des pèlerins, du XIIᵉ siècle, est l'un des rares hospices jacquaires encore debout en France, inscrit à l'UNESCO.",
+      tips: "Nos deux chauffeurs desservent Pons 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The keep, the pilgrims' hospital, the town hall garden and Usson castle.",
+      history: "The keep of Pons, raised around 1187 by the powerful lords of Pons, is among the best preserved in south-west France. The 12th-century pilgrims' hospital is one of the rare Santiago hospices still standing, UNESCO-listed.",
+      tips: "Our two drivers serve Pons 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/17283-Pons-Sols.png/1920px-17283-Pons-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/17283-Pons-argile.jpg/1920px-17283-Pons-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Centre-Pons.JPG/1920px-Centre-Pons.JPG"],
+  },
+  {
+    slug: "randonnees-et-balades-a-pons",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Pons",
+    city: "Pons",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 85 km de La Rochelle", en: "≈ 85 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Vallée de la Seugne, moulins et lavoirs, boucle facile de 8 km.",
+      history: "Le donjon de Pons, élevé vers 1187 par les puissants sires de Pons, reste l'un des mieux conservés du Sud-Ouest. L'hôpital des pèlerins, du XIIᵉ siècle, est l'un des rares hospices jacquaires encore debout en France, inscrit à l'UNESCO.",
+      tips: "Nos deux chauffeurs desservent Pons 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Seugne valley, mills and washhouses, an easy 8 km loop.",
+      history: "The keep of Pons, raised around 1187 by the powerful lords of Pons, is among the best preserved in south-west France. The 12th-century pilgrims' hospital is one of the rare Santiago hospices still standing, UNESCO-listed.",
+      tips: "Our two drivers serve Pons 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Chapelle_Saint-Gilles%2C_Pons.jpg/1920px-Chapelle_Saint-Gilles%2C_Pons.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Chapelle_des_Ursulines.jpg/1920px-Chapelle_des_Ursulines.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Ch%C3%A2teau_de_Pons2.JPG/1920px-Ch%C3%A2teau_de_Pons2.JPG"],
+  },
+  {
+    slug: "ou-manger-a-pons",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Pons",
+    city: "Pons",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 85 km de La Rochelle", en: "≈ 85 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Tables de terroir, pineau, grillons et fromages de chèvre de Saintonge.",
+      history: "Le donjon de Pons, élevé vers 1187 par les puissants sires de Pons, reste l'un des mieux conservés du Sud-Ouest. L'hôpital des pèlerins, du XIIᵉ siècle, est l'un des rares hospices jacquaires encore debout en France, inscrit à l'UNESCO.",
+      tips: "Nos deux chauffeurs desservent Pons 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Regional tables, pineau, potted pork and Saintonge goat cheese.",
+      history: "The keep of Pons, raised around 1187 by the powerful lords of Pons, is among the best preserved in south-west France. The 12th-century pilgrims' hospital is one of the rare Santiago hospices still standing, UNESCO-listed.",
+      tips: "Our two drivers serve Pons 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Ch%C3%A2teau_de_Pons4.JPG/1920px-Ch%C3%A2teau_de_Pons4.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Distillerie_du_donjon_04049.JPG/1920px-Distillerie_du_donjon_04049.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/17283-Pons-Sols.png/1920px-17283-Pons-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-pons",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Pons",
+    city: "Pons",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 85 km de La Rochelle", en: "≈ 85 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Logis 3 étoiles et chambres d'hôtes dans les demeures du XVIIIᵉ siècle.",
+      history: "Le donjon de Pons, élevé vers 1187 par les puissants sires de Pons, reste l'un des mieux conservés du Sud-Ouest. L'hôpital des pèlerins, du XIIᵉ siècle, est l'un des rares hospices jacquaires encore debout en France, inscrit à l'UNESCO.",
+      tips: "Nos deux chauffeurs desservent Pons 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star inns and guesthouses in 18th-century houses.",
+      history: "The keep of Pons, raised around 1187 by the powerful lords of Pons, is among the best preserved in south-west France. The 12th-century pilgrims' hospital is one of the rare Santiago hospices still standing, UNESCO-listed.",
+      tips: "Our two drivers serve Pons 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/17283-Pons-argile.jpg/1920px-17283-Pons-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Centre-Pons.JPG/1920px-Centre-Pons.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Chapelle_Saint-Gilles%2C_Pons.jpg/1920px-Chapelle_Saint-Gilles%2C_Pons.jpg"],
+  },
+  {
+    slug: "visiter-surgeres",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Surgères",
+    city: "Surgères",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Enceinte fortifiée, église Notre-Dame, parc du château et École nationale des industries laitières.",
+      history: "Surgères doit sa renommée au beurre AOP Charentes-Poitou, né de la coopération laitière fondée ici en 1888. Son enceinte médiévale de vingt tours enserre l'église romane Notre-Dame, chef-d'œuvre du XIIᵉ siècle à la façade sculptée.",
+      tips: "Nos deux chauffeurs desservent Surgères 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The fortified wall, Notre-Dame church, the castle park and the national dairy school.",
+      history: "Surgères owes its fame to PDO Charentes-Poitou butter, born of the dairy cooperative founded here in 1888. Its medieval wall of twenty towers encloses the Romanesque church of Notre-Dame, a 12th-century masterpiece.",
+      tips: "Our two drivers serve Surgères 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/d/d8/17-Surg%C3%A8res-logis-seigneurial.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/ba/17-Surg%C3%A8res-%C3%A9glise-nord.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/17434-Surg%C3%A8res-Sols.png/1920px-17434-Surg%C3%A8res-Sols.png"],
+  },
+  {
+    slug: "randonnees-et-balades-a-surgeres",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Surgères",
+    city: "Surgères",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucle de la Gères et chemins de plaine vers Saint-Georges-du-Bois.",
+      history: "Surgères doit sa renommée au beurre AOP Charentes-Poitou, né de la coopération laitière fondée ici en 1888. Son enceinte médiévale de vingt tours enserre l'église romane Notre-Dame, chef-d'œuvre du XIIᵉ siècle à la façade sculptée.",
+      tips: "Nos deux chauffeurs desservent Surgères 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Gères loop and plain paths towards Saint-Georges-du-Bois.",
+      history: "Surgères owes its fame to PDO Charentes-Poitou butter, born of the dairy cooperative founded here in 1888. Its medieval wall of twenty towers encloses the Romanesque church of Notre-Dame, a 12th-century masterpiece.",
+      tips: "Our two drivers serve Surgères 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/e/e1/2008-08-Surg%C3%A8res-Castle-townhall.JPG", "https://upload.wikimedia.org/wikipedia/commons/8/84/2008-08-Surg%C3%A8res-Castle.JPG", "https://upload.wikimedia.org/wikipedia/commons/6/66/2008-08-Surg%C3%A8res-Street.JPG"],
+  },
+  {
+    slug: "ou-manger-a-surgeres",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Surgères",
+    city: "Surgères",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Beurre AOP, fromages fermiers et cuisine de plaine à la crème.",
+      history: "Surgères doit sa renommée au beurre AOP Charentes-Poitou, né de la coopération laitière fondée ici en 1888. Son enceinte médiévale de vingt tours enserre l'église romane Notre-Dame, chef-d'œuvre du XIIᵉ siècle à la façade sculptée.",
+      tips: "Nos deux chauffeurs desservent Surgères 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "PDO butter, farm cheeses and creamy plain cooking.",
+      history: "Surgères owes its fame to PDO Charentes-Poitou butter, born of the dairy cooperative founded here in 1888. Its medieval wall of twenty towers encloses the Romanesque church of Notre-Dame, a 12th-century masterpiece.",
+      tips: "Our two drivers serve Surgères 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/8/8f/2008-08-Surg%C3%A8res-markethall.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Ancien_presbyt%C3%A8re_de_Surg%C3%A8res.JPG/1920px-Ancien_presbyt%C3%A8re_de_Surg%C3%A8res.JPG", "https://upload.wikimedia.org/wikipedia/commons/d/d8/17-Surg%C3%A8res-logis-seigneurial.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-surgeres",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Surgères",
+    city: "Surgères",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles près de la gare, gîtes ruraux alentour.",
+      history: "Surgères doit sa renommée au beurre AOP Charentes-Poitou, né de la coopération laitière fondée ici en 1888. Son enceinte médiévale de vingt tours enserre l'église romane Notre-Dame, chef-d'œuvre du XIIᵉ siècle à la façade sculptée.",
+      tips: "Nos deux chauffeurs desservent Surgères 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Two- and three-star hotels near the station and rural gîtes nearby.",
+      history: "Surgères owes its fame to PDO Charentes-Poitou butter, born of the dairy cooperative founded here in 1888. Its medieval wall of twenty towers encloses the Romanesque church of Notre-Dame, a 12th-century masterpiece.",
+      tips: "Our two drivers serve Surgères 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/b/ba/17-Surg%C3%A8res-%C3%A9glise-nord.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/17434-Surg%C3%A8res-Sols.png/1920px-17434-Surg%C3%A8res-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/e/e1/2008-08-Surg%C3%A8res-Castle-townhall.JPG"],
+  },
+  {
+    slug: "visiter-aulnay-de-saintonge",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Aulnay-de-Saintonge",
+    city: "Aulnay-de-Saintonge",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Église Saint-Pierre, cimetière à croix hosannière, halle et vieux bourg.",
+      history: "L'église Saint-Pierre d'Aulnay, bâtie vers 1130 en plein champ, est considérée comme l'un des sommets de l'art roman saintongeais : ses voussures sculptées d'anges, de vieillards et d'animaux fantastiques sont inscrites à l'UNESCO au titre des chemins de Compostelle.",
+      tips: "Nos deux chauffeurs desservent Aulnay-de-Saintonge 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Saint-Pierre church, the cemetery with its hosanna cross, the market hall and old town.",
+      history: "The church of Saint-Pierre in Aulnay, built around 1130 in open fields, is a summit of Saintonge Romanesque art: its carved archivolts of angels, elders and fantastic beasts are UNESCO-listed on the Santiago routes.",
+      tips: "Our two drivers serve Aulnay-de-Saintonge 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/17024-Aulnay-Sols.png/1920px-17024-Aulnay-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/17024-Aulnay-argile.jpg/1920px-17024-Aulnay-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/a/ab/Aulnay1.1.JPG"],
+  },
+  {
+    slug: "randonnees-et-balades-a-aulnay-de-saintonge",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Aulnay-de-Saintonge",
+    city: "Aulnay-de-Saintonge",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier des églises romanes vers Dampierre-sur-Boutonne et son château Renaissance.",
+      history: "L'église Saint-Pierre d'Aulnay, bâtie vers 1130 en plein champ, est considérée comme l'un des sommets de l'art roman saintongeais : ses voussures sculptées d'anges, de vieillards et d'animaux fantastiques sont inscrites à l'UNESCO au titre des chemins de Compostelle.",
+      tips: "Nos deux chauffeurs desservent Aulnay-de-Saintonge 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Romanesque church trail towards Dampierre-sur-Boutonne and its Renaissance castle.",
+      history: "The church of Saint-Pierre in Aulnay, built around 1130 in open fields, is a summit of Saintonge Romanesque art: its carved archivolts of angels, elders and fantastic beasts are UNESCO-listed on the Santiago routes.",
+      tips: "Our two drivers serve Aulnay-de-Saintonge 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/b/bf/Aulnay1.2.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Aulnay_Ancienne_Gare.jpg/1920px-Aulnay_Ancienne_Gare.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Aulnay_Ancienne_%C3%A9cole_des_gar%C3%A7ons.jpg/1920px-Aulnay_Ancienne_%C3%A9cole_des_gar%C3%A7ons.jpg"],
+  },
+  {
+    slug: "ou-manger-a-aulnay-de-saintonge",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Aulnay-de-Saintonge",
+    city: "Aulnay-de-Saintonge",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Auberges de campagne, agneau, mojettes et vins de pays charentais.",
+      history: "L'église Saint-Pierre d'Aulnay, bâtie vers 1130 en plein champ, est considérée comme l'un des sommets de l'art roman saintongeais : ses voussures sculptées d'anges, de vieillards et d'animaux fantastiques sont inscrites à l'UNESCO au titre des chemins de Compostelle.",
+      tips: "Nos deux chauffeurs desservent Aulnay-de-Saintonge 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Country inns, lamb, white beans and local Charentais wines.",
+      history: "The church of Saint-Pierre in Aulnay, built around 1130 in open fields, is a summit of Saintonge Romanesque art: its carved archivolts of angels, elders and fantastic beasts are UNESCO-listed on the Santiago routes.",
+      tips: "Our two drivers serve Aulnay-de-Saintonge 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Aulnay_Eglise_1.jpg/1920px-Aulnay_Eglise_1.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Aulnay_Eglise_2.jpg/1920px-Aulnay_Eglise_2.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/17024-Aulnay-Sols.png/1920px-17024-Aulnay-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-aulnay-de-saintonge",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Aulnay-de-Saintonge",
+    city: "Aulnay-de-Saintonge",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 90 km de La Rochelle", en: "≈ 90 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes dans les logis, hôtels 2 étoiles à Saint-Jean-d'Angély.",
+      history: "L'église Saint-Pierre d'Aulnay, bâtie vers 1130 en plein champ, est considérée comme l'un des sommets de l'art roman saintongeais : ses voussures sculptées d'anges, de vieillards et d'animaux fantastiques sont inscrites à l'UNESCO au titre des chemins de Compostelle.",
+      tips: "Nos deux chauffeurs desservent Aulnay-de-Saintonge 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Guesthouses in old manors, two-star hotels in Saint-Jean-d'Angély.",
+      history: "The church of Saint-Pierre in Aulnay, built around 1130 in open fields, is a summit of Saintonge Romanesque art: its carved archivolts of angels, elders and fantastic beasts are UNESCO-listed on the Santiago routes.",
+      tips: "Our two drivers serve Aulnay-de-Saintonge 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/17024-Aulnay-argile.jpg/1920px-17024-Aulnay-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/a/ab/Aulnay1.1.JPG", "https://upload.wikimedia.org/wikipedia/commons/b/bf/Aulnay1.2.JPG"],
+  },
+  {
+    slug: "visiter-saint-savinien",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Savinien",
+    city: "Saint-Savinien",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Quais du fleuve, église Saint-Savinien, carrières et plage fluviale.",
+      history: "Petite Cité de Caractère posée sur la Charente, Saint-Savinien vécut de la pierre : ses carrières ont fourni le calcaire des fortifications de Rochefort et de nombreuses églises de la région. Le fleuve y forme une boucle bordée de quais et de plages fluviales.",
+      tips: "Nos deux chauffeurs desservent Saint-Savinien 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The river quays, Saint-Savinien church, the quarries and the river beach.",
+      history: "A Petite Cité de Caractère on the Charente, Saint-Savinien lived on stone: its quarries supplied the limestone for Rochefort's fortifications and many regional churches. The river forms a loop lined with quays and river beaches.",
+      tips: "Our two drivers serve Saint-Savinien 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/17397-Saint-Savinien-Sols.png/1920px-17397-Saint-Savinien-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/17397-Saint-Savinien-argile.jpg/1920px-17397-Saint-Savinien-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Echasse_blanche-17.jpg/1920px-Echasse_blanche-17.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-savinien",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Savinien",
+    city: "Saint-Savinien",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chemin de halage vers Taillebourg et le champ de bataille de 1242.",
+      history: "Petite Cité de Caractère posée sur la Charente, Saint-Savinien vécut de la pierre : ses carrières ont fourni le calcaire des fortifications de Rochefort et de nombreuses églises de la région. Le fleuve y forme une boucle bordée de quais et de plages fluviales.",
+      tips: "Nos deux chauffeurs desservent Saint-Savinien 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The towpath to Taillebourg and the 1242 battlefield.",
+      history: "A Petite Cité de Caractère on the Charente, Saint-Savinien lived on stone: its quarries supplied the limestone for Rochefort's fortifications and many regional churches. The river forms a loop lined with quays and river beaches.",
+      tips: "Our two drivers serve Saint-Savinien 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Cuve_baptismale.jpg/1920px-FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Cuve_baptismale.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Ext%C3%A9rieur.jpg/1920px-FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Ext%C3%A9rieur.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Tableau_repr%C3%A9sentant_Saint-Jean-Baptiste.jpg/1920px-FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Tableau_repr%C3%A9sentant_Saint-Jean-Baptiste.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-savinien",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Savinien",
+    city: "Saint-Savinien",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Guinguettes de bord de fleuve, anguilles et cuisine de rivière.",
+      history: "Petite Cité de Caractère posée sur la Charente, Saint-Savinien vécut de la pierre : ses carrières ont fourni le calcaire des fortifications de Rochefort et de nombreuses églises de la région. Le fleuve y forme une boucle bordée de quais et de plages fluviales.",
+      tips: "Nos deux chauffeurs desservent Saint-Savinien 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Riverside guinguettes, eels and river cooking.",
+      history: "A Petite Cité de Caractère on the Charente, Saint-Savinien lived on stone: its quarries supplied the limestone for Rochefort's fortifications and many regional churches. The river forms a loop lined with quays and river beaches.",
+      tips: "Our two drivers serve Saint-Savinien 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/FR_17_Saint-Savinien_-_Cimeti%C3%A8re_des_protestants.jpg/1920px-FR_17_Saint-Savinien_-_Cimeti%C3%A8re_des_protestants.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/FR_17_Saint-Savinien_-_Coulonge-sur-Charente_-_%C3%89glise_Sainte-Marie_de_l%27Assomption_%28sud-est%29.jpg/1920px-FR_17_Saint-Savinien_-_Coulonge-sur-Charente_-_%C3%89glise_Sainte-Marie_de_l%27Assomption_%28sud-est%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/17397-Saint-Savinien-Sols.png/1920px-17397-Saint-Savinien-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saint-savinien",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Savinien",
+    city: "Saint-Savinien",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes sur les quais, hôtels 2 étoiles à Saintes.",
+      history: "Petite Cité de Caractère posée sur la Charente, Saint-Savinien vécut de la pierre : ses carrières ont fourni le calcaire des fortifications de Rochefort et de nombreuses églises de la région. Le fleuve y forme une boucle bordée de quais et de plages fluviales.",
+      tips: "Nos deux chauffeurs desservent Saint-Savinien 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Quayside guesthouses, two-star hotels in Saintes.",
+      history: "A Petite Cité de Caractère on the Charente, Saint-Savinien lived on stone: its quarries supplied the limestone for Rochefort's fortifications and many regional churches. The river forms a loop lined with quays and river beaches.",
+      tips: "Our two drivers serve Saint-Savinien 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/17397-Saint-Savinien-argile.jpg/1920px-17397-Saint-Savinien-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Echasse_blanche-17.jpg/1920px-Echasse_blanche-17.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Cuve_baptismale.jpg/1920px-FR_17_Saint-Savinien_-_Agonnay_-_%C3%89glise_Saint-Germain_-_Cuve_baptismale.jpg"],
+  },
+  {
+    slug: "visiter-saint-porchaire",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saint-Porchaire",
+    city: "Saint-Porchaire",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Château de La Roche-Courbon, jardins à la française, grottes préhistoriques.",
+      history: "À deux pas du bourg, le château de La Roche-Courbon, sauvé de la ruine par Pierre Loti dans un article de 1908 puis restauré avec ses jardins à la française, domine une vallée où des grottes préhistoriques ont livré des occupations vieilles de 100 000 ans.",
+      tips: "Nos deux chauffeurs desservent Saint-Porchaire 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "La Roche-Courbon castle, its formal gardens and prehistoric caves.",
+      history: "Just outside town, the château of La Roche-Courbon — saved from ruin by Pierre Loti's 1908 article and restored with its formal gardens — overlooks a valley whose prehistoric caves reveal 100,000 years of occupation.",
+      tips: "Our two drivers serve Saint-Porchaire 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/6/6b/-25ansparcantonPC.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/17387-Saint-Porchaire-Sols.png/1920px-17387-Saint-Porchaire-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/17387-Saint-Porchaire-argile.jpg/1920px-17387-Saint-Porchaire-argile.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saint-porchaire",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saint-Porchaire",
+    city: "Saint-Porchaire",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentiers du bois de La Roche-Courbon et vallée du Bruant.",
+      history: "À deux pas du bourg, le château de La Roche-Courbon, sauvé de la ruine par Pierre Loti dans un article de 1908 puis restauré avec ses jardins à la française, domine une vallée où des grottes préhistoriques ont livré des occupations vieilles de 100 000 ans.",
+      tips: "Nos deux chauffeurs desservent Saint-Porchaire 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Trails through the Roche-Courbon woods and the Bruant valley.",
+      history: "Just outside town, the château of La Roche-Courbon — saved from ruin by Pierre Loti's 1908 article and restored with its formal gardens — overlooks a valley whose prehistoric caves reveal 100,000 years of occupation.",
+      tips: "Our two drivers serve Saint-Porchaire 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Buste_de_Pierre_Loti_%C3%A0_Saint-Porchaire_%28Charente-Maritime%29.jpg/1920px-Buste_de_Pierre_Loti_%C3%A0_Saint-Porchaire_%28Charente-Maritime%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/8/8c/Gardens.jpg", "https://upload.wikimedia.org/wikipedia/commons/4/40/Grattoirs_car%C3%A9n%C3%A9s.jpg"],
+  },
+  {
+    slug: "ou-manger-a-saint-porchaire",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saint-Porchaire",
+    city: "Saint-Porchaire",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Auberges saintongeaises, produits fermiers et pineau.",
+      history: "À deux pas du bourg, le château de La Roche-Courbon, sauvé de la ruine par Pierre Loti dans un article de 1908 puis restauré avec ses jardins à la française, domine une vallée où des grottes préhistoriques ont livré des occupations vieilles de 100 000 ans.",
+      tips: "Nos deux chauffeurs desservent Saint-Porchaire 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Saintonge inns, farm produce and pineau.",
+      history: "Just outside town, the château of La Roche-Courbon — saved from ruin by Pierre Loti's 1908 article and restored with its formal gardens — overlooks a valley whose prehistoric caves reveal 100,000 years of occupation.",
+      tips: "Our two drivers serve Saint-Porchaire 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Grottes_du_parc_du_Ch%C3%A2teau_de_la_Roche-Corbon_en_1972_%281%29.jpg/1920px-Grottes_du_parc_du_Ch%C3%A2teau_de_la_Roche-Corbon_en_1972_%281%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Grottes_du_parc_du_Ch%C3%A2teau_de_la_Roche-Courbon_en_1972_%282%292.jpg/1920px-Grottes_du_parc_du_Ch%C3%A2teau_de_la_Roche-Courbon_en_1972_%282%292.jpg", "https://upload.wikimedia.org/wikipedia/commons/6/6b/-25ansparcantonPC.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-saint-porchaire",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saint-Porchaire",
+    city: "Saint-Porchaire",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Saintonge", en: "Area: Saintonge" },
+      { fr: "≈ 60 km de La Rochelle", en: "≈ 60 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes de campagne, hôtels 3 étoiles à Saintes et Rochefort.",
+      history: "À deux pas du bourg, le château de La Roche-Courbon, sauvé de la ruine par Pierre Loti dans un article de 1908 puis restauré avec ses jardins à la française, domine une vallée où des grottes préhistoriques ont livré des occupations vieilles de 100 000 ans.",
+      tips: "Nos deux chauffeurs desservent Saint-Porchaire 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Country guesthouses, three-star hotels in Saintes and Rochefort.",
+      history: "Just outside town, the château of La Roche-Courbon — saved from ruin by Pierre Loti's 1908 article and restored with its formal gardens — overlooks a valley whose prehistoric caves reveal 100,000 years of occupation.",
+      tips: "Our two drivers serve Saint-Porchaire 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/17387-Saint-Porchaire-Sols.png/1920px-17387-Saint-Porchaire-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/17387-Saint-Porchaire-argile.jpg/1920px-17387-Saint-Porchaire-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Buste_de_Pierre_Loti_%C3%A0_Saint-Porchaire_%28Charente-Maritime%29.jpg/1920px-Buste_de_Pierre_Loti_%C3%A0_Saint-Porchaire_%28Charente-Maritime%29.jpg"],
+  },
+  {
+    slug: "visiter-ile-d-aix",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Île d'Aix",
+    city: "Île d'Aix",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Îles", en: "Area: Îles" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Musée napoléonien, fort Liédot, phares jumeaux et village aux volets colorés.",
+      history: "Île sans voiture de 130 hectares, Aix fut fortifiée par Vauban puis par Napoléon, qui y passa ses trois derniers jours en France en juillet 1815 avant de se rendre aux Anglais. La maison de l'Empereur est aujourd'hui musée national.",
+      tips: "Nos deux chauffeurs desservent Île d'Aix 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Napoleonic museum, Fort Liédot, the twin lighthouses and the brightly shuttered village.",
+      history: "A car-free island of 130 hectares, Aix was fortified by Vauban and later Napoleon, who spent his last three days in France here in July 1815 before surrendering to the British. The Emperor's house is now a national museum.",
+      tips: "Our two drivers serve Île d'Aix 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/410_-_Eglise_Saint-Martin_chevet_-_Ile_d%27Aix.jpg/1920px-410_-_Eglise_Saint-Martin_chevet_-_Ile_d%27Aix.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Eastlake_-_Napoleon_on_the_Bellerophon.jpg/1920px-Eastlake_-_Napoleon_on_the_Bellerophon.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/17/Ic%C3%B4ne-%C3%AEle.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-ile-d-aix",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Île d'Aix",
+    city: "Île d'Aix",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Îles", en: "Area: Îles" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Tour de l'île à pied : 6 km de sentier littoral, plages et batteries.",
+      history: "Île sans voiture de 130 hectares, Aix fut fortifiée par Vauban puis par Napoléon, qui y passa ses trois derniers jours en France en juillet 1815 avant de se rendre aux Anglais. La maison de l'Empereur est aujourd'hui musée national.",
+      tips: "Nos deux chauffeurs desservent Île d'Aix 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "A walk around the island: 6 km of coast path, beaches and gun batteries.",
+      history: "A car-free island of 130 hectares, Aix was fortified by Vauban and later Napoleon, who spent his last three days in France here in July 1815 before surrendering to the British. The Emperor's house is now a national museum.",
+      tips: "Our two drivers serve Île d'Aix 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/4/44/Jamblet_battery_at_Ile_d%C2%B4Aix.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/La_Favoli%C3%A8re_%28ing%C3%A9nieur%29_-_L%27isle_Madame%2C_l%27isle_d%27Ay_et_fortifications%2C_1672.png/1920px-La_Favoli%C3%A8re_%28ing%C3%A9nieur%29_-_L%27isle_Madame%2C_l%27isle_d%27Ay_et_fortifications%2C_1672.png", "https://upload.wikimedia.org/wikipedia/commons/a/a5/La_Tente_battery_at_%C3%8Ele-d%27Aix.jpg"],
+  },
+  {
+    slug: "ou-manger-a-ile-d-aix",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Île d'Aix",
+    city: "Île d'Aix",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Îles", en: "Area: Îles" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Restaurants du village, huîtres et fruits de mer face à Fort Boyard.",
+      history: "Île sans voiture de 130 hectares, Aix fut fortifiée par Vauban puis par Napoléon, qui y passa ses trois derniers jours en France en juillet 1815 avant de se rendre aux Anglais. La maison de l'Empereur est aujourd'hui musée national.",
+      tips: "Nos deux chauffeurs desservent Île d'Aix 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Village restaurants, oysters and seafood facing Fort Boyard.",
+      history: "A car-free island of 130 hectares, Aix was fortified by Vauban and later Napoleon, who spent his last three days in France here in July 1815 before surrendering to the British. The Emperor's house is now a national museum.",
+      tips: "Our two drivers serve Île d'Aix 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/6/65/Oc%C3%A9an_Atlantique.png", "https://upload.wikimedia.org/wikipedia/commons/c/c1/PixAile3.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/410_-_Eglise_Saint-Martin_chevet_-_Ile_d%27Aix.jpg/1920px-410_-_Eglise_Saint-Martin_chevet_-_Ile_d%27Aix.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-ile-d-aix",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Île d'Aix",
+    city: "Île d'Aix",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Îles", en: "Area: Îles" },
+      { fr: "≈ 40 km de La Rochelle", en: "≈ 40 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Un hôtel de charme sur l'île, hôtels 3 étoiles à Fouras pour l'embarquement.",
+      history: "Île sans voiture de 130 hectares, Aix fut fortifiée par Vauban puis par Napoléon, qui y passa ses trois derniers jours en France en juillet 1815 avant de se rendre aux Anglais. La maison de l'Empereur est aujourd'hui musée national.",
+      tips: "Nos deux chauffeurs desservent Île d'Aix 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "One charming island hotel, three-star hotels in Fouras by the ferry.",
+      history: "A car-free island of 130 hectares, Aix was fortified by Vauban and later Napoleon, who spent his last three days in France here in July 1815 before surrendering to the British. The Emperor's house is now a national museum.",
+      tips: "Our two drivers serve Île d'Aix 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Eastlake_-_Napoleon_on_the_Bellerophon.jpg/1920px-Eastlake_-_Napoleon_on_the_Bellerophon.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/17/Ic%C3%B4ne-%C3%AEle.jpg", "https://upload.wikimedia.org/wikipedia/commons/4/44/Jamblet_battery_at_Ile_d%C2%B4Aix.jpg"],
+  },
+  {
+    slug: "visiter-tonnay-charente",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Tonnay-Charente",
+    city: "Tonnay-Charente",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Pont suspendu, quais du port de commerce, église Saint-Étienne.",
+      history: "Le pont suspendu de Tonnay-Charente, ouvert en 1842 et long de 200 mètres, était l'un des plus grands d'Europe à sa construction ; réservé aux piétons depuis 1971, il offre la plus belle vue sur les quais où accostaient les navires venus d'Amérique.",
+      tips: "Nos deux chauffeurs desservent Tonnay-Charente 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The suspension bridge, the commercial quays and Saint-Étienne church.",
+      history: "Tonnay-Charente's suspension bridge, opened in 1842 and 200 metres long, was one of Europe's largest when built; pedestrian-only since 1971, it gives the finest view over the quays where ships from the Americas once docked.",
+      tips: "Our two drivers serve Tonnay-Charente 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/17449-Tonnay-Charente-Sols.png/1920px-17449-Tonnay-Charente-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/17449-Tonnay-Charente-argile.jpg/1920px-17449-Tonnay-Charente-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Arche_pont_suspendu_Tonnay-Charente.jpg/1920px-Arche_pont_suspendu_Tonnay-Charente.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-tonnay-charente",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Tonnay-Charente",
+    city: "Tonnay-Charente",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chemin de halage de la Charente jusqu'à Rochefort, 8 km plats.",
+      history: "Le pont suspendu de Tonnay-Charente, ouvert en 1842 et long de 200 mètres, était l'un des plus grands d'Europe à sa construction ; réservé aux piétons depuis 1971, il offre la plus belle vue sur les quais où accostaient les navires venus d'Amérique.",
+      tips: "Nos deux chauffeurs desservent Tonnay-Charente 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The Charente towpath to Rochefort, 8 flat kilometres.",
+      history: "Tonnay-Charente's suspension bridge, opened in 1842 and 200 metres long, was one of Europe's largest when built; pedestrian-only since 1971, it gives the finest view over the quays where ships from the Americas once docked.",
+      tips: "Our two drivers serve Tonnay-Charente 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Biblioth%C3%A8que_municipale_de_Tonnay-Charente_%282%29.jpg/1920px-Biblioth%C3%A8que_municipale_de_Tonnay-Charente_%282%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/B%C3%A2timent_d%27habitation_%C3%A0_Tonnay-Charente.jpg/1920px-B%C3%A2timent_d%27habitation_%C3%A0_Tonnay-Charente.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/B%C3%A2timents_de_la_Croix-Rouge_%C3%A0_Tonnay-Charente.jpg/1920px-B%C3%A2timents_de_la_Croix-Rouge_%C3%A0_Tonnay-Charente.jpg"],
+  },
+  {
+    slug: "ou-manger-a-tonnay-charente",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Tonnay-Charente",
+    city: "Tonnay-Charente",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Bistrots de quai, produits du fleuve et du marais.",
+      history: "Le pont suspendu de Tonnay-Charente, ouvert en 1842 et long de 200 mètres, était l'un des plus grands d'Europe à sa construction ; réservé aux piétons depuis 1971, il offre la plus belle vue sur les quais où accostaient les navires venus d'Amérique.",
+      tips: "Nos deux chauffeurs desservent Tonnay-Charente 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Quayside bistros, river and marsh produce.",
+      history: "Tonnay-Charente's suspension bridge, opened in 1842 and 200 metres long, was one of Europe's largest when built; pedestrian-only since 1971, it gives the finest view over the quays where ships from the Americas once docked.",
+      tips: "Our two drivers serve Tonnay-Charente 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Centre_Richard1.jpg/1920px-Centre_Richard1.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Centre_Richard3.jpg/1920px-Centre_Richard3.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/17449-Tonnay-Charente-Sols.png/1920px-17449-Tonnay-Charente-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-tonnay-charente",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Tonnay-Charente",
+    city: "Tonnay-Charente",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 35 km de La Rochelle", en: "≈ 35 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles, nombreuses adresses à Rochefort à 10 minutes.",
+      history: "Le pont suspendu de Tonnay-Charente, ouvert en 1842 et long de 200 mètres, était l'un des plus grands d'Europe à sa construction ; réservé aux piétons depuis 1971, il offre la plus belle vue sur les quais où accostaient les navires venus d'Amérique.",
+      tips: "Nos deux chauffeurs desservent Tonnay-Charente 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Two- and three-star hotels, plus many options in Rochefort ten minutes away.",
+      history: "Tonnay-Charente's suspension bridge, opened in 1842 and 200 metres long, was one of Europe's largest when built; pedestrian-only since 1971, it gives the finest view over the quays where ships from the Americas once docked.",
+      tips: "Our two drivers serve Tonnay-Charente 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/17449-Tonnay-Charente-argile.jpg/1920px-17449-Tonnay-Charente-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Arche_pont_suspendu_Tonnay-Charente.jpg/1920px-Arche_pont_suspendu_Tonnay-Charente.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Biblioth%C3%A8que_municipale_de_Tonnay-Charente_%282%29.jpg/1920px-Biblioth%C3%A8que_municipale_de_Tonnay-Charente_%282%29.jpg"],
+  },
+  {
+    slug: "visiter-marans",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Marans",
+    city: "Marans",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 25 km de La Rochelle", en: "≈ 25 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Port de plaisance, halle, écluse et maison de la Réserve naturelle.",
+      history: "Porte sud du Marais poitevin, Marans fut un port céréalier relié à la mer par un canal creusé au XIXᵉ siècle. La ville a donné son nom à la poule de Marans, réputée pour ses œufs roux extra-foncés.",
+      tips: "Nos deux chauffeurs desservent Marans 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The marina, the market hall, the lock and the nature reserve centre.",
+      history: "Southern gateway to the Marais Poitevin, Marans was a grain port linked to the sea by a 19th-century canal. The town gave its name to the Marans hen, famed for its very dark brown eggs.",
+      tips: "Our two drivers serve Marans 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/a/ab/004_St_Jean_de_Liversay_%28_17170_%29.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/17218-Marans-Sols.png/1920px-17218-Marans-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/17218-Marans-argile.jpg/1920px-17218-Marans-argile.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-marans",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Marans",
+    city: "Marans",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 25 km de La Rochelle", en: "≈ 25 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Balades en barque et sentiers du Marais poitevin, digues de la Sèvre Niortaise.",
+      history: "Porte sud du Marais poitevin, Marans fut un port céréalier relié à la mer par un canal creusé au XIXᵉ siècle. La ville a donné son nom à la poule de Marans, réputée pour ses œufs roux extra-foncés.",
+      tips: "Nos deux chauffeurs desservent Marans 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Punt trips and Marais Poitevin trails along the Sèvre Niortaise dykes.",
+      history: "Southern gateway to the Marais Poitevin, Marans was a grain port linked to the sea by a 19th-century canal. The town gave its name to the Marans hen, famed for its very dark brown eggs.",
+      tips: "Our two drivers serve Marans 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/255_-_Mairie_-_Andilly.jpg/1920px-255_-_Mairie_-_Andilly.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/332_-_Eglise_Notre-Dame_de_l%27Assomption_-_Marans.jpg/1920px-332_-_Eglise_Notre-Dame_de_l%27Assomption_-_Marans.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/334_-_Halle_du_march%C3%A9_-_Marans.jpg/1920px-334_-_Halle_du_march%C3%A9_-_Marans.jpg"],
+  },
+  {
+    slug: "ou-manger-a-marans",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Marans",
+    city: "Marans",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 25 km de La Rochelle", en: "≈ 25 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Anguilles, mogettes, escargots et beurre AOP.",
+      history: "Porte sud du Marais poitevin, Marans fut un port céréalier relié à la mer par un canal creusé au XIXᵉ siècle. La ville a donné son nom à la poule de Marans, réputée pour ses œufs roux extra-foncés.",
+      tips: "Nos deux chauffeurs desservent Marans 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Eels, white beans, snails and PDO butter.",
+      history: "Southern gateway to the Marais Poitevin, Marans was a grain port linked to the sea by a 19th-century canal. The town gave its name to the Marans hen, famed for its very dark brown eggs.",
+      tips: "Our two drivers serve Marans 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/7/7a/Bb_blue.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/bb/Black222.JPG", "https://upload.wikimedia.org/wikipedia/commons/a/ab/004_St_Jean_de_Liversay_%28_17170_%29.JPG"],
+  },
+  {
+    slug: "ou-dormir-a-marans",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Marans",
+    city: "Marans",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 25 km de La Rochelle", en: "≈ 25 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes du marais, hôtels 3 étoiles à La Rochelle à 25 minutes.",
+      history: "Porte sud du Marais poitevin, Marans fut un port céréalier relié à la mer par un canal creusé au XIXᵉ siècle. La ville a donné son nom à la poule de Marans, réputée pour ses œufs roux extra-foncés.",
+      tips: "Nos deux chauffeurs desservent Marans 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Marsh guesthouses, three-star hotels in La Rochelle 25 minutes away.",
+      history: "Southern gateway to the Marais Poitevin, Marans was a grain port linked to the sea by a 19th-century canal. The town gave its name to the Marans hen, famed for its very dark brown eggs.",
+      tips: "Our two drivers serve Marans 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/17218-Marans-Sols.png/1920px-17218-Marans-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/17218-Marans-argile.jpg/1920px-17218-Marans-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/255_-_Mairie_-_Andilly.jpg/1920px-255_-_Mairie_-_Andilly.jpg"],
+  },
+  {
+    slug: "visiter-esnandes",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Esnandes",
+    city: "Esnandes",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Église fortifiée Saint-Martin, maison de la Mytiliculture, baie de l'Aiguillon.",
+      history: "Esnandes possède une étonnante église-forteresse du XIVᵉ siècle, crénelée comme un donjon face à la baie de l'Aiguillon. C'est aussi le berceau de la mytiliculture sur bouchots, technique née ici au XIIIᵉ siècle selon la tradition.",
+      tips: "Nos deux chauffeurs desservent Esnandes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The fortified church of Saint-Martin, the mussel-farming centre and Aiguillon bay.",
+      history: "Esnandes has a startling 14th-century fortress church, battlemented like a keep and facing the Aiguillon bay. It is also the cradle of bouchot mussel farming, said to have begun here in the 13th century.",
+      tips: "Our two drivers serve Esnandes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/057_-_Eglise_Saint-Martin_-_Villedoux.jpg/1920px-057_-_Eglise_Saint-Martin_-_Villedoux.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/17153-Esnandes-Sols.png/1920px-17153-Esnandes-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/17153-Esnandes-argile.jpg/1920px-17153-Esnandes-argile.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-esnandes",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Esnandes",
+    city: "Esnandes",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier de la baie vers la pointe Saint-Clément, falaises et réserve d'oiseaux.",
+      history: "Esnandes possède une étonnante église-forteresse du XIVᵉ siècle, crénelée comme un donjon face à la baie de l'Aiguillon. C'est aussi le berceau de la mytiliculture sur bouchots, technique née ici au XIIIᵉ siècle selon la tradition.",
+      tips: "Nos deux chauffeurs desservent Esnandes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The bay path to Pointe Saint-Clément, with cliffs and a bird reserve.",
+      history: "Esnandes has a startling 14th-century fortress church, battlemented like a keep and facing the Aiguillon bay. It is also the cradle of bouchot mussel farming, said to have begun here in the 13th century.",
+      tips: "Our two drivers serve Esnandes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/190_-_Eglise_Saint-Martin_-_Esnandes.jpg/1920px-190_-_Eglise_Saint-Martin_-_Esnandes.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/267_-_Eglise_Saint-Martin_-_Esnandes.jpg/1920px-267_-_Eglise_Saint-Martin_-_Esnandes.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/269_-_Eglise_Saint-Martin_nef_-_Esnandes.jpg/1920px-269_-_Eglise_Saint-Martin_nef_-_Esnandes.jpg"],
+  },
+  {
+    slug: "ou-manger-a-esnandes",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Esnandes",
+    city: "Esnandes",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Moules de bouchot de la baie, éclade et mouclade.",
+      history: "Esnandes possède une étonnante église-forteresse du XIVᵉ siècle, crénelée comme un donjon face à la baie de l'Aiguillon. C'est aussi le berceau de la mytiliculture sur bouchots, technique née ici au XIIIᵉ siècle selon la tradition.",
+      tips: "Nos deux chauffeurs desservent Esnandes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Bouchot mussels from the bay, éclade and mouclade.",
+      history: "Esnandes has a startling 14th-century fortress church, battlemented like a keep and facing the Aiguillon bay. It is also the cradle of bouchot mussel farming, said to have begun here in the 13th century.",
+      tips: "Our two drivers serve Esnandes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Brosen_windrose-fr.svg/1920px-Brosen_windrose-fr.svg.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Carrelets_esnandes.jpg/1920px-Carrelets_esnandes.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/057_-_Eglise_Saint-Martin_-_Villedoux.jpg/1920px-057_-_Eglise_Saint-Martin_-_Villedoux.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-esnandes",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Esnandes",
+    city: "Esnandes",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Aunis", en: "Area: Aunis" },
+      { fr: "≈ 15 km de La Rochelle", en: "≈ 15 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Chambres d'hôtes, hôtels 3 et 4 étoiles à La Rochelle tout proche.",
+      history: "Esnandes possède une étonnante église-forteresse du XIVᵉ siècle, crénelée comme un donjon face à la baie de l'Aiguillon. C'est aussi le berceau de la mytiliculture sur bouchots, technique née ici au XIIIᵉ siècle selon la tradition.",
+      tips: "Nos deux chauffeurs desservent Esnandes 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Guesthouses, three- and four-star hotels in nearby La Rochelle.",
+      history: "Esnandes has a startling 14th-century fortress church, battlemented like a keep and facing the Aiguillon bay. It is also the cradle of bouchot mussel farming, said to have begun here in the 13th century.",
+      tips: "Our two drivers serve Esnandes 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/17153-Esnandes-Sols.png/1920px-17153-Esnandes-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/17153-Esnandes-argile.jpg/1920px-17153-Esnandes-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/190_-_Eglise_Saint-Martin_-_Esnandes.jpg/1920px-190_-_Eglise_Saint-Martin_-_Esnandes.jpg"],
+  },
+  {
+    slug: "visiter-saujon",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Saujon",
+    city: "Saujon",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Thermes, train des Mouettes, église et halles du centre.",
+      history: "Saujon est une station thermale spécialisée depuis 1860 dans le traitement des troubles anxieux, unique en France par sa spécialité psychiatrique. Le train des Mouettes, ligne à vapeur de 1875, relie encore la ville à La Tremblade l'été.",
+      tips: "Nos deux chauffeurs desservent Saujon 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The spa, the Train des Mouettes, the church and the covered market.",
+      history: "Saujon has been a spa town since 1860, unique in France for treating anxiety disorders. The Train des Mouettes, an 1875 steam line, still links the town to La Tremblade in summer.",
+      tips: "Our two drivers serve Saujon 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/17421-Saujon-Sols.png/1920px-17421-Saujon-Sols.png", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/17421-Saujon-argile.jpg/1920px-17421-Saujon-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/14/Catastrophe_de_Saujon_%281910%29.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-saujon",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Saujon",
+    city: "Saujon",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentiers de la Seudre et marais de Saujon, départ du chemin vers Mornac.",
+      history: "Saujon est une station thermale spécialisée depuis 1860 dans le traitement des troubles anxieux, unique en France par sa spécialité psychiatrique. Le train des Mouettes, ligne à vapeur de 1875, relie encore la ville à La Tremblade l'été.",
+      tips: "Nos deux chauffeurs desservent Saujon 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Seudre paths and Saujon marshes, start of the trail to Mornac.",
+      history: "Saujon has been a spa town since 1860, unique in France for treating anxiety disorders. The Train des Mouettes, an 1875 steam line, still links the town to La Tremblade in summer.",
+      tips: "Our two drivers serve Saujon 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/5/5c/Champaigne_portrait_richelieu_eb.jpg", "https://upload.wikimedia.org/wikipedia/commons/5/58/Eglise_de_saujon.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Eglise_du_Chay.jpeg/1920px-Eglise_du_Chay.jpeg"],
+  },
+  {
+    slug: "ou-manger-a-saujon",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Saujon",
+    city: "Saujon",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Cuisine thermale et produits de la Seudre, huîtres et poissons.",
+      history: "Saujon est une station thermale spécialisée depuis 1860 dans le traitement des troubles anxieux, unique en France par sa spécialité psychiatrique. Le train des Mouettes, ligne à vapeur de 1875, relie encore la ville à La Tremblade l'été.",
+      tips: "Nos deux chauffeurs desservent Saujon 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Spa-town cooking and Seudre produce, oysters and fish.",
+      history: "Saujon has been a spa town since 1860, unique in France for treating anxiety disorders. The Train des Mouettes, an 1875 steam line, still links the town to La Tremblade in summer.",
+      tips: "Our two drivers serve Saujon 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Espace_culturel_du_Ch%C3%A2teau.jpg/1920px-Espace_culturel_du_Ch%C3%A2teau.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/La_Seudre_%C3%A0_Saujon.jpg/1920px-La_Seudre_%C3%A0_Saujon.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/17421-Saujon-Sols.png/1920px-17421-Saujon-Sols.png"],
+  },
+  {
+    slug: "ou-dormir-a-saujon",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Saujon",
+    city: "Saujon",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Bassin de la Seudre", en: "Area: Bassin de la Seudre" },
+      { fr: "≈ 95 km de La Rochelle", en: "≈ 95 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles et résidences thermales, adresses 4 étoiles à Royan.",
+      history: "Saujon est une station thermale spécialisée depuis 1860 dans le traitement des troubles anxieux, unique en France par sa spécialité psychiatrique. Le train des Mouettes, ligne à vapeur de 1875, relie encore la ville à La Tremblade l'été.",
+      tips: "Nos deux chauffeurs desservent Saujon 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels and spa residences, four-star options in Royan.",
+      history: "Saujon has been a spa town since 1860, unique in France for treating anxiety disorders. The Train des Mouettes, an 1875 steam line, still links the town to La Tremblade in summer.",
+      tips: "Our two drivers serve Saujon 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/17421-Saujon-argile.jpg/1920px-17421-Saujon-argile.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/14/Catastrophe_de_Saujon_%281910%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/5/5c/Champaigne_portrait_richelieu_eb.jpg"],
+  },
+  {
+    slug: "visiter-charron-marais-poitevin",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Charron / Marais poitevin",
+    city: "Charron / Marais poitevin",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Canaux et embarcadères, digues de la Sèvre, réserve naturelle de la baie de l'Aiguillon.",
+      history: "Le Marais poitevin, deuxième zone humide de France, a été asséché à partir du XIIIᵉ siècle par des moines venus des abbayes voisines. Sa partie sud, en Charente-Maritime, mêle canaux, digues et prairies inondables jusqu'à la baie de l'Aiguillon.",
+      tips: "Nos deux chauffeurs desservent Charron / Marais poitevin 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Canals and boat landings, the Sèvre dykes and the Aiguillon bay nature reserve.",
+      history: "The Marais Poitevin, France's second largest wetland, was drained from the 13th century by monks from nearby abbeys. Its southern, Charente-Maritime part mixes canals, dykes and flood meadows down to Aiguillon bay.",
+      tips: "Our two drivers serve Charron / Marais poitevin 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Am%C3%A9nagement_de_la_S%C3%A8vre_Niortaise_et_du_Marais_Poitevin_en_1818_par_Mesnager.jpg/1920px-Am%C3%A9nagement_de_la_S%C3%A8vre_Niortaise_et_du_Marais_Poitevin_en_1818_par_Mesnager.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Chaill%C3%A9_les_Marais_Canal_du_Clain.jpg/1920px-Chaill%C3%A9_les_Marais_Canal_du_Clain.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Chaolaises_dans_le_Marais_poitevin_dess%C3%A9ch%C3%A9_%C3%A0_Esnandes.jpg/1920px-Chaolaises_dans_le_Marais_poitevin_dess%C3%A9ch%C3%A9_%C3%A0_Esnandes.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-charron-marais-poitevin",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Charron / Marais poitevin",
+    city: "Charron / Marais poitevin",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Boucles plates de 5 à 15 km entre frênes têtards et canaux, idéales en famille.",
+      history: "Le Marais poitevin, deuxième zone humide de France, a été asséché à partir du XIIIᵉ siècle par des moines venus des abbayes voisines. Sa partie sud, en Charente-Maritime, mêle canaux, digues et prairies inondables jusqu'à la baie de l'Aiguillon.",
+      tips: "Nos deux chauffeurs desservent Charron / Marais poitevin 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Flat 5-to-15 km loops between pollarded ash trees and canals, ideal with children.",
+      history: "The Marais Poitevin, France's second largest wetland, was drained from the 13th century by monks from nearby abbeys. Its southern, Charente-Maritime part mixes canals, dykes and flood meadows down to Aiguillon bay.",
+      tips: "Our two drivers serve Charron / Marais poitevin 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Communal_de_Lairoux_%28vue_5%2C_%C3%89duarel%2C_11_avril_2016%29.JPG/1920px-Communal_de_Lairoux_%28vue_5%2C_%C3%89duarel%2C_11_avril_2016%29.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Conche_des_cabanes_-_20150810_14h26_%2811048%29.jpg/1920px-Conche_des_cabanes_-_20150810_14h26_%2811048%29.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Coulon-Promenade_en_barque.JPG/1920px-Coulon-Promenade_en_barque.JPG"],
+  },
+  {
+    slug: "ou-manger-a-charron-marais-poitevin",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Charron / Marais poitevin",
+    city: "Charron / Marais poitevin",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Anguilles, escargots, mogettes et fromages de chèvre du marais.",
+      history: "Le Marais poitevin, deuxième zone humide de France, a été asséché à partir du XIIIᵉ siècle par des moines venus des abbayes voisines. Sa partie sud, en Charente-Maritime, mêle canaux, digues et prairies inondables jusqu'à la baie de l'Aiguillon.",
+      tips: "Nos deux chauffeurs desservent Charron / Marais poitevin 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Eels, snails, white beans and marsh goat cheese.",
+      history: "The Marais Poitevin, France's second largest wetland, was drained from the 13th century by monks from nearby abbeys. Its southern, Charente-Maritime part mixes canals, dykes and flood meadows down to Aiguillon bay.",
+      tips: "Our two drivers serve Charron / Marais poitevin 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Coulon-Quai_Louis_Tardy.JPG/1920px-Coulon-Quai_Louis_Tardy.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Damvix_le_port_02.jpg/1920px-Damvix_le_port_02.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Am%C3%A9nagement_de_la_S%C3%A8vre_Niortaise_et_du_Marais_Poitevin_en_1818_par_Mesnager.jpg/1920px-Am%C3%A9nagement_de_la_S%C3%A8vre_Niortaise_et_du_Marais_Poitevin_en_1818_par_Mesnager.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-charron-marais-poitevin",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Charron / Marais poitevin",
+    city: "Charron / Marais poitevin",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Marais poitevin", en: "Area: Marais poitevin" },
+      { fr: "≈ 30 km de La Rochelle", en: "≈ 30 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Gîtes et chambres d'hôtes dans les fermes du marais.",
+      history: "Le Marais poitevin, deuxième zone humide de France, a été asséché à partir du XIIIᵉ siècle par des moines venus des abbayes voisines. Sa partie sud, en Charente-Maritime, mêle canaux, digues et prairies inondables jusqu'à la baie de l'Aiguillon.",
+      tips: "Nos deux chauffeurs desservent Charron / Marais poitevin 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Gîtes and guesthouses in marsh farmhouses.",
+      history: "The Marais Poitevin, France's second largest wetland, was drained from the 13th century by monks from nearby abbeys. Its southern, Charente-Maritime part mixes canals, dykes and flood meadows down to Aiguillon bay.",
+      tips: "Our two drivers serve Charron / Marais poitevin 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Chaill%C3%A9_les_Marais_Canal_du_Clain.jpg/1920px-Chaill%C3%A9_les_Marais_Canal_du_Clain.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Chaolaises_dans_le_Marais_poitevin_dess%C3%A9ch%C3%A9_%C3%A0_Esnandes.jpg/1920px-Chaolaises_dans_le_Marais_poitevin_dess%C3%A9ch%C3%A9_%C3%A0_Esnandes.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Communal_de_Lairoux_%28vue_5%2C_%C3%89duarel%2C_11_avril_2016%29.JPG/1920px-Communal_de_Lairoux_%28vue_5%2C_%C3%89duarel%2C_11_avril_2016%29.JPG"],
+  },
+  {
+    slug: "visiter-les-mathes-la-palmyre",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Les Mathes / La Palmyre",
+    city: "Les Mathes / La Palmyre",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Côte sauvage", en: "Area: Côte sauvage" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Zoo de La Palmyre, port de plaisance, plages de la Côte sauvage.",
+      history: "La Palmyre est née dans les années 1960 au milieu des dunes boisées ; son zoo, ouvert en 1966, est l'un des plus visités de France avec 1 600 animaux sur 18 hectares de pinède.",
+      tips: "Nos deux chauffeurs desservent Les Mathes / La Palmyre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "La Palmyre zoo, the marina and the Côte Sauvage beaches.",
+      history: "La Palmyre grew up in the 1960s among wooded dunes; its zoo, opened in 1966, is one of France's most visited with 1,600 animals across 18 hectares of pine forest.",
+      tips: "Our two drivers serve Les Mathes / La Palmyre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/b/bf/Bonne-Anse.jpg", "https://upload.wikimedia.org/wikipedia/commons/1/1c/Bonne_Anse.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Cascade_zoo_palmyre.jpg/1920px-Cascade_zoo_palmyre.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-les-mathes-la-palmyre",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Les Mathes / La Palmyre",
+    city: "Les Mathes / La Palmyre",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Côte sauvage", en: "Area: Côte sauvage" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Pistes cyclables et sentiers de dunes vers le phare de la Coubre.",
+      history: "La Palmyre est née dans les années 1960 au milieu des dunes boisées ; son zoo, ouvert en 1966, est l'un des plus visités de France avec 1 600 animaux sur 18 hectares de pinède.",
+      tips: "Nos deux chauffeurs desservent Les Mathes / La Palmyre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Cycle tracks and dune paths towards the Coubre lighthouse.",
+      history: "La Palmyre grew up in the 1960s among wooded dunes; its zoo, opened in 1966, is one of France's most visited with 1,600 animals across 18 hectares of pine forest.",
+      tips: "Our two drivers serve Les Mathes / La Palmyre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/EuroVelo1_dans_la_for%C3%AAt_de_la_Coubre.JPG/1920px-EuroVelo1_dans_la_for%C3%AAt_de_la_Coubre.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Heinkel_He_111_during_the_Battle_of_Britain.jpg/1920px-Heinkel_He_111_during_the_Battle_of_Britain.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/LPLM11.jpg/1920px-LPLM11.jpg"],
+  },
+  {
+    slug: "ou-manger-a-les-mathes-la-palmyre",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Les Mathes / La Palmyre",
+    city: "Les Mathes / La Palmyre",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Côte sauvage", en: "Area: Côte sauvage" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Restaurants de plage et de port, moules-frites et fruits de mer.",
+      history: "La Palmyre est née dans les années 1960 au milieu des dunes boisées ; son zoo, ouvert en 1966, est l'un des plus visités de France avec 1 600 animaux sur 18 hectares de pinède.",
+      tips: "Nos deux chauffeurs desservent Les Mathes / La Palmyre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Beach and harbour restaurants, moules-frites and seafood.",
+      history: "La Palmyre grew up in the 1960s among wooded dunes; its zoo, opened in 1966, is one of France's most visited with 1,600 animals across 18 hectares of pine forest.",
+      tips: "Our two drivers serve Les Mathes / La Palmyre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/LPLM2.jpg/1920px-LPLM2.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/LPLM4.jpg/1920px-LPLM4.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/bf/Bonne-Anse.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-les-mathes-la-palmyre",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Les Mathes / La Palmyre",
+    city: "Les Mathes / La Palmyre",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Côte sauvage", en: "Area: Côte sauvage" },
+      { fr: "≈ 105 km de La Rochelle", en: "≈ 105 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 3 étoiles sous les pins, résidences et campings familiaux.",
+      history: "La Palmyre est née dans les années 1960 au milieu des dunes boisées ; son zoo, ouvert en 1966, est l'un des plus visités de France avec 1 600 animaux sur 18 hectares de pinède.",
+      tips: "Nos deux chauffeurs desservent Les Mathes / La Palmyre 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Three-star hotels under the pines, residences and family campsites.",
+      history: "La Palmyre grew up in the 1960s among wooded dunes; its zoo, opened in 1966, is one of France's most visited with 1,600 animals across 18 hectares of pine forest.",
+      tips: "Our two drivers serve Les Mathes / La Palmyre 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/1/1c/Bonne_Anse.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Cascade_zoo_palmyre.jpg/1920px-Cascade_zoo_palmyre.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/EuroVelo1_dans_la_for%C3%AAt_de_la_Coubre.JPG/1920px-EuroVelo1_dans_la_for%C3%AAt_de_la_Coubre.JPG"],
+  },
+  {
+    slug: "visiter-bourcefranc-le-chapus",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Bourcefranc-le-Chapus",
+    city: "Bourcefranc-le-Chapus",
+    facts: [
+      { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Fort Louvois, viaduc d'Oléron, port ostréicole du Chapus.",
+      history: "Bâti entre 1691 et 1694 sur un banc rocheux, le fort Louvois complétait la citadelle d'Oléron pour verrouiller le pertuis. On y accède à pied à marée basse par une chaussée de 400 mètres, en bateau à marée haute.",
+      tips: "Nos deux chauffeurs desservent Bourcefranc-le-Chapus 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Fort Louvois, the Oléron bridge and the Chapus oyster harbour.",
+      history: "Built between 1691 and 1694 on a rocky bank, Fort Louvois completed Oléron's citadel to lock the strait. It is reached on foot at low tide by a 400-metre causeway, by boat at high tide.",
+      tips: "Our two drivers serve Bourcefranc-le-Chapus 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fort_Louvois-1107.jpg/1920px-Fort_Louvois-1107.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Fort_Louvois_-_Bourcefranc.jpg/1920px-Fort_Louvois_-_Bourcefranc.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Fort_Louvois_-_Bourcefranc_Le_Chapus.jpg/1920px-Fort_Louvois_-_Bourcefranc_Le_Chapus.jpg"],
+  },
+  {
+    slug: "randonnees-et-balades-a-bourcefranc-le-chapus",
+    category: "randonnee",
+    dept: "17",
+    name: "Randonnées et balades à Bourcefranc-le-Chapus",
+    city: "Bourcefranc-le-Chapus",
+    facts: [
+      { fr: "Balade nature", en: "Nature walk" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Sentier littoral du Chapus vers Marennes, entre parcs à huîtres et vasières.",
+      history: "Bâti entre 1691 et 1694 sur un banc rocheux, le fort Louvois complétait la citadelle d'Oléron pour verrouiller le pertuis. On y accède à pied à marée basse par une chaussée de 400 mètres, en bateau à marée haute.",
+      tips: "Nos deux chauffeurs desservent Bourcefranc-le-Chapus 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "The coastal path from Le Chapus to Marennes, past oyster beds and mudflats.",
+      history: "Built between 1691 and 1694 on a rocky bank, Fort Louvois completed Oléron's citadel to lock the strait. It is reached on foot at low tide by a 400-metre causeway, by boat at high tide.",
+      tips: "Our two drivers serve Bourcefranc-le-Chapus 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Fort_Louvois_-_Gu%C3%A9rite.JPG/1920px-Fort_Louvois_-_Gu%C3%A9rite.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Fort_Louvois_-_Logement.JPG/1920px-Fort_Louvois_-_Logement.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Fort_Louvois_-_Panorama1.jpg/1920px-Fort_Louvois_-_Panorama1.jpg"],
+  },
+  {
+    slug: "ou-manger-a-bourcefranc-le-chapus",
+    category: "restaurant",
+    dept: "17",
+    name: "Où manger à Bourcefranc-le-Chapus",
+    city: "Bourcefranc-le-Chapus",
+    facts: [
+      { fr: "Tables & spécialités", en: "Tables & specialities" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Cabanes à huîtres du Chapus, crevettes et bulots.",
+      history: "Bâti entre 1691 et 1694 sur un banc rocheux, le fort Louvois complétait la citadelle d'Oléron pour verrouiller le pertuis. On y accède à pied à marée basse par une chaussée de 400 mètres, en bateau à marée haute.",
+      tips: "Nos deux chauffeurs desservent Bourcefranc-le-Chapus 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Chapus oyster huts, shrimp and whelks.",
+      history: "Built between 1691 and 1694 on a rocky bank, Fort Louvois completed Oléron's citadel to lock the strait. It is reached on foot at low tide by a 400-metre causeway, by boat at high tide.",
+      tips: "Our two drivers serve Bourcefranc-le-Chapus 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Fort_Louvois_-_Tour.JPG/1920px-Fort_Louvois_-_Tour.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Fort_Louvois_-_Tour_02.JPG/1920px-Fort_Louvois_-_Tour_02.JPG", "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fort_Louvois-1107.jpg/1920px-Fort_Louvois-1107.jpg"],
+  },
+  {
+    slug: "ou-dormir-a-bourcefranc-le-chapus",
+    category: "hotel",
+    dept: "17",
+    name: "Où dormir à Bourcefranc-le-Chapus",
+    city: "Bourcefranc-le-Chapus",
+    facts: [
+      { fr: "Hôtels & classement", en: "Hotels & star ratings" },
+      { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
+      { fr: "≈ 70 km de La Rochelle", en: "≈ 70 km from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Hôtels 2 et 3 étoiles à Bourcefranc et Marennes.",
+      history: "Bâti entre 1691 et 1694 sur un banc rocheux, le fort Louvois complétait la citadelle d'Oléron pour verrouiller le pertuis. On y accède à pied à marée basse par une chaussée de 400 mètres, en bateau à marée haute.",
+      tips: "Nos deux chauffeurs desservent Bourcefranc-le-Chapus 5j/7, de 8h à 20h. Dépose au plus près du site, van jusqu'à 7 personnes pour les groupes, sièges bébé et rehausseurs enfants sur demande.",
+    },
+    en: {
+      teaser: "Two- and three-star hotels in Bourcefranc and Marennes.",
+      history: "Built between 1691 and 1694 on a rocky bank, Fort Louvois completed Oléron's citadel to lock the strait. It is reached on foot at low tide by a 400-metre causeway, by boat at high tide.",
+      tips: "Our two drivers serve Bourcefranc-le-Chapus 5 days a week, 8am-8pm. Door-to-door drop-off, a van seating up to 7 for groups, baby and booster seats on request.",
+    },
+    photos: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Fort_Louvois_-_Bourcefranc.jpg/1920px-Fort_Louvois_-_Bourcefranc.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Fort_Louvois_-_Bourcefranc_Le_Chapus.jpg/1920px-Fort_Louvois_-_Bourcefranc_Le_Chapus.jpg", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Fort_Louvois_-_Gu%C3%A9rite.JPG/1920px-Fort_Louvois_-_Gu%C3%A9rite.JPG"],
+  },
 ];
 
 export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] = [
@@ -981,9 +3812,13 @@ export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] 
 ];
 
 export const DEPTS: { key: Dept; fr: string; en: string }[] = [
-  { key: "16", fr: "Charente", en: "Charente" },
   { key: "17", fr: "Charente-Maritime", en: "Charente-Maritime" },
 ];
+
+/** Toutes les villes et villages couverts par le guide, triés alphabétiquement. */
+export const GUIDE_CITIES: string[] = Array.from(new Set(GUIDE_ENTRIES.map((e) => e.city))).sort((a, b) =>
+  a.localeCompare(b, "fr"),
+);
 
 export function getGuideEntry(slug: string): GuideEntry | undefined {
   return GUIDE_ENTRIES.find((e) => e.slug === slug);

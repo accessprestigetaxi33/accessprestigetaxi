@@ -31,22 +31,22 @@ const BLOG_PICKS = ["hotel", "restaurant", "visite"]
 
 const COPY = {
   fr: {
-    kicker: "100 % électrique · Charente & Charente-Maritime",
+    kicker: "100 % électrique · Charente-Maritime",
     tagline: "Votre mobilité, notre priorité",
     lead:
-      "Deux chauffeurs, deux Audi Q6 e-tron. Un service de taxi haut de gamme, silencieux et zéro émission, disponible 7j/7 et 24h/24.",
+      "Deux chauffeurs, une BMW iX1 électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et zéro émission, disponible 5j/7, de 8h à 20h.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
     driversEyebrow: "Nos deux chauffeurs",
     driversTitle: "Patricia & Alain, à votre service",
     driversLead:
-      "Deux chauffeurs indépendants, une même exigence : ponctualité, discrétion et confort en Audi Q6 e-tron 100 % électrique, en Charente et Charente-Maritime.",
+      "Deux chauffeurs indépendants, une même exigence : ponctualité, discrétion et confort en BMW iX1 100 % électrique, en Charente-Maritime.",
     scroll: "Découvrir",
     stats: [
       { v: "2", l: "chauffeurs dédiés" },
       { v: "100 %", l: "électrique" },
-      { v: "24/7", l: "disponibilité" },
+      { v: "5j/7 · 8h-20h", l: "disponibilité" },
       { v: "0 g", l: "CO₂ à l'usage" },
     ],
     servicesEyebrow: "Nos services",
@@ -56,8 +56,8 @@ const COPY = {
       { icon: PlaneTakeoff, t: "Gares & aéroports", d: "Suivi des vols et des trains, accueil en gare." },
       { icon: BriefcaseBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       { icon: Sparkles, t: "Conciergerie", d: "Courses, livraisons et mises à disposition sur mesure." },
-      { icon: BatteryCharging, t: "100 % électrique", d: "Audi Q6 e-tron : silence, confort et zéro émission." },
-      { icon: Clock, t: "Disponible 24h/24", d: "Réservation immédiate ou planifiée, 7 jours sur 7." },
+      { icon: BatteryCharging, t: "100 % électrique", d: "BMW iX1 électrique / van Mercedes 7 places : silence, confort et zéro émission." },
+      { icon: Clock, t: "Disponible 5j/7, 8h-20h", d: "Réservation immédiate ou planifiée, 5 jours sur 7, de 8h à 20h." },
     ],
     whyEyebrow: "Pourquoi nous",
     whyTitle: "L'élégance électrique, sans compromis",
@@ -101,7 +101,7 @@ const COPY = {
     reviewTitle: "Déposez votre avis",
     reviewText: "Votre retour aide Patricia et Alain à faire encore mieux. Merci pour votre confiance.",
     blogEyebrow: "Le blog",
-    blogTitle: "Guide Charente & Charente-Maritime",
+    blogTitle: "Guide Charente-Maritime-Maritime",
     blogText: "Restaurants, hôtels, randonnées et lieux à visiter — repérés par vos chauffeurs.",
     blogCta: "Voir tout le guide",
     ctaTitle: "Prêt à réserver votre course ?",
@@ -109,22 +109,22 @@ const COPY = {
 
   },
   en: {
-    kicker: "100% electric · Charente & Charente-Maritime",
+    kicker: "100% electric · Charente-Maritime",
     tagline: "Your mobility, our priority",
     lead:
-      "Two drivers, two Audi Q6 e-tron. A premium, silent, zero-emission taxi service available 24/7.",
+      "Two drivers, one electric BMW iX1 and one 7-seat Mercedes van. A premium, silent, zero-emission taxi service available 5 days a week, 8am-8pm.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
     driversEyebrow: "Our two drivers",
     driversTitle: "Patricia & Alain, at your service",
     driversLead:
-      "Two independent drivers, one shared standard: punctuality, discretion and comfort in a fully electric Audi Q6 e-tron, across Charente and Charente-Maritime.",
+      "Two independent drivers, one shared standard: punctuality, discretion and comfort in a fully electric BMW iX1, across Charente-Maritime.",
     scroll: "Explore",
     stats: [
       { v: "2", l: "dedicated drivers" },
       { v: "100%", l: "electric" },
-      { v: "24/7", l: "availability" },
+      { v: "5j/7 · 8h-20h", l: "availability" },
       { v: "0 g", l: "CO₂ in use" },
     ],
     servicesEyebrow: "Our services",
@@ -134,8 +134,8 @@ const COPY = {
       { icon: PlaneTakeoff, t: "Stations & airports", d: "Flight and train tracking, meet & greet." },
       { icon: BriefcaseBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
       { icon: Sparkles, t: "Concierge", d: "Errands, deliveries and bespoke chauffeur hours." },
-      { icon: BatteryCharging, t: "100% electric", d: "Audi Q6 e-tron: silence, comfort, zero emissions." },
-      { icon: Clock, t: "Available 24/7", d: "Instant or scheduled booking, seven days a week." },
+      { icon: BatteryCharging, t: "100% electric", d: "BMW iX1 électrique / van Mercedes 7 places: silence, comfort, zero emissions." },
+      { icon: Clock, t: "Available 5 days a week, 8am-8pm", d: "Instant or scheduled booking, five days a week, 8am-8pm." },
     ],
     whyEyebrow: "Why us",
     whyTitle: "Electric elegance, no compromise",
@@ -178,7 +178,7 @@ const COPY = {
     reviewTitle: "Leave a review",
     reviewText: "Your feedback helps Patricia and Alain do even better. Thank you for your trust.",
     blogEyebrow: "The blog",
-    blogTitle: "Charente & Charente-Maritime guide",
+    blogTitle: "Charente-Maritime guide",
     blogText: "Restaurants, hotels, hikes and places to visit — picked by your drivers.",
     blogCta: "See the full guide",
     ctaTitle: "Ready to book your ride?",
@@ -195,13 +195,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente et Charente-Maritime. Deux chauffeurs, Audi Q6 e-tron, transport conventionné, gares & aéroports, 7j/7 24h/24.",
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 électrique / van Mercedes 7 places, transport conventionné, gares & aéroports, 5j/7 8h-20h.",
       },
       { property: "og:title", content: "Access Prestige Taxi — Taxi 100 % électrique en Charente" },
       {
         property: "og:description",
         content:
-          "Votre mobilité, notre priorité. Réservation rapide, vocale ou écrite, en véhicule 100 % électrique en Charente & Charente-Maritime.",
+          "Votre mobilité, notre priorité. Réservation rapide, vocale ou écrite, en véhicule 100 % électrique en Charente-Maritime.",
       },
 
       { property: "og:type", content: "website" },
@@ -235,7 +235,7 @@ export const Route = createFileRoute("/")({
             name: d.name,
             telephone: d.intl,
             contactType: "reservations",
-            areaServed: ["Charente", "Charente-Maritime"],
+            areaServed: ["Charente-Maritime"],
             availableLanguage: ["fr", "en"],
           })),
         }),
@@ -258,7 +258,7 @@ function Index() {
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 pb-20 pt-14 text-center sm:pt-20">
           <img
             src={logoLockup}
-            alt="Access Prestige Taxi — Audi Q6 e-tron, taxi 100 % électrique en Charente"
+            alt="Access Prestige Taxi — BMW iX1 électrique / van Mercedes 7 places, taxi 100 % électrique en Charente"
             width={1536}
             height={500}
             fetchPriority="high"
@@ -355,7 +355,7 @@ function Index() {
                   </span>
                   <div className="min-w-0">
                     <h3 className="font-display text-xl font-semibold text-card-foreground">{d.name}</h3>
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Audi Q6 e-tron</p>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">BMW iX1 électrique / van Mercedes 7 places</p>
                   </div>
                 </div>
                 <p className="mt-5 text-sm leading-relaxed text-muted-foreground">

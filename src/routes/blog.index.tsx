@@ -21,9 +21,9 @@ const CAT_ICON: Record<GuideCategory, typeof UtensilsCrossed> = {
 const COPY = {
   fr: {
     eyebrow: "Le guide Access Prestige Taxi",
-    title: "Charente & Charente-Maritime : où manger, dormir, marcher et s'émerveiller",
+    title: "Charente-Maritime : où manger, dormir, marcher et s'émerveiller",
     lead:
-      "Restaurants de caractère, hôtels étoilés, randonnées côtières et sites chargés d'histoire — sélectionnés par nos deux chauffeurs, et desservis en Audi Q6 e-tron 100 % électrique.",
+      "Restaurants de caractère, hôtels étoilés, randonnées côtières et sites chargés d'histoire — sélectionnés par nos deux chauffeurs, et desservis en BMW iX1 100 % électrique.",
     all: "Tout",
     filterCat: "Catégorie",
     filterDept: "Département",
@@ -35,9 +35,9 @@ const COPY = {
   },
   en: {
     eyebrow: "The Access Prestige Taxi guide",
-    title: "Charente & Charente-Maritime: where to eat, sleep, walk and wonder",
+    title: "Charente-Maritime: where to eat, sleep, walk and wonder",
     lead:
-      "Characterful restaurants, star-rated hotels, coastal hikes and history-rich sites — picked by our two drivers and served in a fully electric Audi Q6 e-tron.",
+      "Characterful restaurants, star-rated hotels, coastal hikes and history-rich sites — picked by our two drivers and served in a fully electric BMW iX1.",
     all: "All",
     filterCat: "Category",
     filterDept: "Area",
@@ -53,17 +53,17 @@ export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
   head: () => ({
     meta: [
-      { title: "Guide Charente & Charente-Maritime — Restaurants, hôtels, randos | Access Prestige Taxi" },
+      { title: "Guide Charente-Maritime-Maritime — Restaurants, hôtels, randos | Access Prestige Taxi" },
       {
         name: "description",
         content:
           "Guide complet de la Charente et de la Charente-Maritime : restaurants étoilés, hôtels classés par étoiles, randonnées et lieux à visiter avec leur histoire. Transport en taxi 100 % électrique.",
       },
-      { property: "og:title", content: "Guide Charente & Charente-Maritime | Access Prestige Taxi" },
+      { property: "og:title", content: "Guide Charente-Maritime-Maritime | Access Prestige Taxi" },
       {
         property: "og:description",
         content:
-          "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente et Charente-Maritime, avec photos et conseils.",
+          "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/blog" },
