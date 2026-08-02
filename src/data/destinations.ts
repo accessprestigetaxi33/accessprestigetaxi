@@ -461,7 +461,7 @@ export const DESTINATIONS: Destination[] = [
     slug: "taxi-conventionne-charente-maritime",
     from: "Domicile",
     to: "Hôpital / clinique",
-    dept: "Charente",
+    dept: "Charente-Maritime",
     distanceKm: 30,
     durationMin: 40,
     priceFrom: 0,
