@@ -74,7 +74,7 @@ export const Route = createFileRoute("/blog/$slug")({
             address: {
               "@type": "PostalAddress",
               addressLocality: e.city,
-              addressRegion: e.dept === "16" ? "Charente" : "Charente-Maritime",
+              addressRegion: "Charente-Maritime",
               addressCountry: "FR",
             },
             ...(e.stars ? { starRating: { "@type": "Rating", ratingValue: e.stars } } : {}),
