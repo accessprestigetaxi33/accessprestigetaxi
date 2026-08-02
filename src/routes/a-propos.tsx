@@ -3,9 +3,9 @@ import { seoLinks } from "@/lib/seo-hreflang";
 import { Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
 
-const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente & Charente-Maritime";
+const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
 const ABOUT_DESC =
-  "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente et Charente-Maritime.";
+  "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente-Maritime.";
 const ABOUT_URL = "https://accessprestigetaxi.lovable.app/a-propos";
 
 

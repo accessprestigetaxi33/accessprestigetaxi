@@ -35,7 +35,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi Angoulême – Gare TGV d'Angoulême",
       metaTitle: "Taxi Angoulême Gare TGV — Access Prestige Taxi 100 % électrique",
       metaDescription:
-        "Transfert taxi entre Angoulême et la gare TGV en Audi Q6 e-tron. Prise en charge à domicile, suivi du train, prix annoncé à l'avance. Réservation en 1 minute.",
+        "Transfert taxi entre Angoulême et la gare TGV en BMW iX1 électrique ou van Mercedes 7 places. Prise en charge à domicile, suivi du train, prix annoncé à l'avance. Réservation en 1 minute.",
       lead:
         "La gare d'Angoulême place Paris à 1 h 45 et Bordeaux à 35 minutes : autant dire que la moindre minute compte. Nous surveillons l'horaire réel de votre train et nous vous déposons au plus près du hall départ.",
       sections: [
@@ -49,7 +49,7 @@ export const DESTINATIONS: Destination[] = [
         },
         {
           h: "Silence électrique dès le matin",
-          p: "Nos deux Audi Q6 e-tron partent chargées, chauffées ou climatisées avant votre arrivée. Aucun bruit de moteur pour un départ à 6 h, et zéro émission dans la ville classée patrimoine.",
+          p: "Nos une BMW iX1 électrique et un van Mercedes 7 places partent chargées, chauffées ou climatisées avant votre arrivée. Aucun bruit de moteur pour un départ à 6 h, et zéro émission dans la ville classée patrimoine.",
         },
       ],
       bullets: [
@@ -88,7 +88,7 @@ export const DESTINATIONS: Destination[] = [
         },
         {
           h: "Electric silence, even at dawn",
-          p: "Both Audi Q6 e-tron leave fully charged and pre-conditioned. No engine noise for a 6 a.m. departure and zero emissions in the heritage city centre.",
+          p: "Both BMW iX1 électrique / van Mercedes 7 places leave fully charged and pre-conditioned. No engine noise for a 6 a.m. departure and zero emissions in the heritage city centre.",
         },
       ],
       bullets: [
@@ -122,7 +122,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi Cognac – Aéroport de Bordeaux-Mérignac",
       metaTitle: "Taxi Cognac Aéroport Bordeaux-Mérignac — transfert 100 % électrique",
       metaDescription:
-        "Transfert taxi Cognac ↔ aéroport Bordeaux-Mérignac en Audi Q6 e-tron : vol suivi, accueil pancarte, tarif ferme annoncé avant le départ.",
+        "Transfert taxi Cognac ↔ aéroport Bordeaux-Mérignac en BMW iX1 électrique ou van Mercedes 7 places : vol suivi, accueil pancarte, tarif ferme annoncé avant le départ.",
       lead:
         "Environ 1 h 40 de route entre les chais de Cognac et le hall B de Mérignac. Nous suivons votre numéro de vol : si l'avion prend du retard, nous décalons l'accueil sans supplément.",
       sections: [
@@ -136,7 +136,7 @@ export const DESTINATIONS: Destination[] = [
         },
         {
           h: "Autonomie et confort",
-          p: "L'Audi Q6 e-tron couvre l'aller-retour sans recharge intermédiaire. À bord : Wi-Fi, chargeurs USB-C, eau et sièges chauffants pour arriver reposé.",
+          p: "La BMW iX1 couvre l'aller-retour sans recharge intermédiaire. À bord : Wi-Fi, chargeurs USB-C, eau et sièges chauffants pour arriver reposé.",
         },
       ],
       bullets: [
@@ -161,7 +161,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi Cognac – Bordeaux-Mérignac airport",
       metaTitle: "Taxi Cognac to Bordeaux airport — all-electric private transfer",
       metaDescription:
-        "Cognac ↔ Bordeaux-Mérignac airport transfer in an Audi Q6 e-tron: flight tracking, meet & greet, fixed price confirmed before departure.",
+        "Cognac ↔ Bordeaux-Mérignac airport transfer in an electric BMW iX1 or a 7-seat Mercedes van: flight tracking, meet & greet, fixed price confirmed before departure.",
       lead:
         "Roughly 1 h 40 between the Cognac cellars and Mérignac. We track your flight number, so a delayed landing simply shifts the meeting time at no extra charge.",
       sections: [
@@ -175,7 +175,7 @@ export const DESTINATIONS: Destination[] = [
         },
         {
           h: "Range and comfort",
-          p: "The Audi Q6 e-tron covers the round trip without a charging stop. On board: Wi-Fi, USB-C chargers, water and heated seats.",
+          p: "The BMW iX1 covers the round trip without a charging stop. On board: Wi-Fi, USB-C chargers, water and heated seats.",
         },
       ],
       bullets: [
@@ -383,7 +383,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Journée vignobles et chais de Cognac avec chauffeur",
       metaTitle: "Mise à disposition chauffeur vignobles Cognac & Jarnac — 100 % électrique",
       metaDescription:
-        "Mise à disposition à l'heure pour visiter les chais de Cognac, Jarnac et Segonzac. Chauffeur privé en Audi Q6 e-tron, itinéraire libre, dégustation en toute sécurité.",
+        "Mise à disposition à l'heure pour visiter les chais de Cognac, Jarnac et Segonzac. Chauffeur privé en BMW iX1 électrique ou van Mercedes 7 places, itinéraire libre, dégustation en toute sécurité.",
       lead:
         "Dégustations et conduite ne font pas bon ménage. Nous restons à votre disposition à l'heure : vous choisissez les maisons, nous gérons les routes de vignes.",
       sections: [
@@ -397,7 +397,7 @@ export const DESTINATIONS: Destination[] = [
         },
         {
           h: "Un véhicule discret et silencieux",
-          p: "L'Audi Q6 e-tron n'émet ni bruit ni odeur d'échappement dans les cours de chais : un détail que les maîtres de chai apprécient.",
+          p: "La BMW iX1 n'émet ni bruit ni odeur d'échappement dans les cours de chais : un détail que les maîtres de chai apprécient.",
         },
       ],
       bullets: [
@@ -422,7 +422,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Cognac vineyard and cellar day with a private driver",
       metaTitle: "Private driver for Cognac & Jarnac vineyards — fully electric",
       metaDescription:
-        "Hourly private driver to visit the cellars of Cognac, Jarnac and Segonzac. Audi Q6 e-tron, free itinerary, safe tastings.",
+        "Hourly private driver to visit the cellars of Cognac, Jarnac and Segonzac. BMW iX1 électrique / van Mercedes 7 places, free itinerary, safe tastings.",
       lead:
         "Tasting and driving don't mix. We stay at your disposal by the hour: you pick the houses, we handle the vineyard roads.",
       sections: [
@@ -436,7 +436,7 @@ export const DESTINATIONS: Destination[] = [
         },
         {
           h: "A quiet, discreet car",
-          p: "The Audi Q6 e-tron brings no noise and no exhaust fumes into the cellar courtyards — something cellar masters appreciate.",
+          p: "The BMW iX1 brings no noise and no exhaust fumes into the cellar courtyards — something cellar masters appreciate.",
         },
       ],
       bullets: [
@@ -467,8 +467,8 @@ export const DESTINATIONS: Destination[] = [
     priceFrom: 0,
     fr: {
       title: "Domicile → Hôpital / clinique",
-      h1: "Taxi conventionné CPAM en Charente & Charente-Maritime",
-      metaTitle: "Taxi conventionné CPAM Charente & Charente-Maritime — transport médical assis",
+      h1: "Taxi conventionné CPAM en Charente-Maritime",
+      metaTitle: "Taxi conventionné CPAM Charente-Maritime — transport médical assis",
       metaDescription:
         "Transport médical assis conventionné CPAM : dialyse, chimiothérapie, consultations. Prise en charge à domicile en véhicule électrique, tiers payant.",
       lead:
@@ -506,8 +506,8 @@ export const DESTINATIONS: Destination[] = [
     },
     en: {
       title: "Home → Hospital / clinic",
-      h1: "Covered medical taxi in Charente & Charente-Maritime",
-      metaTitle: "Covered medical taxi Charente & Charente-Maritime — seated patient transport",
+      h1: "Covered medical taxi in Charente-Maritime",
+      metaTitle: "Covered medical taxi Charente-Maritime — seated patient transport",
       metaDescription:
         "Seated medical transport covered by French health insurance: dialysis, chemotherapy, appointments. Door-to-door electric vehicle, no upfront payment.",
       lead:

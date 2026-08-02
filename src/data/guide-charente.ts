@@ -1,4 +1,4 @@
-// Guide Charente-Maritime — contenu éditorial du blog
+// Guide Charente-Maritime-Maritime — contenu éditorial du blog
 // Restaurants, hôtels (étoilés), randonnées et lieux à visiter.
 // Photos : Wikimedia Commons (licences libres), 3 par article.
 

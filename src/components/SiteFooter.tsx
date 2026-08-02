@@ -3,12 +3,12 @@ import { useI18n } from "@/i18n/I18nProvider";
 
 const COPY = {
   fr: {
-    tagline: "Votre taxi conventionné 100 % électrique en Charente & Charente-Maritime. Disponible 7j/7 — 24h/24.",
+    tagline: "Votre taxi conventionné 100 % électrique en Charente-Maritime. Disponible 5j/7 · 8h-20h — 8h-20h.",
     navTitle: "Navigation",
     nav: [
       { to: "/", label: "Accueil" },
       { to: "/services", label: "Services" },
-      { to: "/blog", label: "Guide Charente" },
+      { to: "/blog", label: "Guide Charente-Maritime" },
       { to: "/reservation", label: "Réserver" },
       { to: "/a-propos", label: "À propos" },
       { to: "/contact", label: "Contact" },
@@ -22,8 +22,8 @@ const COPY = {
       "🏖️ Royan, Île de Ré & Oléron",
     ],
     contactTitle: "Contact",
-    zone: "📍 Charente & Charente-Maritime",
-    hours: "🕒 7j/7 · 24h/24",
+    zone: "📍 Charente-Maritime",
+    hours: "🕒 5j/7 · 8h-20h · 8h-20h",
     rights: "Tous droits réservés.",
     security: "Sécurité & garanties",
     destinations: "Destinations",
@@ -31,7 +31,7 @@ const COPY = {
     privacy: "Confidentialité",
   },
   en: {
-    tagline: "Your fully electric, medically-approved taxi service across Charente & Charente-Maritime. Available 7 days a week, 24 hours a day.",
+    tagline: "Your fully electric, medically-approved taxi service across Charente-Maritime. Available 7 days a week, 24 hours a day.",
     navTitle: "Navigation",
     nav: [
       { to: "/", label: "Home" },
@@ -50,8 +50,8 @@ const COPY = {
       "🏖️ Royan, Île de Ré & Oléron",
     ],
     contactTitle: "Contact",
-    zone: "📍 Charente & Charente-Maritime",
-    hours: "🕒 7 days a week · 24/7",
+    zone: "📍 Charente-Maritime",
+    hours: "🕒 7 days a week · 5j/7 · 8h-20h",
     rights: "All rights reserved.",
     security: "Safety & guarantees",
     destinations: "Destinations",

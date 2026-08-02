@@ -111,7 +111,7 @@ function DestinationPage() {
         provider: {
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
-          areaServed: ["Charente", "Charente-Maritime"],
+          areaServed: ["Charente-Maritime"],
           telephone: DRIVERS.map((d) => d.intl),
         },
         areaServed: dest.dept,

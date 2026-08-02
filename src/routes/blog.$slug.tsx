@@ -16,7 +16,7 @@ const COPY = {
     practical: "En bref",
     nearby: "À découvrir aussi",
     ctaTitle: "Trajet en taxi 100 % électrique",
-    ctaText: "Nos deux chauteurs vous conduisent en Audi Q6 e-tron, 7j/7 et 24h/24, depuis Bordeaux et la Gironde.",
+    ctaText: "Nos deux chauteurs vous conduisent en BMW iX1 électrique ou van Mercedes 7 places, 5j/7, de 8h à 20h, depuis Bordeaux et la Gironde.",
     book: "Réserver ma course",
     call: "Appeler un chauffeur",
     stars: "étoiles",
@@ -29,7 +29,7 @@ const COPY = {
     practical: "At a glance",
     nearby: "Also worth a look",
     ctaTitle: "Ride in a fully electric taxi",
-    ctaText: "Our two drivers take you there in an Audi Q6 e-tron, 24/7, from Bordeaux and the Gironde.",
+    ctaText: "Our two drivers take you there in an electric BMW iX1 or a 7-seat Mercedes van, 5j/7 · 8h-20h, from Bordeaux and the Gironde.",
     book: "Book a ride",
     call: "Call a driver",
     stars: "stars",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => {
     const e = getGuideEntry(params.slug);
     if (!e) return {};
-    const title = `${e.name}, ${e.city} — Guide Charente | Access Prestige Taxi`;
+    const title = `${e.name}, ${e.city} — Guide Charente-Maritime | Access Prestige Taxi`;
     const desc = e.fr.teaser.slice(0, 155);
     return {
       meta: [

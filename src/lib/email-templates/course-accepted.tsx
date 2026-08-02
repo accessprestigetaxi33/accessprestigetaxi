@@ -81,7 +81,7 @@ const Email = (p: Props) => {
           </Text>
 
           <Hr style={divider} />
-          <Text style={footer}>Accès Prestige Taxi · 100 % électrique · 7j/7 · 24h/24</Text>
+          <Text style={footer}>Accès Prestige Taxi · 100 % électrique · 5j/7 · 8h-20h · 8h-20h</Text>
         </Container>
       </Body>
     </Html>

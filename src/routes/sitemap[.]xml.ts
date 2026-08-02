@@ -26,7 +26,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.7",
           })),
           { path: "/reserver", changefreq: "monthly", priority: "0.9" },
-          // Pages destinations SEO (Charente & Charente-Maritime)
+          // Pages destinations SEO (Charente-Maritime)
           { path: "/destinations", changefreq: "monthly", priority: "0.9" },
           ...DESTINATIONS.map((d) => ({
             path: `/destinations/${d.slug}`,

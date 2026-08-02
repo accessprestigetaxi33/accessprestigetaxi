@@ -7,7 +7,7 @@ import { DRIVERS } from "@/data/drivers";
 const SITE = "https://accessprestigetaxi.lovable.app";
 const TITLE = "Sécurité & mentions légales — Access Prestige Taxi";
 const DESC =
-  "Chauffeurs de taxi agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente & Charente-Maritime.";
+  "Chauffeurs de taxi agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente-Maritime.";
 
 export const Route = createFileRoute("/securite")({
   head: () => ({
@@ -32,7 +32,7 @@ const COPY = {
     eyebrow: "Garanties",
     h1: "Sécurité & mentions légales",
     lead:
-      "Cette page est tenue à jour par Patricia et Alain, chauffeurs d'Access Prestige Taxi. Elle décrit concrètement les garanties appliquées à chaque course en Charente et Charente-Maritime.",
+      "Cette page est tenue à jour par Patricia et Alain, chauffeurs d'Access Prestige Taxi. Elle décrit concrètement les garanties appliquées à chaque course en Charente-Maritime.",
     pillars: [
       {
         icon: BadgeCheck,
@@ -52,7 +52,7 @@ const COPY = {
       {
         icon: Sparkles,
         t: "Véhicules 100 % électriques",
-        d: "Deux Audi Q6 e-tron : aucune émission à l'échappement, freinage assisté, aides à la conduite et habitacle nettoyé entre chaque client.",
+        d: "Une BMW iX1 électrique et un van Mercedes 7 places : aucune émission à l'échappement, freinage assisté, aides à la conduite et habitacle nettoyé entre chaque client.",
       },
     ],
     childTitle: "Enfants, mobilité réduite et animaux",
@@ -67,7 +67,7 @@ const COPY = {
     legalTitle: "Mentions légales",
     legalRows: [
       ["Service", "Access Prestige Taxi — taxi de tourisme, deux chauffeurs indépendants"],
-      ["Zone", "Charente (16) et Charente-Maritime (17), longue distance toute France"],
+      ["Zone", "Charente-Maritime (17), longue distance toute France"],
       ["Contact", "taxipatricia@gmail.com"],
       ["Tarifs", "Tarifs préfectoraux affichés au compteur, estimation ferme communiquée avant la course"],
       ["Réclamation", "Par e-mail ou téléphone, réponse sous 48 h ouvrées"],
@@ -82,7 +82,7 @@ const COPY = {
     eyebrow: "Guarantees",
     h1: "Safety & legal information",
     lead:
-      "This page is maintained by Patricia and Alain, the two Access Prestige Taxi drivers. It sets out the guarantees applied to every ride in Charente and Charente-Maritime.",
+      "This page is maintained by Patricia and Alain, the two Access Prestige Taxi drivers. It sets out the guarantees applied to every ride in Charente-Maritime.",
     pillars: [
       {
         icon: BadgeCheck,
@@ -102,7 +102,7 @@ const COPY = {
       {
         icon: Sparkles,
         t: "Fully electric fleet",
-        d: "Two Audi Q6 e-tron: no tailpipe emissions, driver assistance systems and a cabin cleaned between every passenger.",
+        d: "One electric BMW iX1 and one 7-seat Mercedes van: no tailpipe emissions, driver assistance systems and a cabin cleaned between every passenger.",
       },
     ],
     childTitle: "Children, reduced mobility and pets",
@@ -117,7 +117,7 @@ const COPY = {
     legalTitle: "Legal information",
     legalRows: [
       ["Service", "Access Prestige Taxi — licensed taxi, two independent drivers"],
-      ["Area", "Charente (16) and Charente-Maritime (17), long distance nationwide"],
+      ["Area", "Charente-Maritime (17), long distance nationwide"],
       ["Contact", "taxipatricia@gmail.com"],
       ["Fares", "Prefecture-regulated meter fares; a firm estimate is given before the ride"],
       ["Complaints", "By email or phone, answered within 48 working hours"],
