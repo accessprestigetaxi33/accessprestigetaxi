@@ -87,14 +87,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Taxi de prestige 100 % électrique à Bordeaux et en Gironde. Réservation rapide 5j/7, 8h-20h.",
+          "Taxi de prestige en Charente-Maritime, BMW iX1 100 % électrique et van Mercedes 7 places. Réservation rapide 5j/7, 8h-20h.",
       },
       { name: "author", content: "Access Prestige Taxi" },
       { property: "og:site_name", content: "Access Prestige Taxi" },
       { property: "og:title", content: "Access Prestige Taxi" },
       {
         property: "og:description",
-        content: "Votre mobilité, notre priorité — taxi 100 % électrique à Bordeaux.",
+        content: "L'excellence à chaque trajet — taxi 100 % électrique en Charente-Maritime.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
