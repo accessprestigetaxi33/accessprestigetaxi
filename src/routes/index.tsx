@@ -33,6 +33,15 @@ const BLOG_PICKS = ["hotel", "restaurant", "visite"]
 const SLOGAN_FR = "L'excellence à chaque trajet";
 const SLOGAN_EN = "Excellence on every journey";
 
+// TODO : remplace par le domaine définitif si tu passes sur un nom de domaine perso
+// (ex: https://accessprestigetaxi.fr). Sert à générer des URLs absolues pour
+// og:url / og:image / twitter:image, obligatoires selon la spec Open Graph.
+const SITE_URL = "https://accessprestigetaxi.lovable.app";
+
+function absoluteUrl(path: string) {
+  return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 const CARD =
   "rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
 
@@ -338,8 +347,23 @@ export const Route = createFileRoute("/")({
           "L'excellence à chaque trajet : réservation rapide vocale ou écrite, BMW iX1 100 % électrique et van Mercedes 7 places en Charente-Maritime, 5j/7 8h-20h.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: absoluteUrl("/") },
+      { property: "og:image", content: absoluteUrl(heroCars.url) },
+      { property: "og:image:width", content: "1656" },
+      { property: "og:image:height", content: "932" },
+      {
+        property: "og:image:alt",
+        content: "BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi",
+      },
+      { property: "og:locale", content: "fr_FR" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
+      {
+        name: "twitter:description",
+        content:
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime, 5j/7 de 8h à 20h. Réservation en moins d'une minute.",
+      },
+      { name: "twitter:image", content: absoluteUrl(heroCars.url) },
     ],
     links: seoLinks("/"),
     scripts: [
@@ -350,10 +374,27 @@ export const Route = createFileRoute("/")({
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
           slogan: SLOGAN_FR,
+          url: SITE_URL,
+          image: absoluteUrl(heroCars.url),
+          // TODO : remplace par ton logo réel si tu en as un dans /assets (utile pour le Knowledge Panel Google)
+          // logo: absoluteUrl("/logo.png"),
+          // TODO : renseigne l'adresse réelle si tu as un point fixe (bureau, station) —
+          // important pour le référencement local / pack Google Maps. Sans adresse fixe
+          // pour un service de VTC/taxi à domicile, tu peux laisser addressRegion seul.
+          address: {
+            "@type": "PostalAddress",
+            addressRegion: "Charente-Maritime",
+            addressCountry: "FR",
+          },
           areaServed: [{ "@type": "AdministrativeArea", name: "Charente-Maritime" }],
           telephone: DRIVERS.map((d) => d.intl),
           availableLanguage: ["fr", "en"],
           openingHours: "Mo-Fr 08:00-20:00",
+          // TODO : ajuste selon ta tarification réelle (€, €€, €€€)
+          priceRange: "€€",
+          // TODO : ajoute tes profils réels (Google Business, Facebook, Instagram...) —
+          // utile pour relier ta fiche Google Business à ce site.
+          // sameAs: ["https://www.google.com/maps/place/...", "https://www.facebook.com/..."],
           employee: DRIVERS.map((d) => ({
             "@type": "Person",
             name: d.name,
@@ -368,6 +409,15 @@ export const Route = createFileRoute("/")({
             areaServed: ["Charente-Maritime"],
             availableLanguage: ["fr", "en"],
           })),
+          // IMPORTANT : n'active aggregateRating que si ce sont de VRAIS avis. Google
+          // pénalise (et peut désindexer) les notes fictives ou gonflées en JSON-LD.
+          // Branche ratingValue/reviewCount sur tes données réelles issues de ReviewForm/
+          // ClientTrust dès que tu as un nombre d'avis significatif, par ex :
+          // aggregateRating: {
+          //   "@type": "AggregateRating",
+          //   ratingValue: realAverageRating,
+          //   reviewCount: realReviewCount,
+          // },
         }),
       },
     ],
