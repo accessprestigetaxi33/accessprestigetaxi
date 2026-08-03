@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { motion } from "motion/react";
@@ -35,12 +36,39 @@ const SLOGAN_EN = "Excellence on every journey";
 const CARD =
   "rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
 
+// Vidéo hero façon pub : déposer les fichiers dans /public/videos/
+// (apt-hero.webm en priorité, apt-hero.mp4 en repli). L'image heroCars
+// reste le poster et le fallback si la vidéo ne peut pas être jouée.
+const HERO_VIDEO_WEBM = "/videos/apt-hero.webm";
+const HERO_VIDEO_MP4 = "/videos/apt-hero.mp4";
+
+/** Autorise la vidéo hero sauf sur connexion lente / data économisée / préférence utilisateur. */
+function useCanPlayHeroVideo() {
+  const [canPlay, setCanPlay] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return;
+
+    const connection = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } })
+      .connection;
+    const saveData = Boolean(connection?.saveData);
+    const slowConnection = ["slow-2g", "2g", "3g"].includes(connection?.effectiveType ?? "");
+    const prefersReducedData = window.matchMedia?.("(prefers-reduced-data: reduce)").matches ?? false;
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+
+    if (!saveData && !slowConnection && !prefersReducedData && !prefersReducedMotion) {
+      setCanPlay(true);
+    }
+  }, []);
+
+  return canPlay;
+}
+
 const COPY = {
   fr: {
     kicker: "100 % électrique · Charente-Maritime",
     tagline: SLOGAN_FR,
-    lead:
-      "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné, disponible 5j/7 de 8h à 20h.",
+    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné, disponible 5j/7 de 8h à 20h.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
@@ -58,11 +86,23 @@ const COPY = {
     servicesTitle: "Une prestation pensée pour chaque trajet",
     services: [
       { icon: Stethoscope, t: "Transport conventionné", d: "Trajets médicaux assis, prise en charge simplifiée." },
-      { photo: photoInterior.url, t: "Confort intérieur", d: "Habitacle soigné, silence électrique, eau et chargeurs à bord." },
+      {
+        photo: photoInterior.url,
+        t: "Confort intérieur",
+        d: "Habitacle soigné, silence électrique, eau et chargeurs à bord.",
+      },
       { icon: PlaneTakeoff, t: "Gares & aéroports", d: "Suivi des vols et des trains, accueil en gare." },
-      { photo: photoDriver.url, t: "Chauffeurs agréés", d: "Patricia et Alain, chauffeurs de taxi conventionnés en Charente-Maritime." },
+      {
+        photo: photoDriver.url,
+        t: "Chauffeurs agréés",
+        d: "Patricia et Alain, chauffeurs de taxi conventionnés en Charente-Maritime.",
+      },
       { icon: BriefcaseBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
-      { photo: photoExterior.url, t: "Disponible 5j/7, 8h-20h", d: "Réservation immédiate ou planifiée, 5 jours sur 7, de 8h à 20h." },
+      {
+        photo: photoExterior.url,
+        t: "Disponible 5j/7, 8h-20h",
+        d: "Réservation immédiate ou planifiée, 5 jours sur 7, de 8h à 20h.",
+      },
     ],
     seatsEyebrow: "Familles",
     seatsTitle: "Sièges bébé et rehausseurs enfants, sur demande",
@@ -79,16 +119,24 @@ const COPY = {
     whyEyebrow: "Pourquoi nous",
     whyTitle: "L'élégance électrique, sans compromis",
     why: [
-      { photo: photoExterior.url, t: "Zéro émission", d: "La BMW iX1 de Patricia roule 100 % à l'électrique, sans bruit ni vibration." },
-      { photo: photoDriver.url, t: "Deux chauffeurs, un standard", d: "Même exigence de confort, de discrétion et de ponctualité." },
+      {
+        photo: photoExterior.url,
+        t: "Zéro émission",
+        d: "La BMW iX1 de Patricia roule 100 % à l'électrique, sans bruit ni vibration.",
+      },
+      {
+        photo: photoDriver.url,
+        t: "Deux chauffeurs, un standard",
+        d: "Même exigence de confort, de discrétion et de ponctualité.",
+      },
       { icon: ShieldCheck, t: "Prix annoncé, prix tenu", d: "Estimation transparente avant le départ." },
     ],
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
-    bannerText: "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons 5j/7, de 8h à 20h.",
+    bannerText:
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons 5j/7, de 8h à 20h.",
     destEyebrow: "Destinations",
     destTitle: "Là où l'on vous emmène",
-    destLead:
-      "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
+    destLead: "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
     destinations: [
       { from: "La Rochelle", to: "Aéroport de La Rochelle", meta: "≈ 15 min · vol suivi" },
       { from: "Rochefort", to: "Gare TGV", meta: "≈ 20 min · accueil quai" },
@@ -100,14 +148,30 @@ const COPY = {
     bestEyebrow: "Les best-sellers",
     bestTitle: "Nos courses les plus demandées",
     best: [
-      { n: "01", t: "Transferts gare & aéroport", d: "Accueil pancarte, suivi du train ou du vol, bagages pris en charge." },
-      { n: "02", t: "Trajets médicaux conventionnés", d: "Dialyse, chimiothérapie, consultations : prise en charge simplifiée." },
-      { n: "03", t: "Groupes jusqu'à 7 personnes", d: "Van Mercedes, bagages inclus, un seul véhicule pour tout le monde." },
+      {
+        n: "01",
+        t: "Transferts gare & aéroport",
+        d: "Accueil pancarte, suivi du train ou du vol, bagages pris en charge.",
+      },
+      {
+        n: "02",
+        t: "Trajets médicaux conventionnés",
+        d: "Dialyse, chimiothérapie, consultations : prise en charge simplifiée.",
+      },
+      {
+        n: "03",
+        t: "Groupes jusqu'à 7 personnes",
+        d: "Van Mercedes, bagages inclus, un seul véhicule pour tout le monde.",
+      },
     ],
     howEyebrow: "Comment ça marche",
     howTitle: "Trois étapes, une minute",
     how: [
-      { s: "1", t: "Vous décrivez le trajet", d: "À la voix ou à l'écrit : départ, arrivée, date, heure et siège enfant." },
+      {
+        s: "1",
+        t: "Vous décrivez le trajet",
+        d: "À la voix ou à l'écrit : départ, arrivée, date, heure et siège enfant.",
+      },
       { s: "2", t: "Nous confirmons", d: "Prix annoncé et chauffeur assigné, confirmation par e-mail." },
       { s: "3", t: "Vous suivez la course", d: "Lien de suivi en temps réel, puis reçu détaillé à l'arrivée." },
     ],
@@ -129,8 +193,7 @@ const COPY = {
   en: {
     kicker: "100% electric · Charente-Maritime",
     tagline: SLOGAN_EN,
-    lead:
-      "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service, available 5 days a week from 8am to 8pm.",
+    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service, available 5 days a week from 8am to 8pm.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
@@ -148,11 +211,23 @@ const COPY = {
     servicesTitle: "A service designed for every journey",
     services: [
       { icon: Stethoscope, t: "Medical transport", d: "Seated medical trips with simplified coverage." },
-      { photo: photoInterior.url, t: "Interior comfort", d: "Immaculate cabin, electric silence, water and chargers on board." },
+      {
+        photo: photoInterior.url,
+        t: "Interior comfort",
+        d: "Immaculate cabin, electric silence, water and chargers on board.",
+      },
       { icon: PlaneTakeoff, t: "Stations & airports", d: "Flight and train tracking, meet & greet." },
-      { photo: photoDriver.url, t: "Licensed drivers", d: "Patricia and Alain, licensed taxi drivers in Charente-Maritime." },
+      {
+        photo: photoDriver.url,
+        t: "Licensed drivers",
+        d: "Patricia and Alain, licensed taxi drivers in Charente-Maritime.",
+      },
       { icon: BriefcaseBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
-      { photo: photoExterior.url, t: "Available 5 days a week, 8am-8pm", d: "Instant or scheduled booking, five days a week, 8am to 8pm." },
+      {
+        photo: photoExterior.url,
+        t: "Available 5 days a week, 8am-8pm",
+        d: "Instant or scheduled booking, five days a week, 8am to 8pm.",
+      },
     ],
     seatsEyebrow: "Families",
     seatsTitle: "Baby seats and child boosters, on request",
@@ -169,12 +244,21 @@ const COPY = {
     whyEyebrow: "Why us",
     whyTitle: "Electric elegance, no compromise",
     why: [
-      { photo: photoExterior.url, t: "Zero emissions", d: "Patricia's BMW iX1 is fully electric — no noise, no vibration." },
-      { photo: photoDriver.url, t: "Two drivers, one standard", d: "The same demand for comfort, discretion and punctuality." },
+      {
+        photo: photoExterior.url,
+        t: "Zero emissions",
+        d: "Patricia's BMW iX1 is fully electric — no noise, no vibration.",
+      },
+      {
+        photo: photoDriver.url,
+        t: "Two drivers, one standard",
+        d: "The same demand for comfort, discretion and punctuality.",
+      },
       { icon: ShieldCheck, t: "Quoted price, final price", d: "Transparent estimate before departure." },
     ],
     bannerTitle: "Charente-Maritime, door to door",
-    bannerText: "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there 5 days a week, 8am to 8pm.",
+    bannerText:
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there 5 days a week, 8am to 8pm.",
     destEyebrow: "Destinations",
     destTitle: "Where we take you",
     destLead: "A few routes our clients book every day — arriving smoothly is our job.",
@@ -273,22 +357,39 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
+  const canPlayHeroVideo = useCanPlayHeroVideo();
 
   return (
     <main>
-      {/* HERO — photo pleine largeur des deux véhicules */}
+      {/* HERO — vidéo (ou photo de repli) pleine largeur des deux véhicules */}
       <section className="relative isolate overflow-hidden">
-        <img
-          src={heroCars.url}
-          alt="BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi au coucher du soleil"
-          fetchPriority="high"
-          width={1656}
-          height={932}
-          className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-        />
+        {canPlayHeroVideo ? (
+          <video
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={heroCars.url}
+            aria-hidden="true"
+          >
+            <source src={HERO_VIDEO_WEBM} type="video/webm" />
+            <source src={HERO_VIDEO_MP4} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={heroCars.url}
+            alt="BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi au coucher du soleil"
+            fetchPriority="high"
+            width={1656}
+            height={932}
+            className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+          />
+        )}
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,10,0.55)_0%,rgba(8,8,10,0.55)_35%,rgba(8,8,10,0.92)_85%,var(--background)_100%)]" />
 
-        <div className="mx-auto flex max-w-5xl flex-col items-center px-5 pb-16 pt-[38vw] text-center sm:pb-20 sm:pt-[26vw] lg:pt-[22vw]">
+        <div className="mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-5 py-16 pt-[max(5.5rem,env(safe-area-inset-top)+3rem)] text-center sm:min-h-[85vh] sm:py-20 lg:min-h-[80vh]">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -303,7 +404,7 @@ function Index() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] sm:text-5xl"
+            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] sm:text-4xl md:text-5xl"
           >
             {c.tagline}
           </motion.h1>
@@ -325,7 +426,7 @@ function Index() {
           >
             <Link
               to="/reserver"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95"
+              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -349,11 +450,13 @@ function Index() {
 
           <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
             {c.stats.map((s) => (
-              <div key={s.l} className="bg-card/90 px-4 py-5 backdrop-blur">
-                <dt className="font-display text-2xl font-semibold text-primary sm:text-3xl">
+              <div key={s.l} className="bg-card/90 px-3 py-4 backdrop-blur sm:px-4 sm:py-5">
+                <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
                   <Counter value={s.n} suffix={s.suffix} />
                 </dt>
-                <dd className="mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">{s.l}</dd>
+                <dd className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-[11px]">
+                  {s.l}
+                </dd>
               </div>
             ))}
           </dl>
@@ -423,7 +526,7 @@ function Index() {
             </ul>
             <Link
               to="/reserver"
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
+              className="mt-7 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
             >
               {c.seatsCta} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -459,7 +562,7 @@ function Index() {
             <Link
               to="/reserver"
               search={{ passagers: 7 } as never}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground"
+              className="mt-7 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground"
             >
               {c.groupCta} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -486,7 +589,7 @@ function Index() {
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/85 sm:text-base">{c.bannerText}</p>
             <Link
               to="/reserver"
-              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
+              className="mt-8 inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -687,7 +790,7 @@ function Index() {
               </div>
               <Link
                 to="/client/login"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground"
               >
                 {c.clientCta} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -767,7 +870,7 @@ function Index() {
             <p className="mt-3 text-muted-foreground">{c.ctaText}</p>
             <Link
               to="/reserver"
-              className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
+              className="mt-8 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
