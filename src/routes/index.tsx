@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Baby,
@@ -36,32 +36,52 @@ const SLOGAN_EN = "Excellence on every journey";
 const CARD =
   "rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
 
-// Vidéo hero façon pub : déposer les fichiers dans /public/videos/
-// (apt-hero.webm en priorité, apt-hero.mp4 en repli). L'image heroCars
-// reste le poster et le fallback si la vidéo ne peut pas être jouée.
-const HERO_VIDEO_WEBM = "/videos/apt-hero.webm";
-const HERO_VIDEO_MP4 = "/videos/apt-hero.mp4";
+// Diaporama hero façon pub, en attendant une vraie vidéo : zoom/pan lent (Ken Burns)
+// en fondu enchaîné entre plusieurs photos existantes. Ajoute/retire des entrées
+// ici pour changer les visuels utilisés.
+const HERO_SLIDES = [
+  {
+    src: heroCars.url,
+    alt: "BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi au coucher du soleil",
+    pan: { x: -18, y: -8 },
+  },
+  {
+    src: photoExterior.url,
+    alt: "BMW iX1 Access Prestige Taxi, extérieur",
+    pan: { x: 18, y: 6 },
+  },
+  {
+    src: photoDriver.url,
+    alt: "Chauffeur Access Prestige Taxi au volant",
+    pan: { x: -14, y: 10 },
+  },
+  {
+    src: photoVan.url,
+    alt: "Van Mercedes 7 places Access Prestige Taxi",
+    pan: { x: 16, y: -10 },
+  },
+];
 
-/** Autorise la vidéo hero sauf sur connexion lente / data économisée / préférence utilisateur. */
-function useCanPlayHeroVideo() {
-  const [canPlay, setCanPlay] = useState(false);
+const HERO_SLIDE_DURATION_MS = 6000;
+
+/** Fait défiler les slides, sauf si l'utilisateur préfère un mouvement réduit. */
+function useHeroSlideshow(count: number, durationMs: number) {
+  const [index, setIndex] = useState(0);
+  const [canAnimate, setCanAnimate] = useState(true);
 
   useEffect(() => {
-    if (typeof window === "undefined" || typeof navigator === "undefined") return;
-
-    const connection = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } })
-      .connection;
-    const saveData = Boolean(connection?.saveData);
-    const slowConnection = ["slow-2g", "2g", "3g"].includes(connection?.effectiveType ?? "");
-    const prefersReducedData = window.matchMedia?.("(prefers-reduced-data: reduce)").matches ?? false;
+    if (typeof window === "undefined") return;
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-
-    if (!saveData && !slowConnection && !prefersReducedData && !prefersReducedMotion) {
-      setCanPlay(true);
-    }
+    setCanAnimate(!prefersReducedMotion);
   }, []);
 
-  return canPlay;
+  useEffect(() => {
+    if (!canAnimate || count <= 1) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % count), durationMs);
+    return () => clearInterval(id);
+  }, [canAnimate, count, durationMs]);
+
+  return { index, canAnimate };
 }
 
 const COPY = {
@@ -357,44 +377,50 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
-  const canPlayHeroVideo = useCanPlayHeroVideo();
+  const { index: slideIndex, canAnimate } = useHeroSlideshow(HERO_SLIDES.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
-      {/* HERO — vidéo (ou photo de repli) pleine largeur des deux véhicules */}
-      <section className="relative isolate overflow-hidden">
-        {canPlayHeroVideo ? (
-          <video
-            className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={heroCars.url}
-            aria-hidden="true"
+      {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
+      <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={slideIndex}
+            className="absolute inset-0 -z-20 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
           >
-            <source src={HERO_VIDEO_WEBM} type="video/webm" />
-            <source src={HERO_VIDEO_MP4} type="video/mp4" />
-          </video>
-        ) : (
-          <img
-            src={heroCars.url}
-            alt="BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi au coucher du soleil"
-            fetchPriority="high"
-            width={1656}
-            height={932}
-            className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-          />
-        )}
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,10,0.55)_0%,rgba(8,8,10,0.55)_35%,rgba(8,8,10,0.92)_85%,var(--background)_100%)]" />
+            <motion.img
+              src={HERO_SLIDES[slideIndex].src}
+              alt={HERO_SLIDES[slideIndex].alt}
+              fetchPriority={slideIndex === 0 ? "high" : undefined}
+              loading={slideIndex === 0 ? "eager" : "lazy"}
+              width={1656}
+              height={932}
+              className="h-full w-full object-cover object-center"
+              initial={{ scale: 1.06, x: 0, y: 0 }}
+              animate={
+                canAnimate
+                  ? { scale: 1.16, x: HERO_SLIDES[slideIndex].pan.x, y: HERO_SLIDES[slideIndex].pan.y }
+                  : { scale: 1.06, x: 0, y: 0 }
+              }
+              transition={{ duration: (HERO_SLIDE_DURATION_MS / 1000) * 1.5, ease: "linear" }}
+            />
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,10,0.15)_0%,rgba(8,8,10,0.35)_60%,var(--background)_100%)]" />
+      </section>
 
-        <div className="mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-5 py-16 pt-[max(5.5rem,env(safe-area-inset-top)+3rem)] text-center sm:min-h-[85vh] sm:py-20 lg:min-h-[80vh]">
+      {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
+      <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
+        <div className="mx-auto flex max-w-5xl flex-col items-center px-5 text-center">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-background/40 px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary backdrop-blur"
+            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-card px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary"
           >
             <BatteryCharging className="hidden h-3.5 w-3.5 sm:inline-block" />
             <span className="text-[10px] leading-relaxed sm:text-[11px]">{c.kicker}</span>
@@ -404,7 +430,7 @@ function Index() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] sm:text-4xl md:text-5xl"
+            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl"
           >
             {c.tagline}
           </motion.h1>
@@ -413,7 +439,7 @@ function Index() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.16 }}
-            className="mt-4 max-w-xl text-base leading-relaxed text-foreground/85 sm:text-lg"
+            className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
           >
             {c.lead}
           </motion.p>
@@ -435,7 +461,7 @@ function Index() {
                 key={d.tel}
                 href={`tel:${d.tel}`}
                 aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                className="inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl border border-border bg-background/50 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition duration-300 hover:scale-[1.03] hover:border-primary"
+                className="inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary"
               >
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
                 <span className="flex flex-col items-start leading-tight">
@@ -450,7 +476,7 @@ function Index() {
 
           <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
             {c.stats.map((s) => (
-              <div key={s.l} className="bg-card/90 px-3 py-4 backdrop-blur sm:px-4 sm:py-5">
+              <div key={s.l} className="bg-card px-3 py-4 sm:px-4 sm:py-5">
                 <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
                   <Counter value={s.n} suffix={s.suffix} />
                 </dt>
