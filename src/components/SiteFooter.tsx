@@ -31,7 +31,7 @@ const COPY = {
     privacy: "Confidentialité",
   },
   en: {
-    tagline: "Your fully electric, medically-approved taxi service across Charente-Maritime. Available 7 days a week, 24 hours a day.",
+    tagline: "Excellence on every journey: a fully electric, medically-approved taxi service across Charente-Maritime, 5 days a week from 8am to 8pm.",
     navTitle: "Navigation",
     nav: [
       { to: "/", label: "Home" },
@@ -51,7 +51,7 @@ const COPY = {
     ],
     contactTitle: "Contact",
     zone: "📍 Charente-Maritime",
-    hours: "🕒 7 days a week · 5j/7 · 8h-20h",
+    hours: "🕒 5 days a week · 8am-8pm",
     rights: "All rights reserved.",
     security: "Safety & guarantees",
     destinations: "Destinations",

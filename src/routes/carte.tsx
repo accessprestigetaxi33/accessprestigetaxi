@@ -88,7 +88,7 @@ const T: Record<Lang, Dict> = {
     website: "Website",
     addContact: "Add to contacts",
     waMessage: "Hello Patricia, I would like to book a taxi.",
-    footer: "Licensed taxi · Charente-Maritime · 7 days a week",
+    footer: "Licensed taxi · Charente-Maritime · 5 days a week, 8am-8pm",
     languageLabel: "Language",
   },
   es: {
