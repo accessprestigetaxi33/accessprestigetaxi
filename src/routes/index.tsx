@@ -465,7 +465,7 @@ function Index() {
 
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
-        <div className="mx-auto flex max-w-5xl flex-col items-center px-5 text-center">
+        <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -480,7 +480,7 @@ function Index() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl"
+            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl text-balance"
           >
             {c.tagline}
           </motion.h1>
@@ -498,11 +498,11 @@ function Index() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.24 }}
-            className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
+            className="mt-8 flex w-full flex-col flex-wrap items-stretch justify-center gap-3 md:w-auto md:flex-row md:items-center"
           >
             <Link
               to="/reserver"
-              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95"
+              className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -511,7 +511,7 @@ function Index() {
                 key={d.tel}
                 href={`tel:${d.tel}`}
                 aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                className="inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary"
+                className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary active:scale-[0.98]"
               >
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
                 <span className="flex flex-col items-start leading-tight">
@@ -524,7 +524,7 @@ function Index() {
             ))}
           </motion.div>
 
-          <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
+          <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
             {c.stats.map((s) => (
               <div key={s.l} className="bg-card px-3 py-4 sm:px-4 sm:py-5">
                 <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
@@ -541,10 +541,10 @@ function Index() {
 
       {/* SERVICES */}
       <section className="border-t border-border bg-background py-20">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.servicesEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.servicesTitle}
             </h2>
           </Reveal>
@@ -577,7 +577,7 @@ function Index() {
 
       {/* SIÈGES BÉBÉ & ENFANTS */}
       <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
           <Reveal>
             <img
               src={photoInterior.url}
@@ -590,7 +590,9 @@ function Index() {
           </Reveal>
           <Reveal delay={0.08}>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.seatsEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.seatsTitle}</h2>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.seatsTitle}
+            </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.seatsText}</p>
             <ul className="mt-6 space-y-2">
               {c.seatsItems.map((s) => (
@@ -602,7 +604,7 @@ function Index() {
             </ul>
             <Link
               to="/reserver"
-              className="mt-7 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
+              className="mt-7 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
             >
               {c.seatsCta} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -612,7 +614,7 @@ function Index() {
 
       {/* TRANSPORT DE GROUPE — VAN 7 PLACES */}
       <section className="border-t border-border py-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
           <Reveal className="lg:order-2">
             <img
               src={photoVan.url}
@@ -625,7 +627,9 @@ function Index() {
           </Reveal>
           <Reveal delay={0.08} className="lg:order-1">
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.groupEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.groupTitle}</h2>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.groupTitle}
+            </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.groupText}</p>
             <ul className="mt-6 space-y-2">
               {c.groupBullets.map((b) => (
@@ -638,7 +642,7 @@ function Index() {
             <Link
               to="/reserver"
               search={{ passagers: 7 } as never}
-              className="mt-7 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground"
+              className="mt-7 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
             >
               {c.groupCta} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -657,15 +661,15 @@ function Index() {
           className="absolute inset-0 -z-20 h-full w-full object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,8,10,0.92),rgba(8,8,10,0.55))]" />
-        <div className="mx-auto max-w-6xl px-5 py-24 sm:py-32">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-24 sm:py-32">
           <Reveal>
-            <h2 className="max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            <h2 className="max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.bannerTitle}
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/85 sm:text-base">{c.bannerText}</p>
             <Link
               to="/reserver"
-              className="mt-8 inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
+              className="mt-8 inline-flex min-h-[48px] touch-manipulation items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -675,10 +679,10 @@ function Index() {
 
       {/* DRIVERS */}
       <section id="chauffeurs" className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.driversEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.driversTitle}
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -708,7 +712,7 @@ function Index() {
                   <a
                     href={`tel:${d.tel}`}
                     aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                    className="mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.02] hover:opacity-95"
+                    className="mt-6 inline-flex min-h-[52px] touch-manipulation w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.02] hover:opacity-95 active:scale-[0.98]"
                   >
                     <Phone className="h-4 w-4 shrink-0" />
                     <span className="tabular-nums">
@@ -724,10 +728,12 @@ function Index() {
 
       {/* DESTINATIONS */}
       <section className="border-t border-border bg-background py-20">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.destEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.destTitle}</h2>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.destTitle}
+            </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.destLead}</p>
           </Reveal>
 
@@ -769,10 +775,12 @@ function Index() {
 
       {/* BEST-SELLERS */}
       <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.bestEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.bestTitle}</h2>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.bestTitle}
+            </h2>
           </Reveal>
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {c.best.map((b, i) => (
@@ -798,14 +806,14 @@ function Index() {
 
       {/* WHY */}
       <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.whyEyebrow}</p>
-            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.whyTitle}
             </h2>
           </Reveal>
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {c.why.map((w, i) => (
               <Reveal key={w.t} delay={i * 0.06}>
                 <div className={`group h-full overflow-hidden ${CARD}`}>
@@ -833,12 +841,14 @@ function Index() {
 
       {/* COMMENT ÇA MARCHE */}
       <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.howEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.howTitle}</h2>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.howTitle}
+            </h2>
           </Reveal>
-          <ol className="mt-10 grid gap-6 sm:grid-cols-3">
+          <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
                 <div className={`h-full bg-background p-6 ${CARD}`}>
@@ -854,19 +864,19 @@ function Index() {
 
       {/* ESPACE CLIENT */}
       <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-5xl px-5">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <div className="grid items-center gap-8 rounded-3xl border border-primary/30 bg-card p-7 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto]">
               <div className="min-w-0">
                 <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.clientEyebrow}</p>
-                <h2 className="mt-3 font-display text-2xl font-semibold text-foreground sm:text-3xl">
+                <h2 className="mt-3 font-display text-2xl font-semibold text-foreground sm:text-3xl text-balance">
                   {c.clientTitle}
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.clientText}</p>
               </div>
               <Link
                 to="/client/login"
-                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
               >
                 {c.clientCta} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -880,10 +890,10 @@ function Index() {
 
       {/* AVIS */}
       <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto max-w-2xl px-5">
+        <div className="mx-auto max-w-2xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.reviewTitle}
             </h2>
             <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
@@ -896,12 +906,14 @@ function Index() {
 
       {/* BLOG */}
       <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
               <div className="min-w-0">
                 <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.blogEyebrow}</p>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.blogTitle}</h2>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+                  {c.blogTitle}
+                </h2>
                 <p className="mt-3 text-sm text-muted-foreground">{c.blogText}</p>
               </div>
               <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">
@@ -910,7 +922,7 @@ function Index() {
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.06}>
                 <Link
@@ -940,13 +952,15 @@ function Index() {
 
       {/* CTA */}
       <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-3xl px-5 text-center">
+        <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8 text-center">
           <Reveal>
-            <h2 className="font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.ctaTitle}</h2>
+            <h2 className="font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.ctaTitle}
+            </h2>
             <p className="mt-3 text-muted-foreground">{c.ctaText}</p>
             <Link
               to="/reserver"
-              className="mt-8 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03]"
+              className="mt-8 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
