@@ -6,12 +6,9 @@ import {
   Baby,
   BatteryCharging,
   BriefcaseBusiness,
-  Clock,
-  Leaf,
   Phone,
   PlaneTakeoff,
   ShieldCheck,
-  Sparkles,
   Stethoscope,
   Users,
 } from "lucide-react";
