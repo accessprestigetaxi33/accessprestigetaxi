@@ -18,6 +18,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
+import { FaqSeo } from "@/components/FaqSeo";
 import { Reveal, Counter } from "@/components/motion-ui";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
@@ -187,6 +188,7 @@ const COPY = {
       { n: 2, suffix: "", l: "chauffeurs dédiés" },
       { n: 100, suffix: " %", l: "électrique (BMW iX1)" },
       { n: 7, suffix: " places", l: "van Mercedes" },
+      { n: 1, suffix: "", l: "SUV Audi Q6 e-tron électrique" },
     ],
     servicesEyebrow: "Nos services",
     servicesTitle: "Une prestation pensée pour chaque trajet",
@@ -325,6 +327,7 @@ const COPY = {
       { n: 2, suffix: "", l: "dedicated drivers" },
       { n: 100, suffix: "%", l: "electric (BMW iX1)" },
       { n: 7, suffix: " seats", l: "Mercedes van" },
+      { n: 1, suffix: "", l: "Audi Q6 e-tron electric SUV" },
     ],
     servicesEyebrow: "Our services",
     servicesTitle: "A service designed for every journey",
@@ -458,13 +461,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 électrique et van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports.",
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 et Audi Q6 e-tron électriques, van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports.",
       },
       { property: "og:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
       {
         property: "og:description",
         content:
-          "L'excellence à chaque trajet : réservation rapide vocale ou écrite, BMW iX1 100 % électrique et van Mercedes 7 places en Charente-Maritime.",
+          "L'excellence à chaque trajet : réservation vocale ou écrite en moins d'une minute, BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes 7 places en Charente-Maritime.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
@@ -1188,6 +1191,9 @@ function Index() {
 
       {/* AVIS & RÉASSURANCE */}
       <ClientTrust />
+
+      {/* FAQ SEO */}
+      <FaqSeo />
 
       {/* AVIS */}
       <section className="border-t border-border bg-card/40 py-20">
