@@ -1122,6 +1122,23 @@ const fr: Dict = {
   "client.dashboard.feat.profile_desc": "Gérez vos informations personnelles",
 
   // Réserver — bouton notifications
+  // Reserver — chat
+  "reserver.chat.title": "Réserver par chat",
+  "reserver.chat.subtitle": "Décrivez votre trajet, Margot s'occupe du reste.",
+  "reserver.chat.placeholder": "Ex : La Rochelle vers Royan demain à 14h pour 2 personnes",
+  "reserver.chat.send": "Envoyer",
+  "reserver.chat.speaking": "Écoute en cours…",
+  "reserver.chat.hold_to_speak": "Maintenez pour parler",
+  "reserver.chat.quick.airport": "Aéroport La Rochelle",
+  "reserver.chat.quick.train": "Gare La Rochelle",
+  "reserver.chat.quick.estimate": "Devis rapide",
+  "reserver.chat.quick.group": "Transport groupe (7 places)",
+  "reserver.chat.quick.child": "Sièges enfant / bébé",
+  "reserver.chat.error.network": "Erreur réseau, veuillez réessayer.",
+  "reserver.chat.booking_ok": "Réservation confirmée !",
+  "reserver.chat.booking_ref": "Référence",
+  "reserver.chat.booking_track": "Suivre ma course",
+
   "reserver.notif.disable_btn": "Désactiver les notifs",
   "reserver.notif.repair_btn": "Réparer / réinscrire les notifications",
   "reserver.notif.enable_btn": "Activer les notifications de suivi",
