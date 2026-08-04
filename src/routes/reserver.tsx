@@ -321,7 +321,7 @@ function ReservationPage() {
           <Input
             ref={inputRef}
             value={input}
-            onChange={handleInputChange}
+            onChange={(e) => setInput(e.target.value)}
             placeholder={t("reserver.chat.placeholder")}
             disabled={isLoading}
             className="flex-1 rounded-full border-[#F4F1EA]/10 bg-[#161618] px-4 py-3 text-sm text-[#F4F1EA] placeholder:text-[#F4F1EA]/40 focus-visible:border-[#C6A24A]/50 focus-visible:ring-[#C6A24A]/20"
