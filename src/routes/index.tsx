@@ -475,6 +475,8 @@ export const Route = createFileRoute("/")({
         content: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
       },
       { property: "og:locale", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "en_GB" },
+      { property: "og:image:alt:en", content: "Access Prestige Taxi — BMW iX1, Audi Q6 e-tron and Mercedes V-Class van, 100% electric taxi fleet in Charente-Maritime" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
       {
