@@ -64,10 +64,18 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   return <Ctx.Provider value={{ lang, setLang, t, dir, isRtl }}>{children}</Ctx.Provider>;
 }
 
+const FALLBACK: I18nCtx = {
+  lang: "fr",
+  setLang: () => {},
+  t: (key: string) => DICTS.fr[key] ?? key,
+  dir: "ltr",
+  isRtl: false,
+};
+
 export function useI18n() {
-  const v = useContext(Ctx);
-  if (!v) throw new Error("useI18n must be used inside I18nProvider");
-  return v;
+  // Pas de throw : en cas de rendu hors provider (HMR, portail), on retombe
+  // sur le français plutôt que d'afficher une page blanche.
+  return useContext(Ctx) ?? FALLBACK;
 }
 
 export function useT() {
