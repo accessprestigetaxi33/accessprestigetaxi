@@ -20,7 +20,7 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal, Counter } from "@/components/motion-ui";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-2026b.png.asset.json";
+import heroCars from "@/assets/apt-hero-2026c.png.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
@@ -62,7 +62,7 @@ const CARD =
 const HERO_SLIDES = [
   {
     src: heroCars.url,
-    alt: "BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi au coucher du soleil",
+    alt: "BMW iX1, Audi Q8 et van Mercedes 7 places Access Prestige Taxi, 100 % électrique, au coucher du soleil",
     pan: { x: -18, y: -8 },
   },
   {
@@ -852,17 +852,17 @@ function Index() {
                     className="h-40 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
                   />
                   <div className="p-6 pt-8">
-                  <span className="absolute right-4 top-[10.5rem] font-display text-5xl font-semibold text-primary/15">
-                    {b.n}
-                  </span>
-                  <h3 className="font-display text-lg font-semibold text-card-foreground">{b.t}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
-                  <Link
-                    to="/reserver"
-                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-                  >
-                    {c.ctaBook} <ArrowRight className="h-4 w-4" />
-                  </Link>
+                    <span className="absolute right-4 top-[10.5rem] font-display text-5xl font-semibold text-primary/15">
+                      {b.n}
+                    </span>
+                    <h3 className="font-display text-lg font-semibold text-card-foreground">{b.t}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
+                    <Link
+                      to="/reserver"
+                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                    >
+                      {c.ctaBook} <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
                 </article>
               </Reveal>
