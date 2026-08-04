@@ -20,7 +20,7 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal, Counter } from "@/components/motion-ui";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-2026d.png.asset.json";
+import heroCars from "@/assets/apt-hero-2026c.png.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
