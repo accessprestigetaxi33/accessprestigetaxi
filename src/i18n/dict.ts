@@ -2237,6 +2237,23 @@ const en: Dict = {
   "client.dashboard.feat.profile_desc": "Manage your personal information",
 
   // Book — notifications button
+  // Reserver — chat
+  "reserver.chat.title": "Book by chat",
+  "reserver.chat.subtitle": "Describe your trip, Margot handles the rest.",
+  "reserver.chat.placeholder": "E.g. La Rochelle to Royan tomorrow at 2pm for 2 people",
+  "reserver.chat.send": "Send",
+  "reserver.chat.speaking": "Listening…",
+  "reserver.chat.hold_to_speak": "Hold to speak",
+  "reserver.chat.quick.airport": "La Rochelle Airport",
+  "reserver.chat.quick.train": "La Rochelle Station",
+  "reserver.chat.quick.estimate": "Quick quote",
+  "reserver.chat.quick.group": "Group transport (7 seats)",
+  "reserver.chat.quick.child": "Child / baby seats",
+  "reserver.chat.error.network": "Network error, please try again.",
+  "reserver.chat.booking_ok": "Booking confirmed!",
+  "reserver.chat.booking_ref": "Reference",
+  "reserver.chat.booking_track": "Track my ride",
+
   "reserver.notif.disable_btn": "Disable notifications",
   "reserver.notif.repair_btn": "Repair / re-subscribe notifications",
   "reserver.notif.enable_btn": "Enable tracking notifications",
