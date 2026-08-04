@@ -144,7 +144,7 @@ function ReservationPage() {
       setMicPermission("denied");
       toast.error(lang === "en" ? "Microphone access denied" : "Accès au micro refusé");
     }
-  }, [handleInputChange, handleSubmit, lang, transcribe]);
+  }, [setInput, sendMessage, lang, transcribe]);
 
   const stopRecording = useCallback(() => {
     const recorder = mediaRecorderRef.current;
