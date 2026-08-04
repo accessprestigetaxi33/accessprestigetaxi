@@ -1,14 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
-import { streamText, tool, type UIMessage, convertToModelMessages } from "ai";
+import { streamText, tool, type UIMessage, convertToModelMessages, isStepCount } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { resolveAddress, sanitizeAssistantReply } from "@/lib/address-resolver.server";
-import { geocodeGoogle, routeGoogle } from "@/lib/google.server";
 import { createReservationPublic } from "@/lib/reservation-create.functions";
 import { calculerPrixMixte, estTarifJourParis } from "@/lib/tarif";
 import { enqueueClientConfirmationEmail, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
 import { formatInTimeZone } from "date-fns-tz";
-import { addMinutes, formatISO, parseISO, isBefore, addDays, startOfToday } from "date-fns";
+import { addMinutes, formatISO, parseISO, isBefore, addDays } from "date-fns";
 
 const TIMEZONE = "Europe/Paris";
 const MIN_ADVANCE_MINUTES = 60;
@@ -22,25 +21,6 @@ const PHONE_ALAIN = "+33650321923";
 const WHATSAPP_PATRICIA = "https://wa.me/33650260015";
 const WHATSAPP_ALAIN = "https://wa.me/33650321923";
 const EMAIL = "taxipatricia@gmail.com";
-
-const FLEET = {
-  patricia: {
-    name: "Patricia",
-    vehicle: "BMW iX1 100% électrique",
-    maxPassengers: 4,
-    childSeats: true,
-    babySeats: true,
-    electric: true,
-  },
-  alain: {
-    name: "Alain",
-    vehicle: "Mercedes V-Class (jusqu'à 7 passagers)",
-    maxPassengers: 7,
-    childSeats: true,
-    babySeats: true,
-    electric: false,
-  },
-};
 
 const SYSTEM_PROMPT_FR = `Tu es Margot, l'assistante de réservation de ${BRAND} en Charente-Maritime.
 RÈGLES ABSOLUES :
@@ -85,12 +65,21 @@ function getSystemPrompt(lang: string) {
 }
 
 function formatPickupDateTime(iso: string, lang: string) {
-  return formatInTimeZone(parseISO(iso), TIMEZONE, lang === "en" ? "MMMM d, yyyy 'at' HH:mm" : "d MMMM yyyy 'à' HH:mm", { locale: lang === "en" ? undefined : undefined });
+  return formatInTimeZone(parseISO(iso), TIMEZONE, lang === "en" ? "MMMM d, yyyy 'at' HH:mm" : "d MMMM yyyy 'à' HH:mm");
 }
 
 function nowParis() {
   return new Date(
-    new Intl.DateTimeFormat("en-GB", { timeZone: TIMEZONE, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).format(new Date()),
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: TIMEZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    }).format(new Date()),
   );
 }
 
@@ -139,39 +128,6 @@ const ReservationState = z.object({
 
 type ReservationStateType = z.infer<typeof ReservationState>;
 
-const QuoteResult = z.object({
-  depart: z.string(),
-  arrivee: z.string(),
-  distance_km: z.number(),
-  duree_min: z.number(),
-  tarif_jour: z.boolean(),
-  prix_estime: z.number(),
-  pickup_datetime: z.string().nullable(),
-  passagers: z.number().int().nullable(),
-});
-
-const SlotResult = z.object({
-  available: z.boolean(),
-  reason: z.string(),
-  next_available: z.string().nullable(),
-});
-
-const ConfirmResult = z.object({
-  ok: z.boolean(),
-  reservation_id: z.string().nullable(),
-  suivi_id: z.string().nullable(),
-  tracking_link: z.string().nullable(),
-  message: z.string(),
-});
-
-const HandoffResult = z.object({
-  ok: z.boolean(),
-  message: z.string(),
-  phone: z.string(),
-  whatsapp: z.string(),
-  email: z.string(),
-});
-
 export const aiChatReservation = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => {
     const schema = z.object({
@@ -181,7 +137,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
     });
     return schema.parse(input);
   })
-  .handler(async ({ data, request }) => {
+  .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("LOVABLE_API_KEY missing");
 
@@ -189,7 +145,6 @@ export const aiChatReservation = createServerFn({ method: "POST" })
     const model = gateway("google/gemini-2.5-flash");
     const lang = data.lang;
 
-    // State carried in the last user message metadata if present
     let state: ReservationStateType = {
       nom: null,
       telephone: null,
@@ -217,7 +172,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
       model,
       system,
       messages: await convertToModelMessages(data.messages as UIMessage[]),
-      maxSteps: MAX_STEPS,
+      stopWhen: [isStepCount(MAX_STEPS)],
       tools: {
         compute_quote: tool({
           description:
@@ -230,30 +185,30 @@ export const aiChatReservation = createServerFn({ method: "POST" })
             pickup_datetime: z.string().nullable().describe("ISO datetime de prise en charge (optionnel) / Pickup ISO datetime (optional)"),
             passagers: z.number().int().nullable().describe("Nombre de passagers / Passenger count"),
           }),
-          execute: async ({ depart, arrivee, pickup_datetime, passagers }) => {
-            const from = await resolveAddress(depart, "depart", lang);
-            const to = await resolveAddress(arrivee, "arrivee", lang);
-            if (!from.ok) return { error: from.hint };
-            if (!to.ok) return { error: to.hint };
+          execute: async (args: { depart: string; arrivee: string; pickup_datetime: string | null; passagers: number | null }) => {
+            const from = await resolveAddress(args.depart, "depart", lang);
+            const to = await resolveAddress(args.arrivee, "arrivee", lang);
+            if (!from.ok) return { error: from.hint } as const;
+            if (!to.ok) return { error: to.hint } as const;
 
-            const route = await routeGoogle(from.geocode, to.geocode, pickup_datetime ?? undefined);
+            const route = await routeGoogle(from.geocode, to.geocode, args.pickup_datetime ?? undefined);
             if (!route) {
               return {
                 error:
                   lang === "en"
                     ? "Unable to calculate the route. Please check the addresses or contact us."
                     : "Impossible de calculer l'itinéraire. Vérifiez les adresses ou contactez-nous.",
-              };
+              } as const;
             }
 
-            const when = pickup_datetime ?? formatISO(addMinutes(new Date(), MIN_ADVANCE_MINUTES));
+            const when = args.pickup_datetime ?? formatISO(addMinutes(new Date(), MIN_ADVANCE_MINUTES));
             const tarifJour = estTarifJourParis(when);
             const price = calculerPrixMixte(route.distanceKm, when);
 
             state.depart = from.geocode.label;
             state.arrivee = to.geocode.label;
             state.pickup_datetime = when;
-            state.passagers = passagers ?? state.passagers;
+            state.passagers = args.passagers ?? state.passagers;
 
             return {
               depart: from.geocode.label,
@@ -263,7 +218,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
               tarif_jour: tarifJour,
               prix_estime: price,
               pickup_datetime: when,
-              passagers: passagers ?? state.passagers,
+              passagers: args.passagers ?? state.passagers,
             };
           },
         }),
@@ -275,8 +230,8 @@ export const aiChatReservation = createServerFn({ method: "POST" })
           parameters: z.object({
             pickup_datetime: z.string().describe("ISO datetime de prise en charge / Pickup ISO datetime"),
           }),
-          execute: async ({ pickup_datetime }) => {
-            const requested = parsePickup(pickup_datetime);
+          execute: async (args: { pickup_datetime: string }) => {
+            const requested = parsePickup(args.pickup_datetime);
             const minTime = addMinutes(nowParis(), MIN_ADVANCE_MINUTES);
             if (isBefore(requested, minTime)) {
               const next = nextOpenSlot();
@@ -289,7 +244,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
                 next_available: formatISO(next),
               };
             }
-            if (!isWithinOpeningHours(pickup_datetime)) {
+            if (!isWithinOpeningHours(args.pickup_datetime)) {
               const next = nextOpenSlot();
               return {
                 available: false,
@@ -300,7 +255,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
                 next_available: formatISO(next),
               };
             }
-            state.pickup_datetime = pickup_datetime;
+            state.pickup_datetime = args.pickup_datetime;
             return {
               available: true,
               reason: lang === "en" ? "The slot is available." : "Le créneau est disponible.",
@@ -327,7 +282,20 @@ export const aiChatReservation = createServerFn({ method: "POST" })
             notes: z.string().nullable().describe("Notes / Notes"),
             paiement: z.string().nullable().describe("Mode de paiement / Payment method"),
           }),
-          execute: async (params) => {
+          execute: async (params: {
+            nom: string;
+            telephone: string;
+            email: string | null;
+            depart: string;
+            arrivee: string;
+            pickup_datetime: string;
+            passagers: number;
+            bagages: number | null;
+            childSeats: number | null;
+            babySeats: number | null;
+            notes: string | null;
+            paiement: string | null;
+          }) => {
             state = { ...state, ...params };
 
             const from = await resolveAddress(state.depart!, "depart", lang);
@@ -439,7 +407,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
         human_handoff: tool({
           description: lang === "en" ? "Hand off to a human operator." : "Transfère vers un opérateur humain.",
           parameters: z.object({ reason: z.string().nullable() }),
-          execute: async ({ reason }) => {
+          execute: async (_args: { reason: string | null }) => {
             return {
               ok: true,
               message:
@@ -452,9 +420,6 @@ export const aiChatReservation = createServerFn({ method: "POST" })
             };
           },
         }),
-      },
-      onStepFinish: async ({ toolResults, response }) => {
-        // Optional: log tool usage for analytics
       },
     });
 
