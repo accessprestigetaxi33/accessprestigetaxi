@@ -1111,9 +1111,9 @@ function ReservationPage() {
     return { isJour: true, label: dayLabel, motif: `${parisTime} (${hStr})` };
   }
 
-  const TARIF_JOUR_KM = 2.16;
-  const TARIF_NUIT_KM = 3.24;
-  const PRISE = 2.83;
+  const TARIF_JOUR_KM = 2.28;
+  const TARIF_NUIT_KM = 3.22;
+  const PRISE = 2.7;
 
   // Détail du calcul mixte : prorata jour/nuit minute par minute.
   function detailMixte(distKm: number, pickupMs: number, dureeS: number) {
