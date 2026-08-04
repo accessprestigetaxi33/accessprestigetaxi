@@ -510,8 +510,8 @@ function Index() {
                     alt={slide.alt}
                     fetchPriority={slideIndex === 0 ? "high" : undefined}
                     loading={slideIndex === 0 ? "eager" : "lazy"}
-                    width={1920}
-                    height={768}
+                    width={1681}
+                    height={935}
                     className={
                       isBanner
                         ? "h-full w-full object-contain object-center"
