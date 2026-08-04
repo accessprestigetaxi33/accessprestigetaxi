@@ -298,6 +298,10 @@ export function SiteFooter() {
           <Link to="/destinations" className="footer-link-sm">
             {c.destinations}
           </Link>
+          <Link to="/notifications" className="footer-link-sm">
+            Notifications
+          </Link>
+
           <Link to="/mentions-legales" className="footer-link-sm">
             {c.legal}
           </Link>
