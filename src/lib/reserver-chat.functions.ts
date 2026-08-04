@@ -413,7 +413,7 @@ export const aiChatReservation = createServerFn({ method: "POST" })
         }),
         human_handoff: tool({
           description: lang === "en" ? "Hand off to a human operator." : "Transfère vers un opérateur humain.",
-          parameters: z.object({ reason: z.string().nullable() }),
+          inputSchema: zodSchema(z.object({ reason: z.string().nullable() })),
           execute: async (_args: { reason: string | null }) => {
             return {
               ok: true,
