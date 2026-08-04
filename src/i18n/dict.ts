@@ -1122,6 +1122,23 @@ const fr: Dict = {
   "client.dashboard.feat.profile_desc": "Gérez vos informations personnelles",
 
   // Réserver — bouton notifications
+  // Reserver — chat
+  "reserver.chat.title": "Réserver par chat",
+  "reserver.chat.subtitle": "Décrivez votre trajet, Margot s'occupe du reste.",
+  "reserver.chat.placeholder": "Ex : La Rochelle vers Royan demain à 14h pour 2 personnes",
+  "reserver.chat.send": "Envoyer",
+  "reserver.chat.speaking": "Écoute en cours…",
+  "reserver.chat.hold_to_speak": "Maintenez pour parler",
+  "reserver.chat.quick.airport": "Aéroport La Rochelle",
+  "reserver.chat.quick.train": "Gare La Rochelle",
+  "reserver.chat.quick.estimate": "Devis rapide",
+  "reserver.chat.quick.group": "Transport groupe (7 places)",
+  "reserver.chat.quick.child": "Sièges enfant / bébé",
+  "reserver.chat.error.network": "Erreur réseau, veuillez réessayer.",
+  "reserver.chat.booking_ok": "Réservation confirmée !",
+  "reserver.chat.booking_ref": "Référence",
+  "reserver.chat.booking_track": "Suivre ma course",
+
   "reserver.notif.disable_btn": "Désactiver les notifs",
   "reserver.notif.repair_btn": "Réparer / réinscrire les notifications",
   "reserver.notif.enable_btn": "Activer les notifications de suivi",
@@ -2220,6 +2237,23 @@ const en: Dict = {
   "client.dashboard.feat.profile_desc": "Manage your personal information",
 
   // Book — notifications button
+  // Reserver — chat
+  "reserver.chat.title": "Book by chat",
+  "reserver.chat.subtitle": "Describe your trip, Margot handles the rest.",
+  "reserver.chat.placeholder": "E.g. La Rochelle to Royan tomorrow at 2pm for 2 people",
+  "reserver.chat.send": "Send",
+  "reserver.chat.speaking": "Listening…",
+  "reserver.chat.hold_to_speak": "Hold to speak",
+  "reserver.chat.quick.airport": "La Rochelle Airport",
+  "reserver.chat.quick.train": "La Rochelle Station",
+  "reserver.chat.quick.estimate": "Quick quote",
+  "reserver.chat.quick.group": "Group transport (7 seats)",
+  "reserver.chat.quick.child": "Child / baby seats",
+  "reserver.chat.error.network": "Network error, please try again.",
+  "reserver.chat.booking_ok": "Booking confirmed!",
+  "reserver.chat.booking_ref": "Reference",
+  "reserver.chat.booking_track": "Track my ride",
+
   "reserver.notif.disable_btn": "Disable notifications",
   "reserver.notif.repair_btn": "Repair / re-subscribe notifications",
   "reserver.notif.enable_btn": "Enable tracking notifications",

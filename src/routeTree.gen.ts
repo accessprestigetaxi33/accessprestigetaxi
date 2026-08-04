@@ -23,6 +23,7 @@ import { Route as ReserverRouteImport } from './routes/reserver'
 import { Route as SecuriteRouteImport } from './routes/securite'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
@@ -122,6 +123,11 @@ const ServicesRoute = ServicesRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiManifestRoute = ApiManifestRouteImport.update({
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
@@ -341,6 +348,7 @@ export interface FileRoutesByTo {
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
@@ -388,6 +396,7 @@ export interface FileRoutesById {
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
@@ -436,6 +445,7 @@ export interface FileRouteTypes {
     | '/securite'
     | '/services'
     | '/sitemap.xml'
+    | '/api/chat'
     | '/api/manifest'
     | '/blog/$slug'
     | '/client/chat'
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
     | '/securite'
     | '/services'
     | '/sitemap.xml'
+    | '/api/chat'
     | '/api/manifest'
     | '/blog/$slug'
     | '/client/chat'
@@ -528,6 +539,7 @@ export interface FileRouteTypes {
     | '/securite'
     | '/services'
     | '/sitemap.xml'
+    | '/api/chat'
     | '/api/manifest'
     | '/blog/$slug'
     | '/client/chat'
@@ -575,6 +587,7 @@ export interface RootRouteChildren {
   SecuriteRoute: typeof SecuriteRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiChatRoute: typeof ApiChatRoute
   ApiManifestRoute: typeof ApiManifestRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ClientChatRoute: typeof ClientChatRoute
@@ -703,6 +716,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/manifest': {
@@ -956,6 +976,7 @@ const rootRouteChildren: RootRouteChildren = {
   SecuriteRoute: SecuriteRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiChatRoute: ApiChatRoute,
   ApiManifestRoute: ApiManifestRoute,
   BlogSlugRoute: BlogSlugRoute,
   ClientChatRoute: ClientChatRoute,
@@ -989,13 +1010,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
