@@ -80,11 +80,14 @@ function ReservationPage() {
   useEffect(() => {
     for (const m of messages) {
       for (const part of m.parts ?? []) {
-        if (part.type === "tool-invocation" && part.toolInvocation.toolName === "confirm_reservation") {
-          const result = part.toolInvocation.result as any;
-          if (result?.ok && result.suivi_id && !confirmed) {
-            setConfirmed({ suiviId: result.suivi_id, trackingLink: result.tracking_link });
-            gaEvent("reservation_confirmed", { method: "chat" });
+        if (part.type === "tool-invocation") {
+          const ti = (part as any).toolInvocation;
+          if (ti?.toolName === "confirm_reservation") {
+            const result = ti.result as any;
+            if (result?.ok && result.suivi_id && !confirmed) {
+              setConfirmed({ suiviId: result.suivi_id, trackingLink: result.tracking_link });
+              gaEvent("reservation_confirmed", { method: "chat" });
+            }
           }
         }
       }
