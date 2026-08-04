@@ -5,7 +5,7 @@ import { resolveAddress } from "@/lib/address-resolver.server";
 import { geocodeGoogle, routeGoogle } from "@/lib/google.server";
 import { createReservationPublic } from "@/lib/reservation-create.functions";
 import { calculerPrixMixte, estTarifJourParis } from "@/lib/tarif";
-import { enqueueClientConfirmationEmail, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
+import { deliverClientConfirmation, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
 import { formatInTimeZone } from "date-fns-tz";
 import { addMinutes, formatISO, parseISO, isBefore, addDays } from "date-fns";
 
@@ -360,21 +360,24 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
           const inserted = await createReservationPublic({ data: payload });
           const trackingLink = buildTrackingLink(suiviId, lang);
 
-          if (state.email) {
-            await enqueueClientConfirmationEmail(inserted.id, state.email, lang, {
+          await deliverClientConfirmation({
+            reservationId: inserted.id,
+            email: state.email ?? null,
+            lang,
+            payload: {
               clientName: state.nom!,
               pickupDatetime: formatPickupDateTime(when, lang),
               depart: from.geocode.label,
               arrivee: to.geocode.label,
               priceEstimate: price,
               trackingId: suiviId,
-            });
-          }
+              trackingLink,
+            },
+          });
 
           await logReservationEvent(inserted.id, "created_from_chat", null, null, null, state.nom!, from.geocode.label, to.geocode.label);
 
-          await sendDriverPush("patricia", lang === "en" ? "New booking" : "Nouvelle réservation", `${state.nom!} — ${from.geocode.label} → ${to.geocode.label}`, trackingLink, inserted.id);
-          await sendDriverPush("alain", lang === "en" ? "New booking" : "Nouvelle réservation", `${state.nom!} — ${from.geocode.label} → ${to.geocode.label}`, trackingLink, inserted.id);
+          await sendDriverPush("chauffeur", lang === "en" ? "New booking" : "Nouvelle réservation", `${state.nom!} — ${from.geocode.label} → ${to.geocode.label}`, trackingLink, inserted.id);
 
           return {
             ok: true,
