@@ -411,7 +411,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image:height", content: "768" },
       {
         property: "og:image:alt",
-        content: "BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi",
+        content: "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, service premium en Charente-Maritime",
       },
       { property: "og:locale", content: "fr_FR" },
       { name: "twitter:card", content: "summary_large_image" },
