@@ -490,7 +490,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
-  const { index: slideIndex, canAnimate } = useHeroSlideshow(HERO_SLIDES.length, HERO_SLIDE_DURATION_MS);
+  const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
+  const { index: slideIndex, canAnimate } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
