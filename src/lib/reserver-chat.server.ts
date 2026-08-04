@@ -1,6 +1,6 @@
 import { streamText, tool, type UIMessage, convertToModelMessages, isStepCount, zodSchema } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayProvider, getLovableAiGatewayRunId, type LovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createLovableAiGatewayProvider, getLovableAiGatewayRunId } from "@/lib/ai-gateway.server";
 import { resolveAddress } from "@/lib/address-resolver.server";
 import { geocodeGoogle, routeGoogle } from "@/lib/google.server";
 import { createReservationPublic } from "@/lib/reservation-create.functions";
@@ -8,6 +8,8 @@ import { calculerPrixMixte, estTarifJourParis } from "@/lib/tarif";
 import { enqueueClientConfirmationEmail, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
 import { formatInTimeZone } from "date-fns-tz";
 import { addMinutes, formatISO, parseISO, isBefore, addDays } from "date-fns";
+
+type LovableAiGatewayProvider = ReturnType<typeof createLovableAiGatewayProvider>;
 
 const TIMEZONE = "Europe/Paris";
 const MIN_ADVANCE_MINUTES = 60;
