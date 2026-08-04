@@ -51,7 +51,7 @@ export async function initFirebase(): Promise<Messaging | null> {
       console.warn("[FCM] Not supported in this browser");
       return null;
     }
-    if (!app) app = initializeApp(firebaseConfig);
+    if (!app) app = initializeApp(await loadFirebaseConfig());
     if (!messaging) messaging = getMessaging(app);
     return messaging;
   } catch (err) {
