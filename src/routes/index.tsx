@@ -492,34 +492,57 @@ function Index() {
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
       <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
         <AnimatePresence mode="sync">
-          <motion.div
-            key={slideIndex}
-            className="absolute inset-0 -z-20 overflow-hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
-          >
-            <motion.img
-              src={HERO_SLIDES[slideIndex].src}
-              alt={HERO_SLIDES[slideIndex].alt}
-              fetchPriority={slideIndex === 0 ? "high" : undefined}
-              loading={slideIndex === 0 ? "eager" : "lazy"}
-              width={1656}
-              height={932}
-              className="h-full w-full object-cover object-center"
-              initial={{ scale: 1.06, x: 0, y: 0 }}
-              animate={
-                canAnimate
-                  ? { scale: 1.16, x: HERO_SLIDES[slideIndex].pan.x, y: HERO_SLIDES[slideIndex].pan.y }
-                  : { scale: 1.06, x: 0, y: 0 }
-              }
-              transition={{ duration: (HERO_SLIDE_DURATION_MS / 1000) * 1.5, ease: "linear" }}
-            />
-          </motion.div>
-        </AnimatePresence>
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,10,0.15)_0%,rgba(8,8,10,0.35)_60%,var(--background)_100%)]" />
+        {(() => {
+          const slide = HERO_SLIDES[slideIndex];
+          const isBanner = Boolean(slide.contain);
+          return (
+            <>
+              <AnimatePresence mode="sync">
+                <motion.div
+                  key={slideIndex}
+                  className="absolute inset-0 -z-20 overflow-hidden bg-background"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                >
+                  <motion.img
+                    src={slide.src}
+                    alt={slide.alt}
+                    fetchPriority={slideIndex === 0 ? "high" : undefined}
+                    loading={slideIndex === 0 ? "eager" : "lazy"}
+                    width={1656}
+                    height={932}
+                    className={
+                      isBanner
+                        ? "h-full w-full object-contain object-center"
+                        : "h-full w-full object-cover object-center"
+                    }
+                    initial={isBanner ? { opacity: 1, scale: 1 } : { scale: 1.06, x: 0, y: 0 }}
+                    animate={
+                      isBanner
+                        ? { scale: 1, x: 0, y: 0 }
+                        : canAnimate
+                          ? { scale: 1.16, x: slide.pan.x, y: slide.pan.y }
+                          : { scale: 1.06, x: 0, y: 0 }
+                    }
+                    transition={{ duration: (HERO_SLIDE_DURATION_MS / 1000) * 1.5, ease: "linear" }}
+                  />
+                </motion.div>
+              </AnimatePresence>
+              {/* Voile sombre : quasi nul sur la bannière pour garder les écritures lisibles */}
+              <div
+                className={
+                  isBanner
+                    ? "absolute inset-0 -z-10 bg-[linear-gradient(180deg,transparent_0%,transparent_80%,var(--background)_100%)]"
+                    : "absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,10,0.15)_0%,rgba(8,8,10,0.35)_60%,var(--background)_100%)]"
+                }
+              />
+            </>
+          );
+        })()}
       </section>
+
 
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
