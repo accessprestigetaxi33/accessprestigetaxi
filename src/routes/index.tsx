@@ -7,6 +7,7 @@ import {
   Baby,
   BatteryCharging,
   BriefcaseBusiness,
+  Leaf,
   Phone,
   PlaneTakeoff,
   ShieldCheck,
