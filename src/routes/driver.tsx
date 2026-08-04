@@ -15,11 +15,7 @@ import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.functions";
 import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
-import {
-  driverUpdateReservation,
-  driverListReservations,
-  driverDeleteClient,
-} from "@/lib/driver-data.functions";
+import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
@@ -366,7 +362,6 @@ function DriverPage() {
     setDriverLabel(getDriverName());
   }, []);
 
-
   const tryToken = useCallback(
     async (candidate: string): Promise<boolean> => {
       if (!candidate) return false;
@@ -381,7 +376,6 @@ function DriverPage() {
           gaEvent("driver_login", { driver: res.driver || "inconnu" });
           return true;
         }
-
       } catch {
         /* ignore */
       }
@@ -559,7 +553,6 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
       document.removeEventListener("visibilitychange", onVis);
     };
   }, [listCoursesFn, driverId]);
-
 
   // Badge avis en attente + toast in-app à chaque nouvel avis
   useEffect(() => {
@@ -794,7 +787,9 @@ function CoursesTab({
   const [selected, setSelected] = useState<string | null>(null);
   const [onlyMine, setOnlyMine] = useState(true);
   const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "accepted" | "en_route" | "arrived" | "done">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "accepted" | "en_route" | "arrived" | "done">(
+    "all",
+  );
   const [dateFilter, setDateFilter] = useState("");
   const listUnreadResasFn = useServerFn(listReservationsWithUnreadChauffeur);
   const getUnreadFn = useServerFn(getUnreadCountsForReservations);
@@ -804,10 +799,7 @@ function CoursesTab({
   const seenPendingRef = useRef<Set<string> | null>(null);
 
   const isAdmin = !driverId || driverId === "admin";
-  const mineOf = useCallback(
-    (r: Resa) => isAdmin || (r as any).assigned_driver === driverId,
-    [isAdmin, driverId],
-  );
+  const mineOf = useCallback((r: Resa) => isAdmin || (r as any).assigned_driver === driverId, [isAdmin, driverId]);
 
   const load = useCallback(async () => {
     const unreadIds = await listUnreadResasFn().catch(() => [] as string[]);
@@ -868,8 +860,6 @@ function CoursesTab({
     },
     [setCourseDriverFn, load],
   );
-
-
 
   // Refresh debouncé : coalesce les bursts Realtime (INSERT + UPDATE
   // read_by_*) en un seul appel batch après 300 ms d'inactivité. Immédiat
@@ -958,7 +948,6 @@ function CoursesTab({
       if (scheduleRef.current.timer) clearTimeout(scheduleRef.current.timer);
     };
   }, [scheduleLoad, applyDelta]);
-
 
   // Canal Realtime dédié aux réservations visibles — recréé quand la liste
   // change (visibleKey). Filtre `reservation_id=in.(...)` côté serveur.
@@ -1067,7 +1056,11 @@ function CoursesTab({
               { key: false, label: `Toutes (${courses.length})` },
             ] as const
           ).map((o) => (
-            <button key={String(o.key)} onClick={() => setOnlyMine(o.key)} style={{ ...chip(onlyMine === o.key), flex: 1 }}>
+            <button
+              key={String(o.key)}
+              onClick={() => setOnlyMine(o.key)}
+              style={{ ...chip(onlyMine === o.key), flex: 1 }}
+            >
               {o.label}
             </button>
           ))}
@@ -1125,7 +1118,6 @@ function CoursesTab({
       </div>
     </div>
   );
-
 
   const renderCard = (r: Resa) => {
     const assigned = (r as any).assigned_driver as string | undefined;
@@ -1227,7 +1219,6 @@ function CoursesTab({
       )}
     </>
   );
-
 }
 
 // ── Course Card avec itinéraires Google Maps ───────────────────────────────
@@ -1354,7 +1345,7 @@ function CourseCard({
             if (estTarifJourParis(t)) jourKm += frac;
             else nuitKm += frac;
           }
-          const prix_estime = parseFloat((2.83 + jourKm * 2.16 + nuitKm * 3.24).toFixed(2));
+          const prix_estime = parseFloat((2.7 + jourKm * 2.28 + nuitKm * 3.22).toFixed(2));
           const estJour = estTarifJourParis(pickupIso);
           const tarifLabel = jourKm > 0 && nuitKm > 0 ? "Tarif mixte 🌗" : estJour ? "Tarif jour ☀️" : "Tarif nuit 🌙";
 
@@ -1670,7 +1661,12 @@ function CourseCard({
     setCompleting(true);
     try {
       const cRes = await driverUpdateReservation({
-        data: { token: getDriverToken(), reservation_id: resa.id, patch: { status: "completed" }, not_status: "completed" },
+        data: {
+          token: getDriverToken(),
+          reservation_id: resa.id,
+          patch: { status: "completed" },
+          not_status: "completed",
+        },
       });
       if (!cRes.changed) {
         toast("Action déjà prise en compte");
@@ -1823,8 +1819,6 @@ function CourseCard({
             </div>
           );
         })()}
-
-
 
       {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
       {resa.message && resa.message.trim().length > 0 && (
@@ -3624,7 +3618,7 @@ function SimulateurTab() {
       );
       const leg = res.routes[0].legs[0];
       // Arrondi à 1 décimale AVANT le calcul du prix, pour que l'affichage
-      // ("5.2 km × 2.16 €") corresponde exactement au prix calculé et évite
+      // ("5.2 km × 2.28 €") corresponde exactement au prix calculé et évite
       // toute impression d'erreur de calcul (ex: 5.153 km affiché "5.2" mais
       // facturé sur la valeur brute → 11.13 € au lieu de 11.23 € attendu).
       const distKm = Math.round(((leg.distance?.value ?? 0) / 1000) * 10) / 10;
@@ -4169,7 +4163,6 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
     </>
   );
 }
-
 
 // ── Mini diagnostic des échecs push (remplace l'ancien lien /admin/dashboard) ──
 function PushDiagnostic() {
