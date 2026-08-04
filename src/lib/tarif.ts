@@ -1,7 +1,7 @@
 // Tarifs officiels taxi Bordeaux (homologués préfecture)
-export const PRISE_EN_CHARGE = 2.83;
-export const TARIF_JOUR = 2.16; // €/km — tarif A (7h–19h)
-export const TARIF_NUIT = 3.24; // €/km — tarif B (19h–7h)
+export const PRISE_EN_CHARGE = 2.7;
+export const TARIF_JOUR = 2.28; // €/km — tarif A (7h–19h)
+export const TARIF_NUIT = 3.22; // €/km — tarif B (19h–7h, dimanche, jours fériés)
 export const VITESSE_MOYENNE_KMH = 40; // vitesse moyenne estimée en ville
 
 export const TARIFS = {
