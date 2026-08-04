@@ -3,7 +3,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 
 const COPY = {
   fr: {
-    tagline: "Votre taxi conventionné 100 % électrique en Charente-Maritime. Disponible 5j/7 · 8h-20h — 8h-20h.",
+    tagline: "Votre taxi conventionné 100 % électrique en Charente-Maritime. —.",
     navTitle: "Navigation",
     nav: [
       { to: "/", label: "Accueil" },
@@ -23,7 +23,7 @@ const COPY = {
     ],
     contactTitle: "Contact",
     zone: "📍 Charente-Maritime",
-    hours: "🕒 5j/7 · 8h-20h · 8h-20h",
+    hours: "🕒 ·",
     rights: "Tous droits réservés.",
     security: "Sécurité & garanties",
     destinations: "Destinations",
@@ -31,7 +31,7 @@ const COPY = {
     privacy: "Confidentialité",
   },
   en: {
-    tagline: "Excellence on every journey: a fully electric, medically-approved taxi service across Charente-Maritime, 5 days a week from 8am to 8pm.",
+    tagline: "Excellence on every journey: a fully electric, medically-approved taxi service across Charente-Maritime.",
     navTitle: "Navigation",
     nav: [
       { to: "/", label: "Home" },
@@ -51,7 +51,7 @@ const COPY = {
     ],
     contactTitle: "Contact",
     zone: "📍 Charente-Maritime",
-    hours: "🕒 5 days a week · 8am-8pm",
+    hours: "🕒",
     rights: "All rights reserved.",
     security: "Safety & guarantees",
     destinations: "Destinations",

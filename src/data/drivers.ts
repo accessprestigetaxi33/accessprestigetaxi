@@ -35,16 +35,16 @@ export const DRIVERS: Driver[] = [
     seats: 7,
     electric: false,
     bio: {
-      fr: "Alain assure les déplacements professionnels, les longues distances, les transferts de groupe et les mises à disposition à bord de son van Mercedes pouvant accueillir jusqu'à 7 personnes avec leurs bagages. Sièges bébé et rehausseurs enfants sur demande, 5j/7 de 8h à 20h.",
-      en: "Alain covers business travel, long distances, group transfers and hourly hire in his Mercedes van seating up to 7 people with luggage. Baby and booster seats on request, 5 days a week from 8am to 8pm.",
+      fr: "Alain assure les déplacements professionnels, les longues distances, les transferts de groupe et les mises à disposition à bord de son van Mercedes pouvant accueillir jusqu'à 7 personnes avec leurs bagages. Sièges bébé et rehausseurs enfants sur demande.",
+      en: "Alain covers business travel, long distances, group transfers and hourly hire in his Mercedes van seating up to 7 people with luggage. Baby and booster seats on request.",
     },
   },
 ];
 
 /** Amplitude de service commune aux deux chauffeurs. */
 export const SERVICE_HOURS = {
-  fr: "5j/7 · 8h-20h",
-  en: "5 days a week · 8am-8pm",
+  fr: "",
+  en: "",
   /** Format schema.org openingHours. */
   schema: "Mo-Fr 08:00-20:00",
 };

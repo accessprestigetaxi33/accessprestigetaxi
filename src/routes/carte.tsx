@@ -78,7 +78,7 @@ const T: Record<Lang, Dict> = {
     website: "Site web",
     addContact: "Ajouter aux contacts",
     waMessage: "Bonjour Patricia, je souhaite réserver un taxi.",
-    footer: "Taxi conventionné · Charente-Maritime · 5j/7 · 8h-20h",
+    footer: "Taxi conventionné · Charente-Maritime ·",
     languageLabel: "Langue",
   },
   en: {
@@ -91,7 +91,7 @@ const T: Record<Lang, Dict> = {
     website: "Website",
     addContact: "Add to contacts",
     waMessage: "Hello Patricia, I would like to book a taxi.",
-    footer: "Licensed taxi · Charente-Maritime · 5 days a week, 8am-8pm",
+    footer: "Licensed taxi · Charente-Maritime ·",
     languageLabel: "Language",
   },
   es: {
