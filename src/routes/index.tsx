@@ -128,7 +128,6 @@ const COPY = {
       { n: 2, suffix: "", l: "chauffeurs dédiés" },
       { n: 100, suffix: " %", l: "électrique (BMW iX1)" },
       { n: 7, suffix: " places", l: "van Mercedes" },
-      { n: 5, suffix: "j/7 · 8h-20h", l: "disponibilité" },
     ],
     servicesEyebrow: "Nos services",
     servicesTitle: "Une prestation pensée pour chaque trajet",
