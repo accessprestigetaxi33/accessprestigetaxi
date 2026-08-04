@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const isAdmin = typeof window !== "undefined" && sessionStorage.getItem("admin_pin_ok") === "1";
 
   if (!isAdmin) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/client/login" replace />;
   }
 
   return <>{children}</>;

@@ -1725,9 +1725,9 @@ function ReservationPage() {
       // ── Email client géré par notify-new-reservation (Edge Function) ────────
       // L'envoi est déclenché par notifyNewReservation() ci-dessus — pas de doublon ici.
 
-      const suiviId = inserted.suivi_id ?? null;
-      if (suiviId) {
-        navigate({ to: "/suivi/$id", params: { id: suiviId } });
+      const insertedSuiviId = inserted.suivi_id ?? null;
+      if (insertedSuiviId) {
+        navigate({ to: "/suivi/$id", params: { id: insertedSuiviId } });
       } else {
         navigate({ to: "/reservation/$id", params: { id: inserted.id } });
       }
