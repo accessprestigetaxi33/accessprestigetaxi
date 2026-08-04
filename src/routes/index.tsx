@@ -20,7 +20,7 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal, Counter } from "@/components/motion-ui";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-2026d.png.asset.json";
+import heroCars from "@/assets/apt-hero-2026c.png.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
@@ -62,10 +62,10 @@ const CARD =
 const HERO_SLIDES = [
   {
     src: heroCars.url,
-    alt: "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, ponctualité confort discrétion sécurité",
+    alt: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
     pan: { x: 0, y: 0 },
-    // Bannière de marque : contient du texte (PONCTUALITÉ · CONFORT · DISCRÉTION · SÉCURITÉ)
-    // qu'il ne faut jamais rogner → affichage intégral.
+    // Bannière de marque complète : logo, slogan, services et valeurs (PONCTUALITÉ · CONFORT · DISCRÉTION · SÉCURITÉ)
+    // doivent rester parfaitement lisibles → affichage intégral sans voile sombre.
     contain: true,
   },
   {
@@ -407,11 +407,11 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
       { property: "og:image", content: absoluteUrl(heroCars.url) },
-      { property: "og:image:width", content: "1920" },
-      { property: "og:image:height", content: "768" },
+      { property: "og:image:width", content: "1681" },
+      { property: "og:image:height", content: "935" },
       {
         property: "og:image:alt",
-        content: "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, service premium en Charente-Maritime",
+        content: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
       },
       { property: "og:locale", content: "fr_FR" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -510,8 +510,8 @@ function Index() {
                     alt={slide.alt}
                     fetchPriority={slideIndex === 0 ? "high" : undefined}
                     loading={slideIndex === 0 ? "eager" : "lazy"}
-                    width={1920}
-                    height={768}
+                    width={1681}
+                    height={935}
                     className={
                       isBanner
                         ? "h-full w-full object-contain object-center"
