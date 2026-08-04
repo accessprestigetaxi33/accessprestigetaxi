@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { AnimatePresence, motion } from "motion/react";
@@ -161,10 +161,11 @@ function useHeroSlideshow(count: number, durationMs: number) {
     return () => clearInterval(id);
   }, [canAnimate, paused, count, durationMs]);
 
-  const select = useCallback((i: number) => {
+  const select = (i: number) => {
     setIndex(i);
     setPaused(true);
-  }, []);
+  };
+
 
   return { index, canAnimate, select, paused };
 }
