@@ -60,31 +60,35 @@ const CARD =
 // Diaporama hero façon pub, en attendant une vraie vidéo : zoom/pan lent (Ken Burns)
 // en fondu enchaîné entre plusieurs photos existantes. Ajoute/retire des entrées
 // ici pour changer les visuels utilisés.
-const HERO_SLIDES = [
+const heroSlides = (lang: "fr" | "en") => [
   {
-    src: heroCars.url,
-    alt: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
+    src: lang === "en" ? heroCarsEn.url : heroCars.url,
+    alt:
+      lang === "en"
+        ? "Access Prestige Taxi — BMW iX1 and Mercedes V-Class van, excellence on every journey, 100% electric"
+        : "Access Prestige Taxi — BMW iX1 et van Mercedes V-Class, l'excellence à chaque trajet, 100 % électrique",
     pan: { x: 0, y: 0 },
-    // Bannière de marque complète : logo, slogan, services et valeurs (PONCTUALITÉ · CONFORT · DISCRÉTION · SÉCURITÉ)
+    // Bannière de marque complète : logo, slogan, services et valeurs
     // doivent rester parfaitement lisibles → affichage intégral sans voile sombre.
     contain: true,
   },
   {
     src: photoExterior.url,
-    alt: "BMW iX1 Access Prestige Taxi, extérieur",
+    alt: lang === "en" ? "Access Prestige Taxi BMW iX1, exterior" : "BMW iX1 Access Prestige Taxi, extérieur",
     pan: { x: 18, y: 6 },
   },
   {
     src: photoDriver.url,
-    alt: "Chauffeur Access Prestige Taxi au volant",
+    alt: lang === "en" ? "Access Prestige Taxi driver at the wheel" : "Chauffeur Access Prestige Taxi au volant",
     pan: { x: -14, y: 10 },
   },
   {
     src: photoVan.url,
-    alt: "Van Mercedes 7 places Access Prestige Taxi",
+    alt: lang === "en" ? "7-seat Mercedes van, Access Prestige Taxi" : "Van Mercedes 7 places Access Prestige Taxi",
     pan: { x: 16, y: -10 },
   },
 ];
+
 
 const HERO_SLIDE_DURATION_MS = 6000;
 
