@@ -54,13 +54,18 @@ function ReservationPage() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const transcribe = useServerFn(transcribeAudio);
+  const [input, setInput] = useState("");
 
-  const { messages, input, handleInputChange, handleSubmit, status, setMessages, error } = useChat({
+  const transport = new DefaultChatTransport({
     api: "/api/chat",
     body: { lang },
+  });
+
+  const { messages, sendMessage, status, setMessages, error } = useChat({
+    transport,
     onError: (err) => {
       console.error("[chat] error", err);
-      toast.error(lang === "en" ? t("reserver.chat.error.network") : t("reserver.chat.error.network"));
+      toast.error(t("reserver.chat.error.network"));
     },
   });
 
