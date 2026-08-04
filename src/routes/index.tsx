@@ -62,10 +62,10 @@ const CARD =
 const HERO_SLIDES = [
   {
     src: heroCars.url,
-    alt: "BMW iX1, Audi Q8 et van Mercedes 7 places Access Prestige Taxi, 100 % électrique, au coucher du soleil",
+    alt: "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, ponctualité confort discrétion sécurité",
     pan: { x: 0, y: 0 },
-    // Bannière de marque : contient du texte (TRANSPORT · TRANSFERTS · DÉPLACEMENTS,
-    // 100 % ÉLECTRIQUE) qu'il ne faut jamais rogner → affichage intégral.
+    // Bannière de marque : contient du texte (PONCTUALITÉ · CONFORT · DISCRÉTION · SÉCURITÉ)
+    // qu'il ne faut jamais rogner → affichage intégral.
     contain: true,
   },
   {
