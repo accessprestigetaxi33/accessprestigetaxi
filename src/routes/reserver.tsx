@@ -45,9 +45,6 @@ export const Route = createFileRoute("/reserver")({
       { property: "og:description", content: RESERVER_DESC },
       { property: "og:url", content: RESERVER_URL },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: RESERVER_TITLE },
-      { name: "twitter:description", content: RESERVER_DESC },
       {
         name: "viewport",
         content:
@@ -56,33 +53,6 @@ export const Route = createFileRoute("/reserver")({
       { name: "theme-color", content: "#1a1209" },
     ],
     links: seoLinks("/reserver"),
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "TaxiService",
-          name: "Access Prestige Taxi — Réservation en ligne",
-          description: RESERVER_DESC,
-          url: RESERVER_URL,
-          provider: {
-            "@type": "LocalBusiness",
-            name: "Access Prestige Taxi",
-            areaServed: "Charente-Maritime",
-          },
-          areaServed: {
-            "@type": "AdministrativeArea",
-            name: "Charente-Maritime",
-          },
-          openingHoursSpecification: {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            opens: "08:00",
-            closes: "20:00",
-          },
-        }),
-      },
-    ],
   }),
   component: ReservationPage,
 });
@@ -102,7 +72,8 @@ const UI = {
     geoInvalid: "Position invalide. Saisissez l\u2019adresse de départ manuellement.",
     geoImprecise: (m: number) =>
       `Signal GPS trop imprécis (${m} m). Saisissez l\u2019adresse exacte pour éviter une mauvaise prise en charge.`,
-    geoIncoherent: "Position incohérente avec la zone Charente-Maritime-Maritime. Saisissez l\u2019adresse exacte de départ.",
+    geoIncoherent:
+      "Position incohérente avec la zone Charente-Maritime-Maritime. Saisissez l\u2019adresse exacte de départ.",
     detectingAuto: "Détection automatique du départ…",
     locating: "Localisation en cours…",
     approxIp: "Position approximative (via IP) — vous pouvez préciser l'adresse",
@@ -136,19 +107,6 @@ const UI = {
     dictateDestinationLabel: "Dictez la destination",
     listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à gare d\u2019Angoulême »",
     listeningHintDest: "Dites uniquement votre destination. Touchez « Arrêter » pour valider.",
-    voiceRetry: "🔄 Réessayer",
-    voiceNoSupport: "La saisie vocale n'est pas supportée par ce navigateur. Continuez à taper votre adresse.",
-    voiceErrorTitle: "Erreur de dictée",
-    childSeatLabel: "Siège enfant",
-    childSeatNone: "Aucun",
-    childSeatBaby: "Siège bébé",
-    childSeatBooster: "Réhausseur",
-    childSeatBoth: "Siège bébé + réhausseur",
-    groupTransportLabel: "Transport de groupe (jusqu'à 7 personnes)",
-    groupTransportHint: "Un véhicule Mercedes 7 places (Alain) sera assigné automatiquement.",
-    recapTitle: "Récapitulatif",
-    recapChildSeat: "Siège enfant :",
-    recapGroupTransport: "🚐 Transport de groupe activé — véhicule Mercedes 7 places",
   },
   en: {
     micDenied: "Microphone access denied. Allow it in your browser settings.",
@@ -173,8 +131,7 @@ const UI = {
     selectFromList: "Select an address from the list",
     addressNotFound: "Address not found — specify the city or place",
     distanceEstimated: "Estimated distance (GPS unavailable) — the price may be adjusted by the driver.",
-    confirmEmailSent:
-      "A confirmation email has been sent to you. Please check your spam folder if you can't find it.",
+    confirmEmailSent: "A confirmation email has been sent to you. Please check your spam folder if you can't find it.",
     backToSite: "Back to site",
     dictateDestOnly: "Dictate destination only",
     dictateFullTrip: "Dictate the full trip",
@@ -192,19 +149,6 @@ const UI = {
     dictateDestinationLabel: "Dictate destination",
     listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Angoulême station »",
     listeningHintDest: "Say only your destination. Tap « Stop » to confirm.",
-    voiceRetry: "🔄 Retry",
-    voiceNoSupport: "Voice input is not supported by this browser. Please keep typing your address.",
-    voiceErrorTitle: "Voice input error",
-    childSeatLabel: "Child seat",
-    childSeatNone: "None",
-    childSeatBaby: "Baby seat",
-    childSeatBooster: "Booster seat",
-    childSeatBoth: "Baby seat + booster seat",
-    groupTransportLabel: "Group transport (up to 7 people)",
-    groupTransportHint: "A 7-seat Mercedes van (Alain) will be assigned automatically.",
-    recapTitle: "Summary",
-    recapChildSeat: "Child seat:",
-    recapGroupTransport: "🚐 Group transport enabled — 7-seat Mercedes van",
   },
 } as const;
 
@@ -224,8 +168,6 @@ interface FormState {
   phone: string;
   email: string;
   message: string;
-  siegeEnfant: "aucun" | "bebe" | "rehausseur" | "les_deux";
-  groupTransport: boolean;
 }
 
 interface OrsResult {
@@ -261,7 +203,8 @@ function shortLabel(label: string): string {
   }
 
   // Adresse classique : rue + ville (ignore code postal, département, région, France)
-  const skipWords = /gironde|charente|charente-maritime|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|^\d{5}$/i;
+  const skipWords =
+    /gironde|charente|charente-maritime|nouvelle-aquitaine|aquitaine|france|métropolitaine|metropolitaine|^\d{5}$/i;
   const kept = parts.filter((p) => !skipWords.test(p));
   return kept.slice(0, 2).join(", ");
 }
@@ -490,7 +433,8 @@ const CANONICAL_PLACES: Array<{
     ],
   },
   {
-    match: /(aeroport|airport).*(angouleme|angoulême|cognac|brie|champniers)|(angouleme|angoulême|cognac).*(aeroport|airport)/,
+    match:
+      /(aeroport|airport).*(angouleme|angoulême|cognac|brie|champniers)|(angouleme|angoulême|cognac).*(aeroport|airport)/,
     label: "Aéroport d'Angoulême-Cognac, 249 Rue Jean Mermoz, 16430 Champniers",
     coord: [45.7291, 0.2205],
   },
@@ -581,7 +525,6 @@ const CANONICAL_PLACES: Array<{
     label: "Gare de Niort, Rue Mazagran, 79000 Niort",
     coord: [46.3175, -0.4626],
   },
-
 ];
 
 function findCanonicalPlace(query: string, origin: [number, number]): AddressChoice | null {
@@ -894,11 +837,6 @@ function ReservationPage() {
   const destinationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [voiceListening, setVoiceListening] = useState(false);
   const [voiceBothListening, setVoiceBothListening] = useState(false);
-  const [voiceOverlayOpen, setVoiceOverlayOpen] = useState(false);
-  const [voicePhase, setVoicePhase] = useState<"listening" | "error" | "done">("listening");
-  const [voiceInterim, setVoiceInterim] = useState("");
-  const [voiceErrorMsg, setVoiceErrorMsg] = useState("");
-  const voiceModeRef = useRef<"dest" | "both">("both");
   const voiceRecogRef = useRef<any>(null);
   const voiceBothRecogRef = useRef<any>(null);
   const resolveDestinationAddressRef = useRef<(() => void) | null>(null);
@@ -928,27 +866,21 @@ function ReservationPage() {
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
-      const msg = lang === "en" ? UI.en.voiceNoSupport : UI.fr.voiceNoSupport;
-      toast.error(msg, { duration: 7000 });
-      setVoiceErrorMsg(msg);
-      setVoicePhase("error");
-      setVoiceOverlayOpen(true);
+      toast.error(
+        lang === "en"
+          ? "Voice input is not supported by this browser — please type your addresses."
+          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
+        { duration: 7000 },
+      );
       return;
     }
     gaEvent("reservation_voice_start");
-    voiceModeRef.current = "dest";
     const recog = new SR();
     recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
-    recog.interimResults = true;
+    recog.interimResults = false;
     recog.maxAlternatives = 1;
-    recog.onstart = () => {
-      setVoiceListening(true);
-      setVoicePhase("listening");
-      setVoiceOverlayOpen(true);
-      setVoiceInterim("");
-      setVoiceErrorMsg("");
-    };
+    recog.onstart = () => setVoiceListening(true);
     recog.onend = () => {
       setVoiceListening(false);
       voiceRecogRef.current = null;
@@ -957,40 +889,22 @@ function ReservationPage() {
       setVoiceListening(false);
       voiceRecogRef.current = null;
       const code = e?.error as string | undefined;
-      let msg = "";
       if (code === "not-allowed" || code === "service-not-allowed") {
-        msg = lang === "en" ? UI.en.micDenied : UI.fr.micDenied;
+        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
       } else if (code === "no-speech") {
-        msg = lang === "en" ? UI.en.noVoice : UI.fr.noVoice;
+        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
       } else if (code === "audio-capture") {
-        msg = lang === "en" ? UI.en.noMic : UI.fr.noMic;
+        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
       } else if (code === "network") {
-        msg = lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork;
-      }
-      if (msg) {
-        setVoiceErrorMsg(msg);
-        setVoicePhase("error");
-        setVoiceOverlayOpen(true);
-        toast.error(msg, { duration: 6000 });
+        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
       }
     };
     recog.onresult = (event: any) => {
-      let interim = "";
-      let finalText = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const res = event.results[i];
-        if (res.isFinal) finalText += res[0].transcript;
-        else interim += res[0].transcript;
-      }
-      if (interim) setVoiceInterim(interim);
-      if (finalText) {
-        set("destination", finalText);
-        setToCoord(null);
-        setVoiceInterim(finalText);
-        setVoicePhase("done");
-        // Déclencher la résolution d'adresse après un court délai
-        setTimeout(() => resolveDestinationAddressRef.current?.(), 300);
-      }
+      const transcript = event.results[0][0].transcript;
+      set("destination", transcript);
+      setToCoord(null);
+      // Déclencher la résolution d'adresse après un court délai
+      setTimeout(() => resolveDestinationAddressRef.current?.(), 300);
     };
     voiceRecogRef.current = recog;
     try {
@@ -1022,27 +936,21 @@ function ReservationPage() {
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
-      const msg = lang === "en" ? UI.en.voiceNoSupport : UI.fr.voiceNoSupport;
-      toast.error(msg, { duration: 7000 });
-      setVoiceErrorMsg(msg);
-      setVoicePhase("error");
-      setVoiceOverlayOpen(true);
+      toast.error(
+        lang === "en"
+          ? "Voice input is not supported by this browser — please type your addresses."
+          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
+        { duration: 7000 },
+      );
       return;
     }
     gaEvent("reservation_voice_start");
-    voiceModeRef.current = "both";
     const recog = new SR();
     recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
-    recog.interimResults = true;
+    recog.interimResults = false;
     recog.maxAlternatives = 1;
-    recog.onstart = () => {
-      setVoiceBothListening(true);
-      setVoicePhase("listening");
-      setVoiceOverlayOpen(true);
-      setVoiceInterim("");
-      setVoiceErrorMsg("");
-    };
+    recog.onstart = () => setVoiceBothListening(true);
     recog.onend = () => {
       setVoiceBothListening(false);
       voiceBothRecogRef.current = null;
@@ -1051,35 +959,18 @@ function ReservationPage() {
       setVoiceBothListening(false);
       voiceBothRecogRef.current = null;
       const code = e?.error as string | undefined;
-      let msg = "";
       if (code === "not-allowed" || code === "service-not-allowed") {
-        msg = lang === "en" ? UI.en.micDenied : UI.fr.micDenied;
+        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
       } else if (code === "no-speech") {
-        msg = lang === "en" ? UI.en.noVoice : UI.fr.noVoice;
+        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
       } else if (code === "audio-capture") {
-        msg = lang === "en" ? UI.en.noMic : UI.fr.noMic;
+        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
       } else if (code === "network") {
-        msg = lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork;
-      }
-      if (msg) {
-        setVoiceErrorMsg(msg);
-        setVoicePhase("error");
-        setVoiceOverlayOpen(true);
-        toast.error(msg, { duration: 6000 });
+        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
       }
     };
     recog.onresult = (event: any) => {
-      let interim = "";
-      let transcript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const res = event.results[i];
-        if (res.isFinal) transcript += res[0].transcript;
-        else interim += res[0].transcript;
-      }
-      if (interim) setVoiceInterim(interim);
-      if (!transcript) return;
-      setVoiceInterim(transcript);
-      setVoicePhase("done");
+      const transcript: string = event.results[0][0].transcript;
       const raw = transcript.trim();
       let depart = "";
       let destination = "";
@@ -1173,8 +1064,6 @@ function ReservationPage() {
       phone: "",
       email: "",
       message: "",
-      siegeEnfant: "aucun",
-      groupTransport: false,
     };
   });
 
@@ -1214,7 +1103,9 @@ function ReservationPage() {
     if (p.weekday === "Sun") return { isJour: false, label: nightLabel, motif: en ? "Sunday" : "Dimanche" };
     if (estJourFerieFR(p.year, p.month, p.day))
       return { isJour: false, label: nightLabel, motif: en ? "Public holiday" : "Jour férié" };
-    const hStr = en ? `${String(p.hour).padStart(2, "0")}:${String(p.minute).padStart(2, "0")}` : `${p.hour}h${String(p.minute).padStart(2, "0")}`;
+    const hStr = en
+      ? `${String(p.hour).padStart(2, "0")}:${String(p.minute).padStart(2, "0")}`
+      : `${p.hour}h${String(p.minute).padStart(2, "0")}`;
     const h = p.hour + p.minute / 60;
     if (h >= 19 || h < 7) return { isJour: false, label: nightLabel, motif: `${parisTime} (${hStr})` };
     return { isJour: true, label: dayLabel, motif: `${parisTime} (${hStr})` };
@@ -1311,7 +1202,15 @@ function ReservationPage() {
     const automatic = options?.automatic === true;
     setGeolocLoading(true);
     setGeolocStatus("loading");
-    setGeolocStatusMsg(automatic ? (lang === "en" ? UI.en.detectingAuto : UI.fr.detectingAuto) : (lang === "en" ? UI.en.locating : UI.fr.locating));
+    setGeolocStatusMsg(
+      automatic
+        ? lang === "en"
+          ? UI.en.detectingAuto
+          : UI.fr.detectingAuto
+        : lang === "en"
+          ? UI.en.locating
+          : UI.fr.locating,
+    );
 
     const applyPosition = async (lat: number, lng: number, source: "gps" | "approx" | "ip" = "gps") => {
       let adresse = await reverseGeocode(lat, lng).catch(() => null);
@@ -1333,8 +1232,12 @@ function ReservationPage() {
         setGeolocStatus("ip");
         setGeolocStatusMsg(
           source === "ip"
-            ? lang === "en" ? UI.en.approxIp : UI.fr.approxIp
-            : lang === "en" ? UI.en.approxDetected : UI.fr.approxDetected,
+            ? lang === "en"
+              ? UI.en.approxIp
+              : UI.fr.approxIp
+            : lang === "en"
+              ? UI.en.approxDetected
+              : UI.fr.approxDetected,
         );
       } else {
         setGeolocStatus("success");
@@ -1726,19 +1629,6 @@ function ReservationPage() {
 
       const fullName = `${f.prenom} ${f.nom}`.trim();
       const pickupIsoFinal = f.date && f.heure ? toParisIso(f.date, f.heure) : new Date().toISOString();
-      const passagersFinal = f.groupTransport ? Math.max(f.passagers, 5) : f.passagers;
-
-      // ── Ajout des mentions siège enfant / transport de groupe dans le message ──
-      const extraLines: string[] = [];
-      if (f.siegeEnfant !== "aucun") {
-        const seatLabel =
-          f.siegeEnfant === "bebe" ? u.childSeatBaby : f.siegeEnfant === "rehausseur" ? u.childSeatBooster : u.childSeatBoth;
-        extraLines.push(`${u.recapChildSeat} ${seatLabel}`);
-      }
-      if (f.groupTransport) {
-        extraLines.push(u.recapGroupTransport);
-      }
-      const fullMessage = [f.message.trim(), ...extraLines].filter(Boolean).join("\n");
 
       const inserted = await createReservationPublic({
         data: {
@@ -1748,7 +1638,7 @@ function ReservationPage() {
           depart: f.depart,
           arrivee: f.destination,
           pickup_datetime: pickupIsoFinal,
-          passagers: passagersFinal,
+          passagers: f.passagers,
           bagages: f.bagages,
           suivi_id: suiviId,
           distance_km: distanceKm,
@@ -1757,8 +1647,8 @@ function ReservationPage() {
           tarif_jour: tarifJour,
           prix_estime: calculerPrixMixteLocal(distanceKm, new Date(pickupIsoFinal).getTime(), dureeS),
           lang: (lang === "en" ? "en" : "fr") as "fr" | "en",
-          message: fullMessage || null,
-          service_type: f.groupTransport ? "groupe" : "standard",
+          message: f.message.trim() || null,
+          service_type: "standard",
           source: "form",
         },
       });
@@ -1818,7 +1708,6 @@ function ReservationPage() {
         }
       }
 
-
       // ── Notifier le chauffeur Patricia (push FCM + email) ─────────────────────
       // On attend la fin avant de naviguer : sinon le navigateur peut tuer
       // la requête en cours lors du changement de page (notamment sur mobile),
@@ -1856,19 +1745,9 @@ function ReservationPage() {
       /* noop */
     }
   };
-  const closeVoiceOverlay = () => {
-    stopAllListening();
-    setVoiceOverlayOpen(false);
-  };
-  const retryVoice = () => {
-    setVoiceOverlayOpen(false);
-    setVoiceInterim("");
-    setVoiceErrorMsg("");
-    setTimeout(() => {
-      if (voiceModeRef.current === "dest") startVoiceRecognition();
-      else startVoiceRecognitionBoth();
-    }, 80);
-  };
+
+  const passagersOptions = [1, 2, 3, 4, 5, 6];
+  const bagagesOptions = [0, 1, 2, 3, 4, 5];
 
   return (
     <div
@@ -1888,10 +1767,10 @@ function ReservationPage() {
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@700&family=DM+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@500;600;700&family=DM+Sans:wght@400;500;600;700;800&display=swap');
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { overflow-x: hidden; max-width: 100vw; overscroll-behavior-y: contain; }
-        input, select, button { font-family: 'DM Sans', sans-serif; }
+        input, select, button, textarea { font-family: 'DM Sans', sans-serif; }
         input[type=date], input[type=time] { color-scheme: light; }
         input[type=text], input[type=tel], input[type=email] { font-size: 16px !important; }
         button, a { touch-action: manipulation; }
@@ -1899,7 +1778,12 @@ function ReservationPage() {
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        input:focus, select:focus { border-color: #c9a84c !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatCar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        .tcb-card { animation: fadeUp 0.35s ease both; }
+        .tcb-stepper-btn:active { transform: scale(0.92); }
+        .tcb-pay-btn:active { transform: scale(0.97); }
+        input:focus, select:focus, textarea:focus { border-color: #c9a84c !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(201,168,76,0.14); }
       `}</style>
 
       {/* ── Contenu principal ── */}
@@ -1912,25 +1796,65 @@ function ReservationPage() {
           overflowX: "hidden",
         }}
       >
-        {/* Header doré */}
+        {/* ══════════ HERO / EN-TÊTE PREMIUM ══════════ */}
         <div
           style={{
-            background: "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
-            padding: "16px 20px 20px",
+            position: "relative",
+            background: "radial-gradient(120% 140% at 15% -10%, #3a2a10 0%, #1a1209 55%, #120c06 100%)",
+            padding: "16px 20px 22px",
             flexShrink: 0,
+            overflow: "hidden",
           }}
         >
+          {/* Motif décoratif : silhouette de route + voiture */}
+          <svg
+            width="180"
+            height="130"
+            viewBox="0 0 180 130"
+            style={{
+              position: "absolute",
+              top: -10,
+              right: -20,
+              opacity: 0.16,
+              pointerEvents: "none",
+            }}
+          >
+            <circle cx="120" cy="55" r="70" fill="none" stroke="#e8c96a" strokeWidth="1" />
+            <circle cx="140" cy="30" r="40" fill="none" stroke="#e8c96a" strokeWidth="1" />
+          </svg>
+          <div
+            style={{
+              position: "absolute",
+              right: 14,
+              top: 54,
+              fontSize: 46,
+              opacity: 0.9,
+              animation: "floatCar 3.2s ease-in-out infinite",
+              filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.35))",
+            }}
+          >
+            🚖
+          </div>
+
           {/* Ligne retour + langue */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 18,
+            }}
+          >
             <button
               onClick={() => navigate({ to: "/" })}
               aria-label={lang === "en" ? UI.en.backToSite : UI.fr.backToSite}
               style={{
-                background: "rgba(201,168,76,0.15)",
+                background: "rgba(255,255,255,0.06)",
                 border: "1px solid rgba(201,168,76,0.35)",
                 color: "#e8c96a",
                 borderRadius: 99,
-                padding: "10px 14px",
+                padding: "10px 16px",
                 minHeight: 40,
                 fontSize: 13,
                 fontWeight: 700,
@@ -1939,6 +1863,7 @@ function ReservationPage() {
                 alignItems: "center",
                 gap: 6,
                 fontFamily: "'DM Sans', sans-serif",
+                backdropFilter: "blur(4px)",
               }}
             >
               {lang === "en" ? "← Back" : "← Retour"}
@@ -1947,14 +1872,15 @@ function ReservationPage() {
               value={lang}
               onChange={(e) => setLang(e.target.value as Lang)}
               style={{
-                background: "rgba(201,168,76,0.15)",
+                background: "rgba(255,255,255,0.06)",
                 border: "1px solid rgba(201,168,76,0.3)",
                 color: "#e8c96a",
-                borderRadius: 8,
-                padding: "9px 10px",
+                borderRadius: 99,
+                padding: "9px 12px",
                 minHeight: 40,
                 fontSize: 13,
                 cursor: "pointer",
+                backdropFilter: "blur(4px)",
               }}
             >
               {LANGUAGES.map((l) => (
@@ -1964,24 +1890,82 @@ function ReservationPage() {
               ))}
             </select>
           </div>
+
           {/* Titre */}
-          <div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: "#f5f0e8", fontFamily: "'Clash Display'" }}>
+          <div style={{ position: "relative", maxWidth: "72%" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                background: "rgba(201,168,76,0.14)",
+                border: "1px solid rgba(201,168,76,0.35)",
+                borderRadius: 99,
+                padding: "4px 10px",
+                fontSize: 10.5,
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "#e8c96a",
+                marginBottom: 10,
+              }}
+            >
+              ✦ {lang === "en" ? "Premium taxi booking" : "Réservation taxi premium"}
+            </div>
+            <div
+              style={{
+                fontSize: 27,
+                fontWeight: 700,
+                color: "#f5f0e8",
+                fontFamily: "'Clash Display'",
+                lineHeight: 1.15,
+              }}
+            >
               {t("res.title")}
             </div>
-            <div style={{ fontSize: 13, color: "rgba(232,201,106,0.75)", marginTop: 4 }}>{t("res.intro")}</div>
+            <div style={{ fontSize: 13, color: "rgba(232,201,106,0.8)", marginTop: 6, lineHeight: 1.4 }}>
+              {t("res.intro")}
+            </div>
+          </div>
+
+          {/* Badges de confiance */}
+          <div style={{ position: "relative", display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
+            {[
+              { icon: "⚡", label: lang === "en" ? "Instant booking" : "Réservation instantanée" },
+              { icon: "🛡️", label: lang === "en" ? "Secure ride" : "Trajet sécurisé" },
+              { icon: "🎯", label: lang === "en" ? "Fixed pricing" : "Tarif transparent" },
+            ].map((b) => (
+              <div
+                key={b.label}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 99,
+                  padding: "6px 10px",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#e8dcc3",
+                }}
+              >
+                <span>{b.icon}</span>
+                {b.label}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Grille tarifaire ── */}
+        {/* ══════════ GRILLE TARIFAIRE ══════════ */}
         <div
           style={{
-            background: "rgba(201,168,76,0.08)",
-            borderBottom: "1px solid rgba(201,168,76,0.2)",
-            padding: "10px 12px",
+            background: "#fff",
+            padding: "14px 16px",
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: 8,
+            gap: 10,
+            borderBottom: "1px solid #ede8de",
           }}
         >
           {[
@@ -1990,85 +1974,120 @@ function ReservationPage() {
               label: t("res.tarif.day"),
               detail: t("res.tarif.day_detail"),
               price: t("res.tarif.day_price"),
+              accent: "#c9a84c",
             },
             {
               icon: "🌙",
               label: t("res.tarif.night"),
               detail: t("res.tarif.night_detail"),
               price: t("res.tarif.night_price"),
+              accent: "#7a6a50",
             },
-            { icon: "🚩", label: t("res.tarif.pickup"), detail: "", price: t("res.tarif.pickup_price") },
+            {
+              icon: "🚩",
+              label: t("res.tarif.pickup"),
+              detail: "",
+              price: t("res.tarif.pickup_price"),
+              accent: "#c9a84c",
+            },
             {
               icon: "ℹ️",
               label: t("res.tarif.booking_fee"),
               detail: t("res.tarif.booking_fee_detail"),
               price: "",
+              accent: "#7a6a50",
             },
           ].map((item) => (
             <div
               key={item.label}
               style={{
                 display: "flex",
-                flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
-                gap: 2,
-                padding: "8px 6px",
-                borderRadius: 10,
-                background: "rgba(255,255,255,0.5)",
-                border: "1px solid rgba(201,168,76,0.15)",
+                gap: 10,
+                padding: "10px 10px",
+                borderRadius: 12,
+                background: "#faf9f6",
+                border: "1px solid #ede8de",
+                borderLeft: `3px solid ${item.accent}`,
                 minWidth: 0,
-                textAlign: "center",
               }}
             >
-              <span style={{ fontSize: 16 }}>{item.icon}</span>
-              <span
+              <div
                 style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  color: "#9a7427",
-                  textAlign: "center",
-                  lineHeight: 1.2,
-                  overflowWrap: "break-word",
+                  fontSize: 17,
+                  width: 32,
+                  height: 32,
+                  flexShrink: 0,
+                  borderRadius: 9,
+                  background: "rgba(201,168,76,0.12)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                {item.label}
-              </span>
-              {item.detail && (
-                <span style={{ fontSize: 9, color: "#b89a5a", textAlign: "center", lineHeight: 1.2 }}>
-                  {item.detail}
-                </span>
-              )}
-              {item.price && (
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1209", marginTop: 1 }}>{item.price}</span>
-              )}
+                {item.icon}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    color: "#7a6a50",
+                    lineHeight: 1.25,
+                    overflowWrap: "break-word",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.03em",
+                  }}
+                >
+                  {item.label}
+                </div>
+                {item.detail && <div style={{ fontSize: 9.5, color: "#b0a180", lineHeight: 1.2 }}>{item.detail}</div>}
+                {item.price && (
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "#1a1209", marginTop: 1 }}>{item.price}</div>
+                )}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Contenu du formulaire */}
+        {/* ══════════ CORPS DU FORMULAIRE ══════════ */}
         <div
           style={{
-            padding: "20px 16px max(24px, env(safe-area-inset-bottom, 0px))",
+            padding: "18px 16px max(24px, env(safe-area-inset-bottom, 0px))",
             display: "flex",
             flexDirection: "column",
-            gap: 16,
+            gap: 14,
           }}
         >
           {/* ── Bannière disponibilité taxi ── */}
           {taxiAvailable === false && (
             <div
+              className="tcb-card"
               style={{
                 background: "#fff5f5",
                 border: "1.5px solid #fca5a5",
-                borderRadius: 12,
-                padding: "12px 16px",
+                borderRadius: 14,
+                padding: "13px 16px",
                 display: "flex",
                 alignItems: "flex-start",
-                gap: 10,
+                gap: 12,
               }}
             >
-              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>🚕</span>
+              <div
+                style={{
+                  fontSize: 18,
+                  flexShrink: 0,
+                  width: 34,
+                  height: 34,
+                  borderRadius: 10,
+                  background: "#fecaca",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                🚕
+              </div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#b91c1c", marginBottom: 2 }}>
                   {t("taxi.banner.busy.title")}
@@ -2079,40 +2098,613 @@ function ReservationPage() {
           )}
           {taxiAvailable === true && (
             <div
+              className="tcb-card"
               style={{
                 background: "#f0fdf4",
                 border: "1.5px solid #4ade80",
-                borderRadius: 12,
-                padding: "12px 16px",
+                borderRadius: 14,
+                padding: "13px 16px",
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                gap: 12,
               }}
             >
-              <span style={{ fontSize: 18, flexShrink: 0 }}>✅</span>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#166534" }}>{t("taxi.banner.available.msg")}</div>
+              <div
+                style={{
+                  fontSize: 18,
+                  flexShrink: 0,
+                  width: 34,
+                  height: 34,
+                  borderRadius: 10,
+                  background: "#bbf7d0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                ✅
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#166534" }}>{t("taxi.banner.available.msg")}</div>
             </div>
           )}
 
           <form
             onSubmit={handleSubmit}
             autoComplete="off"
-            style={{ display: "flex", flexDirection: "column", gap: 16 }}
+            style={{ display: "flex", flexDirection: "column", gap: 14 }}
           >
-            {/* ── Section helper ── */}
-            {/* Card wrapper générique */}
-            {/* ── Votre trajet (adresses + date) ── */}
+            {/* ══════════ ÉTAPE 1 — TRAJET ══════════ */}
             <div
+              className="tcb-card"
               style={{
                 background: "#fff",
-                borderRadius: 16,
+                borderRadius: 18,
                 padding: "18px 16px",
                 border: "1px solid #ede8de",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+                boxShadow: "0 2px 10px rgba(26,18,9,0.05)",
               }}
             >
-              {/* Titre section trajet */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                  <div
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: "50%",
+                      background: "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                      color: "#e8c96a",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 11,
+                      fontWeight: 800,
+                      flexShrink: 0,
+                    }}
+                  >
+                    1
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: "#1a1209",
+                      letterSpacing: "0.04em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {t("res.loc.ride_section")}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={fromCoord ? startVoiceRecognition : startVoiceRecognitionBoth}
+                  title={
+                    fromCoord
+                      ? lang === "en"
+                        ? UI.en.dictateDestOnly
+                        : UI.fr.dictateDestOnly
+                      : lang === "en"
+                        ? UI.en.dictateFullTrip
+                        : UI.fr.dictateFullTrip
+                  }
+                  style={{
+                    background:
+                      voiceBothListening || voiceListening
+                        ? "#dc2626"
+                        : "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                    border: "none",
+                    borderRadius: 99,
+                    padding: "9px 14px",
+                    minHeight: 40,
+                    cursor: "pointer",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: voiceBothListening || voiceListening ? "#fff" : "#e8c96a",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    animation: voiceBothListening || voiceListening ? "pulse 1s ease-in-out infinite" : "none",
+                    boxShadow: "0 2px 8px rgba(26,18,9,0.2)",
+                  }}
+                >
+                  {voiceBothListening || voiceListening
+                    ? lang === "en"
+                      ? UI.en.listening
+                      : UI.fr.listening
+                    : fromCoord
+                      ? lang === "en"
+                        ? UI.en.dictateDestBtn
+                        : UI.fr.dictateDestBtn
+                      : lang === "en"
+                        ? UI.en.dictateTripBtn
+                        : UI.fr.dictateTripBtn}
+                </button>
+              </div>
+
+              {/* Timeline départ → destination */}
+              <div style={{ display: "flex", gap: 12 }}>
+                {/* Colonne pastilles + ligne */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    paddingTop: 12,
+                    width: 14,
+                    flexShrink: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      background: "#22c55e",
+                      boxShadow: "0 0 0 3px rgba(34,197,94,0.18)",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: 2,
+                      flex: 1,
+                      minHeight: 46,
+                      background: "repeating-linear-gradient(180deg, #d8cca4 0 4px, transparent 4px 8px)",
+                      margin: "4px 0",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 3,
+                      background: "#ef4444",
+                      boxShadow: "0 0 0 3px rgba(239,68,68,0.18)",
+                      flexShrink: 0,
+                    }}
+                  />
+                </div>
+
+                {/* Colonne champs */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 14, flex: 1, minWidth: 0 }}>
+                  {/* Départ */}
+                  <div>
+                    <label
+                      style={{
+                        fontSize: 11,
+                        color: "#7a6a50",
+                        fontWeight: 700,
+                        display: "block",
+                        marginBottom: 6,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      {t("res.loc.from")}
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type="text"
+                        value={f.depart}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          set("depart", v);
+                          setFromCoord(null);
+                          setDepartChoices([]);
+                          if (departDebounceRef.current) clearTimeout(departDebounceRef.current);
+                        }}
+                        onBlur={resolveDepartAddress}
+                        placeholder={lang === "en" ? UI.en.departPlaceholder : UI.fr.departPlaceholder}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                        name="tcb-depart-x"
+                        style={{ ...inputStyle(!!errors.depart), paddingRight: 52 }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleGeolocate()}
+                        disabled={geolocLoading}
+                        style={{
+                          position: "absolute",
+                          right: 6,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "linear-gradient(135deg, #c9a84c 0%, #a5842f 100%)",
+                          border: "none",
+                          borderRadius: 9,
+                          cursor: geolocLoading ? "wait" : "pointer",
+                          color: "#fff",
+                          padding: "8px 10px",
+                          minWidth: 40,
+                          minHeight: 40,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 16,
+                          fontWeight: 700,
+                          boxShadow: "0 2px 6px rgba(201,168,76,0.35)",
+                        }}
+                        aria-label={lang === "en" ? UI.en.geolocateAria : UI.fr.geolocateAria}
+                      >
+                        {geolocLoading ? "⏳" : "📍"}
+                      </button>
+                    </div>
+                    {geolocStatus !== "idle" && (
+                      <div
+                        role="status"
+                        aria-live="polite"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          marginTop: 6,
+                          padding: "6px 10px",
+                          borderRadius: 10,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          background:
+                            geolocStatus === "success"
+                              ? "#f0fdf4"
+                              : geolocStatus === "loading"
+                                ? "#fefce8"
+                                : geolocStatus === "hint" || geolocStatus === "ip"
+                                  ? "#eff6ff"
+                                  : "#fff5f5",
+                          color:
+                            geolocStatus === "success"
+                              ? "#166534"
+                              : geolocStatus === "loading"
+                                ? "#854d0e"
+                                : geolocStatus === "hint" || geolocStatus === "ip"
+                                  ? "#1e40af"
+                                  : "#b91c1c",
+                          border: "1px solid currentColor",
+                        }}
+                      >
+                        <span>
+                          {geolocStatus === "hint" && "📍"}
+                          {geolocStatus === "loading" && "⏳"}
+                          {geolocStatus === "success" && "✓"}
+                          {geolocStatus === "ip" && "🌐"}
+                          {geolocStatus === "denied" && "🚫"}
+                          {geolocStatus === "error" && "⚠️"}
+                        </span>
+                        <span style={{ flex: 1 }}>{geolocStatusMsg}</span>
+                        {(geolocStatus === "success" || geolocStatus === "ip") && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGeolocStatus("idle");
+                              setGeolocStatusMsg("");
+                            }}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              color: "inherit",
+                              cursor: "pointer",
+                              fontSize: 11,
+                              textDecoration: "underline",
+                            }}
+                          >
+                            {lang === "en" ? UI.en.edit : UI.fr.edit}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {errors.depart && (
+                      <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.depart}</div>
+                    )}
+                    {fromCoord && !errors.depart && (
+                      <div style={{ color: "#166534", fontSize: 11, marginTop: 4, fontWeight: 600 }}>
+                        ✓ {t("res.geo.btn")}
+                      </div>
+                    )}
+                    {searchingDepart && (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          marginTop: 6,
+                          color: "#9a7427",
+                          fontSize: 11,
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: 10,
+                            height: 10,
+                            borderRadius: "50%",
+                            border: "2px solid #c9a84c",
+                            borderTopColor: "transparent",
+                            animation: "spin 0.8s linear infinite",
+                          }}
+                        />
+                        {t("res.loc.searching")}
+                      </div>
+                    )}
+                    {searchingDepart && departChoices.length === 0 && (
+                      <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
+                        {[0, 1, 2].map((i) => (
+                          <div
+                            key={i}
+                            style={{
+                              height: 44,
+                              borderRadius: 10,
+                              background: "linear-gradient(90deg, #f5f0e8, #ede8de, #f5f0e8)",
+                              backgroundSize: "200% 100%",
+                              animation: "shimmer 1.4s ease-in-out infinite",
+                            }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    {departChoices.length > 0 && (
+                      <div style={{ display: "grid", gap: 6, marginTop: 8 }}>
+                        {departChoices.map((choice) => (
+                          <button
+                            key={`${choice.label}-${choice.coord[0]}-${choice.coord[1]}`}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => {
+                              if (departDebounceRef.current) clearTimeout(departDebounceRef.current);
+                              skipNextDepartResolveRef.current = true;
+                              set("depart", choice.label);
+                              setFromCoord(choice.coord);
+                              setDepartChoices([]);
+                              setErrors((prev) => {
+                                const next = { ...prev };
+                                delete next.depart;
+                                return next;
+                              });
+                            }}
+                            style={{
+                              width: "100%",
+                              textAlign: "left",
+                              padding: "10px 12px",
+                              borderRadius: 11,
+                              border: "1.5px solid #e2d9c8",
+                              background: "#faf9f7",
+                              color: "#1a1209",
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                            }}
+                          >
+                            <span style={{ fontSize: 14 }}>📍</span>
+                            <span style={{ flex: 1, minWidth: 0 }}>
+                              <span style={{ display: "block", fontSize: 13, fontWeight: 700 }}>{choice.label}</span>
+                              <span style={{ display: "block", fontSize: 11, color: "#9a7427", marginTop: 2 }}>
+                                à {choice.distanceKm.toFixed(1)} km
+                              </span>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Destination */}
+                  <div>
+                    <label
+                      style={{
+                        fontSize: 11,
+                        color: "#7a6a50",
+                        fontWeight: 700,
+                        display: "block",
+                        marginBottom: 6,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      {t("res.loc.to")}
+                    </label>
+                    <input
+                      type="text"
+                      value={f.destination}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        set("destination", v);
+                        setToCoord(null);
+                        if (destinationDebounceRef.current) clearTimeout(destinationDebounceRef.current);
+                      }}
+                      onFocus={() => {
+                        destinationFocusedRef.current = true;
+                      }}
+                      onBlur={() => {
+                        destinationFocusedRef.current = false;
+                        resolveDestinationAddress();
+                      }}
+                      placeholder={t("res.f.to.ph")}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      name="tcb-dest-x"
+                      style={inputStyle(!!errors.destination)}
+                    />
+                    {errors.destination && (
+                      <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.destination}</div>
+                    )}
+                    {searchingDestination && (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          marginTop: 6,
+                          color: "#9a7427",
+                          fontSize: 11,
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: 10,
+                            height: 10,
+                            borderRadius: "50%",
+                            border: "2px solid #c9a84c",
+                            borderTopColor: "transparent",
+                            animation: "spin 0.8s linear infinite",
+                          }}
+                        />
+                        {t("res.loc.searching")}
+                      </div>
+                    )}
+                    {toCoord && !errors.destination && (
+                      <div style={{ color: "#166534", fontSize: 11, marginTop: 4, fontWeight: 600 }}>
+                        ✓ {t("res.loc.to")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Estimation de prix en direct ── */}
+              {fromCoord && toCoord && (
+                <div
+                  className="tcb-card"
+                  style={{
+                    marginTop: 16,
+                    background: "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                    borderRadius: 14,
+                    padding: "14px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
+                  }}
+                >
+                  {calcLoading ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        color: "#e8c96a",
+                        fontSize: 13,
+                        fontWeight: 600,
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          border: "2px solid #e8c96a",
+                          borderTopColor: "transparent",
+                          animation: "spin 0.8s linear infinite",
+                        }}
+                      />
+                      {lang === "en" ? "Calculating your fare…" : "Calcul du tarif en cours…"}
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: 10.5,
+                            color: "rgba(232,201,106,0.75)",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {lang === "en" ? "Estimated fare" : "Prix estimé"}
+                        </div>
+                        <div style={{ fontSize: 24, fontWeight: 800, color: "#f5f0e8", fontFamily: "'Clash Display'" }}>
+                          {prixAller.toFixed(2)} €
+                        </div>
+                        {orsResult && (
+                          <div style={{ fontSize: 11, color: "rgba(232,201,106,0.7)", marginTop: 2 }}>
+                            {orsResult.distanceKm.toFixed(1)} km · {Math.round(orsResult.dureeS / 60)} min
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 26 }}>💰</div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Séparateur */}
+              <div style={{ height: 1, background: "#ede8de", margin: "16px 0" }} />
+
+              {/* Date + Heure */}
+              <div>
+                <label
+                  style={{
+                    fontSize: 11,
+                    color: "#7a6a50",
+                    fontWeight: 700,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    marginBottom: 8,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  <span>📅</span> {t("res.datetime.title")}
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div>
+                    <input
+                      type="date"
+                      value={f.date}
+                      onChange={(e) => set("date", e.target.value)}
+                      min={today}
+                      style={inputStyle(!!errors.date)}
+                    />
+                    {errors.date && <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.date}</div>}
+                  </div>
+                  <div>
+                    <input
+                      type="time"
+                      value={f.heure}
+                      onChange={(e) => set("heure", e.target.value)}
+                      style={inputStyle(!!errors.heure)}
+                    />
+                    {errors.heure && <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.heure}</div>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ══════════ ÉTAPE 2 — DÉTAILS DU TRAJET ══════════ */}
+            <div
+              className="tcb-card"
+              style={{
+                background: "#fff",
+                borderRadius: 18,
+                padding: "18px 16px",
+                border: "1px solid #ede8de",
+                boxShadow: "0 2px 10px rgba(26,18,9,0.05)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16 }}>
+                <div
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                    color: "#e8c96a",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 11,
+                    fontWeight: 800,
+                    flexShrink: 0,
+                  }}
+                >
+                  2
+                </div>
                 <div
                   style={{
                     fontSize: 13,
@@ -2122,256 +2714,174 @@ function ReservationPage() {
                     textTransform: "uppercase",
                   }}
                 >
-                  🚖 {t("res.loc.ride_section")}
+                  {t("res.loc.trip_details_section")}
                 </div>
-                <button
-                  type="button"
-                  onClick={fromCoord ? startVoiceRecognition : startVoiceRecognitionBoth}
-                  title={fromCoord ? (lang === "en" ? UI.en.dictateDestOnly : UI.fr.dictateDestOnly) : (lang === "en" ? UI.en.dictateFullTrip : UI.fr.dictateFullTrip)}
-                  style={{
-                    background: voiceBothListening || voiceListening ? "rgba(220,38,38,0.08)" : "rgba(201,168,76,0.1)",
-                    border: `1.5px solid ${voiceBothListening || voiceListening ? "rgba(220,38,38,0.4)" : "rgba(201,168,76,0.5)"}`,
-                    borderRadius: 8,
-                    padding: "8px 10px",
-                    minHeight: 40,
-                    cursor: "pointer",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: voiceBothListening || voiceListening ? "#dc2626" : "#9a7427",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 5,
-                    animation: voiceBothListening || voiceListening ? "pulse 1s ease-in-out infinite" : "none",
-                  }}
-                >
-                  {voiceBothListening || voiceListening
-                    ? (lang === "en" ? UI.en.listening : UI.fr.listening)
-                    : fromCoord
-                      ? (lang === "en" ? UI.en.dictateDestBtn : UI.fr.dictateDestBtn)
-                      : (lang === "en" ? UI.en.dictateTripBtn : UI.fr.dictateTripBtn)}
-                </button>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                {/* Départ */}
-                <div>
-                  <label
-                    style={{
-                      fontSize: 11,
-                      color: "#7a6a50",
-                      fontWeight: 600,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      marginBottom: 6,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    <span>🟢</span> {t("res.loc.from")}
-                  </label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text"
-                      value={f.depart}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        set("depart", v);
-                        setFromCoord(null);
-                        setDepartChoices([]);
-                        if (departDebounceRef.current) clearTimeout(departDebounceRef.current);
-                      }}
-                      onBlur={resolveDepartAddress}
-                      placeholder={lang === "en" ? UI.en.departPlaceholder : UI.fr.departPlaceholder}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck={false}
-                      name="tcb-depart-x"
-                      style={{ ...inputStyle(!!errors.depart), paddingRight: 52 }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleGeolocate()}
-                      disabled={geolocLoading}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  {/* Passagers — compteur tactile */}
+                  <div>
+                    <label
                       style={{
-                        position: "absolute",
-                        right: 6,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        background: "#c9a84c",
-                        border: "none",
-                        borderRadius: 8,
-                        cursor: geolocLoading ? "wait" : "pointer",
-                        color: "#fff",
-                        padding: "8px 10px",
-                        minWidth: 40,
-                        minHeight: 40,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 16,
+                        fontSize: 11,
+                        color: "#7a6a50",
                         fontWeight: 700,
-                      }}
-                      aria-label={lang === "en" ? UI.en.geolocateAria : UI.fr.geolocateAria}
-                    >
-                      {geolocLoading ? "⏳" : "📍"}
-                    </button>
-                  </div>
-                  {geolocStatus !== "idle" && (
-                    <div
-                      role="status"
-                      aria-live="polite"
-                      style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 8,
-                        marginTop: 6,
-                        padding: "6px 10px",
-                        borderRadius: 8,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        background:
-                          geolocStatus === "success"
-                            ? "#f0fdf4"
-                            : geolocStatus === "loading"
-                              ? "#fefce8"
-                              : geolocStatus === "hint" || geolocStatus === "ip"
-                                ? "#eff6ff"
-                                : "#fff5f5",
-                        color:
-                          geolocStatus === "success"
-                            ? "#166534"
-                            : geolocStatus === "loading"
-                              ? "#854d0e"
-                              : geolocStatus === "hint" || geolocStatus === "ip"
-                                ? "#1e40af"
-                                : "#b91c1c",
-                        border: "1px solid currentColor",
+                        gap: 5,
+                        marginBottom: 6,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
-                      <span>
-                        {geolocStatus === "hint" && "📍"}
-                        {geolocStatus === "loading" && "⏳"}
-                        {geolocStatus === "success" && "✓"}
-                        {geolocStatus === "ip" && "🌐"}
-                        {geolocStatus === "denied" && "🚫"}
-                        {geolocStatus === "error" && "⚠️"}
-                      </span>
-                      <span style={{ flex: 1 }}>{geolocStatusMsg}</span>
-                      {(geolocStatus === "success" || geolocStatus === "ip") && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setGeolocStatus("idle");
-                            setGeolocStatusMsg("");
-                          }}
-                          style={{
-                            background: "transparent",
-                            border: "none",
-                            color: "inherit",
-                            cursor: "pointer",
-                            fontSize: 11,
-                            textDecoration: "underline",
-                          }}
-                        >
-                          {lang === "en" ? UI.en.edit : UI.fr.edit}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  {errors.depart && <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.depart}</div>}
-                  {fromCoord && !errors.depart && (
-                    <div style={{ color: "#166534", fontSize: 11, marginTop: 4 }}>✓ {t("res.geo.btn")}</div>
-                  )}
-                  {searchingDepart && (
+                      <span>👥</span> {t("res.f.passengers")}
+                    </label>
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 6,
-                        marginTop: 6,
-                        color: "#9a7427",
-                        fontSize: 11,
+                        justifyContent: "space-between",
+                        border: "1.5px solid #ede0c4",
+                        borderRadius: 12,
+                        padding: "6px 8px",
+                        background: "#faf9f6",
                       }}
                     >
-                      <span
+                      <button
+                        type="button"
+                        className="tcb-stepper-btn"
+                        onClick={() => set("passagers", Math.max(1, f.passagers - 1))}
+                        disabled={f.passagers <= passagersOptions[0]}
                         style={{
-                          display: "inline-block",
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          border: "2px solid #c9a84c",
-                          borderTopColor: "transparent",
-                          animation: "spin 0.8s linear infinite",
+                          width: 32,
+                          height: 32,
+                          borderRadius: 8,
+                          border: "none",
+                          background: "#1a1209",
+                          color: "#e8c96a",
+                          fontSize: 16,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          opacity: f.passagers <= passagersOptions[0] ? 0.35 : 1,
                         }}
-                      />
-                      {t("res.loc.searching")}
+                      >
+                        −
+                      </button>
+                      <div style={{ textAlign: "center", lineHeight: 1.15 }}>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: "#1a1209" }}>{f.passagers}</div>
+                        <div style={{ fontSize: 9.5, color: "#9a7427", fontWeight: 600 }}>
+                          {f.passagers > 1 ? t("res.loc.passengers_pl") : t("res.loc.passenger_sg")}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="tcb-stepper-btn"
+                        onClick={() => set("passagers", Math.min(6, f.passagers + 1))}
+                        disabled={f.passagers >= 6}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 8,
+                          border: "none",
+                          background: "linear-gradient(135deg, #c9a84c 0%, #a5842f 100%)",
+                          color: "#fff",
+                          fontSize: 16,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          opacity: f.passagers >= 6 ? 0.35 : 1,
+                        }}
+                      >
+                        +
+                      </button>
                     </div>
-                  )}
-                  {searchingDepart && departChoices.length === 0 && (
-                    <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
-                      {[0, 1, 2].map((i) => (
-                        <div
-                          key={i}
-                          style={{
-                            height: 44,
-                            borderRadius: 10,
-                            background: "linear-gradient(90deg, #f5f0e8, #ede8de, #f5f0e8)",
-                            backgroundSize: "200% 100%",
-                            animation: "shimmer 1.4s ease-in-out infinite",
-                          }}
-                        />
-                      ))}
+                  </div>
+
+                  {/* Bagages — compteur tactile */}
+                  <div>
+                    <label
+                      style={{
+                        fontSize: 11,
+                        color: "#7a6a50",
+                        fontWeight: 700,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 5,
+                        marginBottom: 6,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      <span>🧳</span> {t("res.f.luggage")}
+                    </label>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        border: "1.5px solid #ede0c4",
+                        borderRadius: 12,
+                        padding: "6px 8px",
+                        background: "#faf9f6",
+                      }}
+                    >
+                      <button
+                        type="button"
+                        className="tcb-stepper-btn"
+                        onClick={() => set("bagages", Math.max(0, f.bagages - 1))}
+                        disabled={f.bagages <= 0}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 8,
+                          border: "none",
+                          background: "#1a1209",
+                          color: "#e8c96a",
+                          fontSize: 16,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          opacity: f.bagages <= 0 ? 0.35 : 1,
+                        }}
+                      >
+                        −
+                      </button>
+                      <div style={{ textAlign: "center", lineHeight: 1.15 }}>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: "#1a1209" }}>{f.bagages}</div>
+                        <div style={{ fontSize: 9.5, color: "#9a7427", fontWeight: 600 }}>
+                          {f.bagages > 1 ? t("res.loc.luggage_pl") : t("res.loc.luggage_sg")}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="tcb-stepper-btn"
+                        onClick={() => set("bagages", Math.min(5, f.bagages + 1))}
+                        disabled={f.bagages >= 5}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 8,
+                          border: "none",
+                          background: "linear-gradient(135deg, #c9a84c 0%, #a5842f 100%)",
+                          color: "#fff",
+                          fontSize: 16,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          opacity: f.bagages >= 5 ? 0.35 : 1,
+                        }}
+                      >
+                        +
+                      </button>
                     </div>
-                  )}
-                  {departChoices.length > 0 && (
-                    <div style={{ display: "grid", gap: 6, marginTop: 8 }}>
-                      {departChoices.map((choice) => (
-                        <button
-                          key={`${choice.label}-${choice.coord[0]}-${choice.coord[1]}`}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                            if (departDebounceRef.current) clearTimeout(departDebounceRef.current);
-                            skipNextDepartResolveRef.current = true;
-                            set("depart", choice.label);
-                            setFromCoord(choice.coord);
-                            setDepartChoices([]);
-                            setErrors((prev) => {
-                              const next = { ...prev };
-                              delete next.depart;
-                              return next;
-                            });
-                          }}
-                          style={{
-                            width: "100%",
-                            textAlign: "left",
-                            padding: "10px 12px",
-                            borderRadius: 10,
-                            border: "1.5px solid #e2d9c8",
-                            background: "#faf9f7",
-                            color: "#1a1209",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <span style={{ display: "block", fontSize: 13, fontWeight: 700 }}>{choice.label}</span>
-                          <span style={{ display: "block", fontSize: 11, color: "#9a7427", marginTop: 2 }}>
-                            à {choice.distanceKm.toFixed(1)} km
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* Destination */}
+                {/* Paiement — sélecteur segmenté */}
                 <div>
                   <label
                     style={{
                       fontSize: 11,
                       color: "#7a6a50",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       display: "flex",
                       alignItems: "center",
                       gap: 5,
@@ -2380,134 +2890,85 @@ function ReservationPage() {
                       letterSpacing: "0.05em",
                     }}
                   >
-                    <span>🔴</span> {t("res.loc.to")}
+                    <span>💳</span> {t("res.loc.payment_section")}
                   </label>
-                  <input
-                    type="text"
-                    value={f.destination}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      set("destination", v);
-                      setToCoord(null);
-                      if (destinationDebounceRef.current) clearTimeout(destinationDebounceRef.current);
-                    }}
-                    onFocus={() => {
-                      destinationFocusedRef.current = true;
-                    }}
-                    onBlur={() => {
-                      destinationFocusedRef.current = false;
-                      resolveDestinationAddress();
-                    }}
-                    placeholder={t("res.f.to.ph")}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    name="tcb-dest-x"
-                    style={inputStyle(!!errors.destination)}
-                  />
-                  {errors.destination && (
-                    <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.destination}</div>
-                  )}
-                  {searchingDestination && (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        marginTop: 6,
-                        color: "#9a7427",
-                        fontSize: 11,
-                      }}
-                    >
-                      <span
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    {[
+                      { val: "cb", icon: "💳", label: t("res.loc.card") },
+                      { val: "especes", icon: "💶", label: t("res.loc.cash") },
+                    ].map((opt) => (
+                      <button
+                        key={opt.val}
+                        type="button"
+                        className="tcb-pay-btn"
+                        onClick={() => set("paiement", opt.val)}
                         style={{
-                          display: "inline-block",
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          border: "2px solid #c9a84c",
-                          borderTopColor: "transparent",
-                          animation: "spin 0.8s linear infinite",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 7,
+                          padding: "12px 10px",
+                          borderRadius: 12,
+                          border: f.paiement === opt.val ? "1.5px solid #c9a84c" : "1.5px solid #ede0c4",
+                          background:
+                            f.paiement === opt.val ? "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)" : "#faf9f6",
+                          color: f.paiement === opt.val ? "#e8c96a" : "#1a1209",
+                          fontSize: 13,
+                          fontWeight: 700,
+                          cursor: "pointer",
                         }}
-                      />
-                      {t("res.loc.searching")}
-                    </div>
-                  )}
-                  {toCoord && !errors.destination && (
-                    <div style={{ color: "#166534", fontSize: 11, marginTop: 4 }}>✓ {t("res.loc.to")}</div>
-                  )}
-                </div>
-
-                {/* Séparateur */}
-                <div style={{ height: 1, background: "#ede8de" }} />
-
-                {/* Date + Heure */}
-                <div>
-                  <label
-                    style={{
-                      fontSize: 11,
-                      color: "#7a6a50",
-                      fontWeight: 600,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      marginBottom: 8,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    <span>📅</span> {t("res.datetime.title")}
-                  </label>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                    <div>
-                      <input
-                        type="date"
-                        value={f.date}
-                        onChange={(e) => set("date", e.target.value)}
-                        min={today}
-                        style={inputStyle(!!errors.date)}
-                      />
-                      {errors.date && <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.date}</div>}
-                    </div>
-                    <div>
-                      <input
-                        type="time"
-                        value={f.heure}
-                        onChange={(e) => set("heure", e.target.value)}
-                        style={inputStyle(!!errors.heure)}
-                      />
-                      {errors.heure && (
-                        <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4 }}>{errors.heure}</div>
-                      )}
-                    </div>
+                      >
+                        <span style={{ fontSize: 16 }}>{opt.icon}</span>
+                        {opt.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ── Coordonnées passager ── */}
+            {/* ══════════ ÉTAPE 3 — COORDONNÉES ══════════ */}
             <div
+              className="tcb-card"
               style={{
                 background: "#fff",
-                borderRadius: 16,
+                borderRadius: 18,
                 padding: "18px 16px",
                 border: "1px solid #ede8de",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+                boxShadow: "0 2px 10px rgba(26,18,9,0.05)",
               }}
             >
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: "#1a1209",
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  marginBottom: 14,
-                }}
-              >
-                👤 {t("res.loc.contact_section")}
+              <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16 }}>
+                <div
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                    color: "#e8c96a",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 11,
+                    fontWeight: 800,
+                    flexShrink: 0,
+                  }}
+                >
+                  3
+                </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: "#1a1209",
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {t("res.loc.contact_section")}
+                </div>
               </div>
+
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
@@ -2519,7 +2980,7 @@ function ReservationPage() {
                         style={{
                           fontSize: 11,
                           color: "#7a6a50",
-                          fontWeight: 600,
+                          fontWeight: 700,
                           display: "flex",
                           alignItems: "center",
                           gap: 5,
@@ -2556,7 +3017,7 @@ function ReservationPage() {
                       style={{
                         fontSize: 11,
                         color: "#7a6a50",
-                        fontWeight: 600,
+                        fontWeight: 700,
                         display: "flex",
                         alignItems: "center",
                         gap: 5,
@@ -2586,198 +3047,13 @@ function ReservationPage() {
               </div>
             </div>
 
-            {/* ── Passagers / Bagages / Paiement ── */}
+            {/* ── Demandes spéciales ── */}
             <div
+              className="tcb-card"
               style={{
-                background: "#fff",
-                borderRadius: 16,
-                padding: "18px 16px",
-                border: "1px solid #ede8de",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: "#1a1209",
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                  marginBottom: 14,
-                }}
-              >
-                ⚙️ {t("res.loc.trip_details_section")}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  <div>
-                    <label
-                      style={{
-                        fontSize: 11,
-                        color: "#7a6a50",
-                        fontWeight: 600,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 5,
-                        marginBottom: 6,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em",
-                      }}
-                    >
-                      <span>👥</span>
-                      {t("res.f.passengers")}
-                    </label>
-                    <select
-                      value={f.passagers}
-                      onChange={(e) => set("passagers", parseInt(e.target.value))}
-                      style={inputStyle()}
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                        <option key={n} value={n}>
-                          {n} {n > 1 ? t("res.loc.passengers_pl") : t("res.loc.passenger_sg")}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      style={{
-                        fontSize: 11,
-                        color: "#7a6a50",
-                        fontWeight: 600,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 5,
-                        marginBottom: 6,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em",
-                      }}
-                    >
-                      <span>🧳</span>
-                      {t("res.f.luggage")}
-                    </label>
-                    <select
-                      value={f.bagages}
-                      onChange={(e) => set("bagages", parseInt(e.target.value))}
-                      style={inputStyle()}
-                    >
-                      {[0, 1, 2, 3, 4, 5].map((n) => (
-                        <option key={n} value={n}>
-                          {n} {n > 1 ? t("res.loc.luggage_pl") : t("res.loc.luggage_sg")}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label
-                    style={{
-                      fontSize: 11,
-                      color: "#7a6a50",
-                      fontWeight: 600,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 5,
-                      marginBottom: 6,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    <span>💳</span>
-                    {t("res.loc.payment_section")}
-                  </label>
-                  <select value={f.paiement} onChange={(e) => set("paiement", e.target.value)} style={inputStyle()}>
-                    <option value="cb">{t("res.loc.card")}</option>
-                    <option value="especes">{t("res.loc.cash")}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Siège enfant + Transport de groupe ── */}
-            <div
-              style={{
-                background: "#fff",
-                borderRadius: 16,
-                padding: "18px 16px",
-                border: "1px solid #ede8de",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-                display: "flex",
-                flexDirection: "column",
-                gap: 14,
-              }}
-            >
-              <div>
-                <label
-                  style={{
-                    fontSize: 11,
-                    color: "#7a6a50",
-                    fontWeight: 600,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 5,
-                    marginBottom: 6,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  <span>🧒</span>
-                  {u.childSeatLabel}
-                </label>
-                <select
-                  value={f.siegeEnfant}
-                  onChange={(e) => set("siegeEnfant", e.target.value as FormState["siegeEnfant"])}
-                  style={inputStyle()}
-                >
-                  <option value="aucun">{u.childSeatNone}</option>
-                  <option value="bebe">{u.childSeatBaby}</option>
-                  <option value="rehausseur">{u.childSeatBooster}</option>
-                  <option value="les_deux">{u.childSeatBoth}</option>
-                </select>
-              </div>
-
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 10,
-                  cursor: "pointer",
-                  padding: "10px 12px",
-                  background: f.groupTransport ? "rgba(201,168,76,0.12)" : "transparent",
-                  border: "1.5px solid rgba(201,168,76,0.25)",
-                  borderRadius: 12,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={f.groupTransport}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
-                    setF((p) => ({
-                      ...p,
-                      groupTransport: checked,
-                      passagers: checked ? Math.max(p.passagers, 5) : p.passagers,
-                    }));
-                  }}
-                  style={{ marginTop: 2, width: 18, height: 18, accentColor: "#c9a84c", flexShrink: 0 }}
-                />
-                <span>
-                  <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#1a1209" }}>
-                    🚐 {u.groupTransportLabel}
-                  </span>
-                  <span style={{ display: "block", fontSize: 12, color: "#7a6a50", marginTop: 2 }}>
-                    {u.groupTransportHint}
-                  </span>
-                </span>
-              </label>
-            </div>
-
-            {/* ── Demandes spéciales (siège bébé, animal, bagages volumineux…) ── */}
-            <div
-              style={{
-                background: "linear-gradient(135deg, rgba(255,253,247,0.7) 0%, rgba(252,247,234,0.6) 100%)",
-                border: "1px solid rgba(201,168,76,0.18)",
-                borderRadius: 16,
+                background: "linear-gradient(135deg, rgba(255,253,247,0.9) 0%, rgba(252,247,234,0.8) 100%)",
+                border: "1px solid rgba(201,168,76,0.22)",
+                borderRadius: 18,
                 padding: "16px 18px",
                 boxShadow: "0 1px 3px rgba(26,18,9,0.04)",
               }}
@@ -2786,7 +3062,7 @@ function ReservationPage() {
                 style={{
                   fontSize: 11,
                   color: "#7a6a50",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
@@ -2807,7 +3083,7 @@ function ReservationPage() {
                   width: "100%",
                   resize: "vertical",
                   padding: "12px 14px",
-                  background: "rgba(255,255,255,0.7)",
+                  background: "rgba(255,255,255,0.75)",
                   border: "1.5px solid rgba(201,168,76,0.25)",
                   borderRadius: 12,
                   fontSize: 16,
@@ -2822,81 +3098,49 @@ function ReservationPage() {
               </div>
             </div>
 
-            {/* ── Récapitulatif (siège enfant / transport de groupe) ── */}
-            {(f.siegeEnfant !== "aucun" || f.groupTransport) && (
-              <div
-                style={{
-                  background: "linear-gradient(135deg, rgba(255,253,247,0.9) 0%, rgba(252,247,234,0.8) 100%)",
-                  border: "1px solid rgba(201,168,76,0.25)",
-                  borderRadius: 14,
-                  padding: "14px 16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 6,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "#1a1209",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    marginBottom: 2,
-                  }}
-                >
-                  {u.recapTitle}
-                </div>
-                {f.siegeEnfant !== "aucun" && (
-                  <div style={{ fontSize: 13, color: "#3a3020" }}>
-                    {u.recapChildSeat}{" "}
-                    {f.siegeEnfant === "bebe"
-                      ? u.childSeatBaby
-                      : f.siegeEnfant === "rehausseur"
-                        ? u.childSeatBooster
-                        : u.childSeatBoth}
-                  </div>
-                )}
-                {f.groupTransport && <div style={{ fontSize: 13, color: "#3a3020" }}>{u.recapGroupTransport}</div>}
-              </div>
-            )}
-
             {/* ── Bouton réserver ── */}
             <button
               type="submit"
               disabled={sending}
               style={{
-                padding: "16px 20px",
-                background: sending ? "#c9b98a" : "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                padding: "18px 20px",
+                background: sending ? "#c9b98a" : "linear-gradient(135deg, #1a1209 0%, #2d1f0a 60%, #1a1209 100%)",
                 color: sending ? "#a8956a" : "#e8c96a",
-                border: "1.5px solid rgba(201,168,76,0.4)",
-                borderRadius: 14,
-                fontWeight: 700,
+                border: "1.5px solid rgba(201,168,76,0.5)",
+                borderRadius: 16,
+                fontWeight: 800,
                 fontSize: 17,
                 cursor: sending ? "wait" : "pointer",
                 letterSpacing: "0.02em",
-                boxShadow: sending ? "none" : "0 4px 16px rgba(26,18,9,0.2)",
+                boxShadow: sending ? "none" : "0 6px 20px rgba(26,18,9,0.25)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
               }}
             >
+              <span style={{ fontSize: 18 }}>{sending ? "⏳" : "🚖"}</span>
               {sending ? t("res.sending") : t("res.send")}
             </button>
           </form>
 
-          <div style={{ height: 20 }} />
+          <div style={{ height: 4 }} />
         </div>
 
-        {/* ── Bouton notifs client — simple carte dans la page ── */}
+        {/* ── Bouton notifs client ── */}
         {typeof window !== "undefined" && "Notification" in window ? (
           <div
+            className="tcb-card"
             style={{
               background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,249,247,0.95) 100%)",
               border: "1px solid rgba(201,168,76,0.2)",
-              borderRadius: 14,
+              borderRadius: 16,
               margin: "0 16px 20px",
-              padding: "12px 16px",
+              padding: "14px 16px",
               display: "flex",
               flexDirection: "column",
               gap: 8,
+              boxShadow: "0 2px 10px rgba(26,18,9,0.04)",
             }}
           >
             <button
@@ -2955,14 +3199,14 @@ function ReservationPage() {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 10,
-                padding: "13px 20px",
+                padding: "14px 20px",
                 background: isSubscribedToNotifs
                   ? "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)"
-                  : "linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)",
-                color: isSubscribedToNotifs ? "#b91c1c" : "#92400e",
+                  : "linear-gradient(135deg, #1a1209 0%, #2d1f0a 100%)",
+                color: isSubscribedToNotifs ? "#b91c1c" : "#e8c96a",
                 border: "1.5px solid rgba(201,168,76,0.4)",
                 borderRadius: 14,
-                fontWeight: 600,
+                fontWeight: 700,
                 fontSize: 14,
                 cursor: "pointer",
                 letterSpacing: "0.01em",
@@ -2982,9 +3226,9 @@ function ReservationPage() {
               style={{
                 margin: 0,
                 fontSize: 12,
-                color: "#92400e",
+                color: "#7a6a50",
                 textAlign: "center",
-                opacity: 0.7,
+                opacity: 0.8,
               }}
             >
               {isSubscribedToNotifs
@@ -3001,26 +3245,10 @@ function ReservationPage() {
         )}
       </div>
       <ListeningOverlay
-        open={voiceOverlayOpen || anyListening}
-        label={
-          voicePhase === "error"
-            ? (lang === "en" ? UI.en.voiceErrorTitle : UI.fr.voiceErrorTitle)
-            : voiceModeRef.current === "both"
-              ? u.listeningLabel
-              : u.dictateDestinationLabel
-        }
-        hint={
-          voicePhase === "listening"
-            ? voiceModeRef.current === "both"
-              ? u.listeningHintBoth
-              : u.listeningHintDest
-            : undefined
-        }
-        transcript={voiceInterim || undefined}
-        errorMessage={voicePhase === "error" ? voiceErrorMsg : undefined}
-        onRetry={voicePhase !== "listening" ? retryVoice : undefined}
-        retryLabel={lang === "en" ? UI.en.voiceRetry : UI.fr.voiceRetry}
-        onCancel={closeVoiceOverlay}
+        open={anyListening}
+        label={voiceBothListening ? u.listeningLabel : u.dictateDestinationLabel}
+        hint={voiceBothListening ? u.listeningHintBoth : u.listeningHintDest}
+        onCancel={stopAllListening}
       />
     </div>
   );
