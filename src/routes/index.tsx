@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { AnimatePresence, motion } from "motion/react";
@@ -63,51 +63,91 @@ const CARD =
 // Diaporama hero façon pub, en attendant une vraie vidéo : zoom/pan lent (Ken Burns)
 // en fondu enchaîné entre plusieurs photos existantes. Ajoute/retire des entrées
 // ici pour changer les visuels utilisés.
-const heroSlides = (lang: "fr" | "en") => [
-  {
-    src: lang === "en" ? heroCarsEn.url : heroCars.url,
-    alt:
-      lang === "en"
-        ? "Access Prestige Taxi — BMW iX1 and Mercedes V-Class van, excellence on every journey, 100% electric"
-        : "Access Prestige Taxi — BMW iX1 et van Mercedes V-Class, l'excellence à chaque trajet, 100 % électrique",
-    pan: { x: 0, y: 0 },
-    // Bannière de marque complète : logo, slogan, services et valeurs
-    // doivent rester parfaitement lisibles → affichage intégral sans voile sombre.
-    contain: true,
-  },
-  {
-    src: photoExterior.url,
-    alt: lang === "en" ? "Access Prestige Taxi BMW iX1, exterior" : "BMW iX1 Access Prestige Taxi, extérieur",
-    pan: { x: 18, y: 6 },
-  },
-  {
-    src: photoDriver.url,
-    alt: lang === "en" ? "Access Prestige Taxi driver at the wheel" : "Chauffeur Access Prestige Taxi au volant",
-    pan: { x: -14, y: 10 },
-  },
-  {
-    src: photoVan.url,
-    alt: lang === "en" ? "7-seat Mercedes van, Access Prestige Taxi" : "Van Mercedes 7 places Access Prestige Taxi",
-    pan: { x: 16, y: -10 },
-  },
-  {
-    src: photoAudi,
-    alt:
-      lang === "en"
-        ? "Audi Q6 e-tron, 100% electric premium SUV, Access Prestige Taxi"
-        : "Audi Q6 e-tron, SUV premium 100 % électrique Access Prestige Taxi",
-    pan: { x: -16, y: -8 },
-  },
-];
-
-
+const heroSlides = (lang: "fr" | "en") => {
+  const en = lang === "en";
+  return [
+    {
+      id: "brand",
+      src: en ? heroCarsEn.url : heroCars.url,
+      alt: en
+        ? "Access Prestige Taxi — BMW iX1 electric and Mercedes V-Class van, excellence on every journey, Charente-Maritime"
+        : "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, l'excellence à chaque trajet, Charente-Maritime",
+      label: en ? "Our fleet" : "Notre flotte",
+      title: en ? "Excellence on every journey" : "L'excellence à chaque trajet",
+      desc: en
+        ? "Two drivers, three premium vehicles across Charente-Maritime, Monday to Friday, 8am-8pm."
+        : "Deux chauffeurs, trois véhicules haut de gamme en Charente-Maritime, 5j/7 de 8h à 20h.",
+      specs: en ? ["2 drivers", "Mon-Fri 8am-8pm", "Charente-Maritime"] : ["2 chauffeurs", "5j/7 · 8h-20h", "Charente-Maritime"],
+      // Bannière de marque complète : logo, slogan et services doivent rester lisibles.
+      contain: true,
+      pan: { x: 0, y: 0 },
+    },
+    {
+      id: "bmw",
+      src: photoExterior.url,
+      alt: en
+        ? "BMW iX1 100% electric taxi driven by Patricia, Access Prestige Taxi in Charente-Maritime"
+        : "Taxi BMW iX1 100 % électrique conduit par Patricia, Access Prestige Taxi en Charente-Maritime",
+      label: "BMW iX1 · Patricia",
+      title: en ? "BMW iX1 — 100% electric" : "BMW iX1 — 100 % électrique",
+      desc: en
+        ? "Silent, zero-emission rides for airport transfers, medical trips and daily journeys, up to 4 passengers."
+        : "Trajets silencieux et zéro émission pour transferts aéroport, courses médicales et déplacements du quotidien, jusqu'à 4 passagers.",
+      specs: en ? ["4 passengers", "Zero emission", "Child seats"] : ["4 passagers", "Zéro émission", "Sièges enfants"],
+      pan: { x: 18, y: 6 },
+    },
+    {
+      id: "audi",
+      src: photoAudi,
+      alt: en
+        ? "Audi Q6 e-tron, 100% electric premium SUV for business transfers, Access Prestige Taxi"
+        : "Audi Q6 e-tron, SUV premium 100 % électrique pour transferts affaires, Access Prestige Taxi",
+      label: "Audi Q6 e-tron",
+      title: en ? "Audi Q6 e-tron — premium SUV" : "Audi Q6 e-tron — SUV premium",
+      desc: en
+        ? "Our electric flagship for business travel and long-distance transfers: generous space, deep comfort, total discretion."
+        : "Notre vaisseau amiral électrique pour les déplacements professionnels et les longues distances : espace généreux, confort profond, discrétion totale.",
+      specs: en ? ["Business", "Long distance", "100% electric"] : ["Affaires", "Longue distance", "100 % électrique"],
+      pan: { x: -16, y: -8 },
+    },
+    {
+      id: "van",
+      src: photoVan.url,
+      alt: en
+        ? "Mercedes V-Class 7-seat van driven by Alain for group transport, Access Prestige Taxi"
+        : "Van Mercedes V-Class 7 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
+      label: "Mercedes Van · Alain",
+      title: en ? "Mercedes van — up to 7 seats" : "Van Mercedes — jusqu'à 7 places",
+      desc: en
+        ? "Family, team or wedding: seven passengers plus luggage in one trip, at one single fare."
+        : "Famille, équipe ou mariage : sept passagers et leurs bagages en un seul trajet, à un seul tarif.",
+      specs: en ? ["7 passengers", "Luggage", "Single fare"] : ["7 passagers", "Bagages", "Tarif unique"],
+      pan: { x: 16, y: -10 },
+    },
+    {
+      id: "driver",
+      src: photoDriver.url,
+      alt: en
+        ? "Access Prestige Taxi licensed driver at the wheel in Charente-Maritime"
+        : "Chauffeur de taxi agréé Access Prestige Taxi au volant en Charente-Maritime",
+      label: en ? "Our drivers" : "Nos chauffeurs",
+      title: en ? "Patricia & Alain at your service" : "Patricia & Alain à votre service",
+      desc: en
+        ? "Licensed taxi drivers, punctual and discreet, with real-time tracking on every booking."
+        : "Chauffeurs de taxi agréés, ponctuels et discrets, avec suivi en temps réel sur chaque réservation.",
+      specs: en ? ["Licensed", "Real-time tracking", "Discretion"] : ["Agréés", "Suivi temps réel", "Discrétion"],
+      pan: { x: -14, y: 10 },
+    },
+  ];
+};
 
 const HERO_SLIDE_DURATION_MS = 6000;
 
-/** Fait défiler les slides, sauf si l'utilisateur préfère un mouvement réduit. */
+/** Fait défiler les slides, sauf si l'utilisateur préfère un mouvement réduit ou a choisi un véhicule. */
 function useHeroSlideshow(count: number, durationMs: number) {
   const [index, setIndex] = useState(0);
   const [canAnimate, setCanAnimate] = useState(true);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -116,13 +156,19 @@ function useHeroSlideshow(count: number, durationMs: number) {
   }, []);
 
   useEffect(() => {
-    if (!canAnimate || count <= 1) return;
+    if (!canAnimate || paused || count <= 1) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % count), durationMs);
     return () => clearInterval(id);
-  }, [canAnimate, count, durationMs]);
+  }, [canAnimate, paused, count, durationMs]);
 
-  return { index, canAnimate };
+  const select = useCallback((i: number) => {
+    setIndex(i);
+    setPaused(true);
+  }, []);
+
+  return { index, canAnimate, select, paused };
 }
+
 
 const COPY = {
   fr: {
@@ -429,6 +475,8 @@ export const Route = createFileRoute("/")({
         content: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
       },
       { property: "og:locale", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "en_GB" },
+      { property: "og:image:alt:en", content: "Access Prestige Taxi — BMW iX1, Audi Q6 e-tron and Mercedes V-Class van, 100% electric taxi fleet in Charente-Maritime" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
       {
@@ -493,7 +541,50 @@ export const Route = createFileRoute("/")({
           // },
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "L'excellence à chaque trajet — flotte Access Prestige Taxi",
+          alternateName: "Excellence on every journey — Access Prestige Taxi fleet",
+          itemListElement: [
+            {
+              "@type": "Car",
+              position: 1,
+              name: "BMW iX1 100 % électrique",
+              alternateName: "BMW iX1 100% electric",
+              image: absoluteUrl(photoExterior.url),
+              vehicleSeatingCapacity: 4,
+              fuelType: "Electric",
+              description:
+                "Taxi BMW iX1 100 % électrique conduit par Patricia : transferts aéroport, courses médicales et déplacements du quotidien en Charente-Maritime.",
+            },
+            {
+              "@type": "Car",
+              position: 2,
+              name: "Audi Q6 e-tron",
+              image: absoluteUrl(photoAudi),
+              vehicleSeatingCapacity: 4,
+              fuelType: "Electric",
+              description:
+                "SUV premium 100 % électrique pour déplacements professionnels et longues distances en Charente-Maritime.",
+            },
+            {
+              "@type": "Car",
+              position: 3,
+              name: "Van Mercedes V-Class 7 places",
+              alternateName: "Mercedes V-Class 7-seat van",
+              image: absoluteUrl(photoVan.url),
+              vehicleSeatingCapacity: 7,
+              description:
+                "Van Mercedes conduit par Alain : transport de groupe jusqu'à 7 passagers avec bagages, tarif unique.",
+            },
+          ],
+        }),
+      },
     ],
+
   }),
 });
 
@@ -501,7 +592,7 @@ function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
   const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
-  const { index: slideIndex, canAnimate } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
+  const { index: slideIndex, canAnimate, select } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
@@ -557,6 +648,75 @@ function Index() {
           );
         })()}
       </section>
+
+      {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
+      <section aria-labelledby="fleet-heading" className="border-t border-border bg-background py-8 sm:py-10">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <h2 id="fleet-heading" className="sr-only">
+            {lang === "en"
+              ? "Excellence on every journey — our electric taxi fleet in Charente-Maritime"
+              : "L'excellence à chaque trajet — notre flotte de taxis électriques en Charente-Maritime"}
+          </h2>
+          <div className="flex gap-2 overflow-x-auto pb-2 sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {slides.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => select(i)}
+                aria-pressed={i === slideIndex}
+                aria-label={s.title}
+                className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
+                  i === slideIndex
+                    ? "border-primary shadow-[var(--shadow-gold)]"
+                    : "border-border opacity-70 hover:opacity-100"
+                }`}
+              >
+                <img
+                  src={s.src}
+                  alt={s.alt}
+                  loading="lazy"
+                  width={320}
+                  height={180}
+                  className={s.contain ? "h-full w-full object-contain" : "h-full w-full object-cover"}
+                />
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slides[slideIndex].id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="mt-5 rounded-2xl border border-border bg-card p-5 sm:p-6"
+            >
+              <p className="text-[11px] uppercase tracking-[0.25em] text-primary">{slides[slideIndex].label}</p>
+              <h3 className="mt-2 font-display text-xl font-semibold text-foreground sm:text-2xl">
+                {slides[slideIndex].title}
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {slides[slideIndex].desc}
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {slides[slideIndex].specs.map((spec) => (
+                  <motion.li
+                    key={spec}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
+                  >
+                    {spec}
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+
 
 
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
