@@ -125,11 +125,11 @@ function ReservationPage() {
         try {
           const res = await transcribe({ data: { base64, mime, lang } });
           if (res.text) {
-            handleInputChange({ target: { value: res.text } } as any);
+            setInput(res.text);
             // Auto-send after short delay
             setTimeout(() => {
               const fakeEvent = { preventDefault: () => {} } as any;
-              handleSubmit(fakeEvent);
+              sendMessage({ text: input.trim() });
             }, 300);
           }
         } catch (err) {
@@ -174,8 +174,8 @@ function ReservationPage() {
   ];
 
   const sendQuick = (text: string) => {
-    handleInputChange({ target: { value: text } } as any);
-    setTimeout(() => handleSubmit({ preventDefault: () => {} } as any), 50);
+    setInput(text);
+    setTimeout(() => sendMessage({ text: input.trim() }), 50);
   };
 
   return (
@@ -293,7 +293,7 @@ function ReservationPage() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!input.trim() || isLoading) return;
-            handleSubmit(e);
+            sendMessage({ text: input.trim() });
             gaEvent("reserver_chat_message", { lang });
           }}
           className="mx-auto flex max-w-2xl items-end gap-2"
