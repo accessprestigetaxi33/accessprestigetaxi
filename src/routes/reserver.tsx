@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useChat, DefaultChatTransport } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { useI18n } from "@/i18n/I18nProvider";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { gaEvent } from "@/lib/ga4";
