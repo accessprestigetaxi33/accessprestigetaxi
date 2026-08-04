@@ -261,13 +261,26 @@ export async function sendPushToAudience(
 
   let sent = 0;
   const toRemove: string[] = [];
+  const { logPushSend } = await import("@/lib/push-log.server");
 
   await Promise.all(
     uniqueSubs.map(async (sub) => {
       if (!sub.fcm_token) return;
       const r = await sendFcmToToken(accessToken, projectId, sub.fcm_token, payload, audience, opts.reservationId);
+      const base = {
+        audience,
+        tag: payload.tag ?? null,
+        reservationId: opts.reservationId ?? null,
+        fcmToken: sub.fcm_token,
+        title: payload.title,
+        body: payload.body,
+        userAgent: sub.user_agent,
+        httpStatus: r.status,
+        errorCode: r.errorCode ?? null,
+      };
       if (r.ok) {
         sent++;
+        await logPushSend({ ...base, status: "sent" });
       } else if (
         r.status === 404 ||
         r.status === 400 ||
@@ -275,8 +288,27 @@ export async function sendPushToAudience(
         r.errorCode === "INVALID_ARGUMENT"
       ) {
         toRemove.push(sub.id);
+        await logPushSend({ ...base, status: "removed" });
       } else {
         console.error("[push] FCM send failed", r.status, r.errorCode);
+        await logPushSend({ ...base, status: "failed" });
+      }
+      if (!r.ok) {
+        try {
+          await supabaseAdmin.from("push_send_failures").insert({
+            audience,
+            tag: payload.tag ?? null,
+            reservation_id: opts.reservationId ?? null,
+            fcm_token_suffix: sub.fcm_token.slice(-12),
+            http_status: r.status,
+            error_code: r.errorCode ?? null,
+            title: payload.title,
+            body: payload.body?.slice(0, 500) ?? null,
+            user_agent: sub.user_agent?.slice(0, 300) ?? null,
+          });
+        } catch (err) {
+          console.warn("[push] failure log insert skipped", err);
+        }
       }
     }),
   );
@@ -287,6 +319,7 @@ export async function sendPushToAudience(
 
   return { sent, removed: toRemove.length };
 }
+
 
 // Placeholder de compat — la vérif dedup était utilisée par un endpoint diag.
 export type DedupHealth = { ok: boolean; note?: string; error?: string };
