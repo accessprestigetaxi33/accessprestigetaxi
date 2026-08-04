@@ -407,8 +407,8 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
       { property: "og:image", content: absoluteUrl(heroCars.url) },
-      { property: "og:image:width", content: "1656" },
-      { property: "og:image:height", content: "932" },
+      { property: "og:image:width", content: "1920" },
+      { property: "og:image:height", content: "768" },
       {
         property: "og:image:alt",
         content: "BMW iX1 100 % électrique et van Mercedes 7 places Access Prestige Taxi",
