@@ -136,7 +136,7 @@ export type ReservationChatInput = {
   sessionId?: string;
 };
 
-export function runReservationChat(input: ReservationChatInput, request: Request, lovableApiKey: string) {
+export async function runReservationChat(input: ReservationChatInput, request: Request, lovableApiKey: string) {
   const gateway = createLovableAiGatewayProvider(lovableApiKey, getLovableAiGatewayRunId(request));
   const lang = input.lang;
 
