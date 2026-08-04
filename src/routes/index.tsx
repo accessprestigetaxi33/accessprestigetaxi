@@ -7,6 +7,7 @@ import {
   Baby,
   BatteryCharging,
   BriefcaseBusiness,
+  Leaf,
   Phone,
   PlaneTakeoff,
   ShieldCheck,
@@ -128,7 +129,6 @@ const COPY = {
       { n: 2, suffix: "", l: "chauffeurs dédiés" },
       { n: 100, suffix: " %", l: "électrique (BMW iX1)" },
       { n: 7, suffix: " places", l: "van Mercedes" },
-      { n: 5, suffix: "j/7 · 8h-20h", l: "disponibilité" },
     ],
     servicesEyebrow: "Nos services",
     servicesTitle: "Une prestation pensée pour chaque trajet",
@@ -267,7 +267,6 @@ const COPY = {
       { n: 2, suffix: "", l: "dedicated drivers" },
       { n: 100, suffix: "%", l: "electric (BMW iX1)" },
       { n: 7, suffix: " seats", l: "Mercedes van" },
-      { n: 5, suffix: " days/wk · 8am-8pm", l: "availability" },
     ],
     servicesEyebrow: "Our services",
     servicesTitle: "A service designed for every journey",
@@ -808,6 +807,28 @@ function Index() {
               </Reveal>
             ))}
           </div>
+
+          {/* Véhicule complémentaire 100 % électrique */}
+          <Reveal delay={0.16}>
+            <article className={`mt-5 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:p-7 ${CARD}`}>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40">
+                <Leaf className="h-5 w-5 text-primary" />
+              </span>
+              <div className="min-w-0">
+                <h3 className="font-display text-xl font-semibold text-card-foreground">
+                  Audi Q6 e-tron
+                </h3>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {lang === "en" ? "Fully electric · up to 4 seats" : "100 % électrique · jusqu'à 4 places"}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {lang === "en"
+                    ? "Our premium fully electric SUV, available on request for business transfers, airport runs and long distances: silent cabin, generous luggage space and extended range across Charente-Maritime."
+                    : "Notre SUV haut de gamme 100 % électrique, disponible sur demande pour les transferts affaires, les aéroports et les longues distances : habitacle silencieux, coffre généreux et grande autonomie en Charente-Maritime."}
+                </p>
+              </div>
+            </article>
+          </Reveal>
         </div>
       </section>
 
