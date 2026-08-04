@@ -63,51 +63,91 @@ const CARD =
 // Diaporama hero façon pub, en attendant une vraie vidéo : zoom/pan lent (Ken Burns)
 // en fondu enchaîné entre plusieurs photos existantes. Ajoute/retire des entrées
 // ici pour changer les visuels utilisés.
-const heroSlides = (lang: "fr" | "en") => [
-  {
-    src: lang === "en" ? heroCarsEn.url : heroCars.url,
-    alt:
-      lang === "en"
-        ? "Access Prestige Taxi — BMW iX1 and Mercedes V-Class van, excellence on every journey, 100% electric"
-        : "Access Prestige Taxi — BMW iX1 et van Mercedes V-Class, l'excellence à chaque trajet, 100 % électrique",
-    pan: { x: 0, y: 0 },
-    // Bannière de marque complète : logo, slogan, services et valeurs
-    // doivent rester parfaitement lisibles → affichage intégral sans voile sombre.
-    contain: true,
-  },
-  {
-    src: photoExterior.url,
-    alt: lang === "en" ? "Access Prestige Taxi BMW iX1, exterior" : "BMW iX1 Access Prestige Taxi, extérieur",
-    pan: { x: 18, y: 6 },
-  },
-  {
-    src: photoDriver.url,
-    alt: lang === "en" ? "Access Prestige Taxi driver at the wheel" : "Chauffeur Access Prestige Taxi au volant",
-    pan: { x: -14, y: 10 },
-  },
-  {
-    src: photoVan.url,
-    alt: lang === "en" ? "7-seat Mercedes van, Access Prestige Taxi" : "Van Mercedes 7 places Access Prestige Taxi",
-    pan: { x: 16, y: -10 },
-  },
-  {
-    src: photoAudi,
-    alt:
-      lang === "en"
-        ? "Audi Q6 e-tron, 100% electric premium SUV, Access Prestige Taxi"
-        : "Audi Q6 e-tron, SUV premium 100 % électrique Access Prestige Taxi",
-    pan: { x: -16, y: -8 },
-  },
-];
-
-
+const heroSlides = (lang: "fr" | "en") => {
+  const en = lang === "en";
+  return [
+    {
+      id: "brand",
+      src: en ? heroCarsEn.url : heroCars.url,
+      alt: en
+        ? "Access Prestige Taxi — BMW iX1 electric and Mercedes V-Class van, excellence on every journey, Charente-Maritime"
+        : "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, l'excellence à chaque trajet, Charente-Maritime",
+      label: en ? "Our fleet" : "Notre flotte",
+      title: en ? "Excellence on every journey" : "L'excellence à chaque trajet",
+      desc: en
+        ? "Two drivers, three premium vehicles across Charente-Maritime, Monday to Friday, 8am-8pm."
+        : "Deux chauffeurs, trois véhicules haut de gamme en Charente-Maritime, 5j/7 de 8h à 20h.",
+      specs: en ? ["2 drivers", "Mon-Fri 8am-8pm", "Charente-Maritime"] : ["2 chauffeurs", "5j/7 · 8h-20h", "Charente-Maritime"],
+      // Bannière de marque complète : logo, slogan et services doivent rester lisibles.
+      contain: true,
+      pan: { x: 0, y: 0 },
+    },
+    {
+      id: "bmw",
+      src: photoExterior.url,
+      alt: en
+        ? "BMW iX1 100% electric taxi driven by Patricia, Access Prestige Taxi in Charente-Maritime"
+        : "Taxi BMW iX1 100 % électrique conduit par Patricia, Access Prestige Taxi en Charente-Maritime",
+      label: "BMW iX1 · Patricia",
+      title: en ? "BMW iX1 — 100% electric" : "BMW iX1 — 100 % électrique",
+      desc: en
+        ? "Silent, zero-emission rides for airport transfers, medical trips and daily journeys, up to 4 passengers."
+        : "Trajets silencieux et zéro émission pour transferts aéroport, courses médicales et déplacements du quotidien, jusqu'à 4 passagers.",
+      specs: en ? ["4 passengers", "Zero emission", "Child seats"] : ["4 passagers", "Zéro émission", "Sièges enfants"],
+      pan: { x: 18, y: 6 },
+    },
+    {
+      id: "audi",
+      src: photoAudi,
+      alt: en
+        ? "Audi Q6 e-tron, 100% electric premium SUV for business transfers, Access Prestige Taxi"
+        : "Audi Q6 e-tron, SUV premium 100 % électrique pour transferts affaires, Access Prestige Taxi",
+      label: "Audi Q6 e-tron",
+      title: en ? "Audi Q6 e-tron — premium SUV" : "Audi Q6 e-tron — SUV premium",
+      desc: en
+        ? "Our electric flagship for business travel and long-distance transfers: generous space, deep comfort, total discretion."
+        : "Notre vaisseau amiral électrique pour les déplacements professionnels et les longues distances : espace généreux, confort profond, discrétion totale.",
+      specs: en ? ["Business", "Long distance", "100% electric"] : ["Affaires", "Longue distance", "100 % électrique"],
+      pan: { x: -16, y: -8 },
+    },
+    {
+      id: "van",
+      src: photoVan.url,
+      alt: en
+        ? "Mercedes V-Class 7-seat van driven by Alain for group transport, Access Prestige Taxi"
+        : "Van Mercedes V-Class 7 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
+      label: "Mercedes Van · Alain",
+      title: en ? "Mercedes van — up to 7 seats" : "Van Mercedes — jusqu'à 7 places",
+      desc: en
+        ? "Family, team or wedding: seven passengers plus luggage in one trip, at one single fare."
+        : "Famille, équipe ou mariage : sept passagers et leurs bagages en un seul trajet, à un seul tarif.",
+      specs: en ? ["7 passengers", "Luggage", "Single fare"] : ["7 passagers", "Bagages", "Tarif unique"],
+      pan: { x: 16, y: -10 },
+    },
+    {
+      id: "driver",
+      src: photoDriver.url,
+      alt: en
+        ? "Access Prestige Taxi licensed driver at the wheel in Charente-Maritime"
+        : "Chauffeur de taxi agréé Access Prestige Taxi au volant en Charente-Maritime",
+      label: en ? "Our drivers" : "Nos chauffeurs",
+      title: en ? "Patricia & Alain at your service" : "Patricia & Alain à votre service",
+      desc: en
+        ? "Licensed taxi drivers, punctual and discreet, with real-time tracking on every booking."
+        : "Chauffeurs de taxi agréés, ponctuels et discrets, avec suivi en temps réel sur chaque réservation.",
+      specs: en ? ["Licensed", "Real-time tracking", "Discretion"] : ["Agréés", "Suivi temps réel", "Discrétion"],
+      pan: { x: -14, y: 10 },
+    },
+  ];
+};
 
 const HERO_SLIDE_DURATION_MS = 6000;
 
-/** Fait défiler les slides, sauf si l'utilisateur préfère un mouvement réduit. */
+/** Fait défiler les slides, sauf si l'utilisateur préfère un mouvement réduit ou a choisi un véhicule. */
 function useHeroSlideshow(count: number, durationMs: number) {
   const [index, setIndex] = useState(0);
   const [canAnimate, setCanAnimate] = useState(true);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -116,13 +156,19 @@ function useHeroSlideshow(count: number, durationMs: number) {
   }, []);
 
   useEffect(() => {
-    if (!canAnimate || count <= 1) return;
+    if (!canAnimate || paused || count <= 1) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % count), durationMs);
     return () => clearInterval(id);
-  }, [canAnimate, count, durationMs]);
+  }, [canAnimate, paused, count, durationMs]);
 
-  return { index, canAnimate };
+  const select = useCallback((i: number) => {
+    setIndex(i);
+    setPaused(true);
+  }, []);
+
+  return { index, canAnimate, select, paused };
 }
+
 
 const COPY = {
   fr: {
