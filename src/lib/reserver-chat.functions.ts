@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { streamText, tool, type UIMessage, convertToModelMessages, isStepCount } from "ai";
+import { streamText, tool, type UIMessage, convertToModelMessages, isStepCount, zodSchema } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { resolveAddress, sanitizeAssistantReply } from "@/lib/address-resolver.server";
+import { geocodeGoogle, routeGoogle } from "@/lib/google.server";
 import { createReservationPublic } from "@/lib/reservation-create.functions";
 import { calculerPrixMixte, estTarifJourParis } from "@/lib/tarif";
 import { enqueueClientConfirmationEmail, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
