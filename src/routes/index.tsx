@@ -604,6 +604,75 @@ function Index() {
         })()}
       </section>
 
+      {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
+      <section aria-labelledby="fleet-heading" className="border-t border-border bg-background py-8 sm:py-10">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <h2 id="fleet-heading" className="sr-only">
+            {lang === "en"
+              ? "Excellence on every journey — our electric taxi fleet in Charente-Maritime"
+              : "L'excellence à chaque trajet — notre flotte de taxis électriques en Charente-Maritime"}
+          </h2>
+          <div className="flex gap-2 overflow-x-auto pb-2 sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {slides.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => select(i)}
+                aria-pressed={i === slideIndex}
+                aria-label={s.title}
+                className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
+                  i === slideIndex
+                    ? "border-primary shadow-[var(--shadow-gold)]"
+                    : "border-border opacity-70 hover:opacity-100"
+                }`}
+              >
+                <img
+                  src={s.src}
+                  alt={s.alt}
+                  loading="lazy"
+                  width={320}
+                  height={180}
+                  className={s.contain ? "h-full w-full object-contain" : "h-full w-full object-cover"}
+                />
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slides[slideIndex].id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="mt-5 rounded-2xl border border-border bg-card p-5 sm:p-6"
+            >
+              <p className="text-[11px] uppercase tracking-[0.25em] text-primary">{slides[slideIndex].label}</p>
+              <h3 className="mt-2 font-display text-xl font-semibold text-foreground sm:text-2xl">
+                {slides[slideIndex].title}
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {slides[slideIndex].desc}
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {slides[slideIndex].specs.map((spec) => (
+                  <motion.li
+                    key={spec}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
+                  >
+                    {spec}
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+
+
 
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
