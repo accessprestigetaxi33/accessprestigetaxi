@@ -27,6 +27,8 @@ import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
 import photoVan from "@/assets/apt-van.jpg.asset.json";
+import photoAudi from "@/assets/apt-audi-q6.jpg";
+
 import photoMedical from "@/assets/apt-medical.jpg";
 import photoAirport from "@/assets/apt-airport.jpg";
 import photoBusiness from "@/assets/apt-business.jpg";
