@@ -180,12 +180,14 @@ export const aiChatReservation = createServerFn({ method: "POST" })
             lang === "en"
               ? "Compute a fare estimate between two addresses for a given pickup time and passenger count."
               : "Calcule un devis entre deux adresses pour une heure et un nombre de passagers donnés.",
-          parameters: z.object({
-            depart: z.string().describe("Adresse de départ / Pickup address"),
-            arrivee: z.string().describe("Adresse d'arrivée / Drop-off address"),
-            pickup_datetime: z.string().nullable().describe("ISO datetime de prise en charge (optionnel) / Pickup ISO datetime (optional)"),
-            passagers: z.number().int().nullable().describe("Nombre de passagers / Passenger count"),
-          }),
+          inputSchema: zodSchema(
+            z.object({
+              depart: z.string().describe("Adresse de départ / Pickup address"),
+              arrivee: z.string().describe("Adresse d'arrivée / Drop-off address"),
+              pickup_datetime: z.string().nullable().describe("ISO datetime de prise en charge (optionnel) / Pickup ISO datetime (optional)"),
+              passagers: z.number().int().nullable().describe("Nombre de passagers / Passenger count"),
+            }),
+          ),
           execute: async (args: { depart: string; arrivee: string; pickup_datetime: string | null; passagers: number | null }) => {
             const from = await resolveAddress(args.depart, "depart", lang);
             const to = await resolveAddress(args.arrivee, "arrivee", lang);
