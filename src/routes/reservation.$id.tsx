@@ -66,7 +66,8 @@ function ConfirmationPage() {
         async (payload: any) => {
           const newStatus = payload.new?.status;
           if (newStatus === "completed" || newStatus === "terminee") {
-            navigate({ to: "/fin/$id", params: { id } });
+            const done = await fetchReservation({ data: { id } });
+            if (done) setReservation(done as Reservation);
             return;
           }
           const updated = await fetchReservation({ data: { id } });

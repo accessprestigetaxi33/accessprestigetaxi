@@ -18,10 +18,10 @@ export function Footer() {
   ];
 
   const serviceLinks = [
-    { to: "/taxi-aeroport-bordeaux-merignac" as const, label: t("footer.link.airport") },
-    { to: "/taxi-gare-saint-jean-bordeaux" as const, label: t("footer.link.station") },
-    { to: "/taxi-bordeaux-arcachon" as const, label: t("footer.link.arcachon") },
-    { to: "/taxi-conventionne-bordeaux" as const, label: t("footer.link.cpam") },
+    { slug: "taxi-la-rochelle-aeroport", label: t("footer.link.airport") },
+    { slug: "taxi-rochefort-gare-la-rochelle", label: t("footer.link.station") },
+    { slug: "taxi-la-rochelle-ile-de-re", label: t("footer.link.arcachon") },
+    { slug: "taxi-conventionne-charente-maritime", label: t("footer.link.cpam") },
   ];
 
   const legalLinks = [
@@ -84,9 +84,10 @@ export function Footer() {
             </h3>
             <ul className="mt-4 space-y-2.5">
               {serviceLinks.map((l) => (
-                <li key={l.to}>
+                <li key={l.slug}>
                   <Link
-                    to={l.to}
+                    to="/destinations/$slug"
+                    params={{ slug: l.slug }}
                     className="touch-manipulation text-sm text-muted-foreground transition [-webkit-tap-highlight-color:transparent] hover:text-primary"
                   >
                     {l.label}
