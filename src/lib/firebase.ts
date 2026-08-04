@@ -1,19 +1,40 @@
 // Firebase Cloud Messaging — client integration
-// Les credentials Web Firebase sont publics par design.
-import { initializeApp, type FirebaseApp } from "firebase/app";
+// Projet Firebase : access-prestige-taxi
+// Les credentials Web Firebase sont publics par design ; l'apiKey est servie
+// par /api/public/firebase-config (secret GOOGLE_API_KEY) pour rester hors dépôt.
+import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
 import { deleteToken, getMessaging, getToken, onMessage, isSupported, type Messaging } from "firebase/messaging";
 
-export const firebaseConfig = {
-  apiKey: "AIzaSyB8wYcBq5-KVdPDAnXGcWzcCkTYmftTKdY",
-  authDomain: "taxi-city-bordeaux.firebaseapp.com",
-  projectId: "taxi-city-bordeaux",
-  storageBucket: "taxi-city-bordeaux.firebasestorage.app",
-  messagingSenderId: "702667833979",
-  appId: "1:702667833979:web:653978ae325adfa06898de",
+export const firebaseConfig: FirebaseOptions = {
+  authDomain: "access-prestige-taxi.firebaseapp.com",
+  projectId: "access-prestige-taxi",
+  storageBucket: "access-prestige-taxi.firebasestorage.app",
+  messagingSenderId: "214617543164",
+  appId: "1:214617543164:web:8094538b9f17694aa5e279",
+  measurementId: "G-LFXHZHLHKE",
 };
 
+let configPromise: Promise<FirebaseOptions> | null = null;
+
+/** Récupère la config complète (avec apiKey) depuis le serveur, une seule fois. */
+async function loadFirebaseConfig(): Promise<FirebaseOptions> {
+  if (!configPromise) {
+    configPromise = fetch("/api/public/firebase-config")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`config ${r.status}`))))
+      .then((remote) => ({ ...firebaseConfig, ...remote }) as FirebaseOptions)
+      .catch((err) => {
+        console.error("[FCM] config fetch failed", err);
+        configPromise = null;
+        throw err;
+      });
+  }
+  return configPromise;
+}
+
 // Clé VAPID *Web Push* de Firebase (Console → Cloud Messaging → Web configuration)
-export const FCM_VAPID_KEY = "BPCVh_FRLBkhOWLLxdaKnD29L6HRNS44w4wHX_AE2DV0a0-Uc6OoofT8SldZ-V4_yMWInXt4xqbvkhGiFW-_N20";
+export const FCM_VAPID_KEY =
+  "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
+
 
 // FCM révoque les tokens après ~60 jours d'inactivité.
 // On force un refresh silencieux tous les 50 jours pour garder le token vivant indéfiniment.
@@ -30,7 +51,7 @@ export async function initFirebase(): Promise<Messaging | null> {
       console.warn("[FCM] Not supported in this browser");
       return null;
     }
-    if (!app) app = initializeApp(firebaseConfig);
+    if (!app) app = initializeApp(await loadFirebaseConfig());
     if (!messaging) messaging = getMessaging(app);
     return messaging;
   } catch (err) {

@@ -45,6 +45,7 @@ import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
 import { Route as ApiAdminSendCourseEmailRouteImport } from './routes/api/admin/send-course-email'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicDriverLocationRouteImport } from './routes/api/public/driver-location'
+import { Route as ApiPublicFirebaseConfigRouteImport } from './routes/api/public/firebase-config'
 import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
 import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/public/notify-reservation'
 import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
@@ -235,6 +236,11 @@ const ApiPublicDriverLocationRoute = ApiPublicDriverLocationRouteImport.update({
   path: '/api/public/driver-location',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicFirebaseConfigRoute = ApiPublicFirebaseConfigRouteImport.update({
+  id: '/api/public/firebase-config',
+  path: '/api/public/firebase-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
   id: '/api/public/geocode',
   path: '/api/public/geocode',
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
+  '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
@@ -370,6 +377,7 @@ export interface FileRoutesByTo {
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
+  '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
@@ -418,6 +426,7 @@ export interface FileRoutesById {
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
   '/api/public/contact': typeof ApiPublicContactRouteWithChildren
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
+  '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
@@ -467,6 +476,7 @@ export interface FileRouteTypes {
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
+    | '/api/public/firebase-config'
     | '/api/public/geocode'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
@@ -514,6 +524,7 @@ export interface FileRouteTypes {
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
+    | '/api/public/firebase-config'
     | '/api/public/geocode'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
@@ -561,6 +572,7 @@ export interface FileRouteTypes {
     | '/api/admin/send-course-email'
     | '/api/public/contact'
     | '/api/public/driver-location'
+    | '/api/public/firebase-config'
     | '/api/public/geocode'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
@@ -608,6 +620,7 @@ export interface RootRouteChildren {
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
   ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
+  ApiPublicFirebaseConfigRoute: typeof ApiPublicFirebaseConfigRoute
   ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
   ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
   ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
@@ -872,6 +885,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDriverLocationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/firebase-config': {
+      id: '/api/public/firebase-config'
+      path: '/api/public/firebase-config'
+      fullPath: '/api/public/firebase-config'
+      preLoaderRoute: typeof ApiPublicFirebaseConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/geocode': {
       id: '/api/public/geocode'
       path: '/api/public/geocode'
@@ -997,6 +1017,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
   ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
+  ApiPublicFirebaseConfigRoute: ApiPublicFirebaseConfigRoute,
   ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
   ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
   ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,

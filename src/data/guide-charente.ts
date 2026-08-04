@@ -9728,3 +9728,70 @@ export const GUIDE_CITIES: string[] = Array.from(new Set(GUIDE_ENTRIES.map((e) =
 export function getGuideEntry(slug: string): GuideEntry | undefined {
   return GUIDE_ENTRIES.find((e) => e.slug === slug);
 }
+
+/* ------------------------------------------------------------------ */
+/* Tags thématiques — dérivés du contenu éditorial (aucune donnée en dur) */
+/* ------------------------------------------------------------------ */
+
+export type GuideTag =
+  | "mer"
+  | "patrimoine"
+  | "nature"
+  | "famille"
+  | "terroir"
+  | "velo"
+  | "panorama"
+  | "gastronomie";
+
+export const GUIDE_TAGS: { key: GuideTag; fr: string; en: string }[] = [
+  { key: "mer", fr: "Bord de mer", en: "Seaside" },
+  { key: "patrimoine", fr: "Patrimoine", en: "Heritage" },
+  { key: "nature", fr: "Nature & marais", en: "Nature & marshes" },
+  { key: "famille", fr: "En famille", en: "Family friendly" },
+  { key: "terroir", fr: "Terroir", en: "Local produce" },
+  { key: "velo", fr: "Vélo", en: "Cycling" },
+  { key: "panorama", fr: "Panorama", en: "Panoramic view" },
+  { key: "gastronomie", fr: "Gastronomie", en: "Fine dining" },
+];
+
+const TAG_RULES: { key: GuideTag; re: RegExp }[] = [
+  { key: "mer", re: /plage|mer\b|océan|littoral|c[ôo]t[ie]|estran|port\b|phare|île|ile\b|estuaire/i },
+  { key: "patrimoine", re: /ch[âa]teau|église|abbaye|roman[ea]|fortif|citadelle|mus[ée]e|histoire|vestige|donjon|remparts?/i },
+  { key: "nature", re: /marais|forêt|nature|oiseaux|réserve|dune|estuaire|sentier|pinède|conche/i },
+  { key: "famille", re: /famille|enfant|poussette|facile|accessible|zoo|parc\b/i },
+  { key: "terroir", re: /huîtres?|ostréic|cognac|pineau|march[ée]|vin\b|sel\b|salin|producteur|ferme/i },
+  { key: "velo", re: /v[ée]lo|cycl|v[ée]lodyss[ée]e|piste/i },
+  { key: "panorama", re: /panorama|point de vue|vue sur|belv[ée]d[èe]re|falaise/i },
+  { key: "gastronomie", re: /michelin|étoil|gastronomi|chef\b|table\b/i },
+];
+
+/** Tags calculés à partir du texte FR + des infos pratiques de la fiche. */
+export function guideTags(e: GuideEntry): GuideTag[] {
+  const hay = [
+    e.name,
+    e.city,
+    e.fr.teaser,
+    e.fr.history,
+    e.fr.tips,
+    ...e.facts.map((f) => f.fr),
+  ].join(" ");
+  const tags = TAG_RULES.filter((r) => r.re.test(hay)).map((r) => r.key);
+  if (e.michelin && !tags.includes("gastronomie")) tags.push("gastronomie");
+  if (e.category === "randonnee" && !tags.includes("nature")) tags.push("nature");
+  return tags;
+}
+
+/** Villes/villages du guide avec le nombre de fiches, triés alphabétiquement. */
+export const GUIDE_CITY_STATS: { city: string; count: number }[] = GUIDE_CITIES.map((city) => ({
+  city,
+  count: GUIDE_ENTRIES.filter((e) => e.city === city).length,
+})).sort((a, b) => a.city.localeCompare(b.city, "fr"));
+
+/** Normalise pour la recherche (sans accents, insensible à la casse). */
+export function normalize(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
