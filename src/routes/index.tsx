@@ -41,9 +41,7 @@ import photoStepVoice from "@/assets/apt-step-voice.jpg";
 import photoStepConfirm from "@/assets/apt-step-confirm.jpg";
 import photoStepTrack from "@/assets/apt-step-track.jpg";
 
-const BLOG_PICKS = ["hotel", "restaurant", "visite"]
-  .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
-  .filter((e): e is (typeof GUIDE_ENTRIES)[number] => Boolean(e));
+const BLOG_PICKS = ["hotel", "restaurant", "visite"].map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat)).filter((e): e is (typeof GUIDE_ENTRIES)[number] => Boolean(e));
 
 const SLOGAN_FR = "L'excellence à chaque trajet";
 const SLOGAN_EN = "Excellence on every journey";
@@ -75,9 +73,9 @@ const heroSlides = (lang: "fr" | "en") => {
       label: en ? "Our fleet" : "Notre flotte",
       title: en ? "Excellence on every journey" : "L'excellence à chaque trajet",
       desc: en
-        ? "Two drivers, three premium vehicles across Charente-Maritime, Monday to Friday, 8am-8pm."
-        : "Deux chauffeurs, trois véhicules haut de gamme en Charente-Maritime, 5j/7 de 8h à 20h.",
-      specs: en ? ["2 drivers", "Mon-Fri 8am-8pm", "Charente-Maritime"] : ["2 chauffeurs", "5j/7 · 8h-20h", "Charente-Maritime"],
+        ? "Two drivers, three premium vehicles across Charente-Maritime."
+        : "Deux chauffeurs, trois véhicules haut de gamme en Charente-Maritime.",
+      specs: en ? ["2 drivers", "", "Charente-Maritime"] : ["2 chauffeurs", "", "Charente-Maritime"],
       // Bannière de marque complète : logo, slogan et services doivent rester lisibles.
       contain: true,
       pan: { x: 0, y: 0 },
@@ -175,7 +173,7 @@ const COPY = {
   fr: {
     kicker: "100 % électrique · Charente-Maritime",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné, disponible 5j/7 de 8h à 20h.",
+    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
@@ -206,7 +204,7 @@ const COPY = {
       { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       {
         photo: photoExterior.url,
-        t: "Disponible 5j/7, 8h-20h",
+        t: "",
         d: "Réservation immédiate ou planifiée, 5 jours sur 7, de 8h à 20h.",
       },
     ],
@@ -239,7 +237,7 @@ const COPY = {
     ],
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
     bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons 5j/7, de 8h à 20h.",
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
     destEyebrow: "Destinations",
     destTitle: "Là où l'on vous emmène",
     destLead: "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
@@ -313,7 +311,7 @@ const COPY = {
   en: {
     kicker: "100% electric · Charente-Maritime",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service, available 5 days a week from 8am to 8pm.",
+    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
@@ -344,7 +342,7 @@ const COPY = {
       { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
       {
         photo: photoExterior.url,
-        t: "Available 5 days a week, 8am-8pm",
+        t: "",
         d: "Instant or scheduled booking, five days a week, 8am to 8pm.",
       },
     ],
@@ -377,7 +375,7 @@ const COPY = {
     ],
     bannerTitle: "Charente-Maritime, door to door",
     bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there 5 days a week, 8am to 8pm.",
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there.",
     destEyebrow: "Destinations",
     destTitle: "Where we take you",
     destLead: "A few routes our clients book every day — arriving smoothly is our job.",
@@ -458,13 +456,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 électrique et van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports, 5j/7 8h-20h.",
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 électrique et van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports.",
       },
       { property: "og:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
       {
         property: "og:description",
         content:
-          "L'excellence à chaque trajet : réservation rapide vocale ou écrite, BMW iX1 100 % électrique et van Mercedes 7 places en Charente-Maritime, 5j/7 8h-20h.",
+          "L'excellence à chaque trajet : réservation rapide vocale ou écrite, BMW iX1 100 % électrique et van Mercedes 7 places en Charente-Maritime.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
@@ -483,7 +481,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime, 5j/7 de 8h à 20h. Réservation en moins d'une minute.",
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Réservation en moins d'une minute.",
       },
       { name: "twitter:image", content: absoluteUrl(heroCars.url) },
     ],
@@ -492,8 +490,7 @@ export const Route = createFileRoute("/")({
       {
         type: "application/ld+json",
         children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "TaxiService",
+          "@context": "https://schema.org", "@type": "TaxiService",
           name: "Access Prestige Taxi",
           slogan: SLOGAN_FR,
           url: SITE_URL,
@@ -545,8 +542,7 @@ export const Route = createFileRoute("/")({
       {
         type: "application/ld+json",
         children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "ItemList",
+          "@context": "https://schema.org", "@type": "ItemList",
           name: "L'excellence à chaque trajet — flotte Access Prestige Taxi",
           alternateName: "Excellence on every journey — Access Prestige Taxi fleet",
           itemListElement: [
