@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { AnimatePresence, motion } from "motion/react";
@@ -20,7 +20,8 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal, Counter } from "@/components/motion-ui";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-2026c.png.asset.json";
+import heroCars from "@/assets/apt-hero-fr.png.asset.json";
+import heroCarsEn from "@/assets/apt-hero-en.png.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
@@ -59,31 +60,35 @@ const CARD =
 // Diaporama hero façon pub, en attendant une vraie vidéo : zoom/pan lent (Ken Burns)
 // en fondu enchaîné entre plusieurs photos existantes. Ajoute/retire des entrées
 // ici pour changer les visuels utilisés.
-const HERO_SLIDES = [
+const heroSlides = (lang: "fr" | "en") => [
   {
-    src: heroCars.url,
-    alt: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
+    src: lang === "en" ? heroCarsEn.url : heroCars.url,
+    alt:
+      lang === "en"
+        ? "Access Prestige Taxi — BMW iX1 and Mercedes V-Class van, excellence on every journey, 100% electric"
+        : "Access Prestige Taxi — BMW iX1 et van Mercedes V-Class, l'excellence à chaque trajet, 100 % électrique",
     pan: { x: 0, y: 0 },
-    // Bannière de marque complète : logo, slogan, services et valeurs (PONCTUALITÉ · CONFORT · DISCRÉTION · SÉCURITÉ)
+    // Bannière de marque complète : logo, slogan, services et valeurs
     // doivent rester parfaitement lisibles → affichage intégral sans voile sombre.
     contain: true,
   },
   {
     src: photoExterior.url,
-    alt: "BMW iX1 Access Prestige Taxi, extérieur",
+    alt: lang === "en" ? "Access Prestige Taxi BMW iX1, exterior" : "BMW iX1 Access Prestige Taxi, extérieur",
     pan: { x: 18, y: 6 },
   },
   {
     src: photoDriver.url,
-    alt: "Chauffeur Access Prestige Taxi au volant",
+    alt: lang === "en" ? "Access Prestige Taxi driver at the wheel" : "Chauffeur Access Prestige Taxi au volant",
     pan: { x: -14, y: 10 },
   },
   {
     src: photoVan.url,
-    alt: "Van Mercedes 7 places Access Prestige Taxi",
+    alt: lang === "en" ? "7-seat Mercedes van, Access Prestige Taxi" : "Van Mercedes 7 places Access Prestige Taxi",
     pan: { x: 16, y: -10 },
   },
 ];
+
 
 const HERO_SLIDE_DURATION_MS = 6000;
 
@@ -407,8 +412,8 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
       { property: "og:image", content: absoluteUrl(heroCars.url) },
-      { property: "og:image:width", content: "1681" },
-      { property: "og:image:height", content: "935" },
+      { property: "og:image:width", content: "1376" },
+      { property: "og:image:height", content: "768" },
       {
         property: "og:image:alt",
         content: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
@@ -485,14 +490,15 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
-  const { index: slideIndex, canAnimate } = useHeroSlideshow(HERO_SLIDES.length, HERO_SLIDE_DURATION_MS);
+  const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
+  const { index: slideIndex, canAnimate } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
       <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
         {(() => {
-          const slide = HERO_SLIDES[slideIndex];
+          const slide = slides[slideIndex];
           const isBanner = Boolean(slide.contain);
           return (
             <>
@@ -510,8 +516,8 @@ function Index() {
                     alt={slide.alt}
                     fetchPriority={slideIndex === 0 ? "high" : undefined}
                     loading={slideIndex === 0 ? "eager" : "lazy"}
-                    width={1681}
-                    height={935}
+                    width={1376}
+                    height={768}
                     className={
                       isBanner
                         ? "h-full w-full object-contain object-center"
