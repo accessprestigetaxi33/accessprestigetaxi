@@ -164,13 +164,15 @@ export async function runReservationChat(input: ReservationChatInput, request: R
 
   const system = getSystemPrompt(lang);
 
-  return streamText({
+  const result = streamText({
     model: gateway("google/gemini-2.5-flash"),
     system,
     messages: await convertToModelMessages(input.messages),
     stopWhen: [isStepCount(MAX_STEPS)],
     tools: buildTools(lang, state, gateway),
   });
+
+  return { result, gateway };
 }
 
 function buildTools(lang: string, state: ReservationStateType, _gateway: LovableAiGatewayProvider) {
