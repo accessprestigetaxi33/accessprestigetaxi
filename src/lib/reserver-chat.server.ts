@@ -156,8 +156,9 @@ export function runReservationChat(input: ReservationChatInput, request: Request
   };
 
   const lastUser = [...input.messages].reverse().find((m) => m.role === "user");
-  if (lastUser?.data?.state) {
-    const parsed = ReservationState.safeParse(lastUser.data.state);
+  const lastUserData = (lastUser as any)?.data;
+  if (lastUserData?.state) {
+    const parsed = ReservationState.safeParse(lastUserData.state);
     if (parsed.success) state = parsed.data;
   }
 
@@ -166,7 +167,7 @@ export function runReservationChat(input: ReservationChatInput, request: Request
   return streamText({
     model: gateway("google/gemini-2.5-flash"),
     system,
-    messages: convertToModelMessages(input.messages),
+    messages: await convertToModelMessages(input.messages),
     stopWhen: [isStepCount(MAX_STEPS)],
     tools: buildTools(lang, state, gateway),
   });
