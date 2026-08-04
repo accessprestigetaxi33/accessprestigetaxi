@@ -5,6 +5,7 @@ import {
   adminBatchFixReservations,
   adminFixReservation,
   adminOverview,
+  adminPushLog,
   adminSetDriverActive,
   adminSetRotation,
   verifyAdminToken,
@@ -187,7 +188,10 @@ function AdminDashboard({ token }: { token: string }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
-  const [tab, setTab] = useState<"chauffeurs" | "courses" | "journal">("chauffeurs");
+  const [tab, setTab] = useState<"chauffeurs" | "courses" | "journal" | "notifications">("chauffeurs");
+  const loadPushLog = useServerFn(adminPushLog);
+  const [pushLog, setPushLog] = useState<{ entries: any[]; stats: { total: number; sent: number; failed: number; email: number } } | null>(null);
+  const [pushLogLoading, setPushLogLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [batchStatus, setBatchStatus] = useState<string>("");
@@ -209,6 +213,22 @@ function AdminDashboard({ token }: { token: string }) {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  const refreshPushLog = useCallback(async () => {
+    setPushLogLoading(true);
+    try {
+      const res = await loadPushLog({ data: { token, limit: 150 } });
+      setPushLog(res as any);
+    } catch {
+      setMsg("Journal notifications indisponible");
+    } finally {
+      setPushLogLoading(false);
+    }
+  }, [loadPushLog, token]);
+
+  useEffect(() => {
+    if (tab === "notifications") void refreshPushLog();
+  }, [tab, refreshPushLog]);
 
   const filtered = useMemo(() => {
     const rows = data?.reservations ?? [];
@@ -322,7 +342,7 @@ function AdminDashboard({ token }: { token: string }) {
       </header>
 
       <nav style={{ display: "flex", gap: 8, padding: 12, overflowX: "auto" }}>
-        {(["chauffeurs", "courses", "journal"] as const).map((t) => (
+        {(["chauffeurs", "courses", "journal", "notifications"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -337,7 +357,13 @@ function AdminDashboard({ token }: { token: string }) {
               whiteSpace: "nowrap",
             }}
           >
-            {t === "chauffeurs" ? "Chauffeurs & rotation" : t === "courses" ? "Correction statuts" : "Journal"}
+            {t === "chauffeurs"
+              ? "Chauffeurs & rotation"
+              : t === "courses"
+                ? "Correction statuts"
+                : t === "journal"
+                  ? "Journal"
+                  : "Notifications"}
           </button>
         ))}
       </nav>
@@ -597,6 +623,62 @@ function AdminDashboard({ token }: { token: string }) {
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+        )}
+
+        {tab === "notifications" && (
+          <section style={card}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
+              <h2 style={{ fontSize: 15, fontWeight: 800 }}>Journal des notifications</h2>
+              <button
+                onClick={() => void refreshPushLog()}
+                style={{ background: INK, color: GOLD, border: "none", borderRadius: 10, padding: "8px 12px", fontWeight: 700 }}
+              >
+                Actualiser
+              </button>
+            </div>
+
+            {pushLog && (
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                {[
+                  ["Total", pushLog.stats.total],
+                  ["Délivrés", pushLog.stats.sent],
+                  ["Erreurs", pushLog.stats.failed],
+                  ["Replis e-mail", pushLog.stats.email],
+                ].map(([label, value]) => (
+                  <div key={String(label)} style={{ border: "1px solid #e2e8f0", borderRadius: 12, padding: "8px 14px" }}>
+                    <div style={{ fontSize: 11, color: "#64748b" }}>{label}</div>
+                    <div style={{ fontSize: 18, fontWeight: 800 }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {pushLogLoading && <div style={{ color: "#64748b", fontSize: 14 }}>Chargement…</div>}
+            {!pushLogLoading && pushLog?.entries.length === 0 && (
+              <div style={{ color: "#64748b", fontSize: 14 }}>Aucun envoi enregistré pour l'instant.</div>
+            )}
+
+            <div style={{ display: "grid", gap: 8 }}>
+              {pushLog?.entries.map((e: any) => {
+                const color =
+                  e.status === "sent" ? "#16a34a" : e.status === "fallback_email" ? "#2563eb" : e.status === "skipped" ? "#94a3b8" : "#dc2626";
+                return (
+                  <div key={e.id} style={{ borderLeft: `3px solid ${color}`, paddingLeft: 10 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>
+                      {e.channel === "email" ? "E-mail" : "Push"} · {e.audience} · {e.status}
+                      {e.http_status ? ` (${e.http_status})` : ""}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#64748b" }}>
+                      {fmt(e.created_at)} — {e.title || "—"}
+                      {e.recipient ? ` · ${e.recipient}` : ""}
+                      {e.fcm_token_suffix ? ` · …${e.fcm_token_suffix}` : ""}
+                      {e.error_code ? ` · ${e.error_code}` : ""}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
