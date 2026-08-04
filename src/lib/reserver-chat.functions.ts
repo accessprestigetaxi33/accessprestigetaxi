@@ -230,9 +230,11 @@ export const aiChatReservation = createServerFn({ method: "POST" })
             lang === "en"
               ? "Check whether a requested pickup slot is available and within opening hours."
               : "Vérifie si un créneau demandé est disponible et dans les horaires d'ouverture.",
-          parameters: z.object({
-            pickup_datetime: z.string().describe("ISO datetime de prise en charge / Pickup ISO datetime"),
-          }),
+          inputSchema: zodSchema(
+            z.object({
+              pickup_datetime: z.string().describe("ISO datetime de prise en charge / Pickup ISO datetime"),
+            }),
+          ),
           execute: async (args: { pickup_datetime: string }) => {
             const requested = parsePickup(args.pickup_datetime);
             const minTime = addMinutes(nowParis(), MIN_ADVANCE_MINUTES);
