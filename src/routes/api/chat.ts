@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/chat")({
         const initialRunId = getLovableAiGatewayRunId(request);
 
         try {
-          const result = await runReservationChat({ messages, lang, sessionId } as ReservationChatInput, request, key);
+          const { result, gateway } = await runReservationChat({ messages, lang, sessionId } as ReservationChatInput, request, key);
           const response = result.toUIMessageStreamResponse({
             originalMessages: messages as any,
             sendReasoning: false,
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/api/chat")({
               ...(initialRunId ? { "X-Lovable-AIG-Run-ID": initialRunId } : {}),
             }),
           });
-          return withLovableAiGatewayRunIdHeader(response, result as any);
+          return withLovableAiGatewayRunIdHeader(response, gateway);
         } catch (err: any) {
           console.error("[/api/chat] error", err);
           return new Response(err?.message ?? "Internal server error", { status: 500 });
