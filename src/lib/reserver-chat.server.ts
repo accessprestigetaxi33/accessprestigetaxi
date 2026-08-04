@@ -255,7 +255,7 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
           const next = nextOpenSlot();
           return {
             available: false,
-            reason: lang === "en" ? "We are open." : "Nous sommes ouverts du lundi au vendredi, de 8h à 20h.",
+            reason: lang === "en" ? "We are open." : "Nous sommes ouverts du lundi au vendredi.",
             next_available: formatISO(next),
           };
         }
@@ -327,7 +327,7 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
             message:
               lang === "en"
                 ? "We are open. Please choose another time."
-                : "Nous sommes ouverts du lundi au vendredi, de 8h à 20h. Choisissez un autre horaire.",
+                : "Nous sommes ouverts du lundi au vendredi. Choisissez un autre horaire.",
           };
         }
 

@@ -61,7 +61,7 @@ export const DESTINATIONS: Destination[] = [
       faq: [
         {
           q: "Prenez-vous les vols très matinaux ?",
-          a: "Nous roulons de 8h à 20h, du lundi au vendredi. Pour un vol plus tôt, appelez-nous : nous cherchons une solution avec vous.",
+          a: "Nous roulons du lundi au vendredi. Pour un vol très matinal, appelez-nous : nous cherchons une solution avec vous.",
         },
         {
           q: "Combien de bagages puis-je emporter ?",
@@ -100,7 +100,7 @@ export const DESTINATIONS: Destination[] = [
       faq: [
         {
           q: "Do you cover very early flights?",
-          a: "We drive from 8am to 8pm, Monday to Friday. For an earlier flight, call us and we will look for a solution.",
+          a: "We drive Monday to Friday. For a very early flight, call us and we will look for a solution.",
         },
         {
           q: "How much luggage can I bring?",
@@ -159,7 +159,7 @@ export const DESTINATIONS: Destination[] = [
     en: {
       title: "Rochefort → La Rochelle station",
       h1: "Taxi Rochefort – La Rochelle TGV station",
-      metaTitle: "Rochefort to La Rochelle station taxi — TGV transfer, 5 days a week",
+      metaTitle: "Rochefort to La Rochelle station taxi — TGV transfer",
       metaDescription:
         "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station. Train tracking, fixed quoted price, 7-seat van available..",
       lead:
