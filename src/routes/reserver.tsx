@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useChat } from "@ai-sdk/react";
+import { useChat, DefaultChatTransport } from "@ai-sdk/react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { gaEvent } from "@/lib/ga4";
@@ -8,7 +8,7 @@ import { transcribeAudio } from "@/lib/stt.functions";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Mic, Send, X, Phone, MessageCircle, Loader2, MapPin, CalendarDays, Users, Baby, Car } from "lucide-react";
+import { ArrowLeft, Mic, Send, X, Phone, Loader2, MapPin, CalendarDays, Users, Baby, Car } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 
