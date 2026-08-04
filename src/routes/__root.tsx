@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Taxi de prestige en Charente-Maritime, BMW iX1 100 % électrique et van Mercedes 7 places. Réservation rapide 5j/7, 8h-20h.",
+          "Taxi de prestige en Charente-Maritime, BMW iX1 100 % électrique et van Mercedes 7 places. Réservation rapide.",
       },
       { name: "author", content: "Access Prestige Taxi" },
       { property: "og:site_name", content: "Access Prestige Taxi" },

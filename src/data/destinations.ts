@@ -35,7 +35,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi La Rochelle – Aéroport La Rochelle-Île de Ré",
       metaTitle: "Taxi aéroport La Rochelle-Île de Ré — Access Prestige Taxi",
       metaDescription:
-        "Transfert taxi entre La Rochelle et l\u2019aéroport La Rochelle-Île de Ré : suivi des vols, prix annoncé, BMW iX1 électrique ou van 7 places. 5j/7, 8h-20h.",
+        "Transfert taxi entre La Rochelle et l\u2019aéroport La Rochelle-Île de Ré : suivi des vols, prix annoncé, BMW iX1 électrique ou van 7 places..",
       lead:
         "L\u2019aéroport La Rochelle-Île de Ré est à douze minutes du Vieux-Port. Nous suivons l\u2019horaire réel de votre vol et vous déposons devant le hall départ, bagages portés.",
       sections: [
@@ -61,7 +61,7 @@ export const DESTINATIONS: Destination[] = [
       faq: [
         {
           q: "Prenez-vous les vols très matinaux ?",
-          a: "Nous roulons de 8h à 20h, du lundi au vendredi. Pour un vol plus tôt, appelez-nous : nous cherchons une solution avec vous.",
+          a: "Nous roulons du lundi au vendredi. Pour un vol très matinal, appelez-nous : nous cherchons une solution avec vous.",
         },
         {
           q: "Combien de bagages puis-je emporter ?",
@@ -74,7 +74,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi La Rochelle – La Rochelle-Île de Ré airport",
       metaTitle: "La Rochelle-Île de Ré airport taxi — Access Prestige Taxi",
       metaDescription:
-        "Taxi transfer between La Rochelle and La Rochelle-Île de Ré airport: flight tracking, quoted price, electric BMW iX1 or 7-seat van. 5 days a week, 8am-8pm.",
+        "Taxi transfer between La Rochelle and La Rochelle-Île de Ré airport: flight tracking, quoted price, electric BMW iX1 or 7-seat van..",
       lead:
         "La Rochelle-Île de Ré airport is twelve minutes from the Old Port. We track your actual flight time and drop you at the departures hall, luggage carried.",
       sections: [
@@ -100,7 +100,7 @@ export const DESTINATIONS: Destination[] = [
       faq: [
         {
           q: "Do you cover very early flights?",
-          a: "We drive from 8am to 8pm, Monday to Friday. For an earlier flight, call us and we will look for a solution.",
+          a: "We drive Monday to Friday. For a very early flight, call us and we will look for a solution.",
         },
         {
           q: "How much luggage can I bring?",
@@ -120,9 +120,9 @@ export const DESTINATIONS: Destination[] = [
     fr: {
       title: "Rochefort → Gare de La Rochelle",
       h1: "Taxi Rochefort – Gare TGV de La Rochelle",
-      metaTitle: "Taxi Rochefort gare de La Rochelle — transfert TGV 5j/7",
+      metaTitle: "Taxi Rochefort gare de La Rochelle — transfert TGV",
       metaDescription:
-        "Taxi entre Rochefort, Tonnay-Charente, Fouras et la gare TGV de La Rochelle. Suivi du train, prix ferme annoncé, van 7 places disponible. 8h-20h.",
+        "Taxi entre Rochefort, Tonnay-Charente, Fouras et la gare TGV de La Rochelle. Suivi du train, prix ferme annoncé, van 7 places disponible..",
       lead:
         "Trente-cinq minutes séparent l\u2019arsenal de Rochefort du hall de la gare de La Rochelle, d\u2019où partent les TGV pour Poitiers, Paris et Nantes. Nous surveillons l\u2019horaire réel du train.",
       sections: [
@@ -159,9 +159,9 @@ export const DESTINATIONS: Destination[] = [
     en: {
       title: "Rochefort → La Rochelle station",
       h1: "Taxi Rochefort – La Rochelle TGV station",
-      metaTitle: "Rochefort to La Rochelle station taxi — TGV transfer, 5 days a week",
+      metaTitle: "Rochefort to La Rochelle station taxi — TGV transfer",
       metaDescription:
-        "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station. Train tracking, fixed quoted price, 7-seat van available. 8am-8pm.",
+        "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station. Train tracking, fixed quoted price, 7-seat van available..",
       lead:
         "Thirty-five minutes separate the Rochefort arsenal from La Rochelle station, where TGV trains leave for Poitiers, Paris and Nantes. We track the real train time.",
       sections: [
@@ -383,7 +383,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Transport de groupe jusqu\u2019à 7 personnes en Charente-Maritime",
       metaTitle: "Taxi van 7 places Charente-Maritime — transport de groupe",
       metaDescription:
-        "Transport de groupe en Charente-Maritime : van Mercedes jusqu\u2019à 7 passagers avec bagages. Mariages, séminaires, familles, aéroport. 5j/7, 8h-20h.",
+        "Transport de groupe en Charente-Maritime : van Mercedes jusqu\u2019à 7 passagers avec bagages. Mariages, séminaires, familles, aéroport..",
       lead:
         "Le van Mercedes d\u2019Alain accueille jusqu\u2019à sept passagers avec leurs bagages : un seul véhicule, un seul tarif, pas de convoi de voitures à coordonner.",
       sections: [
@@ -422,7 +422,7 @@ export const DESTINATIONS: Destination[] = [
       h1: "Group transport for up to 7 people in Charente-Maritime",
       metaTitle: "7-seat van taxi Charente-Maritime — group transport",
       metaDescription:
-        "Group transport in Charente-Maritime: Mercedes van for up to 7 passengers with luggage. Weddings, conferences, families, airport. 5 days a week, 8am-8pm.",
+        "Group transport in Charente-Maritime: Mercedes van for up to 7 passengers with luggage. Weddings, conferences, families, airport..",
       lead:
         "Alain\u2019s Mercedes van carries up to seven passengers with luggage: one vehicle, one fare, no convoy of cars to coordinate.",
       sections: [

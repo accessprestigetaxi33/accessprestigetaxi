@@ -75,9 +75,9 @@ const heroSlides = (lang: "fr" | "en") => {
       label: en ? "Our fleet" : "Notre flotte",
       title: en ? "Excellence on every journey" : "L'excellence à chaque trajet",
       desc: en
-        ? "Two drivers, three premium vehicles across Charente-Maritime, Monday to Friday, 8am-8pm."
-        : "Deux chauffeurs, trois véhicules haut de gamme en Charente-Maritime, 5j/7 de 8h à 20h.",
-      specs: en ? ["2 drivers", "Mon-Fri 8am-8pm", "Charente-Maritime"] : ["2 chauffeurs", "5j/7 · 8h-20h", "Charente-Maritime"],
+        ? "Two drivers, three premium vehicles across Charente-Maritime."
+        : "Deux chauffeurs, trois véhicules haut de gamme en Charente-Maritime.",
+      specs: en ? ["2 drivers", "", "Charente-Maritime"] : ["2 chauffeurs", "", "Charente-Maritime"],
       // Bannière de marque complète : logo, slogan et services doivent rester lisibles.
       contain: true,
       pan: { x: 0, y: 0 },
@@ -175,7 +175,7 @@ const COPY = {
   fr: {
     kicker: "100 % électrique · Charente-Maritime",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné, disponible 5j/7 de 8h à 20h.",
+    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
@@ -206,8 +206,8 @@ const COPY = {
       { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       {
         photo: photoExterior.url,
-        t: "Disponible 5j/7, 8h-20h",
-        d: "Réservation immédiate ou planifiée, 5 jours sur 7, de 8h à 20h.",
+        t: "Disponible sur réservation",
+        d: "Réservation immédiate ou planifiée.",
       },
     ],
     seatsEyebrow: "Familles",
@@ -239,7 +239,7 @@ const COPY = {
     ],
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
     bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons 5j/7, de 8h à 20h.",
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
     destEyebrow: "Destinations",
     destTitle: "Là où l'on vous emmène",
     destLead: "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
@@ -313,7 +313,7 @@ const COPY = {
   en: {
     kicker: "100% electric · Charente-Maritime",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service, available 5 days a week from 8am to 8pm.",
+    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
@@ -344,8 +344,8 @@ const COPY = {
       { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
       {
         photo: photoExterior.url,
-        t: "Available 5 days a week, 8am-8pm",
-        d: "Instant or scheduled booking, five days a week, 8am to 8pm.",
+        t: "Available on booking",
+        d: "Instant or scheduled booking.",
       },
     ],
     seatsEyebrow: "Families",
@@ -377,7 +377,7 @@ const COPY = {
     ],
     bannerTitle: "Charente-Maritime, door to door",
     bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there 5 days a week, 8am to 8pm.",
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there.",
     destEyebrow: "Destinations",
     destTitle: "Where we take you",
     destLead: "A few routes our clients book every day — arriving smoothly is our job.",
@@ -458,13 +458,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 électrique et van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports, 5j/7 8h-20h.",
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 électrique et van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports.",
       },
       { property: "og:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
       {
         property: "og:description",
         content:
-          "L'excellence à chaque trajet : réservation rapide vocale ou écrite, BMW iX1 100 % électrique et van Mercedes 7 places en Charente-Maritime, 5j/7 8h-20h.",
+          "L'excellence à chaque trajet : réservation rapide vocale ou écrite, BMW iX1 100 % électrique et van Mercedes 7 places en Charente-Maritime.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
@@ -483,7 +483,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime, 5j/7 de 8h à 20h. Réservation en moins d'une minute.",
+          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Réservation en moins d'une minute.",
       },
       { name: "twitter:image", content: absoluteUrl(heroCars.url) },
     ],
@@ -650,73 +650,8 @@ function Index() {
         })()}
       </section>
 
-      {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
-      <section aria-labelledby="fleet-heading" className="border-t border-border bg-background py-8 sm:py-10">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <h2 id="fleet-heading" className="sr-only">
-            {lang === "en"
-              ? "Excellence on every journey — our electric taxi fleet in Charente-Maritime"
-              : "L'excellence à chaque trajet — notre flotte de taxis électriques en Charente-Maritime"}
-          </h2>
-          <div className="flex gap-2 overflow-x-auto pb-2 sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {slides.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => select(i)}
-                aria-pressed={i === slideIndex}
-                aria-label={s.title}
-                className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
-                  i === slideIndex
-                    ? "border-primary shadow-[var(--shadow-gold)]"
-                    : "border-border opacity-70 hover:opacity-100"
-                }`}
-              >
-                <img
-                  src={s.src}
-                  alt={s.alt}
-                  loading="lazy"
-                  width={320}
-                  height={180}
-                  className={s.contain ? "h-full w-full object-contain" : "h-full w-full object-cover"}
-                />
-              </button>
-            ))}
-          </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={slides[slideIndex].id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="mt-5 rounded-2xl border border-border bg-card p-5 sm:p-6"
-            >
-              <p className="text-[11px] uppercase tracking-[0.25em] text-primary">{slides[slideIndex].label}</p>
-              <h3 className="mt-2 font-display text-xl font-semibold text-foreground sm:text-2xl">
-                {slides[slideIndex].title}
-              </h3>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                {slides[slideIndex].desc}
-              </p>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {slides[slideIndex].specs.map((spec) => (
-                  <motion.li
-                    key={spec}
-                    initial={{ opacity: 0, scale: 0.94 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
-                  >
-                    {spec}
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </section>
+
 
 
 
@@ -793,6 +728,72 @@ function Index() {
               </div>
             ))}
           </dl>
+
+          {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
+          <div className="mt-12 w-full">
+            <h2 id="fleet-heading" className="sr-only">
+              {lang === "en"
+                ? "Excellence on every journey — our electric taxi fleet in Charente-Maritime"
+                : "L'excellence à chaque trajet — notre flotte de taxis électriques en Charente-Maritime"}
+            </h2>
+            <div className="flex justify-start gap-2 overflow-x-auto pb-2 sm:justify-center sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => select(i)}
+                  aria-pressed={i === slideIndex}
+                  aria-label={s.title}
+                  className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
+                    i === slideIndex
+                      ? "border-primary shadow-[var(--shadow-gold)]"
+                      : "border-border opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img
+                    src={s.src}
+                    alt={s.alt}
+                    loading="lazy"
+                    width={320}
+                    height={180}
+                    className={s.contain ? "h-full w-full object-contain" : "h-full w-full object-cover"}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              {slides[slideIndex].id !== "brand" && (
+                <motion.div
+                  key={slides[slideIndex].id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="mt-5 rounded-2xl border border-border bg-card p-5 text-left sm:p-6"
+                >
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-primary">{slides[slideIndex].label}</p>
+                  <h3 className="mt-2 font-display text-xl font-semibold text-foreground sm:text-2xl">
+                    {slides[slideIndex].title}
+                  </h3>
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    {slides[slideIndex].desc}
+                  </p>
+                  <ul className="mt-4 flex flex-wrap gap-2">
+                    {slides[slideIndex].specs.map((spec) => (
+                      <li
+                        key={spec}
+                        className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
+                      >
+                        {spec}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
         </div>
       </section>
 
