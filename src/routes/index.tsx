@@ -412,8 +412,8 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: absoluteUrl("/") },
       { property: "og:image", content: absoluteUrl(heroCars.url) },
-      { property: "og:image:width", content: "1681" },
-      { property: "og:image:height", content: "935" },
+      { property: "og:image:width", content: "1376" },
+      { property: "og:image:height", content: "768" },
       {
         property: "og:image:alt",
         content: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
@@ -516,8 +516,8 @@ function Index() {
                     alt={slide.alt}
                     fetchPriority={slideIndex === 0 ? "high" : undefined}
                     loading={slideIndex === 0 ? "eager" : "lazy"}
-                    width={1681}
-                    height={935}
+                    width={1376}
+                    height={768}
                     className={
                       isBanner
                         ? "h-full w-full object-contain object-center"
