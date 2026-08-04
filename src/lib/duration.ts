@@ -9,9 +9,9 @@
  * C'est la valeur à écrire dans `reservations.duree_s`.
  */
 export function roundSecondsToMinute(seconds: number | null | undefined): number {
- if (!seconds ||!Number.isFinite(seconds) || seconds <= 0) return 0;
- const minutes = Math.max(1, Math.round(seconds / 60));
- return minutes * 60;
+  if (!seconds || !Number.isFinite(seconds) || seconds <= 0) return 0;
+  const minutes = Math.max(1, Math.round(seconds / 60));
+  return minutes * 60;
 }
 
 /**
@@ -21,13 +21,13 @@ export function roundSecondsToMinute(seconds: number | null | undefined): number
  * les anciennes lignes non arrondies. Retourne 0 si valeur manquante/invalide.
  */
 export function durationSecondsToMinutes(seconds: number | null | undefined): number {
- if (!seconds ||!Number.isFinite(seconds) || seconds <= 0) return 0;
- return Math.max(1, Math.round(seconds / 60));
+  if (!seconds || !Number.isFinite(seconds) || seconds <= 0) return 0;
+  return Math.max(1, Math.round(seconds / 60));
 }
 
 /**
  * Milliseconds correspondant à `duree_s` arrondi à la minute — pour ETA/ICS.
  */
 export function durationSecondsToMs(seconds: number | null | undefined): number {
- return durationSecondsToMinutes(seconds) * 60 * 1000;
+  return durationSecondsToMinutes(seconds) * 60 * 1000;
 }

@@ -1,18 +1,18 @@
-import type { ReactNode } from"react";
-import { cn } from"@/lib/utils";
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 /** Text size of each list item. Maps to a Tailwind text utility. */
-export type BulletedListSize ="xs" |"sm" |"base" |"lg";
+export type BulletedListSize = "xs" | "sm" | "base" | "lg";
 /** Vertical rhythm between items. */
-export type BulletedListDensity ="tight" |"normal" |"relaxed";
+export type BulletedListDensity = "tight" | "normal" | "relaxed";
 /** Color of the decorative dot. Mapped to design tokens, never raw colors. */
 export type BulletedListTone =
- |"primary"
- |"accent"
- |"muted"
- |"foreground"
- |"destructive"
- |"success";
+  | "primary"
+  | "accent"
+  | "muted"
+  | "foreground"
+  | "destructive"
+  | "success";
 
 /**
  * An item can be:
@@ -21,48 +21,67 @@ export type BulletedListTone =
  * - or an object `{ key, content }` when you need a stable key for non-string nodes.
  */
 export type BulletedListItem =
- | string
- | ReactNode
- | { key: string | number; content: ReactNode };
+  | string
+  | ReactNode
+  | { key: string | number; content: ReactNode };
 
 type BulletedListProps = {
- items: readonly BulletedListItem[];
- className?: string;
- itemClassName?: string;
- /** Preset text size (default:"sm"). */
- size?: BulletedListSize;
- /** Vertical spacing between items (default:"normal"). */
- density?: BulletedListDensity;
- /** Dot color, picked from semantic design tokens (default:"primary"). */
- tone?: BulletedListTone;
- /** Accessible label describing the list contents (e.g."Services inclus"). */
- ariaLabel?: string;
- /** ID of an element that labels the list. Use instead of ariaLabel when a visible heading exists. */
- ariaLabelledBy?: string;
+  items: readonly BulletedListItem[];
+  className?: string;
+  itemClassName?: string;
+  /** Preset text size (default: "sm"). */
+  size?: BulletedListSize;
+  /** Vertical spacing between items (default: "normal"). */
+  density?: BulletedListDensity;
+  /** Dot color, picked from semantic design tokens (default: "primary"). */
+  tone?: BulletedListTone;
+  /** Accessible label describing the list contents (e.g. "Services inclus"). */
+  ariaLabel?: string;
+  /** ID of an element that labels the list. Use instead of ariaLabel when a visible heading exists. */
+  ariaLabelledBy?: string;
 };
 
 function isKeyedItem(
- item: BulletedListItem,
+  item: BulletedListItem,
 ): item is { key: string | number; content: ReactNode } {
- return (
- typeof item ==="object" &&
- item!== null &&!Array.isArray(item) &&"key" in (item as object) &&"content" in (item as object)
- );
+  return (
+    typeof item === "object" &&
+    item !== null &&
+    !Array.isArray(item) &&
+    "key" in (item as object) &&
+    "content" in (item as object)
+  );
 }
 
 const SIZE_CLASS: Record<BulletedListSize, string> = {
- xs:"text-xs"sm:"text-sm"base:"text-base"lg:"text-lg"};
+  xs: "text-xs",
+  sm: "text-sm",
+  base: "text-base",
+  lg: "text-lg",
+};
 
 const DENSITY_CLASS: Record<BulletedListDensity, string> = {
- tight:"space-y-1"normal:"space-y-2"relaxed:"space-y-3"};
+  tight: "space-y-1",
+  normal: "space-y-2",
+  relaxed: "space-y-3",
+};
 
 // Dot size scales subtly with text size to keep optical balance.
 const DOT_SIZE_CLASS: Record<BulletedListSize, string> = {
- xs:"mt-1 h-1 w-1"sm:"mt-1.5 h-1.5 w-1.5"base:"mt-2 h-2 w-2"lg:"mt-2.5 h-2 w-2"};
+  xs: "mt-1 h-1 w-1",
+  sm: "mt-1.5 h-1.5 w-1.5",
+  base: "mt-2 h-2 w-2",
+  lg: "mt-2.5 h-2 w-2",
+};
 
 // Map tones to semantic tokens declared in src/styles.css.
 const TONE_CLASS: Record<BulletedListTone, string> = {
- primary:"bg-primary"accent:"bg-accent"muted:"bg-muted-foreground"foreground:"bg-foreground"destructive:"bg-destructive"success:"bg-emerald-500"// fallback if no semantic success token is defined
+  primary: "bg-primary",
+  accent: "bg-accent",
+  muted: "bg-muted-foreground",
+  foreground: "bg-foreground",
+  destructive: "bg-destructive",
+  success: "bg-emerald-500", // fallback if no semantic success token is defined
 };
 
 /**
@@ -82,42 +101,51 @@ const TONE_CLASS: Record<BulletedListTone, string> = {
  * - Decorative bullet dot is hidden via `aria-hidden`.
  * - Pass `ariaLabel` (or `ariaLabelledBy`) to give the list a meaningful name.
  * - The list itself is non-interactive: keyboard users skip it like any prose
- * block. If a list item needs to be actionable, wrap its text in a real
- * <a>/<button> at the call site so default focus order and Enter/Space work.
+ *   block. If a list item needs to be actionable, wrap its text in a real
+ *   <a>/<button> at the call site so default focus order and Enter/Space work.
  */
 export function BulletedList({
- items,
- className,
- itemClassName,
- size ="sm"density ="normal"tone ="primary"ariaLabel,
- ariaLabelledBy,
+  items,
+  className,
+  itemClassName,
+  size = "sm",
+  density = "normal",
+  tone = "primary",
+  ariaLabel,
+  ariaLabelledBy,
 }: BulletedListProps) {
- return (
- <ul
- className={cn(DENSITY_CLASS[density], SIZE_CLASS[size], className)}
- aria-label={ariaLabel}
- aria-labelledby={ariaLabelledBy}
- >
- {items.map((item, index) => {
- const key: string | number = isKeyedItem(item)? item.key: typeof item ==="string" || typeof item ==="number"? item: index;
- const content: ReactNode = isKeyedItem(item)? item.content: (item as ReactNode);
- return (
- <li
- key={key}
- className={cn("flex items-start gap-2 text-foreground/80"itemClassName)}
- >
- <span
- aria-hidden="true"
- className={cn("shrink-0 rounded-full"DOT_SIZE_CLASS[size],
- TONE_CLASS[tone],
- )}
- />
- <span className="min-w-0 flex-1 break-words leading-snug [hyphens:auto]">
- {content}
- </span>
- </li>
- );
- })}
- </ul>
- );
+  return (
+    <ul
+      className={cn(DENSITY_CLASS[density], SIZE_CLASS[size], className)}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+    >
+      {items.map((item, index) => {
+        const key: string | number = isKeyedItem(item)
+          ? item.key
+          : typeof item === "string" || typeof item === "number"
+            ? item
+            : index;
+        const content: ReactNode = isKeyedItem(item) ? item.content : (item as ReactNode);
+        return (
+          <li
+            key={key}
+            className={cn("flex items-start gap-2 text-foreground/80", itemClassName)}
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                "shrink-0 rounded-full",
+                DOT_SIZE_CLASS[size],
+                TONE_CLASS[tone],
+              )}
+            />
+            <span className="min-w-0 flex-1 break-words leading-snug [hyphens:auto]">
+              {content}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }

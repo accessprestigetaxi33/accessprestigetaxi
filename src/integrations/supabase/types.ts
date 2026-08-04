@@ -1,1358 +1,1400 @@
 export type Json =
- | string
- | number
- | boolean
- | null
- | { [key: string]: Json | undefined }
- | Json[]
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
- // Allows to automatically instantiate createClient with right options
- // instead of createClient<Database, { PostgrestVersion:'XX' }>(URL, KEY)
- __InternalSupabase: {
- PostgrestVersion:"14.15"
- }
- public: {
- Tables: {
- active_visitors: {
- Row: {
- created_at: string
- last_seen: string
- page: string | null
- session_id: string
- }
- Insert: {
- created_at?: string
- last_seen?: string
- page?: string | null
- session_id: string
- }
- Update: {
- created_at?: string
- last_seen?: string
- page?: string | null
- session_id?: string
- }
- Relationships: []
- }
- app_settings: {
- Row: {
- id: number
- tracking_mode: string
- updated_at: string
- }
- Insert: {
- id?: number
- tracking_mode?: string
- updated_at?: string
- }
- Update: {
- id?: number
- tracking_mode?: string
- updated_at?: string
- }
- Relationships: []
- }
- avis: {
- Row: {
- author_name: string
- chauffeur_id: string | null
- commentaire: string | null
- created_at: string
- id: string
- note: number
- reservation_id: string | null
- status: string
- }
- Insert: {
- author_name: string
- chauffeur_id?: string | null
- commentaire?: string | null
- created_at?: string
- id?: string
- note: number
- reservation_id?: string | null
- status?: string
- }
- Update: {
- author_name?: string
- chauffeur_id?: string | null
- commentaire?: string | null
- created_at?: string
- id?: string
- note?: number
- reservation_id?: string | null
- status?: string
- }
- Relationships: []
- }
- client_account_secrets: {
- Row: {
- client_account_id: string
- created_at: string
- password_hash: string
- updated_at: string
- }
- Insert: {
- client_account_id: string
- created_at?: string
- password_hash: string
- updated_at?: string
- }
- Update: {
- client_account_id?: string
- created_at?: string
- password_hash?: string
- updated_at?: string
- }
- Relationships: [
- {
- foreignKeyName:"client_account_secrets_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: true
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- client_accounts: {
- Row: {
- billing_address: string | null
- client_name: string | null
- company_name: string | null
- created_at: string
- email: string
- id: string
- phone: string | null
- siret: string | null
- tva_intracom: string | null
- }
- Insert: {
- billing_address?: string | null
- client_name?: string | null
- company_name?: string | null
- created_at?: string
- email: string
- id?: string
- phone?: string | null
- siret?: string | null
- tva_intracom?: string | null
- }
- Update: {
- billing_address?: string | null
- client_name?: string | null
- company_name?: string | null
- created_at?: string
- email?: string
- id?: string
- phone?: string | null
- siret?: string | null
- tva_intracom?: string | null
- }
- Relationships: []
- }
- client_favorites: {
- Row: {
- address: string
- client_id: string
- created_at: string
- icon: string | null
- id: string
- label: string
- sort_order: number
- updated_at: string
- }
- Insert: {
- address: string
- client_id: string
- created_at?: string
- icon?: string | null
- id?: string
- label: string
- sort_order?: number
- updated_at?: string
- }
- Update: {
- address?: string
- client_id?: string
- created_at?: string
- icon?: string | null
- id?: string
- label?: string
- sort_order?: number
- updated_at?: string
- }
- Relationships: [
- {
- foreignKeyName:"client_favorites_client_id_fkey"
- columns: ["client_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- client_password_resets: {
- Row: {
- client_account_id: string
- created_at: string
- expires_at: string
- id: string
- token_hash: string
- used_at: string | null
- }
- Insert: {
- client_account_id: string
- created_at?: string
- expires_at: string
- id?: string
- token_hash: string
- used_at?: string | null
- }
- Update: {
- client_account_id?: string
- created_at?: string
- expires_at?: string
- id?: string
- token_hash?: string
- used_at?: string | null
- }
- Relationships: [
- {
- foreignKeyName:"client_password_resets_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- client_recurring_rides: {
- Row: {
- active: boolean
- bagages: number
- client_account_id: string
- created_at: string
- day_of_week: number
- depart: string
- destination: string
- hour: number
- id: string
- label: string
- last_run_at: string | null
- message: string | null
- minute: number
- next_run_at: string
- paiement: string
- passagers: number
- updated_at: string
- }
- Insert: {
- active?: boolean
- bagages?: number
- client_account_id: string
- created_at?: string
- day_of_week: number
- depart: string
- destination: string
- hour: number
- id?: string
- label: string
- last_run_at?: string | null
- message?: string | null
- minute?: number
- next_run_at: string
- paiement?: string
- passagers?: number
- updated_at?: string
- }
- Update: {
- active?: boolean
- bagages?: number
- client_account_id?: string
- created_at?: string
- day_of_week?: number
- depart?: string
- destination?: string
- hour?: number
- id?: string
- label?: string
- last_run_at?: string | null
- message?: string | null
- minute?: number
- next_run_at?: string
- paiement?: string
- passagers?: number
- updated_at?: string
- }
- Relationships: [
- {
- foreignKeyName:"client_recurring_rides_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- client_sessions: {
- Row: {
- client_account_id: string
- created_at: string
- expires_at: string
- id: string
- last_seen_at: string
- token_hash: string
- }
- Insert: {
- client_account_id: string
- created_at?: string
- expires_at?: string
- id?: string
- last_seen_at?: string
- token_hash: string
- }
- Update: {
- client_account_id?: string
- created_at?: string
- expires_at?: string
- id?: string
- last_seen_at?: string
- token_hash?: string
- }
- Relationships: [
- {
- foreignKeyName:"client_sessions_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- clients: {
- Row: {
- created_at: string
- email: string | null
- id: string
- name: string
- phone: string | null
- total_courses: number
- total_depense: number
- }
- Insert: {
- created_at?: string
- email?: string | null
- id?: string
- name: string
- phone?: string | null
- total_courses?: number
- total_depense?: number
- }
- Update: {
- created_at?: string
- email?: string | null
- id?: string
- name?: string
- phone?: string | null
- total_courses?: number
- total_depense?: number
- }
- Relationships: []
- }
- courses: {
- Row: {
- client_id: string | null
- created_at: string
- depart: string | null
- destination: string | null
- id: string
- paiement: string
- prix_final: number | null
- reservation_id: string | null
- status: string
- }
- Insert: {
- client_id?: string | null
- created_at?: string
- depart?: string | null
- destination?: string | null
- id?: string
- paiement?: string
- prix_final?: number | null
- reservation_id?: string | null
- status?: string
- }
- Update: {
- client_id?: string | null
- created_at?: string
- depart?: string | null
- destination?: string | null
- id?: string
- paiement?: string
- prix_final?: number | null
- reservation_id?: string | null
- status?: string
- }
- Relationships: [
- {
- foreignKeyName:"courses_client_id_fkey"
- columns: ["client_id"]
- isOneToOne: false
- referencedRelation:"clients"
- referencedColumns: ["id"]
- },
- {
- foreignKeyName:"courses_reservation_id_fkey"
- columns: ["reservation_id"]
- isOneToOne: false
- referencedRelation:"reservations"
- referencedColumns: ["id"]
- },
- ]
- }
- cta_events: {
- Row: {
- created_at: string
- event_type: string
- has_draft: boolean | null
- id: string
- lang: string | null
- page: string | null
- referrer: string | null
- user_agent: string | null
- variant: string | null
- }
- Insert: {
- created_at?: string
- event_type: string
- has_draft?: boolean | null
- id?: string
- lang?: string | null
- page?: string | null
- referrer?: string | null
- user_agent?: string | null
- variant?: string | null
- }
- Update: {
- created_at?: string
- event_type?: string
- has_draft?: boolean | null
- id?: string
- lang?: string | null
- page?: string | null
- referrer?: string | null
- user_agent?: string | null
- variant?: string | null
- }
- Relationships: []
- }
- direct_messages: {
- Row: {
- client_account_id: string
- content: string
- created_at: string
- id: string
- read_by_chauffeur: boolean
- read_by_client: boolean
- sender: string
- }
- Insert: {
- client_account_id: string
- content: string
- created_at?: string
- id?: string
- read_by_chauffeur?: boolean
- read_by_client?: boolean
- sender: string
- }
- Update: {
- client_account_id?: string
- content?: string
- created_at?: string
- id?: string
- read_by_chauffeur?: boolean
- read_by_client?: boolean
- sender?: string
- }
- Relationships: [
- {
- foreignKeyName:"direct_messages_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- driver_gps: {
- Row: {
- accuracy: number | null
- destination: string | null
- heading: number | null
- heartbeat_at: string | null
- id: string
- is_active: boolean
- latitude: number | null
- longitude: number | null
- prix_estime: string | null
- speed: number | null
- updated_at: string
- }
- Insert: {
- accuracy?: number | null
- destination?: string | null
- heading?: number | null
- heartbeat_at?: string | null
- id: string
- is_active?: boolean
- latitude?: number | null
- longitude?: number | null
- prix_estime?: string | null
- speed?: number | null
- updated_at?: string
- }
- Update: {
- accuracy?: number | null
- destination?: string | null
- heading?: number | null
- heartbeat_at?: string | null
- id?: string
- is_active?: boolean
- latitude?: number | null
- longitude?: number | null
- prix_estime?: string | null
- speed?: number | null
- updated_at?: string
- }
- Relationships: []
- }
- driver_location: {
- Row: {
- accuracy: number | null
- heading: number | null
- id: string
- is_online: boolean
- latitude: number
- longitude: number
- speed: number | null
- updated_at: string
- }
- Insert: {
- accuracy?: number | null
- heading?: number | null
- id?: string
- is_online?: boolean
- latitude: number
- longitude: number
- speed?: number | null
- updated_at?: string
- }
- Update: {
- accuracy?: number | null
- heading?: number | null
- id?: string
- is_online?: boolean
- latitude?: number
- longitude?: number
- speed?: number | null
- updated_at?: string
- }
- Relationships: []
- }
- driver_profiles: {
- Row: {
- active: boolean
- created_at: string
- id: string
- name: string
- phone: string | null
- sort_order: number
- updated_at: string
- }
- Insert: {
- active?: boolean
- created_at?: string
- id: string
- name: string
- phone?: string | null
- sort_order?: number
- updated_at?: string
- }
- Update: {
- active?: boolean
- created_at?: string
- id?: string
- name?: string
- phone?: string | null
- sort_order?: number
- updated_at?: string
- }
- Relationships: []
- }
- driver_rotation: {
- Row: {
- id: number
- last_driver: string
- updated_at: string
- }
- Insert: {
- id: number
- last_driver?: string
- updated_at?: string
- }
- Update: {
- id?: number
- last_driver?: string
- updated_at?: string
- }
- Relationships: []
- }
- email_send_log: {
- Row: {
- created_at: string
- error_message: string | null
- id: string
- idempotency_key: string | null
- message_id: string | null
- metadata: Json | null
- recipient_email: string
- status: string
- template_name: string
- }
- Insert: {
- created_at?: string
- error_message?: string | null
- id?: string
- idempotency_key?: string | null
- message_id?: string | null
- metadata?: Json | null
- recipient_email: string
- status: string
- template_name: string
- }
- Update: {
- created_at?: string
- error_message?: string | null
- id?: string
- idempotency_key?: string | null
- message_id?: string | null
- metadata?: Json | null
- recipient_email?: string
- status?: string
- template_name?: string
- }
- Relationships: []
- }
- email_send_state: {
- Row: {
- auth_email_ttl_minutes: number
- batch_size: number
- id: number
- retry_after_until: string | null
- send_delay_ms: number
- transactional_email_ttl_minutes: number
- updated_at: string
- }
- Insert: {
- auth_email_ttl_minutes?: number
- batch_size?: number
- id?: number
- retry_after_until?: string | null
- send_delay_ms?: number
- transactional_email_ttl_minutes?: number
- updated_at?: string
- }
- Update: {
- auth_email_ttl_minutes?: number
- batch_size?: number
- id?: number
- retry_after_until?: string | null
- send_delay_ms?: number
- transactional_email_ttl_minutes?: number
- updated_at?: string
- }
- Relationships: []
- }
- email_unsubscribe_tokens: {
- Row: {
- created_at: string
- email: string
- id: string
- token: string
- used_at: string | null
- }
- Insert: {
- created_at?: string
- email: string
- id?: string
- token: string
- used_at?: string | null
- }
- Update: {
- created_at?: string
- email?: string
- id?: string
- token?: string
- used_at?: string | null
- }
- Relationships: []
- }
- push_dedup: {
- Row: {
- audience: string
- expires_at: string
- first_sent_at: string
- tag: string
- }
- Insert: {
- audience: string
- expires_at: string
- first_sent_at?: string
- tag: string
- }
- Update: {
- audience?: string
- expires_at?: string
- first_sent_at?: string
- tag?: string
- }
- Relationships: []
- }
- push_send_failures: {
- Row: {
- audience: string
- body: string | null
- created_at: string
- error_code: string | null
- fcm_token_suffix: string | null
- http_status: number | null
- id: string
- reservation_id: string | null
- tag: string | null
- title: string | null
- user_agent: string | null
- }
- Insert: {
- audience: string
- body?: string | null
- created_at?: string
- error_code?: string | null
- fcm_token_suffix?: string | null
- http_status?: number | null
- id?: string
- reservation_id?: string | null
- tag?: string | null
- title?: string | null
- user_agent?: string | null
- }
- Update: {
- audience?: string
- body?: string | null
- created_at?: string
- error_code?: string | null
- fcm_token_suffix?: string | null
- http_status?: number | null
- id?: string
- reservation_id?: string | null
- tag?: string | null
- title?: string | null
- user_agent?: string | null
- }
- Relationships: []
- }
- push_subscriptions: {
- Row: {
- audience: string
- auth: string | null
- client_account_id: string | null
- created_at: string
- endpoint: string
- fcm_token: string | null
- id: string
- last_seen_at: string
- p256dh: string | null
- reservation_id: string | null
- user_agent: string | null
- user_id: string | null
- }
- Insert: {
- audience: string
- auth?: string | null
- client_account_id?: string | null
- created_at?: string
- endpoint: string
- fcm_token?: string | null
- id?: string
- last_seen_at?: string
- p256dh?: string | null
- reservation_id?: string | null
- user_agent?: string | null
- user_id?: string | null
- }
- Update: {
- audience?: string
- auth?: string | null
- client_account_id?: string | null
- created_at?: string
- endpoint?: string
- fcm_token?: string | null
- id?: string
- last_seen_at?: string
- p256dh?: string | null
- reservation_id?: string | null
- user_agent?: string | null
- user_id?: string | null
- }
- Relationships: [
- {
- foreignKeyName:"push_subscriptions_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- {
- foreignKeyName:"push_subscriptions_reservation_id_fkey"
- columns: ["reservation_id"]
- isOneToOne: false
- referencedRelation:"reservations"
- referencedColumns: ["id"]
- },
- ]
- }
- reservation_events: {
- Row: {
- client_name: string | null
- created_at: string
- depart: string | null
- destination: string | null
- driver: string | null
- event_type: string
- from_value: string | null
- id: string
- reservation_id: string
- to_value: string | null
- }
- Insert: {
- client_name?: string | null
- created_at?: string
- depart?: string | null
- destination?: string | null
- driver?: string | null
- event_type: string
- from_value?: string | null
- id?: string
- reservation_id: string
- to_value?: string | null
- }
- Update: {
- client_name?: string | null
- created_at?: string
- depart?: string | null
- destination?: string | null
- driver?: string | null
- event_type?: string
- from_value?: string | null
- id?: string
- reservation_id?: string
- to_value?: string | null
- }
- Relationships: [
- {
- foreignKeyName:"reservation_events_reservation_id_fkey"
- columns: ["reservation_id"]
- isOneToOne: false
- referencedRelation:"reservations"
- referencedColumns: ["id"]
- },
- ]
- }
- reservation_messages: {
- Row: {
- content: string
- created_at: string
- id: string
- read_by_chauffeur: boolean
- read_by_client: boolean
- reservation_id: string
- sender: string
- }
- Insert: {
- content: string
- created_at?: string
- id?: string
- read_by_chauffeur?: boolean
- read_by_client?: boolean
- reservation_id: string
- sender: string
- }
- Update: {
- content?: string
- created_at?: string
- id?: string
- read_by_chauffeur?: boolean
- read_by_client?: boolean
- reservation_id?: string
- sender?: string
- }
- Relationships: [
- {
- foreignKeyName:"reservation_messages_reservation_id_fkey"
- columns: ["reservation_id"]
- isOneToOne: false
- referencedRelation:"reservations"
- referencedColumns: ["id"]
- },
- ]
- }
- reservations: {
- Row: {
- arrivee: string
- assigned_driver: string | null
- bagages: number
- client_account_id: string | null
- client_email: string | null
- client_name: string | null
- client_phone: string | null
- created_at: string
- date_course: string | null
- depart: string
- destination: string | null
- distance_km: number | null
- duree_recomputed_at: string | null
- duree_s: number | null
- email: string | null
- gps_validated_at: string | null
- heure_course: string | null
- id: string
- lang: string | null
- message: string | null
- nb_passagers: number | null
- nom: string
- paiement: string | null
- passagers: number
- phone_cancel_requested_at: string | null
- pickup_datetime: string
- prix_estime: number | null
- refus_motif: string | null
- reminder_j1_sent_at: string | null
- route_coords: Json | null
- route_label: string | null
- service_type: string
- source: string | null
- status: string
- suivi_id: string | null
- tarif_jour: boolean | null
- telephone: string
- tracking_id: string | null
- updated_at: string | null
- }
- Insert: {
- arrivee: string
- assigned_driver?: string | null
- bagages?: number
- client_account_id?: string | null
- client_email?: string | null
- client_name?: string | null
- client_phone?: string | null
- created_at?: string
- date_course?: string | null
- depart: string
- destination?: string | null
- distance_km?: number | null
- duree_recomputed_at?: string | null
- duree_s?: number | null
- email?: string | null
- gps_validated_at?: string | null
- heure_course?: string | null
- id?: string
- lang?: string | null
- message?: string | null
- nb_passagers?: number | null
- nom: string
- paiement?: string | null
- passagers?: number
- phone_cancel_requested_at?: string | null
- pickup_datetime: string
- prix_estime?: number | null
- refus_motif?: string | null
- reminder_j1_sent_at?: string | null
- route_coords?: Json | null
- route_label?: string | null
- service_type?: string
- source?: string | null
- status?: string
- suivi_id?: string | null
- tarif_jour?: boolean | null
- telephone: string
- tracking_id?: string | null
- updated_at?: string | null
- }
- Update: {
- arrivee?: string
- assigned_driver?: string | null
- bagages?: number
- client_account_id?: string | null
- client_email?: string | null
- client_name?: string | null
- client_phone?: string | null
- created_at?: string
- date_course?: string | null
- depart?: string
- destination?: string | null
- distance_km?: number | null
- duree_recomputed_at?: string | null
- duree_s?: number | null
- email?: string | null
- gps_validated_at?: string | null
- heure_course?: string | null
- id?: string
- lang?: string | null
- message?: string | null
- nb_passagers?: number | null
- nom?: string
- paiement?: string | null
- passagers?: number
- phone_cancel_requested_at?: string | null
- pickup_datetime?: string
- prix_estime?: number | null
- refus_motif?: string | null
- reminder_j1_sent_at?: string | null
- route_coords?: Json | null
- route_label?: string | null
- service_type?: string
- source?: string | null
- status?: string
- suivi_id?: string | null
- tarif_jour?: boolean | null
- telephone?: string
- tracking_id?: string | null
- updated_at?: string | null
- }
- Relationships: [
- {
- foreignKeyName:"reservations_client_account_id_fkey"
- columns: ["client_account_id"]
- isOneToOne: false
- referencedRelation:"client_accounts"
- referencedColumns: ["id"]
- },
- ]
- }
- reviews: {
- Row: {
- approved: boolean
- created_at: string
- id: string
- name: string
- rating: number
- text: string
- }
- Insert: {
- approved?: boolean
- created_at?: string
- id?: string
- name: string
- rating: number
- text: string
- }
- Update: {
- approved?: boolean
- created_at?: string
- id?: string
- name?: string
- rating?: number
- text?: string
- }
- Relationships: []
- }
- site_analytics: {
- Row: {
- created_at: string
- event: string
- id: string
- page: string | null
- referrer: string | null
- session_id: string | null
- }
- Insert: {
- created_at?: string
- event: string
- id?: string
- page?: string | null
- referrer?: string | null
- session_id?: string | null
- }
- Update: {
- created_at?: string
- event?: string
- id?: string
- page?: string | null
- referrer?: string | null
- session_id?: string | null
- }
- Relationships: []
- }
- suppressed_emails: {
- Row: {
- created_at: string
- email: string
- id: string
- metadata: Json | null
- reason: string
- }
- Insert: {
- created_at?: string
- email: string
- id?: string
- metadata?: Json | null
- reason: string
- }
- Update: {
- created_at?: string
- email?: string
- id?: string
- metadata?: Json | null
- reason?: string
- }
- Relationships: []
- }
- user_roles: {
- Row: {
- created_at: string
- id: string
- role: Database["public"]["Enums"]["app_role"]
- user_id: string
- }
- Insert: {
- created_at?: string
- id?: string
- role: Database["public"]["Enums"]["app_role"]
- user_id: string
- }
- Update: {
- created_at?: string
- id?: string
- role?: Database["public"]["Enums"]["app_role"]
- user_id?: string
- }
- Relationships: []
- }
- }
- Views: {
- [_ in never]: never
- }
- Functions: {
- delete_email: {
- Args: { message_id: number; queue_name: string }
- Returns: boolean
- }
- enqueue_email: {
- Args: { payload: Json; queue_name: string }
- Returns: number
- }
- get_active_visitor_count: { Args: { p_scope?: string }; Returns: number }
- get_reservation_by_tracking: {
- Args: { p_tracking_id: string }
- Returns: {
- arrivee: string
- bagages: number
- client_email: string
- client_name: string
- client_phone: string
- created_at: string
- date_course: string
- depart: string
- destination: string
- distance_km: number
- email: string
- heure_course: string
- id: string
- message: string
- nb_passagers: number
- nom: string
- passagers: number
- pickup_datetime: string
- prix_estime: number
- service_type: string
- status: string
- telephone: string
- tracking_id: string
- }[]
- }
- get_reservation_for_suivi: {
- Args: { p_key: string }
- Returns: {
- arrivee: string
- assigned_driver: string | null
- bagages: number
- client_account_id: string | null
- client_email: string | null
- client_name: string | null
- client_phone: string | null
- created_at: string
- date_course: string | null
- depart: string
- destination: string | null
- distance_km: number | null
- duree_recomputed_at: string | null
- duree_s: number | null
- email: string | null
- gps_validated_at: string | null
- heure_course: string | null
- id: string
- lang: string | null
- message: string | null
- nb_passagers: number | null
- nom: string
- paiement: string | null
- passagers: number
- phone_cancel_requested_at: string | null
- pickup_datetime: string
- prix_estime: number | null
- refus_motif: string | null
- reminder_j1_sent_at: string | null
- route_coords: Json | null
- route_label: string | null
- service_type: string
- source: string | null
- status: string
- suivi_id: string | null
- tarif_jour: boolean | null
- telephone: string
- tracking_id: string | null
- updated_at: string | null
- }[]
- SetofOptions: {
- from:"*"
- to:"reservations"
- isOneToOne: false
- isSetofReturn: true
- }
- }
- has_role: {
- Args: {
- _role: Database["public"]["Enums"]["app_role"]
- _user_id: string
- }
- Returns: boolean
- }
- mark_gps_validated: {
- Args: { p_reservation_id: string }
- Returns: boolean
- }
- mark_reservation_read_by_chauffeur: {
- Args: { p_reservation_id: string }
- Returns: number
- }
- move_to_dlq: {
- Args: {
- dlq_name: string
- message_id: number
- payload: Json
- source_queue: string
- }
- Returns: number
- }
- read_email_batch: {
- Args: { batch_size: number; queue_name: string; vt: number }
- Returns: {
- message: Json
- msg_id: number
- read_ct: number
- }[]
- }
- unsubscribe_push: { Args: { p_endpoint: string }; Returns: boolean }
- }
- Enums: {
- app_role:"admin" |"user"
- }
- CompositeTypes: {
- [_ in never]: never
- }
- }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.15"
+  }
+  public: {
+    Tables: {
+      active_visitors: {
+        Row: {
+          created_at: string
+          last_seen: string
+          page: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          last_seen?: string
+          page?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          last_seen?: string
+          page?: string | null
+          session_id?: string
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          id: number
+          tracking_mode: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          tracking_mode?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          tracking_mode?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      avis: {
+        Row: {
+          author_name: string
+          chauffeur_id: string | null
+          commentaire: string | null
+          created_at: string
+          id: string
+          note: number
+          reservation_id: string | null
+          status: string
+        }
+        Insert: {
+          author_name: string
+          chauffeur_id?: string | null
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          note: number
+          reservation_id?: string | null
+          status?: string
+        }
+        Update: {
+          author_name?: string
+          chauffeur_id?: string | null
+          commentaire?: string | null
+          created_at?: string
+          id?: string
+          note?: number
+          reservation_id?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      client_account_secrets: {
+        Row: {
+          client_account_id: string
+          created_at: string
+          password_hash: string
+          updated_at: string
+        }
+        Insert: {
+          client_account_id: string
+          created_at?: string
+          password_hash: string
+          updated_at?: string
+        }
+        Update: {
+          client_account_id?: string
+          created_at?: string
+          password_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_account_secrets_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: true
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_accounts: {
+        Row: {
+          billing_address: string | null
+          client_name: string | null
+          company_name: string | null
+          created_at: string
+          email: string
+          id: string
+          phone: string | null
+          siret: string | null
+          tva_intracom: string | null
+        }
+        Insert: {
+          billing_address?: string | null
+          client_name?: string | null
+          company_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          phone?: string | null
+          siret?: string | null
+          tva_intracom?: string | null
+        }
+        Update: {
+          billing_address?: string | null
+          client_name?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string | null
+          siret?: string | null
+          tva_intracom?: string | null
+        }
+        Relationships: []
+      }
+      client_favorites: {
+        Row: {
+          address: string
+          client_id: string
+          created_at: string
+          icon: string | null
+          id: string
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          client_id: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          client_id?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_favorites_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_password_resets: {
+        Row: {
+          client_account_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          token_hash: string
+          used_at: string | null
+        }
+        Insert: {
+          client_account_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          token_hash: string
+          used_at?: string | null
+        }
+        Update: {
+          client_account_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token_hash?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_password_resets_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_recurring_rides: {
+        Row: {
+          active: boolean
+          bagages: number
+          client_account_id: string
+          created_at: string
+          day_of_week: number
+          depart: string
+          destination: string
+          hour: number
+          id: string
+          label: string
+          last_run_at: string | null
+          message: string | null
+          minute: number
+          next_run_at: string
+          paiement: string
+          passagers: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          bagages?: number
+          client_account_id: string
+          created_at?: string
+          day_of_week: number
+          depart: string
+          destination: string
+          hour: number
+          id?: string
+          label: string
+          last_run_at?: string | null
+          message?: string | null
+          minute?: number
+          next_run_at: string
+          paiement?: string
+          passagers?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          bagages?: number
+          client_account_id?: string
+          created_at?: string
+          day_of_week?: number
+          depart?: string
+          destination?: string
+          hour?: number
+          id?: string
+          label?: string
+          last_run_at?: string | null
+          message?: string | null
+          minute?: number
+          next_run_at?: string
+          paiement?: string
+          passagers?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_recurring_rides_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_sessions: {
+        Row: {
+          client_account_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          last_seen_at: string
+          token_hash: string
+        }
+        Insert: {
+          client_account_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_seen_at?: string
+          token_hash: string
+        }
+        Update: {
+          client_account_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_seen_at?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_sessions_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          total_courses: number
+          total_depense: number
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          total_courses?: number
+          total_depense?: number
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          total_courses?: number
+          total_depense?: number
+        }
+        Relationships: []
+      }
+      courses: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          depart: string | null
+          destination: string | null
+          id: string
+          paiement: string
+          prix_final: number | null
+          reservation_id: string | null
+          status: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          depart?: string | null
+          destination?: string | null
+          id?: string
+          paiement?: string
+          prix_final?: number | null
+          reservation_id?: string | null
+          status?: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          depart?: string | null
+          destination?: string | null
+          id?: string
+          paiement?: string
+          prix_final?: number | null
+          reservation_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "courses_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cta_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          has_draft: boolean | null
+          id: string
+          lang: string | null
+          page: string | null
+          referrer: string | null
+          user_agent: string | null
+          variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          has_draft?: boolean | null
+          id?: string
+          lang?: string | null
+          page?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          has_draft?: boolean | null
+          id?: string
+          lang?: string | null
+          page?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          variant?: string | null
+        }
+        Relationships: []
+      }
+      direct_messages: {
+        Row: {
+          client_account_id: string
+          content: string
+          created_at: string
+          id: string
+          read_by_chauffeur: boolean
+          read_by_client: boolean
+          sender: string
+        }
+        Insert: {
+          client_account_id: string
+          content: string
+          created_at?: string
+          id?: string
+          read_by_chauffeur?: boolean
+          read_by_client?: boolean
+          sender: string
+        }
+        Update: {
+          client_account_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          read_by_chauffeur?: boolean
+          read_by_client?: boolean
+          sender?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "direct_messages_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_gps: {
+        Row: {
+          accuracy: number | null
+          destination: string | null
+          heading: number | null
+          heartbeat_at: string | null
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          prix_estime: string | null
+          speed: number | null
+          updated_at: string
+        }
+        Insert: {
+          accuracy?: number | null
+          destination?: string | null
+          heading?: number | null
+          heartbeat_at?: string | null
+          id: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          prix_estime?: string | null
+          speed?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accuracy?: number | null
+          destination?: string | null
+          heading?: number | null
+          heartbeat_at?: string | null
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          prix_estime?: string | null
+          speed?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      driver_location: {
+        Row: {
+          accuracy: number | null
+          heading: number | null
+          id: string
+          is_online: boolean
+          latitude: number
+          longitude: number
+          speed: number | null
+          updated_at: string
+        }
+        Insert: {
+          accuracy?: number | null
+          heading?: number | null
+          id?: string
+          is_online?: boolean
+          latitude: number
+          longitude: number
+          speed?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accuracy?: number | null
+          heading?: number | null
+          id?: string
+          is_online?: boolean
+          latitude?: number
+          longitude?: number
+          speed?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      driver_profiles: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id: string
+          name: string
+          phone?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      driver_rotation: {
+        Row: {
+          id: number
+          last_driver: string
+          updated_at: string
+        }
+        Insert: {
+          id: number
+          last_driver?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          last_driver?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_send_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          idempotency_key: string | null
+          message_id: string | null
+          metadata: Json | null
+          recipient_email: string
+          status: string
+          template_name: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string | null
+          message_id?: string | null
+          metadata?: Json | null
+          recipient_email: string
+          status: string
+          template_name: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string | null
+          message_id?: string | null
+          metadata?: Json | null
+          recipient_email?: string
+          status?: string
+          template_name?: string
+        }
+        Relationships: []
+      }
+      email_send_state: {
+        Row: {
+          auth_email_ttl_minutes: number
+          batch_size: number
+          id: number
+          retry_after_until: string | null
+          send_delay_ms: number
+          transactional_email_ttl_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          auth_email_ttl_minutes?: number
+          batch_size?: number
+          id?: number
+          retry_after_until?: string | null
+          send_delay_ms?: number
+          transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          auth_email_ttl_minutes?: number
+          batch_size?: number
+          id?: number
+          retry_after_until?: string | null
+          send_delay_ms?: number
+          transactional_email_ttl_minutes?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_unsubscribe_tokens: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
+      push_dedup: {
+        Row: {
+          audience: string
+          expires_at: string
+          first_sent_at: string
+          tag: string
+        }
+        Insert: {
+          audience: string
+          expires_at: string
+          first_sent_at?: string
+          tag: string
+        }
+        Update: {
+          audience?: string
+          expires_at?: string
+          first_sent_at?: string
+          tag?: string
+        }
+        Relationships: []
+      }
+      push_send_failures: {
+        Row: {
+          audience: string
+          body: string | null
+          created_at: string
+          error_code: string | null
+          fcm_token_suffix: string | null
+          http_status: number | null
+          id: string
+          reservation_id: string | null
+          tag: string | null
+          title: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          audience: string
+          body?: string | null
+          created_at?: string
+          error_code?: string | null
+          fcm_token_suffix?: string | null
+          http_status?: number | null
+          id?: string
+          reservation_id?: string | null
+          tag?: string | null
+          title?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          audience?: string
+          body?: string | null
+          created_at?: string
+          error_code?: string | null
+          fcm_token_suffix?: string | null
+          http_status?: number | null
+          id?: string
+          reservation_id?: string | null
+          tag?: string | null
+          title?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          audience: string
+          auth: string | null
+          client_account_id: string | null
+          created_at: string
+          endpoint: string
+          fcm_token: string | null
+          id: string
+          last_seen_at: string
+          p256dh: string | null
+          reservation_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          audience: string
+          auth?: string | null
+          client_account_id?: string | null
+          created_at?: string
+          endpoint: string
+          fcm_token?: string | null
+          id?: string
+          last_seen_at?: string
+          p256dh?: string | null
+          reservation_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          audience?: string
+          auth?: string | null
+          client_account_id?: string | null
+          created_at?: string
+          endpoint?: string
+          fcm_token?: string | null
+          id?: string
+          last_seen_at?: string
+          p256dh?: string | null
+          reservation_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_subscriptions_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reservation_events: {
+        Row: {
+          client_name: string | null
+          created_at: string
+          depart: string | null
+          destination: string | null
+          driver: string | null
+          event_type: string
+          from_value: string | null
+          id: string
+          reservation_id: string
+          to_value: string | null
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string
+          depart?: string | null
+          destination?: string | null
+          driver?: string | null
+          event_type: string
+          from_value?: string | null
+          id?: string
+          reservation_id: string
+          to_value?: string | null
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string
+          depart?: string | null
+          destination?: string | null
+          driver?: string | null
+          event_type?: string
+          from_value?: string | null
+          id?: string
+          reservation_id?: string
+          to_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservation_events_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reservation_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read_by_chauffeur: boolean
+          read_by_client: boolean
+          reservation_id: string
+          sender: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read_by_chauffeur?: boolean
+          read_by_client?: boolean
+          reservation_id: string
+          sender: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read_by_chauffeur?: boolean
+          read_by_client?: boolean
+          reservation_id?: string
+          sender?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservation_messages_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reservations: {
+        Row: {
+          arrivee: string
+          assigned_driver: string | null
+          bagages: number
+          client_account_id: string | null
+          client_email: string | null
+          client_name: string | null
+          client_phone: string | null
+          created_at: string
+          date_course: string | null
+          depart: string
+          destination: string | null
+          distance_km: number | null
+          duree_recomputed_at: string | null
+          duree_s: number | null
+          email: string | null
+          gps_validated_at: string | null
+          heure_course: string | null
+          id: string
+          lang: string | null
+          message: string | null
+          nb_passagers: number | null
+          nom: string
+          paiement: string | null
+          passagers: number
+          phone_cancel_requested_at: string | null
+          pickup_datetime: string
+          prix_estime: number | null
+          refus_motif: string | null
+          reminder_j1_sent_at: string | null
+          route_coords: Json | null
+          route_label: string | null
+          service_type: string
+          source: string | null
+          status: string
+          suivi_id: string | null
+          tarif_jour: boolean | null
+          telephone: string
+          tracking_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          arrivee: string
+          assigned_driver?: string | null
+          bagages?: number
+          client_account_id?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          created_at?: string
+          date_course?: string | null
+          depart: string
+          destination?: string | null
+          distance_km?: number | null
+          duree_recomputed_at?: string | null
+          duree_s?: number | null
+          email?: string | null
+          gps_validated_at?: string | null
+          heure_course?: string | null
+          id?: string
+          lang?: string | null
+          message?: string | null
+          nb_passagers?: number | null
+          nom: string
+          paiement?: string | null
+          passagers?: number
+          phone_cancel_requested_at?: string | null
+          pickup_datetime: string
+          prix_estime?: number | null
+          refus_motif?: string | null
+          reminder_j1_sent_at?: string | null
+          route_coords?: Json | null
+          route_label?: string | null
+          service_type?: string
+          source?: string | null
+          status?: string
+          suivi_id?: string | null
+          tarif_jour?: boolean | null
+          telephone: string
+          tracking_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          arrivee?: string
+          assigned_driver?: string | null
+          bagages?: number
+          client_account_id?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          client_phone?: string | null
+          created_at?: string
+          date_course?: string | null
+          depart?: string
+          destination?: string | null
+          distance_km?: number | null
+          duree_recomputed_at?: string | null
+          duree_s?: number | null
+          email?: string | null
+          gps_validated_at?: string | null
+          heure_course?: string | null
+          id?: string
+          lang?: string | null
+          message?: string | null
+          nb_passagers?: number | null
+          nom?: string
+          paiement?: string | null
+          passagers?: number
+          phone_cancel_requested_at?: string | null
+          pickup_datetime?: string
+          prix_estime?: number | null
+          refus_motif?: string | null
+          reminder_j1_sent_at?: string | null
+          route_coords?: Json | null
+          route_label?: string | null
+          service_type?: string
+          source?: string | null
+          status?: string
+          suivi_id?: string | null
+          tarif_jour?: boolean | null
+          telephone?: string
+          tracking_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_client_account_id_fkey"
+            columns: ["client_account_id"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          approved: boolean
+          created_at: string
+          id: string
+          name: string
+          rating: number
+          text: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          rating: number
+          text: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          rating?: number
+          text?: string
+        }
+        Relationships: []
+      }
+      site_analytics: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          page: string | null
+          referrer: string | null
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          page?: string | null
+          referrer?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          page?: string | null
+          referrer?: string | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      suppressed_emails: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          metadata: Json | null
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          metadata?: Json | null
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      delete_email: {
+        Args: { message_id: number; queue_name: string }
+        Returns: boolean
+      }
+      enqueue_email: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
+      get_active_visitor_count: { Args: { p_scope?: string }; Returns: number }
+      get_reservation_by_tracking: {
+        Args: { p_tracking_id: string }
+        Returns: {
+          arrivee: string
+          bagages: number
+          client_email: string
+          client_name: string
+          client_phone: string
+          created_at: string
+          date_course: string
+          depart: string
+          destination: string
+          distance_km: number
+          email: string
+          heure_course: string
+          id: string
+          message: string
+          nb_passagers: number
+          nom: string
+          passagers: number
+          pickup_datetime: string
+          prix_estime: number
+          service_type: string
+          status: string
+          telephone: string
+          tracking_id: string
+        }[]
+      }
+      get_reservation_for_suivi: {
+        Args: { p_key: string }
+        Returns: {
+          arrivee: string
+          assigned_driver: string | null
+          bagages: number
+          client_account_id: string | null
+          client_email: string | null
+          client_name: string | null
+          client_phone: string | null
+          created_at: string
+          date_course: string | null
+          depart: string
+          destination: string | null
+          distance_km: number | null
+          duree_recomputed_at: string | null
+          duree_s: number | null
+          email: string | null
+          gps_validated_at: string | null
+          heure_course: string | null
+          id: string
+          lang: string | null
+          message: string | null
+          nb_passagers: number | null
+          nom: string
+          paiement: string | null
+          passagers: number
+          phone_cancel_requested_at: string | null
+          pickup_datetime: string
+          prix_estime: number | null
+          refus_motif: string | null
+          reminder_j1_sent_at: string | null
+          route_coords: Json | null
+          route_label: string | null
+          service_type: string
+          source: string | null
+          status: string
+          suivi_id: string | null
+          tarif_jour: boolean | null
+          telephone: string
+          tracking_id: string | null
+          updated_at: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "reservations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      mark_gps_validated: {
+        Args: { p_reservation_id: string }
+        Returns: boolean
+      }
+      mark_reservation_read_by_chauffeur: {
+        Args: { p_reservation_id: string }
+        Returns: number
+      }
+      move_to_dlq: {
+        Args: {
+          dlq_name: string
+          message_id: number
+          payload: Json
+          source_queue: string
+        }
+        Returns: number
+      }
+      read_email_batch: {
+        Args: { batch_size: number; queue_name: string; vt: number }
+        Returns: {
+          message: Json
+          msg_id: number
+          read_ct: number
+        }[]
+      }
+      unsubscribe_push: { Args: { p_endpoint: string }; Returns: boolean }
+    }
+    Enums: {
+      app_role: "admin" | "user"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
 
-type DatabaseWithoutInternals = Omit<Database"__InternalSupabase">
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database"public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
- DefaultSchemaTableNameOrOptions extends
- | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
- | { schema: keyof DatabaseWithoutInternals },
- TableName extends DefaultSchemaTableNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
- }? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
- DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"]): never = never,
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
-}? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
- DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
- Row: infer R
- }? R: never: DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
- DefaultSchema["Views"])? (DefaultSchema["Tables"] &
- DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
- Row: infer R
- }? R: never: never
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
- DefaultSchemaTableNameOrOptions extends
- | keyof DefaultSchema["Tables"]
- | { schema: keyof DatabaseWithoutInternals },
- TableName extends DefaultSchemaTableNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
- }? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]: never = never,
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
-}? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
- Insert: infer I
- }? I: never: DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
- Insert: infer I
- }? I: never: never
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
- DefaultSchemaTableNameOrOptions extends
- | keyof DefaultSchema["Tables"]
- | { schema: keyof DatabaseWithoutInternals },
- TableName extends DefaultSchemaTableNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
- }? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]: never = never,
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
-}? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
- Update: infer U
- }? U: never: DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
- Update: infer U
- }? U: never: never
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
- DefaultSchemaEnumNameOrOptions extends
- | keyof DefaultSchema["Enums"]
- | { schema: keyof DatabaseWithoutInternals },
- EnumName extends DefaultSchemaEnumNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
- }? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]: never = never,
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
-}? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]: DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]: never
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
- PublicCompositeTypeNameOrOptions extends
- | keyof DefaultSchema["CompositeTypes"]
- | { schema: keyof DatabaseWithoutInternals },
- CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
- }? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]: never = never,
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
- schema: keyof DatabaseWithoutInternals
-}? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]: PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]: never
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
- public: {
- Enums: {
- app_role: ["admin""user"],
- },
- },
+  public: {
+    Enums: {
+      app_role: ["admin", "user"],
+    },
+  },
 } as const
