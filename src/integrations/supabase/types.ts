@@ -761,6 +761,57 @@ export type Database = {
         }
         Relationships: []
       }
+      push_send_log: {
+        Row: {
+          audience: string
+          body: string | null
+          channel: string
+          created_at: string
+          error_code: string | null
+          fcm_token_suffix: string | null
+          http_status: number | null
+          id: string
+          recipient: string | null
+          reservation_id: string | null
+          status: string
+          tag: string | null
+          title: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          audience: string
+          body?: string | null
+          channel?: string
+          created_at?: string
+          error_code?: string | null
+          fcm_token_suffix?: string | null
+          http_status?: number | null
+          id?: string
+          recipient?: string | null
+          reservation_id?: string | null
+          status: string
+          tag?: string | null
+          title?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          audience?: string
+          body?: string | null
+          channel?: string
+          created_at?: string
+          error_code?: string | null
+          fcm_token_suffix?: string | null
+          http_status?: number | null
+          id?: string
+          recipient?: string | null
+          reservation_id?: string | null
+          status?: string
+          tag?: string | null
+          title?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           audience: string
