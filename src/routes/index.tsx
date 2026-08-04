@@ -266,7 +266,6 @@ const COPY = {
       { n: 2, suffix: "", l: "dedicated drivers" },
       { n: 100, suffix: "%", l: "electric (BMW iX1)" },
       { n: 7, suffix: " seats", l: "Mercedes van" },
-      { n: 5, suffix: " days/wk · 8am-8pm", l: "availability" },
     ],
     servicesEyebrow: "Our services",
     servicesTitle: "A service designed for every journey",
