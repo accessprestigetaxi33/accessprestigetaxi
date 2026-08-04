@@ -1,24 +1,19 @@
-import type { ComponentType } from "react";
+import type { ComponentType } from"react";
 
 export interface TemplateEntry {
-  component: ComponentType<any>;
-  subject: string | ((data: Record<string, any>) => string);
-  displayName?: string;
-  previewData?: Record<string, any>;
-  /** Fixed recipient — overrides caller-provided recipientEmail when set. */
-  to?: string;
+ component: ComponentType<any>;
+ subject: string | ((data: Record<string, any>) => string);
+ displayName?: string;
+ previewData?: Record<string, any>;
+ /** Fixed recipient — overrides caller-provided recipientEmail when set. */
+ to?: string;
 }
 
-import { template as contactMessage } from "./contact-message";
-import { template as reservationClientConfirmation } from "./reservation-client-confirmation";
-import { template as courseAccepted } from "./course-accepted";
-import { template as newReservationAdmin } from "./new-reservation-admin";
-import { template as customPrice } from "./custom-price";
+import { template as contactMessage } from"./contact-message";
+import { template as reservationClientConfirmation } from"./reservation-client-confirmation";
+import { template as courseAccepted } from"./course-accepted";
+import { template as newReservationAdmin } from"./new-reservation-admin";
+import { template as customPrice } from"./custom-price";
 
-export const TEMPLATES: Record<string, TemplateEntry> = {
-  "contact-message": contactMessage,
-  "reservation-client-confirmation": reservationClientConfirmation,
-  "course-accepted": courseAccepted,
-  "new-reservation-admin": newReservationAdmin,
-  "custom-price": customPrice,
+export const TEMPLATES: Record<string, TemplateEntry> = {"contact-message": contactMessage"reservation-client-confirmation": reservationClientConfirmation"course-accepted": courseAccepted"new-reservation-admin": newReservationAdmin"custom-price": customPrice,
 };

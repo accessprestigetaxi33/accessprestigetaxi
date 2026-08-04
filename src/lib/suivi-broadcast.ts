@@ -3,50 +3,50 @@
 // which bypasses RLS entirely — required because anon has no SELECT policy on
 // public.reservations (PII protection), so postgres_changes UPDATE events are
 // never delivered to the tracking page.
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from"@/integrations/supabase/client";
 
-export function broadcastSuiviUpdate(reservationId: string | null | undefined, kind: string = "update") {
-  if (!reservationId) return;
-  try {
-    const ch = (supabase as any).channel(`suivi:${reservationId}`, {
-      config: { broadcast: { self: false, ack: false } },
-    });
-    ch.subscribe((status: string) => {
-      if (status !== "SUBSCRIBED") return;
-      try {
-        ch.send({ type: "broadcast", event: "update", payload: { kind, at: Date.now() } });
-      } catch {}
-      // Tear down shortly after so we don't leak channels.
-      setTimeout(() => {
-        try {
-          supabase.removeChannel(ch);
-        } catch {}
-      }, 800);
-    });
-  } catch (e) {
-    console.warn("[suivi-broadcast] failed", e);
-  }
+export function broadcastSuiviUpdate(reservationId: string | null | undefined, kind: string ="update") {
+ if (!reservationId) return;
+ try {
+ const ch = (supabase as any).channel(`suivi:${reservationId}`, {
+ config: { broadcast: { self: false, ack: false } },
+ });
+ ch.subscribe((status: string) => {
+ if (status!=="SUBSCRIBED") return;
+ try {
+ ch.send({ type:"broadcast"event:"update"payload: { kind, at: Date.now() } });
+ } catch {}
+ // Tear down shortly after so we don't leak channels.
+ setTimeout(() => {
+ try {
+ supabase.removeChannel(ch);
+ } catch {}
+ }, 800);
+ });
+ } catch (e) {
+ console.warn("[suivi-broadcast] failed"e);
+ }
 }
 
 /** Prévient les tableaux de bord chauffeur ouverts qu'une résa vient d'arriver. */
-export function broadcastDriverFeed(kind: string = "reservation") {
-  try {
-    const ch = (supabase as any).channel("driver-feed", {
-      config: { broadcast: { self: false, ack: false } },
-    });
-    ch.subscribe((status: string) => {
-      if (status !== "SUBSCRIBED") return;
-      try {
-        ch.send({ type: "broadcast", event: "reservation", payload: { kind, at: Date.now() } });
-      } catch {}
-      setTimeout(() => {
-        try {
-          supabase.removeChannel(ch);
-        } catch {}
-      }, 800);
-    });
-  } catch (e) {
-    console.warn("[driver-feed] broadcast failed", e);
-  }
+export function broadcastDriverFeed(kind: string ="reservation") {
+ try {
+ const ch = (supabase as any).channel("driver-feed"{
+ config: { broadcast: { self: false, ack: false } },
+ });
+ ch.subscribe((status: string) => {
+ if (status!=="SUBSCRIBED") return;
+ try {
+ ch.send({ type:"broadcast"event:"reservation"payload: { kind, at: Date.now() } });
+ } catch {}
+ setTimeout(() => {
+ try {
+ supabase.removeChannel(ch);
+ } catch {}
+ }, 800);
+ });
+ } catch (e) {
+ console.warn("[driver-feed] broadcast failed"e);
+ }
 }
 

@@ -8,1005 +8,733 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AProposRouteImport } from './routes/a-propos'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as CarteRouteImport } from './routes/carte'
-import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as DriverRouteImport } from './routes/driver'
-import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
-import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
-import { Route as ReservationRouteImport } from './routes/reservation'
-import { Route as ReserverRouteImport } from './routes/reserver'
-import { Route as SecuriteRouteImport } from './routes/securite'
-import { Route as ServicesRouteImport } from './routes/services'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as ApiManifestRouteImport } from './routes/api/manifest'
-import { Route as BlogIndexRouteImport } from './routes/blog.index'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
-import { Route as ClientChatRouteImport } from './routes/client.chat'
-import { Route as ClientDashboardRouteImport } from './routes/client.dashboard'
-import { Route as ClientFacturesRouteImport } from './routes/client.factures'
-import { Route as ClientForgotPasswordRouteImport } from './routes/client.forgot-password'
-import { Route as ClientHistoriqueRouteImport } from './routes/client.historique'
-import { Route as ClientLoginRouteImport } from './routes/client.login'
-import { Route as ClientProfilRouteImport } from './routes/client.profil'
-import { Route as ClientResetPasswordRouteImport } from './routes/client.reset-password'
-import { Route as ClientTrajetsRouteImport } from './routes/client.trajets'
-import { Route as CourseIdRouteImport } from './routes/course.$id'
-import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
-import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
-import { Route as ReservationIdRouteImport } from './routes/reservation.$id'
-import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
-import { Route as ApiAdminSendCourseEmailRouteImport } from './routes/api/admin/send-course-email'
-import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
-import { Route as ApiPublicDriverLocationRouteImport } from './routes/api/public/driver-location'
-import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
-import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/public/notify-reservation'
-import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
-import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
-import { Route as ApiPublicReviewsRouteImport } from './routes/api/public/reviews'
-import { Route as ApiPublicContactVcfRouteImport } from './routes/api/public/contact.vcf'
-import { Route as ApiPublicHooksRecomputeDurationsTickRouteImport } from './routes/api/public/hooks/recompute-durations-tick'
-import { Route as ApiPublicHooksRecurringRidesTickRouteImport } from './routes/api/public/hooks/recurring-rides-tick'
-import { Route as ApiPublicHooksRideRemindersTickRouteImport } from './routes/api/public/hooks/ride-reminders-tick'
+import { Route as rootRouteImport } from'./routes/__root'
+import { Route as IndexRouteImport } from'./routes/index'
+import { Route as AProposRouteImport } from'./routes/a-propos'
+import { Route as AdminRouteImport } from'./routes/admin'
+import { Route as CarteRouteImport } from'./routes/carte'
+import { Route as ConfidentialiteRouteImport } from'./routes/confidentialite'
+import { Route as ContactRouteImport } from'./routes/contact'
+import { Route as DriverRouteImport } from'./routes/driver'
+import { Route as MentionsLegalesRouteImport } from'./routes/mentions-legales'
+import { Route as QrGeneratorRouteImport } from'./routes/qr-generator'
+import { Route as ReservationRouteImport } from'./routes/reservation'
+import { Route as ReserverRouteImport } from'./routes/reserver'
+import { Route as SecuriteRouteImport } from'./routes/securite'
+import { Route as ServicesRouteImport } from'./routes/services'
+import { Route as SitemapDotxmlRouteImport } from'./routes/sitemap[.]xml'
+import { Route as ApiChatRouteImport } from'./routes/api/chat'
+import { Route as ApiManifestRouteImport } from'./routes/api/manifest'
+import { Route as BlogIndexRouteImport } from'./routes/blog.index'
+import { Route as BlogSlugRouteImport } from'./routes/blog.$slug'
+import { Route as ClientChatRouteImport } from'./routes/client.chat'
+import { Route as ClientDashboardRouteImport } from'./routes/client.dashboard'
+import { Route as ClientFacturesRouteImport } from'./routes/client.factures'
+import { Route as ClientForgotPasswordRouteImport } from'./routes/client.forgot-password'
+import { Route as ClientHistoriqueRouteImport } from'./routes/client.historique'
+import { Route as ClientLoginRouteImport } from'./routes/client.login'
+import { Route as ClientProfilRouteImport } from'./routes/client.profil'
+import { Route as ClientResetPasswordRouteImport } from'./routes/client.reset-password'
+import { Route as ClientTrajetsRouteImport } from'./routes/client.trajets'
+import { Route as CourseIdRouteImport } from'./routes/course.$id'
+import { Route as DestinationsIndexRouteImport } from'./routes/destinations.index'
+import { Route as DestinationsSlugRouteImport } from'./routes/destinations.$slug'
+import { Route as EmailUnsubscribeRouteImport } from'./routes/email/unsubscribe'
+import { Route as ReservationIdRouteImport } from'./routes/reservation.$id'
+import { Route as SuiviIdRouteImport } from'./routes/suivi.$id'
+import { Route as ApiAdminSendCourseEmailRouteImport } from'./routes/api/admin/send-course-email'
+import { Route as ApiPublicContactRouteImport } from'./routes/api/public/contact'
+import { Route as ApiPublicDriverLocationRouteImport } from'./routes/api/public/driver-location'
+import { Route as ApiPublicGeocodeRouteImport } from'./routes/api/public/geocode'
+import { Route as ApiPublicNotifyReservationRouteImport } from'./routes/api/public/notify-reservation'
+import { Route as ApiPublicNotifyReservationClientRouteImport } from'./routes/api/public/notify-reservation-client'
+import { Route as ApiPublicPushDedupCheckRouteImport } from'./routes/api/public/push-dedup-check'
+import { Route as ApiPublicReviewsRouteImport } from'./routes/api/public/reviews'
+import { Route as ApiPublicContactVcfRouteImport } from'./routes/api/public/contact.vcf'
+import { Route as ApiPublicHooksRecomputeDurationsTickRouteImport } from'./routes/api/public/hooks/recompute-durations-tick'
+import { Route as ApiPublicHooksRecurringRidesTickRouteImport } from'./routes/api/public/hooks/recurring-rides-tick'
+import { Route as ApiPublicHooksRideRemindersTickRouteImport } from'./routes/api/public/hooks/ride-reminders-tick'
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
+ id:'/'path:'/'getParentRoute: () => rootRouteImport,
 } as any)
 const AProposRoute = AProposRouteImport.update({
-  id: '/a-propos',
-  path: '/a-propos',
-  getParentRoute: () => rootRouteImport,
+ id:'/a-propos'path:'/a-propos'getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
+ id:'/admin'path:'/admin'getParentRoute: () => rootRouteImport,
 } as any)
 const CarteRoute = CarteRouteImport.update({
-  id: '/carte',
-  path: '/carte',
-  getParentRoute: () => rootRouteImport,
+ id:'/carte'path:'/carte'getParentRoute: () => rootRouteImport,
 } as any)
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
-  id: '/confidentialite',
-  path: '/confidentialite',
-  getParentRoute: () => rootRouteImport,
+ id:'/confidentialite'path:'/confidentialite'getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
+ id:'/contact'path:'/contact'getParentRoute: () => rootRouteImport,
 } as any)
 const DriverRoute = DriverRouteImport.update({
-  id: '/driver',
-  path: '/driver',
-  getParentRoute: () => rootRouteImport,
+ id:'/driver'path:'/driver'getParentRoute: () => rootRouteImport,
 } as any)
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
-  id: '/mentions-legales',
-  path: '/mentions-legales',
-  getParentRoute: () => rootRouteImport,
+ id:'/mentions-legales'path:'/mentions-legales'getParentRoute: () => rootRouteImport,
 } as any)
 const QrGeneratorRoute = QrGeneratorRouteImport.update({
-  id: '/qr-generator',
-  path: '/qr-generator',
-  getParentRoute: () => rootRouteImport,
+ id:'/qr-generator'path:'/qr-generator'getParentRoute: () => rootRouteImport,
 } as any)
 const ReservationRoute = ReservationRouteImport.update({
-  id: '/reservation',
-  path: '/reservation',
-  getParentRoute: () => rootRouteImport,
+ id:'/reservation'path:'/reservation'getParentRoute: () => rootRouteImport,
 } as any)
 const ReserverRoute = ReserverRouteImport.update({
-  id: '/reserver',
-  path: '/reserver',
-  getParentRoute: () => rootRouteImport,
+ id:'/reserver'path:'/reserver'getParentRoute: () => rootRouteImport,
 } as any)
 const SecuriteRoute = SecuriteRouteImport.update({
-  id: '/securite',
-  path: '/securite',
-  getParentRoute: () => rootRouteImport,
+ id:'/securite'path:'/securite'getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => rootRouteImport,
+ id:'/services'path:'/services'getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
+ id:'/sitemap.xml'path:'/sitemap.xml'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/chat'path:'/api/chat'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiManifestRoute = ApiManifestRouteImport.update({
-  id: '/api/manifest',
-  path: '/api/manifest',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/manifest'path:'/api/manifest'getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
-  id: '/blog/',
-  path: '/blog/',
-  getParentRoute: () => rootRouteImport,
+ id:'/blog/'path:'/blog/'getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/blog/$slug',
-  path: '/blog/$slug',
-  getParentRoute: () => rootRouteImport,
+ id:'/blog/$slug'path:'/blog/$slug'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientChatRoute = ClientChatRouteImport.update({
-  id: '/client/chat',
-  path: '/client/chat',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/chat'path:'/client/chat'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientDashboardRoute = ClientDashboardRouteImport.update({
-  id: '/client/dashboard',
-  path: '/client/dashboard',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/dashboard'path:'/client/dashboard'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientFacturesRoute = ClientFacturesRouteImport.update({
-  id: '/client/factures',
-  path: '/client/factures',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/factures'path:'/client/factures'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientForgotPasswordRoute = ClientForgotPasswordRouteImport.update({
-  id: '/client/forgot-password',
-  path: '/client/forgot-password',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/forgot-password'path:'/client/forgot-password'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientHistoriqueRoute = ClientHistoriqueRouteImport.update({
-  id: '/client/historique',
-  path: '/client/historique',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/historique'path:'/client/historique'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientLoginRoute = ClientLoginRouteImport.update({
-  id: '/client/login',
-  path: '/client/login',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/login'path:'/client/login'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientProfilRoute = ClientProfilRouteImport.update({
-  id: '/client/profil',
-  path: '/client/profil',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/profil'path:'/client/profil'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientResetPasswordRoute = ClientResetPasswordRouteImport.update({
-  id: '/client/reset-password',
-  path: '/client/reset-password',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/reset-password'path:'/client/reset-password'getParentRoute: () => rootRouteImport,
 } as any)
 const ClientTrajetsRoute = ClientTrajetsRouteImport.update({
-  id: '/client/trajets',
-  path: '/client/trajets',
-  getParentRoute: () => rootRouteImport,
+ id:'/client/trajets'path:'/client/trajets'getParentRoute: () => rootRouteImport,
 } as any)
 const CourseIdRoute = CourseIdRouteImport.update({
-  id: '/course/$id',
-  path: '/course/$id',
-  getParentRoute: () => rootRouteImport,
+ id:'/course/$id'path:'/course/$id'getParentRoute: () => rootRouteImport,
 } as any)
 const DestinationsIndexRoute = DestinationsIndexRouteImport.update({
-  id: '/destinations/',
-  path: '/destinations/',
-  getParentRoute: () => rootRouteImport,
+ id:'/destinations/'path:'/destinations/'getParentRoute: () => rootRouteImport,
 } as any)
 const DestinationsSlugRoute = DestinationsSlugRouteImport.update({
-  id: '/destinations/$slug',
-  path: '/destinations/$slug',
-  getParentRoute: () => rootRouteImport,
+ id:'/destinations/$slug'path:'/destinations/$slug'getParentRoute: () => rootRouteImport,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
-  id: '/email/unsubscribe',
-  path: '/email/unsubscribe',
-  getParentRoute: () => rootRouteImport,
+ id:'/email/unsubscribe'path:'/email/unsubscribe'getParentRoute: () => rootRouteImport,
 } as any)
 const ReservationIdRoute = ReservationIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ReservationRoute,
+ id:'/$id'path:'/$id'getParentRoute: () => ReservationRoute,
 } as any)
 const SuiviIdRoute = SuiviIdRouteImport.update({
-  id: '/suivi/$id',
-  path: '/suivi/$id',
-  getParentRoute: () => rootRouteImport,
+ id:'/suivi/$id'path:'/suivi/$id'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminSendCourseEmailRoute = ApiAdminSendCourseEmailRouteImport.update({
-  id: '/api/admin/send-course-email',
-  path: '/api/admin/send-course-email',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/admin/send-course-email'path:'/api/admin/send-course-email'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
-  id: '/api/public/contact',
-  path: '/api/public/contact',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/public/contact'path:'/api/public/contact'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicDriverLocationRoute = ApiPublicDriverLocationRouteImport.update({
-  id: '/api/public/driver-location',
-  path: '/api/public/driver-location',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/public/driver-location'path:'/api/public/driver-location'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
-  id: '/api/public/geocode',
-  path: '/api/public/geocode',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/public/geocode'path:'/api/public/geocode'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicNotifyReservationRoute =
-  ApiPublicNotifyReservationRouteImport.update({
-    id: '/api/public/notify-reservation',
-    path: '/api/public/notify-reservation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+ ApiPublicNotifyReservationRouteImport.update({
+ id:'/api/public/notify-reservation'path:'/api/public/notify-reservation'getParentRoute: () => rootRouteImport,
+ } as any)
 const ApiPublicNotifyReservationClientRoute =
-  ApiPublicNotifyReservationClientRouteImport.update({
-    id: '/api/public/notify-reservation-client',
-    path: '/api/public/notify-reservation-client',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+ ApiPublicNotifyReservationClientRouteImport.update({
+ id:'/api/public/notify-reservation-client'path:'/api/public/notify-reservation-client'getParentRoute: () => rootRouteImport,
+ } as any)
 const ApiPublicPushDedupCheckRoute = ApiPublicPushDedupCheckRouteImport.update({
-  id: '/api/public/push-dedup-check',
-  path: '/api/public/push-dedup-check',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/public/push-dedup-check'path:'/api/public/push-dedup-check'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicReviewsRoute = ApiPublicReviewsRouteImport.update({
-  id: '/api/public/reviews',
-  path: '/api/public/reviews',
-  getParentRoute: () => rootRouteImport,
+ id:'/api/public/reviews'path:'/api/public/reviews'getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicContactVcfRoute = ApiPublicContactVcfRouteImport.update({
-  id: '/vcf',
-  path: '/vcf',
-  getParentRoute: () => ApiPublicContactRoute,
+ id:'/vcf'path:'/vcf'getParentRoute: () => ApiPublicContactRoute,
 } as any)
 const ApiPublicHooksRecomputeDurationsTickRoute =
-  ApiPublicHooksRecomputeDurationsTickRouteImport.update({
-    id: '/api/public/hooks/recompute-durations-tick',
-    path: '/api/public/hooks/recompute-durations-tick',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+ ApiPublicHooksRecomputeDurationsTickRouteImport.update({
+ id:'/api/public/hooks/recompute-durations-tick'path:'/api/public/hooks/recompute-durations-tick'getParentRoute: () => rootRouteImport,
+ } as any)
 const ApiPublicHooksRecurringRidesTickRoute =
-  ApiPublicHooksRecurringRidesTickRouteImport.update({
-    id: '/api/public/hooks/recurring-rides-tick',
-    path: '/api/public/hooks/recurring-rides-tick',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+ ApiPublicHooksRecurringRidesTickRouteImport.update({
+ id:'/api/public/hooks/recurring-rides-tick'path:'/api/public/hooks/recurring-rides-tick'getParentRoute: () => rootRouteImport,
+ } as any)
 const ApiPublicHooksRideRemindersTickRoute =
-  ApiPublicHooksRideRemindersTickRouteImport.update({
-    id: '/api/public/hooks/ride-reminders-tick',
-    path: '/api/public/hooks/ride-reminders-tick',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+ ApiPublicHooksRideRemindersTickRouteImport.update({
+ id:'/api/public/hooks/ride-reminders-tick'path:'/api/public/hooks/ride-reminders-tick'getParentRoute: () => rootRouteImport,
+ } as any)
 
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/a-propos': typeof AProposRoute
-  '/admin': typeof AdminRoute
-  '/carte': typeof CarteRoute
-  '/confidentialite': typeof ConfidentialiteRoute
-  '/contact': typeof ContactRoute
-  '/driver': typeof DriverRoute
-  '/mentions-legales': typeof MentionsLegalesRoute
-  '/qr-generator': typeof QrGeneratorRoute
-  '/reservation': typeof ReservationRouteWithChildren
-  '/reserver': typeof ReserverRoute
-  '/securite': typeof SecuriteRoute
-  '/services': typeof ServicesRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/chat': typeof ApiChatRoute
-  '/api/manifest': typeof ApiManifestRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/client/chat': typeof ClientChatRoute
-  '/client/dashboard': typeof ClientDashboardRoute
-  '/client/factures': typeof ClientFacturesRoute
-  '/client/forgot-password': typeof ClientForgotPasswordRoute
-  '/client/historique': typeof ClientHistoriqueRoute
-  '/client/login': typeof ClientLoginRoute
-  '/client/profil': typeof ClientProfilRoute
-  '/client/reset-password': typeof ClientResetPasswordRoute
-  '/client/trajets': typeof ClientTrajetsRoute
-  '/course/$id': typeof CourseIdRoute
-  '/destinations/$slug': typeof DestinationsSlugRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
-  '/reservation/$id': typeof ReservationIdRoute
-  '/suivi/$id': typeof SuiviIdRoute
-  '/blog/': typeof BlogIndexRoute
-  '/destinations/': typeof DestinationsIndexRoute
-  '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
-  '/api/public/contact': typeof ApiPublicContactRouteWithChildren
-  '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
-  '/api/public/geocode': typeof ApiPublicGeocodeRoute
-  '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
-  '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
-  '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
-  '/api/public/reviews': typeof ApiPublicReviewsRoute
-  '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
-  '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
-  '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
-  '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
+export interface FileRoutesByFullPath {'/': typeof IndexRoute'/a-propos': typeof AProposRoute'/admin': typeof AdminRoute'/carte': typeof CarteRoute'/confidentialite': typeof ConfidentialiteRoute'/contact': typeof ContactRoute'/driver': typeof DriverRoute'/mentions-legales': typeof MentionsLegalesRoute'/qr-generator': typeof QrGeneratorRoute'/reservation': typeof ReservationRouteWithChildren'/reserver': typeof ReserverRoute'/securite': typeof SecuriteRoute'/services': typeof ServicesRoute'/sitemap.xml': typeof SitemapDotxmlRoute'/api/chat': typeof ApiChatRoute'/api/manifest': typeof ApiManifestRoute'/blog/$slug': typeof BlogSlugRoute'/client/chat': typeof ClientChatRoute'/client/dashboard': typeof ClientDashboardRoute'/client/factures': typeof ClientFacturesRoute'/client/forgot-password': typeof ClientForgotPasswordRoute'/client/historique': typeof ClientHistoriqueRoute'/client/login': typeof ClientLoginRoute'/client/profil': typeof ClientProfilRoute'/client/reset-password': typeof ClientResetPasswordRoute'/client/trajets': typeof ClientTrajetsRoute'/course/$id': typeof CourseIdRoute'/destinations/$slug': typeof DestinationsSlugRoute'/email/unsubscribe': typeof EmailUnsubscribeRoute'/reservation/$id': typeof ReservationIdRoute'/suivi/$id': typeof SuiviIdRoute'/blog/': typeof BlogIndexRoute'/destinations/': typeof DestinationsIndexRoute'/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute'/api/public/contact': typeof ApiPublicContactRouteWithChildren'/api/public/driver-location': typeof ApiPublicDriverLocationRoute'/api/public/geocode': typeof ApiPublicGeocodeRoute'/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute'/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute'/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute'/api/public/reviews': typeof ApiPublicReviewsRoute'/api/public/contact/vcf': typeof ApiPublicContactVcfRoute'/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute'/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute'/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
 }
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/a-propos': typeof AProposRoute
-  '/admin': typeof AdminRoute
-  '/carte': typeof CarteRoute
-  '/confidentialite': typeof ConfidentialiteRoute
-  '/contact': typeof ContactRoute
-  '/driver': typeof DriverRoute
-  '/mentions-legales': typeof MentionsLegalesRoute
-  '/qr-generator': typeof QrGeneratorRoute
-  '/reservation': typeof ReservationRouteWithChildren
-  '/reserver': typeof ReserverRoute
-  '/securite': typeof SecuriteRoute
-  '/services': typeof ServicesRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/chat': typeof ApiChatRoute
-  '/api/manifest': typeof ApiManifestRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/client/chat': typeof ClientChatRoute
-  '/client/dashboard': typeof ClientDashboardRoute
-  '/client/factures': typeof ClientFacturesRoute
-  '/client/forgot-password': typeof ClientForgotPasswordRoute
-  '/client/historique': typeof ClientHistoriqueRoute
-  '/client/login': typeof ClientLoginRoute
-  '/client/profil': typeof ClientProfilRoute
-  '/client/reset-password': typeof ClientResetPasswordRoute
-  '/client/trajets': typeof ClientTrajetsRoute
-  '/course/$id': typeof CourseIdRoute
-  '/destinations/$slug': typeof DestinationsSlugRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
-  '/reservation/$id': typeof ReservationIdRoute
-  '/suivi/$id': typeof SuiviIdRoute
-  '/blog': typeof BlogIndexRoute
-  '/destinations': typeof DestinationsIndexRoute
-  '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
-  '/api/public/contact': typeof ApiPublicContactRouteWithChildren
-  '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
-  '/api/public/geocode': typeof ApiPublicGeocodeRoute
-  '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
-  '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
-  '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
-  '/api/public/reviews': typeof ApiPublicReviewsRoute
-  '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
-  '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
-  '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
-  '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
+export interface FileRoutesByTo {'/': typeof IndexRoute'/a-propos': typeof AProposRoute'/admin': typeof AdminRoute'/carte': typeof CarteRoute'/confidentialite': typeof ConfidentialiteRoute'/contact': typeof ContactRoute'/driver': typeof DriverRoute'/mentions-legales': typeof MentionsLegalesRoute'/qr-generator': typeof QrGeneratorRoute'/reservation': typeof ReservationRouteWithChildren'/reserver': typeof ReserverRoute'/securite': typeof SecuriteRoute'/services': typeof ServicesRoute'/sitemap.xml': typeof SitemapDotxmlRoute'/api/chat': typeof ApiChatRoute'/api/manifest': typeof ApiManifestRoute'/blog/$slug': typeof BlogSlugRoute'/client/chat': typeof ClientChatRoute'/client/dashboard': typeof ClientDashboardRoute'/client/factures': typeof ClientFacturesRoute'/client/forgot-password': typeof ClientForgotPasswordRoute'/client/historique': typeof ClientHistoriqueRoute'/client/login': typeof ClientLoginRoute'/client/profil': typeof ClientProfilRoute'/client/reset-password': typeof ClientResetPasswordRoute'/client/trajets': typeof ClientTrajetsRoute'/course/$id': typeof CourseIdRoute'/destinations/$slug': typeof DestinationsSlugRoute'/email/unsubscribe': typeof EmailUnsubscribeRoute'/reservation/$id': typeof ReservationIdRoute'/suivi/$id': typeof SuiviIdRoute'/blog': typeof BlogIndexRoute'/destinations': typeof DestinationsIndexRoute'/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute'/api/public/contact': typeof ApiPublicContactRouteWithChildren'/api/public/driver-location': typeof ApiPublicDriverLocationRoute'/api/public/geocode': typeof ApiPublicGeocodeRoute'/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute'/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute'/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute'/api/public/reviews': typeof ApiPublicReviewsRoute'/api/public/contact/vcf': typeof ApiPublicContactVcfRoute'/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute'/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute'/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/a-propos': typeof AProposRoute
-  '/admin': typeof AdminRoute
-  '/carte': typeof CarteRoute
-  '/confidentialite': typeof ConfidentialiteRoute
-  '/contact': typeof ContactRoute
-  '/driver': typeof DriverRoute
-  '/mentions-legales': typeof MentionsLegalesRoute
-  '/qr-generator': typeof QrGeneratorRoute
-  '/reservation': typeof ReservationRouteWithChildren
-  '/reserver': typeof ReserverRoute
-  '/securite': typeof SecuriteRoute
-  '/services': typeof ServicesRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/chat': typeof ApiChatRoute
-  '/api/manifest': typeof ApiManifestRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/client/chat': typeof ClientChatRoute
-  '/client/dashboard': typeof ClientDashboardRoute
-  '/client/factures': typeof ClientFacturesRoute
-  '/client/forgot-password': typeof ClientForgotPasswordRoute
-  '/client/historique': typeof ClientHistoriqueRoute
-  '/client/login': typeof ClientLoginRoute
-  '/client/profil': typeof ClientProfilRoute
-  '/client/reset-password': typeof ClientResetPasswordRoute
-  '/client/trajets': typeof ClientTrajetsRoute
-  '/course/$id': typeof CourseIdRoute
-  '/destinations/$slug': typeof DestinationsSlugRoute
-  '/email/unsubscribe': typeof EmailUnsubscribeRoute
-  '/reservation/$id': typeof ReservationIdRoute
-  '/suivi/$id': typeof SuiviIdRoute
-  '/blog/': typeof BlogIndexRoute
-  '/destinations/': typeof DestinationsIndexRoute
-  '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
-  '/api/public/contact': typeof ApiPublicContactRouteWithChildren
-  '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
-  '/api/public/geocode': typeof ApiPublicGeocodeRoute
-  '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
-  '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
-  '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
-  '/api/public/reviews': typeof ApiPublicReviewsRoute
-  '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
-  '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
-  '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
-  '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
+ __root__: typeof rootRouteImport'/': typeof IndexRoute'/a-propos': typeof AProposRoute'/admin': typeof AdminRoute'/carte': typeof CarteRoute'/confidentialite': typeof ConfidentialiteRoute'/contact': typeof ContactRoute'/driver': typeof DriverRoute'/mentions-legales': typeof MentionsLegalesRoute'/qr-generator': typeof QrGeneratorRoute'/reservation': typeof ReservationRouteWithChildren'/reserver': typeof ReserverRoute'/securite': typeof SecuriteRoute'/services': typeof ServicesRoute'/sitemap.xml': typeof SitemapDotxmlRoute'/api/chat': typeof ApiChatRoute'/api/manifest': typeof ApiManifestRoute'/blog/$slug': typeof BlogSlugRoute'/client/chat': typeof ClientChatRoute'/client/dashboard': typeof ClientDashboardRoute'/client/factures': typeof ClientFacturesRoute'/client/forgot-password': typeof ClientForgotPasswordRoute'/client/historique': typeof ClientHistoriqueRoute'/client/login': typeof ClientLoginRoute'/client/profil': typeof ClientProfilRoute'/client/reset-password': typeof ClientResetPasswordRoute'/client/trajets': typeof ClientTrajetsRoute'/course/$id': typeof CourseIdRoute'/destinations/$slug': typeof DestinationsSlugRoute'/email/unsubscribe': typeof EmailUnsubscribeRoute'/reservation/$id': typeof ReservationIdRoute'/suivi/$id': typeof SuiviIdRoute'/blog/': typeof BlogIndexRoute'/destinations/': typeof DestinationsIndexRoute'/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute'/api/public/contact': typeof ApiPublicContactRouteWithChildren'/api/public/driver-location': typeof ApiPublicDriverLocationRoute'/api/public/geocode': typeof ApiPublicGeocodeRoute'/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute'/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute'/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute'/api/public/reviews': typeof ApiPublicReviewsRoute'/api/public/contact/vcf': typeof ApiPublicContactVcfRoute'/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute'/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute'/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/a-propos'
-    | '/admin'
-    | '/carte'
-    | '/confidentialite'
-    | '/contact'
-    | '/driver'
-    | '/mentions-legales'
-    | '/qr-generator'
-    | '/reservation'
-    | '/reserver'
-    | '/securite'
-    | '/services'
-    | '/sitemap.xml'
-    | '/api/chat'
-    | '/api/manifest'
-    | '/blog/$slug'
-    | '/client/chat'
-    | '/client/dashboard'
-    | '/client/factures'
-    | '/client/forgot-password'
-    | '/client/historique'
-    | '/client/login'
-    | '/client/profil'
-    | '/client/reset-password'
-    | '/client/trajets'
-    | '/course/$id'
-    | '/destinations/$slug'
-    | '/email/unsubscribe'
-    | '/reservation/$id'
-    | '/suivi/$id'
-    | '/blog/'
-    | '/destinations/'
-    | '/api/admin/send-course-email'
-    | '/api/public/contact'
-    | '/api/public/driver-location'
-    | '/api/public/geocode'
-    | '/api/public/notify-reservation'
-    | '/api/public/notify-reservation-client'
-    | '/api/public/push-dedup-check'
-    | '/api/public/reviews'
-    | '/api/public/contact/vcf'
-    | '/api/public/hooks/recompute-durations-tick'
-    | '/api/public/hooks/recurring-rides-tick'
-    | '/api/public/hooks/ride-reminders-tick'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/a-propos'
-    | '/admin'
-    | '/carte'
-    | '/confidentialite'
-    | '/contact'
-    | '/driver'
-    | '/mentions-legales'
-    | '/qr-generator'
-    | '/reservation'
-    | '/reserver'
-    | '/securite'
-    | '/services'
-    | '/sitemap.xml'
-    | '/api/chat'
-    | '/api/manifest'
-    | '/blog/$slug'
-    | '/client/chat'
-    | '/client/dashboard'
-    | '/client/factures'
-    | '/client/forgot-password'
-    | '/client/historique'
-    | '/client/login'
-    | '/client/profil'
-    | '/client/reset-password'
-    | '/client/trajets'
-    | '/course/$id'
-    | '/destinations/$slug'
-    | '/email/unsubscribe'
-    | '/reservation/$id'
-    | '/suivi/$id'
-    | '/blog'
-    | '/destinations'
-    | '/api/admin/send-course-email'
-    | '/api/public/contact'
-    | '/api/public/driver-location'
-    | '/api/public/geocode'
-    | '/api/public/notify-reservation'
-    | '/api/public/notify-reservation-client'
-    | '/api/public/push-dedup-check'
-    | '/api/public/reviews'
-    | '/api/public/contact/vcf'
-    | '/api/public/hooks/recompute-durations-tick'
-    | '/api/public/hooks/recurring-rides-tick'
-    | '/api/public/hooks/ride-reminders-tick'
-  id:
-    | '__root__'
-    | '/'
-    | '/a-propos'
-    | '/admin'
-    | '/carte'
-    | '/confidentialite'
-    | '/contact'
-    | '/driver'
-    | '/mentions-legales'
-    | '/qr-generator'
-    | '/reservation'
-    | '/reserver'
-    | '/securite'
-    | '/services'
-    | '/sitemap.xml'
-    | '/api/chat'
-    | '/api/manifest'
-    | '/blog/$slug'
-    | '/client/chat'
-    | '/client/dashboard'
-    | '/client/factures'
-    | '/client/forgot-password'
-    | '/client/historique'
-    | '/client/login'
-    | '/client/profil'
-    | '/client/reset-password'
-    | '/client/trajets'
-    | '/course/$id'
-    | '/destinations/$slug'
-    | '/email/unsubscribe'
-    | '/reservation/$id'
-    | '/suivi/$id'
-    | '/blog/'
-    | '/destinations/'
-    | '/api/admin/send-course-email'
-    | '/api/public/contact'
-    | '/api/public/driver-location'
-    | '/api/public/geocode'
-    | '/api/public/notify-reservation'
-    | '/api/public/notify-reservation-client'
-    | '/api/public/push-dedup-check'
-    | '/api/public/reviews'
-    | '/api/public/contact/vcf'
-    | '/api/public/hooks/recompute-durations-tick'
-    | '/api/public/hooks/recurring-rides-tick'
-    | '/api/public/hooks/ride-reminders-tick'
-  fileRoutesById: FileRoutesById
+ fileRoutesByFullPath: FileRoutesByFullPath
+ fullPaths:
+ |'/'
+ |'/a-propos'
+ |'/admin'
+ |'/carte'
+ |'/confidentialite'
+ |'/contact'
+ |'/driver'
+ |'/mentions-legales'
+ |'/qr-generator'
+ |'/reservation'
+ |'/reserver'
+ |'/securite'
+ |'/services'
+ |'/sitemap.xml'
+ |'/api/chat'
+ |'/api/manifest'
+ |'/blog/$slug'
+ |'/client/chat'
+ |'/client/dashboard'
+ |'/client/factures'
+ |'/client/forgot-password'
+ |'/client/historique'
+ |'/client/login'
+ |'/client/profil'
+ |'/client/reset-password'
+ |'/client/trajets'
+ |'/course/$id'
+ |'/destinations/$slug'
+ |'/email/unsubscribe'
+ |'/reservation/$id'
+ |'/suivi/$id'
+ |'/blog/'
+ |'/destinations/'
+ |'/api/admin/send-course-email'
+ |'/api/public/contact'
+ |'/api/public/driver-location'
+ |'/api/public/geocode'
+ |'/api/public/notify-reservation'
+ |'/api/public/notify-reservation-client'
+ |'/api/public/push-dedup-check'
+ |'/api/public/reviews'
+ |'/api/public/contact/vcf'
+ |'/api/public/hooks/recompute-durations-tick'
+ |'/api/public/hooks/recurring-rides-tick'
+ |'/api/public/hooks/ride-reminders-tick'
+ fileRoutesByTo: FileRoutesByTo
+ to:
+ |'/'
+ |'/a-propos'
+ |'/admin'
+ |'/carte'
+ |'/confidentialite'
+ |'/contact'
+ |'/driver'
+ |'/mentions-legales'
+ |'/qr-generator'
+ |'/reservation'
+ |'/reserver'
+ |'/securite'
+ |'/services'
+ |'/sitemap.xml'
+ |'/api/chat'
+ |'/api/manifest'
+ |'/blog/$slug'
+ |'/client/chat'
+ |'/client/dashboard'
+ |'/client/factures'
+ |'/client/forgot-password'
+ |'/client/historique'
+ |'/client/login'
+ |'/client/profil'
+ |'/client/reset-password'
+ |'/client/trajets'
+ |'/course/$id'
+ |'/destinations/$slug'
+ |'/email/unsubscribe'
+ |'/reservation/$id'
+ |'/suivi/$id'
+ |'/blog'
+ |'/destinations'
+ |'/api/admin/send-course-email'
+ |'/api/public/contact'
+ |'/api/public/driver-location'
+ |'/api/public/geocode'
+ |'/api/public/notify-reservation'
+ |'/api/public/notify-reservation-client'
+ |'/api/public/push-dedup-check'
+ |'/api/public/reviews'
+ |'/api/public/contact/vcf'
+ |'/api/public/hooks/recompute-durations-tick'
+ |'/api/public/hooks/recurring-rides-tick'
+ |'/api/public/hooks/ride-reminders-tick'
+ id:
+ |'__root__'
+ |'/'
+ |'/a-propos'
+ |'/admin'
+ |'/carte'
+ |'/confidentialite'
+ |'/contact'
+ |'/driver'
+ |'/mentions-legales'
+ |'/qr-generator'
+ |'/reservation'
+ |'/reserver'
+ |'/securite'
+ |'/services'
+ |'/sitemap.xml'
+ |'/api/chat'
+ |'/api/manifest'
+ |'/blog/$slug'
+ |'/client/chat'
+ |'/client/dashboard'
+ |'/client/factures'
+ |'/client/forgot-password'
+ |'/client/historique'
+ |'/client/login'
+ |'/client/profil'
+ |'/client/reset-password'
+ |'/client/trajets'
+ |'/course/$id'
+ |'/destinations/$slug'
+ |'/email/unsubscribe'
+ |'/reservation/$id'
+ |'/suivi/$id'
+ |'/blog/'
+ |'/destinations/'
+ |'/api/admin/send-course-email'
+ |'/api/public/contact'
+ |'/api/public/driver-location'
+ |'/api/public/geocode'
+ |'/api/public/notify-reservation'
+ |'/api/public/notify-reservation-client'
+ |'/api/public/push-dedup-check'
+ |'/api/public/reviews'
+ |'/api/public/contact/vcf'
+ |'/api/public/hooks/recompute-durations-tick'
+ |'/api/public/hooks/recurring-rides-tick'
+ |'/api/public/hooks/ride-reminders-tick'
+ fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AProposRoute: typeof AProposRoute
-  AdminRoute: typeof AdminRoute
-  CarteRoute: typeof CarteRoute
-  ConfidentialiteRoute: typeof ConfidentialiteRoute
-  ContactRoute: typeof ContactRoute
-  DriverRoute: typeof DriverRoute
-  MentionsLegalesRoute: typeof MentionsLegalesRoute
-  QrGeneratorRoute: typeof QrGeneratorRoute
-  ReservationRoute: typeof ReservationRouteWithChildren
-  ReserverRoute: typeof ReserverRoute
-  SecuriteRoute: typeof SecuriteRoute
-  ServicesRoute: typeof ServicesRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiChatRoute: typeof ApiChatRoute
-  ApiManifestRoute: typeof ApiManifestRoute
-  BlogSlugRoute: typeof BlogSlugRoute
-  ClientChatRoute: typeof ClientChatRoute
-  ClientDashboardRoute: typeof ClientDashboardRoute
-  ClientFacturesRoute: typeof ClientFacturesRoute
-  ClientForgotPasswordRoute: typeof ClientForgotPasswordRoute
-  ClientHistoriqueRoute: typeof ClientHistoriqueRoute
-  ClientLoginRoute: typeof ClientLoginRoute
-  ClientProfilRoute: typeof ClientProfilRoute
-  ClientResetPasswordRoute: typeof ClientResetPasswordRoute
-  ClientTrajetsRoute: typeof ClientTrajetsRoute
-  CourseIdRoute: typeof CourseIdRoute
-  DestinationsSlugRoute: typeof DestinationsSlugRoute
-  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
-  SuiviIdRoute: typeof SuiviIdRoute
-  BlogIndexRoute: typeof BlogIndexRoute
-  DestinationsIndexRoute: typeof DestinationsIndexRoute
-  ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
-  ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
-  ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
-  ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
-  ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
-  ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
-  ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
-  ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
-  ApiPublicHooksRecomputeDurationsTickRoute: typeof ApiPublicHooksRecomputeDurationsTickRoute
-  ApiPublicHooksRecurringRidesTickRoute: typeof ApiPublicHooksRecurringRidesTickRoute
-  ApiPublicHooksRideRemindersTickRoute: typeof ApiPublicHooksRideRemindersTickRoute
+ IndexRoute: typeof IndexRoute
+ AProposRoute: typeof AProposRoute
+ AdminRoute: typeof AdminRoute
+ CarteRoute: typeof CarteRoute
+ ConfidentialiteRoute: typeof ConfidentialiteRoute
+ ContactRoute: typeof ContactRoute
+ DriverRoute: typeof DriverRoute
+ MentionsLegalesRoute: typeof MentionsLegalesRoute
+ QrGeneratorRoute: typeof QrGeneratorRoute
+ ReservationRoute: typeof ReservationRouteWithChildren
+ ReserverRoute: typeof ReserverRoute
+ SecuriteRoute: typeof SecuriteRoute
+ ServicesRoute: typeof ServicesRoute
+ SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+ ApiChatRoute: typeof ApiChatRoute
+ ApiManifestRoute: typeof ApiManifestRoute
+ BlogSlugRoute: typeof BlogSlugRoute
+ ClientChatRoute: typeof ClientChatRoute
+ ClientDashboardRoute: typeof ClientDashboardRoute
+ ClientFacturesRoute: typeof ClientFacturesRoute
+ ClientForgotPasswordRoute: typeof ClientForgotPasswordRoute
+ ClientHistoriqueRoute: typeof ClientHistoriqueRoute
+ ClientLoginRoute: typeof ClientLoginRoute
+ ClientProfilRoute: typeof ClientProfilRoute
+ ClientResetPasswordRoute: typeof ClientResetPasswordRoute
+ ClientTrajetsRoute: typeof ClientTrajetsRoute
+ CourseIdRoute: typeof CourseIdRoute
+ DestinationsSlugRoute: typeof DestinationsSlugRoute
+ EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+ SuiviIdRoute: typeof SuiviIdRoute
+ BlogIndexRoute: typeof BlogIndexRoute
+ DestinationsIndexRoute: typeof DestinationsIndexRoute
+ ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
+ ApiPublicContactRoute: typeof ApiPublicContactRouteWithChildren
+ ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
+ ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
+ ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
+ ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
+ ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
+ ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
+ ApiPublicHooksRecomputeDurationsTickRoute: typeof ApiPublicHooksRecomputeDurationsTickRoute
+ ApiPublicHooksRecurringRidesTickRoute: typeof ApiPublicHooksRecurringRidesTickRoute
+ ApiPublicHooksRideRemindersTickRoute: typeof ApiPublicHooksRideRemindersTickRoute
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/a-propos': {
-      id: '/a-propos'
-      path: '/a-propos'
-      fullPath: '/a-propos'
-      preLoaderRoute: typeof AProposRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/carte': {
-      id: '/carte'
-      path: '/carte'
-      fullPath: '/carte'
-      preLoaderRoute: typeof CarteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/confidentialite': {
-      id: '/confidentialite'
-      path: '/confidentialite'
-      fullPath: '/confidentialite'
-      preLoaderRoute: typeof ConfidentialiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/driver': {
-      id: '/driver'
-      path: '/driver'
-      fullPath: '/driver'
-      preLoaderRoute: typeof DriverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mentions-legales': {
-      id: '/mentions-legales'
-      path: '/mentions-legales'
-      fullPath: '/mentions-legales'
-      preLoaderRoute: typeof MentionsLegalesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/qr-generator': {
-      id: '/qr-generator'
-      path: '/qr-generator'
-      fullPath: '/qr-generator'
-      preLoaderRoute: typeof QrGeneratorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reservation': {
-      id: '/reservation'
-      path: '/reservation'
-      fullPath: '/reservation'
-      preLoaderRoute: typeof ReservationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reserver': {
-      id: '/reserver'
-      path: '/reserver'
-      fullPath: '/reserver'
-      preLoaderRoute: typeof ReserverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/securite': {
-      id: '/securite'
-      path: '/securite'
-      fullPath: '/securite'
-      preLoaderRoute: typeof SecuriteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/manifest': {
-      id: '/api/manifest'
-      path: '/api/manifest'
-      fullPath: '/api/manifest'
-      preLoaderRoute: typeof ApiManifestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/': {
-      id: '/blog/'
-      path: '/blog'
-      fullPath: '/blog/'
-      preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/blog/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/chat': {
-      id: '/client/chat'
-      path: '/client/chat'
-      fullPath: '/client/chat'
-      preLoaderRoute: typeof ClientChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/dashboard': {
-      id: '/client/dashboard'
-      path: '/client/dashboard'
-      fullPath: '/client/dashboard'
-      preLoaderRoute: typeof ClientDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/factures': {
-      id: '/client/factures'
-      path: '/client/factures'
-      fullPath: '/client/factures'
-      preLoaderRoute: typeof ClientFacturesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/forgot-password': {
-      id: '/client/forgot-password'
-      path: '/client/forgot-password'
-      fullPath: '/client/forgot-password'
-      preLoaderRoute: typeof ClientForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/historique': {
-      id: '/client/historique'
-      path: '/client/historique'
-      fullPath: '/client/historique'
-      preLoaderRoute: typeof ClientHistoriqueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/login': {
-      id: '/client/login'
-      path: '/client/login'
-      fullPath: '/client/login'
-      preLoaderRoute: typeof ClientLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/profil': {
-      id: '/client/profil'
-      path: '/client/profil'
-      fullPath: '/client/profil'
-      preLoaderRoute: typeof ClientProfilRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/reset-password': {
-      id: '/client/reset-password'
-      path: '/client/reset-password'
-      fullPath: '/client/reset-password'
-      preLoaderRoute: typeof ClientResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client/trajets': {
-      id: '/client/trajets'
-      path: '/client/trajets'
-      fullPath: '/client/trajets'
-      preLoaderRoute: typeof ClientTrajetsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/course/$id': {
-      id: '/course/$id'
-      path: '/course/$id'
-      fullPath: '/course/$id'
-      preLoaderRoute: typeof CourseIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/destinations/': {
-      id: '/destinations/'
-      path: '/destinations'
-      fullPath: '/destinations/'
-      preLoaderRoute: typeof DestinationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/destinations/$slug': {
-      id: '/destinations/$slug'
-      path: '/destinations/$slug'
-      fullPath: '/destinations/$slug'
-      preLoaderRoute: typeof DestinationsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/email/unsubscribe': {
-      id: '/email/unsubscribe'
-      path: '/email/unsubscribe'
-      fullPath: '/email/unsubscribe'
-      preLoaderRoute: typeof EmailUnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reservation/$id': {
-      id: '/reservation/$id'
-      path: '/$id'
-      fullPath: '/reservation/$id'
-      preLoaderRoute: typeof ReservationIdRouteImport
-      parentRoute: typeof ReservationRoute
-    }
-    '/suivi/$id': {
-      id: '/suivi/$id'
-      path: '/suivi/$id'
-      fullPath: '/suivi/$id'
-      preLoaderRoute: typeof SuiviIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/admin/send-course-email': {
-      id: '/api/admin/send-course-email'
-      path: '/api/admin/send-course-email'
-      fullPath: '/api/admin/send-course-email'
-      preLoaderRoute: typeof ApiAdminSendCourseEmailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/contact': {
-      id: '/api/public/contact'
-      path: '/api/public/contact'
-      fullPath: '/api/public/contact'
-      preLoaderRoute: typeof ApiPublicContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/driver-location': {
-      id: '/api/public/driver-location'
-      path: '/api/public/driver-location'
-      fullPath: '/api/public/driver-location'
-      preLoaderRoute: typeof ApiPublicDriverLocationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/geocode': {
-      id: '/api/public/geocode'
-      path: '/api/public/geocode'
-      fullPath: '/api/public/geocode'
-      preLoaderRoute: typeof ApiPublicGeocodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/notify-reservation': {
-      id: '/api/public/notify-reservation'
-      path: '/api/public/notify-reservation'
-      fullPath: '/api/public/notify-reservation'
-      preLoaderRoute: typeof ApiPublicNotifyReservationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/notify-reservation-client': {
-      id: '/api/public/notify-reservation-client'
-      path: '/api/public/notify-reservation-client'
-      fullPath: '/api/public/notify-reservation-client'
-      preLoaderRoute: typeof ApiPublicNotifyReservationClientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/push-dedup-check': {
-      id: '/api/public/push-dedup-check'
-      path: '/api/public/push-dedup-check'
-      fullPath: '/api/public/push-dedup-check'
-      preLoaderRoute: typeof ApiPublicPushDedupCheckRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/reviews': {
-      id: '/api/public/reviews'
-      path: '/api/public/reviews'
-      fullPath: '/api/public/reviews'
-      preLoaderRoute: typeof ApiPublicReviewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/contact/vcf': {
-      id: '/api/public/contact/vcf'
-      path: '/vcf'
-      fullPath: '/api/public/contact/vcf'
-      preLoaderRoute: typeof ApiPublicContactVcfRouteImport
-      parentRoute: typeof ApiPublicContactRoute
-    }
-    '/api/public/hooks/recompute-durations-tick': {
-      id: '/api/public/hooks/recompute-durations-tick'
-      path: '/api/public/hooks/recompute-durations-tick'
-      fullPath: '/api/public/hooks/recompute-durations-tick'
-      preLoaderRoute: typeof ApiPublicHooksRecomputeDurationsTickRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/recurring-rides-tick': {
-      id: '/api/public/hooks/recurring-rides-tick'
-      path: '/api/public/hooks/recurring-rides-tick'
-      fullPath: '/api/public/hooks/recurring-rides-tick'
-      preLoaderRoute: typeof ApiPublicHooksRecurringRidesTickRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/ride-reminders-tick': {
-      id: '/api/public/hooks/ride-reminders-tick'
-      path: '/api/public/hooks/ride-reminders-tick'
-      fullPath: '/api/public/hooks/ride-reminders-tick'
-      preLoaderRoute: typeof ApiPublicHooksRideRemindersTickRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
+declare module'@tanstack/react-router' {
+ interface FileRoutesByPath {'/': {
+ id:'/'
+ path:'/'
+ fullPath:'/'
+ preLoaderRoute: typeof IndexRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/a-propos': {
+ id:'/a-propos'
+ path:'/a-propos'
+ fullPath:'/a-propos'
+ preLoaderRoute: typeof AProposRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/admin': {
+ id:'/admin'
+ path:'/admin'
+ fullPath:'/admin'
+ preLoaderRoute: typeof AdminRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/carte': {
+ id:'/carte'
+ path:'/carte'
+ fullPath:'/carte'
+ preLoaderRoute: typeof CarteRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/confidentialite': {
+ id:'/confidentialite'
+ path:'/confidentialite'
+ fullPath:'/confidentialite'
+ preLoaderRoute: typeof ConfidentialiteRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/contact': {
+ id:'/contact'
+ path:'/contact'
+ fullPath:'/contact'
+ preLoaderRoute: typeof ContactRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/driver': {
+ id:'/driver'
+ path:'/driver'
+ fullPath:'/driver'
+ preLoaderRoute: typeof DriverRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/mentions-legales': {
+ id:'/mentions-legales'
+ path:'/mentions-legales'
+ fullPath:'/mentions-legales'
+ preLoaderRoute: typeof MentionsLegalesRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/qr-generator': {
+ id:'/qr-generator'
+ path:'/qr-generator'
+ fullPath:'/qr-generator'
+ preLoaderRoute: typeof QrGeneratorRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/reservation': {
+ id:'/reservation'
+ path:'/reservation'
+ fullPath:'/reservation'
+ preLoaderRoute: typeof ReservationRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/reserver': {
+ id:'/reserver'
+ path:'/reserver'
+ fullPath:'/reserver'
+ preLoaderRoute: typeof ReserverRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/securite': {
+ id:'/securite'
+ path:'/securite'
+ fullPath:'/securite'
+ preLoaderRoute: typeof SecuriteRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/services': {
+ id:'/services'
+ path:'/services'
+ fullPath:'/services'
+ preLoaderRoute: typeof ServicesRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/sitemap.xml': {
+ id:'/sitemap.xml'
+ path:'/sitemap.xml'
+ fullPath:'/sitemap.xml'
+ preLoaderRoute: typeof SitemapDotxmlRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/chat': {
+ id:'/api/chat'
+ path:'/api/chat'
+ fullPath:'/api/chat'
+ preLoaderRoute: typeof ApiChatRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/manifest': {
+ id:'/api/manifest'
+ path:'/api/manifest'
+ fullPath:'/api/manifest'
+ preLoaderRoute: typeof ApiManifestRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/blog/': {
+ id:'/blog/'
+ path:'/blog'
+ fullPath:'/blog/'
+ preLoaderRoute: typeof BlogIndexRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/blog/$slug': {
+ id:'/blog/$slug'
+ path:'/blog/$slug'
+ fullPath:'/blog/$slug'
+ preLoaderRoute: typeof BlogSlugRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/chat': {
+ id:'/client/chat'
+ path:'/client/chat'
+ fullPath:'/client/chat'
+ preLoaderRoute: typeof ClientChatRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/dashboard': {
+ id:'/client/dashboard'
+ path:'/client/dashboard'
+ fullPath:'/client/dashboard'
+ preLoaderRoute: typeof ClientDashboardRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/factures': {
+ id:'/client/factures'
+ path:'/client/factures'
+ fullPath:'/client/factures'
+ preLoaderRoute: typeof ClientFacturesRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/forgot-password': {
+ id:'/client/forgot-password'
+ path:'/client/forgot-password'
+ fullPath:'/client/forgot-password'
+ preLoaderRoute: typeof ClientForgotPasswordRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/historique': {
+ id:'/client/historique'
+ path:'/client/historique'
+ fullPath:'/client/historique'
+ preLoaderRoute: typeof ClientHistoriqueRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/login': {
+ id:'/client/login'
+ path:'/client/login'
+ fullPath:'/client/login'
+ preLoaderRoute: typeof ClientLoginRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/profil': {
+ id:'/client/profil'
+ path:'/client/profil'
+ fullPath:'/client/profil'
+ preLoaderRoute: typeof ClientProfilRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/reset-password': {
+ id:'/client/reset-password'
+ path:'/client/reset-password'
+ fullPath:'/client/reset-password'
+ preLoaderRoute: typeof ClientResetPasswordRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/client/trajets': {
+ id:'/client/trajets'
+ path:'/client/trajets'
+ fullPath:'/client/trajets'
+ preLoaderRoute: typeof ClientTrajetsRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/course/$id': {
+ id:'/course/$id'
+ path:'/course/$id'
+ fullPath:'/course/$id'
+ preLoaderRoute: typeof CourseIdRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/destinations/': {
+ id:'/destinations/'
+ path:'/destinations'
+ fullPath:'/destinations/'
+ preLoaderRoute: typeof DestinationsIndexRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/destinations/$slug': {
+ id:'/destinations/$slug'
+ path:'/destinations/$slug'
+ fullPath:'/destinations/$slug'
+ preLoaderRoute: typeof DestinationsSlugRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/email/unsubscribe': {
+ id:'/email/unsubscribe'
+ path:'/email/unsubscribe'
+ fullPath:'/email/unsubscribe'
+ preLoaderRoute: typeof EmailUnsubscribeRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/reservation/$id': {
+ id:'/reservation/$id'
+ path:'/$id'
+ fullPath:'/reservation/$id'
+ preLoaderRoute: typeof ReservationIdRouteImport
+ parentRoute: typeof ReservationRoute
+ }'/suivi/$id': {
+ id:'/suivi/$id'
+ path:'/suivi/$id'
+ fullPath:'/suivi/$id'
+ preLoaderRoute: typeof SuiviIdRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/admin/send-course-email': {
+ id:'/api/admin/send-course-email'
+ path:'/api/admin/send-course-email'
+ fullPath:'/api/admin/send-course-email'
+ preLoaderRoute: typeof ApiAdminSendCourseEmailRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/contact': {
+ id:'/api/public/contact'
+ path:'/api/public/contact'
+ fullPath:'/api/public/contact'
+ preLoaderRoute: typeof ApiPublicContactRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/driver-location': {
+ id:'/api/public/driver-location'
+ path:'/api/public/driver-location'
+ fullPath:'/api/public/driver-location'
+ preLoaderRoute: typeof ApiPublicDriverLocationRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/geocode': {
+ id:'/api/public/geocode'
+ path:'/api/public/geocode'
+ fullPath:'/api/public/geocode'
+ preLoaderRoute: typeof ApiPublicGeocodeRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/notify-reservation': {
+ id:'/api/public/notify-reservation'
+ path:'/api/public/notify-reservation'
+ fullPath:'/api/public/notify-reservation'
+ preLoaderRoute: typeof ApiPublicNotifyReservationRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/notify-reservation-client': {
+ id:'/api/public/notify-reservation-client'
+ path:'/api/public/notify-reservation-client'
+ fullPath:'/api/public/notify-reservation-client'
+ preLoaderRoute: typeof ApiPublicNotifyReservationClientRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/push-dedup-check': {
+ id:'/api/public/push-dedup-check'
+ path:'/api/public/push-dedup-check'
+ fullPath:'/api/public/push-dedup-check'
+ preLoaderRoute: typeof ApiPublicPushDedupCheckRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/reviews': {
+ id:'/api/public/reviews'
+ path:'/api/public/reviews'
+ fullPath:'/api/public/reviews'
+ preLoaderRoute: typeof ApiPublicReviewsRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/contact/vcf': {
+ id:'/api/public/contact/vcf'
+ path:'/vcf'
+ fullPath:'/api/public/contact/vcf'
+ preLoaderRoute: typeof ApiPublicContactVcfRouteImport
+ parentRoute: typeof ApiPublicContactRoute
+ }'/api/public/hooks/recompute-durations-tick': {
+ id:'/api/public/hooks/recompute-durations-tick'
+ path:'/api/public/hooks/recompute-durations-tick'
+ fullPath:'/api/public/hooks/recompute-durations-tick'
+ preLoaderRoute: typeof ApiPublicHooksRecomputeDurationsTickRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/hooks/recurring-rides-tick': {
+ id:'/api/public/hooks/recurring-rides-tick'
+ path:'/api/public/hooks/recurring-rides-tick'
+ fullPath:'/api/public/hooks/recurring-rides-tick'
+ preLoaderRoute: typeof ApiPublicHooksRecurringRidesTickRouteImport
+ parentRoute: typeof rootRouteImport
+ }'/api/public/hooks/ride-reminders-tick': {
+ id:'/api/public/hooks/ride-reminders-tick'
+ path:'/api/public/hooks/ride-reminders-tick'
+ fullPath:'/api/public/hooks/ride-reminders-tick'
+ preLoaderRoute: typeof ApiPublicHooksRideRemindersTickRouteImport
+ parentRoute: typeof rootRouteImport
+ }
+ }
 }
 
 interface ReservationRouteChildren {
-  ReservationIdRoute: typeof ReservationIdRoute
+ ReservationIdRoute: typeof ReservationIdRoute
 }
 
 const ReservationRouteChildren: ReservationRouteChildren = {
-  ReservationIdRoute: ReservationIdRoute,
+ ReservationIdRoute: ReservationIdRoute,
 }
 
 const ReservationRouteWithChildren = ReservationRoute._addFileChildren(
-  ReservationRouteChildren,
+ ReservationRouteChildren,
 )
 
 interface ApiPublicContactRouteChildren {
-  ApiPublicContactVcfRoute: typeof ApiPublicContactVcfRoute
+ ApiPublicContactVcfRoute: typeof ApiPublicContactVcfRoute
 }
 
 const ApiPublicContactRouteChildren: ApiPublicContactRouteChildren = {
-  ApiPublicContactVcfRoute: ApiPublicContactVcfRoute,
+ ApiPublicContactVcfRoute: ApiPublicContactVcfRoute,
 }
 
 const ApiPublicContactRouteWithChildren =
-  ApiPublicContactRoute._addFileChildren(ApiPublicContactRouteChildren)
+ ApiPublicContactRoute._addFileChildren(ApiPublicContactRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AProposRoute: AProposRoute,
-  AdminRoute: AdminRoute,
-  CarteRoute: CarteRoute,
-  ConfidentialiteRoute: ConfidentialiteRoute,
-  ContactRoute: ContactRoute,
-  DriverRoute: DriverRoute,
-  MentionsLegalesRoute: MentionsLegalesRoute,
-  QrGeneratorRoute: QrGeneratorRoute,
-  ReservationRoute: ReservationRouteWithChildren,
-  ReserverRoute: ReserverRoute,
-  SecuriteRoute: SecuriteRoute,
-  ServicesRoute: ServicesRoute,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiChatRoute: ApiChatRoute,
-  ApiManifestRoute: ApiManifestRoute,
-  BlogSlugRoute: BlogSlugRoute,
-  ClientChatRoute: ClientChatRoute,
-  ClientDashboardRoute: ClientDashboardRoute,
-  ClientFacturesRoute: ClientFacturesRoute,
-  ClientForgotPasswordRoute: ClientForgotPasswordRoute,
-  ClientHistoriqueRoute: ClientHistoriqueRoute,
-  ClientLoginRoute: ClientLoginRoute,
-  ClientProfilRoute: ClientProfilRoute,
-  ClientResetPasswordRoute: ClientResetPasswordRoute,
-  ClientTrajetsRoute: ClientTrajetsRoute,
-  CourseIdRoute: CourseIdRoute,
-  DestinationsSlugRoute: DestinationsSlugRoute,
-  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
-  SuiviIdRoute: SuiviIdRoute,
-  BlogIndexRoute: BlogIndexRoute,
-  DestinationsIndexRoute: DestinationsIndexRoute,
-  ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
-  ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
-  ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
-  ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
-  ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
-  ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
-  ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
-  ApiPublicReviewsRoute: ApiPublicReviewsRoute,
-  ApiPublicHooksRecomputeDurationsTickRoute:
-    ApiPublicHooksRecomputeDurationsTickRoute,
-  ApiPublicHooksRecurringRidesTickRoute: ApiPublicHooksRecurringRidesTickRoute,
-  ApiPublicHooksRideRemindersTickRoute: ApiPublicHooksRideRemindersTickRoute,
+ IndexRoute: IndexRoute,
+ AProposRoute: AProposRoute,
+ AdminRoute: AdminRoute,
+ CarteRoute: CarteRoute,
+ ConfidentialiteRoute: ConfidentialiteRoute,
+ ContactRoute: ContactRoute,
+ DriverRoute: DriverRoute,
+ MentionsLegalesRoute: MentionsLegalesRoute,
+ QrGeneratorRoute: QrGeneratorRoute,
+ ReservationRoute: ReservationRouteWithChildren,
+ ReserverRoute: ReserverRoute,
+ SecuriteRoute: SecuriteRoute,
+ ServicesRoute: ServicesRoute,
+ SitemapDotxmlRoute: SitemapDotxmlRoute,
+ ApiChatRoute: ApiChatRoute,
+ ApiManifestRoute: ApiManifestRoute,
+ BlogSlugRoute: BlogSlugRoute,
+ ClientChatRoute: ClientChatRoute,
+ ClientDashboardRoute: ClientDashboardRoute,
+ ClientFacturesRoute: ClientFacturesRoute,
+ ClientForgotPasswordRoute: ClientForgotPasswordRoute,
+ ClientHistoriqueRoute: ClientHistoriqueRoute,
+ ClientLoginRoute: ClientLoginRoute,
+ ClientProfilRoute: ClientProfilRoute,
+ ClientResetPasswordRoute: ClientResetPasswordRoute,
+ ClientTrajetsRoute: ClientTrajetsRoute,
+ CourseIdRoute: CourseIdRoute,
+ DestinationsSlugRoute: DestinationsSlugRoute,
+ EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+ SuiviIdRoute: SuiviIdRoute,
+ BlogIndexRoute: BlogIndexRoute,
+ DestinationsIndexRoute: DestinationsIndexRoute,
+ ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,
+ ApiPublicContactRoute: ApiPublicContactRouteWithChildren,
+ ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
+ ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
+ ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
+ ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
+ ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
+ ApiPublicReviewsRoute: ApiPublicReviewsRoute,
+ ApiPublicHooksRecomputeDurationsTickRoute:
+ ApiPublicHooksRecomputeDurationsTickRoute,
+ ApiPublicHooksRecurringRidesTickRoute: ApiPublicHooksRecurringRidesTickRoute,
+ ApiPublicHooksRideRemindersTickRoute: ApiPublicHooksRideRemindersTickRoute,
 }
-export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
