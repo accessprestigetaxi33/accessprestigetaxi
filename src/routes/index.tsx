@@ -88,7 +88,16 @@ const heroSlides = (lang: "fr" | "en") => [
     alt: lang === "en" ? "7-seat Mercedes van, Access Prestige Taxi" : "Van Mercedes 7 places Access Prestige Taxi",
     pan: { x: 16, y: -10 },
   },
+  {
+    src: photoAudi,
+    alt:
+      lang === "en"
+        ? "Audi Q6 e-tron, 100% electric premium SUV, Access Prestige Taxi"
+        : "Audi Q6 e-tron, SUV premium 100 % électrique Access Prestige Taxi",
+    pan: { x: -16, y: -8 },
+  },
 ];
+
 
 
 const HERO_SLIDE_DURATION_MS = 6000;
