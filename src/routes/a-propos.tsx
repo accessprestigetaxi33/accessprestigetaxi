@@ -2,12 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
+import { DRIVERS, SERVICE_HOURS } from "@/data/drivers";
 
 const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
 const ABOUT_DESC =
   "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente-Maritime.";
 const ABOUT_URL = "https://accessprestigetaxi.lovable.app/a-propos";
-
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
@@ -18,8 +18,32 @@ export const Route = createFileRoute("/a-propos")({
       { property: "og:description", content: ABOUT_DESC },
       { property: "og:url", content: ABOUT_URL },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: ABOUT_TITLE },
+      { name: "twitter:description", content: ABOUT_DESC },
     ],
     links: seoLinks("/a-propos"),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          additionalType: "https://schema.org/TaxiService",
+          name: "Access Prestige Taxi",
+          slogan: "L'excellence à chaque trajet",
+          url: ABOUT_URL,
+          telephone: DRIVERS.map((d) => d.intl),
+          areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "20:00",
+          },
+        }),
+      },
+    ],
   }),
   component: AboutPage,
 });

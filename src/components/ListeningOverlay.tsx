@@ -5,6 +5,13 @@ interface ListeningOverlayProps {
   label?: string;
   hint?: string;
   onCancel?: () => void;
+  /** Live interim/final transcript to display while/after listening. */
+  transcript?: string;
+  /** Translated error message (mic denied, no speech, no support…). */
+  errorMessage?: string;
+  /** Called when the user wants to relaunch listening (after error or result). */
+  onRetry?: () => void;
+  retryLabel?: string;
 }
 
 /**
@@ -18,6 +25,10 @@ export function ListeningOverlay({
   label = "Je vous écoute…",
   hint = "Parlez clairement. Touchez « Arrêter » pour valider.",
   onCancel,
+  transcript,
+  errorMessage,
+  onRetry,
+  retryLabel = "Réessayer",
 }: ListeningOverlayProps) {
   // ESC to cancel on desktop
   React.useEffect(() => {
@@ -107,33 +118,98 @@ export function ListeningOverlay({
       <div style={{ color: "#fff", fontSize: 20, fontWeight: 700, textAlign: "center", marginBottom: 6 }}>
         {label}
       </div>
-      <div style={{ color: "#cbd5e1", fontSize: 14, textAlign: "center", maxWidth: 320, marginBottom: 28 }}>
-        {hint}
-      </div>
+      {hint && (
+        <div style={{ color: "#cbd5e1", fontSize: 14, textAlign: "center", maxWidth: 320, marginBottom: 16 }}>
+          {hint}
+        </div>
+      )}
 
-      {onCancel && (
-        <button
-          type="button"
-          onClick={onCancel}
+      {errorMessage && (
+        <div
+          role="alert"
           style={{
-            minHeight: 48,
-            padding: "12px 28px",
-            borderRadius: 999,
-            border: "1px solid rgba(255,255,255,0.2)",
-            background: "rgba(255,255,255,0.08)",
-            color: "#fff",
-            fontSize: 15,
-            fontWeight: 700,
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            touchAction: "manipulation",
+            color: "#fecaca",
+            background: "rgba(220,38,38,0.15)",
+            border: "1px solid rgba(220,38,38,0.35)",
+            borderRadius: 12,
+            padding: "10px 16px",
+            fontSize: 14,
+            textAlign: "center",
+            maxWidth: 320,
+            marginBottom: 16,
           }}
         >
-          <span aria-hidden="true">⏹</span> Arrêter
-        </button>
+          {errorMessage}
+        </div>
       )}
+
+      {transcript && (
+        <div
+          style={{
+            color: "#fff",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 12,
+            padding: "10px 16px",
+            fontSize: 16,
+            fontStyle: "italic",
+            textAlign: "center",
+            maxWidth: 320,
+            marginBottom: 20,
+          }}
+        >
+          « {transcript} »
+        </div>
+      )}
+
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
+        {onRetry && (
+          <button
+            type="button"
+            onClick={onRetry}
+            style={{
+              minHeight: 48,
+              padding: "12px 24px",
+              borderRadius: 999,
+              border: "1px solid rgba(245,200,66,0.5)",
+              background: "rgba(245,200,66,0.15)",
+              color: "#f5c842",
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              touchAction: "manipulation",
+            }}
+          >
+            <span aria-hidden="true">🔄</span> {retryLabel}
+          </button>
+        )}
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{
+              minHeight: 48,
+              padding: "12px 28px",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.2)",
+              background: "rgba(255,255,255,0.08)",
+              color: "#fff",
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              touchAction: "manipulation",
+            }}
+          >
+            <span aria-hidden="true">⏹</span> Arrêter
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -45,6 +45,9 @@ export const Route = createFileRoute("/reserver")({
       { property: "og:description", content: RESERVER_DESC },
       { property: "og:url", content: RESERVER_URL },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: RESERVER_TITLE },
+      { name: "twitter:description", content: RESERVER_DESC },
       {
         name: "viewport",
         content:
@@ -53,6 +56,33 @@ export const Route = createFileRoute("/reserver")({
       { name: "theme-color", content: "#1a1209" },
     ],
     links: seoLinks("/reserver"),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "TaxiService",
+          name: "Access Prestige Taxi — Réservation en ligne",
+          description: RESERVER_DESC,
+          url: RESERVER_URL,
+          provider: {
+            "@type": "LocalBusiness",
+            name: "Access Prestige Taxi",
+            areaServed: "Charente-Maritime",
+          },
+          areaServed: {
+            "@type": "AdministrativeArea",
+            name: "Charente-Maritime",
+          },
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "20:00",
+          },
+        }),
+      },
+    ],
   }),
   component: ReservationPage,
 });
@@ -106,6 +136,19 @@ const UI = {
     dictateDestinationLabel: "Dictez la destination",
     listeningHintBoth: "Dites votre trajet, ex : « 12 rue de la République à gare d\u2019Angoulême »",
     listeningHintDest: "Dites uniquement votre destination. Touchez « Arrêter » pour valider.",
+    voiceRetry: "🔄 Réessayer",
+    voiceNoSupport: "La saisie vocale n'est pas supportée par ce navigateur. Continuez à taper votre adresse.",
+    voiceErrorTitle: "Erreur de dictée",
+    childSeatLabel: "Siège enfant",
+    childSeatNone: "Aucun",
+    childSeatBaby: "Siège bébé",
+    childSeatBooster: "Réhausseur",
+    childSeatBoth: "Siège bébé + réhausseur",
+    groupTransportLabel: "Transport de groupe (jusqu'à 7 personnes)",
+    groupTransportHint: "Un véhicule Mercedes 7 places (Alain) sera assigné automatiquement.",
+    recapTitle: "Récapitulatif",
+    recapChildSeat: "Siège enfant :",
+    recapGroupTransport: "🚐 Transport de groupe activé — véhicule Mercedes 7 places",
   },
   en: {
     micDenied: "Microphone access denied. Allow it in your browser settings.",
@@ -149,6 +192,19 @@ const UI = {
     dictateDestinationLabel: "Dictate destination",
     listeningHintBoth: "Say your trip, e.g. « 12 rue de la République to Angoulême station »",
     listeningHintDest: "Say only your destination. Tap « Stop » to confirm.",
+    voiceRetry: "🔄 Retry",
+    voiceNoSupport: "Voice input is not supported by this browser. Please keep typing your address.",
+    voiceErrorTitle: "Voice input error",
+    childSeatLabel: "Child seat",
+    childSeatNone: "None",
+    childSeatBaby: "Baby seat",
+    childSeatBooster: "Booster seat",
+    childSeatBoth: "Baby seat + booster seat",
+    groupTransportLabel: "Group transport (up to 7 people)",
+    groupTransportHint: "A 7-seat Mercedes van (Alain) will be assigned automatically.",
+    recapTitle: "Summary",
+    recapChildSeat: "Child seat:",
+    recapGroupTransport: "🚐 Group transport enabled — 7-seat Mercedes van",
   },
 } as const;
 
@@ -168,6 +224,8 @@ interface FormState {
   phone: string;
   email: string;
   message: string;
+  siegeEnfant: "aucun" | "bebe" | "rehausseur" | "les_deux";
+  groupTransport: boolean;
 }
 
 interface OrsResult {
@@ -836,6 +894,11 @@ function ReservationPage() {
   const destinationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [voiceListening, setVoiceListening] = useState(false);
   const [voiceBothListening, setVoiceBothListening] = useState(false);
+  const [voiceOverlayOpen, setVoiceOverlayOpen] = useState(false);
+  const [voicePhase, setVoicePhase] = useState<"listening" | "error" | "done">("listening");
+  const [voiceInterim, setVoiceInterim] = useState("");
+  const [voiceErrorMsg, setVoiceErrorMsg] = useState("");
+  const voiceModeRef = useRef<"dest" | "both">("both");
   const voiceRecogRef = useRef<any>(null);
   const voiceBothRecogRef = useRef<any>(null);
   const resolveDestinationAddressRef = useRef<(() => void) | null>(null);
@@ -865,21 +928,27 @@ function ReservationPage() {
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
-      toast.error(
-        lang === "en"
-          ? "Voice input is not supported by this browser — please type your addresses."
-          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
-        { duration: 7000 },
-      );
+      const msg = lang === "en" ? UI.en.voiceNoSupport : UI.fr.voiceNoSupport;
+      toast.error(msg, { duration: 7000 });
+      setVoiceErrorMsg(msg);
+      setVoicePhase("error");
+      setVoiceOverlayOpen(true);
       return;
     }
     gaEvent("reservation_voice_start");
+    voiceModeRef.current = "dest";
     const recog = new SR();
     recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
-    recog.interimResults = false;
+    recog.interimResults = true;
     recog.maxAlternatives = 1;
-    recog.onstart = () => setVoiceListening(true);
+    recog.onstart = () => {
+      setVoiceListening(true);
+      setVoicePhase("listening");
+      setVoiceOverlayOpen(true);
+      setVoiceInterim("");
+      setVoiceErrorMsg("");
+    };
     recog.onend = () => {
       setVoiceListening(false);
       voiceRecogRef.current = null;
@@ -888,22 +957,40 @@ function ReservationPage() {
       setVoiceListening(false);
       voiceRecogRef.current = null;
       const code = e?.error as string | undefined;
+      let msg = "";
       if (code === "not-allowed" || code === "service-not-allowed") {
-        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
+        msg = lang === "en" ? UI.en.micDenied : UI.fr.micDenied;
       } else if (code === "no-speech") {
-        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
+        msg = lang === "en" ? UI.en.noVoice : UI.fr.noVoice;
       } else if (code === "audio-capture") {
-        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
+        msg = lang === "en" ? UI.en.noMic : UI.fr.noMic;
       } else if (code === "network") {
-        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
+        msg = lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork;
+      }
+      if (msg) {
+        setVoiceErrorMsg(msg);
+        setVoicePhase("error");
+        setVoiceOverlayOpen(true);
+        toast.error(msg, { duration: 6000 });
       }
     };
     recog.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      set("destination", transcript);
-      setToCoord(null);
-      // Déclencher la résolution d'adresse après un court délai
-      setTimeout(() => resolveDestinationAddressRef.current?.(), 300);
+      let interim = "";
+      let finalText = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const res = event.results[i];
+        if (res.isFinal) finalText += res[0].transcript;
+        else interim += res[0].transcript;
+      }
+      if (interim) setVoiceInterim(interim);
+      if (finalText) {
+        set("destination", finalText);
+        setToCoord(null);
+        setVoiceInterim(finalText);
+        setVoicePhase("done");
+        // Déclencher la résolution d'adresse après un court délai
+        setTimeout(() => resolveDestinationAddressRef.current?.(), 300);
+      }
     };
     voiceRecogRef.current = recog;
     try {
@@ -935,21 +1022,27 @@ function ReservationPage() {
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
-      toast.error(
-        lang === "en"
-          ? "Voice input is not supported by this browser — please type your addresses."
-          : "La saisie vocale n'est pas supportée par ce navigateur — saisissez vos adresses au clavier.",
-        { duration: 7000 },
-      );
+      const msg = lang === "en" ? UI.en.voiceNoSupport : UI.fr.voiceNoSupport;
+      toast.error(msg, { duration: 7000 });
+      setVoiceErrorMsg(msg);
+      setVoicePhase("error");
+      setVoiceOverlayOpen(true);
       return;
     }
     gaEvent("reservation_voice_start");
+    voiceModeRef.current = "both";
     const recog = new SR();
     recog.lang = lang === "en" ? "en-GB" : "fr-FR";
     recog.continuous = false;
-    recog.interimResults = false;
+    recog.interimResults = true;
     recog.maxAlternatives = 1;
-    recog.onstart = () => setVoiceBothListening(true);
+    recog.onstart = () => {
+      setVoiceBothListening(true);
+      setVoicePhase("listening");
+      setVoiceOverlayOpen(true);
+      setVoiceInterim("");
+      setVoiceErrorMsg("");
+    };
     recog.onend = () => {
       setVoiceBothListening(false);
       voiceBothRecogRef.current = null;
@@ -958,18 +1051,35 @@ function ReservationPage() {
       setVoiceBothListening(false);
       voiceBothRecogRef.current = null;
       const code = e?.error as string | undefined;
+      let msg = "";
       if (code === "not-allowed" || code === "service-not-allowed") {
-        toast.error(lang === "en" ? UI.en.micDenied : UI.fr.micDenied, { duration: 6000 });
+        msg = lang === "en" ? UI.en.micDenied : UI.fr.micDenied;
       } else if (code === "no-speech") {
-        toast.info(lang === "en" ? UI.en.noVoice : UI.fr.noVoice);
+        msg = lang === "en" ? UI.en.noVoice : UI.fr.noVoice;
       } else if (code === "audio-capture") {
-        toast.error(lang === "en" ? UI.en.noMic : UI.fr.noMic);
+        msg = lang === "en" ? UI.en.noMic : UI.fr.noMic;
       } else if (code === "network") {
-        toast.error(lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork);
+        msg = lang === "en" ? UI.en.micNetwork : UI.fr.micNetwork;
+      }
+      if (msg) {
+        setVoiceErrorMsg(msg);
+        setVoicePhase("error");
+        setVoiceOverlayOpen(true);
+        toast.error(msg, { duration: 6000 });
       }
     };
     recog.onresult = (event: any) => {
-      const transcript: string = event.results[0][0].transcript;
+      let interim = "";
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const res = event.results[i];
+        if (res.isFinal) transcript += res[0].transcript;
+        else interim += res[0].transcript;
+      }
+      if (interim) setVoiceInterim(interim);
+      if (!transcript) return;
+      setVoiceInterim(transcript);
+      setVoicePhase("done");
       const raw = transcript.trim();
       let depart = "";
       let destination = "";
@@ -1063,6 +1173,8 @@ function ReservationPage() {
       phone: "",
       email: "",
       message: "",
+      siegeEnfant: "aucun",
+      groupTransport: false,
     };
   });
 
@@ -1614,6 +1726,19 @@ function ReservationPage() {
 
       const fullName = `${f.prenom} ${f.nom}`.trim();
       const pickupIsoFinal = f.date && f.heure ? toParisIso(f.date, f.heure) : new Date().toISOString();
+      const passagersFinal = f.groupTransport ? Math.max(f.passagers, 5) : f.passagers;
+
+      // ── Ajout des mentions siège enfant / transport de groupe dans le message ──
+      const extraLines: string[] = [];
+      if (f.siegeEnfant !== "aucun") {
+        const seatLabel =
+          f.siegeEnfant === "bebe" ? u.childSeatBaby : f.siegeEnfant === "rehausseur" ? u.childSeatBooster : u.childSeatBoth;
+        extraLines.push(`${u.recapChildSeat} ${seatLabel}`);
+      }
+      if (f.groupTransport) {
+        extraLines.push(u.recapGroupTransport);
+      }
+      const fullMessage = [f.message.trim(), ...extraLines].filter(Boolean).join("\n");
 
       const inserted = await createReservationPublic({
         data: {
@@ -1623,7 +1748,7 @@ function ReservationPage() {
           depart: f.depart,
           arrivee: f.destination,
           pickup_datetime: pickupIsoFinal,
-          passagers: f.passagers,
+          passagers: passagersFinal,
           bagages: f.bagages,
           suivi_id: suiviId,
           distance_km: distanceKm,
@@ -1632,8 +1757,8 @@ function ReservationPage() {
           tarif_jour: tarifJour,
           prix_estime: calculerPrixMixteLocal(distanceKm, new Date(pickupIsoFinal).getTime(), dureeS),
           lang: (lang === "en" ? "en" : "fr") as "fr" | "en",
-          message: f.message.trim() || null,
-          service_type: "standard",
+          message: fullMessage || null,
+          service_type: f.groupTransport ? "groupe" : "standard",
           source: "form",
         },
       });
@@ -1730,6 +1855,19 @@ function ReservationPage() {
     } catch {
       /* noop */
     }
+  };
+  const closeVoiceOverlay = () => {
+    stopAllListening();
+    setVoiceOverlayOpen(false);
+  };
+  const retryVoice = () => {
+    setVoiceOverlayOpen(false);
+    setVoiceInterim("");
+    setVoiceErrorMsg("");
+    setTimeout(() => {
+      if (voiceModeRef.current === "dest") startVoiceRecognition();
+      else startVoiceRecognitionBoth();
+    }, 80);
   };
 
   return (
@@ -2494,7 +2632,7 @@ function ReservationPage() {
                       onChange={(e) => set("passagers", parseInt(e.target.value))}
                       style={inputStyle()}
                     >
-                      {[1, 2, 3, 4, 5, 6].map((n) => (
+                      {[1, 2, 3, 4, 5, 6, 7].map((n) => (
                         <option key={n} value={n}>
                           {n} {n > 1 ? t("res.loc.passengers_pl") : t("res.loc.passenger_sg")}
                         </option>
@@ -2556,6 +2694,84 @@ function ReservationPage() {
               </div>
             </div>
 
+            {/* ── Siège enfant + Transport de groupe ── */}
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                padding: "18px 16px",
+                border: "1px solid #ede8de",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+              }}
+            >
+              <div>
+                <label
+                  style={{
+                    fontSize: 11,
+                    color: "#7a6a50",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    marginBottom: 6,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  <span>🧒</span>
+                  {u.childSeatLabel}
+                </label>
+                <select
+                  value={f.siegeEnfant}
+                  onChange={(e) => set("siegeEnfant", e.target.value as FormState["siegeEnfant"])}
+                  style={inputStyle()}
+                >
+                  <option value="aucun">{u.childSeatNone}</option>
+                  <option value="bebe">{u.childSeatBaby}</option>
+                  <option value="rehausseur">{u.childSeatBooster}</option>
+                  <option value="les_deux">{u.childSeatBoth}</option>
+                </select>
+              </div>
+
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  cursor: "pointer",
+                  padding: "10px 12px",
+                  background: f.groupTransport ? "rgba(201,168,76,0.12)" : "transparent",
+                  border: "1.5px solid rgba(201,168,76,0.25)",
+                  borderRadius: 12,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={f.groupTransport}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setF((p) => ({
+                      ...p,
+                      groupTransport: checked,
+                      passagers: checked ? Math.max(p.passagers, 5) : p.passagers,
+                    }));
+                  }}
+                  style={{ marginTop: 2, width: 18, height: 18, accentColor: "#c9a84c", flexShrink: 0 }}
+                />
+                <span>
+                  <span style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#1a1209" }}>
+                    🚐 {u.groupTransportLabel}
+                  </span>
+                  <span style={{ display: "block", fontSize: 12, color: "#7a6a50", marginTop: 2 }}>
+                    {u.groupTransportHint}
+                  </span>
+                </span>
+              </label>
+            </div>
+
             {/* ── Demandes spéciales (siège bébé, animal, bagages volumineux…) ── */}
             <div
               style={{
@@ -2605,6 +2821,45 @@ function ReservationPage() {
                 {f.message.length}/500
               </div>
             </div>
+
+            {/* ── Récapitulatif (siège enfant / transport de groupe) ── */}
+            {(f.siegeEnfant !== "aucun" || f.groupTransport) && (
+              <div
+                style={{
+                  background: "linear-gradient(135deg, rgba(255,253,247,0.9) 0%, rgba(252,247,234,0.8) 100%)",
+                  border: "1px solid rgba(201,168,76,0.25)",
+                  borderRadius: 14,
+                  padding: "14px 16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: "#1a1209",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    marginBottom: 2,
+                  }}
+                >
+                  {u.recapTitle}
+                </div>
+                {f.siegeEnfant !== "aucun" && (
+                  <div style={{ fontSize: 13, color: "#3a3020" }}>
+                    {u.recapChildSeat}{" "}
+                    {f.siegeEnfant === "bebe"
+                      ? u.childSeatBaby
+                      : f.siegeEnfant === "rehausseur"
+                        ? u.childSeatBooster
+                        : u.childSeatBoth}
+                  </div>
+                )}
+                {f.groupTransport && <div style={{ fontSize: 13, color: "#3a3020" }}>{u.recapGroupTransport}</div>}
+              </div>
+            )}
 
             {/* ── Bouton réserver ── */}
             <button
@@ -2746,10 +3001,26 @@ function ReservationPage() {
         )}
       </div>
       <ListeningOverlay
-        open={anyListening}
-        label={voiceBothListening ? u.listeningLabel : u.dictateDestinationLabel}
-        hint={voiceBothListening ? u.listeningHintBoth : u.listeningHintDest}
-        onCancel={stopAllListening}
+        open={voiceOverlayOpen || anyListening}
+        label={
+          voicePhase === "error"
+            ? (lang === "en" ? UI.en.voiceErrorTitle : UI.fr.voiceErrorTitle)
+            : voiceModeRef.current === "both"
+              ? u.listeningLabel
+              : u.dictateDestinationLabel
+        }
+        hint={
+          voicePhase === "listening"
+            ? voiceModeRef.current === "both"
+              ? u.listeningHintBoth
+              : u.listeningHintDest
+            : undefined
+        }
+        transcript={voiceInterim || undefined}
+        errorMessage={voicePhase === "error" ? voiceErrorMsg : undefined}
+        onRetry={voicePhase !== "listening" ? retryVoice : undefined}
+        retryLabel={lang === "en" ? UI.en.voiceRetry : UI.fr.voiceRetry}
+        onCancel={closeVoiceOverlay}
       />
     </div>
   );

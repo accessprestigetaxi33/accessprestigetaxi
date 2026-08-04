@@ -138,3 +138,29 @@ export const adminFixReservation = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { changed: !!updated };
   });
+
+/** Correction en lot : statut et/ou chauffeur attribué pour plusieurs courses. */
+export const adminBatchFixReservations = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    TokenSchema.extend({
+      reservation_ids: z.array(z.string().uuid()).min(1).max(200),
+      status: z.enum(STATUSES).optional(),
+      assigned_driver: z.string().trim().min(1).max(40).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    await requireAdmin(data.token);
+    const patch: Record<string, unknown> = {};
+    if (data.status) patch.status = data.status;
+    if (data.assigned_driver) patch.assigned_driver = data.assigned_driver;
+    if (Object.keys(patch).length === 0) return { updated: 0 };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: updated, error } = await supabaseAdmin
+      .from("reservations")
+      .update(patch as any)
+      .in("id", data.reservation_ids)
+      .select("id");
+    if (error) throw new Error(error.message);
+    return { updated: ((updated as any[]) ?? []).length };
+  });

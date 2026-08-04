@@ -8,7 +8,7 @@ import { useT } from "@/i18n/I18nProvider";
 
 export const Route = createFileRoute("/client/chat")({
   head: () => ({
-    meta: [{ title: "Chat — Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Chat — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: ClientChatPage,
 });

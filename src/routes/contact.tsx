@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { Phone, Mail, MapPin, MessageCircle, Clock } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
+import { DRIVERS } from "@/data/drivers";
 
-const CONTACT_TITLE = "Contact : Access Prestige Taxi";
+const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
 const CONTACT_DESC =
   "Contactez Access Prestige Taxi : 06 50 26 00 15, taxi.city033@gmail.com. Interventions en Charente-Maritime.";
 const CONTACT_URL = "https://accessprestigetaxi.lovable.app/contact";
@@ -17,8 +18,33 @@ export const Route = createFileRoute("/contact")({
       { property: "og:description", content: CONTACT_DESC },
       { property: "og:url", content: CONTACT_URL },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: CONTACT_TITLE },
+      { name: "twitter:description", content: CONTACT_DESC },
     ],
     links: seoLinks("/contact"),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          additionalType: "https://schema.org/TaxiService",
+          name: "Access Prestige Taxi",
+          slogan: "L'excellence à chaque trajet",
+          url: CONTACT_URL,
+          telephone: DRIVERS.map((d) => d.intl),
+          email: "taxi.city033@gmail.com",
+          areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "20:00",
+          },
+        }),
+      },
+    ],
   }),
   component: ContactPage,
 });

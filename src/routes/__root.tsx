@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Access Prestige Taxi — Taxi 100 % électrique à Bordeaux" },
+      { title: "Access Prestige Taxi — Taxi 100 % électrique en Charente-Maritime" },
       {
         name: "description",
         content:
@@ -105,6 +105,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://accessprestigetaxi.lovable.app/#organization",
+              name: "Access Prestige Taxi",
+              url: "https://accessprestigetaxi.lovable.app",
+              slogan: "L'excellence à chaque trajet",
+              logo: "https://accessprestigetaxi.lovable.app/favicon.png",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://accessprestigetaxi.lovable.app/#website",
+              name: "Access Prestige Taxi",
+              url: "https://accessprestigetaxi.lovable.app",
+              publisher: { "@id": "https://accessprestigetaxi.lovable.app/#organization" },
+            },
+          ],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,

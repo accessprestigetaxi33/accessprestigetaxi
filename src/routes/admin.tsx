@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
+  adminBatchFixReservations,
   adminFixReservation,
   adminOverview,
   adminSetDriverActive,
@@ -180,6 +181,7 @@ function AdminDashboard({ token }: { token: string }) {
   const setActive = useServerFn(adminSetDriverActive);
   const setRotation = useServerFn(adminSetRotation);
   const fixResa = useServerFn(adminFixReservation);
+  const batchFixResa = useServerFn(adminBatchFixReservations);
 
   const [data, setData] = useState<Overview | null>(null);
   const [loading, setLoading] = useState(true);
@@ -187,6 +189,10 @@ function AdminDashboard({ token }: { token: string }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [tab, setTab] = useState<"chauffeurs" | "courses" | "journal">("chauffeurs");
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [batchStatus, setBatchStatus] = useState<string>("");
+  const [batchDriver, setBatchDriver] = useState<string>("");
+  const [batchBusy, setBatchBusy] = useState(false);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -214,6 +220,59 @@ function AdminDashboard({ token }: { token: string }) {
         .some((v: string) => String(v).toLowerCase().includes(q)),
     );
   }, [data, query]);
+
+  const selectedIds = useMemo(() => Object.keys(selected).filter((id) => selected[id]), [selected]);
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const allFilteredSelected = filtered.length > 0 && filtered.every((r: any) => selected[r.id]);
+
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) {
+      setSelected((prev) => {
+        const next = { ...prev };
+        filtered.forEach((r: any) => delete next[r.id]);
+        return next;
+      });
+    } else {
+      setSelected((prev) => {
+        const next = { ...prev };
+        filtered.forEach((r: any) => {
+          next[r.id] = true;
+        });
+        return next;
+      });
+    }
+  };
+
+  const clearSelection = () => setSelected({});
+
+  const applyBatch = async () => {
+    if (selectedIds.length === 0) return;
+    if (!batchStatus && !batchDriver) {
+      setMsg("Choisissez un statut ou un chauffeur à appliquer.");
+      return;
+    }
+    setBatchBusy(true);
+    setMsg(null);
+    try {
+      const patch: any = { token, reservation_ids: selectedIds };
+      if (batchStatus) patch.status = batchStatus;
+      if (batchDriver) patch.assigned_driver = batchDriver;
+      const res = await batchFixResa({ data: patch });
+      setMsg(`${res.updated} course(s) mise(s) à jour.`);
+      clearSelection();
+      setBatchStatus("");
+      setBatchDriver("");
+      await refresh();
+    } catch (e: any) {
+      setMsg("Action impossible.");
+    } finally {
+      setBatchBusy(false);
+    }
+  };
 
   const act = async (key: string, fn: () => Promise<unknown>, ok: string) => {
     setBusy(key);
@@ -378,49 +437,143 @@ function AdminDashboard({ token }: { token: string }) {
               placeholder="Rechercher (client, téléphone, trajet, statut…)"
               style={{ width: "100%", padding: "11px 12px", borderRadius: 10, border: "1px solid #d8dbe0", fontSize: 15, marginBottom: 12 }}
             />
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#334155", cursor: filtered.length ? "pointer" : "default" }}>
+                <input
+                  type="checkbox"
+                  checked={allFilteredSelected}
+                  disabled={filtered.length === 0}
+                  onChange={toggleSelectAll}
+                  style={{ width: 18, height: 18 }}
+                />
+                {allFilteredSelected ? "Tout désélectionner" : "Tout sélectionner"}
+              </label>
+              {selectedIds.length > 0 && (
+                <span style={{ fontSize: 13, color: "#64748b" }}>· {selectedIds.length} sélectionnée(s)</span>
+              )}
+            </div>
             <div style={{ display: "grid", gap: 10 }}>
               {filtered.length === 0 && <div style={{ color: "#64748b", fontSize: 14 }}>Aucune course.</div>}
               {filtered.map((r: any) => (
-                <div key={r.id} style={{ border: "1px solid #eceef1", borderRadius: 12, padding: 12 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14 }}>
-                    {r.client_name || r.nom || "Client"} · {fmt(r.pickup_datetime)}
-                  </div>
-                  <div style={{ fontSize: 13, color: "#64748b", marginBottom: 8 }}>
-                    {r.depart} → {r.destination || r.arrivee}
-                  </div>
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                    <select
-                      value={r.status}
-                      onChange={(e) =>
-                        act("st-" + r.id, () => fixResa({ data: { token, reservation_id: r.id, status: e.target.value as any } }), "Statut corrigé.")
-                      }
-                      style={{ padding: "9px 10px", borderRadius: 10, border: "1px solid #d8dbe0", fontSize: 14, minHeight: 42 }}
-                    >
-                      {STATUSES.map((s) => (
-                        <option key={s} value={s}>
-                          {STATUS_LABEL[s]}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      value={r.assigned_driver || ""}
-                      onChange={(e) =>
-                        act("dr-" + r.id, () => fixResa({ data: { token, reservation_id: r.id, assigned_driver: e.target.value } }), "Chauffeur réattribué.")
-                      }
-                      style={{ padding: "9px 10px", borderRadius: 10, border: "1px solid #d8dbe0", fontSize: 14, minHeight: 42 }}
-                    >
-                      <option value="">Non attribuée</option>
-                      {data.drivers.map((d) => (
-                        <option key={d.id} value={d.id}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
+                <div
+                  key={r.id}
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    border: "1px solid " + (selected[r.id] ? GOLD : "#eceef1"),
+                    borderRadius: 12,
+                    padding: 12,
+                    background: selected[r.id] ? "#fffdf6" : "#fff",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={!!selected[r.id]}
+                    onChange={() => toggleSelect(r.id)}
+                    style={{ width: 18, height: 18, marginTop: 2, flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>
+                      {r.client_name || r.nom || "Client"} · {fmt(r.pickup_datetime)}
+                    </div>
+                    <div style={{ fontSize: 13, color: "#64748b", marginBottom: 8 }}>
+                      {r.depart} → {r.destination || r.arrivee}
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                      <select
+                        value={r.status}
+                        onChange={(e) =>
+                          act("st-" + r.id, () => fixResa({ data: { token, reservation_id: r.id, status: e.target.value as any } }), "Statut corrigé.")
+                        }
+                        style={{ padding: "9px 10px", borderRadius: 10, border: "1px solid #d8dbe0", fontSize: 14, minHeight: 42 }}
+                      >
+                        {STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {STATUS_LABEL[s]}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={r.assigned_driver || ""}
+                        onChange={(e) =>
+                          act("dr-" + r.id, () => fixResa({ data: { token, reservation_id: r.id, assigned_driver: e.target.value } }), "Chauffeur réattribué.")
+                        }
+                        style={{ padding: "9px 10px", borderRadius: 10, border: "1px solid #d8dbe0", fontSize: 14, minHeight: 42 }}
+                      >
+                        <option value="">Non attribuée</option>
+                        {data.drivers.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </section>
+        )}
+
+        {selectedIds.length > 0 && tab === "courses" && (
+          <div
+            style={{
+              position: "sticky",
+              bottom: 12,
+              zIndex: 10,
+              background: INK,
+              color: "#fff",
+              borderRadius: 14,
+              padding: 14,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
+              display: "flex",
+              gap: 10,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ fontWeight: 700, fontSize: 14, color: GOLD, whiteSpace: "nowrap" }}>
+              {selectedIds.length} sélectionnée(s)
+            </div>
+            <select
+              value={batchStatus}
+              onChange={(e) => setBatchStatus(e.target.value)}
+              style={{ padding: "9px 10px", borderRadius: 10, border: "1px solid #333", background: "#141416", color: "#fff", fontSize: 14, minHeight: 42 }}
+            >
+              <option value="">Statut inchangé</option>
+              {STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {STATUS_LABEL[s]}
+                </option>
+              ))}
+            </select>
+            <select
+              value={batchDriver}
+              onChange={(e) => setBatchDriver(e.target.value)}
+              style={{ padding: "9px 10px", borderRadius: 10, border: "1px solid #333", background: "#141416", color: "#fff", fontSize: 14, minHeight: 42 }}
+            >
+              <option value="">Chauffeur inchangé</option>
+              {data?.drivers.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+            <button
+              disabled={batchBusy}
+              onClick={() => void applyBatch()}
+              style={{ background: GOLD, color: INK, border: "none", borderRadius: 10, padding: "10px 16px", fontWeight: 800, minHeight: 42 }}
+            >
+              {batchBusy ? "Application…" : "Appliquer"}
+            </button>
+            <button
+              disabled={batchBusy}
+              onClick={clearSelection}
+              style={{ background: "transparent", color: "#fff", border: "1px solid #444", borderRadius: 10, padding: "10px 16px", fontWeight: 700, minHeight: 42 }}
+            >
+              Effacer la sélection
+            </button>
+          </div>
         )}
 
         {!loading && tab === "journal" && data && (

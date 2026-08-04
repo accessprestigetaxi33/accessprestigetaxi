@@ -9,7 +9,7 @@ export const Route = createFileRoute("/qr-generator")({
   head: () => ({
     meta: [
       { title: "Générateur QR — Access Prestige Taxi" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: QrGeneratorPage,

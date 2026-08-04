@@ -23,6 +23,38 @@ export const Route = createFileRoute("/destinations/")({
       { name: "twitter:description", content: DESC },
     ],
     links: seoLinks("/destinations"),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              name: TITLE,
+              description: DESC,
+              url: `${SITE}/destinations`,
+            },
+            {
+              "@type": "ItemList",
+              itemListElement: DESTINATIONS.map((d, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                name: d.fr.h1,
+                url: `${SITE}/destinations/${d.slug}`,
+              })),
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
+                { "@type": "ListItem", position: 2, name: "Destinations", item: `${SITE}/destinations` },
+              ],
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: DestinationsIndex,
 });
@@ -53,20 +85,8 @@ function DestinationsIndex() {
   const isEn = lang === "en";
   const c = COPY[isEn ? "en" : "fr"];
 
-  const itemList = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: DESTINATIONS.map((d, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: (isEn ? d.en : d.fr).h1,
-      url: `${SITE}/destinations/${d.slug}`,
-    })),
-  };
-
   return (
     <div className="mx-auto max-w-6xl px-5 py-14 sm:py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
       <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
       <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl md:text-5xl">{c.h1}</h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.lead}</p>

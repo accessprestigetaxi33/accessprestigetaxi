@@ -39,7 +39,7 @@ export const Route = createFileRoute("/suivi/$id")({
   head: () => ({
     meta: [
       { title: "Suivi de votre taxi — Access Prestige Taxi" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
       {
         name: "viewport",
         content:

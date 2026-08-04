@@ -10,7 +10,7 @@ export const Route = createFileRoute("/client/forgot-password")({
   head: () => ({
     meta: [
       { title: "Mot de passe oublié — Access Prestige Taxi" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ForgotPasswordPage,

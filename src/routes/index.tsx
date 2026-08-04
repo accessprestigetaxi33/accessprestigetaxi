@@ -25,6 +25,17 @@ import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
 import photoVan from "@/assets/apt-van.jpg.asset.json";
+import photoMedical from "@/assets/apt-medical.jpg";
+import photoAirport from "@/assets/apt-airport.jpg";
+import photoBusiness from "@/assets/apt-business.jpg";
+import photoPrice from "@/assets/apt-price.jpg";
+import photoLaRochelle from "@/assets/apt-larochelle.jpg";
+import photoIleDeRe from "@/assets/apt-ile-de-re.jpg";
+import photoRoyan from "@/assets/apt-royan.jpg";
+import photoGare from "@/assets/apt-gare.jpg";
+import photoStepVoice from "@/assets/apt-step-voice.jpg";
+import photoStepConfirm from "@/assets/apt-step-confirm.jpg";
+import photoStepTrack from "@/assets/apt-step-track.jpg";
 
 const BLOG_PICKS = ["hotel", "restaurant", "visite"]
   .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
@@ -114,19 +125,19 @@ const COPY = {
     servicesEyebrow: "Nos services",
     servicesTitle: "Une prestation pensée pour chaque trajet",
     services: [
-      { icon: Stethoscope, t: "Transport conventionné", d: "Trajets médicaux assis, prise en charge simplifiée." },
+      { photo: photoMedical, t: "Transport conventionné", d: "Trajets médicaux assis, prise en charge simplifiée." },
       {
         photo: photoInterior.url,
         t: "Confort intérieur",
         d: "Habitacle soigné, silence électrique, eau et chargeurs à bord.",
       },
-      { icon: PlaneTakeoff, t: "Gares & aéroports", d: "Suivi des vols et des trains, accueil en gare." },
+      { photo: photoAirport, t: "Gares & aéroports", d: "Suivi des vols et des trains, accueil en gare." },
       {
         photo: photoDriver.url,
         t: "Chauffeurs agréés",
         d: "Patricia et Alain, chauffeurs de taxi conventionnés en Charente-Maritime.",
       },
-      { icon: BriefcaseBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
+      { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       {
         photo: photoExterior.url,
         t: "Disponible 5j/7, 8h-20h",
@@ -158,7 +169,7 @@ const COPY = {
         t: "Deux chauffeurs, un standard",
         d: "Même exigence de confort, de discrétion et de ponctualité.",
       },
-      { icon: ShieldCheck, t: "Prix annoncé, prix tenu", d: "Estimation transparente avant le départ." },
+      { photo: photoPrice, t: "Prix annoncé, prix tenu", d: "Estimation transparente avant le départ." },
     ],
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
     bannerText:
@@ -167,28 +178,31 @@ const COPY = {
     destTitle: "Là où l'on vous emmène",
     destLead: "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
     destinations: [
-      { from: "La Rochelle", to: "Aéroport de La Rochelle", meta: "≈ 15 min · vol suivi" },
-      { from: "Rochefort", to: "Gare TGV", meta: "≈ 20 min · accueil quai" },
-      { from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · pont inclus" },
-      { from: "Saintes", to: "Royan", meta: "≈ 45 min · côte de Beauté" },
-      { from: "Groupe", to: "Van 7 places", meta: "Transferts à plusieurs" },
-      { from: "Domicile", to: "Hôpital / clinique", meta: "Conventionné CPAM" },
+      { img: photoAirport, from: "La Rochelle", to: "Aéroport de La Rochelle", meta: "≈ 15 min · vol suivi" },
+      { img: photoGare, from: "Rochefort", to: "Gare TGV", meta: "≈ 20 min · accueil quai" },
+      { img: photoIleDeRe, from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · pont inclus" },
+      { img: photoRoyan, from: "Saintes", to: "Royan", meta: "≈ 45 min · côte de Beauté" },
+      { img: photoVan.url, from: "Groupe", to: "Van 7 places", meta: "Transferts à plusieurs" },
+      { img: photoMedical, from: "Domicile", to: "Hôpital / clinique", meta: "Conventionné CPAM" },
     ],
     bestEyebrow: "Les best-sellers",
     bestTitle: "Nos courses les plus demandées",
     best: [
       {
         n: "01",
+        img: photoGare,
         t: "Transferts gare & aéroport",
         d: "Accueil pancarte, suivi du train ou du vol, bagages pris en charge.",
       },
       {
         n: "02",
+        img: photoMedical,
         t: "Trajets médicaux conventionnés",
         d: "Dialyse, chimiothérapie, consultations : prise en charge simplifiée.",
       },
       {
         n: "03",
+        img: photoVan.url,
         t: "Groupes jusqu'à 7 personnes",
         d: "Van Mercedes, bagages inclus, un seul véhicule pour tout le monde.",
       },
@@ -198,11 +212,22 @@ const COPY = {
     how: [
       {
         s: "1",
+        img: photoStepVoice,
         t: "Vous décrivez le trajet",
         d: "À la voix ou à l'écrit : départ, arrivée, date, heure et siège enfant.",
       },
-      { s: "2", t: "Nous confirmons", d: "Prix annoncé et chauffeur assigné, confirmation par e-mail." },
-      { s: "3", t: "Vous suivez la course", d: "Lien de suivi en temps réel, puis reçu détaillé à l'arrivée." },
+      {
+        s: "2",
+        img: photoStepConfirm,
+        t: "Nous confirmons",
+        d: "Prix annoncé et chauffeur assigné, confirmation par e-mail.",
+      },
+      {
+        s: "3",
+        img: photoStepTrack,
+        t: "Vous suivez la course",
+        d: "Lien de suivi en temps réel, puis reçu détaillé à l'arrivée.",
+      },
     ],
     clientEyebrow: "Espace client",
     clientTitle: "Vos courses, vos factures, au même endroit",
@@ -239,19 +264,19 @@ const COPY = {
     servicesEyebrow: "Our services",
     servicesTitle: "A service designed for every journey",
     services: [
-      { icon: Stethoscope, t: "Medical transport", d: "Seated medical trips with simplified coverage." },
+      { photo: photoMedical, t: "Medical transport", d: "Seated medical trips with simplified coverage." },
       {
         photo: photoInterior.url,
         t: "Interior comfort",
         d: "Immaculate cabin, electric silence, water and chargers on board.",
       },
-      { icon: PlaneTakeoff, t: "Stations & airports", d: "Flight and train tracking, meet & greet." },
+      { photo: photoAirport, t: "Stations & airports", d: "Flight and train tracking, meet & greet." },
       {
         photo: photoDriver.url,
         t: "Licensed drivers",
         d: "Patricia and Alain, licensed taxi drivers in Charente-Maritime.",
       },
-      { icon: BriefcaseBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
+      { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
       {
         photo: photoExterior.url,
         t: "Available 5 days a week, 8am-8pm",
@@ -283,7 +308,7 @@ const COPY = {
         t: "Two drivers, one standard",
         d: "The same demand for comfort, discretion and punctuality.",
       },
-      { icon: ShieldCheck, t: "Quoted price, final price", d: "Transparent estimate before departure." },
+      { photo: photoPrice, t: "Quoted price, final price", d: "Transparent estimate before departure." },
     ],
     bannerTitle: "Charente-Maritime, door to door",
     bannerText:
@@ -292,26 +317,56 @@ const COPY = {
     destTitle: "Where we take you",
     destLead: "A few routes our clients book every day — arriving smoothly is our job.",
     destinations: [
-      { from: "La Rochelle", to: "La Rochelle airport", meta: "≈ 15 min · flight tracked" },
-      { from: "Rochefort", to: "TGV station", meta: "≈ 20 min · platform meet" },
-      { from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · bridge included" },
-      { from: "Saintes", to: "Royan", meta: "≈ 45 min · Atlantic coast" },
-      { from: "Group", to: "7-seat van", meta: "Group transfers" },
-      { from: "Home", to: "Hospital / clinic", meta: "Medical transport" },
+      { img: photoAirport, from: "La Rochelle", to: "La Rochelle airport", meta: "≈ 15 min · flight tracked" },
+      { img: photoGare, from: "Rochefort", to: "TGV station", meta: "≈ 20 min · platform meet" },
+      { img: photoIleDeRe, from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · bridge included" },
+      { img: photoRoyan, from: "Saintes", to: "Royan", meta: "≈ 45 min · Atlantic coast" },
+      { img: photoVan.url, from: "Group", to: "7-seat van", meta: "Group transfers" },
+      { img: photoMedical, from: "Home", to: "Hospital / clinic", meta: "Medical transport" },
     ],
     bestEyebrow: "Best-sellers",
     bestTitle: "Our most requested rides",
     best: [
-      { n: "01", t: "Station & airport transfers", d: "Meet & greet, train or flight tracking, luggage handled." },
-      { n: "02", t: "Covered medical trips", d: "Dialysis, chemotherapy, appointments: simplified coverage." },
-      { n: "03", t: "Groups of up to 7", d: "Mercedes van, luggage included, one vehicle for everyone." },
+      {
+        n: "01",
+        img: photoGare,
+        t: "Station & airport transfers",
+        d: "Meet & greet, train or flight tracking, luggage handled.",
+      },
+      {
+        n: "02",
+        img: photoMedical,
+        t: "Covered medical trips",
+        d: "Dialysis, chemotherapy, appointments: simplified coverage.",
+      },
+      {
+        n: "03",
+        img: photoVan.url,
+        t: "Groups of up to 7",
+        d: "Mercedes van, luggage included, one vehicle for everyone.",
+      },
     ],
     howEyebrow: "How it works",
     howTitle: "Three steps, one minute",
     how: [
-      { s: "1", t: "Describe your ride", d: "By voice or typing: pickup, drop-off, date, time and child seat." },
-      { s: "2", t: "We confirm", d: "Quoted price and assigned driver, confirmed by email." },
-      { s: "3", t: "Track your ride", d: "Live tracking link, then a detailed receipt on arrival." },
+      {
+        s: "1",
+        img: photoStepVoice,
+        t: "Describe your ride",
+        d: "By voice or typing: pickup, drop-off, date, time and child seat.",
+      },
+      {
+        s: "2",
+        img: photoStepConfirm,
+        t: "We confirm",
+        d: "Quoted price and assigned driver, confirmed by email.",
+      },
+      {
+        s: "3",
+        img: photoStepTrack,
+        t: "Track your ride",
+        d: "Live tracking link, then a detailed receipt on arrival.",
+      },
     ],
     clientEyebrow: "Client area",
     clientTitle: "Your rides and invoices in one place",
@@ -564,8 +619,7 @@ function Index() {
                     />
                   ) : null}
                   <div className="p-6">
-                    {"icon" in s && s.icon ? <s.icon className="h-6 w-6 text-primary" /> : null}
-                    <h3 className="mt-4 font-display text-lg font-semibold text-card-foreground">{s.t}</h3>
+                    <h3 className="font-display text-lg font-semibold text-card-foreground">{s.t}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
                   </div>
                 </article>
@@ -745,11 +799,14 @@ function Index() {
                   params={{ slug: DESTINATIONS[i]?.slug ?? DESTINATIONS[0].slug }}
                   className={`group flex items-center gap-3 px-4 py-4 ${CARD}`}
                 >
-                  <span className="flex flex-col items-center gap-1 pt-1">
-                    <span className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="h-6 w-px bg-border" />
-                    <span className="h-2 w-2 rounded-full border border-primary" />
-                  </span>
+                  <img
+                    src={d.img}
+                    alt={`${d.from} → ${d.to}`}
+                    loading="lazy"
+                    width={1024}
+                    height={768}
+                    className="h-14 w-14 shrink-0 rounded-xl object-cover transition duration-500 group-hover:scale-105"
+                  />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold text-card-foreground">{d.from}</span>
                     <span className="block truncate text-sm font-semibold text-card-foreground">{d.to}</span>
@@ -785,8 +842,17 @@ function Index() {
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {c.best.map((b, i) => (
               <Reveal key={b.n} delay={i * 0.06}>
-                <article className={`relative h-full overflow-hidden p-6 pt-8 ${CARD}`}>
-                  <span className="absolute right-4 top-2 font-display text-5xl font-semibold text-primary/15">
+                <article className={`group relative h-full overflow-hidden ${CARD}`}>
+                  <img
+                    src={b.img}
+                    alt={b.t}
+                    loading="lazy"
+                    width={1024}
+                    height={768}
+                    className="h-40 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                  />
+                  <div className="p-6 pt-8">
+                  <span className="absolute right-4 top-[10.5rem] font-display text-5xl font-semibold text-primary/15">
                     {b.n}
                   </span>
                   <h3 className="font-display text-lg font-semibold text-card-foreground">{b.t}</h3>
@@ -797,6 +863,7 @@ function Index() {
                   >
                     {c.ctaBook} <ArrowRight className="h-4 w-4" />
                   </Link>
+                  </div>
                 </article>
               </Reveal>
             ))}
@@ -828,8 +895,7 @@ function Index() {
                     />
                   ) : null}
                   <div className="p-6">
-                    {"icon" in w && w.icon ? <w.icon className="h-6 w-6 text-primary" /> : null}
-                    <h3 className="mt-3 font-display text-lg font-semibold text-foreground">{w.t}</h3>
+                    <h3 className="font-display text-lg font-semibold text-foreground">{w.t}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{w.d}</p>
                   </div>
                 </div>
@@ -851,10 +917,20 @@ function Index() {
           <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
-                <div className={`h-full bg-background p-6 ${CARD}`}>
-                  <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
-                  <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
+                <div className={`group h-full overflow-hidden bg-background ${CARD}`}>
+                  <img
+                    src={h.img}
+                    alt={h.t}
+                    loading="lazy"
+                    width={1024}
+                    height={768}
+                    className="h-36 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                  />
+                  <div className="p-6">
+                    <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
+                    <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
+                  </div>
                 </div>
               </Reveal>
             ))}
