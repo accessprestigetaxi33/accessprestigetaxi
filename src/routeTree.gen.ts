@@ -17,6 +17,7 @@ import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
 import { Route as ReservationRouteImport } from './routes/reservation'
 import { Route as ReserverRouteImport } from './routes/reserver'
@@ -94,6 +95,11 @@ const DriverRoute = DriverRouteImport.update({
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QrGeneratorRoute = QrGeneratorRouteImport.update({
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
@@ -448,6 +457,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/driver'
     | '/mentions-legales'
+    | '/notifications'
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/driver'
     | '/mentions-legales'
+    | '/notifications'
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/driver'
     | '/mentions-legales'
+    | '/notifications'
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
@@ -593,6 +605,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DriverRoute: typeof DriverRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  NotificationsRoute: typeof NotificationsRoute
   QrGeneratorRoute: typeof QrGeneratorRoute
   ReservationRoute: typeof ReservationRouteWithChildren
   ReserverRoute: typeof ReserverRoute
@@ -687,6 +700,13 @@ declare module '@tanstack/react-router' {
       path: '/mentions-legales'
       fullPath: '/mentions-legales'
       preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/qr-generator': {
@@ -990,6 +1010,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DriverRoute: DriverRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  NotificationsRoute: NotificationsRoute,
   QrGeneratorRoute: QrGeneratorRoute,
   ReservationRoute: ReservationRouteWithChildren,
   ReserverRoute: ReserverRoute,
@@ -1031,3 +1052,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
