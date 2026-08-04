@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/reservation/$id")({
   head: () => ({
-    meta: [{ title: "Confirmation – Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Confirmation – Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: ConfirmationPage,
 });

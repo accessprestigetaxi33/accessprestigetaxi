@@ -90,7 +90,7 @@ export const Route = createFileRoute("/client/dashboard")({
   head: () => ({
     meta: [
       { title: "Mon espace client — Access Prestige Taxi" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0f172a" },
     ],

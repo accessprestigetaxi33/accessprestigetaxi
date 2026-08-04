@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { seoLinks } from "@/lib/seo-hreflang";
+import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { ArrowLeft, ArrowRight, MapPin, Phone, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { GUIDE_ENTRIES, GUIDE_CATEGORIES, getGuideEntry, type GuideEntry } from "@/data/guide-charente";
@@ -48,6 +48,7 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!e) return {};
     const title = `${e.name}, ${e.city} — Guide Charente-Maritime | Access Prestige Taxi`;
     const desc = e.fr.teaser.slice(0, 155);
+    const url = `${SITE}/blog/${e.slug}`;
     return {
       meta: [
         { title },
@@ -58,6 +59,8 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:url", content: `/blog/${e.slug}` },
         { property: "og:image", content: e.photos[0] },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: desc },
         { name: "twitter:image", content: e.photos[0] },
       ],
       links: seoLinks(`/blog/${e.slug}`),
@@ -66,18 +69,37 @@ export const Route = createFileRoute("/blog/$slug")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type":
-              e.category === "hotel" ? "Hotel" : e.category === "restaurant" ? "Restaurant" : "TouristAttraction",
-            name: e.name,
-            description: e.fr.teaser,
-            image: e.photos,
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: e.city,
-              addressRegion: "Charente-Maritime",
-              addressCountry: "FR",
-            },
-            ...(e.stars ? { starRating: { "@type": "Rating", ratingValue: e.stars } } : {}),
+            "@graph": [
+              {
+                "@type":
+                  e.category === "hotel" ? "Hotel" : e.category === "restaurant" ? "Restaurant" : "TouristAttraction",
+                name: e.name,
+                description: e.fr.teaser,
+                image: e.photos,
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: e.city,
+                  addressRegion: "Charente-Maritime",
+                  addressCountry: "FR",
+                },
+                ...(e.stars ? { starRating: { "@type": "Rating", ratingValue: e.stars } } : {}),
+              },
+              {
+                "@type": "Article",
+                headline: e.name,
+                image: e.photos,
+                author: { "@type": "Organization", name: "Access Prestige Taxi" },
+                publisher: { "@type": "Organization", name: "Access Prestige Taxi" },
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
+                  { "@type": "ListItem", position: 2, name: "Guide", item: `${SITE}/blog` },
+                  { "@type": "ListItem", position: 3, name: e.name, item: url },
+                ],
+              },
+            ],
           }),
         },
       ],

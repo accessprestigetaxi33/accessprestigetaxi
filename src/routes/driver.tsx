@@ -97,7 +97,7 @@ export const Route = createFileRoute("/driver")({
   head: () => ({
     meta: [
       { title: "Espace chauffeur" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0f172a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },

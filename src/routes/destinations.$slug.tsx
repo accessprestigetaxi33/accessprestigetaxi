@@ -30,8 +30,8 @@ export const Route = createFileRoute("/destinations/$slug")({
         { property: "og:locale", content: "fr_FR" },
         { property: "og:locale:alternate", content: "en_GB" },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: dest.en.metaTitle },
-        { name: "twitter:description", content: dest.en.metaDescription },
+        { name: "twitter:title", content: dest.fr.metaTitle },
+        { name: "twitter:description", content: dest.fr.metaDescription },
       ],
       links: seoLinks(`/destinations/${params.slug}`),
     };

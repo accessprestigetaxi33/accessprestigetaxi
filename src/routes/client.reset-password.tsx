@@ -10,7 +10,7 @@ export const Route = createFileRoute("/client/reset-password")({
   head: () => ({
     meta: [
       { title: "Nouveau mot de passe — Access Prestige Taxi" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ResetPasswordPage,

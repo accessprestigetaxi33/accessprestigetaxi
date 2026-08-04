@@ -38,7 +38,7 @@ export const Route = createFileRoute("/client/login")({
         content:
           "Connectez-vous à votre espace client Access Prestige Taxi pour suivre vos courses et gérer vos réservations.",
       },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "noindex, nofollow" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0f172a" },
     ],

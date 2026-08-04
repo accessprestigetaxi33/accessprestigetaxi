@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { seoLinks } from "@/lib/seo-hreflang";
+import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { useMemo, useState } from "react";
 import { ArrowRight, MapPin, Star, UtensilsCrossed, BedDouble, Footprints, Landmark } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -49,27 +49,50 @@ const COPY = {
   },
 } as const;
 
+const BLOG_TITLE = "Guide Charente-Maritime — Restaurants, hôtels, randos";
+const BLOG_DESC =
+  "Guide complet de la Charente-Maritime : restaurants étoilés, hôtels classés par étoiles, randonnées et lieux à visiter avec leur histoire. Transport en taxi 100 % électrique.";
+const BLOG_OG_DESC =
+  "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.";
+
 export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
   head: () => ({
     meta: [
-      { title: "Guide Charente-Maritime-Maritime — Restaurants, hôtels, randos | Access Prestige Taxi" },
-      {
-        name: "description",
-        content:
-          "Guide complet de la Charente et de la Charente-Maritime : restaurants étoilés, hôtels classés par étoiles, randonnées et lieux à visiter avec leur histoire. Transport en taxi 100 % électrique.",
-      },
-      { property: "og:title", content: "Guide Charente-Maritime-Maritime | Access Prestige Taxi" },
-      {
-        property: "og:description",
-        content:
-          "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.",
-      },
+      { title: BLOG_TITLE },
+      { name: "description", content: BLOG_DESC },
+      { property: "og:title", content: BLOG_TITLE },
+      { property: "og:description", content: BLOG_OG_DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/blog" },
+      { property: "og:url", content: `${SITE}/blog` },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: BLOG_TITLE },
+      { name: "twitter:description", content: BLOG_OG_DESC },
     ],
     links: seoLinks("/blog"),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              name: BLOG_TITLE,
+              description: BLOG_DESC,
+              url: `${SITE}/blog`,
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
+                { "@type": "ListItem", position: 2, name: "Guide", item: `${SITE}/blog` },
+              ],
+            },
+          ],
+        }),
+      },
+    ],
   }),
 });
 

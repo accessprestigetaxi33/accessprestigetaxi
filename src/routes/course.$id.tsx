@@ -2,7 +2,12 @@
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/course/$id")({
-  head: () => ({ meta: [{ title: "Redirection course — Access Prestige Taxi" }] }),
+  head: () => ({
+    meta: [
+      { title: "Redirection course — Access Prestige Taxi" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: CoursePage,
 });
 

@@ -4,10 +4,19 @@ import { Plane, Train, Briefcase, Wrench, ShieldCheck, MapPin, Users, Clock, Hel
 import { useT } from "@/i18n/I18nProvider";
 import { BulletedList } from "@/components/BulletedList";
 
-const SERVICES_TITLE = "Services Access Prestige Taxi : Aéroport, Gare, CPAM & Mariages";
+const SERVICES_TITLE = "Services taxi Charente-Maritime : Aéroport, Gare, CPAM";
 const SERVICES_DESC =
   "Découvrez nos services de taxi en Charente-Maritime : transferts aéroport, gare, transport conventionné CPAM, mariages, business, longues distances.";
 const SERVICES_URL = "https://accessprestigetaxi.lovable.app/services";
+
+const SERVICE_LIST = [
+  { name: "Transfert aéroport", description: "Transferts vers et depuis les aéroports en Charente-Maritime." },
+  { name: "Transfert gare", description: "Transferts vers et depuis les gares en Charente-Maritime." },
+  { name: "Transport conventionné CPAM", description: "Transport médical assis conventionné, prise en charge Assurance Maladie." },
+  { name: "Mariages et événements", description: "Mise à disposition pour mariages et événements." },
+  { name: "Trajets professionnels", description: "Déplacements business et mise à disposition avec chauffeur." },
+  { name: "Longues distances", description: "Trajets longue distance en France et en Europe sur réservation." },
+];
 
 const SERVICES_FAQ = [
   {
@@ -40,12 +49,37 @@ export const Route = createFileRoute("/services")({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: SERVICES_FAQ.map((f) => ({
-            "@type": "Question",
-            name: f.q,
-            acceptedAnswer: { "@type": "Answer", text: f.a },
-          })),
+          "@graph": [
+            {
+              "@type": "FAQPage",
+              mainEntity: SERVICES_FAQ.map((f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              })),
+            },
+            {
+              "@type": "ItemList",
+              itemListElement: SERVICE_LIST.map((svc, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                item: {
+                  "@type": "Service",
+                  name: svc.name,
+                  description: svc.description,
+                  provider: { "@type": "TaxiService", name: "Access Prestige Taxi" },
+                  areaServed: "Charente-Maritime",
+                },
+              })),
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Accueil", item: "https://accessprestigetaxi.lovable.app/" },
+                { "@type": "ListItem", position: 2, name: "Services", item: "https://accessprestigetaxi.lovable.app/services" },
+              ],
+            },
+          ],
         }),
       },
     ],

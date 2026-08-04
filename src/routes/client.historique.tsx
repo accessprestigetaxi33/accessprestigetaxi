@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/client/historique")({
   head: () => ({
-    meta: [{ title: "Historique — Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Historique — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: ClientHistorique,
 });

@@ -17,7 +17,7 @@ import { downloadMonthlyInvoicePDF, downloadYearlyInvoicePDF } from "@/lib/clien
 
 export const Route = createFileRoute("/client/factures")({
   head: () => ({
-    meta: [{ title: "Mes factures — Access Prestige Taxi" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Mes factures — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: ClientFactures,
 });
