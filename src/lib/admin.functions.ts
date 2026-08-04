@@ -164,3 +164,35 @@ export const adminBatchFixReservations = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { updated: ((updated as any[]) ?? []).length };
   });
+
+/** Journal des notifications : push envoyés, erreurs et replis e-mail. */
+export const adminPushLog = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    TokenSchema.extend({
+      limit: z.number().int().min(10).max(300).optional(),
+      status: z.enum(["all", "sent", "failed", "removed", "fallback_email"]).optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    await requireAdmin(data.token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let q = supabaseAdmin
+      .from("push_send_log" as any)
+      .select(
+        "id, created_at, channel, audience, status, tag, reservation_id, recipient, fcm_token_suffix, http_status, error_code, title, body",
+      )
+      .order("created_at", { ascending: false })
+      .limit(data.limit ?? 100);
+    if (data.status && data.status !== "all") q = q.eq("status", data.status);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(`push_log_failed: ${error.message}`);
+
+    const list = (rows ?? []) as any[];
+    const stats = {
+      total: list.length,
+      sent: list.filter((r) => r.status === "sent").length,
+      failed: list.filter((r) => r.status === "failed" || r.status === "removed").length,
+      email: list.filter((r) => r.status === "fallback_email").length,
+    };
+    return { entries: list, stats };
+  });
