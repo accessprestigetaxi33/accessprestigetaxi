@@ -273,20 +273,22 @@ export const aiChatReservation = createServerFn({ method: "POST" })
             lang === "en"
               ? "Confirm and create the reservation after collecting all required fields."
               : "Confirme et crée la réservation après avoir collecté tous les champs requis.",
-          parameters: z.object({
-            nom: z.string().describe("Nom du client / Client name"),
-            telephone: z.string().describe("Téléphone du client / Client phone"),
-            email: z.string().nullable().describe("Email du client (optionnel) / Client email (optional)"),
-            depart: z.string().describe("Adresse de départ / Pickup address"),
-            arrivee: z.string().describe("Adresse d'arrivée / Drop-off address"),
-            pickup_datetime: z.string().describe("ISO datetime de prise en charge / Pickup ISO datetime"),
-            passagers: z.number().int().describe("Nombre de passagers / Passenger count"),
-            bagages: z.number().int().nullable().describe("Nombre de bagages / Luggage count"),
-            childSeats: z.number().int().nullable().describe("Nombre de sièges enfant / Child seats"),
-            babySeats: z.number().int().nullable().describe("Nombre de sièges bébé / Baby seats"),
-            notes: z.string().nullable().describe("Notes / Notes"),
-            paiement: z.string().nullable().describe("Mode de paiement / Payment method"),
-          }),
+          inputSchema: zodSchema(
+            z.object({
+              nom: z.string().describe("Nom du client / Client name"),
+              telephone: z.string().describe("Téléphone du client / Client phone"),
+              email: z.string().nullable().describe("Email du client (optionnel) / Client email (optional)"),
+              depart: z.string().describe("Adresse de départ / Pickup address"),
+              arrivee: z.string().describe("Adresse d'arrivée / Drop-off address"),
+              pickup_datetime: z.string().describe("ISO datetime de prise en charge / Pickup ISO datetime"),
+              passagers: z.number().int().describe("Nombre de passagers / Passenger count"),
+              bagages: z.number().int().nullable().describe("Nombre de bagages / Luggage count"),
+              childSeats: z.number().int().nullable().describe("Nombre de sièges enfant / Child seats"),
+              babySeats: z.number().int().nullable().describe("Nombre de sièges bébé / Baby seats"),
+              notes: z.string().nullable().describe("Notes / Notes"),
+              paiement: z.string().nullable().describe("Mode de paiement / Payment method"),
+            }),
+          ),
           execute: async (params: {
             nom: string;
             telephone: string;
