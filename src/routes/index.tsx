@@ -27,6 +27,8 @@ import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
 import photoVan from "@/assets/apt-van.jpg.asset.json";
+import photoAudi from "@/assets/apt-audi-q6.jpg";
+
 import photoMedical from "@/assets/apt-medical.jpg";
 import photoAirport from "@/assets/apt-airport.jpg";
 import photoBusiness from "@/assets/apt-business.jpg";
@@ -88,7 +90,16 @@ const heroSlides = (lang: "fr" | "en") => [
     alt: lang === "en" ? "7-seat Mercedes van, Access Prestige Taxi" : "Van Mercedes 7 places Access Prestige Taxi",
     pan: { x: 16, y: -10 },
   },
+  {
+    src: photoAudi,
+    alt:
+      lang === "en"
+        ? "Audi Q6 e-tron, 100% electric premium SUV, Access Prestige Taxi"
+        : "Audi Q6 e-tron, SUV premium 100 % électrique Access Prestige Taxi",
+    pan: { x: -16, y: -8 },
+  },
 ];
+
 
 
 const HERO_SLIDE_DURATION_MS = 6000;
