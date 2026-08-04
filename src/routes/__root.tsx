@@ -50,9 +50,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
@@ -158,6 +156,9 @@ function RootComponent() {
   // L'espace chauffeur est une application plein écran (PWA) : pas de header
   // ni de footer du site public, comme sur la version d'origine.
   const standalone = pathname.startsWith("/driver") || pathname.startsWith("/admin");
+  // La page de réservation garde le header mais masque le footer
+  // (formulaire long, on évite de pousser l'utilisateur vers du contenu superflu).
+  const hideFooter = pathname.startsWith("/reserver");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -171,7 +172,7 @@ function RootComponent() {
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
               <Outlet />
             </div>
-            <SiteFooter />
+            {!hideFooter && <SiteFooter />}
           </div>
         )}
         <Toaster />
