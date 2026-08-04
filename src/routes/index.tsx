@@ -541,7 +541,50 @@ export const Route = createFileRoute("/")({
           // },
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "L'excellence à chaque trajet — flotte Access Prestige Taxi",
+          alternateName: "Excellence on every journey — Access Prestige Taxi fleet",
+          itemListElement: [
+            {
+              "@type": "Car",
+              position: 1,
+              name: "BMW iX1 100 % électrique",
+              alternateName: "BMW iX1 100% electric",
+              image: absoluteUrl(photoExterior.url),
+              vehicleSeatingCapacity: 4,
+              fuelType: "Electric",
+              description:
+                "Taxi BMW iX1 100 % électrique conduit par Patricia : transferts aéroport, courses médicales et déplacements du quotidien en Charente-Maritime.",
+            },
+            {
+              "@type": "Car",
+              position: 2,
+              name: "Audi Q6 e-tron",
+              image: absoluteUrl(photoAudi),
+              vehicleSeatingCapacity: 4,
+              fuelType: "Electric",
+              description:
+                "SUV premium 100 % électrique pour déplacements professionnels et longues distances en Charente-Maritime.",
+            },
+            {
+              "@type": "Car",
+              position: 3,
+              name: "Van Mercedes V-Class 7 places",
+              alternateName: "Mercedes V-Class 7-seat van",
+              image: absoluteUrl(photoVan.url),
+              vehicleSeatingCapacity: 7,
+              description:
+                "Van Mercedes conduit par Alain : transport de groupe jusqu'à 7 passagers avec bagages, tarif unique.",
+            },
+          ],
+        }),
+      },
     ],
+
   }),
 });
 
