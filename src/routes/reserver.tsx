@@ -15,8 +15,8 @@ import { motion, AnimatePresence } from "motion/react";
 
 const RESERVER_TITLE_FR = "Réserver un taxi en Charente-Maritime — Access Prestige Taxi";
 const RESERVER_TITLE_EN = "Book a taxi in Charente-Maritime — Access Prestige Taxi";
-const RESERVER_DESC_FR = "Réservez votre taxi en Charente-Maritime par chat ou voix en 2 minutes. Devis instantané, confirmation immédiate, suivi en direct.";
-const RESERVER_DESC_EN = "Book your taxi in Charente-Maritime by chat or voice in 2 minutes. Instant quote, immediate confirmation, live tracking.";
+const RESERVER_DESC_FR = "Réservez votre taxi en Charente-Maritime par chat ou à la voix en moins d'une minute. Devis instantané, confirmation immédiate, suivi en temps réel, sièges bébé et enfants sur demande.";
+const RESERVER_DESC_EN = "Book your taxi in Charente-Maritime by chat or voice in under a minute. Instant quote, immediate confirmation, real-time tracking, baby and child seats on request.";
 
 export const Route = createFileRoute("/reserver")({
   head: () => ({
@@ -28,6 +28,10 @@ export const Route = createFileRoute("/reserver")({
       { property: "og:url", content: "https://accessprestigetaxi.lovable.app/reserver" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: RESERVER_TITLE_FR },
+      { name: "twitter:description", content: RESERVER_DESC_FR },
+      { property: "og:locale", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "en_GB" },
       {
         name: "viewport",
         content:

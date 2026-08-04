@@ -74,7 +74,7 @@ export function ClientTrust() {
       .select("id,author_name,note,commentaire,created_at")
       .eq("status", "approved")
       .order("created_at", { ascending: false })
-      .limit(6)
+      .limit(12)
       .then(({ data }) => {
         if (active && data) setReviews(data as Review[]);
       });
@@ -83,7 +83,7 @@ export function ClientTrust() {
     };
   }, []);
 
-  const withText = reviews.filter((r) => (r.commentaire ?? "").trim().length > 0).slice(0, 3);
+  const withText = reviews.filter((r) => (r.commentaire ?? "").trim().length > 0).slice(0, 10);
   const count = reviews.length;
   const average = count ? reviews.reduce((s, r) => s + (r.note || 0), 0) / count : 5;
 
