@@ -156,7 +156,7 @@ function RootComponent() {
   // L'espace chauffeur est une application plein écran (PWA) : pas de header
   // ni de footer du site public, comme sur la version d'origine.
   // Pages immersives (chauffeur, admin, réservation par chat) : pas de header/footer public.
-  const standalone = pathname.startsWith("/driver") || pathname.startsWith("/admin") || pathname.startsWith("/reserver");
+  const standalone = pathname.startsWith("/driver") || pathname.startsWith("/reserver");
 
   return (
     <QueryClientProvider client={queryClient}>
