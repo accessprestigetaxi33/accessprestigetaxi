@@ -16,12 +16,15 @@ interface UsePushOptions {
   reservationId?: string;
   /** client_account_id à associer (chat direct + espace client). */
   clientAccountId?: string | null;
+  /** Identifiant chauffeur (patricia / alain / admin) pour l'audience "chauffeur". */
+  driverId?: string | null;
 }
 
 export function usePushNotifications(opts: UsePushOptions = {}) {
-  const { autoAudience, reservationId, clientAccountId } = opts;
+  const { autoAudience, reservationId, clientAccountId, driverId } = opts;
   const [status, setStatus] = useState<PushStatus>("idle");
   const [token, setToken] = useState<string | null>(null);
+
 
   const subscribeFn = useServerFn(subscribePush);
 
