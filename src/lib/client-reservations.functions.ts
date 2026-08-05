@@ -156,7 +156,7 @@ export const updateReservationTime = createServerFn({ method: "POST" })
       await sendPushToAudience("chauffeur", {
         title: "⏰ Modification d'heure",
         body: `Le client a modifié l'heure de sa course : ${when}`,
-        url: "/admin/dashboard",
+        url: "/driver",
         tag: `modif-heure-${data.reservation_id}`,
         requireInteraction: true,
       });
@@ -192,7 +192,7 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
       await sendPushToAudience("chauffeur", {
         title: "❌ Course annulée",
         body: "Le client a annulé sa réservation.",
-        url: "/admin/dashboard",
+        url: "/driver",
         tag: `cancel-${data.reservation_id}`,
       });
     } catch (e) {
