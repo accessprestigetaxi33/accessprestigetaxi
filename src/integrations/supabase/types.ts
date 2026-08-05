@@ -818,6 +818,7 @@ export type Database = {
           auth: string | null
           client_account_id: string | null
           created_at: string
+          driver_id: string | null
           endpoint: string
           fcm_token: string | null
           id: string
@@ -832,6 +833,7 @@ export type Database = {
           auth?: string | null
           client_account_id?: string | null
           created_at?: string
+          driver_id?: string | null
           endpoint: string
           fcm_token?: string | null
           id?: string
@@ -846,6 +848,7 @@ export type Database = {
           auth?: string | null
           client_account_id?: string | null
           created_at?: string
+          driver_id?: string | null
           endpoint?: string
           fcm_token?: string | null
           id?: string
