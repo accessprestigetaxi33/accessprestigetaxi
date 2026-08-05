@@ -50,13 +50,17 @@ export const subscribePush = createServerFn({ method: "POST" })
     // jamais l'ancienne ligne, et on accumule des lignes actives pour le même
     // device → notifications ×N côté iPhone. En gardant l'endpoint stable par
     // device (hash UA), la rotation de token remplace bien l'ancienne ligne.
+    const driverId = data.audience === "chauffeur" ? (data.driver_id ?? null) : null;
     const targetKey = clientAccountId
       ? `account-${clientAccountId}`
       : reservationId
         ? `reservation-${reservationId}`
-        : "generic";
+        : driverId
+          ? `driver-${driverId}`
+          : "generic";
     const deviceKey = hashUserAgent(ua);
     const endpoint = `${data.audience}-${targetKey}-${deviceKey}`;
+
     const nowIso = new Date().toISOString();
 
     // Cleanup ancienne ligne pour ce device/cible + vieux doublons du même token.
