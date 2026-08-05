@@ -25,8 +25,10 @@ const subSchema = z.object({
   fcm_token: z.string().regex(FCM_TOKEN_RE, "fcm_token format invalide"),
   reservation_id: z.string().uuid().optional().nullable(),
   client_account_id: z.string().uuid().optional().nullable(),
+  driver_id: z.string().max(40).optional().nullable(),
   user_agent: z.string().max(500).optional().nullable(),
 });
+
 
 export const subscribePush = createServerFn({ method: "POST" })
   .inputValidator((input) => subSchema.parse(input))
