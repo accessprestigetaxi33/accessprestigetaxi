@@ -30,7 +30,7 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur";
+type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "appareils";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -487,7 +487,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({ autoAudience: "chauffeur" });
+  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({ autoAudience: "chauffeur", driverId: driverId ?? null });
 
   // Capture le prompt d'installation PWA
   useEffect(() => {
@@ -706,7 +706,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map((t) => (
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "appareils"] as Tab[]).map((t) => (
             <button
               key={t}
               className={`drv-tab${tab === t ? " active" : ""}`}
@@ -736,6 +736,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                 {t === "stats" && <IconChart />}
                 {t === "historique" && <IconCalendar />}
                 {t === "simulateur" && <IconCalc />}
+                {t === "appareils" && <IconBell />}
               </div>
               <span>
                 {
@@ -747,6 +748,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                     stats: "Stats",
                     historique: "Historique",
                     simulateur: "Simu",
+                    appareils: "Appareils",
                   }[t]
                 }
               </span>
@@ -765,6 +767,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           {tab === "stats" && <StatsTab />}
           {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
+          {tab === "appareils" && <AppareilsTab />}
         </div>
       </div>
     </>
