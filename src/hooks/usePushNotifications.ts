@@ -66,6 +66,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             fcm_token: fcm,
             reservation_id: reservationId ?? null,
             client_account_id: clientAccountId ?? null,
+            driver_id: driverId ?? null,
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
@@ -96,7 +97,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     };
     // reservationId volontairement exclu : on ne re-subscribe pas si l'id change après le montage
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoAudience, clientAccountId]);
+  }, [autoAudience, clientAccountId, driverId]);
 
   // ── Subscribe manuel (pour les appels explicites) ──
   const subscribe = useCallback(
@@ -114,6 +115,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             fcm_token: fcm,
             reservation_id: resId ?? reservationId ?? null,
             client_account_id: accountId ?? clientAccountId ?? null,
+            driver_id: driverId ?? null,
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
@@ -128,7 +130,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         return false;
       }
     },
-    [subscribeFn, reservationId, clientAccountId],
+    [subscribeFn, reservationId, clientAccountId, driverId],
   );
 
   const testNotification = useCallback(async () => {
@@ -152,6 +154,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             fcm_token: fcm,
             reservation_id: reservationId ?? null,
             client_account_id: clientAccountId ?? null,
+            driver_id: driverId ?? null,
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
@@ -161,7 +164,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         console.warn("[push] refreshToken failed", e);
       }
     },
-    [subscribeFn, reservationId, clientAccountId],
+    [subscribeFn, reservationId, clientAccountId, driverId],
   );
 
   return { status, subscription: token, subscribe, testNotification, refreshToken };
