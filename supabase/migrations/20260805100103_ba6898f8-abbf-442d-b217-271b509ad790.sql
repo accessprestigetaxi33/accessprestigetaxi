@@ -1,0 +1,2 @@
+ALTER TABLE public.push_subscriptions ADD COLUMN IF NOT EXISTS driver_id text;
+CREATE INDEX IF NOT EXISTS push_subscriptions_driver_id_idx ON public.push_subscriptions (driver_id) WHERE driver_id IS NOT NULL;

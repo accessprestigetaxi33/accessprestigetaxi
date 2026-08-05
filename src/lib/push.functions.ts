@@ -25,8 +25,10 @@ const subSchema = z.object({
   fcm_token: z.string().regex(FCM_TOKEN_RE, "fcm_token format invalide"),
   reservation_id: z.string().uuid().optional().nullable(),
   client_account_id: z.string().uuid().optional().nullable(),
+  driver_id: z.string().max(40).optional().nullable(),
   user_agent: z.string().max(500).optional().nullable(),
 });
+
 
 export const subscribePush = createServerFn({ method: "POST" })
   .inputValidator((input) => subSchema.parse(input))
@@ -48,13 +50,17 @@ export const subscribePush = createServerFn({ method: "POST" })
     // jamais l'ancienne ligne, et on accumule des lignes actives pour le même
     // device → notifications ×N côté iPhone. En gardant l'endpoint stable par
     // device (hash UA), la rotation de token remplace bien l'ancienne ligne.
+    const driverId = data.audience === "chauffeur" ? (data.driver_id ?? null) : null;
     const targetKey = clientAccountId
       ? `account-${clientAccountId}`
       : reservationId
         ? `reservation-${reservationId}`
-        : "generic";
+        : driverId
+          ? `driver-${driverId}`
+          : "generic";
     const deviceKey = hashUserAgent(ua);
     const endpoint = `${data.audience}-${targetKey}-${deviceKey}`;
+
     const nowIso = new Date().toISOString();
 
     // Cleanup ancienne ligne pour ce device/cible + vieux doublons du même token.
@@ -80,6 +86,8 @@ export const subscribePush = createServerFn({ method: "POST" })
       reservation_id: reservationId,
     };
     if (clientAccountId) insertPayload.client_account_id = clientAccountId;
+    if (driverId) insertPayload.driver_id = driverId;
+
 
     let { error: insErr } = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
     if ((insErr as any)?.code === "23505") {

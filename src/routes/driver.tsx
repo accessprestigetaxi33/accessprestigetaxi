@@ -17,6 +17,8 @@ import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
+import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
+
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
@@ -30,7 +32,7 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur";
+type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "appareils";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -487,7 +489,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({ autoAudience: "chauffeur" });
+  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({ autoAudience: "chauffeur", driverId: driverId ?? null });
 
   // Capture le prompt d'installation PWA
   useEffect(() => {
@@ -706,7 +708,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map((t) => (
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "appareils"] as Tab[]).map((t) => (
             <button
               key={t}
               className={`drv-tab${tab === t ? " active" : ""}`}
@@ -736,6 +738,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                 {t === "stats" && <IconChart />}
                 {t === "historique" && <IconCalendar />}
                 {t === "simulateur" && <IconCalc />}
+                {t === "appareils" && <IconBell />}
               </div>
               <span>
                 {
@@ -747,6 +750,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                     stats: "Stats",
                     historique: "Historique",
                     simulateur: "Simu",
+                    appareils: "Appareils",
                   }[t]
                 }
               </span>
@@ -765,6 +769,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           {tab === "stats" && <StatsTab />}
           {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
+          {tab === "appareils" && <AppareilsTab />}
         </div>
       </div>
     </>
@@ -4250,6 +4255,175 @@ function PushDiagnostic() {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Onglet Appareils (notifications push par chauffeur) ────────────────────
+const DRIVER_LABELS: Record<string, string> = {
+  patricia: "Patricia",
+  alain: "Alain",
+  admin: "Administration",
+};
+
+function fmtDate(v: string | null): string {
+  if (!v) return "—";
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+function AppareilsTab() {
+  const listFn = useServerFn(listDriverDevices);
+  const revokeFn = useServerFn(revokeDriverDevice);
+  const logFn = useServerFn(driverPushLog);
+
+  const [devices, setDevices] = useState<any[]>([]);
+  const [log, setLog] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>({ total: 0, sent: 0, failed: 0, email: 0 });
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [perm, setPerm] = useState<string>("default");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const token = getDriverToken();
+      const [d, l]: any[] = await Promise.all([listFn({ data: { token } }), logFn({ data: { token, limit: 60 } })]);
+      setDevices(d?.devices ?? []);
+      setLog(l?.entries ?? []);
+      setStats(l?.stats ?? { total: 0, sent: 0, failed: 0, email: 0 });
+    } catch (e: any) {
+      toast.error("Chargement des appareils impossible");
+    } finally {
+      setLoading(false);
+    }
+  }, [listFn, logFn]);
+
+  useEffect(() => {
+    load();
+    if (typeof window !== "undefined" && "Notification" in window) setPerm(Notification.permission);
+  }, [load]);
+
+  const revoke = async (id: string, label: string) => {
+    if (!window.confirm(`Désinscrire l'appareil « ${label} » des notifications ?`)) return;
+    setBusy(id);
+    try {
+      await revokeFn({ data: { token: getDriverToken(), device_id: id } });
+      toast.success("Appareil désinscrit");
+      setDevices((prev) => prev.filter((d) => d.id !== id));
+    } catch {
+      toast.error("Révocation impossible");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const groups = React.useMemo(() => {
+    const map = new Map<string, any[]>();
+    for (const d of devices) {
+      const key = d.driver_id || "inconnu";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(d);
+    }
+    return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [devices]);
+
+  if (loading) return <div style={{ padding: 16, color: "#64748b" }}>Chargement…</div>;
+
+  return (
+    <div style={{ display: "grid", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <span style={{ fontSize: 12, color: "#64748b" }}>
+          Permission navigateur : <b>{perm === "granted" ? "accordée" : perm === "denied" ? "refusée" : "non demandée"}</b>
+        </span>
+        <button
+          onClick={load}
+          style={{ marginLeft: "auto", background: "#0f172a", color: "#fff", border: "none", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+        >
+          🔄 Rafraîchir
+        </button>
+      </div>
+
+      {groups.length === 0 && <div style={{ color: "#64748b", fontSize: 14 }}>Aucun appareil inscrit pour le moment.</div>}
+
+      {groups.map(([driver, list]) => (
+        <div key={driver} style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ background: "#0B0B0D", color: "#C6A24A", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
+            {DRIVER_LABELS[driver] ?? "Chauffeur inconnu"} — {list.length} appareil{list.length > 1 ? "s" : ""}
+          </div>
+          <div style={{ display: "grid" }}>
+            {list.map((d) => (
+              <div key={d.id} style={{ padding: 12, borderTop: "1px solid #f1f5f9", display: "grid", gap: 4 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <b style={{ fontSize: 14 }}>{d.platform}</b>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      padding: "2px 8px",
+                      borderRadius: 999,
+                      background: d.active ? "#dcfce7" : "#fee2e2",
+                      color: d.active ? "#166534" : "#991b1b",
+                    }}
+                  >
+                    {d.active ? "actif" : "inactif"}
+                  </span>
+                  <code style={{ fontSize: 11, color: "#64748b" }}>…{d.fcm_suffix ?? "—"}</code>
+                  <button
+                    onClick={() => revoke(d.id, `${DRIVER_LABELS[driver] ?? driver} · ${d.platform}`)}
+                    disabled={busy === d.id}
+                    style={{ marginLeft: "auto", background: "#dc2626", color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                  >
+                    {busy === d.id ? "…" : "Désinscrire"}
+                  </button>
+                </div>
+                <div style={{ fontSize: 12, color: "#475569" }}>
+                  Dernière activité : {fmtDate(d.last_seen_at)} · Inscrit le {fmtDate(d.created_at)}
+                </div>
+                <div style={{ fontSize: 12, color: "#475569" }}>
+                  Dernier envoi : {fmtDate(d.last_sent_at)}
+                  {d.last_sent_title ? ` — ${d.last_sent_title}` : ""}
+                </div>
+                <div style={{ fontSize: 12, color: d.last_error_at ? "#b91c1c" : "#94a3b8" }}>
+                  Dernière erreur :{" "}
+                  {d.last_error_at
+                    ? `${fmtDate(d.last_error_at)} — ${d.last_error_code ?? "erreur"}${d.last_error_status ? ` (HTTP ${d.last_error_status})` : ""}`
+                    : "aucune"}
+                </div>
+                {d.user_agent && (
+                  <div style={{ fontSize: 11, color: "#94a3b8", wordBreak: "break-all" }}>{d.user_agent}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
+        <div style={{ background: "#f8fafc", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
+          Journal des notifications — {stats.sent} envoyées · {stats.failed} en échec · {stats.email} repli e-mail
+        </div>
+        <div style={{ maxHeight: 320, overflowY: "auto" }}>
+          {log.length === 0 && <div style={{ padding: 12, color: "#64748b", fontSize: 13 }}>Aucun envoi enregistré.</div>}
+          {log.map((e) => (
+            <div key={e.id} style={{ padding: "8px 12px", borderTop: "1px solid #f1f5f9", fontSize: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ color: "#94a3b8", minWidth: 96 }}>{fmtDate(e.created_at)}</span>
+              <span
+                style={{
+                  fontWeight: 700,
+                  color: e.status === "sent" ? "#166534" : e.status === "fallback_email" ? "#92400e" : "#b91c1c",
+                }}
+              >
+                {e.status}
+              </span>
+              <span style={{ color: "#475569" }}>{e.audience}</span>
+              <span style={{ color: "#0f172a", flex: 1, minWidth: 140 }}>{e.title ?? e.tag ?? "—"}</span>
+              {e.error_code && <span style={{ color: "#b91c1c" }}>{e.error_code}</span>}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
