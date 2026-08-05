@@ -86,6 +86,8 @@ export const subscribePush = createServerFn({ method: "POST" })
       reservation_id: reservationId,
     };
     if (clientAccountId) insertPayload.client_account_id = clientAccountId;
+    if (driverId) insertPayload.driver_id = driverId;
+
 
     let { error: insErr } = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
     if ((insErr as any)?.code === "23505") {
