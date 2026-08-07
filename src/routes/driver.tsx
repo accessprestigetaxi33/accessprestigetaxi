@@ -807,7 +807,7 @@ function CoursesTab({
   const mineOf = useCallback((r: Resa) => isAdmin || (r as any).assigned_driver === driverId, [isAdmin, driverId]);
 
   const load = useCallback(async () => {
-    const unreadIds = await listUnreadResasFn().catch(() => [] as string[]);
+    const unreadIds = await listUnreadResasFn({ data: { driver_token: getDriverToken() } }).catch(() => [] as string[]);
     let res: any;
     try {
       res = await listCoursesFn({
@@ -843,7 +843,7 @@ function CoursesTab({
     // COUNT SQL agrégé pour prioriser les cartes + indicateurs
     try {
       const ids = list.map((r) => r.id);
-      const map = await getUnreadFn({ data: { reservation_ids: ids } });
+      const map = await getUnreadFn({ data: { reservation_ids: ids, driver_token: getDriverToken() } });
       setUnreadMap(map);
       const totalUnread = Object.values(map).reduce((sum: number, v: any) => sum + (v?.unread_chauffeur ?? 0), 0);
       onChatBadge?.(totalUnread);

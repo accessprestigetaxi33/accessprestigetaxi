@@ -485,7 +485,7 @@ function AnonChat({
     let cancelled = false;
     (async () => {
       try {
-        await markReadFn({ data: { reservation_id: reservationId, role: "client" } });
+        await markReadFn({ data: { suivi_key: suiviKey, role: "client" } });
         if (!cancelled) {
           setMessages((prev) =>
             prev.map((m) => (!m.read_by_client ? { ...m, read_by_client: true } : m)),
