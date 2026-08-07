@@ -174,9 +174,9 @@ function useHeroSlideshow(count: number, durationMs: number) {
 
 const COPY = {
   fr: {
-    kicker: "100 % électrique · Charente-Maritime",
+    kicker: "10 ans d'expérience · Transport sanitaire conventionné · Charente-Maritime",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Un service de taxi haut de gamme, silencieux et attentionné.",
+    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Transport sanitaire conventionné et courses sans limite de distance, pour tous types de prestations.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
