@@ -183,7 +183,7 @@ function ClientFactures() {
             <BrandLoader size={20} /> {t("client.trajets.loading")}
           </div>
         ) : (rows ?? []).length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center text-sm text-foreground/60">
+          <div className="rounded-2xl border border-border bg-white/[0.03] p-8 text-center text-sm text-foreground/60">
             {t("client.factures.empty_year")} {year}.
           </div>
         ) : (
@@ -225,7 +225,7 @@ function ClientFactures() {
                   return (
                     <div
                       key={month}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-white/[0.04] p-4"
                     >
                       <div>
                         <div className="text-sm font-semibold capitalize text-foreground">{monthLabel(year, month)}</div>

@@ -150,7 +150,7 @@ function ClientProfil() {
         </div>
 
         {/* Identity card */}
-        <section className="mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
+        <section className="mb-6 rounded-2xl border border-border bg-white/[0.04] p-5 backdrop-blur">
           <div className="flex items-center gap-4">
             <div
               className="flex h-14 w-14 items-center justify-center rounded-full text-lg font-bold text-black"
@@ -182,7 +182,7 @@ function ClientProfil() {
           </div>
 
           {adding && (
-            <div className="mb-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur">
+            <div className="mb-3 rounded-2xl border border-border bg-white/[0.04] p-4 backdrop-blur">
               <div className="mb-3 flex flex-wrap gap-2">
                 {PRESETS.map((p) => {
                   const Icon = ICONS[p.icon];
@@ -198,8 +198,8 @@ function ClientProfil() {
                       className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition"
                       style={{
                         borderColor: active ? "var(--gold)" : "rgba(255,255,255,0.15)",
-                        background: active ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.03)",
-                        color: active ? "#E8C96D" : "rgba(255,255,255,0.75)",
+                        background: active ? "oklch(0.62 0.12 75 / 0.15)" : "rgba(255,255,255,0.03)",
+                        color: active ? "#E8C96D" : "var(--muted-foreground)",
                       }}
                     >
                       <Icon className="h-3.5 w-3.5" /> {t(p.tKey)}
@@ -230,7 +230,7 @@ function ClientProfil() {
                 </button>
                 <button
                   onClick={() => setAdding(false)}
-                  className="rounded-lg border border-white/10 px-4 py-2 text-xs text-foreground/70 hover:bg-white/5"
+                  className="rounded-lg border border-border px-4 py-2 text-xs text-foreground/70 hover:bg-muted/50"
                 >
                   {t("profil.common.cancel")}
                 </button>
@@ -239,13 +239,13 @@ function ClientProfil() {
           )}
 
           {loading && (
-            <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-8 text-foreground/60">
+            <div className="flex items-center justify-center rounded-2xl border border-border bg-muted/50 p-8 text-foreground/60">
               <BrandLoader size={20} /> {t("profil.common.loading")}
             </div>
           )}
 
           {!loading && favorites && favorites.length === 0 && !adding && (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-foreground/60">
+            <div className="rounded-2xl border border-border bg-muted/50 p-6 text-center text-sm text-foreground/60">
               {t("profil.favorites.empty")}
             </div>
           )}
@@ -257,11 +257,11 @@ function ClientProfil() {
                 return (
                   <li
                     key={f.id}
-                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur"
+                    className="flex items-center gap-3 rounded-2xl border border-border bg-white/[0.04] p-3 backdrop-blur"
                   >
                     <div
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                      style={{ background: "rgba(201,168,76,0.15)", color: "#E8C96D" }}
+                      style={{ background: "oklch(0.62 0.12 75 / 0.15)", color: "var(--gold)" }}
                     >
                       <Icon className="h-5 w-5" />
                     </div>
@@ -278,7 +278,7 @@ function ClientProfil() {
                     </a>
                     <button
                       onClick={() => onDelete(f.id)}
-                      className="rounded-lg p-2 text-muted-foreground/60 hover:bg-white/5 hover:text-red-300"
+                      className="rounded-lg p-2 text-muted-foreground/60 hover:bg-muted/50 hover:text-red-300"
                       aria-label={t("profil.favorites.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -296,7 +296,7 @@ function ClientProfil() {
 
         <button
           onClick={logout}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-4 py-2.5 text-sm text-foreground/70 hover:bg-white/5"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2.5 text-sm text-foreground/70 hover:bg-muted/50"
         >
           <LogOut className="h-4 w-4" /> {t("profil.logout")}
         </button>
@@ -411,7 +411,7 @@ function RecurringRidesSection({ token }: { token: string }) {
       </div>
 
       {adding && (
-        <div className="mb-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur">
+        <div className="mb-3 rounded-2xl border border-border bg-white/[0.04] p-4 backdrop-blur">
           <input
             value={form.label}
             onChange={(e) => setForm({ ...form, label: e.target.value })}
@@ -519,7 +519,7 @@ function RecurringRidesSection({ token }: { token: string }) {
             </button>
             <button
               onClick={() => setAdding(false)}
-              className="rounded-lg border border-white/10 px-4 py-2 text-xs text-foreground/70 hover:bg-white/5"
+              className="rounded-lg border border-border px-4 py-2 text-xs text-foreground/70 hover:bg-muted/50"
             >
               {t("profil.common.cancel")}
             </button>
@@ -531,13 +531,13 @@ function RecurringRidesSection({ token }: { token: string }) {
       )}
 
       {loading && (
-        <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-8 text-foreground/60">
+        <div className="flex items-center justify-center rounded-2xl border border-border bg-muted/50 p-8 text-foreground/60">
           <BrandLoader size={20} /> {t("profil.common.loading")}
         </div>
       )}
 
       {!loading && rides && rides.length === 0 && !adding && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-foreground/60">
+        <div className="rounded-2xl border border-border bg-muted/50 p-6 text-center text-sm text-foreground/60">
           {t("profil.recurring.empty")}
         </div>
       )}
@@ -547,13 +547,13 @@ function RecurringRidesSection({ token }: { token: string }) {
           {rides.map((r) => (
             <li
               key={r.id}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur"
+              className="rounded-2xl border border-border bg-white/[0.04] p-3 backdrop-blur"
               style={{ opacity: r.active ? 1 : 0.55 }}
             >
               <div className="flex items-start gap-3">
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: "rgba(201,168,76,0.15)", color: "#E8C96D" }}
+                  style={{ background: "oklch(0.62 0.12 75 / 0.15)", color: "var(--gold)" }}
                 >
                   <Repeat className="h-5 w-5" />
                 </div>
@@ -568,7 +568,7 @@ function RecurringRidesSection({ token }: { token: string }) {
                 </div>
                 <button
                   onClick={() => onToggle(r)}
-                  className="rounded-lg p-2 text-muted-foreground/60 hover:bg-white/5 hover:text-primary"
+                  className="rounded-lg p-2 text-muted-foreground/60 hover:bg-muted/50 hover:text-primary"
                   aria-label={r.active ? t("profil.recurring.pause") : t("profil.recurring.activate")}
                   title={r.active ? t("profil.recurring.pause") : t("profil.recurring.activate")}
                 >
@@ -576,7 +576,7 @@ function RecurringRidesSection({ token }: { token: string }) {
                 </button>
                 <button
                   onClick={() => onDelete(r.id)}
-                  className="rounded-lg p-2 text-muted-foreground/60 hover:bg-white/5 hover:text-red-300"
+                  className="rounded-lg p-2 text-muted-foreground/60 hover:bg-muted/50 hover:text-red-300"
                   aria-label="Supprimer"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -661,11 +661,11 @@ function CompanyInfoSection({ token }: { token: string }) {
         </Link>
       </div>
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-6 text-foreground/60">
+        <div className="flex items-center justify-center rounded-2xl border border-border bg-muted/50 p-6 text-foreground/60">
           <BrandLoader size={18} /> {t("profil.common.loading")}
         </div>
       ) : (
-        <div className="space-y-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <div className="space-y-2 rounded-2xl border border-border bg-white/[0.04] p-4">
           <p className="mb-2 text-xs text-foreground/50">
             {t("profil.company.optional")}
           </p>

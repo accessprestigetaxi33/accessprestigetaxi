@@ -128,7 +128,7 @@ function ClientHistorique() {
         </div>
 
         {/* Filters */}
-        <div className="mb-4 grid gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur sm:grid-cols-4">
+        <div className="mb-4 grid gap-2 rounded-2xl border border-border bg-white/[0.04] p-3 backdrop-blur sm:grid-cols-4">
           <label className="relative sm:col-span-2">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
             <input
@@ -159,20 +159,20 @@ function ClientHistorique() {
           <button
             disabled={!filtered || filtered.length === 0}
             onClick={() => filtered && exportReservationsCSV(filtered)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-foreground hover:bg-white/10 disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-foreground hover:bg-muted/60 disabled:opacity-40"
           >
             <Download className="h-3.5 w-3.5" /> {t("client.historique.export_csv")}
           </button>
         </div>
 
         {loading && (
-          <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-10 text-foreground/60">
+          <div className="flex items-center justify-center rounded-2xl border border-border bg-muted/50 p-10 text-foreground/60">
             <BrandLoader size={20} /> {t("client.trajets.loading")}
           </div>
         )}
 
         {!loading && filtered && filtered.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-sm text-foreground/60">
+          <div className="rounded-2xl border border-border bg-muted/50 p-8 text-center text-sm text-foreground/60">
             {t("client.historique.empty")}
           </div>
         )}
@@ -183,7 +183,7 @@ function ClientHistorique() {
               const dest = r.arrivee || r.destination || "—";
               const isCompleted = r.status === "completed";
               return (
-                <li key={r.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur sm:p-5">
+                <li key={r.id} className="rounded-2xl border border-border bg-white/[0.04] p-4 backdrop-blur sm:p-5">
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                     <span className="inline-flex items-center gap-1.5 text-xs text-foreground/60">
                       <Calendar className="h-3.5 w-3.5" /> {fmtDate(r.pickup_datetime)}
