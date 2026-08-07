@@ -288,7 +288,7 @@ const fr: Dict = {
   // Contact page
   "contact.eyebrow": "Contact",
   "contact.title": "Nous contacter",
-  "contact.intro": " : un appel suffit, ou envoyez-nous un message.",
+  "contact.intro": "Du lundi au vendredi, 8h-20h : un appel suffit, ou envoyez-nous un message.",
   "contact.phone": "Téléphone",
   "contact.phone.sub": "Réponse immédiate",
   "contact.wa.title": "WhatsApp",
@@ -1405,7 +1405,7 @@ const en: Dict = {
 
   "contact.eyebrow": "Contact",
   "contact.title": "Get in touch",
-  "contact.intro": ": one call is enough, or send us a message.",
+  "contact.intro": "Monday to Friday, 8am-8pm: one call is enough, or send us a message.",
   "contact.phone": "Phone",
   "contact.phone.sub": "Immediate answer",
   "contact.wa.title": "WhatsApp",

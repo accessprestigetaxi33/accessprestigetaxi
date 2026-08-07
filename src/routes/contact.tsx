@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Phone, Mail, MapPin, MessageCircle, Clock } from "lucide-react";
+import { Phone, Mail, MapPin, MessageCircle, Clock, HeartPulse } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { ContactForm } from "@/components/ContactForm";
+import heroLogo from "@/assets/apt-logo-lockup.png";
 
+const CONTACT_EMAIL = "taxipatricia@gmail.com";
 const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
 const CONTACT_DESC =
-  "Contactez Access Prestige Taxi : 06 50 26 00 15, taxi.city033@gmail.com. Interventions en Charente-Maritime.";
+  "Contactez Access Prestige Taxi : 06 50 32 19 23, taxipatricia@gmail.com. Transport sanitaire conventionné, toutes distances, base Charente-Maritime.";
 const CONTACT_URL = "https://accessprestigetaxi.lovable.app/contact";
 
 export const Route = createFileRoute("/contact")({
@@ -34,8 +37,9 @@ export const Route = createFileRoute("/contact")({
           slogan: "L'excellence à chaque trajet",
           url: CONTACT_URL,
           telephone: DRIVERS.map((d) => d.intl),
-          email: "taxi.city033@gmail.com",
+          email: CONTACT_EMAIL,
           areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+          knowsAbout: ["Transport sanitaire conventionné", "Longue distance sans limite de kilométrage"],
           openingHoursSpecification: {
             "@type": "OpeningHoursSpecification",
             dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -56,8 +60,12 @@ const COPY = {
     whatsappSub: "Messagerie instantanée",
     zoneTitle: "Zone d'intervention",
     zoneMain: "Charente-Maritime",
-    zoneSub: "Tout le département (16 & 17)",
-    zoneLong: "Longues distances sur toute la France et en Europe sur réservation.",
+    zoneSub: "Tout le département (17) et au-delà",
+    zoneLong: "Aucune limite de distance : toute la France et l'Europe, pour tous types de prestations.",
+    cmuTitle: "Transport sanitaire conventionné",
+    cmuText:
+      "Consultations, hospitalisations, dialyses, chimiothérapies : prise en charge conventionnée sur prescription médicale.",
+    badge: "10 ans d'expérience",
   },
   en: {
     whatsappTitle: "WhatsApp",
@@ -65,8 +73,12 @@ const COPY = {
     whatsappSub: "Instant messaging",
     zoneTitle: "Service area",
     zoneMain: "Charente-Maritime",
-    zoneSub: "The whole area (16 & 17)",
-    zoneLong: "Long-distance trips throughout France and Europe by reservation.",
+    zoneSub: "The whole area (17) and beyond",
+    zoneLong: "No distance limit: anywhere in France and Europe, for every type of journey.",
+    cmuTitle: "Approved medical transport",
+    cmuText:
+      "Appointments, hospital stays, dialysis, chemotherapy: covered medical transport with a doctor's prescription.",
+    badge: "10 years of experience",
   },
 } as const;
 
@@ -74,31 +86,49 @@ function ContactPage() {
   const t = useT();
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
+  const first = DRIVERS[0]!;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:py-14 md:py-16">
       <div className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
+        <img
+          src={heroLogo}
+          alt="Access Prestige Taxi"
+          width={320}
+          height={120}
+          className="mx-auto h-20 w-auto object-contain sm:h-28"
+        />
+        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
         <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("contact.title")}</h1>
         <p className="mt-3 text-sm text-muted-foreground sm:mt-4 sm:text-base">{t("contact.intro")}</p>
+        <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+          {c.badge}
+        </span>
       </div>
 
       {/* Contact cards: 1-col on mobile, 2-col on md */}
       <div className="mt-8 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6">
         <a
-          href="tel:0650260015"
+          href={`tel:${first.tel}`}
           className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <Phone className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
           <div>
             <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{t("contact.phone")}</h2>
-            <p className="text-xl font-bold text-primary sm:mt-1 sm:text-2xl">06 50 26 00 15</p>
+            {DRIVERS.map((d) => (
+              <p key={d.tel} className="text-lg font-bold text-primary sm:mt-1 sm:text-xl">
+                <span className="mr-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  {d.name}
+                </span>
+                {d.display}
+              </p>
+            ))}
             <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{t("contact.phone.sub")}</p>
           </div>
         </a>
 
         <a
-          href="https://wa.me/33650260015"
+          href={`https://wa.me/${first.intl.replace("+", "")}`}
           target="_blank"
           rel="noopener noreferrer"
           className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
@@ -112,13 +142,13 @@ function ContactPage() {
         </a>
 
         <a
-          href="mailto:taxi.city033@gmail.com"
+          href={`mailto:${CONTACT_EMAIL}`}
           className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <Mail className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
           <div>
             <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{t("contact.email")}</h2>
-            <p className="break-all font-semibold sm:mt-1 sm:text-base">taxi.city033@gmail.com</p>
+            <p className="break-all font-semibold sm:mt-1 sm:text-base">✉️ {CONTACT_EMAIL}</p>
             <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{t("contact.email.sub")}</p>
           </div>
         </a>
@@ -129,11 +159,21 @@ function ContactPage() {
             <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{c.zoneTitle}</h2>
             <p className="font-semibold sm:mt-1">{c.zoneMain}</p>
             <p className="text-sm text-muted-foreground">{c.zoneSub}</p>
-            <p className="mt-1 text-sm text-muted-foreground sm:mt-2">
-              {c.zoneLong}
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground sm:mt-2">{c.zoneLong}</p>
           </div>
         </div>
+      </div>
+
+      <div className="mt-5 flex flex-row items-start gap-4 rounded-2xl border border-primary/30 bg-card p-5 sm:mt-6 sm:p-6">
+        <HeartPulse className="h-7 w-7 shrink-0 text-primary" />
+        <div>
+          <h2 className="font-display text-lg font-semibold sm:text-xl">{c.cmuTitle}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{c.cmuText}</p>
+        </div>
+      </div>
+
+      <div className="mt-8 sm:mt-10">
+        <ContactForm />
       </div>
 
       <div className="mt-5 rounded-2xl border border-primary/30 bg-card p-4 text-center sm:mt-8 sm:p-5">
