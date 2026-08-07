@@ -459,7 +459,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
     <div className="flex h-full w-full flex-col overflow-hidden" style={{ background: "#0f172a" }}>
       {/* Header */}
       <div
-        className="flex items-center justify-between border-b border-white/10 px-4 py-3"
+        className="flex items-center justify-between border-b border-border px-4 py-3"
         style={{
           background: "linear-gradient(180deg, rgba(201,168,76,0.12) 0%, transparent 100%)",
         }}
@@ -512,7 +512,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
       )}
 
       {showSearch && (
-        <div className="space-y-2 border-b border-white/10 bg-black/30 px-3 py-2.5">
+        <div className="space-y-2 border-b border-border bg-muted/50 px-3 py-2.5">
           <div className="relative">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/40" />
             <input
@@ -520,7 +520,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
               value={searchKw}
               onChange={(e) => setSearchKw(e.target.value)}
               placeholder={t("chat_search_placeholder")}
-              className="w-full rounded-lg border border-white/10 bg-white/5 py-1.5 pl-8 pr-2 text-xs text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
+              className="w-full rounded-lg border border-border bg-white/5 py-1.5 pl-8 pr-2 text-xs text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
             />
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-white/60">
@@ -530,7 +530,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
                 type="date"
                 value={searchFrom}
                 onChange={(e) => setSearchFrom(e.target.value)}
-                className="w-full rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
+                className="w-full rounded-md border border-border bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
               />
             </label>
             <label className="flex-1">
@@ -539,7 +539,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
                 type="date"
                 value={searchTo}
                 onChange={(e) => setSearchTo(e.target.value)}
-                className="w-full rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
+                className="w-full rounded-md border border-border bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
               />
             </label>
             {filterActive && (
@@ -550,7 +550,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
                   setSearchFrom("");
                   setSearchTo("");
                 }}
-                className="self-end rounded-md border border-white/10 px-2 py-1 text-[10px] text-white/60 transition hover:bg-white/10 hover:text-white"
+                className="self-end rounded-md border border-border px-2 py-1 text-[10px] text-white/60 transition hover:bg-white/10 hover:text-white"
               >
                 {t("chat_reset")}
               </button>
@@ -577,7 +577,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
               type="button"
               onClick={loadOlder}
               disabled={loadingMore}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/60 hover:bg-white/10 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white/5 px-3 py-1 text-[11px] text-white/60 hover:bg-white/10 disabled:opacity-50"
             >
               {loadingMore ? <Loader2 className="h-3 w-3 animate-spin" /> : <ChevronUp className="h-3 w-3" />}
               {t("chat_older_messages")}
@@ -607,7 +607,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
               <li key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[78%] rounded-2xl px-3.5 py-2 text-sm leading-snug ${
-                    mine ? "text-black" : "text-white"
+                    mine ? "text-foreground" : "text-white"
                   }`}
                   style={
                     mine
@@ -618,7 +618,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
                   <div className="whitespace-pre-wrap break-words">{m.content}</div>
                   <div
                     className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
-                      mine ? "text-black/55" : "text-white/40"
+                      mine ? "text-foreground/55" : "text-white/40"
                     }`}
                   >
                     <span>
@@ -656,7 +656,7 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
           e.preventDefault();
           send();
         }}
-        className="flex items-end gap-2 border-t border-white/10 bg-black/30 px-3 py-3"
+        className="flex items-end gap-2 border-t border-border bg-muted/50 px-3 py-3"
       >
         <textarea
           value={input}
@@ -672,12 +672,12 @@ export function DirectChatPanel({ accountId, authToken, role, onClose, peerName 
           }}
           placeholder={t("chat_input_placeholder")}
           rows={1}
-          className="max-h-32 flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
+          className="max-h-32 flex-1 resize-none rounded-xl border border-border bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
         />
         <button
           type="submit"
           disabled={sending || !input.trim()}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-black transition active:scale-95 disabled:opacity-50"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-foreground transition active:scale-95 disabled:opacity-50"
           style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
           aria-label={t("chat_send")}
         >

@@ -451,7 +451,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
   const panelBg = isDriver ? "#FBF7EE" : "#0f172a";
   const headerBorder = isDriver ? "1px solid #E8DFCB" : "1px solid rgba(255,255,255,0.1)";
   const titleColor = isDriver ? "#1a1a1a" : "#ffffff";
-  const iconColor = isDriver ? "text-black/60 hover:text-black hover:bg-black/5" : "text-white/60 hover:text-white hover:bg-white/10";
+  const iconColor = isDriver ? "text-foreground/60 hover:text-foreground hover:bg-muted/50" : "text-white/60 hover:text-white hover:bg-white/10";
 
   return (
     <div
@@ -484,7 +484,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
           {isDriver && (
             <button
               onClick={onClose}
-              className="mr-2 inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[12px] font-semibold text-black transition active:scale-95"
+              className="mr-2 inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[12px] font-semibold text-foreground transition active:scale-95"
               aria-label={isEn ? "Back to driver view" : "Retour driver"}
             >
               <ArrowLeft className="h-3.5 w-3.5" /> {isEn ? "Back to driver" : "Retour driver"}
@@ -492,8 +492,8 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
           )}
           <div className="min-w-0 flex-1">
             <div className="truncate text-sm font-semibold" style={{ color: titleColor }}>{title}</div>
-            <div className={`flex items-center gap-1.5 text-[11px] ${isDriver ? (peerOnline || peerTyping ? "text-emerald-600" : "text-black/40") : statusColor}`}>
-              <span className={`inline-block h-1.5 w-1.5 rounded-full ${peerOnline || peerTyping ? "bg-emerald-500" : (isDriver ? "bg-black/30" : "bg-white/30")}`} /> {statusLabel}
+            <div className={`flex items-center gap-1.5 text-[11px] ${isDriver ? (peerOnline || peerTyping ? "text-emerald-600" : "text-muted-foreground") : statusColor}`}>
+              <span className={`inline-block h-1.5 w-1.5 rounded-full ${peerOnline || peerTyping ? "bg-emerald-500" : (isDriver ? "bg-muted/50" : "bg-white/30")}`} /> {statusLabel}
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -538,7 +538,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
         )}
 
         {showSearch && (
-          <div className="space-y-2 border-b border-white/10 bg-black/30 px-3 py-2.5">
+          <div className="space-y-2 border-b border-border bg-muted/50 px-3 py-2.5">
             <div className="relative">
               <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/40" />
               <input
@@ -546,7 +546,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                 value={searchKw}
                 onChange={(e) => setSearchKw(e.target.value)}
                 placeholder={t("chat.search_ph")}
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-1.5 pl-8 pr-2 text-xs text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
+                className="w-full rounded-lg border border-border bg-white/5 py-1.5 pl-8 pr-2 text-xs text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
               />
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-white/60">
@@ -556,7 +556,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                   type="date"
                   value={searchFrom}
                   onChange={(e) => setSearchFrom(e.target.value)}
-                  className="w-full rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
+                  className="w-full rounded-md border border-border bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
                 />
               </label>
               <label className="flex-1">
@@ -565,7 +565,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                   type="date"
                   value={searchTo}
                   onChange={(e) => setSearchTo(e.target.value)}
-                  className="w-full rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
+                  className="w-full rounded-md border border-border bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-[#E8C96D]"
                 />
               </label>
               {filterActive && (
@@ -576,7 +576,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                     setSearchFrom("");
                     setSearchTo("");
                   }}
-                  className="self-end rounded-md border border-white/10 px-2 py-1 text-[10px] text-white/60 transition hover:bg-white/10 hover:text-white"
+                  className="self-end rounded-md border border-border px-2 py-1 text-[10px] text-white/60 transition hover:bg-white/10 hover:text-white"
                 >
                   {t("chat.reset")}
                 </button>
@@ -603,7 +603,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                 type="button"
                 onClick={loadOlder}
                 disabled={loadingMore}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/60 hover:bg-white/10 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-white/5 px-3 py-1 text-[11px] text-white/60 hover:bg-white/10 disabled:opacity-50"
               >
                 {loadingMore ? <Loader2 className="h-3 w-3 animate-spin" /> : <ChevronUp className="h-3 w-3" />}
                 {t("chat.older")}
@@ -635,7 +635,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                 <li key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[78%] rounded-2xl px-3.5 py-2 text-sm leading-snug ${
-                      mine ? "text-black" : isDriver ? "text-black" : "text-white"
+                      mine ? "text-foreground" : isDriver ? "text-foreground" : "text-white"
                     }`}
                     style={
                       mine
@@ -648,7 +648,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
                     <div className="whitespace-pre-wrap break-words">{m.content}</div>
                     <div
                       className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
-                        mine ? "text-black/55" : isDriver ? "text-black/40" : "text-white/40"
+                        mine ? "text-foreground/55" : isDriver ? "text-muted-foreground" : "text-white/40"
                       }`}
                     >
                       <span>
@@ -718,14 +718,14 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
             rows={1}
             className={
               isDriver
-                ? "max-h-32 flex-1 resize-none rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-black placeholder-black/40 outline-none focus:border-[#C9A84C]"
-                : "max-h-32 flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
+                ? "max-h-32 flex-1 resize-none rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-foreground placeholder-black/40 outline-none focus:border-[#C9A84C]"
+                : "max-h-32 flex-1 resize-none rounded-xl border border-border bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/40 outline-none focus:border-[#E8C96D]"
             }
           />
           <button
             type="submit"
             disabled={sending || !input.trim()}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-black transition active:scale-95 disabled:opacity-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-foreground transition active:scale-95 disabled:opacity-50"
             style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
             aria-label={t("chat.send")}
           >
@@ -741,7 +741,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
 function Dot({ delay, dark = false }: { delay: string; dark?: boolean }) {
   return (
     <span
-      className={`inline-block h-1.5 w-1.5 animate-bounce rounded-full ${dark ? "bg-black/50" : "bg-white/60"}`}
+      className={`inline-block h-1.5 w-1.5 animate-bounce rounded-full ${dark ? "bg-muted/500" : "bg-white/60"}`}
       style={{ animationDelay: delay }}
     />
   );
