@@ -94,12 +94,15 @@ function ContactPage() {
         <img
           src={heroLogo}
           alt="Access Prestige Taxi"
-          width={320}
-          height={120}
-          className="mx-auto h-20 w-auto object-contain sm:h-28"
+          width={400}
+          height={150}
+          className="mx-auto h-28 w-auto object-contain sm:h-40 md:h-48"
         />
-        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
-        <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("contact.title")}</h1>
+        <p className="mt-5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+          Access <span className="text-primary">Prestige</span> Taxi
+        </p>
+        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
+        <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("contact.title")}</h1>
         <p className="mt-3 text-sm text-muted-foreground sm:mt-4 sm:text-base">{t("contact.intro")}</p>
         <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
           {c.badge}
