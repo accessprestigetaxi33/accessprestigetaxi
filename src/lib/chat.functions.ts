@@ -773,20 +773,18 @@ export const countUnreadClientForReservation = createServerFn({ method: "POST" }
 // même si la réservation n'est plus dans les statuts actifs.
 export const listReservationsWithUnreadChauffeur = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
-  .handler(
-  async ({ data }) => {
+  .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+    const { data: rows, error } = await supabaseAdmin
       .from("reservation_messages")
       .select("reservation_id")
       .eq("sender", "client")
       .eq("read_by_chauffeur", false);
     if (error) throw error;
-    const ids = Array.from(new Set((data ?? []).map((r: any) => r.reservation_id).filter(Boolean)));
+    const ids = Array.from(new Set((rows ?? []).map((r: any) => r.reservation_id).filter(Boolean)));
     return ids as string[];
-  },
-);
+  });
 
 // Version "par ID de réservation" du compteur client — utilisée côté chauffeur
 // pour afficher un indicateur "message envoyé, pas encore lu par le client".
