@@ -313,9 +313,9 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "100% electric · Charente-Maritime",
+    kicker: "10 years of experience · Approved medical transport · Charente-Maritime",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. A premium, silent and attentive taxi service.",
+    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. Approved medical transport and rides with no distance limit, for every type of service.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
