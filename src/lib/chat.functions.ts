@@ -41,6 +41,15 @@ function normalizePhone(p?: string | null): string | null {
   return digits.length >= 6 ? digits.slice(-9) : null;
 }
 
+// Jeton du panneau chauffeur — validé côté serveur pour chaque appel qui lit ou
+// écrit des données de réservation/messagerie (aucune confiance dans le client).
+const driverTokenSchema = z.string().min(8).max(200);
+
+async function requireDriver(token: unknown) {
+  const { assertDriverToken } = await import("@/lib/driver-auth.server");
+  return assertDriverToken(token);
+}
+
 async function assertClientOwnsReservation(
   reservationId: string,
   identity: { account_id: string; phone?: string | null; email?: string | null },
@@ -119,8 +128,9 @@ export const sendClientMessage = createServerFn({ method: "POST" })
   });
 
 export const sendChauffeurMessage = createServerFn({ method: "POST" })
-  .inputValidator((input) => sendSchema.parse(input))
+  .inputValidator((input) => sendSchema.extend({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Récupère suivi_id + compte client pour construire l'URL et cibler la push
@@ -174,12 +184,14 @@ export const listReservationMessages = createServerFn({ method: "POST" })
     z
       .object({
         reservation_id: z.string().uuid(),
+        driver_token: driverTokenSchema,
         before: z.string().datetime().optional(),
         limit: z.number().int().min(1).max(100).optional(),
       })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin
       .from("reservation_messages")
@@ -197,12 +209,26 @@ export const markReservationMessagesRead = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z
       .object({
-        reservation_id: z.string().uuid(),
+        // Côté chauffeur : jeton du panneau. Côté client : clé de suivi (preuve
+        // de possession du lien de la réservation). Aucun accès sans preuve.
+        reservation_id: z.string().uuid().optional(),
+        suivi_key: z.string().trim().min(6).max(200).optional(),
+        driver_token: driverTokenSchema.optional(),
         role: z.enum(["client", "chauffeur"]),
       })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    let reservationId: string;
+    if (data.role === "chauffeur") {
+      await requireDriver(data.driver_token);
+      if (!data.reservation_id) throw new Error("BAD_REQUEST");
+      reservationId = data.reservation_id;
+    } else {
+      if (!data.suivi_key) throw new Error("UNAUTHORIZED");
+      const r = await resolveSuiviReservation(data.suivi_key);
+      reservationId = r.id as string;
+    }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // role='client' → marque tous les messages read_by_client=true (y compris
     // la demande spéciale envoyée par le client lui-même, insérée avec
@@ -213,7 +239,7 @@ export const markReservationMessagesRead = createServerFn({ method: "POST" })
     let q = supabaseAdmin
       .from("reservation_messages")
       .update(patch)
-      .eq("reservation_id", data.reservation_id)
+      .eq("reservation_id", reservationId)
       .eq(readCol, false);
     if (data.role === "chauffeur") q = q.eq("sender", "client");
     const { error } = await q;
@@ -225,8 +251,11 @@ export const markReservationMessagesRead = createServerFn({ method: "POST" })
 // de messages effectivement basculés à `read_by_chauffeur=true`. Utilisé par
 // InlineDriverChat pour éviter la course entre clics rapides / plusieurs onglets.
 export const markReservationReadByChauffeur = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ reservation_id: z.string().uuid() }).parse(input))
+  .inputValidator((input) =>
+    z.object({ reservation_id: z.string().uuid(), driver_token: driverTokenSchema }).parse(input),
+  )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: count, error } = await supabaseAdmin.rpc(
       "mark_reservation_read_by_chauffeur",
@@ -237,8 +266,13 @@ export const markReservationReadByChauffeur = createServerFn({ method: "POST" })
   });
 
 export const countUnreadForClient = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ reservation_ids: z.array(z.string().uuid()).max(200) }).parse(input))
+  .inputValidator((input) =>
+    z
+      .object({ reservation_ids: z.array(z.string().uuid()).max(200), driver_token: driverTokenSchema })
+      .parse(input),
+  )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     if (data.reservation_ids.length === 0) return {} as Record<string, number>;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
@@ -255,7 +289,10 @@ export const countUnreadForClient = createServerFn({ method: "POST" })
     return counts;
   });
 
-export const listAdminChatThreads = createServerFn({ method: "GET" }).handler(async () => {
+export const listAdminChatThreads = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
+  .handler(async ({ data }) => {
+  await requireDriver(data.driver_token);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const { data: msgs, error } = await supabaseAdmin
@@ -384,11 +421,13 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
 const seedSpecialSchema = z.object({
   reservation_id: z.string().uuid(),
   content: z.string().trim().min(1).max(2000),
+  driver_token: driverTokenSchema,
 });
 
 export const seedReservationSpecialRequest = createServerFn({ method: "POST" })
   .inputValidator((input) => seedSpecialSchema.parse(input))
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // Anti-doublon : si un message client identique existe déjà pour cette
     // réservation, on ne réinsère pas (utile en cas de re-submit / retry).
@@ -592,7 +631,10 @@ export const markDirectMessagesRead = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const listAdminDirectThreads = createServerFn({ method: "GET" }).handler(async () => {
+export const listAdminDirectThreads = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
+  .handler(async ({ data }) => {
+  await requireDriver(data.driver_token);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: msgs, error } = await supabaseAdmin
     .from("direct_messages")
@@ -662,7 +704,10 @@ export type MergedMessage = {
   created_at: string;
 };
 
-export const countUnreadChauffeurMessages = createServerFn({ method: "GET" }).handler(async () => {
+export const countUnreadChauffeurMessages = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
+  .handler(async ({ data }) => {
+  await requireDriver(data.driver_token);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [dm, rm] = await Promise.all([
     supabaseAdmin
@@ -684,8 +729,11 @@ export const countUnreadChauffeurMessages = createServerFn({ method: "GET" }).ha
 });
 
 export const countUnreadChauffeurForReservation = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ reservation_id: z.string().uuid() }).parse(input))
+  .inputValidator((input) =>
+    z.object({ reservation_id: z.string().uuid(), driver_token: driverTokenSchema }).parse(input),
+  )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { count, error } = await supabaseAdmin
       .from("reservation_messages")
@@ -723,8 +771,11 @@ export const countUnreadClientForReservation = createServerFn({ method: "POST" }
 // Liste des réservations ayant au moins un message client non lu par le
 // chauffeur — utilisé pour ne jamais rater une "demande spéciale" côté driver,
 // même si la réservation n'est plus dans les statuts actifs.
-export const listReservationsWithUnreadChauffeur = createServerFn({ method: "GET" }).handler(
-  async () => {
+export const listReservationsWithUnreadChauffeur = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
+  .handler(
+  async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("reservation_messages")
@@ -740,8 +791,11 @@ export const listReservationsWithUnreadChauffeur = createServerFn({ method: "GET
 // Version "par ID de réservation" du compteur client — utilisée côté chauffeur
 // pour afficher un indicateur "message envoyé, pas encore lu par le client".
 export const countUnreadClientForReservationById = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ reservation_id: z.string().uuid() }).parse(input))
+  .inputValidator((input) =>
+    z.object({ reservation_id: z.string().uuid(), driver_token: driverTokenSchema }).parse(input),
+  )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { count, error } = await supabaseAdmin
       .from("reservation_messages")
@@ -759,9 +813,12 @@ export const countUnreadClientForReservationById = createServerFn({ method: "POS
 export type UnreadMap = Record<string, { unread_chauffeur: number; unread_client: number }>;
 export const getUnreadCountsForReservations = createServerFn({ method: "POST" })
   .inputValidator((input) =>
-    z.object({ reservation_ids: z.array(z.string().uuid()).max(500) }).parse(input),
+    z
+      .object({ reservation_ids: z.array(z.string().uuid()).max(500), driver_token: driverTokenSchema })
+      .parse(input),
   )
   .handler(async ({ data }): Promise<UnreadMap> => {
+    await requireDriver(data.driver_token);
     if (data.reservation_ids.length === 0) return {};
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
