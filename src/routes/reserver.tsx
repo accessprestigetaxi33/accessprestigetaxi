@@ -37,7 +37,7 @@ export const Route = createFileRoute("/reserver")({
         content:
           "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
       },
-      { name: "theme-color", content: "var(--gold-foreground)" },
+      { name: "theme-color", content: "#F5F0E6" },
     ],
     links: seoLinks("/reserver"),
   }),
