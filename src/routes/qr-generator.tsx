@@ -298,8 +298,8 @@ function QrGeneratorPage() {
     <main
       style={{
         minHeight: "100dvh",
-        background: "linear-gradient(180deg,#0a0a0a 0%,#111827 100%)",
-        color: "#fff",
+        background: "linear-gradient(180deg,#F5F0E6 0%,#EDE6D4 100%)",
+        color: "#2c2718",
         padding: "40px 20px",
       }}
     >
@@ -364,7 +364,7 @@ function QrGeneratorPage() {
                     border: "1px solid rgba(255,255,255,0.15)",
                     borderRadius: 8,
                     padding: "10px 12px",
-                    color: "#fff",
+                    color: "#2c2718",
                     fontSize: 14,
                   }}
                 />
@@ -393,7 +393,7 @@ function QrGeneratorPage() {
                     border: `1px solid ${errors[key] ? "#ef4444" : "rgba(255,255,255,0.15)"}`,
                     borderRadius: 8,
                     padding: "10px 12px",
-                    color: "#fff",
+                    color: "#2c2718",
                     fontSize: 14,
                   }}
                 />
@@ -599,7 +599,7 @@ function btnGhost(disabled: boolean): React.CSSProperties {
     borderRadius: 10,
     border: "1px solid rgba(255,255,255,0.2)",
     background: "transparent",
-    color: "#fff",
+    color: "#2c2718",
     fontWeight: 600,
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.5 : 1,

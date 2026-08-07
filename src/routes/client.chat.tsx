@@ -32,21 +32,21 @@ function ClientChatPage() {
   return (
     <main
       className="relative flex min-h-[100dvh] flex-col overflow-hidden px-4 pt-8"
-      style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #111827 100%)" }}
+      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
     >
       <div className="mx-auto w-full max-w-3xl">
         <div className="mb-4">
           <p className="text-xs uppercase tracking-[0.2em] text-[#E8C96D]">{t("client.eyebrow")}</p>
           <h1
-            className="mt-1 text-2xl font-bold text-white sm:text-3xl"
+            className="mt-1 text-2xl font-bold text-foreground sm:text-3xl"
             style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
           >
             {t("client.chat.title")}
           </h1>
-          <p className="mt-1 text-xs text-white/50">{t("client.chat.subtitle")}</p>
+          <p className="mt-1 text-xs text-foreground/50">{t("client.chat.subtitle")}</p>
         </div>
         <div
-          className="flex flex-col overflow-hidden rounded-2xl border border-white/10"
+          className="flex flex-col overflow-hidden rounded-2xl border border-border/40"
           style={{ height: "calc(100dvh - 240px)", minHeight: 360 }}
         >
           <DirectChatPanel accountId={session.id} authToken={session.token} role="client" peerName="Access Prestige Taxi 🚖" />

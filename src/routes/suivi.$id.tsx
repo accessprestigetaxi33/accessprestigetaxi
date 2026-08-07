@@ -1821,7 +1821,7 @@ function SuiviPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
         }}
       >
         <style>{PREMIUM_CSS}</style>
@@ -1838,7 +1838,7 @@ function SuiviPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
           padding: "20px",
         }}
       >
@@ -1874,7 +1874,7 @@ function SuiviPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
           padding: "20px",
         }}
       >
@@ -1920,7 +1920,7 @@ function SuiviPage() {
       <div
         className="suivi-root"
         style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
           minHeight: "100dvh",
           padding: "16px",
           paddingTop: "calc(16px + env(safe-area-inset-top, 0px))",
@@ -2156,7 +2156,7 @@ function SuiviPage() {
                 className="vehicle-photo-block"
                 style={{
                   marginTop: "12px",
-                  background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+                  background: "linear-gradient(135deg, #E5DCC8 0%, #EDE6D4 100%)",
                   borderRadius: "12px",
                   border: "1px solid rgba(255,255,255,0.08)",
                   overflow: "hidden",
@@ -2200,7 +2200,7 @@ function SuiviPage() {
                       left: 0,
                       right: 0,
                       height: "60px",
-                      background: "linear-gradient(to top, #0f172a, transparent)",
+                      background: "linear-gradient(to top, #EDE6D4, transparent)",
                     }}
                   />
                   {/* Badge Taxi flottant */}

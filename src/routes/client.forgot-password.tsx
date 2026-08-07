@@ -45,12 +45,12 @@ function ForgotPasswordPage() {
   return (
     <main
       className="relative min-h-[100dvh] overflow-hidden px-4 py-10 sm:py-16"
-      style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #111827 100%)" }}
+      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
-        style={{ background: "radial-gradient(circle, #C9A84C 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
       />
       <div className="relative mx-auto flex w-full max-w-md flex-col items-center">
         <ClientAuthHeader />
@@ -67,20 +67,20 @@ function ForgotPasswordPage() {
           {!sent ? (
             <>
               <h1
-                className="text-center text-2xl font-bold text-white sm:text-3xl"
+                className="text-center text-2xl font-bold text-foreground sm:text-3xl"
                 style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
               >
                 {t("client.forgot.title")}
               </h1>
-              <p className="mt-2 text-center text-sm text-white/60">
+              <p className="mt-2 text-center text-sm text-foreground/60">
                 {t("client.forgot.desc")}
               </p>
               <form onSubmit={onSubmit} className="mt-6 space-y-3.5">
                 <label
-                  className="flex items-center gap-2.5 rounded-xl border px-3.5 transition focus-within:border-[#C9A84C]/60"
+                  className="flex items-center gap-2.5 rounded-xl border px-3.5 transition focus-within:border-[var(--gold)]/60"
                   style={{ height: 50, background: "rgba(0,0,0,0.25)", borderColor: "rgba(255,255,255,0.08)" }}
                 >
-                  <Mail className="h-4 w-4 text-white/50" />
+                  <Mail className="h-4 w-4 text-foreground/50" />
                   <input
                     type="email"
                     inputMode="email"
@@ -88,7 +88,7 @@ function ForgotPasswordPage() {
                     placeholder="votre@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-transparent text-white placeholder:text-white/40 focus:outline-none"
+                    className="w-full bg-transparent text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
                   />
                 </label>
                 {error && (
@@ -111,7 +111,7 @@ function ForgotPasswordPage() {
                   style={{
                     height: 52,
                     borderRadius: 14,
-                    background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)",
+                    background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)",
                     boxShadow: "0 10px 30px -10px rgba(201,168,76,0.5)",
                   }}
                 >
@@ -122,18 +122,18 @@ function ForgotPasswordPage() {
           ) : (
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ background: "rgba(201,168,76,0.15)" }}>
-                <CheckCircle2 className="h-7 w-7 text-[#E8C96D]" />
+                <CheckCircle2 className="h-7 w-7 text-primary" />
               </div>
-              <h1 className="text-xl font-bold text-white" style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}>
+              <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}>
                 {t("client.forgot.sent_title")}
               </h1>
-              <p className="mt-3 text-sm text-white/70">
-                {t("client.forgot.sent_desc")} <span className="text-[#E8C96D]">{email}</span>
+              <p className="mt-3 text-sm text-foreground/70">
+                {t("client.forgot.sent_desc")} <span className="text-primary">{email}</span>
               </p>
-              <p className="mt-2 text-xs text-white/50">{t("client.forgot.sent_spam")}</p>
+              <p className="mt-2 text-xs text-foreground/50">{t("client.forgot.sent_spam")}</p>
               <button
                 onClick={() => navigate({ to: "/client/login" })}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#C9A84C]/40 bg-[#C9A84C]/10 px-4 py-3 text-sm font-semibold text-[#E8C96D]"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--gold)]/40 bg-[var(--gold)]/10 px-4 py-3 text-sm font-semibold text-primary"
               >
                 {t("client.forgot.back_login")}
               </button>
@@ -142,7 +142,7 @@ function ForgotPasswordPage() {
         </div>
         <Link
           to="/client/login"
-          className="mt-6 inline-flex items-center gap-1.5 text-xs text-white/60 hover:text-white"
+          className="mt-6 inline-flex items-center gap-1.5 text-xs text-foreground/60 hover:text-foreground"
         >
           <ArrowLeft className="h-3 w-3" /> {t("client.forgot.back")}
         </Link>

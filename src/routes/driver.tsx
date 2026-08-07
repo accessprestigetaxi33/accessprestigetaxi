@@ -121,16 +121,16 @@ const css = `
     position: fixed; inset: 0;
     max-width: 480px; margin: 0 auto;
     display: flex; flex-direction: column;
-    background: #fff;
+    background: #FDFBF7;
   }
   .drv-header {
-    background: #0f172a; color: #fff; display: flex; align-items: center; gap: 10px;
+    background: #0f172a; color: #FDFBF7; display: flex; align-items: center; gap: 10px;
     padding: max(calc(env(safe-area-inset-top, 0px) + 14px), 54px) calc(env(safe-area-inset-right, 0px) + 16px) 10px calc(env(safe-area-inset-left, 0px) + 16px);
     flex-shrink: 0;
   }
   .drv-header h1 { margin: 0; font-size: 17px; font-weight: 700; flex: 1; font-family: 'DM Sans', sans-serif; }
   .drv-tabs {
-    display: flex; border-bottom: 1px solid #e2e8f0; background: #fff;
+    display: flex; border-bottom: 1px solid #e2e8f0; background: #FDFBF7;
     padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
     flex-shrink: 0;
   }
@@ -143,14 +143,14 @@ const css = `
   .drv-tab:active { background: #f8fafc; }
   .drv-tab.active { color: #0f172a; border-bottom-color: #0f172a; }
   .drv-tab svg { width: 22px; height: 22px; }
-  .drv-badge { background: #ef4444; color: #fff; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
+  .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
   .drv-body {
     flex: 1; padding: 16px;
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
   }
   .drv-section { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
-  .drv-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+  .drv-card { background: #FDFBF7; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
   .drv-card.pending { border-color: #f59e0b; }
   .drv-card.new { border-color: #3b82f6; box-shadow: 0 0 0 3px #3b82f620; }
   .drv-card.done { opacity: 0.5; }
@@ -165,7 +165,7 @@ const css = `
   .drv-meta { display: flex; gap: 12px; font-size: 12px; color: #64748b; margin: 8px 0 12px; flex-wrap: wrap; }
   .drv-meta span { display: flex; align-items: center; gap: 4px; }
   .drv-btns { display: flex; gap: 8px; }
-  .drv-btn-primary { flex: 1; min-height: 46px; background: #0f172a; color: #fff; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-primary { flex: 1; min-height: 46px; background: #0f172a; color: #FDFBF7; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-primary:active { background: #1e293b; }
   .drv-btn-secondary { flex: 1; min-height: 46px; background: #f1f5f9; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-secondary:active { background: #e2e8f0; }
@@ -174,11 +174,11 @@ const css = `
   .drv-badge-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
   .drv-badge-blue { background: #eff6ff; color: #1d4ed8; }
   .drv-badge-green { background: #f0fdf4; color: #15803d; }
-  .drv-badge-amber { background: #fffbeb; color: #92400e; }
+  .drv-badge-amber { background: #FDFBF7beb; color: #92400e; }
   .drv-badge-red { background: #fef2f2; color: #b91c1c; }
   .drv-badge-gray { background: #f1f5f9; color: #475569; }
   .drv-stars { color: #f59e0b; font-size: 15px; letter-spacing: 1px; }
-  .drv-stars-empty { color: #cbd5e1; font-size: 15px; }
+  .drv-stars-empty { color: var(--border); font-size: 15px; }
   .drv-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
   .drv-stat { background: #f8fafc; border-radius: 14px; padding: 14px; }
   .drv-stat-lbl { font-size: 11px; color: #64748b; margin-bottom: 4px; }
@@ -198,17 +198,17 @@ const css = `
   .drv-planning-slot { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
   .drv-planning-time { font-size: 12px; color: #64748b; min-width: 40px; padding-top: 3px; }
   .drv-planning-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
-  .drv-planning-card { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; }
+  .drv-planning-card { flex: 1; background: #FDFBF7; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; }
   @media (max-width: 380px) {
     .drv-time { font-size: 18px; }
     .drv-stat-val { font-size: 20px; }
   }
-  .drv-chat-thread { border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #fff; display: flex; align-items: center; gap: 10; }
+  .drv-chat-thread { border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10; }
   .drv-chat-thread:active { background: #f8fafc; }
   .drv-chat-thread.unread { border-color: #3b82f6; background: #eff6ff; }
-  .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+  .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
   .drv-chat-bubble { max-width: 78%; border-radius: 14px; padding: 9px 12px; font-size: 13.5px; line-height: 1.45; }
-  .drv-chat-bubble.me { background: #0f172a; color: #fff; border-radius: 14px 14px 4px 14px; margin-left: auto; }
+  .drv-chat-bubble.me { background: #0f172a; color: #FDFBF7; border-radius: 14px 14px 4px 14px; margin-left: auto; }
   .drv-chat-bubble.them { background: #f1f5f9; color: #0f172a; border-radius: 14px 14px 14px 4px; }
   @keyframes drv-fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
   .drv-msg-in { animation: drv-fadein 0.25s ease both; }
@@ -451,7 +451,7 @@ function DriverPage() {
                 style={{
                   padding: "12px 14px",
                   borderRadius: 10,
-                  border: "1px solid #cbd5e1",
+                  border: "1px solid var(--border)",
                   fontSize: 16,
                 }}
               />
@@ -461,8 +461,8 @@ function DriverPage() {
                   padding: "12px 14px",
                   borderRadius: 10,
                   border: "none",
-                  background: "#0B0B0D",
-                  color: "#C6A24A",
+                  background: "var(--background)",
+                  color: "var(--gold)",
                   fontWeight: 700,
                   fontSize: 15,
                   cursor: "pointer",
@@ -628,7 +628,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
               style={{
                 flexShrink: 0,
                 background: "#0ea5e9",
-                color: "#fff",
+                color: "#FDFBF7",
                 border: "none",
                 borderRadius: 8,
                 padding: "6px 10px",
@@ -646,7 +646,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
               display: "flex",
               alignItems: "center",
               gap: 4,
-              color: "#cbd5e1",
+              color: "var(--border)",
               fontSize: 11,
               textDecoration: "none",
               border: "1px solid #334155",
@@ -691,7 +691,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
                 style={{
                   flexShrink: 0,
                   background: "#0f172a",
-                  color: "#fff",
+                  color: "#FDFBF7",
                   border: "none",
                   borderRadius: 8,
                   padding: "6px 12px",
@@ -1041,9 +1041,9 @@ function CoursesTab({
   const chip = (active: boolean): React.CSSProperties => ({
     padding: "7px 12px",
     borderRadius: 999,
-    border: "1px solid " + (active ? "#0B0B0D" : "#cbd5e1"),
-    background: active ? "#0B0B0D" : "#fff",
-    color: active ? "#C6A24A" : "#334155",
+    border: "1px solid " + (active ? "var(--background)" : "var(--border)"),
+    background: active ? "var(--background)" : "#FDFBF7",
+    color: active ? "var(--gold)" : "#334155",
     fontSize: 12,
     fontWeight: 700,
     cursor: "pointer",
@@ -1079,7 +1079,7 @@ function CoursesTab({
           style={{
             flex: 1,
             minWidth: 0,
-            border: "1px solid #cbd5e1",
+            border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "9px 12px",
             fontSize: 13,
@@ -1090,7 +1090,7 @@ function CoursesTab({
           type="date"
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
-          style={{ border: "1px solid #cbd5e1", borderRadius: 12, padding: "9px 10px", fontSize: 13, minHeight: 40 }}
+          style={{ border: "1px solid var(--border)", borderRadius: 12, padding: "9px 10px", fontSize: 13, minHeight: 40 }}
         />
       </div>
       <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
@@ -1157,7 +1157,7 @@ function CoursesTab({
               onClick={() => reassign(r.id, other as "patricia" | "alain")}
               style={{
                 background: "transparent",
-                border: "1px solid #cbd5e1",
+                border: "1px solid var(--border)",
                 borderRadius: 8,
                 padding: "4px 9px",
                 fontSize: 11.5,
@@ -1781,14 +1781,14 @@ function CourseCard({
                   <button
                     onClick={handleAccept}
                     disabled={busy}
-                    style={{ ...qb, background: "#0B0B0D", border: "2px solid #0B0B0D", color: "#C6A24A" }}
+                    style={{ ...qb, background: "var(--background)", border: "2px solid var(--background)", color: "var(--gold)" }}
                   >
                     {busy ? "…" : "✅ Accepter"}
                   </button>
                   <button
                     onClick={handleRefuse}
                     disabled={busy}
-                    style={{ ...qb, background: "#fff", border: "2px solid #fecaca", color: "#b91c1c" }}
+                    style={{ ...qb, background: "#FDFBF7", border: "2px solid #fecaca", color: "#b91c1c" }}
                   >
                     ✖ Refuser
                   </button>
@@ -1831,7 +1831,7 @@ function CourseCard({
           style={{
             marginTop: 10,
             padding: "10px 12px",
-            background: "linear-gradient(180deg, #fff8e1 0%, #fff3c4 100%)",
+            background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
             border: "1px solid #f59e0b",
             borderRadius: 12,
             fontSize: 13,
@@ -1887,7 +1887,7 @@ function CourseCard({
             alignItems: "center",
             justifyContent: "space-between",
             gap: 8,
-            background: "linear-gradient(180deg,#0f172a 0%,#1e293b 100%)",
+            background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
             border: "1px solid #334155",
             borderRadius: "10px 10px 0 0",
             color: "#E8C96D",
@@ -1907,7 +1907,7 @@ function CourseCard({
                 padding: "0 6px",
                 borderRadius: 10,
                 background: "#ef4444",
-                color: "#fff",
+                color: "#FDFBF7",
                 fontSize: 11,
                 fontWeight: 800,
                 display: "inline-flex",
@@ -2085,7 +2085,7 @@ function CourseCard({
                   {mail && (
                     <a
                       href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
-                      style={{ ...contactBtn, background: "#fffbeb", borderColor: "#fde68a", color: "#92400e" }}
+                      style={{ ...contactBtn, background: "#FDFBF7beb", borderColor: "#fde68a", color: "#92400e" }}
                     >
                       ✉️ Email
                     </a>
@@ -2129,7 +2129,7 @@ function CourseCard({
                       e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,109,0.25)";
                     }}
                     onBlur={(e) => {
-                      e.currentTarget.style.borderColor = "#cbd5e1";
+                      e.currentTarget.style.borderColor = "var(--border)";
                       e.currentTarget.style.boxShadow = "none";
                     }}
                     className="drv-custom-prix-input"
@@ -2137,11 +2137,11 @@ function CourseCard({
                       width: "100%",
                       padding: "12px 14px",
                       borderRadius: 10,
-                      border: "1px solid #cbd5e1",
+                      border: "1px solid var(--border)",
                       fontSize: 16,
                       marginBottom: 8,
                       fontFamily: "'DM Sans', sans-serif",
-                      background: "#ffffff",
+                      background: "#FDFBF7fff",
                       color: "#0f172a",
                       fontWeight: 600,
                       outline: "none",
@@ -2194,7 +2194,7 @@ function CourseCard({
                       style={{
                         flex: 1,
                         minWidth: 70,
-                        background: "#fffbeb",
+                        background: "#FDFBF7beb",
                         border: "1px solid #fde68a",
                         color: "#92400e",
                         borderRadius: 10,
@@ -2342,7 +2342,7 @@ function CourseCard({
                         display: "block",
                         textAlign: "center",
                         background: "#0f172a",
-                        color: "#fff",
+                        color: "#FDFBF7",
                         border: "none",
                         borderRadius: 12,
                         padding: "13px 8px",
@@ -3152,7 +3152,7 @@ function TrackingAnalytics() {
           padding: "12px 16px",
           fontSize: 13,
           fontWeight: 700,
-          color: open ? "#fff" : "#0f172a",
+          color: open ? "#FDFBF7" : "#0f172a",
           cursor: "pointer",
           marginBottom: open ? 10 : 0,
           fontFamily: "'DM Sans', sans-serif",
@@ -3645,7 +3645,7 @@ function SimulateurTab() {
     fontSize: 16,
     fontFamily: "'DM Sans', sans-serif",
     color: "#0f172a",
-    background: "#fff",
+    background: "#FDFBF7",
     colorScheme: "light",
   };
   const labelStyle: React.CSSProperties = {
@@ -3672,7 +3672,7 @@ function SimulateurTab() {
             fontSize: 13,
             cursor: "pointer",
             border: mode === "manuel" ? "2px solid #2563eb" : "1px solid #e2e8f0",
-            background: mode === "manuel" ? "#eff6ff" : "#fff",
+            background: mode === "manuel" ? "#eff6ff" : "#FDFBF7",
             color: mode === "manuel" ? "#1d4ed8" : "#475569",
           }}
         >
@@ -3689,7 +3689,7 @@ function SimulateurTab() {
             fontSize: 13,
             cursor: "pointer",
             border: mode === "adresses" ? "2px solid #2563eb" : "1px solid #e2e8f0",
-            background: mode === "adresses" ? "#eff6ff" : "#fff",
+            background: mode === "adresses" ? "#eff6ff" : "#FDFBF7",
             color: mode === "adresses" ? "#1d4ed8" : "#475569",
           }}
         >
@@ -3725,7 +3725,7 @@ function SimulateurTab() {
             style={{
               width: "100%",
               background: "#0b1224",
-              color: "#fff",
+              color: "#FDFBF7",
               border: "none",
               borderRadius: 12,
               padding: "13px",
@@ -3769,7 +3769,7 @@ function SimulateurTab() {
             style={{
               width: "100%",
               background: "#0b1224",
-              color: "#fff",
+              color: "#FDFBF7",
               border: "none",
               borderRadius: 12,
               padding: "13px",
@@ -3915,9 +3915,9 @@ function StatsTab() {
             style={{
               padding: "7px 14px",
               borderRadius: 999,
-              border: "1px solid " + (days === d ? "#0B0B0D" : "#cbd5e1"),
-              background: days === d ? "#0B0B0D" : "#fff",
-              color: days === d ? "#C6A24A" : "#334155",
+              border: "1px solid " + (days === d ? "var(--background)" : "var(--border)"),
+              background: days === d ? "var(--background)" : "#FDFBF7",
+              color: days === d ? "var(--gold)" : "#334155",
               fontSize: 12,
               fontWeight: 700,
               cursor: "pointer",
@@ -4104,9 +4104,9 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
               flex: 1,
               padding: "8px 10px",
               borderRadius: 999,
-              border: "1px solid " + (filter === o.k ? "#0B0B0D" : "#cbd5e1"),
-              background: filter === o.k ? "#0B0B0D" : "#fff",
-              color: filter === o.k ? "#C6A24A" : "#334155",
+              border: "1px solid " + (filter === o.k ? "var(--background)" : "var(--border)"),
+              background: filter === o.k ? "var(--background)" : "#FDFBF7",
+              color: filter === o.k ? "var(--gold)" : "#334155",
               fontSize: 12.5,
               fontWeight: 700,
               cursor: "pointer",
@@ -4339,7 +4339,7 @@ function AppareilsTab() {
         </span>
         <button
           onClick={load}
-          style={{ marginLeft: "auto", background: "#0f172a", color: "#fff", border: "none", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+          style={{ marginLeft: "auto", background: "#0f172a", color: "#FDFBF7", border: "none", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
         >
           🔄 Rafraîchir
         </button>
@@ -4349,7 +4349,7 @@ function AppareilsTab() {
 
       {groups.map(([driver, list]) => (
         <div key={driver} style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
-          <div style={{ background: "#0B0B0D", color: "#C6A24A", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
+          <div style={{ background: "var(--background)", color: "var(--gold)", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
             {DRIVER_LABELS[driver] ?? "Chauffeur inconnu"} — {list.length} appareil{list.length > 1 ? "s" : ""}
           </div>
           <div style={{ display: "grid" }}>
@@ -4373,7 +4373,7 @@ function AppareilsTab() {
                   <button
                     onClick={() => revoke(d.id, `${DRIVER_LABELS[driver] ?? driver} · ${d.platform}`)}
                     disabled={busy === d.id}
-                    style={{ marginLeft: "auto", background: "#dc2626", color: "#fff", border: "none", borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                    style={{ marginLeft: "auto", background: "#dc2626", color: "#FDFBF7", border: "none", borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
                   >
                     {busy === d.id ? "…" : "Désinscrire"}
                   </button>

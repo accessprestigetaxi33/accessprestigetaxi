@@ -27,14 +27,14 @@ function CoursePage() {
         alignItems: "center",
         justifyContent: "center",
         padding: 24,
-        background: "#0a0a14",
-        color: "#f8fafc",
+        background: "#F5F0E6",
+        color: "#2A2520",
         fontFamily: "'DM Sans', sans-serif",
       }}
     >
       <div style={{ maxWidth: 540, textAlign: "center" }}>
         <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>Redirection...</div>
-        <div style={{ color: "#94a3b8" }}>
+        <div style={{ color: "#6B6255" }}>
           La page /course/{id} n’est plus utilisée. Vous êtes redirigé vers la page de réservation.
         </div>
       </div>

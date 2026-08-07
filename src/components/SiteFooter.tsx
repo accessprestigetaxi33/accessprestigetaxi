@@ -81,12 +81,12 @@ export function SiteFooter() {
   return (
     <footer
       style={{
-        background: "#0a0f1e",
-        color: "#cbd5e1",
+        background: "#EDE6D4",
+        color: "#4a4538",
         /* Reduced top padding on mobile */
         padding: "40px 16px 24px",
         fontFamily: "'DM Sans',sans-serif",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderTop: "1px solid rgba(0,0,0,0.06)",
       }}
     >
       <style>{`
@@ -128,13 +128,13 @@ export function SiteFooter() {
           max-width: 1200px;
           margin: 32px auto 0;
           padding-top: 20px;
-          border-top: 1px solid rgba(255,255,255,0.06);
+          border-top: 1px solid rgba(0,0,0,0.06);
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 12px;
           font-size: 12px;
-          color: #64748b;
+          color: #6b6555;
           text-align: center;
         }
         @media (min-width: 640px) {
@@ -150,7 +150,7 @@ export function SiteFooter() {
           width: 44px;
           height: 44px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.05);
+          background: rgba(0,0,0,0.05);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -159,12 +159,12 @@ export function SiteFooter() {
           transition: background 0.2s;
         }
         .footer-social-btn:active {
-          background: rgba(255,255,255,0.12);
+          background: rgba(0,0,0,0.12);
         }
 
         /* Footer links: bigger tap area */
         .footer-link {
-          color: #cbd5e1;
+          color: #4a4538;
           text-decoration: none;
           font-size: 15px;
           padding: 3px 0;
@@ -174,14 +174,14 @@ export function SiteFooter() {
           .footer-link { font-size: 14px; }
         }
         .footer-link-sm {
-          color: #cbd5e1;
+          color: #4a4538;
           text-decoration: none;
           font-size: 12px;
         }
 
         .footer-li-text {
           font-size: 15px;
-          color: #94a3b8;
+          color: #6b6555;
           padding: 3px 0;
         }
         @media (min-width: 1024px) {
@@ -192,7 +192,7 @@ export function SiteFooter() {
           font-family: 'Syne', sans-serif;
           font-size: 13px;
           font-weight: 800;
-          color: #f8fafc;
+          color: #2c2718;
           margin: 0 0 14px;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -216,7 +216,7 @@ export function SiteFooter() {
               fontFamily: "'Syne',sans-serif",
               fontWeight: 900,
               fontSize: 20,
-              color: "#f8fafc",
+              color: "#2c2718",
               marginBottom: 10,
             }}
           >
@@ -230,7 +230,7 @@ export function SiteFooter() {
               href="mailto:taxipatricia@gmail.com"
               aria-label="Email"
               className="footer-social-btn"
-              style={{ border: "1px solid #94a3b840" }}
+              style={{ border: "1px solid rgba(0,0,0,0.08)" }}
             >
               ✉️
             </a>

@@ -7,7 +7,7 @@ export function ClientAuthHeader({ backLabel = "Retour à l'accueil" }: { backLa
     <>
       <Link
         to="/"
-        className="mb-6 inline-flex items-center gap-1.5 text-xs text-white/60 transition hover:text-white"
+        className="mb-6 inline-flex items-center gap-1.5 text-xs text-foreground/60 transition hover:text-foreground"
       >
         <ArrowLeft className="h-3.5 w-3.5" /> {backLabel}
       </Link>

@@ -68,12 +68,12 @@ function ResetPasswordPage() {
   return (
     <main
       className="relative min-h-[100dvh] overflow-hidden px-4 py-10 sm:py-16"
-      style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #111827 100%)" }}
+      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-30 blur-3xl"
-        style={{ background: "radial-gradient(circle, #C9A84C 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
       />
       <div className="relative mx-auto flex w-full max-w-md flex-col items-center">
         <ClientAuthHeader />
@@ -92,23 +92,23 @@ function ResetPasswordPage() {
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ background: "rgba(34,197,94,0.15)" }}>
                 <CheckCircle2 className="h-7 w-7 text-green-400" />
               </div>
-              <h1 className="text-xl font-bold text-white" style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}>
+              <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}>
                 {t("client.reset.done_title")}
               </h1>
-              <p className="mt-3 text-sm text-white/70">{t("client.reset.done_desc")}</p>
+              <p className="mt-3 text-sm text-foreground/70">{t("client.reset.done_desc")}</p>
             </div>
           ) : !token && error ? (
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full" style={{ background: "rgba(239,68,68,0.15)" }}>
                 <AlertTriangle className="h-7 w-7 text-red-300" />
               </div>
-              <h1 className="text-xl font-bold text-white" style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}>
+              <h1 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}>
                 {t("client.reset.invalid_title")}
               </h1>
-              <p className="mt-3 text-sm text-white/70">{error}</p>
+              <p className="mt-3 text-sm text-foreground/70">{error}</p>
               <Link
                 to="/client/forgot-password"
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#C9A84C]/40 bg-[#C9A84C]/10 px-4 py-3 text-sm font-semibold text-[#E8C96D]"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--gold)]/40 bg-[var(--gold)]/10 px-4 py-3 text-sm font-semibold text-primary"
               >
                 {t("client.reset.request_new")}
               </Link>
@@ -116,43 +116,43 @@ function ResetPasswordPage() {
           ) : (
             <>
               <h1
-                className="text-center text-2xl font-bold text-white sm:text-3xl"
+                className="text-center text-2xl font-bold text-foreground sm:text-3xl"
                 style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
               >
                 {t("client.reset.title")}
               </h1>
-              <p className="mt-2 text-center text-sm text-white/60">
+              <p className="mt-2 text-center text-sm text-foreground/60">
                 {t("client.reset.desc")}
               </p>
               <form onSubmit={onSubmit} className="mt-6 space-y-3.5">
                 <Field>
-                  <Lock className="h-4 w-4 text-white/50" />
+                  <Lock className="h-4 w-4 text-foreground/50" />
                   <input
                     type={showPwd ? "text" : "password"}
                     autoComplete="new-password"
                     placeholder={t("client.reset.pwd_ph")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-transparent text-white placeholder:text-white/40 focus:outline-none"
+                    className="w-full bg-transparent text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
                   />
                   <button
                     type="button"
                     aria-label={showPwd ? t("client.login.hide") : t("client.login.show")}
                     onClick={() => setShowPwd((v) => !v)}
-                    className="ml-2 text-white/50 hover:text-white"
+                    className="ml-2 text-foreground/50 hover:text-foreground"
                   >
                     {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </Field>
                 <Field>
-                  <Lock className="h-4 w-4 text-white/50" />
+                  <Lock className="h-4 w-4 text-foreground/50" />
                   <input
                     type={showPwd ? "text" : "password"}
                     autoComplete="new-password"
                     placeholder={t("client.reset.pwd_confirm_ph")}
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
-                    className="w-full bg-transparent text-white placeholder:text-white/40 focus:outline-none"
+                    className="w-full bg-transparent text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
                   />
                 </Field>
                 {error && (
@@ -175,7 +175,7 @@ function ResetPasswordPage() {
                   style={{
                     height: 52,
                     borderRadius: 14,
-                    background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)",
+                    background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)",
                     boxShadow: "0 10px 30px -10px rgba(201,168,76,0.5)",
                   }}
                 >
@@ -193,7 +193,7 @@ function ResetPasswordPage() {
 function Field({ children }: { children: React.ReactNode }) {
   return (
     <label
-      className="flex items-center gap-2.5 rounded-xl border px-3.5 transition focus-within:border-[#C9A84C]/60"
+      className="flex items-center gap-2.5 rounded-xl border px-3.5 transition focus-within:border-[var(--gold)]/60"
       style={{ height: 50, background: "rgba(0,0,0,0.25)", borderColor: "rgba(255,255,255,0.08)" }}
     >
       {children}

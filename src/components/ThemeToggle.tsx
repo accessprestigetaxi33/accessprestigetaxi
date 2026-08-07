@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 
-const STORAGE_KEY = "tcb.theme";
+const STORAGE_KEY = "apt.theme";
 type Theme = "dark" | "light";
 
 function applyTheme(t: Theme) {
@@ -12,12 +12,12 @@ function applyTheme(t: Theme) {
 }
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-      const initial: Theme = stored === "light" || stored === "dark" ? stored : "dark";
+      const initial: Theme = stored === "light" || stored === "dark" ? stored : "light";
       setTheme(initial);
       applyTheme(initial);
     } catch {

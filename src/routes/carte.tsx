@@ -260,8 +260,8 @@ function CartePage() {
       dir={rtl ? "rtl" : "ltr"}
       style={{
         minHeight: "100dvh",
-        background: "linear-gradient(180deg,#0a0a0a 0%,#111827 100%)",
-        color: "#fff",
+        background: "linear-gradient(180deg,#F5F0E6 0%,#EDE6D4 100%)",
+        color: "#2c2718",
         padding: "32px 20px",
         display: "flex",
         justifyContent: "center",
@@ -270,16 +270,16 @@ function CartePage() {
       <div style={{ width: "100%", maxWidth: 420, display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
         {/* Language switcher */}
         <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-          <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "rgba(0,0,0,0.5)" }}>
             🌐
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value as Lang)}
               aria-label={t.languageLabel}
               style={{
-                background: "rgba(255,255,255,0.08)",
-                color: "#fff",
-                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(0,0,0,0.05)",
+                color: "#2c2718",
+                border: "1px solid rgba(0,0,0,0.1)",
                 borderRadius: 8,
                 padding: "6px 8px",
                 fontSize: 13,
@@ -287,7 +287,7 @@ function CartePage() {
               }}
             >
               {LANGS.map((l) => (
-                <option key={l.code} value={l.code} style={{ background: "#111827" }}>
+                <option key={l.code} value={l.code} style={{ background: "#F5F0E6" }}>
                   {l.flag} {l.label}
                 </option>
               ))}
@@ -369,9 +369,9 @@ function ActionButton({
     fontWeight: 600,
     fontSize: 16,
     textDecoration: "none",
-    border: "1px solid rgba(255,255,255,0.15)",
+    border: "1px solid rgba(0,0,0,0.1)",
     background: "rgba(255,255,255,0.05)",
-    color: "#fff",
+    color: "#2c2718",
     transition: "transform 0.1s",
   };
   const gold: React.CSSProperties = {
