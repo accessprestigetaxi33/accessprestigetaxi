@@ -11,6 +11,7 @@ import {
 } from "@/lib/chat.functions";
 import { registerChauffeurReader } from "@/lib/chat-badge-sync";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { getDriverToken } from "@/lib/driver-token";
 
 type Props = {
   reservationId: string;
@@ -66,7 +67,12 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
   // la mise à jour `read_by_chauffeur=true` soit persistée AVANT de recompter.
   const markRead = useCallback(async () => {
     try {
-      await markReservationMessagesRead({ data: { reservation_id: reservationId, role } });
+      await markReservationMessagesRead({
+        data:
+          role === "chauffeur"
+            ? { reservation_id: reservationId, role, driver_token: getDriverToken() }
+            : { suivi_key: suiviKey ?? reservationId, role },
+      });
     } catch (e) {
       console.warn("[chat] markRead failed", e);
     }
@@ -97,7 +103,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
     (async () => {
       try {
         const rows = await listReservationMessages({
-          data: { reservation_id: reservationId, limit: PAGE_SIZE },
+          data: { reservation_id: reservationId, limit: PAGE_SIZE, driver_token: getDriverToken() },
         });
         if (cancelled) return;
         setMessages(rows);
@@ -127,7 +133,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
     }
     try {
       const older = await listReservationMessages({
-        data: { reservation_id: reservationId, before: oldest.created_at, limit: PAGE_SIZE },
+        data: { reservation_id: reservationId, before: oldest.created_at, limit: PAGE_SIZE, driver_token: getDriverToken() },
       });
       setMessages((prev) => [...older, ...prev]);
       setHasMore(older.length >= PAGE_SIZE);
@@ -197,7 +203,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
       if (stop || document.hidden) return;
       try {
         const latest = await listReservationMessages({
-          data: { reservation_id: reservationId, limit: PAGE_SIZE },
+          data: { reservation_id: reservationId, limit: PAGE_SIZE, driver_token: getDriverToken() },
         });
         if (stop || latest.length === 0) return;
         setMessages((prev) => {
@@ -310,7 +316,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
         });
       }
       return await sendChauffeurMessage({
-        data: { reservation_id: reservationId, content, skip_push: peerOnline },
+        data: { reservation_id: reservationId, content, skip_push: peerOnline, driver_token: getDriverToken() },
       });
     },
     [reservationId, role, peerOnline, clientToken],

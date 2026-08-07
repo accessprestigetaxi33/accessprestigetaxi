@@ -8,6 +8,7 @@ import {
   type ChatMessage,
 } from "@/lib/chat.functions";
 import {
+import { getDriverToken } from "@/lib/driver-token";
   registerChauffeurReader,
   acquireReadLock,
   releaseReadLock,
@@ -53,7 +54,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
     }
     try {
       const res = await markReservationReadByChauffeur({
-        data: { reservation_id: reservationId },
+        data: { reservation_id: reservationId, driver_token: getDriverToken() },
       });
       onUnreadChange?.(0);
       if ((res?.updated ?? 0) > 0) {
@@ -69,7 +70,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
   const load = useCallback(async () => {
     try {
       const rows = await listReservationMessages({
-        data: { reservation_id: reservationId, limit: 30 },
+        data: { reservation_id: reservationId, limit: 30, driver_token: getDriverToken() },
       });
       setMessages(rows);
     } catch (e) {
@@ -115,7 +116,7 @@ export function InlineDriverChat({ reservationId, onUnreadChange }: Props) {
     setSending(true);
     try {
       const msg = await sendChauffeurMessage({
-        data: { reservation_id: reservationId, content },
+        data: { reservation_id: reservationId, content, driver_token: getDriverToken() },
       });
       setMessages((prev) => (prev.some((x) => x.id === msg.id) ? prev : [...prev, msg]));
       setInput("");

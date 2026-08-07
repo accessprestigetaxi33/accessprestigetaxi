@@ -807,7 +807,7 @@ function CoursesTab({
   const mineOf = useCallback((r: Resa) => isAdmin || (r as any).assigned_driver === driverId, [isAdmin, driverId]);
 
   const load = useCallback(async () => {
-    const unreadIds = await listUnreadResasFn().catch(() => [] as string[]);
+    const unreadIds = await listUnreadResasFn({ data: { driver_token: getDriverToken() } }).catch(() => [] as string[]);
     let res: any;
     try {
       res = await listCoursesFn({
