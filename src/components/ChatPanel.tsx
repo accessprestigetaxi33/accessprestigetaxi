@@ -20,6 +20,8 @@ type Props = {
   peerName?: string;
   /** Jeton de session client vérifié côté serveur (role="client"). */
   clientToken?: string;
+  /** Clé de suivi (preuve d'accès côté client) pour marquer les messages lus. */
+  suiviKey?: string;
 };
 
 const PAGE_SIZE = 30;
@@ -32,7 +34,7 @@ const MSG_COLS = "id,reservation_id,sender,content,read_by_client,read_by_chauff
 const OFFLINE_QUEUE_KEY = (rid: string, role: string) => `chat:offline:${role}:${rid}`;
 type OfflineMsg = { tempId: string; content: string; at: number };
 
-export function ChatPanel({ reservationId, role, onClose, peerName, clientToken }: Props) {
+export function ChatPanel({ reservationId, role, onClose, peerName, clientToken, suiviKey }: Props) {
   const t = useT();
   const { lang } = useI18n();
   const isEn = lang === "en";
@@ -76,7 +78,7 @@ export function ChatPanel({ reservationId, role, onClose, peerName, clientToken 
     } catch (e) {
       console.warn("[chat] markRead failed", e);
     }
-  }, [reservationId, role]);
+  }, [reservationId, role, suiviKey]);
 
   // Enregistre le thread ouvert pour synchro badge côté chauffeur.
   useEffect(() => {

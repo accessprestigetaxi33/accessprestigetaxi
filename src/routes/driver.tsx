@@ -843,7 +843,7 @@ function CoursesTab({
     // COUNT SQL agrégé pour prioriser les cartes + indicateurs
     try {
       const ids = list.map((r) => r.id);
-      const map = await getUnreadFn({ data: { reservation_ids: ids } });
+      const map = await getUnreadFn({ data: { reservation_ids: ids, driver_token: getDriverToken() } });
       setUnreadMap(map);
       const totalUnread = Object.values(map).reduce((sum: number, v: any) => sum + (v?.unread_chauffeur ?? 0), 0);
       onChatBadge?.(totalUnread);
