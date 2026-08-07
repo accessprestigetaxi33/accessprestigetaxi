@@ -78,7 +78,7 @@ const css = `
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   .cd-root { position: fixed; inset: 0; max-width: 640px; margin: 0 auto;
     display: flex; flex-direction: column;
-    background: linear-gradient(180deg, #0a0a0a 0%, #111827 100%); }
+    background: linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%); }
   .cd-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px; background: rgba(10,10,10,0.92);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);

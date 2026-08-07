@@ -1887,7 +1887,7 @@ function CourseCard({
             alignItems: "center",
             justifyContent: "space-between",
             gap: 8,
-            background: "linear-gradient(180deg,#0f172a 0%,#1e293b 100%)",
+            background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
             border: "1px solid #334155",
             borderRadius: "10px 10px 0 0",
             color: "#E8C96D",

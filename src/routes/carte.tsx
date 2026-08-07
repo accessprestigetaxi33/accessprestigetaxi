@@ -260,7 +260,7 @@ function CartePage() {
       dir={rtl ? "rtl" : "ltr"}
       style={{
         minHeight: "100dvh",
-        background: "linear-gradient(180deg,#0a0a0a 0%,#111827 100%)",
+        background: "linear-gradient(180deg,#F5F0E6 0%,#EDE6D4 100%)",
         color: "#fff",
         padding: "32px 20px",
         display: "flex",

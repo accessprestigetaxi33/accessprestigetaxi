@@ -97,7 +97,7 @@ function ClientTrajets() {
   return (
     <main
       className="relative min-h-[100dvh] overflow-hidden px-4 py-8"
-      style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #111827 100%)" }}
+      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
     >
       <div
         aria-hidden

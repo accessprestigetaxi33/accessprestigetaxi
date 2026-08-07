@@ -125,7 +125,7 @@ function ClientFactures() {
   return (
     <main
       className="relative min-h-[100dvh] px-4 pt-8 pb-4"
-      style={{ background: "linear-gradient(180deg, #0a0a0a 0%, #111827 100%)" }}
+      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
     >
       <div className="mx-auto w-full max-w-3xl">
         <div className="mb-5 flex items-center justify-between">
