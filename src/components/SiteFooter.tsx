@@ -216,7 +216,7 @@ export function SiteFooter() {
               fontFamily: "'Syne',sans-serif",
               fontWeight: 900,
               fontSize: 20,
-              color: "#f8fafc",
+              color: "#2c2718",
               marginBottom: 10,
             }}
           >
