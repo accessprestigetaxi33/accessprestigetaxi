@@ -8,12 +8,12 @@ import {
   type ChatMessage,
 } from "@/lib/chat.functions";
 import {
-import { getDriverToken } from "@/lib/driver-token";
   registerChauffeurReader,
   acquireReadLock,
   releaseReadLock,
   broadcastChatBadge,
 } from "@/lib/chat-badge-sync";
+import { getDriverToken } from "@/lib/driver-token";
 
 type Props = {
   reservationId: string;
