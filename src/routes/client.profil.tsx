@@ -136,13 +136,13 @@ function ClientProfil() {
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, #C9A84C 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
       />
       <div className="relative mx-auto max-w-3xl">
         <div className="mb-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#E8C96D]">{t("profil.eyebrow")}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("profil.eyebrow")}</p>
           <h1
-            className="mt-1 text-2xl font-bold text-white sm:text-3xl"
+            className="mt-1 text-2xl font-bold text-foreground sm:text-3xl"
             style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
           >
             {t("profil.title")}
@@ -154,14 +154,14 @@ function ClientProfil() {
           <div className="flex items-center gap-4">
             <div
               className="flex h-14 w-14 items-center justify-center rounded-full text-lg font-bold text-black"
-              style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+              style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
             >
               {(session.name || session.email).slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-base font-semibold text-white">{session.name || t("profil.client_vip")}</div>
-              <div className="truncate text-xs text-white/60">{session.email}</div>
-              <div className="truncate text-xs text-white/60">{session.phone}</div>
+              <div className="truncate text-base font-semibold text-foreground">{session.name || t("profil.client_vip")}</div>
+              <div className="truncate text-xs text-foreground/60">{session.email}</div>
+              <div className="truncate text-xs text-foreground/60">{session.phone}</div>
             </div>
           </div>
         </section>
@@ -169,12 +169,12 @@ function ClientProfil() {
         {/* Favorites */}
         <section className="mb-6">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-white/60">{t("profil.favorites.title")}</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground/60">{t("profil.favorites.title")}</h2>
             {!adding && (
               <button
                 onClick={() => setAdding(true)}
                 className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-black"
-                style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+                style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
               >
                 <Plus className="h-3.5 w-3.5" /> {t("profil.favorites.add")}
               </button>
@@ -197,7 +197,7 @@ function ClientProfil() {
                       }}
                       className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition"
                       style={{
-                        borderColor: active ? "#C9A84C" : "rgba(255,255,255,0.15)",
+                        borderColor: active ? "var(--gold)" : "rgba(255,255,255,0.15)",
                         background: active ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.03)",
                         color: active ? "#E8C96D" : "rgba(255,255,255,0.75)",
                       }}
@@ -211,26 +211,26 @@ function ClientProfil() {
                 value={formLabel}
                 onChange={(e) => setFormLabel(e.target.value)}
                 placeholder={t("profil.favorites.name_ph")}
-                className="mb-2 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+                className="mb-2 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
               />
               <input
                 value={formAddress}
                 onChange={(e) => setFormAddress(e.target.value)}
                 placeholder={t("profil.favorites.address_ph")}
-                className="mb-3 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+                className="mb-3 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
               />
               <div className="flex gap-2">
                 <button
                   onClick={onSave}
                   disabled={busy}
                   className="flex-1 rounded-lg px-4 py-2 text-xs font-semibold text-black disabled:opacity-60"
-                  style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+                  style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
                 >
                   {busy ? "…" : t("profil.common.save")}
                 </button>
                 <button
                   onClick={() => setAdding(false)}
-                  className="rounded-lg border border-white/10 px-4 py-2 text-xs text-white/70 hover:bg-white/5"
+                  className="rounded-lg border border-white/10 px-4 py-2 text-xs text-foreground/70 hover:bg-white/5"
                 >
                   {t("profil.common.cancel")}
                 </button>
@@ -239,13 +239,13 @@ function ClientProfil() {
           )}
 
           {loading && (
-            <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-8 text-white/60">
+            <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-8 text-foreground/60">
               <BrandLoader size={20} /> {t("profil.common.loading")}
             </div>
           )}
 
           {!loading && favorites && favorites.length === 0 && !adding && (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/60">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-foreground/60">
               {t("profil.favorites.empty")}
             </div>
           )}
@@ -266,19 +266,19 @@ function ClientProfil() {
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-semibold text-white">{f.label}</div>
-                      <div className="truncate text-xs text-white/60">{f.address}</div>
+                      <div className="truncate text-sm font-semibold text-foreground">{f.label}</div>
+                      <div className="truncate text-xs text-foreground/60">{f.address}</div>
                     </div>
                     <a
                       href={`/reserver?depart=${encodeURIComponent(f.address)}`}
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#C9A84C]/40 bg-[#C9A84C]/10 px-2.5 py-1.5 text-[11px] font-semibold text-[#E8C96D]"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[var(--gold)]/40 bg-[var(--gold)]/10 px-2.5 py-1.5 text-[11px] font-semibold text-primary"
                       title={t("profil.favorites.book_from")}
                     >
                       <ExternalLink className="h-3 w-3" /> {t("profil.favorites.book")}
                     </a>
                     <button
                       onClick={() => onDelete(f.id)}
-                      className="rounded-lg p-2 text-white/40 hover:bg-white/5 hover:text-red-300"
+                      className="rounded-lg p-2 text-muted-foreground/60 hover:bg-white/5 hover:text-red-300"
                       aria-label={t("profil.favorites.delete")}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -296,7 +296,7 @@ function ClientProfil() {
 
         <button
           onClick={logout}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-4 py-2.5 text-sm text-foreground/70 hover:bg-white/5"
         >
           <LogOut className="h-4 w-4" /> {t("profil.logout")}
         </button>
@@ -396,14 +396,14 @@ function RecurringRidesSection({ token }: { token: string }) {
   return (
     <section className="mb-6">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white/60">
+        <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-foreground/60">
           <Repeat className="h-4 w-4" /> {t("profil.recurring.title")}
         </h2>
         {!adding && (
           <button
             onClick={() => setAdding(true)}
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-black"
-            style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+            style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
           >
             <Plus className="h-3.5 w-3.5" /> {t("profil.recurring.new")}
           </button>
@@ -416,28 +416,28 @@ function RecurringRidesSection({ token }: { token: string }) {
             value={form.label}
             onChange={(e) => setForm({ ...form, label: e.target.value })}
             placeholder={t("profil.recurring.label_ph")}
-            className="mb-2 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+            className="mb-2 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
           />
           <input
             value={form.depart}
             onChange={(e) => setForm({ ...form, depart: e.target.value })}
             placeholder={t("profil.recurring.depart_ph")}
-            className="mb-2 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+            className="mb-2 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
           />
           <input
             value={form.destination}
             onChange={(e) => setForm({ ...form, destination: e.target.value })}
             placeholder={t("profil.recurring.dest_ph")}
-            className="mb-3 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+            className="mb-3 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
           />
           <div className="mb-3 grid grid-cols-3 gap-2">
             <select
               value={form.day_of_week}
               onChange={(e) => setForm({ ...form, day_of_week: parseInt(e.target.value, 10) })}
-              className="rounded-lg border border-white/15 bg-black/40 px-2 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               {DAYS.map((d, i) => (
-                <option key={i} value={i} className="bg-black">
+                <option key={i} value={i} className="bg-card">
                   {d}
                 </option>
               ))}
@@ -445,10 +445,10 @@ function RecurringRidesSection({ token }: { token: string }) {
             <select
               value={form.hour}
               onChange={(e) => setForm({ ...form, hour: parseInt(e.target.value, 10) })}
-              className="rounded-lg border border-white/15 bg-black/40 px-2 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               {Array.from({ length: 24 }, (_, i) => (
-                <option key={i} value={i} className="bg-black">
+                <option key={i} value={i} className="bg-card">
                   {String(i).padStart(2, "0")}h
                 </option>
               ))}
@@ -456,10 +456,10 @@ function RecurringRidesSection({ token }: { token: string }) {
             <select
               value={form.minute}
               onChange={(e) => setForm({ ...form, minute: parseInt(e.target.value, 10) })}
-              className="rounded-lg border border-white/15 bg-black/40 px-2 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               {[0, 15, 30, 45].map((m) => (
-                <option key={m} value={m} className="bg-black">
+                <option key={m} value={m} className="bg-card">
                   {String(m).padStart(2, "0")}
                 </option>
               ))}
@@ -469,10 +469,10 @@ function RecurringRidesSection({ token }: { token: string }) {
             <select
               value={form.passagers}
               onChange={(e) => setForm({ ...form, passagers: parseInt(e.target.value, 10) })}
-              className="rounded-lg border border-white/15 bg-black/40 px-2 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                <option key={n} value={n} className="bg-black">
+                <option key={n} value={n} className="bg-card">
                   {n} pax
                 </option>
               ))}
@@ -480,10 +480,10 @@ function RecurringRidesSection({ token }: { token: string }) {
             <select
               value={form.bagages}
               onChange={(e) => setForm({ ...form, bagages: parseInt(e.target.value, 10) })}
-              className="rounded-lg border border-white/15 bg-black/40 px-2 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
               {[0, 1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n} className="bg-black">
+                <option key={n} value={n} className="bg-card">
                   {n} bag.
                 </option>
               ))}
@@ -491,12 +491,12 @@ function RecurringRidesSection({ token }: { token: string }) {
             <select
               value={form.paiement}
               onChange={(e) => setForm({ ...form, paiement: e.target.value as "cb" | "especes" })}
-              className="rounded-lg border border-white/15 bg-black/40 px-2 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-2 py-2 text-sm text-foreground outline-none focus:border-primary"
             >
-              <option value="cb" className="bg-black">
+              <option value="cb" className="bg-card">
                 CB
               </option>
-              <option value="especes" className="bg-black">
+              <option value="especes" className="bg-card">
                 Espèces
               </option>
             </select>
@@ -506,38 +506,38 @@ function RecurringRidesSection({ token }: { token: string }) {
             onChange={(e) => setForm({ ...form, message: e.target.value.slice(0, 500) })}
             placeholder={t("profil.recurring.msg_ph")}
             rows={2}
-            className="mb-3 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+            className="mb-3 w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
           />
           <div className="flex gap-2">
             <button
               onClick={onCreate}
               disabled={busy}
               className="flex-1 rounded-lg px-4 py-2 text-xs font-semibold text-black disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+              style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
             >
               {busy ? "…" : t("profil.recurring.create")}
             </button>
             <button
               onClick={() => setAdding(false)}
-              className="rounded-lg border border-white/10 px-4 py-2 text-xs text-white/70 hover:bg-white/5"
+              className="rounded-lg border border-white/10 px-4 py-2 text-xs text-foreground/70 hover:bg-white/5"
             >
               {t("profil.common.cancel")}
             </button>
           </div>
-          <p className="mt-2 text-[11px] text-white/40">
+          <p className="mt-2 text-[11px] text-muted-foreground/60">
             {t("profil.recurring.auto_note")}
           </p>
         </div>
       )}
 
       {loading && (
-        <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-8 text-white/60">
+        <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-8 text-foreground/60">
           <BrandLoader size={20} /> {t("profil.common.loading")}
         </div>
       )}
 
       {!loading && rides && rides.length === 0 && !adding && (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-white/60">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-foreground/60">
           {t("profil.recurring.empty")}
         </div>
       )}
@@ -558,17 +558,17 @@ function RecurringRidesSection({ token }: { token: string }) {
                   <Repeat className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-white">{r.label}</div>
-                  <div className="truncate text-xs text-white/60">
+                  <div className="truncate text-sm font-semibold text-foreground">{r.label}</div>
+                  <div className="truncate text-xs text-foreground/60">
                     {r.depart} → {r.destination}
                   </div>
-                  <div className="mt-1 text-[11px] text-[#E8C96D]">
+                  <div className="mt-1 text-[11px] text-primary">
                     {t("profil.recurring.every")} {t(`profil.recurring.day.${["sun","mon","tue","wed","thu","fri","sat"][r.day_of_week]}`)}. {t("profil.recurring.at")} {String(r.hour).padStart(2, "0")}h{String(r.minute).padStart(2, "0")} · {r.passagers} {t("profil.recurring.pax")} · {r.bagages} {t("profil.recurring.bag")}
                   </div>
                 </div>
                 <button
                   onClick={() => onToggle(r)}
-                  className="rounded-lg p-2 text-white/40 hover:bg-white/5 hover:text-[#E8C96D]"
+                  className="rounded-lg p-2 text-muted-foreground/60 hover:bg-white/5 hover:text-primary"
                   aria-label={r.active ? t("profil.recurring.pause") : t("profil.recurring.activate")}
                   title={r.active ? t("profil.recurring.pause") : t("profil.recurring.activate")}
                 >
@@ -576,7 +576,7 @@ function RecurringRidesSection({ token }: { token: string }) {
                 </button>
                 <button
                   onClick={() => onDelete(r.id)}
-                  className="rounded-lg p-2 text-white/40 hover:bg-white/5 hover:text-red-300"
+                  className="rounded-lg p-2 text-muted-foreground/60 hover:bg-white/5 hover:text-red-300"
                   aria-label="Supprimer"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -648,45 +648,45 @@ function CompanyInfoSection({ token }: { token: string }) {
     <section className="mb-6">
       <div className="mb-3 flex items-center justify-between">
         <h2
-          className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#E8C96D]"
+          className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-primary"
           style={{ fontFamily: "'Syne', serif" }}
         >
           <Briefcase className="h-3.5 w-3.5" /> {t("profil.company.title")}
         </h2>
         <Link
           to="/client/factures"
-          className="inline-flex items-center gap-1 rounded-lg border border-[#E8C96D]/40 bg-[#E8C96D]/10 px-3 py-1.5 text-[11px] font-semibold text-[#E8C96D] hover:bg-[#E8C96D]/20"
+          className="inline-flex items-center gap-1 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary hover:bg-primary/20"
         >
           {t("profil.company.invoices_link")}
         </Link>
       </div>
       {loading ? (
-        <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-6 text-white/60">
+        <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-6 text-foreground/60">
           <BrandLoader size={18} /> {t("profil.common.loading")}
         </div>
       ) : (
         <div className="space-y-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-          <p className="mb-2 text-xs text-white/50">
+          <p className="mb-2 text-xs text-foreground/50">
             {t("profil.company.optional")}
           </p>
           <input
             value={company.company_name}
             onChange={(e) => setCompany({ ...company, company_name: e.target.value })}
             placeholder={t("profil.company.name_ph")}
-            className="w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+            className="w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
           />
           <div className="grid grid-cols-2 gap-2">
             <input
               value={company.siret}
               onChange={(e) => setCompany({ ...company, siret: e.target.value })}
               placeholder={t("profil.company.siret_ph")}
-              className="rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
             />
             <input
               value={company.tva_intracom}
               onChange={(e) => setCompany({ ...company, tva_intracom: e.target.value })}
               placeholder={t("profil.company.tva_ph")}
-              className="rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+              className="rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
             />
           </div>
           <textarea
@@ -694,14 +694,14 @@ function CompanyInfoSection({ token }: { token: string }) {
             onChange={(e) => setCompany({ ...company, billing_address: e.target.value })}
             placeholder={t("profil.company.billing_ph")}
             rows={2}
-            className="w-full resize-none rounded-lg border border-white/15 bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+            className="w-full resize-none rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
           />
           <div className="flex justify-end">
             <button
               onClick={save}
               disabled={saving}
               className="rounded-lg px-4 py-2 text-xs font-semibold text-black disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+              style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
             >
               {saving ? "…" : t("profil.common.save")}
             </button>

@@ -114,13 +114,13 @@ function ClientHistorique() {
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, #C9A84C 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
       />
       <div className="relative mx-auto max-w-3xl">
         <div className="mb-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#E8C96D]">{t("client.eyebrow")}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("client.eyebrow")}</p>
           <h1
-            className="mt-1 text-2xl font-bold text-white sm:text-3xl"
+            className="mt-1 text-2xl font-bold text-foreground sm:text-3xl"
             style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
           >
             {t("client.historique.title")}
@@ -130,49 +130,49 @@ function ClientHistorique() {
         {/* Filters */}
         <div className="mb-4 grid gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur sm:grid-cols-4">
           <label className="relative sm:col-span-2">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/40" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("client.historique.search_ph")}
-              className="w-full rounded-lg border border-white/15 bg-black/40 py-2 pl-9 pr-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#E8C96D]"
+              className="w-full rounded-lg border border-border bg-muted py-2 pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
             />
           </label>
           <input
             type="date"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+            className="rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           />
           <input
             type="date"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-[#E8C96D]"
+            className="rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
           />
         </div>
 
         <div className="mb-4 flex items-center justify-between gap-2">
-          <div className="text-xs text-white/60">
+          <div className="text-xs text-foreground/60">
             {filtered ? `${filtered.length} ${t("client.historique.courses_total")} — ${totalEur.toFixed(2)} €` : "—"}
           </div>
           <button
             disabled={!filtered || filtered.length === 0}
             onClick={() => filtered && exportReservationsCSV(filtered)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white hover:bg-white/10 disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-foreground hover:bg-white/10 disabled:opacity-40"
           >
             <Download className="h-3.5 w-3.5" /> {t("client.historique.export_csv")}
           </button>
         </div>
 
         {loading && (
-          <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-10 text-white/60">
+          <div className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-10 text-foreground/60">
             <BrandLoader size={20} /> {t("client.trajets.loading")}
           </div>
         )}
 
         {!loading && filtered && filtered.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-sm text-white/60">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-sm text-foreground/60">
             {t("client.historique.empty")}
           </div>
         )}
@@ -185,7 +185,7 @@ function ClientHistorique() {
               return (
                 <li key={r.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur sm:p-5">
                   <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-white/60">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-foreground/60">
                       <Calendar className="h-3.5 w-3.5" /> {fmtDate(r.pickup_datetime)}
                     </span>
                     <span
@@ -202,21 +202,21 @@ function ClientHistorique() {
                           : t("client.historique.refused")}
                     </span>
                   </div>
-                  <div className="flex items-start gap-2 text-sm text-white">
-                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#E8C96D]" />
+                  <div className="flex items-start gap-2 text-sm text-foreground">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <div className="flex-1 leading-snug">
-                      <span className="text-white/90">{r.depart}</span>
-                      <ArrowRight className="mx-1.5 inline h-3.5 w-3.5 text-white/40" />
-                      <span className="text-white/90">{dest}</span>
+                      <span className="text-foreground/90">{r.depart}</span>
+                      <ArrowRight className="mx-1.5 inline h-3.5 w-3.5 text-muted-foreground/60" />
+                      <span className="text-foreground/90">{dest}</span>
                     </div>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-                    <div className="text-xs text-white/60">
+                    <div className="text-xs text-foreground/60">
                       {t("client.historique.ref")} {(r.tracking_id || r.id).slice(0, 10)}
                       {r.prix_estime != null && (
                         <>
                           {" — "}
-                          <span className="font-semibold text-[#E8C96D]">{Number(r.prix_estime).toFixed(2)} €</span>
+                          <span className="font-semibold text-primary">{Number(r.prix_estime).toFixed(2)} €</span>
                         </>
                       )}
                     </div>
@@ -230,7 +230,7 @@ function ClientHistorique() {
                           })
                         }
                         className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-black"
-                        style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
+                        style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
                       >
                         <FileText className="h-3.5 w-3.5" /> {t("client.historique.receipt_pdf")}
                       </button>
