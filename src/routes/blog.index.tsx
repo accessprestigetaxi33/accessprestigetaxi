@@ -165,7 +165,7 @@ function BlogIndex() {
   return (
     <main className="pb-16">
       {/* HERO */}
-      <section className="border-b border-border bg-[var(--gradient-dark,linear-gradient(180deg,#0b0b0d,#111014))]">
+      <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-5xl px-4 py-12 text-center sm:px-6 sm:py-16">
           <p className="text-[10px] uppercase tracking-[0.28em] text-primary sm:text-[11px]">{c.eyebrow}</p>
           <h1 className="mx-auto mt-3 max-w-3xl text-balance font-display text-2xl font-semibold leading-tight text-foreground sm:text-4xl">

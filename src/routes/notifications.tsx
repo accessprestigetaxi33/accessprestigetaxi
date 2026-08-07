@@ -134,19 +134,19 @@ function NotificationsPage() {
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-14">
-      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C6A24A]">{c.kicker}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">{c.kicker}</p>
       <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{c.title}</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{c.intro}</p>
 
       <section className="mt-8 rounded-2xl border border-border bg-card p-5">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#C6A24A]/12">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/12">
             {isGranted ? (
-              <BellRing className="h-5 w-5 text-[#C6A24A]" />
+              <BellRing className="h-5 w-5 text-primary" />
             ) : isDenied || isUnsupported ? (
               <BellOff className="h-5 w-5 text-muted-foreground" />
             ) : (
-              <Bell className="h-5 w-5 text-[#C6A24A]" />
+              <Bell className="h-5 w-5 text-primary" />
             )}
           </div>
           <div className="min-w-0 flex-1">
@@ -171,7 +171,7 @@ function NotificationsPage() {
                       type="button"
                       onClick={() => void enable()}
                       disabled={busy}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#C6A24A] px-5 text-sm font-bold text-[#0B0B0D] disabled:opacity-60"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground disabled:opacity-60"
                     >
                       {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4" />}
                       {busy ? c.working : c.enable}
