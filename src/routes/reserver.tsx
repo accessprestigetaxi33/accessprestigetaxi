@@ -601,7 +601,12 @@ function ReserverPage() {
   const recapDialogRef = useFocusTrap<HTMLDivElement>(recapOpen && !reservationId, () => setRecapOpen(false));
   const [gps, setGps] = useState<{ lat: number; lng: number; label?: string } | null>(null);
   const [gpsBusy, setGpsBusy] = useState(false);
-  const [gpsError, setGpsError] = useState<"denied" | "unavailable" | "timeout" | "low_accuracy" | null>(null);
+  const [gpsError, setGpsError] = useState<
+    "denied" | "unavailable" | "timeout" | "low_accuracy" | "out_of_zone" | null
+  >(null);
+  /** Vrai quand la position affichée provient du repli IP (approximative). */
+  const [gpsFromIp, setGpsFromIp] = useState(false);
+  const [manualArrivee, setManualArrivee] = useState<string>("");
   const [manualDepart, setManualDepart] = useState<string>("");
   const [manualDepartCoord, setManualDepartCoord] = useState<{ lat: number; lng: number } | null>(null);
   const [showManualDepart, setShowManualDepart] = useState(false);
@@ -741,7 +746,8 @@ function ReserverPage() {
     const noGeo = typeof navigator === "undefined" || !navigator.geolocation;
     setGpsBusy(true);
 
-    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean) => {
+    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean, fromIp = false) => {
+      setGpsFromIp(fromIp);
       const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
       setGps({ lat, lng, label });
       setGpsError(approximate ? "low_accuracy" : null);
@@ -777,25 +783,41 @@ function ReserverPage() {
       }
     };
 
-    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
       setGpsBusy(false);
       setGpsError(code);
+      setGpsFromIp(false);
       markGpsReady();
+      setShowManualDepart(true);
+      if (code === "out_of_zone") {
+        setMessages((prev) => {
+          if (prev.length === 1 && prev[0].role === "assistant") {
+            return [{ role: "assistant", content: `📍 ${TXT[L].gps_out_zone}. ${TXT[L].gps_out_zone_msg}` }];
+          }
+          return prev;
+        });
+      }
     };
 
-    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
       const ip = await ipGeolocate();
       if (ip && isInServiceZone(ip.lat, ip.lng)) {
-        await applyDetectedPosition(ip.lat, ip.lng, true);
+        await applyDetectedPosition(ip.lat, ip.lng, true, true);
         return;
       }
-      failWith(code);
+      // Repli IP indisponible ou lui aussi hors zone : on l'annonce clairement
+      // et on bascule sur la saisie manuelle départ/arrivée.
+      failWith(ip ? "out_of_zone" : code);
     };
 
     const onSuccess = (pos: GeolocationPosition, allowApproximate: boolean) => {
       const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !isInServiceZone(lat, lng)) {
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
         void tryIpFallback("unavailable");
+        return;
+      }
+      if (!isInServiceZone(lat, lng)) {
+        void tryIpFallback("out_of_zone");
         return;
       }
       const approximate = typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M;
