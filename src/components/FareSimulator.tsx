@@ -233,22 +233,29 @@ export function FareSimulator() {
     return () => clearInterval(id);
   }, []);
 
-  const currentParisHour = parisHour(now);
-  const isDay = currentParisHour >= 7 && currentParisHour < 19;
+  // Règle jour/nuit centralisée (07h–19h Paris, hors dimanche et jours fériés)
+  const nowIso = now.toISOString();
+  const isDay = estTarifJourParis(nowIso);
   const periodLabel = isDay
     ? `${t("sim.period_day")} ${formatEUR(RATE_DAY)} / km`
     : `${t("sim.period_night")} ${formatEUR(RATE_NIGHT)} / km`;
 
-  // Taux mixte : pondéré sur la durée réelle du trajet depuis maintenant
-  const rate = useMemo(
-    () => (route ? computeMixedRate(now, route.durationSec) : isDay ? RATE_DAY : RATE_NIGHT),
-    [route, now, isDay],
+  // Décomposition officielle, identique à celle utilisée sur /reserver
+  const detail = useMemo(
+    () => (route ? detaillerPrix(route.km, nowIso, route.durationSec / 60) : null),
+    [route, nowIso],
   );
 
-  // Tarif mixte si on chevauche une frontière 7h / 19h
-  const isMixed = route ? Math.abs(rate - RATE_DAY) > 0.01 && Math.abs(rate - RATE_NIGHT) > 0.01 : false;
+  const rate = detail && detail.distanceKm > 0
+    ? (detail.prixJour + detail.prixNuit) / detail.distanceKm
+    : isDay
+      ? RATE_DAY
+      : RATE_NIGHT;
 
-  const total = useMemo(() => (route ? PICKUP_FEE + route.km * rate : null), [route, rate]);
+  const isMixed = detail?.regime === "mixte";
+
+  const total = detail ? detail.total : null;
+
 
   const handleUseMyPosition = async () => {
     setGeoMsg(null);
