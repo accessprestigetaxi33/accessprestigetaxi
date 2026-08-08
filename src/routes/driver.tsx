@@ -2005,19 +2005,69 @@ function CourseCard({
     if (!confirm("Supprimer définitivement cette course ? Action irréversible.")) return;
     setDeleting(true);
     try {
-      const { error } = await (supabase as any).from("reservations").delete().eq("id", resa.id);
-      if (error) throw error;
+      await driverDeleteReservation({ data: { token: getDriverToken(), reservation_id: resa.id } });
       toast.success("Course supprimée");
       onRefresh();
     } catch (e: any) {
       toast.error("Suppression impossible : " + (e.message ?? e));
     } finally {
       setDeleting(false);
+      setSwipeX(0);
     }
   };
 
+  // ── Swipe-to-delete (iOS) ──
+  const [swipeX, setSwipeX] = useState(0);
+  const swipeStart = useRef<{ x: number; y: number; base: number } | null>(null);
+  const swipeLock = useRef<"none" | "x" | "y">("none");
+  const SWIPE_MAX = 88;
+
+  const onSwipeStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    if (!t) return;
+    swipeStart.current = { x: t.clientX, y: t.clientY, base: swipeX };
+    swipeLock.current = "none";
+  };
+  const onSwipeMove = (e: React.TouchEvent) => {
+    const s = swipeStart.current;
+    const t = e.touches[0];
+    if (!s || !t) return;
+    const dx = t.clientX - s.x;
+    const dy = t.clientY - s.y;
+    if (swipeLock.current === "none") {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      swipeLock.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    }
+    if (swipeLock.current !== "x") return;
+    const next = Math.min(0, Math.max(-SWIPE_MAX - 24, s.base + dx));
+    setSwipeX(next);
+  };
+  const onSwipeEnd = () => {
+    if (swipeLock.current === "x") setSwipeX(swipeX < -SWIPE_MAX / 2 ? -SWIPE_MAX : 0);
+    swipeStart.current = null;
+    swipeLock.current = "none";
+  };
+
   return (
-    <div className={`drv-card${resa.status === "pending" ? " new" : ""}`}>
+    <div className="drv-swipe">
+      <button
+        type="button"
+        className="drv-swipe-action"
+        aria-label="Supprimer cette course"
+        onClick={handleDeleteResa}
+        disabled={deleting}
+      >
+        {deleting ? "…" : "🗑"}
+        <span>Suppr.</span>
+      </button>
+      <div
+        className={`drv-card drv-swipe-content${resa.status === "pending" ? " new" : ""}`}
+        style={{ transform: `translateX(${swipeX}px)`, transition: swipeStart.current ? "none" : "transform .22s ease" }}
+        onTouchStart={onSwipeStart}
+        onTouchMove={onSwipeMove}
+        onTouchEnd={onSwipeEnd}
+        onTouchCancel={onSwipeEnd}
+      >
       {/* En-tête */}
       <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
         <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
