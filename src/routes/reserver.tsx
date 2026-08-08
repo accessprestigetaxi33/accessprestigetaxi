@@ -603,19 +603,7 @@ function ReserverPage() {
   // AUTO geoloc on mount — no button. Même configuration que Start Fresh Here :
   // 1) GPS haute précision, 2) retry basse précision avec cache, 3) fallback IP.
   useEffect(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      void (async () => {
-        const ip = await ipGeolocate();
-        if (ip && isInServiceZone(ip.lat, ip.lng)) {
-          await applyDetectedPosition(ip.lat, ip.lng, true);
-          return;
-        }
-        setGpsError("unavailable");
-        setGpsBusy(false);
-        markGpsReady();
-      })();
-      return;
-    }
+    const noGeo = typeof navigator === "undefined" || !navigator.geolocation;
     setGpsBusy(true);
 
     const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean) => {
