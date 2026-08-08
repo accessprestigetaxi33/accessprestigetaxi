@@ -1,10 +1,8 @@
-// Notifications de réservation — push (FCM) + repli e-mail
+// Notifications de réservation — push (FCM) + e-mails transactionnels bilingues.
 // Site bi-chauffeur : les deux chauffeurs (Patricia, Alain) partagent
-// l'audience "chauffeur" ; le repli e-mail sert quand le client n'a pas
-// autorisé les notifications push.
+// l'audience "chauffeur". Les e-mails passent par les modèles FR/EN et
+// l'infrastructure e-mail gérée (rebonds/plaintes/désabonnements gérés côté serveur).
 
-const SITE_NAME = "Access Prestige Taxi";
-const SENDER_DOMAIN = "accessprestigetaxi.fr";
 const ADMIN_EMAIL = "taxipatricia@gmail.com";
 
 /**
