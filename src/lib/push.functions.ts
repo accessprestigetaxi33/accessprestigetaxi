@@ -383,7 +383,13 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
 
     // ── Push CLIENT : confirmation, approche, arrivée, fin de course ─────
     let clientResult = { sent: 0, removed: 0 };
-    const target = { reservationId: r.id, accountId: (r as any).client_account_id ?? undefined };
+    // dedupTtlMinutes : les tags de statut sont uniques par course, un rejeu
+    // du même changement de statut dans les 24 h est donc ignoré.
+    const target = {
+      reservationId: r.id,
+      accountId: (r as any).client_account_id ?? undefined,
+      dedupTtlMinutes: 24 * 60,
+    };
     if (data.status === "accepted") {
       clientResult = await sendPushToAudience(
         "client",
