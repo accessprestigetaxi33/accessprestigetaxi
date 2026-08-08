@@ -218,7 +218,7 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
           } as const;
         }
 
-        const when = args.pickup_datetime ?? formatISO(addMinutes(new Date(), MIN_ADVANCE_MINUTES));
+        const when = args.pickup_datetime ?? toParisIso(addMinutes(new Date(), MIN_ADVANCE_MINUTES));
         const tarifJour = estTarifJourParis(when);
         const price = calculerPrixMixte(route.distanceKm, when);
 
