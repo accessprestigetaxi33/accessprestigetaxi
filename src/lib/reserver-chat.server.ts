@@ -4,7 +4,7 @@ import { createLovableAiGatewayProvider, getLovableAiGatewayRunId } from "@/lib/
 import { resolveAddress } from "@/lib/address-resolver.server";
 import { geocodeGoogle, routeGoogle } from "@/lib/google.server";
 import { createReservationPublic } from "@/lib/reservation-create.functions";
-import { calculerPrixMixte, estTarifJourParis } from "@/lib/tarif";
+import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, partsParis } from "@/lib/tarif";
 import { deliverClientConfirmation, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
 import { formatInTimeZone } from "date-fns-tz";
 import { addMinutes, formatISO, parseISO, isBefore, addDays } from "date-fns";
