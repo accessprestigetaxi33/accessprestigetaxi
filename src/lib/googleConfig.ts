@@ -34,6 +34,34 @@ export const GOOGLE_MAPS_LIBRARIES = "places,geometry" as const;
 export const GOOGLE_MAPS_LANGUAGE = "fr" as const;
 export const GOOGLE_MAPS_REGION = "FR" as const;
 
+/**
+ * Clé servie à l'exécution par /api/public/maps-config (secret serveur
+ * GOOGLE_MAPS_API_KEY / GOOGLE_API_KEY). Utilisée quand aucune clé n'est
+ * présente au build — évite de figer la clé dans le dépôt.
+ */
+let runtimeKeyPromise: Promise<string[]> | null = null;
+
+export function getRuntimeGoogleMapsKeys(): Promise<string[]> {
+  if (typeof window === "undefined") return Promise.resolve([]);
+  if (!runtimeKeyPromise) {
+    runtimeKeyPromise = fetch("/api/public/maps-config", { headers: { Accept: "application/json" } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        const key = cleanEnv(j?.key);
+        return key ? [key] : [];
+      })
+      .catch(() => []);
+  }
+  return runtimeKeyPromise;
+}
+
+/** Clés disponibles pour l'hôte courant, build-time puis runtime. */
+export async function resolveGoogleMapsApiKeys(): Promise<string[]> {
+  const buildKeys = getGoogleMapsApiKeysForCurrentHost();
+  const runtime = await getRuntimeGoogleMapsKeys();
+  return Array.from(new Set([...buildKeys, ...runtime]));
+}
+
 export type GoogleConfigStatus = { ok: true; key: string } | { ok: false; reason: string };
 
 export function getGoogleConfigStatus(): GoogleConfigStatus {

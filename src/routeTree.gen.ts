@@ -47,6 +47,7 @@ import { Route as ApiPublicContactRouteImport } from './routes/api/public/contac
 import { Route as ApiPublicDriverLocationRouteImport } from './routes/api/public/driver-location'
 import { Route as ApiPublicFirebaseConfigRouteImport } from './routes/api/public/firebase-config'
 import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
+import { Route as ApiPublicMapsConfigRouteImport } from './routes/api/public/maps-config'
 import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/public/notify-reservation'
 import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
 import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
@@ -248,6 +249,11 @@ const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
   path: '/api/public/geocode',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMapsConfigRoute = ApiPublicMapsConfigRouteImport.update({
+  id: '/api/public/maps-config',
+  path: '/api/public/maps-config',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicNotifyReservationRoute =
   ApiPublicNotifyReservationRouteImport.update({
     id: '/api/public/notify-reservation',
@@ -344,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
   '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
+  '/api/public/maps-config': typeof ApiPublicMapsConfigRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
@@ -394,6 +401,7 @@ export interface FileRoutesByTo {
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
   '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
+  '/api/public/maps-config': typeof ApiPublicMapsConfigRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
@@ -445,6 +453,7 @@ export interface FileRoutesById {
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
   '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
+  '/api/public/maps-config': typeof ApiPublicMapsConfigRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
@@ -497,6 +506,7 @@ export interface FileRouteTypes {
     | '/api/public/driver-location'
     | '/api/public/firebase-config'
     | '/api/public/geocode'
+    | '/api/public/maps-config'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
@@ -547,6 +557,7 @@ export interface FileRouteTypes {
     | '/api/public/driver-location'
     | '/api/public/firebase-config'
     | '/api/public/geocode'
+    | '/api/public/maps-config'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
@@ -597,6 +608,7 @@ export interface FileRouteTypes {
     | '/api/public/driver-location'
     | '/api/public/firebase-config'
     | '/api/public/geocode'
+    | '/api/public/maps-config'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
@@ -647,6 +659,7 @@ export interface RootRouteChildren {
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
   ApiPublicFirebaseConfigRoute: typeof ApiPublicFirebaseConfigRoute
   ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
+  ApiPublicMapsConfigRoute: typeof ApiPublicMapsConfigRoute
   ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
   ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
   ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
@@ -926,6 +939,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGeocodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/maps-config': {
+      id: '/api/public/maps-config'
+      path: '/api/public/maps-config'
+      fullPath: '/api/public/maps-config'
+      preLoaderRoute: typeof ApiPublicMapsConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/notify-reservation': {
       id: '/api/public/notify-reservation'
       path: '/api/public/notify-reservation'
@@ -1060,6 +1080,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
   ApiPublicFirebaseConfigRoute: ApiPublicFirebaseConfigRoute,
   ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
+  ApiPublicMapsConfigRoute: ApiPublicMapsConfigRoute,
   ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
   ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
   ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
@@ -1074,13 +1095,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

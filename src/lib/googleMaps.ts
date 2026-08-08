@@ -8,8 +8,7 @@ import {
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_TRACKING_ID,
-  getGoogleConfigStatus,
-  getGoogleMapsApiKeysForCurrentHost,
+  resolveGoogleMapsApiKeys,
 } from "./googleConfig";
 
 export type GoogleMapsApi = any;
@@ -30,13 +29,13 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
     return Promise.resolve(win.google);
   }
   if (!mapsLoadPromise) {
-    const status = getGoogleConfigStatus();
-    if (!status.ok) {
-      mapsLoadPromise = null;
-      return Promise.reject(new Error(status.reason));
-    }
-    const apiKeys = getGoogleMapsApiKeysForCurrentHost();
-    mapsLoadPromise = new Promise<GoogleMapsApi>((resolve, reject) => {
+    mapsLoadPromise = resolveGoogleMapsApiKeys().then((apiKeys) => {
+      if (apiKeys.length === 0) {
+        throw new Error(
+          "Clé Google Maps manquante — ajoute GOOGLE_MAPS_API_KEY (ou GOOGLE_API_KEY) côté serveur.",
+        );
+      }
+      return new Promise<GoogleMapsApi>((resolve, reject) => {
       const cleanupFailedScript = () => {
         document.getElementById("google-maps-sdk")?.remove();
         try {
@@ -114,6 +113,7 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
       };
 
       tryKey(0);
+      });
     }).catch((err) => {
       mapsLoadPromise = null;
       throw err;
