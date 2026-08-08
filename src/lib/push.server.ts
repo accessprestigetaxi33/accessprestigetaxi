@@ -261,7 +261,14 @@ export async function resolveReservationDriver(
 export async function sendPushToAudience(
   audience: PushAudience,
   payload: PushPayload,
-  opts: { reservationId?: string; accountId?: string; driverId?: string | null } = {},
+  opts: {
+    reservationId?: string;
+    accountId?: string;
+    driverId?: string | null;
+    /** Fenêtre d'idempotence du tag (minutes). Défaut : 60. */
+    dedupTtlMinutes?: number;
+  } = {},
+
 ): Promise<{ sent: number; removed: number }> {
   const baseQuery = () =>
     supabaseAdmin
