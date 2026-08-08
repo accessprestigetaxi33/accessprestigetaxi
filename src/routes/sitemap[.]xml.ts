@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://accessprestigetaxi.lovable.app";
+const BASE_URL = "https://accessprestigetaxi.fr";
 
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";

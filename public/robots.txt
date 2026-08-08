@@ -20,4 +20,4 @@ Disallow: /reservation/
 Disallow: /qr-generator
 
 
-Sitemap: https://accessprestigetaxi.lovable.app/sitemap.xml
+Sitemap: https://accessprestigetaxi.fr/sitemap.xml

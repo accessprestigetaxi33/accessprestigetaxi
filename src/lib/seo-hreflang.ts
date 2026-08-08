@@ -10,7 +10,7 @@ export function hreflangLinks(url: string) {
   ];
 }
 
-export const SITE_URL = "https://accessprestigetaxi.lovable.app";
+export const SITE_URL = "https://accessprestigetaxi.fr";
 
 /** Canonical absolu + alternates hreflang (fr/en + x-default) pour une page. */
 export function seoLinks(path: string) {

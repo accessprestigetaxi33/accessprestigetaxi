@@ -52,7 +52,7 @@ const SLOGAN_EN = "Excellence on every journey";
 // TODO : remplace par le domaine définitif si tu passes sur un nom de domaine perso
 // (ex: https://accessprestigetaxi.fr). Sert à générer des URLs absolues pour
 // og:url / og:image / twitter:image, obligatoires selon la spec Open Graph.
-const SITE_URL = "https://accessprestigetaxi.lovable.app";
+const SITE_URL = "https://accessprestigetaxi.fr";
 
 function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
@@ -175,6 +175,7 @@ function useHeroSlideshow(count: number, durationMs: number) {
 const COPY = {
   fr: {
     kicker: "10 ans d'expérience · Transport sanitaire conventionné · Charente-Maritime",
+    h1: "Taxi 100 % électrique en Charente-Maritime",
     tagline: SLOGAN_FR,
     lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Transport sanitaire conventionné et courses sans limite de distance, pour tous types de prestations.",
     ctaBook: "Réserver ma course",
@@ -314,6 +315,7 @@ const COPY = {
   },
   en: {
     kicker: "10 years of experience · Approved medical transport · Charente-Maritime",
+    h1: "100% electric taxi in Charente-Maritime",
     tagline: SLOGAN_EN,
     lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. Approved medical transport and rides with no distance limit, for every type of service.",
     ctaBook: "Book a ride",
@@ -457,11 +459,11 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Access Prestige Taxi — Taxi 100 % électrique en Charente-Maritime" },
+      { title: "Taxi électrique Charente-Maritime | Access Prestige" },
       {
         name: "description",
         content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Deux chauffeurs, BMW iX1 et Audi Q6 e-tron électriques, van Mercedes 7 places, sièges bébé et enfants, transport conventionné, gares & aéroports.",
+          "Taxi 100 % électrique en Charente-Maritime : BMW iX1, Audi Q6 e-tron, van 7 places, transport conventionné, gares et aéroports.",
       },
       { property: "og:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
       {
@@ -501,11 +503,7 @@ export const Route = createFileRoute("/")({
           slogan: SLOGAN_FR,
           url: SITE_URL,
           image: absoluteUrl(heroCars.url),
-          // TODO : remplace par ton logo réel si tu en as un dans /assets (utile pour le Knowledge Panel Google)
-          // logo: absoluteUrl("/logo.png"),
-          // TODO : renseigne l'adresse réelle si tu as un point fixe (bureau, station) —
-          // important pour le référencement local / pack Google Maps. Sans adresse fixe
-          // pour un service de VTC/taxi à domicile, tu peux laisser addressRegion seul.
+          logo: absoluteUrl("/favicon.png"),
           address: {
             "@type": "PostalAddress",
             addressRegion: "Charente-Maritime",
@@ -515,11 +513,7 @@ export const Route = createFileRoute("/")({
           telephone: DRIVERS.map((d) => d.intl),
           availableLanguage: ["fr", "en"],
           openingHours: "Mo-Fr 08:00-20:00",
-          // TODO : ajuste selon ta tarification réelle (€, €€, €€€)
           priceRange: "€€",
-          // TODO : ajoute tes profils réels (Google Business, Facebook, Instagram...) —
-          // utile pour relier ta fiche Google Business à ce site.
-          // sameAs: ["https://www.google.com/maps/place/...", "https://www.facebook.com/..."],
           employee: DRIVERS.map((d) => ({
             "@type": "Person",
             name: d.name,
@@ -677,7 +671,7 @@ function Index() {
             transition={{ duration: 0.55, delay: 0.08 }}
             className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl text-balance"
           >
-            {c.tagline}
+            {c.h1}
           </motion.h1>
 
           <motion.p

@@ -68,7 +68,7 @@ const COPY = {
 
 const BLOG_TITLE = "Guide Charente-Maritime — Restaurants, hôtels, randos";
 const BLOG_DESC =
-  "Guide complet de la Charente-Maritime : restaurants étoilés, hôtels classés par étoiles, randonnées et lieux à visiter avec leur histoire. Transport en taxi 100 % électrique.";
+  "Guide de la Charente-Maritime : restaurants, hôtels étoilés, randonnées et lieux à visiter, avec taxi 100 % électrique.";
 const BLOG_OG_DESC =
   "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.";
 

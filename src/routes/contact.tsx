@@ -10,7 +10,7 @@ const CONTACT_EMAIL = "taxipatricia@gmail.com";
 const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
 const CONTACT_DESC =
   "Contactez Access Prestige Taxi : 06 50 32 19 23, taxipatricia@gmail.com. Transport sanitaire conventionné, toutes distances, base Charente-Maritime.";
-const CONTACT_URL = "https://accessprestigetaxi.lovable.app/contact";
+const CONTACT_URL = "https://accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
