@@ -1087,6 +1087,55 @@ function ReserverPage() {
     mediaStreamRef.current = null;
   }
 
+  /** Transcription en streaming (SSE) — latence minimale ; retombe en batch si indisponible. */
+  async function transcribeStreaming(base64: string): Promise<string> {
+    try {
+      const res = await fetch("/api/transcribe-stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ base64, mime: "audio/wav" }),
+      });
+      if (!res.ok || !res.body) throw new Error(`stream_${res.status}`);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      let acc = "";
+      let done = false;
+      while (!done) {
+        const { value, done: d } = await reader.read();
+        done = d;
+        if (!value) continue;
+        buf += decoder.decode(value, { stream: true });
+        const lines = buf.split("\n");
+        buf = lines.pop() ?? "";
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const raw = trimmed.slice(5).trim();
+          if (!raw || raw === "[DONE]") continue;
+          try {
+            const evt = JSON.parse(raw) as { type?: string; delta?: string; text?: string };
+            if (evt.type === "transcript.text.delta" && evt.delta) {
+              acc += evt.delta;
+              setVoicePartial(acc);
+            } else if (evt.type === "transcript.text.done" && evt.text) {
+              acc = evt.text;
+              setVoicePartial(acc);
+            }
+          } catch {
+            /* ignore keep-alive / partial frames */
+          }
+        }
+      }
+      if (acc.trim()) return acc.trim();
+      throw new Error("stream_empty");
+    } catch (err) {
+      console.warn("[voice] streaming unavailable, batch fallback", err);
+      const { text } = await transcribeFn({ data: { base64, mime: "audio/wav" } });
+      return (text ?? "").trim();
+    }
+  }
+
   async function finishVoice(send_ = true) {
     if (stoppingRef.current) return;
     stoppingRef.current = true;
@@ -1096,6 +1145,7 @@ function ReserverPage() {
     pcmRef.current = [];
     cleanupMic();
     setListening(false);
+    setVoiceLevel(0);
     if (!send_ || chunks.length === 0) {
       stoppingRef.current = false;
       return;
@@ -1103,28 +1153,43 @@ function ReserverPage() {
     const blob = encodeWav(chunks, rate);
     if (blob.size < 4000 || !hasSpokenRef.current) {
       stoppingRef.current = false;
+      setVoiceError(TXT[L].voice_empty);
       toast.error(TXT[L].voice_empty);
       return;
     }
     setTranscribing(true);
+    setVoicePartial("");
+    setVoiceError(null);
     try {
       const base64 = await blobToBase64(blob);
-      const { text } = await transcribeFn({ data: { base64, mime: "audio/wav" } });
+      const text = await transcribeStreaming(base64);
       if (text) {
-        const combined = inputRef.current ? `${inputRef.current} ${text}` : text;
-        setInput("");
-        send(combined);
+        // Sauvegarde automatique dans le champ : l'utilisateur relit / corrige avant envoi.
+        const combined = inputRef.current ? `${inputRef.current} ${text}`.trim() : text;
+        setInput(combined.slice(0, MAX_INPUT));
+        setVoiceReviewed(true);
+        requestAnimationFrame(() => {
+          const el = textareaRef.current;
+          if (el) {
+            el.focus();
+            el.setSelectionRange(el.value.length, el.value.length);
+          }
+        });
       } else {
+        setVoiceError(TXT[L].voice_empty);
         toast.error(TXT[L].voice_empty);
       }
     } catch (err) {
       console.error("[voice] transcription failed", err);
+      setVoiceError(TXT[L].voice_error);
       toast.error(TXT[L].voice_error);
     } finally {
+      setVoicePartial("");
       setTranscribing(false);
       stoppingRef.current = false;
     }
   }
+
 
   function stopVoice() {
     void finishVoice(true);
