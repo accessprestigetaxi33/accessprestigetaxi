@@ -340,6 +340,19 @@ function normalize(q: string): string[] {
   const cleaned = q.replace(/\s+/g, " ").trim();
   const lower = normalizeAddressText(cleaned);
   const variants: string[] = [];
+
+  // Adresse citant une ville hors Charente-Maritime (ex. Bordeaux) :
+  // on interroge Google tel quel, sans aucun raccourci local.
+  if (mentionsOtherCity(cleaned)) {
+    variants.push(cleaned, `${cleaned}, France`);
+    return Array.from(new Set(variants.filter(Boolean)));
+  }
+
+  // Adresse détaillée (numéro de rue ou 3 mots et plus) : on essaie le texte brut
+  // AVANT les alias locaux, pour ne jamais écraser une vraie adresse.
+  const looksDetailed = /\d/.test(cleaned) || lower.split(" ").filter(Boolean).length >= 3;
+  if (looksDetailed) variants.push(cleaned);
+
   const canonical = findCanonicalGeocode(cleaned);
   if (canonical) variants.push(canonical.label);
   if (ALIASES[lower]) variants.push(ALIASES[lower]);
@@ -355,27 +368,26 @@ function normalize(q: string): string[] {
     if (/la\s+rochelle|ile\s+de\s+re|iledere/.test(lower) || lower === "aeroport" || lower === "airport") {
       variants.push("Aéroport La Rochelle-Île de Ré");
     } else {
-      const cityToken = lower.replace(/aeroport|airport|de|du|d/g, " ").trim().split(/\s+/)[0];
+      const cityToken = lower.replace(/\b(aeroport|airport|de|du|d|l|la|le)\b/g, " ").trim().split(/\s+/)[0];
       if (cityToken && cityToken.length > 2) {
         variants.push(`aéroport ${cityToken}, France`, `${cityToken} airport, France`);
       }
     }
   }
-  if (/gare/.test(lower)) {
+  if (/\bgare\b/.test(lower)) {
     if (/la\s+rochelle|rochelle/.test(lower) || lower === "gare") {
       variants.push("Gare de La Rochelle");
     } else {
-      const cityToken = lower.replace(/gare|de|du|d/g, " ").trim().split(/\s+/)[0];
-      if (cityToken && cityToken.length > 2) {
-        variants.push(`gare ${cityToken}, France`);
-      }
+      const rest = lower.replace(/\b(gare|sncf|de|du|d|la|le|les)\b/g, " ").replace(/\s+/g, " ").trim();
+      if (rest.length > 2) variants.push(`gare ${rest}, France`);
     }
   }
   variants.push(cleaned);
   const hasHint = /la\s+rochelle|royan|saintes|rochefort|oleron|ile\s+de\s+re|iledere|chatelaillon|châtelaillon|saint\s+georges|la\s+palmyre|fort\s+boyard|charente\s*maritime|17\d{3}/i.test(cleaned);
   if (!hasHint) {
-    variants.push(`${cleaned}, La Rochelle`);
     variants.push(`${cleaned}, Charente-Maritime, France`);
+    variants.push(`${cleaned}, France`);
+    variants.push(`${cleaned}, La Rochelle`);
   }
   return Array.from(new Set(variants.filter(Boolean)));
 }
