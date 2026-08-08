@@ -547,12 +547,16 @@ function ReserverPage() {
 
   const [listening, setListening] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
-  const mediaRecRef = useRef<MediaRecorder | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const silenceRafRef = useRef<number | null>(null);
+  const procRef = useRef<ScriptProcessorNode | null>(null);
+  const srcNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const pcmRef = useRef<Float32Array[]>([]);
+  const recStartRef = useRef(0);
+  const lastLoudRef = useRef(0);
+  const hasSpokenRef = useRef(false);
+  const stoppingRef = useRef(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInst = useRef<any>(null);
@@ -840,78 +844,117 @@ function ReserverPage() {
   const NO_SPEECH_MS = 6000;
   const MAX_RECORDING_MS = 25000;
 
-  function stopSilenceWatch() {
-    if (silenceRafRef.current != null) {
-      cancelAnimationFrame(silenceRafRef.current);
-      silenceRafRef.current = null;
+  function encodeWav(chunks: Float32Array[], sampleRate: number, targetRate = 16000): Blob {
+    let total = 0;
+    for (const c of chunks) total += c.length;
+    const merged = new Float32Array(total);
+    let off = 0;
+    for (const c of chunks) {
+      merged.set(c, off);
+      off += c.length;
     }
-    analyserRef.current = null;
-    if (audioCtxRef.current) {
-      try {
-        audioCtxRef.current.close();
-      } catch {}
-      audioCtxRef.current = null;
+    // Downsample (simple decimation with averaging)
+    const ratio = sampleRate / targetRate;
+    const outLen = ratio > 1 ? Math.floor(merged.length / ratio) : merged.length;
+    const out = new Float32Array(outLen);
+    if (ratio > 1) {
+      for (let i = 0; i < outLen; i++) {
+        const start = Math.floor(i * ratio);
+        const end = Math.min(merged.length, Math.floor((i + 1) * ratio));
+        let sum = 0;
+        for (let j = start; j < end; j++) sum += merged[j];
+        out[i] = sum / Math.max(1, end - start);
+      }
+    } else {
+      out.set(merged);
     }
-  }
-
-  function startSilenceWatch(stream: MediaStream) {
-    try {
-      const Ctx: typeof AudioContext | undefined = window.AudioContext || (window as any).webkitAudioContext;
-      if (!Ctx) return;
-      const audioCtx = new Ctx();
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      source.connect(analyser);
-      audioCtxRef.current = audioCtx;
-      analyserRef.current = analyser;
-
-      const data = new Uint8Array(analyser.fftSize);
-      const start = Date.now();
-      let lastLoud = Date.now();
-      let hasSpoken = false;
-
-      const tick = () => {
-        const an = analyserRef.current;
-        if (!an) return;
-        an.getByteTimeDomainData(data);
-        let sumSquares = 0;
-        for (let i = 0; i < data.length; i++) {
-          const v = (data[i] - 128) / 128;
-          sumSquares += v * v;
-        }
-        const rms = Math.sqrt(sumSquares / data.length);
-        const now = Date.now();
-        if (rms > SILENCE_RMS) {
-          lastLoud = now;
-          hasSpoken = true;
-        }
-        if (hasSpoken && now - lastLoud > SILENCE_MS) return stopVoice();
-        if (!hasSpoken && now - start > NO_SPEECH_MS) return stopVoice();
-        if (now - start > MAX_RECORDING_MS) return stopVoice();
-        silenceRafRef.current = requestAnimationFrame(tick);
-      };
-      silenceRafRef.current = requestAnimationFrame(tick);
-    } catch (e) {
-      console.warn("[voice] détection de silence indisponible", e);
+    const rate = ratio > 1 ? targetRate : sampleRate;
+    const buffer = new ArrayBuffer(44 + out.length * 2);
+    const view = new DataView(buffer);
+    const writeStr = (o: number, s: string) => {
+      for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i));
+    };
+    writeStr(0, "RIFF");
+    view.setUint32(4, 36 + out.length * 2, true);
+    writeStr(8, "WAVE");
+    writeStr(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, rate, true);
+    view.setUint32(28, rate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, "data");
+    view.setUint32(40, out.length * 2, true);
+    let p = 44;
+    for (let i = 0; i < out.length; i++, p += 2) {
+      const s = Math.max(-1, Math.min(1, out[i]));
+      view.setInt16(p, s < 0 ? s * 0x8000 : s * 0x7fff, true);
     }
+    return new Blob([buffer], { type: "audio/wav" });
   }
 
   function cleanupMic() {
     try {
-      mediaRecRef.current?.state === "recording" && mediaRecRef.current.stop();
+      procRef.current?.disconnect();
     } catch {}
+    try {
+      srcNodeRef.current?.disconnect();
+    } catch {}
+    procRef.current = null;
+    srcNodeRef.current = null;
+    if (audioCtxRef.current) {
+      try {
+        void audioCtxRef.current.close();
+      } catch {}
+      audioCtxRef.current = null;
+    }
     mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
     mediaStreamRef.current = null;
-    mediaRecRef.current = null;
-    audioChunksRef.current = [];
-    stopSilenceWatch();
+  }
+
+  async function finishVoice(send_ = true) {
+    if (stoppingRef.current) return;
+    stoppingRef.current = true;
+    const ctx = audioCtxRef.current;
+    const rate = ctx?.sampleRate ?? 44100;
+    const chunks = pcmRef.current;
+    pcmRef.current = [];
+    cleanupMic();
+    setListening(false);
+    if (!send_ || chunks.length === 0) {
+      stoppingRef.current = false;
+      return;
+    }
+    const blob = encodeWav(chunks, rate);
+    if (blob.size < 4000 || !hasSpokenRef.current) {
+      stoppingRef.current = false;
+      toast.error(TXT[L].voice_empty);
+      return;
+    }
+    setTranscribing(true);
+    try {
+      const base64 = await blobToBase64(blob);
+      const { text } = await transcribeFn({ data: { base64, mime: "audio/wav" } });
+      if (text) {
+        const combined = inputRef.current ? `${inputRef.current} ${text}` : text;
+        setInput("");
+        send(combined);
+      } else {
+        toast.error(TXT[L].voice_empty);
+      }
+    } catch (err) {
+      console.error("[voice] transcription failed", err);
+      toast.error(TXT[L].voice_error);
+    } finally {
+      setTranscribing(false);
+      stoppingRef.current = false;
+    }
   }
 
   function stopVoice() {
-    try {
-      mediaRecRef.current?.state === "recording" && mediaRecRef.current.stop();
-    } catch {}
+    void finishVoice(true);
   }
 
   const voiceStartingRef = useRef(false);
@@ -925,23 +968,18 @@ function ReserverPage() {
     voiceStartingRef.current = true;
 
     try {
-      if (typeof window === "undefined" || typeof window.MediaRecorder === "undefined") {
-        toast.error(TXT[L].voice_unsupported);
-        return;
-      }
-      if (!navigator.mediaDevices?.getUserMedia) {
+      const Ctx: typeof AudioContext | undefined =
+        typeof window !== "undefined" ? window.AudioContext || (window as any).webkitAudioContext : undefined;
+      if (!Ctx || !navigator.mediaDevices?.getUserMedia) {
         toast.error(TXT[L].voice_unsupported);
         return;
       }
 
       let stream: MediaStream;
       try {
-        stream = await Promise.race([
-          navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-          }),
-          new Promise<never>((_, reject) => setTimeout(() => reject(new Error("getUserMedia_timeout")), 8000)),
-        ]);
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        });
       } catch (err: any) {
         const name = err?.name || err?.message;
         if (name === "NotAllowedError" || name === "SecurityError") toast.error(TXT[L].voice_denied);
@@ -951,68 +989,61 @@ function ReserverPage() {
       }
       mediaStreamRef.current = stream;
 
-      const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/mpeg"];
-      const mime = candidates.find((m) => window.MediaRecorder?.isTypeSupported?.(m)) || "";
-      let rec: MediaRecorder;
-      try {
-        rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
-      } catch {
-        cleanupMic();
-        toast.error(TXT[L].voice_error);
-        return;
-      }
-      mediaRecRef.current = rec;
-      audioChunksRef.current = [];
-
-      rec.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) audioChunksRef.current.push(e.data);
-      };
-      rec.onstart = () => {
-        setListening(true);
-        startSilenceWatch(stream);
-      };
-      rec.onerror = () => {
-        setListening(false);
-        cleanupMic();
-        toast.error(TXT[L].voice_error);
-      };
-      rec.onstop = async () => {
-        setListening(false);
-        const blob = new Blob(audioChunksRef.current, { type: rec.mimeType || mime || "audio/webm" });
-        cleanupMic();
-        if (blob.size < 1200) return;
-        setTranscribing(true);
+      const ctx = new Ctx();
+      audioCtxRef.current = ctx;
+      if (ctx.state === "suspended") {
         try {
-          const base64 = await blobToBase64(blob);
-          const { text } = await transcribeFn({ data: { base64, mime: blob.type } });
-          if (text) {
-            const combined = inputRef.current ? `${inputRef.current} ${text}` : text;
-            setInput("");
-            send(combined);
-          } else {
-            toast.error(TXT[L].voice_empty);
-          }
-        } catch {
-          toast.error(TXT[L].voice_error);
-        } finally {
-          setTranscribing(false);
+          await ctx.resume();
+        } catch {}
+      }
+      const source = ctx.createMediaStreamSource(stream);
+      const proc = ctx.createScriptProcessor(4096, 1, 1);
+      srcNodeRef.current = source;
+      procRef.current = proc;
+      pcmRef.current = [];
+      hasSpokenRef.current = false;
+      recStartRef.current = Date.now();
+      lastLoudRef.current = Date.now();
+      stoppingRef.current = false;
+
+      proc.onaudioprocess = (e) => {
+        const data = e.inputBuffer.getChannelData(0);
+        pcmRef.current.push(new Float32Array(data));
+        let sum = 0;
+        for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+        const rms = Math.sqrt(sum / data.length);
+        const now = Date.now();
+        if (rms > SILENCE_RMS) {
+          hasSpokenRef.current = true;
+          lastLoudRef.current = now;
+        }
+        const elapsed = now - recStartRef.current;
+        if (
+          (hasSpokenRef.current && now - lastLoudRef.current > SILENCE_MS) ||
+          (!hasSpokenRef.current && elapsed > NO_SPEECH_MS) ||
+          elapsed > MAX_RECORDING_MS
+        ) {
+          void finishVoice(true);
         }
       };
+      source.connect(proc);
+      // Gain 0 sink : nécessaire pour que onaudioprocess se déclenche (Safari/Chrome)
+      const sink = ctx.createGain();
+      sink.gain.value = 0;
+      proc.connect(sink);
+      sink.connect(ctx.destination);
 
-      try {
-        rec.start();
-      } catch {
-        cleanupMic();
-        setListening(false);
-        toast.error(TXT[L].voice_error);
-      }
-    } catch {
+      setListening(true);
+    } catch (err) {
+      console.error("[voice] start failed", err);
+      cleanupMic();
       toast.error(TXT[L].voice_error);
       setListening(false);
     } finally {
       voiceStartingRef.current = false;
     }
   }
+
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
