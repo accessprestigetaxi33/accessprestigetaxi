@@ -11,8 +11,11 @@ export const TARIFS = {
   VITESSE_MOYENNE_KMH,
 } as const;
 
-const DEBUT_JOUR = 7;
-const FIN_JOUR = 19;
+/** Frontière jour/nuit, heure de Paris : jour = [07:00, 19:00[, nuit sinon. */
+export const HEURE_DEBUT_JOUR = 7;
+export const HEURE_FIN_JOUR = 19;
+const DEBUT_JOUR = HEURE_DEBUT_JOUR;
+const FIN_JOUR = HEURE_FIN_JOUR;
 
 /**
  * Extrait les composantes Paris d'une date de manière fiable (tous navigateurs,
