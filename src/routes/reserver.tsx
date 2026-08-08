@@ -333,7 +333,18 @@ type TxtKey =
   | "voice_start"
   | "voice_stop"
   | "voice_listening"
-  | "voice_empty";
+  | "voice_empty"
+  | "voice_hint_title"
+  | "voice_hint_desc"
+  | "voice_hint_1"
+  | "voice_hint_2"
+  | "voice_hint_3"
+  | "voice_hint_cta"
+  | "voice_hint_later"
+  | "voice_denied_help"
+  | "voice_review"
+  | "voice_transcribing"
+  | "voice_level";
 
 const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
   fr: {
@@ -408,6 +419,17 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     voice_stop: "Arrêter le micro",
     voice_listening: "Écoute en cours",
     voice_empty: "Rien n'a été compris. Réessayez.",
+    voice_hint_title: "Autoriser le micro",
+    voice_hint_desc: "Pour dicter votre trajet, votre navigateur va demander l'accès au microphone.",
+    voice_hint_1: "Cliquez sur « Autoriser » dans la fenêtre du navigateur.",
+    voice_hint_2: "Sur iPhone : Réglages → Safari → Microphone → Autoriser.",
+    voice_hint_3: "L'enregistrement démarre automatiquement dès l'autorisation.",
+    voice_hint_cta: "Autoriser et parler",
+    voice_hint_later: "Plus tard",
+    voice_denied_help: "Micro bloqué : ouvrez l'icône du cadenas dans la barre d'adresse et réautorisez le microphone.",
+    voice_review: "Transcription enregistrée dans le champ : relisez, corrigez puis envoyez.",
+    voice_transcribing: "Transcription en cours…",
+    voice_level: "Niveau sonore",
   },
   en: {
     kicker: "Access Prestige Taxi · Charente-Maritime",
@@ -480,6 +502,17 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     voice_stop: "Stop microphone",
     voice_listening: "Listening…",
     voice_empty: "Nothing was understood. Please try again.",
+    voice_hint_title: "Allow microphone",
+    voice_hint_desc: "To dictate your trip, your browser will ask for microphone access.",
+    voice_hint_1: "Click “Allow” in the browser prompt.",
+    voice_hint_2: "On iPhone: Settings → Safari → Microphone → Allow.",
+    voice_hint_3: "Recording starts automatically once access is granted.",
+    voice_hint_cta: "Allow and speak",
+    voice_hint_later: "Later",
+    voice_denied_help: "Microphone blocked: open the lock icon in the address bar and allow the microphone again.",
+    voice_review: "Transcript saved in the field: review, edit, then send.",
+    voice_transcribing: "Transcribing…",
+    voice_level: "Input level",
   },
 };
 
@@ -645,6 +678,15 @@ function ReserverPage() {
 
   const [listening, setListening] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
+  const [voiceLevel, setVoiceLevel] = useState(0);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [voicePartial, setVoicePartial] = useState("");
+  const [voiceReviewed, setVoiceReviewed] = useState(false);
+  const [micGate, setMicGate] = useState(false);
+  const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt" | "unknown">("unknown");
+  const levelTickRef = useRef(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const procRef = useRef<ScriptProcessorNode | null>(null);
@@ -1078,6 +1120,55 @@ function ReserverPage() {
     mediaStreamRef.current = null;
   }
 
+  /** Transcription en streaming (SSE) — latence minimale ; retombe en batch si indisponible. */
+  async function transcribeStreaming(base64: string): Promise<string> {
+    try {
+      const res = await fetch("/api/transcribe-stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ base64, mime: "audio/wav" }),
+      });
+      if (!res.ok || !res.body) throw new Error(`stream_${res.status}`);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      let acc = "";
+      let done = false;
+      while (!done) {
+        const { value, done: d } = await reader.read();
+        done = d;
+        if (!value) continue;
+        buf += decoder.decode(value, { stream: true });
+        const lines = buf.split("\n");
+        buf = lines.pop() ?? "";
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+          const raw = trimmed.slice(5).trim();
+          if (!raw || raw === "[DONE]") continue;
+          try {
+            const evt = JSON.parse(raw) as { type?: string; delta?: string; text?: string };
+            if (evt.type === "transcript.text.delta" && evt.delta) {
+              acc += evt.delta;
+              setVoicePartial(acc);
+            } else if (evt.type === "transcript.text.done" && evt.text) {
+              acc = evt.text;
+              setVoicePartial(acc);
+            }
+          } catch {
+            /* ignore keep-alive / partial frames */
+          }
+        }
+      }
+      if (acc.trim()) return acc.trim();
+      throw new Error("stream_empty");
+    } catch (err) {
+      console.warn("[voice] streaming unavailable, batch fallback", err);
+      const { text } = await transcribeFn({ data: { base64, mime: "audio/wav" } });
+      return (text ?? "").trim();
+    }
+  }
+
   async function finishVoice(send_ = true) {
     if (stoppingRef.current) return;
     stoppingRef.current = true;
@@ -1087,6 +1178,7 @@ function ReserverPage() {
     pcmRef.current = [];
     cleanupMic();
     setListening(false);
+    setVoiceLevel(0);
     if (!send_ || chunks.length === 0) {
       stoppingRef.current = false;
       return;
@@ -1094,28 +1186,43 @@ function ReserverPage() {
     const blob = encodeWav(chunks, rate);
     if (blob.size < 4000 || !hasSpokenRef.current) {
       stoppingRef.current = false;
+      setVoiceError(TXT[L].voice_empty);
       toast.error(TXT[L].voice_empty);
       return;
     }
     setTranscribing(true);
+    setVoicePartial("");
+    setVoiceError(null);
     try {
       const base64 = await blobToBase64(blob);
-      const { text } = await transcribeFn({ data: { base64, mime: "audio/wav" } });
+      const text = await transcribeStreaming(base64);
       if (text) {
-        const combined = inputRef.current ? `${inputRef.current} ${text}` : text;
-        setInput("");
-        send(combined);
+        // Sauvegarde automatique dans le champ : l'utilisateur relit / corrige avant envoi.
+        const combined = inputRef.current ? `${inputRef.current} ${text}`.trim() : text;
+        setInput(combined.slice(0, MAX_INPUT));
+        setVoiceReviewed(true);
+        requestAnimationFrame(() => {
+          const el = textareaRef.current;
+          if (el) {
+            el.focus();
+            el.setSelectionRange(el.value.length, el.value.length);
+          }
+        });
       } else {
+        setVoiceError(TXT[L].voice_empty);
         toast.error(TXT[L].voice_empty);
       }
     } catch (err) {
       console.error("[voice] transcription failed", err);
+      setVoiceError(TXT[L].voice_error);
       toast.error(TXT[L].voice_error);
     } finally {
+      setVoicePartial("");
       setTranscribing(false);
       stoppingRef.current = false;
     }
   }
+
 
   function stopVoice() {
     void finishVoice(true);
@@ -1123,18 +1230,17 @@ function ReserverPage() {
 
   const voiceStartingRef = useRef(false);
 
-  async function toggleVoice() {
-    if (listening) {
-      stopVoice();
-      return;
-    }
-    if (voiceStartingRef.current) return;
+  async function startRecording() {
+    if (listening || voiceStartingRef.current) return;
     voiceStartingRef.current = true;
+    setVoiceError(null);
+    setVoicePartial("");
 
     try {
       const Ctx: typeof AudioContext | undefined =
         typeof window !== "undefined" ? window.AudioContext || (window as any).webkitAudioContext : undefined;
       if (!Ctx || !navigator.mediaDevices?.getUserMedia) {
+        setVoiceError(TXT[L].voice_unsupported);
         toast.error(TXT[L].voice_unsupported);
         return;
       }
@@ -1146,12 +1252,21 @@ function ReserverPage() {
         });
       } catch (err: any) {
         const name = err?.name || err?.message;
-        if (name === "NotAllowedError" || name === "SecurityError") toast.error(TXT[L].voice_denied);
-        else if (name === "NotFoundError" || name === "OverconstrainedError") toast.error(TXT[L].voice_no_mic);
-        else toast.error(TXT[L].voice_error);
+        let msg = TXT[L].voice_error;
+        if (name === "NotAllowedError" || name === "SecurityError") {
+          msg = TXT[L].voice_denied;
+          setMicPermission("denied");
+          setMicGate(true);
+        } else if (name === "NotFoundError" || name === "OverconstrainedError") {
+          msg = TXT[L].voice_no_mic;
+        }
+        setVoiceError(msg);
+        toast.error(msg);
         return;
       }
       mediaStreamRef.current = stream;
+      setMicPermission("granted");
+      setMicGate(false);
 
       const ctx = new Ctx();
       audioCtxRef.current = ctx;
@@ -1177,6 +1292,10 @@ function ReserverPage() {
         for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
         const rms = Math.sqrt(sum / data.length);
         const now = Date.now();
+        if (now - levelTickRef.current > 80) {
+          levelTickRef.current = now;
+          setVoiceLevel(Math.min(1, rms * 8));
+        }
         if (rms > SILENCE_RMS) {
           hasSpokenRef.current = true;
           lastLoudRef.current = now;
@@ -1201,12 +1320,69 @@ function ReserverPage() {
     } catch (err) {
       console.error("[voice] start failed", err);
       cleanupMic();
+      setVoiceError(TXT[L].voice_error);
       toast.error(TXT[L].voice_error);
       setListening(false);
     } finally {
       voiceStartingRef.current = false;
     }
   }
+
+  const startRecordingRef = useRef(startRecording);
+  startRecordingRef.current = startRecording;
+
+  async function toggleVoice() {
+    if (listening) {
+      stopVoice();
+      return;
+    }
+    // Écran d'explication avant la 1re demande d'autorisation (ou après un refus)
+    let state: string = micPermission;
+    try {
+      const perm = await (navigator as any).permissions?.query?.({ name: "microphone" as PermissionName });
+      if (perm?.state) {
+        state = perm.state;
+        setMicPermission(perm.state);
+      }
+    } catch {
+      /* Safari : Permissions API micro non supportée */
+    }
+    const seen = typeof window !== "undefined" && localStorage.getItem("apt_mic_intro") === "1";
+    if (state === "granted" || (seen && state !== "denied")) {
+      void startRecording();
+      return;
+    }
+    setVoiceError(null);
+    setMicGate(true);
+  }
+
+  // Relance automatique dès que l'autorisation micro passe à "granted"
+  useEffect(() => {
+    let perm: any;
+    let cancelled = false;
+    (async () => {
+      try {
+        perm = await (navigator as any).permissions?.query?.({ name: "microphone" as PermissionName });
+      } catch {
+        return;
+      }
+      if (!perm || cancelled) return;
+      setMicPermission(perm.state);
+      perm.onchange = () => {
+        setMicPermission(perm.state);
+        if (perm.state === "granted") {
+          setVoiceError(null);
+          setMicGate(false);
+          void startRecordingRef.current();
+        }
+      };
+    })();
+    return () => {
+      cancelled = true;
+      if (perm) perm.onchange = null;
+    };
+  }, []);
+
 
 
   useEffect(() => {
@@ -1397,16 +1573,95 @@ function ReserverPage() {
               </div>
             )}
 
+            {/* Écran d'explication micro */}
+            {micGate && (
+              <div className="border-t border-border/60 bg-accent/5 px-4 py-3" role="dialog" aria-label={tx("voice_hint_title")}>
+                <p className="text-sm font-semibold text-foreground">{tx("voice_hint_title")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{tx("voice_hint_desc")}</p>
+                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <li>• {tx("voice_hint_1")}</li>
+                  <li>• {tx("voice_hint_2")}</li>
+                  <li>• {tx("voice_hint_3")}</li>
+                </ul>
+                {micPermission === "denied" && (
+                  <p className="mt-2 text-xs font-medium text-destructive">{tx("voice_denied_help")}</p>
+                )}
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      try {
+                        localStorage.setItem("apt_mic_intro", "1");
+                      } catch {}
+                      void startRecording();
+                    }}
+                    className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
+                  >
+                    {tx("voice_hint_cta")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMicGate(false)}
+                    className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+                  >
+                    {tx("voice_hint_later")}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Indicateur d'enregistrement / transcription */}
+            {(listening || transcribing || voiceError || voiceReviewed) && (
+              <div className="border-t border-border/60 px-4 py-2.5" aria-live="polite">
+                {listening && (
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-destructive" aria-hidden="true" />
+                      {tx("voice_listening")}
+                    </span>
+                    <div
+                      className="h-2 flex-1 overflow-hidden rounded-full bg-muted"
+                      role="meter"
+                      aria-label={tx("voice_level")}
+                      aria-valuenow={Math.round(voiceLevel * 100)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
+                      <div
+                        className="h-full rounded-full bg-accent transition-[width] duration-100"
+                        style={{ width: `${Math.max(4, Math.round(voiceLevel * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {transcribing && (
+                  <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                    {voicePartial ? voicePartial : tx("voice_transcribing")}
+                  </p>
+                )}
+                {!listening && !transcribing && voiceError && (
+                  <p className="text-xs font-medium text-destructive">{voiceError}</p>
+                )}
+                {!listening && !transcribing && !voiceError && voiceReviewed && (
+                  <p className="text-xs text-accent">{tx("voice_review")}</p>
+                )}
+              </div>
+            )}
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                setVoiceReviewed(false);
                 send(input);
               }}
               className="flex items-end gap-2 border-t border-border/60 bg-background/60 p-3"
             >
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
