@@ -645,6 +645,15 @@ function ReserverPage() {
 
   const [listening, setListening] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
+  const [voiceLevel, setVoiceLevel] = useState(0);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [voicePartial, setVoicePartial] = useState("");
+  const [voiceReviewed, setVoiceReviewed] = useState(false);
+  const [micGate, setMicGate] = useState(false);
+  const [micPermission, setMicPermission] = useState<"granted" | "denied" | "prompt" | "unknown">("unknown");
+  const levelTickRef = useRef(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const procRef = useRef<ScriptProcessorNode | null>(null);
