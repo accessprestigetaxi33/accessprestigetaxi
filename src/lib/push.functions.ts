@@ -369,10 +369,14 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     }
 
     const clientName = r.client_name || r.nom || "Client";
+    const assignedKey = String((r as any).assigned_driver || "").toLowerCase().trim();
+    const assignedName =
+      assignedKey === "patricia" ? "Patricia" : assignedKey === "alain" ? "Alain" : "Votre chauffeur";
     const trajet = `${r.depart} → ${r.arrivee || r.destination || "—"}`;
     const phone = r.client_phone || r.telephone || "";
     const smsPhone = phone.replace(/[^\d]/g, "").replace(/^0/, "+33");
     const url = `/suivi/${(r as any).suivi_id || r.id}`;
+
 
     // ── Push CHAUFFEUR désactivée (notification "Active ton GPS" retirée) ─
     const chauffeurResult = { sent: 0, removed: 0 };
