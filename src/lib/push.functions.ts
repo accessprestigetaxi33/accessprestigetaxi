@@ -420,7 +420,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           title: "🚖 Votre taxi arrive",
           body: `Votre taxi arrive vers ${r.depart}${etaTxt}.`,
           url,
-          tag: `client-en-route-${r.id}`,
+          tag: pushKey("en_route"),
           requireInteraction: false,
           data: { reservation_id: r.id, status: "en_route", eta_minutes: eta ?? null },
         },
