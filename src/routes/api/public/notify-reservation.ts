@@ -14,10 +14,8 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const [{ getTaxiSupabaseAdmin, getTaxiSupabaseConfig }, { sendPushToAudience }] = await Promise.all([
-          import("@/lib/taxi-supabase.server"),
-          import("@/lib/push.server"),
-        ]);
+        const [{ getTaxiSupabaseAdmin, getTaxiSupabaseConfig }, { sendPushToAudience, claimNotificationOnce }] =
+          await Promise.all([import("@/lib/taxi-supabase.server"), import("@/lib/push.server")]);
         let serviceKey = "";
         try {
           const cfg = getTaxiSupabaseConfig();
@@ -56,6 +54,19 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         }
         const reservationId = parsed.data.reservation_id;
         console.log("[notify-reservation] reservationId:", reservationId);
+
+        // Idempotence au niveau du webhook : un rejeu (retry HTTP, double
+        // trigger Postgres, redelivery) ne doit jamais renvoyer l'e-mail admin
+        // ni les push. Le premier appel réserve la clé pour 24 h.
+        const firstDelivery = await claimNotificationOnce(
+          `notify-reservation-${reservationId}`,
+          "webhook",
+          24 * 60,
+        );
+        if (!firstDelivery) {
+          console.log("[notify-reservation] duplicate ignoré:", reservationId);
+          return Response.json({ success: true, duplicate: true, emailQueued: false });
+        }
 
         const supabase = getTaxiSupabaseAdmin();
 
@@ -158,7 +169,7 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
               requireInteraction: true,
               data: { reservation_id: reservationId, kind: "new_reservation" },
             },
-            { driverId: assignedLabel ? assignedRaw.toLowerCase() : null },
+            { driverId: assignedLabel ? assignedRaw.toLowerCase() : null, dedupTtlMinutes: 24 * 60 },
           );
 
           console.log("[notify-reservation] push chauffeur:", JSON.stringify(chauffeurResult));
@@ -185,6 +196,7 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
             {
               reservationId,
               accountId: (reservation as any).client_account_id ?? undefined,
+              dedupTtlMinutes: 24 * 60,
             },
           );
           console.log("[notify-reservation] push client:", JSON.stringify(clientResult), "lang:", clientLang);
