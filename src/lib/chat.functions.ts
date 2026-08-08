@@ -408,17 +408,24 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     try {
-      const { sendPushToAudience } = await import("@/lib/push.server");
-      await sendPushToAudience("chauffeur", {
-        title: `💬 Message de ${clientName}`,
-        body: data.content.slice(0, 100),
-        url: "/driver",
-        tag: `chat-driver-resa-${r.id}-${Date.now()}`,
-        requireInteraction: false,
-      });
+      const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+      const { driverId } = await resolveReservationDriver(r.id);
+      await sendPushToAudience(
+        "chauffeur",
+        {
+          title: `💬 Message de ${clientName}`,
+          body: data.content.slice(0, 100),
+          url: "/driver",
+          tag: `chat-driver-resa-${r.id}-${Date.now()}`,
+          requireInteraction: false,
+          data: { reservation_id: r.id, kind: "chat" },
+        },
+        { driverId },
+      );
     } catch (e) {
       console.warn("[chat] push chauffeur (suivi) failed (non-blocking)", e);
     }
+
 
     return row as ChatMessage;
   });
