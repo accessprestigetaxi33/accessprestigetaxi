@@ -600,68 +600,109 @@ function ReserverPage() {
     })();
   }, [quote]);
 
-  // AUTO geoloc on mount — no button.
+  // AUTO geoloc on mount — no button. Même configuration que Start Fresh Here :
+  // 1) GPS haute précision, 2) retry basse précision avec cache, 3) fallback IP.
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setGpsError("unavailable");
-      markGpsReady();
+      void (async () => {
+        const ip = await ipGeolocate();
+        if (ip && isInServiceZone(ip.lat, ip.lng)) {
+          await applyDetectedPosition(ip.lat, ip.lng, true);
+          return;
+        }
+        setGpsError("unavailable");
+        setGpsBusy(false);
+        markGpsReady();
+      })();
       return;
     }
     setGpsBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-        const LOW_ACCURACY_LIMIT_M = 300;
-        const isLowAccuracy = typeof accuracy === "number" && accuracy > LOW_ACCURACY_LIMIT_M;
-        const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        setGps(isLowAccuracy ? null : { lat, lng, label });
-        setGpsError(isLowAccuracy ? "low_accuracy" : null);
-        setGpsBusy(false);
-        markGpsReady();
-        setMessages((prev) => {
-          if (prev.length === 1 && prev[0].role === "assistant") {
-            if (isLowAccuracy) {
-              const accM = Math.round(accuracy);
-              return [
-                {
-                  role: "assistant",
-                  content: `📍 ${TXT[L].gps_low} (±${accM} m). ${TXT[L].gps_ask_manual}`,
-                },
-              ];
-            }
-            return [
-              {
-                role: "assistant",
-                content: `📍 ${TXT[L].gps_detected} : ${label}.\n${TXT[L].ask_destination}`,
-              },
-            ];
-          }
-          return prev;
-        });
-        const map = mapInst.current;
-        const g = (window as any).google;
-        if (!isLowAccuracy && map && g?.maps) {
-          const pos2 = { lat, lng };
-          if (gpsMarker.current) gpsMarker.current.setPosition(pos2);
-          else
-            gpsMarker.current = new g.maps.Marker({
-              position: pos2,
-              map,
-              title: TXT[L].map_from,
-              label: { text: "🧭", fontSize: "18px" },
-            });
-          map.setCenter(pos2);
-          map.setZoom(14);
+
+    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean) => {
+      const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      setGps({ lat, lng, label });
+      setGpsError(approximate ? "low_accuracy" : null);
+      setGpsBusy(false);
+      markGpsReady();
+      setMessages((prev) => {
+        if (prev.length === 1 && prev[0].role === "assistant") {
+          return [
+            {
+              role: "assistant",
+              content: approximate
+                ? `📍 ${TXT[L].gps_low}. ${TXT[L].gps_ask_manual}\n${label}`
+                : `📍 ${TXT[L].gps_detected} : ${label}.\n${TXT[L].ask_destination}`,
+            },
+          ];
         }
-      },
-      (err) => {
-        setGpsBusy(false);
-        const code = err?.code;
-        setGpsError(code === 1 ? "denied" : code === 3 ? "timeout" : "unavailable");
-        markGpsReady();
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
-    );
+        return prev;
+      });
+      const map = mapInst.current;
+      const g = (window as any).google;
+      if (map && g?.maps) {
+        const pos2 = { lat, lng };
+        if (gpsMarker.current) gpsMarker.current.setPosition(pos2);
+        else
+          gpsMarker.current = new g.maps.Marker({
+            position: pos2,
+            map,
+            title: TXT[L].map_from,
+            label: { text: "🧭", fontSize: "18px" },
+          });
+        map.setCenter(pos2);
+        map.setZoom(approximate ? 11 : 14);
+      }
+    };
+
+    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+      setGpsBusy(false);
+      setGpsError(code);
+      markGpsReady();
+    };
+
+    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+      const ip = await ipGeolocate();
+      if (ip && isInServiceZone(ip.lat, ip.lng)) {
+        await applyDetectedPosition(ip.lat, ip.lng, true);
+        return;
+      }
+      failWith(code);
+    };
+
+    const onSuccess = (pos: GeolocationPosition, allowApproximate: boolean) => {
+      const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !isInServiceZone(lat, lng)) {
+        void tryIpFallback("unavailable");
+        return;
+      }
+      const approximate = typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M;
+      if (approximate && !allowApproximate) {
+        void tryIpFallback("low_accuracy");
+        return;
+      }
+      void applyDetectedPosition(lat, lng, approximate);
+    };
+
+    const onFirstError = (firstErr: GeolocationPositionError) => {
+      if (firstErr?.code === 1) {
+        void tryIpFallback("denied");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (cached) => onSuccess(cached, true),
+        (secondErr) => {
+          const err = secondErr || firstErr;
+          void tryIpFallback(err?.code === 1 ? "denied" : err?.code === 3 ? "timeout" : "unavailable");
+        },
+        { enableHighAccuracy: false, maximumAge: 120000, timeout: 8000 },
+      );
+    };
+
+    navigator.geolocation.getCurrentPosition((pos) => onSuccess(pos, false), onFirstError, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 18000,
+    });
   }, []);
 
   // When user picks a manual departure, update greeting & map
