@@ -160,7 +160,21 @@ export async function runReservationChat(input: ReservationChatInput, request: R
     if (parsed.success) state = parsed.data;
   }
 
-  const system = getSystemPrompt(lang);
+  // Contexte temporel explicite : sans lui, le modèle invente la date du jour
+  // et déclare "déjà passé" un créneau situé dans le futur.
+  const nowIso = toParisIso(new Date());
+  const nowHuman = formatInTimeZone(new Date(), TIMEZONE, lang === "en" ? "EEEE d MMMM yyyy, HH:mm" : "EEEE d MMMM yyyy, HH:mm");
+  const timeContext =
+    lang === "en"
+      ? `\n\nCURRENT TIME CONTEXT (authoritative): now in Paris it is ${nowHuman} (ISO ${nowIso}, timezone Europe/Paris).
+- Always compute relative dates ("tomorrow", "next Tuesday", "in a week") from this exact date.
+- Always send pickup_datetime as a local Paris ISO string "YYYY-MM-DDTHH:mm:ss" (no Z, no offset).
+- Never claim a requested time is in the past unless the check_slot tool says so.`
+      : `\n\nCONTEXTE TEMPOREL (fait autoritaire) : nous sommes le ${nowHuman} à Paris (ISO ${nowIso}, fuseau Europe/Paris).
+- Calcule toujours les dates relatives ("demain", "mardi prochain", "dans une semaine") à partir de cette date exacte.
+- Envoie toujours pickup_datetime au format ISO local Paris "AAAA-MM-JJTHH:mm:ss" (sans Z ni décalage).
+- N'affirme jamais qu'un horaire est déjà passé sans que l'outil check_slot l'ait indiqué.`;
+  const system = getSystemPrompt(lang) + timeContext;
 
   const result = streamText({
     model: gateway("google/gemini-2.5-flash"),
