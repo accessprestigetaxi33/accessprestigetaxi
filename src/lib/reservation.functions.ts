@@ -29,9 +29,31 @@ export const cancelReservationPublic = createServerFn({ method: "POST" })
       .update({ status: "annulee" })
       .eq("id", data.id)
       .not("status", "in", "(annulee,terminee)")
-      .select("id")
+      .select("id, email, client_email, lang, nom, client_name, pickup_datetime, depart, arrivee, destination")
       .maybeSingle();
     if (error) throw new Error(error.message);
+
+    if (updated) {
+      try {
+        const row: any = updated;
+        const email = row.client_email || row.email;
+        if (email) {
+          const { sendClientCancellationEmail } = await import("@/lib/reservation-notifications.server");
+          await sendClientCancellationEmail({
+            reservationId: data.id,
+            email,
+            lang: row.lang ?? "fr",
+            clientName: row.client_name ?? row.nom ?? null,
+            pickupDatetime: row.pickup_datetime ?? null,
+            depart: row.depart ?? null,
+            arrivee: row.arrivee ?? row.destination ?? null,
+          });
+        }
+      } catch (e) {
+        console.warn("[reservation] cancellation email failed", e);
+      }
+    }
+
     return { ok: !!updated };
   });
 
