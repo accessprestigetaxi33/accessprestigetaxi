@@ -26,3 +26,23 @@ export const getActiveVisitorCount = createServerFn({ method: "POST" })
     });
     return { count: Number(count ?? 0) };
   });
+
+/**
+ * Ouverture de session chauffeur sans mot de passe : Alain ou Patricia
+ * choisissent simplement leur profil, le serveur renvoie le jeton technique
+ * utilisé ensuite par toutes les fonctions du panneau.
+ */
+export const openDriverSession = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z.object({ driver: z.enum(["patricia", "alain"]) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { tokenForDriver } = await import("@/lib/driver-auth.server");
+    const token = tokenForDriver(data.driver);
+    if (!token) return { ok: false as const, token: null, driver: null };
+    return {
+      ok: true as const,
+      token,
+      driver: data.driver === "patricia" ? "Patricia" : "Alain",
+    };
+  });
