@@ -183,24 +183,53 @@ async function sendFcmToToken(
 
 type SubRow = { id: string; fcm_token: string | null; user_agent: string | null; last_seen_at: string | null; created_at: string | null };
 
-async function claimPushSendOnce(audience: PushAudience, tag?: string, reservationId?: string): Promise<boolean> {
-  if (!tag || !reservationId) return true;
+/**
+ * Garde-fou d'idempotence générique (push, e-mail, webhooks).
+ * Réserve une clé logique dans `push_dedup` : le premier appel obtient `true`,
+ * tous les retrys (webhook rejoué, double clic, redelivery FCM) obtiennent
+ * `false` tant que la clé n'a pas expiré.
+ *
+ * @param key    clé logique unique (ex. `notify-reservation-<id>`)
+ * @param scope  espace de noms (`client`, `chauffeur`, `email`, `webhook`…)
+ * @param ttlMinutes durée de rétention de la clé (défaut 60 min)
+ */
+export async function claimNotificationOnce(
+  key: string,
+  scope: string,
+  ttlMinutes = 60,
+): Promise<boolean> {
+  if (!key) return true;
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000).toISOString();
+  const expiresAt = new Date(now.getTime() + ttlMinutes * 60 * 1000).toISOString();
   try {
     await supabaseAdmin.from("push_dedup").delete().lt("expires_at", now.toISOString());
   } catch {}
   const { error } = await supabaseAdmin.from("push_dedup").insert({
-    tag,
-    audience,
+    tag: key,
+    audience: scope,
     first_sent_at: now.toISOString(),
     expires_at: expiresAt,
   });
   if (!error) return true;
-  if ((error as any).code === "23505") return false;
-  console.warn("[push] dedup claim non-fatal error", error);
+  if ((error as any).code === "23505") {
+    console.log("[dedup] duplicate suppressed", scope, key);
+    return false;
+  }
+  console.warn("[dedup] claim non-fatal error", error);
   return true;
 }
+
+async function claimPushSendOnce(
+  audience: PushAudience,
+  tag?: string,
+  ttlMinutes = 60,
+): Promise<boolean> {
+  // Les tags volontairement uniques (suffixe horodaté, ex. messages de tchat)
+  // ne sont pas dédupliqués : chaque message est une notification distincte.
+  if (!tag || /-\d{13}$/.test(tag)) return true;
+  return claimNotificationOnce(tag, audience, ttlMinutes);
+}
+
 
 function isLikelyIosWebPush(userAgent: string | null): boolean {
   if (!userAgent) return false;
@@ -232,7 +261,14 @@ export async function resolveReservationDriver(
 export async function sendPushToAudience(
   audience: PushAudience,
   payload: PushPayload,
-  opts: { reservationId?: string; accountId?: string; driverId?: string | null } = {},
+  opts: {
+    reservationId?: string;
+    accountId?: string;
+    driverId?: string | null;
+    /** Fenêtre d'idempotence du tag (minutes). Défaut : 60. */
+    dedupTtlMinutes?: number;
+  } = {},
+
 ): Promise<{ sent: number; removed: number }> {
   const baseQuery = () =>
     supabaseAdmin
@@ -263,7 +299,7 @@ export async function sendPushToAudience(
   }
   if (error || !data || data.length === 0) return { sent: 0, removed: 0 };
 
-  const claimed = await claimPushSendOnce(audience, payload.tag, opts.reservationId);
+  const claimed = await claimPushSendOnce(audience, payload.tag, opts.dedupTtlMinutes ?? 60);
   if (!claimed) return { sent: 0, removed: 0 };
 
 

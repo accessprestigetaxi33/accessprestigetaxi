@@ -75,6 +75,11 @@ export async function sendClientConfirmationEmail(
 ) {
   const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
+  const { claimNotificationOnce } = await import("@/lib/push.server");
+  // Garde-fou : un webhook/serverFn rejoué ne renvoie pas deux confirmations.
+  if (!(await claimNotificationOnce(`email-confirmation-${reservationId}`, "email", 24 * 60))) {
+    return { sent: false as const, reason: "duplicate" };
+  }
   const trackingLink = payload.trackingLink ?? `${SITE_URL}/suivi/${payload.trackingId}`;
 
   try {
@@ -132,6 +137,10 @@ export async function sendClientCancellationEmail(args: {
 }) {
   const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
+  const { claimNotificationOnce } = await import("@/lib/push.server");
+  if (!(await claimNotificationOnce(`email-cancelled-${args.reservationId}`, "email", 24 * 60))) {
+    return { sent: false as const, reason: "duplicate" };
+  }
   try {
     const result = await sendTemplateEmail("reservation-cancelled", args.email, {
       idempotencyKey: `reservation-cancelled-${args.reservationId}`,
@@ -187,6 +196,12 @@ export async function sendClientTrackingEmail(args: {
 }) {
   const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
+  const { claimNotificationOnce } = await import("@/lib/push.server");
+  if (
+    !(await claimNotificationOnce(`email-tracking-${args.stage}-${args.reservationId}`, "email", 24 * 60))
+  ) {
+    return { sent: false as const, reason: "duplicate" };
+  }
   const suiviUrl = `${SITE_URL}/suivi/${args.trackingId ?? args.reservationId}`;
   try {
     const result = await sendTemplateEmail("reservation-tracking", args.email, {
