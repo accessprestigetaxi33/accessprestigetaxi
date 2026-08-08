@@ -389,7 +389,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
         "client",
         {
           title: "✅ Course confirmée",
-          body: `Patricia a confirmé votre course : ${trajet}.`,
+          body: `${assignedName} a confirmé votre course : ${trajet}.`,
           url,
           tag: `client-accepted-${r.id}`,
           requireInteraction: false,
