@@ -55,6 +55,7 @@ import { Route as ApiPublicContactVcfRouteImport } from './routes/api/public/con
 import { Route as ApiPublicHooksRecomputeDurationsTickRouteImport } from './routes/api/public/hooks/recompute-durations-tick'
 import { Route as ApiPublicHooksRecurringRidesTickRouteImport } from './routes/api/public/hooks/recurring-rides-tick'
 import { Route as ApiPublicHooksRideRemindersTickRouteImport } from './routes/api/public/hooks/ride-reminders-tick'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -291,6 +292,12 @@ const ApiPublicHooksRideRemindersTickRoute =
     path: '/api/public/hooks/ride-reminders-tick',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -339,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
   '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -387,6 +395,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
   '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -436,6 +445,7 @@ export interface FileRoutesById {
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
   '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
     | '/api/public/hooks/ride-reminders-tick'
+    | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -534,6 +545,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
     | '/api/public/hooks/ride-reminders-tick'
+    | '/lovable/email/transactional/preview'
   id:
     | '__root__'
     | '/'
@@ -582,6 +594,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
     | '/api/public/hooks/ride-reminders-tick'
+    | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -629,6 +642,7 @@ export interface RootRouteChildren {
   ApiPublicHooksRecomputeDurationsTickRoute: typeof ApiPublicHooksRecomputeDurationsTickRoute
   ApiPublicHooksRecurringRidesTickRoute: typeof ApiPublicHooksRecurringRidesTickRoute
   ApiPublicHooksRideRemindersTickRoute: typeof ApiPublicHooksRideRemindersTickRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -955,6 +969,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksRideRemindersTickRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1027,7 +1048,18 @@ const rootRouteChildren: RootRouteChildren = {
     ApiPublicHooksRecomputeDurationsTickRoute,
   ApiPublicHooksRecurringRidesTickRoute: ApiPublicHooksRecurringRidesTickRoute,
   ApiPublicHooksRideRemindersTickRoute: ApiPublicHooksRideRemindersTickRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
