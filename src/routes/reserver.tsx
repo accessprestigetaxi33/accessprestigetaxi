@@ -65,7 +65,100 @@ type Quote = {
   prix_estime?: number;
   depart_resolu?: string;
   arrivee_resolu?: string;
+  pickup_datetime?: string;
 };
+
+// ─── Récapitulatif / validations avant confirmation ────────────────────────
+const MAX_INPUT = 800;
+
+const RECAP: Record<"fr" | "en", Record<string, string>> = {
+  fr: {
+    open: "Vérifier et confirmer",
+    title: "Récapitulatif de votre course",
+    subtitle: "Vérifiez les informations avant de confirmer définitivement.",
+    from: "Départ",
+    to: "Arrivée",
+    when: "Date et heure",
+    dist: "Distance / durée",
+    price: "Tarif estimé",
+    contact: "Vos coordonnées",
+    name: "Nom et prénom",
+    phone: "Téléphone",
+    email: "E-mail",
+    pax: "Passagers",
+    bags: "Bagages",
+    note: "Précision (optionnel)",
+    note_ph: "Siège bébé, étage, bagages volumineux…",
+    agree: "Je confirme l'exactitude de ces informations.",
+    cancel: "Modifier",
+    submit: "Confirmer la réservation",
+    err_name: "Indiquez votre nom (2 caractères minimum).",
+    err_phone: "Numéro invalide : 10 chiffres, ex. 06 12 34 56 78.",
+    err_email: "Adresse e-mail invalide.",
+    err_agree: "Merci de cocher la case de confirmation.",
+    err_pax: "Entre 1 et 7 passagers.",
+    err_bags: "Entre 0 et 7 bagages.",
+    err_input: `Message trop long (${MAX_INPUT} caractères maximum).`,
+    err_depart: "Précisez une adresse de départ complète (rue et ville).",
+    err_quote: "Demandez d'abord un devis à l'assistante.",
+    ok_title: "Réservation confirmée",
+    ok_desc: "Votre chauffeur est prévenu. Vous recevez la confirmation par e-mail.",
+    ok_ref: "Référence de suivi",
+    ok_cta: "Suivre ma course",
+    counter: "caractères restants",
+  },
+  en: {
+    open: "Review and confirm",
+    title: "Your ride summary",
+    subtitle: "Please check the details before confirming.",
+    from: "Pickup",
+    to: "Drop-off",
+    when: "Date and time",
+    dist: "Distance / duration",
+    price: "Estimated fare",
+    contact: "Your details",
+    name: "Full name",
+    phone: "Phone",
+    email: "Email",
+    pax: "Passengers",
+    bags: "Luggage",
+    note: "Note (optional)",
+    note_ph: "Baby seat, floor number, large luggage…",
+    agree: "I confirm these details are correct.",
+    cancel: "Edit",
+    submit: "Confirm booking",
+    err_name: "Please enter your name (2 characters minimum).",
+    err_phone: "Invalid number: 10 digits, e.g. 06 12 34 56 78.",
+    err_email: "Invalid email address.",
+    err_agree: "Please tick the confirmation box.",
+    err_pax: "Between 1 and 7 passengers.",
+    err_bags: "Between 0 and 7 pieces of luggage.",
+    err_input: `Message too long (${MAX_INPUT} characters maximum).`,
+    err_depart: "Please enter a complete pickup address (street and town).",
+    err_quote: "Ask the assistant for a quote first.",
+    ok_title: "Booking confirmed",
+    ok_desc: "Your driver has been notified. A confirmation email is on its way.",
+    ok_ref: "Tracking reference",
+    ok_cta: "Track my ride",
+    counter: "characters left",
+  },
+};
+
+const PHONE_RE = /^(?:\+33|0)[1-9](?:[ .-]?\d{2}){4}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+
+function formatPickup(iso: string | undefined, lang: "fr" | "en"): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleString(lang === "en" ? "en-GB" : "fr-FR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 // ─── Textes bilingues (FR/EN) de la page ───────────────────────────────────
 type TxtKey =
@@ -362,6 +455,19 @@ function ReserverPage() {
   const [busy, setBusy] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [reservationId, setReservationId] = useState<string | null>(null);
+  const [suiviId, setSuiviId] = useState<string | null>(null);
+  // Récapitulatif avant soumission
+  const [recapOpen, setRecapOpen] = useState(false);
+  const [form, setForm] = useState({
+    nom: "",
+    telephone: "",
+    email: "",
+    passagers: "1",
+    bagages: "0",
+    note: "",
+    agree: false,
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [gps, setGps] = useState<{ lat: number; lng: number; label?: string } | null>(null);
   const [gpsBusy, setGpsBusy] = useState(false);
   const [gpsError, setGpsError] = useState<"denied" | "unavailable" | "timeout" | "low_accuracy" | null>(null);
@@ -589,9 +695,25 @@ function ReserverPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, busy]);
 
+  const R = RECAP[L];
+
+  /** Validations claires côté client, avant tout appel à l'assistante. */
+  function validateBeforeSend(clean: string): string | null {
+    if (clean.length > MAX_INPUT) return R.err_input;
+    // Une adresse de départ saisie à la main doit être exploitable.
+    const manual = manualDepartRef.current?.trim() ?? "";
+    if (manual && manual.length < 6) return R.err_depart;
+    return null;
+  }
+
   async function send(text: string) {
     const clean = text.trim();
     if (!clean || busy) return;
+    const invalid = validateBeforeSend(clean);
+    if (invalid) {
+      toast.error(invalid);
+      return;
+    }
     const next = [...messages, { role: "user" as const, content: clean }];
     setMessages(next);
     setInput("");
@@ -627,7 +749,10 @@ function ReserverPage() {
         setReservationId(res.reservation_id);
         toast.success(TXT[L].success);
         const trackId = res.suivi_id ?? res.reservation_id;
-        setTimeout(() => navigate({ to: "/suivi/$id", params: { id: trackId! } }), 1500);
+        setSuiviId(trackId ?? null);
+        setRecapOpen(false);
+        // Laisse le temps de lire la confirmation avant la redirection.
+        setTimeout(() => navigate({ to: "/suivi/$id", params: { id: trackId! } }), 6000);
       }
     } catch (e: any) {
       toast.error(e?.message ?? TXT[L].error);
@@ -829,6 +954,35 @@ function ReserverPage() {
     return () => cleanupMic();
   }, []);
 
+  function submitRecap() {
+    const errors: Record<string, string> = {};
+    const nom = form.nom.trim();
+    const tel = form.telephone.trim();
+    const email = form.email.trim();
+    const pax = Number(form.passagers);
+    const bags = Number(form.bagages);
+
+    if (nom.length < 2) errors.nom = R.err_name;
+    if (!PHONE_RE.test(tel.replace(/\s+/g, " "))) errors.telephone = R.err_phone;
+    if (!EMAIL_RE.test(email)) errors.email = R.err_email;
+    if (!Number.isFinite(pax) || pax < 1 || pax > 7) errors.passagers = R.err_pax;
+    if (!Number.isFinite(bags) || bags < 0 || bags > 7) errors.bagages = R.err_bags;
+    if (!form.agree) errors.agree = R.err_agree;
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    const note = form.note.trim();
+    const msg =
+      L === "en"
+        ? `I confirm the booking. Name: ${nom}. Phone: ${tel}. Email: ${email}. Passengers: ${pax}. Luggage: ${bags}.${note ? ` Note: ${note}.` : ""}`
+        : `Je confirme la réservation. Nom : ${nom}. Téléphone : ${tel}. Email : ${email}. Passagers : ${pax}. Bagages : ${bags}.${note ? ` Précision : ${note}.` : ""}`;
+    setRecapOpen(false);
+    void send(msg);
+  }
+
+  const pickupLabel = formatPickup(quote?.pickup_datetime, L);
+
   const sugg = [tx("sug1"), tx("sug2"), tx("sug3"), tx("sug4")];
   const stepsLabels = [tx("step1"), tx("step2"), tx("step3"), tx("step4")];
   const currentStep = reservationId ? 3 : quote ? 2 : messages.length > 1 ? 1 : 0;
@@ -940,8 +1094,15 @@ function ReserverPage() {
                 rows={1}
                 disabled={busy || !!reservationId}
                 placeholder={reservationId ? tx("sent") : tx("placeholder")}
+                maxLength={MAX_INPUT}
+                aria-invalid={input.length > MAX_INPUT}
                 className="max-h-32 min-h-[44px] flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-accent"
               />
+              {input.length > MAX_INPUT - 200 && (
+                <span className="self-center text-[11px] text-muted-foreground" aria-live="polite">
+                  {MAX_INPUT - input.length} {R.counter}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={toggleVoice}
@@ -1014,6 +1175,45 @@ function ReserverPage() {
                 </li>
               </ul>
             </div>
+
+            {/* Récapitulatif avant soumission / confirmation multilingue */}
+            {reservationId ? (
+              <div
+                className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm"
+                role="status"
+                aria-live="polite"
+              >
+                <p className="flex items-center gap-2 font-display text-base font-bold text-foreground">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" /> {R.ok_title}
+                </p>
+                <p className="mt-1 text-muted-foreground">{R.ok_desc}</p>
+                {suiviId && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {R.ok_ref} :{" "}
+                    <span className="font-mono font-semibold text-foreground">{suiviId}</span>
+                  </p>
+                )}
+                {suiviId && (
+                  <Link
+                    to="/suivi/$id"
+                    params={{ id: suiviId }}
+                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90"
+                  >
+                    <Car className="h-4 w-4" /> {R.ok_cta}
+                  </Link>
+                )}
+              </div>
+            ) : (
+              quote?.prix_estime != null && (
+                <button
+                  type="button"
+                  onClick={() => setRecapOpen(true)}
+                  className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                >
+                  {R.open}
+                </button>
+              )
+            )}
 
             {/* GPS status (auto) + manual fallback */}
             <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4" aria-live="polite">
@@ -1104,6 +1304,214 @@ function ReserverPage() {
             </Link>
           </aside>
         </div>
+
+        {/* Modale de récapitulatif avant soumission */}
+        {recapOpen && !reservationId && (
+          <div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="recap-title"
+            onClick={(e) => e.target === e.currentTarget && setRecapOpen(false)}
+          >
+            <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-border bg-card p-5 shadow-[var(--shadow-elegant)] sm:rounded-3xl sm:p-6">
+              <h2 id="recap-title" className="font-display text-xl font-bold text-foreground">
+                {R.title}
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">{R.subtitle}</p>
+
+              <dl className="mt-4 space-y-2 rounded-2xl border border-border bg-background/60 p-4 text-sm">
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.from}</dt>
+                  <dd className="text-right font-medium text-foreground">{quote?.depart_resolu ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.to}</dt>
+                  <dd className="text-right font-medium text-foreground">{quote?.arrivee_resolu ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.when}</dt>
+                  <dd className="text-right font-medium text-foreground">{pickupLabel ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.dist}</dt>
+                  <dd className="text-right font-medium text-foreground">
+                    {quote?.distance_km != null ? `${quote.distance_km} km · ~${quote.duree_min} min` : "—"}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3 border-t border-border pt-2">
+                  <dt className="shrink-0 font-semibold text-foreground">{R.price}</dt>
+                  <dd className="text-right font-display text-lg font-bold text-accent">
+                    {quote?.prix_estime != null ? `${quote.prix_estime.toFixed(2)} €` : "—"}
+                  </dd>
+                </div>
+              </dl>
+
+              <form
+                className="mt-4 space-y-3"
+                noValidate
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submitRecap();
+                }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{R.contact}</p>
+
+                <div>
+                  <label htmlFor="recap-nom" className="block text-xs font-medium text-muted-foreground">
+                    {R.name}
+                  </label>
+                  <input
+                    id="recap-nom"
+                    value={form.nom}
+                    onChange={(e) => setForm((f) => ({ ...f, nom: e.target.value }))}
+                    maxLength={100}
+                    autoComplete="name"
+                    aria-invalid={!!formErrors.nom}
+                    aria-describedby={formErrors.nom ? "recap-nom-err" : undefined}
+                    className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                  {formErrors.nom && (
+                    <p id="recap-nom-err" className="mt-1 text-[11px] font-medium text-destructive">
+                      {formErrors.nom}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="recap-tel" className="block text-xs font-medium text-muted-foreground">
+                      {R.phone}
+                    </label>
+                    <input
+                      id="recap-tel"
+                      type="tel"
+                      inputMode="tel"
+                      value={form.telephone}
+                      onChange={(e) => setForm((f) => ({ ...f, telephone: e.target.value }))}
+                      maxLength={20}
+                      autoComplete="tel"
+                      placeholder="06 12 34 56 78"
+                      aria-invalid={!!formErrors.telephone}
+                      aria-describedby={formErrors.telephone ? "recap-tel-err" : undefined}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.telephone && (
+                      <p id="recap-tel-err" className="mt-1 text-[11px] font-medium text-destructive">
+                        {formErrors.telephone}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="recap-email" className="block text-xs font-medium text-muted-foreground">
+                      {R.email}
+                    </label>
+                    <input
+                      id="recap-email"
+                      type="email"
+                      inputMode="email"
+                      value={form.email}
+                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                      maxLength={255}
+                      autoComplete="email"
+                      aria-invalid={!!formErrors.email}
+                      aria-describedby={formErrors.email ? "recap-email-err" : undefined}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.email && (
+                      <p id="recap-email-err" className="mt-1 text-[11px] font-medium text-destructive">
+                        {formErrors.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="recap-pax" className="block text-xs font-medium text-muted-foreground">
+                      {R.pax}
+                    </label>
+                    <input
+                      id="recap-pax"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={form.passagers}
+                      onChange={(e) => setForm((f) => ({ ...f, passagers: e.target.value }))}
+                      aria-invalid={!!formErrors.passagers}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.passagers && (
+                      <p className="mt-1 text-[11px] font-medium text-destructive">{formErrors.passagers}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="recap-bags" className="block text-xs font-medium text-muted-foreground">
+                      {R.bags}
+                    </label>
+                    <input
+                      id="recap-bags"
+                      type="number"
+                      min={0}
+                      max={7}
+                      value={form.bagages}
+                      onChange={(e) => setForm((f) => ({ ...f, bagages: e.target.value }))}
+                      aria-invalid={!!formErrors.bagages}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.bagages && (
+                      <p className="mt-1 text-[11px] font-medium text-destructive">{formErrors.bagages}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="recap-note" className="block text-xs font-medium text-muted-foreground">
+                    {R.note}
+                  </label>
+                  <textarea
+                    id="recap-note"
+                    rows={2}
+                    maxLength={300}
+                    value={form.note}
+                    onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
+                    placeholder={R.note_ph}
+                    className="mt-1 w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                </div>
+
+                <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={form.agree}
+                    onChange={(e) => setForm((f) => ({ ...f, agree: e.target.checked }))}
+                    className="mt-0.5 h-4 w-4 accent-[hsl(var(--accent))]"
+                    aria-invalid={!!formErrors.agree}
+                  />
+                  <span>{R.agree}</span>
+                </label>
+                {formErrors.agree && <p className="text-[11px] font-medium text-destructive">{formErrors.agree}</p>}
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setRecapOpen(false)}
+                    className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    {R.cancel}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={busy}
+                    className="flex-[2] rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+                  >
+                    {busy ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : R.submit}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Map */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
