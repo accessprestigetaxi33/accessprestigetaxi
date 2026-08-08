@@ -4,7 +4,6 @@ import { TEMPLATES } from "@/lib/email-templates/registry";
 import { getPushClientStrings, normalizePushLang } from "@/lib/push-i18n.server";
 
 const TEMPLATE_NAME = "new-reservation-admin";
-const INTERNAL_NOTIFY_SECRET = "taxi-city-reservation-trigger-v1";
 
 const schema = z.object({
   reservation_id: z.string().uuid(),
@@ -36,15 +35,18 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
           return Response.json({ error: "Server config error" }, { status: 500 });
         }
 
-        const internalSecret = request.headers.get("X-Internal-Notify-Secret");
-        const hasServiceBearer = request.headers.get("Authorization") === `Bearer ${serviceKey}`;
-        if (internalSecret !== INTERNAL_NOTIFY_SECRET && !hasServiceBearer) {
-          return Response.json({ error: "Unauthorized" }, { status: 401 });
+        // Sécurité webhook : hôte autorisé + signature HMAC horodatée
+        // (ou bearer service-role pour les appels internes), anti-rejeu inclus.
+        const { verifyWebhookRequest, normalizeDriverKey } = await import("@/lib/webhook-security.server");
+        const auth = await verifyWebhookRequest(request, { serviceKey, scope: "webhook:reservation" });
+        if (!auth.ok) {
+          console.warn("[notify-reservation] rejeté:", auth.error);
+          return Response.json({ error: auth.error }, { status: auth.status });
         }
 
         let raw: unknown;
         try {
-          raw = await request.json();
+          raw = JSON.parse(auth.body);
         } catch {
           return Response.json({ error: "Invalid JSON" }, { status: 400 });
         }
@@ -58,8 +60,14 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         // Idempotence au niveau du webhook : un rejeu (retry HTTP, double
         // trigger Postgres, redelivery) ne doit jamais renvoyer l'e-mail admin
         // ni les push. Le premier appel réserve la clé pour 24 h.
+        const { buildIdempotencyKey } = await import("@/lib/idempotency");
         const firstDelivery = await claimNotificationOnce(
-          `notify-reservation-${reservationId}`,
+          buildIdempotencyKey({
+            event: "reservation.created",
+            entity: "res",
+            id: reservationId,
+            channel: "webhook",
+          }),
           "webhook",
           24 * 60,
         );
@@ -119,7 +127,13 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
           return Response.json({ error: "Template not configured" }, { status: 500 });
         }
         const recipient = template.to;
-        const idempotencyKey = `reservation-${reservationId}`;
+        const idempotencyKey = buildIdempotencyKey({
+          event: "reservation.created",
+          entity: "res",
+          id: reservationId,
+          channel: "email",
+          discriminator: "admin",
+        });
 
         const EMAIL_BRIDGE_URL = "https://accessprestigetaxi.lovable.app/lovable/email/transactional/send";
         console.log("[notify-reservation] → bridge:", EMAIL_BRIDGE_URL, "reservation:", reservationId);
@@ -154,9 +168,10 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         // Push chauffeur — envoyé ici (côté serveur, à la création de
         // la résa) pour ne plus dépendre d'un onglet dashboard ouvert.
         const clientName = reservation.client_name || reservation.nom || "Client";
-        const assignedRaw = String((reservation as any).assigned_driver || "");
-        const assignedLabel =
-          assignedRaw === "patricia" ? "Patricia" : assignedRaw === "alain" ? "Alain" : "";
+        // Validation stricte du chauffeur : seules les clés connues du site
+        // bi-chauffeur sont acceptées, toute autre valeur est ignorée (broadcast).
+        const assignedKey = normalizeDriverKey((reservation as any).assigned_driver);
+        const assignedLabel = assignedKey ? assignedKey[0]!.toUpperCase() + assignedKey.slice(1) : "";
         const trajet = `${reservation.depart} → ${reservation.arrivee || reservation.destination || "—"}`;
         try {
           const chauffeurResult = await sendPushToAudience(
@@ -165,11 +180,17 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
               title: assignedLabel ? `🚕 Nouvelle résa — ${assignedLabel}` : "🚕 Nouvelle résa",
               body: `${clientName} — ${trajet}`,
               url: "/driver",
-              tag: `chauffeur-res-${reservationId}`,
+              tag: buildIdempotencyKey({
+                event: "reservation.created",
+                entity: "res",
+                id: reservationId,
+                channel: "push",
+                discriminator: "chauffeur",
+              }),
               requireInteraction: true,
               data: { reservation_id: reservationId, kind: "new_reservation" },
             },
-            { driverId: assignedLabel ? assignedRaw.toLowerCase() : null, dedupTtlMinutes: 24 * 60 },
+            { driverId: assignedKey, dedupTtlMinutes: 24 * 60 },
           );
 
           console.log("[notify-reservation] push chauffeur:", JSON.stringify(chauffeurResult));
@@ -189,7 +210,13 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
               title: push.pending_title,
               body: push.pending_body(trajet),
               url: suiviUrl,
-              tag: `client-pending-${reservationId}`,
+              tag: buildIdempotencyKey({
+                event: "reservation.created",
+                entity: "res",
+                id: reservationId,
+                channel: "push",
+                discriminator: "client",
+              }),
               requireInteraction: false,
               data: { reservation_id: reservationId, status: "pending" },
             },

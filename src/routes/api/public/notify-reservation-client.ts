@@ -34,9 +34,16 @@ export const Route = createFileRoute("/api/public/notify-reservation-client")({
           return Response.json({ error: "config" }, { status: 500 });
         }
 
+        const { verifyWebhookRequest } = await import("@/lib/webhook-security.server");
+        const auth = await verifyWebhookRequest(request, { serviceKey, scope: "webhook:reservation-client" });
+        if (!auth.ok) {
+          log("rejected", { reason: auth.error });
+          return Response.json({ error: auth.error }, { status: auth.status });
+        }
+
         let raw: unknown;
         try {
-          raw = await request.json();
+          raw = JSON.parse(auth.body);
         } catch {
           return Response.json({ error: "json" }, { status: 400 });
         }

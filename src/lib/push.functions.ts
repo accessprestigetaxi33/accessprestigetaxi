@@ -385,6 +385,14 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     let clientResult = { sent: 0, removed: 0 };
     // dedupTtlMinutes : les tags de statut sont uniques par course, un rejeu
     // du même changement de statut dans les 24 h est donc ignoré.
+    const { buildIdempotencyKey, reservationStatusEvent } = await import("@/lib/idempotency");
+    const pushKey = (stage: "accepted" | "en_route" | "arrived" | "completed") =>
+      buildIdempotencyKey({
+        event: reservationStatusEvent(stage),
+        entity: "res",
+        id: r.id,
+        channel: "push",
+      });
     const target = {
       reservationId: r.id,
       accountId: (r as any).client_account_id ?? undefined,
@@ -397,7 +405,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           title: "✅ Course confirmée",
           body: `${assignedName} a confirmé votre course : ${trajet}.`,
           url,
-          tag: `client-accepted-${r.id}`,
+          tag: pushKey("accepted"),
           requireInteraction: false,
           data: { reservation_id: r.id, status: "accepted" },
         },
@@ -412,7 +420,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           title: "🚖 Votre taxi arrive",
           body: `Votre taxi arrive vers ${r.depart}${etaTxt}.`,
           url,
-          tag: `client-en-route-${r.id}`,
+          tag: pushKey("en_route"),
           requireInteraction: false,
           data: { reservation_id: r.id, status: "en_route", eta_minutes: eta ?? null },
         },
@@ -425,7 +433,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           title: "✅ Votre taxi est arrivé",
           body: `Votre chauffeur vous attend au point de prise en charge.`,
           url,
-          tag: `client-arrived-${r.id}`,
+          tag: pushKey("arrived"),
           requireInteraction: true,
           data: { reservation_id: r.id, status: "arrived" },
         },
@@ -438,7 +446,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           title: "🏁 Course terminée",
           body: "Merci pour votre trajet avec Access Prestige Taxi.",
           url,
-          tag: `client-completed-${r.id}`,
+          tag: pushKey("completed"),
           requireInteraction: false,
           data: { reservation_id: r.id, status: "completed" },
         },
