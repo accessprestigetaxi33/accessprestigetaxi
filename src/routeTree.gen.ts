@@ -51,6 +51,7 @@ import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/pub
 import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
 import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
 import { Route as ApiPublicReviewsRouteImport } from './routes/api/public/reviews'
+import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicContactVcfRouteImport } from './routes/api/public/contact.vcf'
 import { Route as ApiPublicHooksRecomputeDurationsTickRouteImport } from './routes/api/public/hooks/recompute-durations-tick'
 import { Route as ApiPublicHooksRecurringRidesTickRouteImport } from './routes/api/public/hooks/recurring-rides-tick'
@@ -269,6 +270,11 @@ const ApiPublicReviewsRoute = ApiPublicReviewsRouteImport.update({
   path: '/api/public/reviews',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
+  id: '/lovable/email/events',
+  path: '/lovable/email/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicContactVcfRoute = ApiPublicContactVcfRouteImport.update({
   id: '/vcf',
   path: '/vcf',
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
@@ -391,6 +398,7 @@ export interface FileRoutesByTo {
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
@@ -441,6 +449,7 @@ export interface FileRoutesById {
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
+    | '/lovable/email/events'
     | '/api/public/contact/vcf'
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
+    | '/lovable/email/events'
     | '/api/public/contact/vcf'
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
@@ -590,6 +601,7 @@ export interface FileRouteTypes {
     | '/api/public/notify-reservation-client'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
+    | '/lovable/email/events'
     | '/api/public/contact/vcf'
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
@@ -639,6 +651,7 @@ export interface RootRouteChildren {
   ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
   ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
   ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
+  LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   ApiPublicHooksRecomputeDurationsTickRoute: typeof ApiPublicHooksRecomputeDurationsTickRoute
   ApiPublicHooksRecurringRidesTickRoute: typeof ApiPublicHooksRecurringRidesTickRoute
   ApiPublicHooksRideRemindersTickRoute: typeof ApiPublicHooksRideRemindersTickRoute
@@ -941,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicReviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/events': {
+      id: '/lovable/email/events'
+      path: '/lovable/email/events'
+      fullPath: '/lovable/email/events'
+      preLoaderRoute: typeof LovableEmailEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/contact/vcf': {
       id: '/api/public/contact/vcf'
       path: '/vcf'
@@ -1044,6 +1064,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
   ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
   ApiPublicReviewsRoute: ApiPublicReviewsRoute,
+  LovableEmailEventsRoute: LovableEmailEventsRoute,
   ApiPublicHooksRecomputeDurationsTickRoute:
     ApiPublicHooksRecomputeDurationsTickRoute,
   ApiPublicHooksRecurringRidesTickRoute: ApiPublicHooksRecurringRidesTickRoute,

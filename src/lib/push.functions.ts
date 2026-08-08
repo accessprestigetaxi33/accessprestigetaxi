@@ -342,7 +342,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     const { data: r, error: fetchErr } = await supabaseAdmin
       .from("reservations")
       .select(
-        "id, nom, client_name, client_phone, telephone, depart, arrivee, destination, suivi_id, lang, client_account_id",
+        "id, nom, client_name, client_phone, telephone, email, client_email, pickup_datetime, assigned_driver, depart, arrivee, destination, suivi_id, lang, client_account_id",
       )
       .eq("id", data.reservation_id)
       .maybeSingle();
@@ -435,6 +435,36 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
         target,
       );
     }
+
+    // ── E-mail de suivi (FR/EN) : confirmée / en route / arrivé / terminée ──
+    const trackingStages = ["accepted", "en_route", "arrived", "completed"] as const;
+    type TrackingStage = (typeof trackingStages)[number];
+    if ((trackingStages as readonly string[]).includes(data.status)) {
+      const clientEmail = (r as any).client_email || (r as any).email;
+      if (clientEmail) {
+        try {
+          const { sendClientTrackingEmail } = await import("@/lib/reservation-notifications.server");
+          const assigned = String((r as any).assigned_driver || "");
+          await sendClientTrackingEmail({
+            reservationId: r.id,
+            email: clientEmail,
+            stage: data.status as TrackingStage,
+            lang: (r as any).lang ?? "fr",
+            clientName: clientName,
+            depart: r.depart ?? null,
+            arrivee: (r as any).arrivee ?? (r as any).destination ?? null,
+            pickupDatetime: (r as any).pickup_datetime ?? null,
+            driverName: assigned === "patricia" ? "Patricia" : assigned === "alain" ? "Alain" : null,
+            etaMinutes: data.status === "en_route" ? (data.eta_minutes ?? null) : null,
+            trackingId: (r as any).suivi_id ?? r.id,
+          });
+        } catch (e) {
+          console.warn("[notifyReservationStatus] tracking email failed", e);
+        }
+      }
+    }
+
+
 
     // SMS optionnel (lien wa.me/sms côté UI) — conservé
     let smsBody: string | null = null;

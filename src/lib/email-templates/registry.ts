@@ -14,6 +14,8 @@ import { template as reservationClientConfirmation } from "./reservation-client-
 import { template as courseAccepted } from "./course-accepted";
 import { template as newReservationAdmin } from "./new-reservation-admin";
 import { template as customPrice } from "./custom-price";
+import { template as reservationCancelled } from "./reservation-cancelled";
+import { template as reservationTracking } from "./reservation-tracking";
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   "contact-message": contactMessage,
@@ -21,4 +23,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   "course-accepted": courseAccepted,
   "new-reservation-admin": newReservationAdmin,
   "custom-price": customPrice,
+  "reservation-cancelled": reservationCancelled,
+  "reservation-tracking": reservationTracking,
 };

@@ -199,6 +199,32 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
       console.warn("[client] push cancel failed", e);
     }
 
+    // E-mail d'annulation au client (FR/EN)
+    try {
+      const { data: full } = await supabaseAdmin
+        .from("reservations")
+        .select("client_email, email, lang, client_name, nom, pickup_datetime, depart, arrivee, destination")
+        .eq("id", data.reservation_id)
+        .maybeSingle();
+      const row: any = full ?? r;
+      const email = row.client_email || row.email;
+      if (email) {
+        const { sendClientCancellationEmail } = await import("@/lib/reservation-notifications.server");
+        await sendClientCancellationEmail({
+          reservationId: data.reservation_id,
+          email,
+          lang: row.lang ?? "fr",
+          clientName: row.client_name ?? row.nom ?? null,
+          pickupDatetime: row.pickup_datetime ?? null,
+          depart: row.depart ?? null,
+          arrivee: row.arrivee ?? row.destination ?? null,
+        });
+      }
+    } catch (e) {
+      console.warn("[client] cancellation email failed", e);
+    }
+
+
     return { ok: true };
   });
 
