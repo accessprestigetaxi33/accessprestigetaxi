@@ -160,13 +160,25 @@ function normalizeGeocodeKey(q: string) {
     .replace(/\b17\d{3}\b/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  if (ALIASES[k]) return normalizeSimple(ALIASES[k]);
-  for (const alias of Object.keys(ALIASES)) {
-    if (k === alias || k.startsWith(alias + " ") || k.endsWith(" " + alias) || k.includes(" " + alias + " ")) {
-      return normalizeSimple(ALIASES[alias]);
+  // Les raccourcis locaux ne s'appliquent JAMAIS si la requête cite une autre ville
+  // (ex. "gare Saint-Jean Bordeaux" ne doit pas devenir "Gare de La Rochelle").
+  if (!mentionsOtherCity(q)) {
+    if (ALIASES[k]) return normalizeSimple(ALIASES[k]);
+    for (const alias of Object.keys(ALIASES)) {
+      if (k === alias || k.startsWith(alias + " ") || k.endsWith(" " + alias) || k.includes(" " + alias + " ")) {
+        return normalizeSimple(ALIASES[alias]);
+      }
     }
   }
   return k;
+}
+
+// Villes/pôles hors Charente-Maritime fréquemment demandés en longue distance.
+const OTHER_CITY_RE =
+  /\b(bordeaux|merignac|arcachon|libourne|angouleme|cognac|jarnac|poitiers|niort|nantes|paris|orly|roissy|charles\s+de\s+gaulle|cdg|beauvais|lyon|marseille|toulouse|blagnac|bayonne|biarritz|pau|limoges|perigueux|brive|tours|rennes|nancy|lille|strasbourg|montpellier|toulon|nice|bruxelles|geneve|madrid|barcelone|londres|london)\b/;
+
+export function mentionsOtherCity(query: string): boolean {
+  return OTHER_CITY_RE.test(normalizeAddressText(query));
 }
 function normalizeSimple(s: string) {
   return s
