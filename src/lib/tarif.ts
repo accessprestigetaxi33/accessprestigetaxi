@@ -11,8 +11,11 @@ export const TARIFS = {
   VITESSE_MOYENNE_KMH,
 } as const;
 
-const DEBUT_JOUR = 7;
-const FIN_JOUR = 19;
+/** Frontière jour/nuit, heure de Paris : jour = [07:00, 19:00[, nuit sinon. */
+export const HEURE_DEBUT_JOUR = 7;
+export const HEURE_FIN_JOUR = 19;
+const DEBUT_JOUR = HEURE_DEBUT_JOUR;
+const FIN_JOUR = HEURE_FIN_JOUR;
 
 /**
  * Extrait les composantes Paris d'une date de manière fiable (tous navigateurs,
@@ -155,26 +158,86 @@ export function calculerPrix(distanceKm: number, tarifJour: boolean): number {
  * @param pickupIso   ISO datetime de prise en charge
  */
 export function calculerPrixMixte(distanceKm: number, pickupIso: string): number {
-  if (!pickupIso || distanceKm <= 0) {
-    return calculerPrix(distanceKm, true);
-  }
+  return detaillerPrix(distanceKm, pickupIso).total;
+}
 
-  const dureeH = distanceKm / VITESSE_MOYENNE_KMH;
-  const dureeMs = Math.max(dureeH * 3_600_000, 60_000);
-  const departMs = new Date(pickupIso).getTime();
-  const steps = Math.max(Math.ceil(dureeMs / 60_000), 1);
+export type DetailPrix = {
+  distanceKm: number;
+  dureeMin: number;
+  priseEnCharge: number;
+  tarifKmJour: number;
+  tarifKmNuit: number;
+  kmJour: number;
+  kmNuit: number;
+  prixJour: number;
+  prixNuit: number;
+  total: number;
+  /** "jour" | "nuit" | "mixte" — régime tarifaire dominant sur la course. */
+  regime: "jour" | "nuit" | "mixte";
+  /** Vrai si le départ lui-même est en tarif jour. */
+  departJour: boolean;
+};
+
+/**
+ * Décomposition complète du prix — source unique de vérité partagée par
+ * l'assistante de réservation, la page /reserver et les simulateurs.
+ *
+ * Règle jour/nuit unique : jour = 07:00–19:00 heure de Paris, hors dimanche
+ * et jours fériés (nuit toute la journée dans ces cas).
+ *
+ * @param dureeMinOverride durée réelle du trajet (min) si connue (Google Routes),
+ *                         sinon estimée avec VITESSE_MOYENNE_KMH.
+ */
+export function detaillerPrix(
+  distanceKm: number,
+  pickupIso: string,
+  dureeMinOverride?: number,
+): DetailPrix {
+  const dist = Number.isFinite(distanceKm) && distanceKm > 0 ? distanceKm : 0;
+  const dureeMin =
+    dureeMinOverride && dureeMinOverride > 0
+      ? dureeMinOverride
+      : Math.max(Math.round((dist / VITESSE_MOYENNE_KMH) * 60), 1);
+
+  const iso = pickupIso || new Date().toISOString();
+  const departJour = estTarifJourParis(iso);
 
   let kmJour = 0;
   let kmNuit = 0;
 
-  for (let i = 0; i < steps; i++) {
-    const t = new Date(departMs + i * (dureeMs / steps)).toISOString();
-    const kmSlice = distanceKm / steps;
-    if (estTarifJourParis(t)) kmJour += kmSlice;
-    else kmNuit += kmSlice;
+  if (dist <= 0) {
+    // Pas de distance : pas de kilométrage, seule la prise en charge s'applique.
+  } else {
+    const departMs = parseAsParisTime(iso).getTime();
+    const steps = Math.max(Math.ceil(dureeMin), 1);
+    const stepMs = (dureeMin * 60_000) / steps;
+    const kmSlice = dist / steps;
+    for (let i = 0; i < steps; i++) {
+      const t = new Date(departMs + i * stepMs).toISOString();
+      if (estTarifJourParis(t)) kmJour += kmSlice;
+      else kmNuit += kmSlice;
+    }
   }
 
-  return arrondir(PRISE_EN_CHARGE + kmJour * TARIF_JOUR + kmNuit * TARIF_NUIT);
+  const prixJour = kmJour * TARIF_JOUR;
+  const prixNuit = kmNuit * TARIF_NUIT;
+  const regime: DetailPrix["regime"] =
+    kmJour > 0.01 && kmNuit > 0.01 ? "mixte" : kmNuit > 0.01 ? "nuit" : "jour";
+
+  return {
+    distanceKm: dist,
+    dureeMin,
+    priseEnCharge: PRISE_EN_CHARGE,
+    tarifKmJour: TARIF_JOUR,
+    tarifKmNuit: TARIF_NUIT,
+    kmJour: arrondir(kmJour),
+    kmNuit: arrondir(kmNuit),
+    prixJour: arrondir(prixJour),
+    prixNuit: arrondir(prixNuit),
+    total: arrondir(PRISE_EN_CHARGE + prixJour + prixNuit),
+    regime,
+    departJour,
+  };
 }
 
 /**

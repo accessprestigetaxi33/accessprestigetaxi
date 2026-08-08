@@ -4,7 +4,7 @@ import { Calculator, Phone, ArrowRight, Info, MapPin, Loader2, Clock } from "luc
 import { useI18n } from "@/i18n/I18nProvider";
 import { getDistanceAndDurationKm } from "@/lib/googleRoute";
 import { searchAddress } from "@/lib/googleGeocode";
-import { TARIFS } from "@/lib/tarif";
+import { TARIFS, detaillerPrix, estTarifJourParis } from "@/lib/tarif";
 
 const LOCAL_COPY = {
   fr: {
@@ -33,47 +33,6 @@ function formatEUR(value: number) {
     currency: "EUR",
     maximumFractionDigits: 2,
   }).format(value);
-}
-
-function parisHour(date: Date): number {
-  const parts = new Intl.DateTimeFormat("fr-FR", {
-    timeZone: "Europe/Paris",
-    hour: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-  return parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10) % 24;
-}
-
-// ─── Tarif mixte ─────────────────────────────────────────────
-/**
- * Étant donné une heure de départ et une durée de trajet (secondes),
- * calcule le tarif kilométrique moyen pondéré entre jour et nuit.
- * Découpe le trajet en tranches d'1 min pour déterminer chaque tarif.
- */
-function computeMixedRate(departure: Date, durationSec: number): number {
-  if (durationSec <= 0) {
-    const h = parisHour(departure);
-    return h >= 7 && h < 19 ? RATE_DAY : RATE_NIGHT;
-  }
-
-  const start = departure.getTime();
-  const end = start + durationSec * 1000;
-  const STEP = 60_000; // 1 minute
-  let dayMs = 0;
-  let nightMs = 0;
-  let cursor = start;
-
-  while (cursor < end) {
-    const slice = Math.min(STEP, end - cursor);
-    const h = parisHour(new Date(cursor));
-    if (h >= 7 && h < 19) dayMs += slice;
-    else nightMs += slice;
-    cursor += slice;
-  }
-
-  const total = dayMs + nightMs;
-  if (total === 0) return RATE_DAY;
-  return (dayMs / total) * RATE_DAY + (nightMs / total) * RATE_NIGHT;
 }
 
 // ─── Géocodage silencieux (1er résultat Nominatim) ───────────
@@ -233,22 +192,29 @@ export function FareSimulator() {
     return () => clearInterval(id);
   }, []);
 
-  const currentParisHour = parisHour(now);
-  const isDay = currentParisHour >= 7 && currentParisHour < 19;
+  // Règle jour/nuit centralisée (07h–19h Paris, hors dimanche et jours fériés)
+  const nowIso = now.toISOString();
+  const isDay = estTarifJourParis(nowIso);
   const periodLabel = isDay
     ? `${t("sim.period_day")} ${formatEUR(RATE_DAY)} / km`
     : `${t("sim.period_night")} ${formatEUR(RATE_NIGHT)} / km`;
 
-  // Taux mixte : pondéré sur la durée réelle du trajet depuis maintenant
-  const rate = useMemo(
-    () => (route ? computeMixedRate(now, route.durationSec) : isDay ? RATE_DAY : RATE_NIGHT),
-    [route, now, isDay],
+  // Décomposition officielle, identique à celle utilisée sur /reserver
+  const detail = useMemo(
+    () => (route ? detaillerPrix(route.km, nowIso, route.durationSec / 60) : null),
+    [route, nowIso],
   );
 
-  // Tarif mixte si on chevauche une frontière 7h / 19h
-  const isMixed = route ? Math.abs(rate - RATE_DAY) > 0.01 && Math.abs(rate - RATE_NIGHT) > 0.01 : false;
+  const rate = detail && detail.distanceKm > 0
+    ? (detail.prixJour + detail.prixNuit) / detail.distanceKm
+    : isDay
+      ? RATE_DAY
+      : RATE_NIGHT;
 
-  const total = useMemo(() => (route ? PICKUP_FEE + route.km * rate : null), [route, rate]);
+  const isMixed = detail?.regime === "mixte";
+
+  const total = detail ? detail.total : null;
+
 
   const handleUseMyPosition = async () => {
     setGeoMsg(null);

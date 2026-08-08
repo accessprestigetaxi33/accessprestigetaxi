@@ -40,6 +40,7 @@ import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { seoLinks } from "@/lib/seo-hreflang";
+import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 
 // ─── Géolocalisation : même configuration que Start Fresh Here ──────────────
 const MAX_AUTO_GEO_ACCURACY_M = 1500;
@@ -170,6 +171,14 @@ const RECAP: Record<"fr" | "en", Record<string, string>> = {
     restored: "Nous avons retrouvé votre réservation en cours.",
     restored_cta: "Recommencer à zéro",
     map_error_title: "Carte indisponible",
+    calc_title: "Détail du calcul",
+    calc_base: "Prise en charge",
+    calc_day: "Kilomètres tarif jour",
+    calc_night: "Kilomètres tarif nuit",
+    calc_dist: "Distance totale",
+    calc_dur: "Durée estimée",
+    calc_total: "Total estimé",
+    calc_rule: `Tarif jour de ${HEURE_DEBUT_JOUR}h à ${HEURE_FIN_JOUR}h (heure de Paris). Tarif nuit de ${HEURE_FIN_JOUR}h à ${HEURE_DEBUT_JOUR}h, ainsi que les dimanches et jours fériés toute la journée. Une course à cheval sur la frontière est facturée au prorata des kilomètres parcourus dans chaque plage.`,
   },
   en: {
     open: "Review and confirm",
@@ -217,6 +226,14 @@ const RECAP: Record<"fr" | "en", Record<string, string>> = {
     restored: "We restored your booking in progress.",
     restored_cta: "Start over",
     map_error_title: "Map unavailable",
+    calc_title: "How this fare is calculated",
+    calc_base: "Pick-up charge",
+    calc_day: "Kilometres at day rate",
+    calc_night: "Kilometres at night rate",
+    calc_dist: "Total distance",
+    calc_dur: "Estimated duration",
+    calc_total: "Estimated total",
+    calc_rule: `Day rate from ${HEURE_DEBUT_JOUR}am to ${HEURE_FIN_JOUR - 12}pm (Paris time). Night rate from ${HEURE_FIN_JOUR - 12}pm to ${HEURE_DEBUT_JOUR}am, and all day on Sundays and public holidays. A ride crossing the boundary is billed pro rata to the kilometres driven in each period.`,
   },
 };
 
@@ -284,6 +301,12 @@ type TxtKey =
   | "gps_enter"
   | "gps_placeholder"
   | "gps_back"
+  | "gps_out_zone"
+  | "gps_out_zone_msg"
+  | "gps_ip_note"
+  | "gps_enter_arrivee"
+  | "gps_arrivee_ph"
+  | "gps_use_addresses"
   | "ask_destination"
   | "map_label"
   | "map_zone"
@@ -351,6 +374,13 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     gps_enter: "Saisissez votre adresse de départ",
     gps_placeholder: "Ex : Vieux-Port, La Rochelle",
     gps_back: "Revenir à ma position GPS",
+    gps_out_zone: "Position hors zone de détection automatique",
+    gps_out_zone_msg:
+      "Votre position détectée se situe à plus de 130 km de Saintes : nous ne pouvons pas la reprendre automatiquement. Nous assurons pourtant tous les trajets, sans limite de distance — saisissez simplement votre adresse de départ et votre destination ci-dessous.",
+    gps_ip_note: "Position approximative estimée d'après votre connexion Internet (repli IP).",
+    gps_enter_arrivee: "Saisissez votre adresse d'arrivée",
+    gps_arrivee_ph: "Ex : Aéroport de La Rochelle",
+    gps_use_addresses: "Calculer le tarif avec ces adresses",
     ask_destination: "Quelle est votre destination ?",
     map_label: "Carte du trajet",
     map_zone: "Charente-Maritime et longue distance",
@@ -416,6 +446,13 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     gps_enter: "Enter your pickup address",
     gps_placeholder: "E.g. Old Port, La Rochelle",
     gps_back: "Back to my GPS location",
+    gps_out_zone: "Location outside the automatic detection area",
+    gps_out_zone_msg:
+      "Your detected location is more than 130 km from Saintes, so we cannot use it automatically. We still cover every journey with no distance limit — simply enter your pickup and drop-off addresses below.",
+    gps_ip_note: "Approximate location estimated from your internet connection (IP fallback).",
+    gps_enter_arrivee: "Enter your drop-off address",
+    gps_arrivee_ph: "E.g. La Rochelle airport",
+    gps_use_addresses: "Get a fare with these addresses",
     ask_destination: "What is your destination?",
     map_label: "Route map",
     map_zone: "Charente-Maritime and long distance",
@@ -564,7 +601,12 @@ function ReserverPage() {
   const recapDialogRef = useFocusTrap<HTMLDivElement>(recapOpen && !reservationId, () => setRecapOpen(false));
   const [gps, setGps] = useState<{ lat: number; lng: number; label?: string } | null>(null);
   const [gpsBusy, setGpsBusy] = useState(false);
-  const [gpsError, setGpsError] = useState<"denied" | "unavailable" | "timeout" | "low_accuracy" | null>(null);
+  const [gpsError, setGpsError] = useState<
+    "denied" | "unavailable" | "timeout" | "low_accuracy" | "out_of_zone" | null
+  >(null);
+  /** Vrai quand la position affichée provient du repli IP (approximative). */
+  const [gpsFromIp, setGpsFromIp] = useState(false);
+  const [manualArrivee, setManualArrivee] = useState<string>("");
   const [manualDepart, setManualDepart] = useState<string>("");
   const [manualDepartCoord, setManualDepartCoord] = useState<{ lat: number; lng: number } | null>(null);
   const [showManualDepart, setShowManualDepart] = useState(false);
@@ -704,7 +746,8 @@ function ReserverPage() {
     const noGeo = typeof navigator === "undefined" || !navigator.geolocation;
     setGpsBusy(true);
 
-    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean) => {
+    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean, fromIp = false) => {
+      setGpsFromIp(fromIp);
       const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
       setGps({ lat, lng, label });
       setGpsError(approximate ? "low_accuracy" : null);
@@ -740,25 +783,41 @@ function ReserverPage() {
       }
     };
 
-    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
       setGpsBusy(false);
       setGpsError(code);
+      setGpsFromIp(false);
       markGpsReady();
+      setShowManualDepart(true);
+      if (code === "out_of_zone") {
+        setMessages((prev) => {
+          if (prev.length === 1 && prev[0].role === "assistant") {
+            return [{ role: "assistant", content: `📍 ${TXT[L].gps_out_zone}. ${TXT[L].gps_out_zone_msg}` }];
+          }
+          return prev;
+        });
+      }
     };
 
-    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
       const ip = await ipGeolocate();
       if (ip && isInServiceZone(ip.lat, ip.lng)) {
-        await applyDetectedPosition(ip.lat, ip.lng, true);
+        await applyDetectedPosition(ip.lat, ip.lng, true, true);
         return;
       }
-      failWith(code);
+      // Repli IP indisponible ou lui aussi hors zone : on l'annonce clairement
+      // et on bascule sur la saisie manuelle départ/arrivée.
+      failWith(ip ? "out_of_zone" : code);
     };
 
     const onSuccess = (pos: GeolocationPosition, allowApproximate: boolean) => {
       const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !isInServiceZone(lat, lng)) {
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
         void tryIpFallback("unavailable");
+        return;
+      }
+      if (!isInServiceZone(lat, lng)) {
+        void tryIpFallback("out_of_zone");
         return;
       }
       const approximate = typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M;
@@ -1204,6 +1263,13 @@ function ReserverPage() {
 
   const pickupLabel = formatPickup(quote?.pickup_datetime, L);
 
+  /** Décomposition officielle du prix (mêmes règles que le simulateur). */
+  const fareDetail =
+    quote?.distance_km != null && quote.distance_km > 0
+      ? detaillerPrix(quote.distance_km, quote.pickup_datetime ?? new Date().toISOString(), quote.duree_min)
+      : null;
+  const eur = (n: number) => `${n.toFixed(2)} €`;
+
   /** Toutes les valeurs qui partiront au chauffeur, relues avant validation. */
   const reviewRows = [
     { icon: MapPin, label: R.from, value: quote?.depart_resolu ?? manualDepart ?? "" },
@@ -1491,13 +1557,27 @@ function ReserverPage() {
                           ? tx("gps_detected")
                           : gpsError === "denied"
                             ? tx("gps_denied")
-                            : tx("gps_unavailable")}
+                            : gpsError === "out_of_zone"
+                              ? tx("gps_out_zone")
+                              : tx("gps_unavailable")}
                   </p>
                   <p className="mt-0.5 break-words text-[11px] text-muted-foreground">
                     {manualDepart || gps?.label || tx("gps_auto")}
                   </p>
+                  {!gpsBusy && gpsFromIp && gps && !manualDepart && (
+                    <p className="mt-1 break-words text-[11px] text-muted-foreground">{tx("gps_ip_note")}</p>
+                  )}
                 </div>
               </div>
+
+              {!gpsBusy && gpsError === "out_of_zone" && (
+                <p
+                  role="status"
+                  className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-[11px] leading-relaxed text-foreground"
+                >
+                  {tx("gps_out_zone_msg")}
+                </p>
+              )}
 
               {!gpsBusy && (gps || gpsError) && !showManualDepart && (
                 <button
@@ -1523,6 +1603,29 @@ function ReserverPage() {
                     }}
                     placeholder={tx("gps_placeholder")}
                   />
+                  <span className="block pt-1 text-[11px] font-medium text-muted-foreground">
+                    {tx("gps_enter_arrivee")}
+                  </span>
+                  <AddressAutocomplete
+                    value={manualArrivee}
+                    onChange={(v) => setManualArrivee(v)}
+                    placeholder={tx("gps_arrivee_ph")}
+                  />
+                  {manualDepart.trim().length > 2 && manualArrivee.trim().length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const msg =
+                          L === "en"
+                            ? `Pickup: ${manualDepart.trim()}. Drop-off: ${manualArrivee.trim()}.`
+                            : `Départ : ${manualDepart.trim()}. Arrivée : ${manualArrivee.trim()}.`;
+                        void send(msg);
+                      }}
+                      className="w-full rounded-xl bg-accent px-3 py-2 text-[12px] font-semibold text-accent-foreground transition hover:opacity-90"
+                    >
+                      {tx("gps_use_addresses")}
+                    </button>
+                  )}
                   {gps && showManualDepart && (
                     <button
                       type="button"
@@ -1659,6 +1762,49 @@ function ReserverPage() {
                   </dd>
                 </div>
               </dl>
+
+              {fareDetail && (
+                <section className="mt-3 rounded-2xl border border-border bg-background/60 p-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {R.calc_title}
+                  </h4>
+                  <dl className="mt-2 space-y-1.5 text-[13px]">
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{R.calc_base}</dt>
+                      <dd className="font-medium text-foreground">{eur(fareDetail.priseEnCharge)}</dd>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{R.calc_dist}</dt>
+                      <dd className="font-medium text-foreground">{fareDetail.distanceKm.toFixed(1)} km</dd>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{R.calc_dur}</dt>
+                      <dd className="font-medium text-foreground">~{Math.round(fareDetail.dureeMin)} min</dd>
+                    </div>
+                    {fareDetail.kmJour > 0 && (
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-muted-foreground">
+                          ☀️ {R.calc_day} · {fareDetail.kmJour.toFixed(1)} km × {eur(fareDetail.tarifKmJour)}/km
+                        </dt>
+                        <dd className="font-medium text-foreground">{eur(fareDetail.prixJour)}</dd>
+                      </div>
+                    )}
+                    {fareDetail.kmNuit > 0 && (
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-muted-foreground">
+                          🌙 {R.calc_night} · {fareDetail.kmNuit.toFixed(1)} km × {eur(fareDetail.tarifKmNuit)}/km
+                        </dt>
+                        <dd className="font-medium text-foreground">{eur(fareDetail.prixNuit)}</dd>
+                      </div>
+                    )}
+                    <div className="flex justify-between gap-3 border-t border-border pt-1.5">
+                      <dt className="font-semibold text-foreground">{R.calc_total}</dt>
+                      <dd className="font-display font-bold text-accent">{eur(fareDetail.total)}</dd>
+                    </div>
+                  </dl>
+                  <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{R.calc_rule}</p>
+                </section>
+              )}
 
               <form
                 className="mt-4 space-y-3"
