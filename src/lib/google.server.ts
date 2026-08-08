@@ -160,13 +160,25 @@ function normalizeGeocodeKey(q: string) {
     .replace(/\b17\d{3}\b/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  if (ALIASES[k]) return normalizeSimple(ALIASES[k]);
-  for (const alias of Object.keys(ALIASES)) {
-    if (k === alias || k.startsWith(alias + " ") || k.endsWith(" " + alias) || k.includes(" " + alias + " ")) {
-      return normalizeSimple(ALIASES[alias]);
+  // Les raccourcis locaux ne s'appliquent JAMAIS si la requête cite une autre ville
+  // (ex. "gare Saint-Jean Bordeaux" ne doit pas devenir "Gare de La Rochelle").
+  if (!mentionsOtherCity(q)) {
+    if (ALIASES[k]) return normalizeSimple(ALIASES[k]);
+    for (const alias of Object.keys(ALIASES)) {
+      if (k === alias || k.startsWith(alias + " ") || k.endsWith(" " + alias) || k.includes(" " + alias + " ")) {
+        return normalizeSimple(ALIASES[alias]);
+      }
     }
   }
   return k;
+}
+
+// Villes/pôles hors Charente-Maritime fréquemment demandés en longue distance.
+const OTHER_CITY_RE =
+  /\b(bordeaux|merignac|arcachon|libourne|angouleme|cognac|jarnac|poitiers|niort|nantes|paris|orly|roissy|charles\s+de\s+gaulle|cdg|beauvais|lyon|marseille|toulouse|blagnac|bayonne|biarritz|pau|limoges|perigueux|brive|tours|rennes|nancy|lille|strasbourg|montpellier|toulon|nice|bruxelles|geneve|madrid|barcelone|londres|london)\b/;
+
+export function mentionsOtherCity(query: string): boolean {
+  return OTHER_CITY_RE.test(normalizeAddressText(query));
 }
 function normalizeSimple(s: string) {
   return s
@@ -328,6 +340,19 @@ function normalize(q: string): string[] {
   const cleaned = q.replace(/\s+/g, " ").trim();
   const lower = normalizeAddressText(cleaned);
   const variants: string[] = [];
+
+  // Adresse citant une ville hors Charente-Maritime (ex. Bordeaux) :
+  // on interroge Google tel quel, sans aucun raccourci local.
+  if (mentionsOtherCity(cleaned)) {
+    variants.push(cleaned, `${cleaned}, France`);
+    return Array.from(new Set(variants.filter(Boolean)));
+  }
+
+  // Adresse détaillée (numéro de rue ou 3 mots et plus) : on essaie le texte brut
+  // AVANT les alias locaux, pour ne jamais écraser une vraie adresse.
+  const looksDetailed = /\d/.test(cleaned) || lower.split(" ").filter(Boolean).length >= 3;
+  if (looksDetailed) variants.push(cleaned);
+
   const canonical = findCanonicalGeocode(cleaned);
   if (canonical) variants.push(canonical.label);
   if (ALIASES[lower]) variants.push(ALIASES[lower]);
@@ -343,27 +368,26 @@ function normalize(q: string): string[] {
     if (/la\s+rochelle|ile\s+de\s+re|iledere/.test(lower) || lower === "aeroport" || lower === "airport") {
       variants.push("Aéroport La Rochelle-Île de Ré");
     } else {
-      const cityToken = lower.replace(/aeroport|airport|de|du|d/g, " ").trim().split(/\s+/)[0];
+      const cityToken = lower.replace(/\b(aeroport|airport|de|du|d|l|la|le)\b/g, " ").trim().split(/\s+/)[0];
       if (cityToken && cityToken.length > 2) {
         variants.push(`aéroport ${cityToken}, France`, `${cityToken} airport, France`);
       }
     }
   }
-  if (/gare/.test(lower)) {
+  if (/\bgare\b/.test(lower)) {
     if (/la\s+rochelle|rochelle/.test(lower) || lower === "gare") {
       variants.push("Gare de La Rochelle");
     } else {
-      const cityToken = lower.replace(/gare|de|du|d/g, " ").trim().split(/\s+/)[0];
-      if (cityToken && cityToken.length > 2) {
-        variants.push(`gare ${cityToken}, France`);
-      }
+      const rest = lower.replace(/\b(gare|sncf|de|du|d|la|le|les)\b/g, " ").replace(/\s+/g, " ").trim();
+      if (rest.length > 2) variants.push(`gare ${rest}, France`);
     }
   }
   variants.push(cleaned);
   const hasHint = /la\s+rochelle|royan|saintes|rochefort|oleron|ile\s+de\s+re|iledere|chatelaillon|châtelaillon|saint\s+georges|la\s+palmyre|fort\s+boyard|charente\s*maritime|17\d{3}/i.test(cleaned);
   if (!hasHint) {
-    variants.push(`${cleaned}, La Rochelle`);
     variants.push(`${cleaned}, Charente-Maritime, France`);
+    variants.push(`${cleaned}, France`);
+    variants.push(`${cleaned}, La Rochelle`);
   }
   return Array.from(new Set(variants.filter(Boolean)));
 }
@@ -428,12 +452,15 @@ async function placesTextSearch(q: string): Promise<GoogleGeocode | null> {
 export async function geocodeGoogle(query: string): Promise<GoogleGeocode | null> {
   const q = query?.trim();
   if (!q || q.length < 2) return null;
-  const canonical = findCanonicalGeocode(q);
+  const outside = mentionsOtherCity(q);
+  const canonical = outside ? null : findCanonicalGeocode(q);
   if (canonical) return canonical;
   return geocodeCache.run(normalizeGeocodeKey(q), async () => {
     for (const v of normalize(q)) {
-      const c = findCanonicalGeocode(v);
-      if (c) return c;
+      if (!outside) {
+        const c = findCanonicalGeocode(v);
+        if (c) return c;
+      }
       const g = await geocodeOnce(v);
       if (g) return g;
     }
