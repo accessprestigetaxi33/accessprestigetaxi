@@ -25,6 +25,7 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
+import { Route as ApiTranscribeStreamRouteImport } from './routes/api/transcribe-stream'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ClientChatRouteImport } from './routes/client.chat'
@@ -137,6 +138,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
 const ApiManifestRoute = ApiManifestRouteImport.update({
   id: '/api/manifest',
   path: '/api/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTranscribeStreamRoute = ApiTranscribeStreamRouteImport.update({
+  id: '/api/transcribe-stream',
+  path: '/api/transcribe-stream',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
@@ -328,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
+  '/api/transcribe-stream': typeof ApiTranscribeStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
   '/client/dashboard': typeof ClientDashboardRoute
@@ -379,6 +386,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
+  '/api/transcribe-stream': typeof ApiTranscribeStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
   '/client/dashboard': typeof ClientDashboardRoute
@@ -431,6 +439,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
+  '/api/transcribe-stream': typeof ApiTranscribeStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/client/chat': typeof ClientChatRoute
   '/client/dashboard': typeof ClientDashboardRoute
@@ -484,6 +493,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/api/chat'
     | '/api/manifest'
+    | '/api/transcribe-stream'
     | '/blog/$slug'
     | '/client/chat'
     | '/client/dashboard'
@@ -535,6 +545,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/api/chat'
     | '/api/manifest'
+    | '/api/transcribe-stream'
     | '/blog/$slug'
     | '/client/chat'
     | '/client/dashboard'
@@ -586,6 +597,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/api/chat'
     | '/api/manifest'
+    | '/api/transcribe-stream'
     | '/blog/$slug'
     | '/client/chat'
     | '/client/dashboard'
@@ -638,6 +650,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiManifestRoute: typeof ApiManifestRoute
+  ApiTranscribeStreamRoute: typeof ApiTranscribeStreamRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ClientChatRoute: typeof ClientChatRoute
   ClientDashboardRoute: typeof ClientDashboardRoute
@@ -783,6 +796,13 @@ declare module '@tanstack/react-router' {
       path: '/api/manifest'
       fullPath: '/api/manifest'
       preLoaderRoute: typeof ApiManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/transcribe-stream': {
+      id: '/api/transcribe-stream'
+      path: '/api/transcribe-stream'
+      fullPath: '/api/transcribe-stream'
+      preLoaderRoute: typeof ApiTranscribeStreamRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/': {
@@ -1059,6 +1079,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiChatRoute: ApiChatRoute,
   ApiManifestRoute: ApiManifestRoute,
+  ApiTranscribeStreamRoute: ApiTranscribeStreamRoute,
   BlogSlugRoute: BlogSlugRoute,
   ClientChatRoute: ClientChatRoute,
   ClientDashboardRoute: ClientDashboardRoute,
@@ -1095,3 +1116,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
