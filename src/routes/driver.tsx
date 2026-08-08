@@ -18,7 +18,7 @@ import { listDriverCourses, setCourseDriver, driverDeleteReservation } from "@/l
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
-import { updateMyDriverPosition, stopMyDriverPosition } from "@/lib/driver-gps.functions";
+import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/geocode";
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
@@ -114,7 +114,7 @@ const css = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
   html, body {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
-    overscroll-behavior-y: contain; background: #f8fafc;
+    overscroll-behavior-y: contain; background: #FDFBF7;
     font-family: 'DM Sans', sans-serif;
   }
   input, textarea, select { font-size: 16px; }
@@ -125,9 +125,9 @@ const css = `
     background: #FDFBF7;
   }
   /* Tablette (iPad portrait et paysage) : colonne élargie, toujours centrée,
-     avec un liseré pour la distinguer du fond gris de l'écran. */
+     avec un liseré pour la distinguer du fond beige plus soutenu de l'écran. */
   @media (min-width: 700px) {
-    html, body { background: #e2e8f0; }
+    html, body { background: #EFE6D8; }
     .drv-root {
       max-width: 620px;
       box-shadow: 0 0 0 1px #e2e8f0, 0 20px 60px -20px rgba(15, 23, 42, 0.25);
@@ -770,6 +770,9 @@ function DriverApp({
           identifyError={identifyError}
         />
 
+        {/* Position de l'équipe (Alain / Patricia) */}
+        {(driverId === "alain" || driverId === "patricia") && <TeamMapCard driverId={driverId} />}
+
         {/* Tabs */}
         <div className="drv-tabs">
           {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "appareils"] as Tab[]).map(
@@ -1265,6 +1268,189 @@ function GpsCard({
           <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 8, lineHeight: 1.5 }}>
             La position est partagée uniquement avec le client pendant une course acceptée.
           </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Carte équipe (positions Alain / Patricia) ────────────────────────────
+const TEAM_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
+const TEAM_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
+
+function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+  const R = 6371;
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+}
+
+function TeamMapCard({ driverId }: { driverId?: string }) {
+  const listPos = useServerFn(listDriverPositions);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInst = useRef<any>(null);
+  const markersRef = useRef<Record<string, any>>({});
+  const [rows, setRows] = useState<
+    { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
+  >([]);
+  const [open, setOpen] = useState(false);
+
+  const refresh = useCallback(async () => {
+    try {
+      const res: any = await listPos({ data: { token: getDriverToken() ?? "" } });
+      setRows((res?.positions ?? []).filter((p: any) => p.id === "alain" || p.id === "patricia"));
+    } catch {}
+  }, [listPos]);
+
+  useEffect(() => {
+    refresh();
+    const t = setInterval(refresh, 15000);
+    return () => clearInterval(t);
+  }, [refresh]);
+
+  useEffect(() => {
+    if (!open) return;
+    const pts = rows.filter((r) => r.lat != null && r.lng != null);
+    if (pts.length === 0) return;
+    (async () => {
+      try {
+        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
+        if (!mapInst.current) {
+          mapInst.current = new mapsApi.maps.Map(mapRef.current!, {
+            zoom: 12,
+            disableDefaultUI: true,
+            gestureHandling: "cooperative",
+            styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
+          });
+        }
+        const bounds = new mapsApi.maps.LatLngBounds();
+        pts.forEach((p) => {
+          const pos = { lat: p.lat as number, lng: p.lng as number };
+          bounds.extend(pos);
+          const color = TEAM_COLORS[p.id] ?? "#0f172a";
+          if (!markersRef.current[p.id]) {
+            markersRef.current[p.id] = new mapsApi.maps.Marker({
+              map: mapInst.current,
+              label: { text: (TEAM_NAMES[p.id] ?? p.id)[0], color: "#fff", fontWeight: "700" },
+              icon: {
+                path: mapsApi.maps.SymbolPath.CIRCLE,
+                scale: 11,
+                fillColor: color,
+                fillOpacity: 1,
+                strokeColor: "#fff",
+                strokeWeight: 2,
+              },
+            });
+          }
+          markersRef.current[p.id].setPosition(pos);
+          markersRef.current[p.id].setOpacity(p.is_active ? 1 : 0.5);
+        });
+        if (pts.length === 1) {
+          mapInst.current.setCenter(bounds.getCenter());
+          mapInst.current.setZoom(14);
+        } else {
+          mapInst.current.fitBounds(bounds, 40);
+        }
+      } catch {}
+    })();
+  }, [open, rows]);
+
+  const mine = rows.find((r) => r.id === driverId);
+  const other = rows.find((r) => r.id !== driverId && (r.id === "alain" || r.id === "patricia"));
+  const pts = rows.filter((r) => r.lat != null && r.lng != null);
+  const distKm =
+    mine?.lat != null && mine?.lng != null && other?.lat != null && other?.lng != null
+      ? haversineKm({ lat: mine.lat, lng: mine.lng }, { lat: other.lat, lng: other.lng })
+      : null;
+
+  const fmtAge = (s: number) =>
+    s < 60 ? `il y a ${s}s` : s < 3600 ? `il y a ${Math.round(s / 60)} min` : "position ancienne";
+
+  return (
+    <div
+      style={{
+        margin: "10px 16px 0",
+        border: "1px solid #e2e8f0",
+        borderRadius: 14,
+        background: "#FDFBF7",
+        overflow: "hidden",
+        fontFamily: "'DM Sans', sans-serif",
+      }}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          background: "transparent",
+          border: "none",
+          padding: "11px 14px",
+          cursor: "pointer",
+          textAlign: "left",
+        }}
+      >
+        <span style={{ fontSize: 15 }}>🗺️</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>Équipe</span>
+        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "#64748b" }}>
+          {distKm != null ? `${distKm.toFixed(1)} km entre vous` : `${pts.length}/2 en ligne`} {open ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {open && (
+        <div style={{ padding: "0 14px 14px" }}>
+          {pts.length > 0 ? (
+            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #e2e8f0", marginBottom: 10 }}>
+              <div ref={mapRef} style={{ width: "100%", height: 220 }} />
+            </div>
+          ) : (
+            <div style={{ fontSize: 12.5, color: "#64748b", marginBottom: 10 }}>
+              Aucune position partagée pour l'instant.
+            </div>
+          )}
+
+          {(["alain", "patricia"] as const).map((id) => {
+            const r = rows.find((x) => x.id === id);
+            return (
+              <div
+                key={id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: 12.5,
+                  color: "#334155",
+                  padding: "4px 0",
+                }}
+              >
+                <span
+                  style={{
+                    width: 9,
+                    height: 9,
+                    borderRadius: "50%",
+                    background: r?.is_active ? TEAM_COLORS[id] : "#cbd5e1",
+                    flexShrink: 0,
+                  }}
+                />
+                <b style={{ minWidth: 60 }}>{TEAM_NAMES[id]}</b>
+                <span style={{ color: "#64748b" }}>
+                  {r ? (r.is_active ? fmtAge(r.age_s) : "hors ligne") : "jamais connecté"}
+                  {id === driverId ? " · vous" : ""}
+                </span>
+              </div>
+            );
+          })}
+
+          {distKm != null && (
+            <div style={{ fontSize: 12, color: "#64748b", marginTop: 8 }}>
+              📏 ≈ {distKm.toFixed(1)} km à vol d'oiseau entre vous — trop loin pour une course ? Passez-la depuis
+              l'onglet Courses.
+            </div>
+          )}
         </div>
       )}
     </div>
