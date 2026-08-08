@@ -342,7 +342,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     const { data: r, error: fetchErr } = await supabaseAdmin
       .from("reservations")
       .select(
-        "id, nom, client_name, client_phone, telephone, depart, arrivee, destination, suivi_id, lang, client_account_id",
+        "id, nom, client_name, client_phone, telephone, email, client_email, pickup_datetime, assigned_driver, depart, arrivee, destination, suivi_id, lang, client_account_id",
       )
       .eq("id", data.reservation_id)
       .maybeSingle();
