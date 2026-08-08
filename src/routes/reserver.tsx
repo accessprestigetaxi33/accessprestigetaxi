@@ -1184,8 +1184,6 @@ function ReserverPage() {
       // d'écran), et le premier champ fautif est mis en évidence.
       window.setTimeout(() => {
         errorSummaryRef.current?.focus();
-        const first = document.getElementById(FIELD_IDS[keys[0]] ?? "");
-        first?.setAttribute("data-error-first", "true");
       }, 0);
       return;
     }
@@ -1198,6 +1196,11 @@ function ReserverPage() {
     setRecapOpen(false);
     void send(msg);
   }
+
+  // Accessibilité : la confirmation prend le focus dès qu'elle apparaît.
+  useEffect(() => {
+    if (reservationId) confirmationRef.current?.focus();
+  }, [reservationId]);
 
   const pickupLabel = formatPickup(quote?.pickup_datetime, L);
 
@@ -1235,6 +1238,22 @@ function ReserverPage() {
             {tx("hero_title")}
           </h1>
           <p className="mt-3 text-muted-foreground">{tx("hero_sub")}</p>
+          {wasRestored && !reservationId && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="mx-auto mt-4 flex max-w-xl flex-wrap items-center justify-center gap-3 rounded-2xl border border-accent/30 bg-accent/5 px-4 py-2.5 text-sm"
+            >
+              <span className="text-foreground">{R.restored}</span>
+              <button
+                type="button"
+                onClick={resetConversation}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> {R.restored_cta}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Steps banner */}
@@ -1416,9 +1435,12 @@ function ReserverPage() {
             {/* Récapitulatif avant soumission / confirmation multilingue */}
             {reservationId ? (
               <div
-                className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm"
+                ref={confirmationRef}
+                tabIndex={-1}
+                className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 role="status"
                 aria-live="polite"
+                aria-atomic="true"
               >
                 <p className="flex items-center gap-2 font-display text-base font-bold text-foreground">
                   <CheckCircle2 className="h-5 w-5 text-emerald-600" /> {R.ok_title}
@@ -1869,10 +1891,15 @@ function ReserverPage() {
           <div className="relative h-[360px] w-full">
             <div ref={mapRef} className="absolute inset-0" />
             {mapError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/95 p-4">
-                <pre className="max-h-full max-w-full overflow-auto whitespace-pre-wrap rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-[11px] leading-relaxed text-destructive">
-                  {mapError}
-                </pre>
+              <div className="absolute inset-0 flex items-center justify-center bg-background/95 p-4" role="status">
+                <div className="max-h-full max-w-full overflow-auto rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                  <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                    <AlertCircle className="h-4 w-4" aria-hidden="true" /> {R.map_error_title}
+                  </p>
+                  <pre className="mt-1.5 whitespace-pre-wrap text-[11px] leading-relaxed text-destructive">
+                    {mapError}
+                  </pre>
+                </div>
               </div>
             )}
           </div>
