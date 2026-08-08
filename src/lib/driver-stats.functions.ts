@@ -180,3 +180,41 @@ export const listReservationEvents = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { events: (rows as any[]) ?? [] };
   });
+
+/** Analytics des ouvertures du lien de suivi (30 derniers jours). */
+export const getTrackingAnalytics = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    TokenSchema.extend({ days: z.number().int().min(1).max(365).optional() }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { assertDriverToken } = await import("@/lib/driver-auth.server");
+    assertDriverToken(data.token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const days = data.days ?? 30;
+    const since = new Date(Date.now() - days * 86400000).toISOString();
+
+    const [{ data: events }, { count: totalCourses }] = await Promise.all([
+      supabaseAdmin
+        .from("tracking_events")
+        .select("reservation_id,created_at,source,reservations(client_name)")
+        .eq("event_type", "tracking_opened")
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabaseAdmin
+        .from("reservations")
+        .select("id", { count: "exact", head: true })
+        .in("status", ["accepted", "en_route", "arrived", "completed"])
+        .gte("pickup_datetime", since),
+    ]);
+
+    const evts = ((events as any[]) ?? []).map((e) => ({
+      reservation_id: e.reservation_id as string,
+      created_at: e.created_at as string,
+      source: (e.source as string | null) ?? "direct",
+      client_name: (e.reservations?.client_name as string | null) ?? null,
+    }));
+
+    return { events: evts, totalCourses: totalCourses ?? 0 };
+  });
