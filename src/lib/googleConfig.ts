@@ -41,26 +41,55 @@ export const GOOGLE_MAPS_REGION = "FR" as const;
  */
 let runtimeKeyPromise: Promise<string[]> | null = null;
 
+/** Référents à autoriser pour l'hôte courant (renvoyés par /api/public/maps-config). */
+export type MapsRuntimeConfig = { keys: string[]; dev: boolean; host: string; allowlist: string[] };
+
+let runtimeConfig: MapsRuntimeConfig = { keys: [], dev: false, host: "", allowlist: [] };
+
+export function getMapsRuntimeConfig(): MapsRuntimeConfig {
+  return runtimeConfig;
+}
+
 export function getRuntimeGoogleMapsKeys(): Promise<string[]> {
   if (typeof window === "undefined") return Promise.resolve([]);
   if (!runtimeKeyPromise) {
     runtimeKeyPromise = fetch("/api/public/maps-config", { headers: { Accept: "application/json" } })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
-        const key = cleanEnv(j?.key);
-        return key ? [key] : [];
+        const keys = Array.isArray(j?.keys)
+          ? (j.keys.map(cleanEnv).filter(Boolean) as string[])
+          : ((cleanEnv(j?.key) ? [cleanEnv(j?.key)] : []) as string[]);
+        runtimeConfig = {
+          keys,
+          dev: Boolean(j?.dev),
+          host: cleanEnv(j?.host) ?? "",
+          allowlist: Array.isArray(j?.allowlist) ? (j.allowlist.filter(Boolean) as string[]) : [],
+        };
+        return keys;
       })
       .catch(() => []);
   }
   return runtimeKeyPromise;
 }
 
-/** Clés disponibles pour l'hôte courant, build-time puis runtime. */
+/**
+ * Clés disponibles pour l'hôte courant, build-time puis runtime.
+ * En preview/localhost, la clé runtime de développement passe en premier :
+ * c'est la seule dont les restrictions HTTP referrer couvrent ces domaines.
+ */
 export async function resolveGoogleMapsApiKeys(): Promise<string[]> {
   const buildKeys = getGoogleMapsApiKeysForCurrentHost();
   const runtime = await getRuntimeGoogleMapsKeys();
-  return Array.from(new Set([...buildKeys, ...runtime]));
+  const host = typeof window !== "undefined" ? window.location.hostname : "";
+  const isDevHost =
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".lovableproject.com") ||
+    host.endsWith(".lovable.app");
+  const ordered = isDevHost ? [...runtime, ...buildKeys] : [...buildKeys, ...runtime];
+  return Array.from(new Set(ordered));
 }
+
 
 export type GoogleConfigStatus = { ok: true; key: string } | { ok: false; reason: string };
 
