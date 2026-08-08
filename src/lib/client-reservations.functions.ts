@@ -160,11 +160,13 @@ export const updateReservationTime = createServerFn({ method: "POST" })
           title: "⏰ Modification d'heure",
           body: `Le client a modifié l'heure de sa course : ${when}`,
           url: "/driver",
-          tag: `modif-heure-${data.reservation_id}`,
+          // Le tag inclut l'horaire cible : deux reports différents restent
+          // deux notifications, mais un retry du même report est ignoré.
+          tag: `modif-heure-${data.reservation_id}-${Date.parse(data.pickup_datetime) || 0}`,
           requireInteraction: true,
           data: { reservation_id: data.reservation_id, kind: "reschedule" },
         },
-        { driverId },
+        { driverId, dedupTtlMinutes: 24 * 60 },
       );
     } catch (e) {
 
@@ -206,7 +208,7 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
           tag: `cancel-${data.reservation_id}`,
           data: { reservation_id: data.reservation_id, kind: "cancel" },
         },
-        { driverId },
+        { driverId, dedupTtlMinutes: 24 * 60 },
       );
     } catch (e) {
 
