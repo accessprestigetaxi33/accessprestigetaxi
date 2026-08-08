@@ -70,17 +70,23 @@ function ClientHistorique() {
     if (session) refresh();
   }, [session, refresh]);
 
-  // Realtime — re-fetch si une course terminée/annulée apparaît
+  // Rafraîchissement — SANS postgres_changes.
+  // La lecture de `reservations` est fermée côté RLS (aucune policy SELECT
+  // pour anon / authenticated) : l'abonnement realtime ne délivrait jamais
+  // rien. L'historique se remet à jour au retour sur l'onglet / la fenêtre.
   useEffect(() => {
     if (!session) return;
-    const channel = supabase
-      .channel("historique-realtime")
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "reservations" }, () => refresh())
-      .subscribe();
+    const onWake = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onWake);
+    window.addEventListener("focus", onWake);
     return () => {
-      supabase.removeChannel(channel);
+      document.removeEventListener("visibilitychange", onWake);
+      window.removeEventListener("focus", onWake);
     };
   }, [session, refresh]);
+
 
   const filtered = useMemo(() => {
     if (!rows) return null;
