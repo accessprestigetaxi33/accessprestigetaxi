@@ -148,6 +148,7 @@ export const updateReservationTime = createServerFn({ method: "POST" })
 
     try {
       const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+      const { buildIdempotencyKey } = await import("@/lib/idempotency");
       const { driverId } = await resolveReservationDriver(data.reservation_id);
       const when = new Date(data.pickup_datetime).toLocaleString("fr-FR", {
         dateStyle: "short",
@@ -160,9 +161,15 @@ export const updateReservationTime = createServerFn({ method: "POST" })
           title: "⏰ Modification d'heure",
           body: `Le client a modifié l'heure de sa course : ${when}`,
           url: "/driver",
-          // Le tag inclut l'horaire cible : deux reports différents restent
+          // Le discriminant (horaire cible) : deux reports différents restent
           // deux notifications, mais un retry du même report est ignoré.
-          tag: `modif-heure-${data.reservation_id}-${Date.parse(data.pickup_datetime) || 0}`,
+          tag: buildIdempotencyKey({
+            event: "reservation.rescheduled",
+            entity: "res",
+            id: data.reservation_id,
+            channel: "push",
+            discriminator: Date.parse(data.pickup_datetime) || 0,
+          }),
           requireInteraction: true,
           data: { reservation_id: data.reservation_id, kind: "reschedule" },
         },
@@ -198,6 +205,7 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
 
     try {
       const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+      const { buildIdempotencyKey } = await import("@/lib/idempotency");
       const { driverId } = await resolveReservationDriver(data.reservation_id);
       await sendPushToAudience(
         "chauffeur",
@@ -205,7 +213,12 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
           title: "❌ Course annulée",
           body: "Le client a annulé sa réservation.",
           url: "/driver",
-          tag: `cancel-${data.reservation_id}`,
+          tag: buildIdempotencyKey({
+            event: "reservation.cancelled",
+            entity: "res",
+            id: data.reservation_id,
+            channel: "push",
+          }),
           data: { reservation_id: data.reservation_id, kind: "cancel" },
         },
         { driverId, dedupTtlMinutes: 24 * 60 },
