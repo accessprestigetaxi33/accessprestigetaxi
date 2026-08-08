@@ -148,13 +148,19 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
           assignedRaw === "patricia" ? "Patricia" : assignedRaw === "alain" ? "Alain" : "";
         const trajet = `${reservation.depart} → ${reservation.arrivee || reservation.destination || "—"}`;
         try {
-          const chauffeurResult = await sendPushToAudience("chauffeur", {
-            title: assignedLabel ? `🚕 Nouvelle résa — ${assignedLabel}` : "🚕 Nouvelle résa",
-            body: `${clientName} — ${trajet}`,
-            url: "/driver",
-            tag: `chauffeur-res-${reservationId}`,
-            requireInteraction: true,
-          });
+          const chauffeurResult = await sendPushToAudience(
+            "chauffeur",
+            {
+              title: assignedLabel ? `🚕 Nouvelle résa — ${assignedLabel}` : "🚕 Nouvelle résa",
+              body: `${clientName} — ${trajet}`,
+              url: "/driver",
+              tag: `chauffeur-res-${reservationId}`,
+              requireInteraction: true,
+              data: { reservation_id: reservationId, kind: "new_reservation" },
+            },
+            { driverId: assignedLabel ? assignedRaw.toLowerCase() : null },
+          );
+
           console.log("[notify-reservation] push chauffeur:", JSON.stringify(chauffeurResult));
         } catch (pushErr) {
           console.error("[notify-reservation] push failed", pushErr);
