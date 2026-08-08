@@ -74,44 +74,38 @@ function formatPickupDateTime(iso: string, lang: string) {
   return formatInTimeZone(parseISO(iso), TIMEZONE, lang === "en" ? "MMMM d, yyyy 'at' HH:mm" : "d MMMM yyyy 'à' HH:mm");
 }
 
-function nowParis() {
-  return new Date(
-    new Intl.DateTimeFormat("en-GB", {
-      timeZone: TIMEZONE,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    }).format(new Date()),
-  );
+// Instant "maintenant" (absolu). Les calculs de jour/heure passent par Paris.
+function nowParis(): Date {
+  return new Date();
 }
 
+// Un ISO sans fuseau est interprété comme une heure locale de Paris.
 function parsePickup(iso: string): Date {
-  return parseISO(iso);
+  return parseAsParisTime(iso);
 }
+
+function toParisIso(d: Date): string {
+  return formatInTimeZone(d, TIMEZONE, "yyyy-MM-dd'T'HH:mm:ss");
+}
+
+const WEEKDAY_INDEX: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 
 function isWithinOpeningHours(iso: string): boolean {
-  const d = parsePickup(iso);
-  const day = d.getDay();
-  const hour = d.getHours() + d.getMinutes() / 60;
+  const p = partsParis(iso);
+  const day = WEEKDAY_INDEX[p.weekday] ?? new Date(parsePickup(iso)).getUTCDay();
+  const hour = p.hour + p.minute / 60;
   return OPEN_DAYS.includes(day) && hour >= OPEN_HOUR && hour < CLOSE_HOUR;
 }
 
 function nextOpenSlot(): Date {
-  const now = nowParis();
-  let candidate = addMinutes(now, MIN_ADVANCE_MINUTES);
-  while (!isWithinOpeningHours(formatISO(candidate))) {
+  let candidate = addMinutes(nowParis(), MIN_ADVANCE_MINUTES);
+  for (let i = 0; i < 24 * 4 * 8; i++) {
+    if (isWithinOpeningHours(toParisIso(candidate))) return candidate;
     candidate = addMinutes(candidate, 15);
-    if (candidate.getHours() >= CLOSE_HOUR) {
-      candidate = addDays(candidate, 1);
-      candidate.setHours(OPEN_HOUR, 0, 0, 0);
-    }
   }
   return candidate;
 }
+
 
 function buildTrackingLink(suiviId: string, lang: string) {
   return `https://accessprestigetaxi.lovable.app/${lang === "en" ? "tracking" : "suivi"}?id=${encodeURIComponent(suiviId)}`;
