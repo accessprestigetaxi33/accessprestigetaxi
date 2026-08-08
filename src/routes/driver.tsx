@@ -431,52 +431,56 @@ function DriverPage() {
         }}
       >
         <div style={{ textAlign: "center", maxWidth: 320, width: "100%" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>🚕</div>
+          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>
             {status === "checking" ? "Vérification…" : "Espace chauffeur"}
           </div>
           {status === "denied" && (
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setError(null);
-                const ok = await tryToken(input.trim());
-                if (!ok) setError("Code invalide");
-              }}
-              style={{ display: "grid", gap: 10 }}
-            >
-              <input
-                type="password"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Code d'accès (Patricia ou Alain)"
-                autoComplete="current-password"
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: 10,
-                  border: "1px solid var(--border)",
-                  fontSize: 16,
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: 10,
-                  border: "none",
-                  background: "var(--background)",
-                  color: "var(--gold)",
-                  fontWeight: 700,
-                  fontSize: 15,
-                  cursor: "pointer",
-                }}
-              >
-                Se connecter
-              </button>
-              {error && <div style={{ color: "#dc2626", fontSize: 13 }}>{error}</div>}
-            </form>
+            <>
+              <div style={{ fontSize: 13, marginBottom: 16 }}>Choisissez votre profil</div>
+              <div style={{ display: "grid", gap: 10 }}>
+                {([
+                  { id: "alain", name: "Alain" },
+                  { id: "patricia", name: "Patricia" },
+                ] as const).map((d) => (
+                  <button
+                    key={d.id}
+                    type="button"
+                    disabled={busy !== null}
+                    onClick={async () => {
+                      setError(null);
+                      setBusy(d.id);
+                      try {
+                        const res: any = await openSession({ data: { driver: d.id } });
+                        const ok = res?.ok && res.token ? await tryToken(res.token) : false;
+                        if (!ok) setError("Accès indisponible, réessayez.");
+                      } catch {
+                        setError("Accès indisponible, réessayez.");
+                      } finally {
+                        setBusy(null);
+                      }
+                    }}
+                    style={{
+                      padding: "14px 16px",
+                      borderRadius: 12,
+                      border: "none",
+                      background: "var(--background)",
+                      color: "var(--gold)",
+                      fontWeight: 700,
+                      fontSize: 16,
+                      cursor: busy ? "wait" : "pointer",
+                      opacity: busy && busy !== d.id ? 0.5 : 1,
+                    }}
+                  >
+                    {busy === d.id ? "Connexion…" : d.name}
+                  </button>
+                ))}
+              </div>
+              {error && <div style={{ color: "#dc2626", fontSize: 13, marginTop: 10 }}>{error}</div>}
+            </>
           )}
         </div>
+
       </div>
     );
   }
