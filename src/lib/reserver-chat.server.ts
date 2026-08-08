@@ -355,7 +355,14 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
           tarif_jour: tarifJour,
           prix_estime: price,
           lang,
-          message: state.notes || null,
+          message:
+            [
+              state.childSeats ? (lang === "en" ? `${state.childSeats} child seat(s)` : `${state.childSeats} siège(s) enfant`) : null,
+              state.babySeats ? (lang === "en" ? `${state.babySeats} baby seat(s)` : `${state.babySeats} siège(s) bébé`) : null,
+              state.notes || null,
+            ]
+              .filter(Boolean)
+              .join(" — ") || null,
           service_type: "standard",
           source: "chat",
         };
