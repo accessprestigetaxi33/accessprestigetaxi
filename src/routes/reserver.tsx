@@ -1573,16 +1573,95 @@ function ReserverPage() {
               </div>
             )}
 
+            {/* Écran d'explication micro */}
+            {micGate && (
+              <div className="border-t border-border/60 bg-accent/5 px-4 py-3" role="dialog" aria-label={tx("voice_hint_title")}>
+                <p className="text-sm font-semibold text-foreground">{tx("voice_hint_title")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{tx("voice_hint_desc")}</p>
+                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <li>• {tx("voice_hint_1")}</li>
+                  <li>• {tx("voice_hint_2")}</li>
+                  <li>• {tx("voice_hint_3")}</li>
+                </ul>
+                {micPermission === "denied" && (
+                  <p className="mt-2 text-xs font-medium text-destructive">{tx("voice_denied_help")}</p>
+                )}
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      try {
+                        localStorage.setItem("apt_mic_intro", "1");
+                      } catch {}
+                      void startRecording();
+                    }}
+                    className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
+                  >
+                    {tx("voice_hint_cta")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMicGate(false)}
+                    className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+                  >
+                    {tx("voice_hint_later")}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Indicateur d'enregistrement / transcription */}
+            {(listening || transcribing || voiceError || voiceReviewed) && (
+              <div className="border-t border-border/60 px-4 py-2.5" aria-live="polite">
+                {listening && (
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-destructive" aria-hidden="true" />
+                      {tx("voice_listening")}
+                    </span>
+                    <div
+                      className="h-2 flex-1 overflow-hidden rounded-full bg-muted"
+                      role="meter"
+                      aria-label={tx("voice_level")}
+                      aria-valuenow={Math.round(voiceLevel * 100)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
+                      <div
+                        className="h-full rounded-full bg-accent transition-[width] duration-100"
+                        style={{ width: `${Math.max(4, Math.round(voiceLevel * 100))}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {transcribing && (
+                  <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                    {voicePartial ? voicePartial : tx("voice_transcribing")}
+                  </p>
+                )}
+                {!listening && !transcribing && voiceError && (
+                  <p className="text-xs font-medium text-destructive">{voiceError}</p>
+                )}
+                {!listening && !transcribing && !voiceError && voiceReviewed && (
+                  <p className="text-xs text-accent">{tx("voice_review")}</p>
+                )}
+              </div>
+            )}
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                setVoiceReviewed(false);
                 send(input);
               }}
               className="flex items-end gap-2 border-t border-border/60 bg-background/60 p-3"
             >
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
