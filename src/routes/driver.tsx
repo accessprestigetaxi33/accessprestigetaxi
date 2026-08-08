@@ -634,7 +634,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           <span style={{ fontSize: 26 }}>🚕</span>
           <h1>{driverLabel ? `Espace ${driverLabel}` : "Espace chauffeur"}</h1>
 
-          {installPrompt && (
+          {installPrompt ? (
             <button
               onClick={async () => {
                 installPrompt.prompt();
@@ -655,6 +655,22 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
             >
               📲 Installer
             </button>
+          ) : (
+            <a
+              href="/driver-install.html"
+              style={{
+                flexShrink: 0,
+                background: "#0ea5e9",
+                color: "#FDFBF7",
+                borderRadius: 8,
+                padding: "8px 10px",
+                fontSize: 11,
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              📲 Installer
+            </a>
           )}
           <a
             href="/"
