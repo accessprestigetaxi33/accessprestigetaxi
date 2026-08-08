@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+const SuiviLiveMap = lazy(() => import("@/components/SuiviLiveMap"));
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -2330,6 +2332,17 @@ function SuiviPage() {
             </div>
           </div>
         </div>
+
+        {/* Carte live du chauffeur (lissée : sondage throttlé + interpolation) */}
+        <Suspense fallback={null}>
+          <div style={{ marginBottom: "16px" }}>
+            <SuiviLiveMap
+              suiviKey={id}
+              status={reservation.status}
+              lang={locale === "en" ? "en" : "fr"}
+            />
+          </div>
+        </Suspense>
 
         {/* Details Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
