@@ -16,7 +16,7 @@ import { verifyDriverToken, getActiveVisitorCount } from "@/lib/driver-auth.func
 import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
-import { getDriverStats, listReservationEvents } from "@/lib/driver-stats.functions";
+import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
 
 
@@ -3034,6 +3034,7 @@ function ClientsTab() {
 
 // ── Analytics : ouvertures du lien de suivi ────────────────────────────────
 function TrackingAnalytics() {
+  const trackingAnalyticsFn = useServerFn(getTrackingAnalytics);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{
@@ -3052,20 +3053,9 @@ function TrackingAnalytics() {
       const since30j = new Date();
       since30j.setDate(since30j.getDate() - 30);
 
-      const [{ data: events }, { count: totalCourses }] = await Promise.all([
-        (supabase as any)
-          .from("tracking_events")
-          .select("reservation_id, created_at, source, reservations(client_name)")
-          .eq("event_type", "tracking_opened")
-          .gte("created_at", since30j.toISOString())
-          .order("created_at", { ascending: false })
-          .limit(500),
-        (supabase as any)
-          .from("reservations")
-          .select("id", { count: "exact", head: true })
-          .in("status", ["accepted", "en_route", "arrived", "completed"])
-          .gte("pickup_datetime", since30j.toISOString()),
-      ]);
+      const { events, totalCourses } = await trackingAnalyticsFn({
+        data: { token: getDriverToken() ?? "", days: 30 },
+      });
 
       const evts: any[] = events ?? [];
 
@@ -3100,7 +3090,7 @@ function TrackingAnalytics() {
 
       const dernierEvents = evts.slice(0, 5).map((e: any) => ({
         reservation_id: e.reservation_id,
-        client_name: e.reservations?.client_name ?? null,
+        client_name: e.client_name ?? null,
         created_at: e.created_at,
         source: e.source ?? "direct",
       }));
@@ -3110,7 +3100,7 @@ function TrackingAnalytics() {
       setData({
         totalOuvertures: evts.length,
         coursesAvecSuivi: uniqueResas.size,
-        totalCourses: totalCourses ?? 0,
+        totalCourses,
         tauxOuverture,
         parJour,
         parSource,
