@@ -4,6 +4,7 @@ import { Calculator, Phone, ArrowRight, Info, MapPin, Loader2, Clock } from "luc
 import { useI18n } from "@/i18n/I18nProvider";
 import { getDistanceAndDurationKm } from "@/lib/googleRoute";
 import { searchAddress } from "@/lib/googleGeocode";
+import { TARIFS } from "@/lib/tarif";
 
 const LOCAL_COPY = {
   fr: {
