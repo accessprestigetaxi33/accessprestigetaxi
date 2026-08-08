@@ -65,8 +65,12 @@ function AboutPage() {
         <p>{t("about.p3")}</p>
       </div>
 
+      <h2 className="mt-12 text-center font-display text-2xl font-semibold sm:text-3xl">
+        {t("about.b.section") !== "about.b.section" ? t("about.b.section") : "Nos engagements"}
+      </h2>
+
       {/* 1-col on mobile, 2-col on md */}
-      <div className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-6">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6">
         {[
           { icon: Award, title: t("about.b1.t"), desc: t("about.b1.d") },
           { icon: Clock, title: t("about.b2.t"), desc: t("about.b2.d") },
