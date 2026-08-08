@@ -201,17 +201,23 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
 
     // E-mail d'annulation au client (FR/EN)
     try {
-      const email = (r as any).client_email || (r as any).email;
+      const { data: full } = await supabaseAdmin
+        .from("reservations")
+        .select("client_email, email, lang, client_name, nom, pickup_datetime, depart, arrivee, destination")
+        .eq("id", data.reservation_id)
+        .maybeSingle();
+      const row: any = full ?? r;
+      const email = row.client_email || row.email;
       if (email) {
         const { sendClientCancellationEmail } = await import("@/lib/reservation-notifications.server");
         await sendClientCancellationEmail({
           reservationId: data.reservation_id,
           email,
-          lang: (r as any).lang ?? "fr",
-          clientName: (r as any).client_name ?? (r as any).nom ?? null,
-          pickupDatetime: (r as any).pickup_datetime ?? null,
-          depart: (r as any).depart ?? null,
-          arrivee: (r as any).arrivee ?? (r as any).destination ?? null,
+          lang: row.lang ?? "fr",
+          clientName: row.client_name ?? row.nom ?? null,
+          pickupDatetime: row.pickup_datetime ?? null,
+          depart: row.depart ?? null,
+          arrivee: row.arrivee ?? row.destination ?? null,
         });
       }
     } catch (e) {
