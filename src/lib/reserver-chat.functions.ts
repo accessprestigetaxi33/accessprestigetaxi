@@ -193,6 +193,8 @@ async function computeQuote(
     prix_estime: calculerPrixMixte(kmRaw, args.pickup_datetime),
     depart_resolu: from.label,
     arrivee_resolu: to.label,
+    // Renvoyé au navigateur pour le récapitulatif affiché avant confirmation.
+    pickup_datetime: args.pickup_datetime,
   };
 }
 
