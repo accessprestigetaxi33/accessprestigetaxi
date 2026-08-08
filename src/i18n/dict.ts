@@ -265,6 +265,7 @@ const fr: Dict = {
 
   // About page
   "about.eyebrow": "Notre histoire",
+  "about.b.section": "Nos engagements",
   "about.title": "À propos de Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -1386,6 +1387,7 @@ const en: Dict = {
   "city.stemilion": "Saint-Émilion",
 
   "about.eyebrow": "Our story",
+  "about.b.section": "Our commitments",
   "about.title": "About Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -2504,6 +2506,7 @@ const es: Dict = {
   "city.stemilion": "Saint-Émilion",
 
   "about.eyebrow": "Nuestra historia",
+  "about.b.section": "Nuestros compromisos",
   "about.title": "Sobre Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -3608,6 +3611,7 @@ const it: Dict = {
   "city.stemilion": "Saint-Émilion",
 
   "about.eyebrow": "La nostra storia",
+  "about.b.section": "I nostri impegni",
   "about.title": "Chi siamo — Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -4707,6 +4711,7 @@ const ar: Dict = {
   "city.stemilion": "سان إيميليون",
 
   "about.eyebrow": "قصتنا",
+  "about.b.section": "التزاماتنا",
   "about.title": "عن تاكسي سيتي بوردو",
   "about.p1.brand": "تاكسي سيتي بوردو",
   "about.p1": "شركة تاكسي مستقلة في بوردو. نهدف لتقديم خدمة تليق بأناقة بوردو: دقة، راحة، وتكتم.",
@@ -5817,6 +5822,7 @@ const pt: Dict = {
 
   // About page
   "about.eyebrow": "A nossa história",
+  "about.b.section": "Os nossos compromissos",
   "about.title": "Sobre Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
