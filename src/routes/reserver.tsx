@@ -1305,6 +1305,214 @@ function ReserverPage() {
           </aside>
         </div>
 
+        {/* Modale de récapitulatif avant soumission */}
+        {recapOpen && !reservationId && (
+          <div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="recap-title"
+            onClick={(e) => e.target === e.currentTarget && setRecapOpen(false)}
+          >
+            <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-border bg-card p-5 shadow-[var(--shadow-elegant)] sm:rounded-3xl sm:p-6">
+              <h2 id="recap-title" className="font-display text-xl font-bold text-foreground">
+                {R.title}
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">{R.subtitle}</p>
+
+              <dl className="mt-4 space-y-2 rounded-2xl border border-border bg-background/60 p-4 text-sm">
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.from}</dt>
+                  <dd className="text-right font-medium text-foreground">{quote?.depart_resolu ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.to}</dt>
+                  <dd className="text-right font-medium text-foreground">{quote?.arrivee_resolu ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.when}</dt>
+                  <dd className="text-right font-medium text-foreground">{pickupLabel ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="shrink-0 text-muted-foreground">{R.dist}</dt>
+                  <dd className="text-right font-medium text-foreground">
+                    {quote?.distance_km != null ? `${quote.distance_km} km · ~${quote.duree_min} min` : "—"}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3 border-t border-border pt-2">
+                  <dt className="shrink-0 font-semibold text-foreground">{R.price}</dt>
+                  <dd className="text-right font-display text-lg font-bold text-accent">
+                    {quote?.prix_estime != null ? `${quote.prix_estime.toFixed(2)} €` : "—"}
+                  </dd>
+                </div>
+              </dl>
+
+              <form
+                className="mt-4 space-y-3"
+                noValidate
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submitRecap();
+                }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{R.contact}</p>
+
+                <div>
+                  <label htmlFor="recap-nom" className="block text-xs font-medium text-muted-foreground">
+                    {R.name}
+                  </label>
+                  <input
+                    id="recap-nom"
+                    value={form.nom}
+                    onChange={(e) => setForm((f) => ({ ...f, nom: e.target.value }))}
+                    maxLength={100}
+                    autoComplete="name"
+                    aria-invalid={!!formErrors.nom}
+                    aria-describedby={formErrors.nom ? "recap-nom-err" : undefined}
+                    className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                  {formErrors.nom && (
+                    <p id="recap-nom-err" className="mt-1 text-[11px] font-medium text-destructive">
+                      {formErrors.nom}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="recap-tel" className="block text-xs font-medium text-muted-foreground">
+                      {R.phone}
+                    </label>
+                    <input
+                      id="recap-tel"
+                      type="tel"
+                      inputMode="tel"
+                      value={form.telephone}
+                      onChange={(e) => setForm((f) => ({ ...f, telephone: e.target.value }))}
+                      maxLength={20}
+                      autoComplete="tel"
+                      placeholder="06 12 34 56 78"
+                      aria-invalid={!!formErrors.telephone}
+                      aria-describedby={formErrors.telephone ? "recap-tel-err" : undefined}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.telephone && (
+                      <p id="recap-tel-err" className="mt-1 text-[11px] font-medium text-destructive">
+                        {formErrors.telephone}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="recap-email" className="block text-xs font-medium text-muted-foreground">
+                      {R.email}
+                    </label>
+                    <input
+                      id="recap-email"
+                      type="email"
+                      inputMode="email"
+                      value={form.email}
+                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                      maxLength={255}
+                      autoComplete="email"
+                      aria-invalid={!!formErrors.email}
+                      aria-describedby={formErrors.email ? "recap-email-err" : undefined}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.email && (
+                      <p id="recap-email-err" className="mt-1 text-[11px] font-medium text-destructive">
+                        {formErrors.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="recap-pax" className="block text-xs font-medium text-muted-foreground">
+                      {R.pax}
+                    </label>
+                    <input
+                      id="recap-pax"
+                      type="number"
+                      min={1}
+                      max={7}
+                      value={form.passagers}
+                      onChange={(e) => setForm((f) => ({ ...f, passagers: e.target.value }))}
+                      aria-invalid={!!formErrors.passagers}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.passagers && (
+                      <p className="mt-1 text-[11px] font-medium text-destructive">{formErrors.passagers}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="recap-bags" className="block text-xs font-medium text-muted-foreground">
+                      {R.bags}
+                    </label>
+                    <input
+                      id="recap-bags"
+                      type="number"
+                      min={0}
+                      max={7}
+                      value={form.bagages}
+                      onChange={(e) => setForm((f) => ({ ...f, bagages: e.target.value }))}
+                      aria-invalid={!!formErrors.bagages}
+                      className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                    {formErrors.bagages && (
+                      <p className="mt-1 text-[11px] font-medium text-destructive">{formErrors.bagages}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="recap-note" className="block text-xs font-medium text-muted-foreground">
+                    {R.note}
+                  </label>
+                  <textarea
+                    id="recap-note"
+                    rows={2}
+                    maxLength={300}
+                    value={form.note}
+                    onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
+                    placeholder={R.note_ph}
+                    className="mt-1 w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                </div>
+
+                <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={form.agree}
+                    onChange={(e) => setForm((f) => ({ ...f, agree: e.target.checked }))}
+                    className="mt-0.5 h-4 w-4 accent-[hsl(var(--accent))]"
+                    aria-invalid={!!formErrors.agree}
+                  />
+                  <span>{R.agree}</span>
+                </label>
+                {formErrors.agree && <p className="text-[11px] font-medium text-destructive">{formErrors.agree}</p>}
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setRecapOpen(false)}
+                    className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    {R.cancel}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={busy}
+                    className="flex-[2] rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+                  >
+                    {busy ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : R.submit}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Map */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
