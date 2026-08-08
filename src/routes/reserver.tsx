@@ -17,7 +17,21 @@ import {
   Mic,
   MicOff,
   Bell,
+  X,
+  AlertCircle,
+  RotateCcw,
+  User,
+  Mail,
+  Users,
+  Briefcase,
 } from "lucide-react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import {
+  clearReserverSession,
+  loadReserverSession,
+  saveReserverSession,
+  type ReserverSession,
+} from "@/lib/reserver-session";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { aiChatReservation } from "@/lib/reserver-chat.functions";
 import { transcribeAudio } from "@/lib/stt.functions";
@@ -144,6 +158,18 @@ const RECAP: Record<"fr" | "en", Record<string, string>> = {
     ok_ref: "Référence de suivi",
     ok_cta: "Suivre ma course",
     counter: "caractères restants",
+    close: "Fermer le récapitulatif",
+    required: "obligatoire",
+    optional: "facultatif",
+    trip_section: "Votre trajet",
+    review_section: "Ce qui sera envoyé au chauffeur",
+    err_title: "Corrigez les champs suivants",
+    err_intro: "Le formulaire n'a pas été envoyé.",
+    valid: "Champ validé",
+    to_fill: "À compléter",
+    restored: "Nous avons retrouvé votre réservation en cours.",
+    restored_cta: "Recommencer à zéro",
+    map_error_title: "Carte indisponible",
   },
   en: {
     open: "Review and confirm",
@@ -179,7 +205,29 @@ const RECAP: Record<"fr" | "en", Record<string, string>> = {
     ok_ref: "Tracking reference",
     ok_cta: "Track my ride",
     counter: "characters left",
+    close: "Close summary",
+    required: "required",
+    optional: "optional",
+    trip_section: "Your journey",
+    review_section: "What will be sent to the driver",
+    err_title: "Please fix the following fields",
+    err_intro: "The form was not submitted.",
+    valid: "Field valid",
+    to_fill: "To complete",
+    restored: "We restored your booking in progress.",
+    restored_cta: "Start over",
+    map_error_title: "Map unavailable",
   },
+};
+
+/** Champs du récapitulatif → id DOM, pour lier erreurs, labels et focus. */
+const FIELD_IDS: Record<string, string> = {
+  nom: "recap-nom",
+  telephone: "recap-tel",
+  email: "recap-email",
+  passagers: "recap-pax",
+  bagages: "recap-bags",
+  agree: "recap-agree",
 };
 
 const PHONE_RE = /^(?:\+33|0)[1-9](?:[ .-]?\d{2}){4}$/;
@@ -484,6 +532,11 @@ function ReserverPage() {
   const tx = (k: TxtKey) => TXT[L][k];
   const chat = useServerFn(aiChatReservation);
   const { subscription: clientPushToken } = usePushNotifications();
+  // ─── Reprise automatique (refresh / retour arrière) ─────────────────────
+  // Restauration après hydratation (jamais pendant le rendu SSR : évite tout
+  // décalage d'hydratation entre le HTML serveur et le premier rendu client).
+  const [wasRestored, setWasRestored] = useState(false);
+  const hydratedRef = useRef(false);
   const [messages, setMessages] = useState<ChatMsg[]>([{ role: "assistant", content: TXT[L].greeting }]);
   const [input, setInput] = useState("");
   const inputRef = useRef("");
@@ -506,6 +559,9 @@ function ReserverPage() {
     agree: false,
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
+  const confirmationRef = useRef<HTMLDivElement>(null);
+  const recapDialogRef = useFocusTrap<HTMLDivElement>(recapOpen && !reservationId, () => setRecapOpen(false));
   const [gps, setGps] = useState<{ lat: number; lng: number; label?: string } | null>(null);
   const [gpsBusy, setGpsBusy] = useState(false);
   const [gpsError, setGpsError] = useState<"denied" | "unavailable" | "timeout" | "low_accuracy" | null>(null);
@@ -771,6 +827,52 @@ function ReserverPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, busy]);
 
+  // ─── Reprise automatique : restauration puis sauvegarde continue ─────────
+  useEffect(() => {
+    const saved = loadReserverSession();
+    hydratedRef.current = true;
+    if (!saved) return;
+    if (saved.messages?.length) setMessages(saved.messages);
+    if (saved.quote) setQuote(saved.quote as Quote);
+    if (saved.form) setForm(saved.form);
+    if (saved.manualDepart) {
+      setManualDepart(saved.manualDepart);
+      setManualDepartCoord(saved.manualDepartCoord ?? null);
+      setShowManualDepart(true);
+    }
+    if (saved.reservationId) setReservationId(saved.reservationId);
+    if (saved.suiviId) setSuiviId(saved.suiviId);
+    setWasRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    // Rien à mémoriser tant que le client n'a pas commencé (accueil seul).
+    const started = messages.length > 1 || Boolean(quote) || Boolean(manualDepart);
+    if (!started) return;
+    saveReserverSession({
+      lang: L,
+      messages,
+      quote,
+      form,
+      manualDepart,
+      manualDepartCoord,
+      reservationId,
+      suiviId,
+    });
+  }, [messages, quote, form, manualDepart, manualDepartCoord, reservationId, suiviId, L]);
+
+  function resetConversation() {
+    clearReserverSession();
+    setWasRestored(false);
+    setMessages([{ role: "assistant", content: TXT[L].greeting }]);
+    setQuote(null);
+    setReservationId(null);
+    setSuiviId(null);
+    setFormErrors({});
+    setForm({ nom: "", telephone: "", email: "", passagers: "1", bagages: "0", note: "", agree: false });
+  }
+
   const R = RECAP[L];
 
   /** Validations claires côté client, avant tout appel à l'assistante. */
@@ -828,7 +930,10 @@ function ReserverPage() {
         setSuiviId(trackId ?? null);
         setRecapOpen(false);
         // Laisse le temps de lire la confirmation avant la redirection.
-        setTimeout(() => navigate({ to: "/suivi/$id", params: { id: trackId! } }), 6000);
+        setTimeout(() => {
+          clearReserverSession();
+          navigate({ to: "/suivi/$id", params: { id: trackId! } });
+        }, 6000);
       }
     } catch (e: any) {
       toast.error(e?.message ?? TXT[L].error);
@@ -1073,7 +1178,15 @@ function ReserverPage() {
     if (!form.agree) errors.agree = R.err_agree;
 
     setFormErrors(errors);
-    if (Object.keys(errors).length > 0) return;
+    const keys = Object.keys(errors);
+    if (keys.length > 0) {
+      // Accessibilité : le résumé d'erreurs reçoit le focus (lu par le lecteur
+      // d'écran), et le premier champ fautif est mis en évidence.
+      window.setTimeout(() => {
+        errorSummaryRef.current?.focus();
+      }, 0);
+      return;
+    }
 
     const note = form.note.trim();
     const msg =
@@ -1084,7 +1197,31 @@ function ReserverPage() {
     void send(msg);
   }
 
+  // Accessibilité : la confirmation prend le focus dès qu'elle apparaît.
+  useEffect(() => {
+    if (reservationId) confirmationRef.current?.focus();
+  }, [reservationId]);
+
   const pickupLabel = formatPickup(quote?.pickup_datetime, L);
+
+  /** Toutes les valeurs qui partiront au chauffeur, relues avant validation. */
+  const reviewRows = [
+    { icon: MapPin, label: R.from, value: quote?.depart_resolu ?? manualDepart ?? "" },
+    { icon: MapPin, label: R.to, value: quote?.arrivee_resolu ?? "" },
+    { icon: Calendar, label: R.when, value: pickupLabel ?? "" },
+    {
+      icon: Car,
+      label: R.dist,
+      value: quote?.distance_km != null ? `${quote.distance_km} km · ~${quote.duree_min} min` : "",
+    },
+    { icon: Sparkles, label: R.price, value: quote?.prix_estime != null ? `${quote.prix_estime.toFixed(2)} €` : "" },
+    { icon: User, label: R.name, value: form.nom.trim() },
+    { icon: Phone, label: R.phone, value: form.telephone.trim() },
+    { icon: Mail, label: R.email, value: form.email.trim() },
+    { icon: Users, label: R.pax, value: form.passagers },
+    { icon: Briefcase, label: R.bags, value: form.bagages },
+    { icon: MessageSquare, label: R.note, value: form.note.trim() },
+  ];
 
   const sugg = [tx("sug1"), tx("sug2"), tx("sug3"), tx("sug4")];
   const stepsLabels = [tx("step1"), tx("step2"), tx("step3"), tx("step4")];
@@ -1101,6 +1238,22 @@ function ReserverPage() {
             {tx("hero_title")}
           </h1>
           <p className="mt-3 text-muted-foreground">{tx("hero_sub")}</p>
+          {wasRestored && !reservationId && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="mx-auto mt-4 flex max-w-xl flex-wrap items-center justify-center gap-3 rounded-2xl border border-accent/30 bg-accent/5 px-4 py-2.5 text-sm"
+            >
+              <span className="text-foreground">{R.restored}</span>
+              <button
+                type="button"
+                onClick={resetConversation}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold text-muted-foreground transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> {R.restored_cta}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Steps banner */}
@@ -1282,9 +1435,12 @@ function ReserverPage() {
             {/* Récapitulatif avant soumission / confirmation multilingue */}
             {reservationId ? (
               <div
-                className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm"
+                ref={confirmationRef}
+                tabIndex={-1}
+                className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 role="status"
                 aria-live="polite"
+                aria-atomic="true"
               >
                 <p className="flex items-center gap-2 font-display text-base font-bold text-foreground">
                   <CheckCircle2 className="h-5 w-5 text-emerald-600" /> {R.ok_title}
@@ -1412,18 +1568,72 @@ function ReserverPage() {
         {recapOpen && !reservationId && (
           <div
             className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="recap-title"
             onClick={(e) => e.target === e.currentTarget && setRecapOpen(false)}
           >
-            <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-border bg-card p-5 shadow-[var(--shadow-elegant)] sm:rounded-3xl sm:p-6">
-              <h2 id="recap-title" className="font-display text-xl font-bold text-foreground">
-                {R.title}
-              </h2>
-              <p className="mt-1 text-xs text-muted-foreground">{R.subtitle}</p>
+            <div
+              ref={recapDialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="recap-title"
+              aria-describedby="recap-subtitle"
+              className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-border bg-card p-5 shadow-[var(--shadow-elegant)] sm:rounded-3xl sm:p-6"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 id="recap-title" className="font-display text-xl font-bold text-foreground">
+                    {R.title}
+                  </h2>
+                  <p id="recap-subtitle" className="mt-1 text-xs text-muted-foreground">
+                    {R.subtitle}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRecapOpen(false)}
+                  aria-label={R.close}
+                  className="-mr-1 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
 
-              <dl className="mt-4 space-y-2 rounded-2xl border border-border bg-background/60 p-4 text-sm">
+              {/* Résumé d'erreurs : focusable, annoncé, liens vers les champs */}
+              {Object.keys(formErrors).length > 0 && (
+                <div
+                  ref={errorSummaryRef}
+                  tabIndex={-1}
+                  role="alert"
+                  aria-live="assertive"
+                  className="mt-4 rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-destructive"
+                >
+                  <p className="flex items-center gap-2 font-semibold text-destructive">
+                    <AlertCircle className="h-4 w-4" aria-hidden="true" /> {R.err_title}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-destructive/80">{R.err_intro}</p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-[12px] text-destructive">
+                    {Object.entries(formErrors).map(([field, message]) => (
+                      <li key={field}>
+                        <a
+                          href={`#${FIELD_IDS[field] ?? "recap-nom"}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById(FIELD_IDS[field] ?? "")?.focus();
+                          }}
+                          className="underline underline-offset-2"
+                        >
+                          {message}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <h3 className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {R.trip_section}
+              </h3>
+              <dl className="mt-2 space-y-2 rounded-2xl border border-border bg-background/60 p-4 text-sm">
+
                 <div className="flex justify-between gap-3">
                   <dt className="shrink-0 text-muted-foreground">{R.from}</dt>
                   <dd className="text-right font-medium text-foreground">{quote?.depart_resolu ?? "—"}</dd>
@@ -1458,11 +1668,16 @@ function ReserverPage() {
                   submitRecap();
                 }}
               >
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{R.contact}</p>
+                <fieldset className="space-y-3 border-0 p-0">
+                <legend className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {R.contact}
+                </legend>
 
                 <div>
                   <label htmlFor="recap-nom" className="block text-xs font-medium text-muted-foreground">
-                    {R.name}
+                    {R.name}{" "}
+                    <span className="text-destructive" aria-hidden="true">*</span>
+                    <span className="sr-only"> ({R.required})</span>
                   </label>
                   <input
                     id="recap-nom"
@@ -1470,6 +1685,8 @@ function ReserverPage() {
                     onChange={(e) => setForm((f) => ({ ...f, nom: e.target.value }))}
                     maxLength={100}
                     autoComplete="name"
+                    required
+                    aria-required="true"
                     aria-invalid={!!formErrors.nom}
                     aria-describedby={formErrors.nom ? "recap-nom-err" : undefined}
                     className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
@@ -1484,7 +1701,9 @@ function ReserverPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <label htmlFor="recap-tel" className="block text-xs font-medium text-muted-foreground">
-                      {R.phone}
+                      {R.phone}{" "}
+                      <span className="text-destructive" aria-hidden="true">*</span>
+                      <span className="sr-only"> ({R.required})</span>
                     </label>
                     <input
                       id="recap-tel"
@@ -1495,6 +1714,8 @@ function ReserverPage() {
                       maxLength={20}
                       autoComplete="tel"
                       placeholder="06 12 34 56 78"
+                      required
+                      aria-required="true"
                       aria-invalid={!!formErrors.telephone}
                       aria-describedby={formErrors.telephone ? "recap-tel-err" : undefined}
                       className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
@@ -1507,7 +1728,9 @@ function ReserverPage() {
                   </div>
                   <div>
                     <label htmlFor="recap-email" className="block text-xs font-medium text-muted-foreground">
-                      {R.email}
+                      {R.email}{" "}
+                      <span className="text-destructive" aria-hidden="true">*</span>
+                      <span className="sr-only"> ({R.required})</span>
                     </label>
                     <input
                       id="recap-email"
@@ -1517,6 +1740,8 @@ function ReserverPage() {
                       onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                       maxLength={255}
                       autoComplete="email"
+                      required
+                      aria-required="true"
                       aria-invalid={!!formErrors.email}
                       aria-describedby={formErrors.email ? "recap-email-err" : undefined}
                       className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
@@ -1542,10 +1767,13 @@ function ReserverPage() {
                       value={form.passagers}
                       onChange={(e) => setForm((f) => ({ ...f, passagers: e.target.value }))}
                       aria-invalid={!!formErrors.passagers}
+                      aria-describedby={formErrors.passagers ? "recap-pax-err" : undefined}
                       className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
                     />
                     {formErrors.passagers && (
-                      <p className="mt-1 text-[11px] font-medium text-destructive">{formErrors.passagers}</p>
+                      <p id="recap-pax-err" className="mt-1 text-[11px] font-medium text-destructive">
+                        {formErrors.passagers}
+                      </p>
                     )}
                   </div>
                   <div>
@@ -1560,10 +1788,13 @@ function ReserverPage() {
                       value={form.bagages}
                       onChange={(e) => setForm((f) => ({ ...f, bagages: e.target.value }))}
                       aria-invalid={!!formErrors.bagages}
+                      aria-describedby={formErrors.bagages ? "recap-bags-err" : undefined}
                       className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
                     />
                     {formErrors.bagages && (
-                      <p className="mt-1 text-[11px] font-medium text-destructive">{formErrors.bagages}</p>
+                      <p id="recap-bags-err" className="mt-1 text-[11px] font-medium text-destructive">
+                        {formErrors.bagages}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1583,17 +1814,52 @@ function ReserverPage() {
                   />
                 </div>
 
-                <label className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={form.agree}
-                    onChange={(e) => setForm((f) => ({ ...f, agree: e.target.checked }))}
-                    className="mt-0.5 h-4 w-4 accent-[hsl(var(--accent))]"
-                    aria-invalid={!!formErrors.agree}
-                  />
-                  <span>{R.agree}</span>
-                </label>
-                {formErrors.agree && <p className="text-[11px] font-medium text-destructive">{formErrors.agree}</p>}
+                </fieldset>
+
+                {/* Récapitulatif complet, mis à jour en direct avant envoi */}
+                <section
+                  aria-live="polite"
+                  className="rounded-2xl border border-accent/30 bg-accent/5 p-4"
+                >
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-accent">{R.review_section}</h3>
+                  <dl className="mt-2 grid gap-x-4 gap-y-1.5 text-[13px] sm:grid-cols-2">
+                    {reviewRows.map((row) => (
+                      <div key={row.label} className="flex items-start justify-between gap-2 sm:block">
+                        <dt className="flex items-center gap-1.5 text-muted-foreground">
+                          <row.icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          {row.label}
+                        </dt>
+                        <dd
+                          className={`text-right font-medium sm:text-left ${row.value ? "text-foreground" : "italic text-muted-foreground"}`}
+                        >
+                          {row.value || R.to_fill}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+
+                <div>
+                  <label htmlFor="recap-agree" className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <input
+                      id="recap-agree"
+                      type="checkbox"
+                      checked={form.agree}
+                      onChange={(e) => setForm((f) => ({ ...f, agree: e.target.checked }))}
+                      className="mt-0.5 h-4 w-4 accent-[hsl(var(--accent))]"
+                      required
+                      aria-required="true"
+                      aria-invalid={!!formErrors.agree}
+                      aria-describedby={formErrors.agree ? "recap-agree-err" : undefined}
+                    />
+                    <span>{R.agree}</span>
+                  </label>
+                  {formErrors.agree && (
+                    <p id="recap-agree-err" className="mt-1 text-[11px] font-medium text-destructive">
+                      {formErrors.agree}
+                    </p>
+                  )}
+                </div>
 
                 <div className="flex gap-2 pt-1">
                   <button
@@ -1625,10 +1891,15 @@ function ReserverPage() {
           <div className="relative h-[360px] w-full">
             <div ref={mapRef} className="absolute inset-0" />
             {mapError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/95 p-4">
-                <pre className="max-h-full max-w-full overflow-auto whitespace-pre-wrap rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-[11px] leading-relaxed text-destructive">
-                  {mapError}
-                </pre>
+              <div className="absolute inset-0 flex items-center justify-center bg-background/95 p-4" role="status">
+                <div className="max-h-full max-w-full overflow-auto rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                  <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
+                    <AlertCircle className="h-4 w-4" aria-hidden="true" /> {R.map_error_title}
+                  </p>
+                  <pre className="mt-1.5 whitespace-pre-wrap text-[11px] leading-relaxed text-destructive">
+                    {mapError}
+                  </pre>
+                </div>
               </div>
             )}
           </div>

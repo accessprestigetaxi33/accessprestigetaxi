@@ -8,8 +8,24 @@ import {
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_TRACKING_ID,
+  getMapsRuntimeConfig,
   resolveGoogleMapsApiKeys,
 } from "./googleConfig";
+
+/** Message actionnable quand Google refuse la clé sur le domaine courant. */
+function refererHelp(): string {
+  const cfg = getMapsRuntimeConfig();
+  const host = typeof window !== "undefined" ? window.location.origin : cfg.host;
+  const list = (cfg.allowlist.length > 0 ? cfg.allowlist : [`${host}/*`]).join("\n  • ");
+  return [
+    `Google Maps refuse la clé sur ${host}.`,
+    "",
+    "Dans Google Cloud Console → Identifiants → votre clé Maps → Restrictions d'application (référents HTTP), ajoutez :",
+    `  • ${list}`,
+    "",
+    "Alternative pour tester en preview/localhost sans toucher à la clé de production : créez une seconde clé Maps autorisée sur ces domaines et enregistrez-la dans le secret GOOGLE_MAPS_DEV_API_KEY — elle sera utilisée automatiquement en preview.",
+  ].join("\n");
+}
 
 export type GoogleMapsApi = any;
 
@@ -32,7 +48,7 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
     mapsLoadPromise = resolveGoogleMapsApiKeys().then((apiKeys) => {
       if (apiKeys.length === 0) {
         throw new Error(
-          "Clé Google Maps manquante — ajoute GOOGLE_MAPS_API_KEY (ou GOOGLE_API_KEY) côté serveur.",
+          "Clé Google Maps manquante — ajoutez le secret GOOGLE_MAPS_API_KEY (ou GOOGLE_API_KEY) côté serveur, et GOOGLE_MAPS_DEV_API_KEY pour la preview.",
         );
       }
       return new Promise<GoogleMapsApi>((resolve, reject) => {
@@ -51,7 +67,7 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
         const apiKey = apiKeys[index];
         if (!apiKey) {
           cleanupFailedScript();
-          reject(new Error("Impossible de charger Google Maps avec les clés configurées."));
+          reject(new Error(refererHelp()));
           return;
         }
         const existing = document.getElementById("google-maps-sdk");
@@ -96,9 +112,7 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
           }, 500);
         };
         (win as any).gm_authFailure = () => {
-          fail(
-            "Google Maps refuse la clé sur ce domaine. Vérifie les restrictions HTTP accessprestigetaxi.lovable.app/* et *.accessprestigetaxi.lovable.app/*.",
-          );
+          fail(refererHelp());
         };
 
       const script = document.createElement("script");
