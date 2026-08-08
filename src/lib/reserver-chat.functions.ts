@@ -50,7 +50,7 @@ FORMAT pickup_datetime OBLIGATOIRE : ISO 8601 en heure 24h, sans suffixe de fuse
 Puis confirm_reservation. Passagers=1, bagages=0 par défaut.
 
 Règles métier :
-• Tarifs : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit (19h-7h), le dimanche et les jours fériés. Tarif mixte automatique.
+• Tarifs : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit (19h-7h), le dimanche et les jours fériés. Tarif mixte automatique.
 • Flotte : Patricia conduit une BMW iX1 100 % électrique (4 passagers). Alain conduit un van Mercedes jusqu'à 7 passagers — propose-le spontanément dès 5 passagers ou pour un groupe.
 • Sièges bébé et sièges enfant disponibles sur demande, sans supplément.
 • Zone : Charente-Maritime (La Rochelle, Rochefort, Royan, Saintes, Île de Ré, Île d'Oléron, Châtelaillon-Plage…) et longue distance (Bordeaux, Nantes, Paris, aéroports, gares).

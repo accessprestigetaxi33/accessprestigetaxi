@@ -27,6 +27,44 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { seoLinks } from "@/lib/seo-hreflang";
 
+// ─── Géolocalisation : même configuration que Start Fresh Here ──────────────
+const MAX_AUTO_GEO_ACCURACY_M = 1500;
+const MAX_AUTO_GEO_DISTANCE_KM = 130;
+/** Centre de zone : Saintes (Charente-Maritime). */
+const ZONE_CENTER: [number, number] = [45.746, -0.6337];
+
+function distanceKmBetween(a: [number, number], b: [number, number]): number {
+  const R = 6371;
+  const dLat = ((b[0] - a[0]) * Math.PI) / 180;
+  const dLng = ((b[1] - a[1]) * Math.PI) / 180;
+  const lat1 = (a[0] * Math.PI) / 180;
+  const lat2 = (b[0] * Math.PI) / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+function isInServiceZone(lat: number, lng: number): boolean {
+  return distanceKmBetween(ZONE_CENTER, [lat, lng]) <= MAX_AUTO_GEO_DISTANCE_KM;
+}
+
+/** Fallback géolocalisation IP si le GPS du navigateur échoue. */
+async function ipGeolocate(): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 5000);
+    const res = await fetch("https://ipapi.co/json/", { signal: ctrl.signal });
+    clearTimeout(tid);
+    if (!res.ok) return null;
+    const j = await res.json();
+    const lat = Number(j?.latitude);
+    const lng = Number(j?.longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return { lat, lng };
+  } catch {
+    return null;
+  }
+}
+
 const RESERVER_TITLE_FR = "Réserver un taxi en Charente-Maritime — Access Prestige Taxi";
 const RESERVER_DESC_FR =
   "Réservez votre taxi en Charente-Maritime en discutant (ou à la voix) avec notre assistante. Devis instantané, créneaux vérifiés, confirmation immédiate.";
@@ -600,68 +638,102 @@ function ReserverPage() {
     })();
   }, [quote]);
 
-  // AUTO geoloc on mount — no button.
+  // AUTO geoloc on mount — no button. Même configuration que Start Fresh Here :
+  // 1) GPS haute précision, 2) retry basse précision avec cache, 3) fallback IP.
   useEffect(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setGpsError("unavailable");
+    const noGeo = typeof navigator === "undefined" || !navigator.geolocation;
+    setGpsBusy(true);
+
+    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean) => {
+      const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      setGps({ lat, lng, label });
+      setGpsError(approximate ? "low_accuracy" : null);
+      setGpsBusy(false);
       markGpsReady();
+      setMessages((prev) => {
+        if (prev.length === 1 && prev[0].role === "assistant") {
+          return [
+            {
+              role: "assistant",
+              content: approximate
+                ? `📍 ${TXT[L].gps_low}. ${TXT[L].gps_ask_manual}\n${label}`
+                : `📍 ${TXT[L].gps_detected} : ${label}.\n${TXT[L].ask_destination}`,
+            },
+          ];
+        }
+        return prev;
+      });
+      const map = mapInst.current;
+      const g = (window as any).google;
+      if (map && g?.maps) {
+        const pos2 = { lat, lng };
+        if (gpsMarker.current) gpsMarker.current.setPosition(pos2);
+        else
+          gpsMarker.current = new g.maps.Marker({
+            position: pos2,
+            map,
+            title: TXT[L].map_from,
+            label: { text: "🧭", fontSize: "18px" },
+          });
+        map.setCenter(pos2);
+        map.setZoom(approximate ? 11 : 14);
+      }
+    };
+
+    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+      setGpsBusy(false);
+      setGpsError(code);
+      markGpsReady();
+    };
+
+    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy") => {
+      const ip = await ipGeolocate();
+      if (ip && isInServiceZone(ip.lat, ip.lng)) {
+        await applyDetectedPosition(ip.lat, ip.lng, true);
+        return;
+      }
+      failWith(code);
+    };
+
+    const onSuccess = (pos: GeolocationPosition, allowApproximate: boolean) => {
+      const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || !isInServiceZone(lat, lng)) {
+        void tryIpFallback("unavailable");
+        return;
+      }
+      const approximate = typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M;
+      if (approximate && !allowApproximate) {
+        void tryIpFallback("low_accuracy");
+        return;
+      }
+      void applyDetectedPosition(lat, lng, approximate);
+    };
+
+    const onFirstError = (firstErr: GeolocationPositionError) => {
+      if (firstErr?.code === 1) {
+        void tryIpFallback("denied");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (cached) => onSuccess(cached, true),
+        (secondErr) => {
+          const err = secondErr || firstErr;
+          void tryIpFallback(err?.code === 1 ? "denied" : err?.code === 3 ? "timeout" : "unavailable");
+        },
+        { enableHighAccuracy: false, maximumAge: 120000, timeout: 8000 },
+      );
+    };
+
+    if (noGeo) {
+      void tryIpFallback("unavailable");
       return;
     }
-    setGpsBusy(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-        const LOW_ACCURACY_LIMIT_M = 300;
-        const isLowAccuracy = typeof accuracy === "number" && accuracy > LOW_ACCURACY_LIMIT_M;
-        const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-        setGps(isLowAccuracy ? null : { lat, lng, label });
-        setGpsError(isLowAccuracy ? "low_accuracy" : null);
-        setGpsBusy(false);
-        markGpsReady();
-        setMessages((prev) => {
-          if (prev.length === 1 && prev[0].role === "assistant") {
-            if (isLowAccuracy) {
-              const accM = Math.round(accuracy);
-              return [
-                {
-                  role: "assistant",
-                  content: `📍 ${TXT[L].gps_low} (±${accM} m). ${TXT[L].gps_ask_manual}`,
-                },
-              ];
-            }
-            return [
-              {
-                role: "assistant",
-                content: `📍 ${TXT[L].gps_detected} : ${label}.\n${TXT[L].ask_destination}`,
-              },
-            ];
-          }
-          return prev;
-        });
-        const map = mapInst.current;
-        const g = (window as any).google;
-        if (!isLowAccuracy && map && g?.maps) {
-          const pos2 = { lat, lng };
-          if (gpsMarker.current) gpsMarker.current.setPosition(pos2);
-          else
-            gpsMarker.current = new g.maps.Marker({
-              position: pos2,
-              map,
-              title: TXT[L].map_from,
-              label: { text: "🧭", fontSize: "18px" },
-            });
-          map.setCenter(pos2);
-          map.setZoom(14);
-        }
-      },
-      (err) => {
-        setGpsBusy(false);
-        const code = err?.code;
-        setGpsError(code === 1 ? "denied" : code === 3 ? "timeout" : "unavailable");
-        markGpsReady();
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
-    );
+
+    navigator.geolocation.getCurrentPosition((pos) => onSuccess(pos, false), onFirstError, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 18000,
+    });
   }, []);
 
   // When user picks a manual departure, update greeting & map
