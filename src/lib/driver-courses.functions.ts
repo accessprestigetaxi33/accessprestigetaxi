@@ -65,3 +65,44 @@ export const setCourseDriver = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Met à jour le statut d'une course (panneau chauffeur uniquement). */
+export const driverSetReservationStatus = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    TokenSchema.extend({
+      reservation_id: z.string().uuid(),
+      status: z.enum(["pending", "accepted", "en_route", "arrived", "completed", "cancelled"]),
+    }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { assertDriverToken } = await import("@/lib/driver-auth.server");
+    assertDriverToken(data.token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: updated, error } = await supabaseAdmin
+      .from("reservations")
+      .update({ status: data.status } as any)
+      .eq("id", data.reservation_id)
+      .neq("status", data.status)
+      .select("id")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return { changed: !!updated };
+  });
+
+/** Supprime définitivement une course (panneau chauffeur uniquement). */
+export const driverDeleteReservation = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    TokenSchema.extend({ reservation_id: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { assertDriverToken } = await import("@/lib/driver-auth.server");
+    assertDriverToken(data.token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("avis")
+      .update({ reservation_id: null } as any)
+      .eq("reservation_id", data.reservation_id);
+    const { error } = await supabaseAdmin.from("reservations").delete().eq("id", data.reservation_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

@@ -14,7 +14,7 @@ import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
 import { verifyDriverToken, getActiveVisitorCount, openDriverSession } from "@/lib/driver-auth.functions";
 import { gaEvent } from "@/lib/ga4";
-import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functions";
+import { listDriverCourses, setCourseDriver, driverDeleteReservation } from "@/lib/driver-courses.functions";
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
@@ -153,6 +153,15 @@ const css = `
   }
   .drv-section { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
   .drv-card { background: #FDFBF7; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+  .drv-swipe { position: relative; margin-bottom: 10px; border-radius: 16px; overflow: hidden; }
+  .drv-swipe .drv-card { margin-bottom: 0; }
+  .drv-swipe-content { position: relative; z-index: 1; touch-action: pan-y; will-change: transform; }
+  .drv-swipe-action {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 96px; z-index: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    background: #dc2626; color: #fff; border: none; font-size: 20px; font-weight: 700; cursor: pointer;
+  }
+  .drv-swipe-action span { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
   .drv-card.pending { border-color: #f59e0b; }
   .drv-card.new { border-color: #3b82f6; box-shadow: 0 0 0 3px #3b82f620; }
   .drv-card.done { opacity: 0.5; }
@@ -625,7 +634,7 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           <span style={{ fontSize: 26 }}>🚕</span>
           <h1>{driverLabel ? `Espace ${driverLabel}` : "Espace chauffeur"}</h1>
 
-          {installPrompt && (
+          {installPrompt ? (
             <button
               onClick={async () => {
                 installPrompt.prompt();
@@ -646,6 +655,22 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
             >
               📲 Installer
             </button>
+          ) : (
+            <a
+              href="/driver-install.html"
+              style={{
+                flexShrink: 0,
+                background: "#0ea5e9",
+                color: "#FDFBF7",
+                borderRadius: 8,
+                padding: "8px 10px",
+                fontSize: 11,
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              📲 Installer
+            </a>
           )}
           <a
             href="/"
@@ -2005,19 +2030,69 @@ function CourseCard({
     if (!confirm("Supprimer définitivement cette course ? Action irréversible.")) return;
     setDeleting(true);
     try {
-      const { error } = await (supabase as any).from("reservations").delete().eq("id", resa.id);
-      if (error) throw error;
+      await driverDeleteReservation({ data: { token: getDriverToken(), reservation_id: resa.id } });
       toast.success("Course supprimée");
       onRefresh();
     } catch (e: any) {
       toast.error("Suppression impossible : " + (e.message ?? e));
     } finally {
       setDeleting(false);
+      setSwipeX(0);
     }
   };
 
+  // ── Swipe-to-delete (iOS) ──
+  const [swipeX, setSwipeX] = useState(0);
+  const swipeStart = useRef<{ x: number; y: number; base: number } | null>(null);
+  const swipeLock = useRef<"none" | "x" | "y">("none");
+  const SWIPE_MAX = 88;
+
+  const onSwipeStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    if (!t) return;
+    swipeStart.current = { x: t.clientX, y: t.clientY, base: swipeX };
+    swipeLock.current = "none";
+  };
+  const onSwipeMove = (e: React.TouchEvent) => {
+    const s = swipeStart.current;
+    const t = e.touches[0];
+    if (!s || !t) return;
+    const dx = t.clientX - s.x;
+    const dy = t.clientY - s.y;
+    if (swipeLock.current === "none") {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      swipeLock.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    }
+    if (swipeLock.current !== "x") return;
+    const next = Math.min(0, Math.max(-SWIPE_MAX - 24, s.base + dx));
+    setSwipeX(next);
+  };
+  const onSwipeEnd = () => {
+    if (swipeLock.current === "x") setSwipeX(swipeX < -SWIPE_MAX / 2 ? -SWIPE_MAX : 0);
+    swipeStart.current = null;
+    swipeLock.current = "none";
+  };
+
   return (
-    <div className={`drv-card${resa.status === "pending" ? " new" : ""}`}>
+    <div className="drv-swipe">
+      <button
+        type="button"
+        className="drv-swipe-action"
+        aria-label="Supprimer cette course"
+        onClick={handleDeleteResa}
+        disabled={deleting}
+      >
+        {deleting ? "…" : "🗑"}
+        <span>Suppr.</span>
+      </button>
+      <div
+        className={`drv-card drv-swipe-content${resa.status === "pending" ? " new" : ""}`}
+        style={{ transform: `translateX(${swipeX}px)`, transition: swipeStart.current ? "none" : "transform .22s ease" }}
+        onTouchStart={onSwipeStart}
+        onTouchMove={onSwipeMove}
+        onTouchEnd={onSwipeEnd}
+        onTouchCancel={onSwipeEnd}
+      >
       {/* En-tête */}
       <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
         <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
@@ -2727,6 +2802,7 @@ function CourseCard({
       >
         {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
       </button>
+      </div>
     </div>
   );
 }
