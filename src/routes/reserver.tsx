@@ -943,25 +943,47 @@ function ReserverPage() {
     }
     if (saved.reservationId) setReservationId(saved.reservationId);
     if (saved.suiviId) setSuiviId(saved.suiviId);
+    if (saved.recapOpen && !saved.reservationId) setRecapOpen(true);
     setWasRestored(true);
   }, []);
 
+  const sessionSnapshotRef = useRef<(() => void) | null>(null);
   useEffect(() => {
-    if (!hydratedRef.current) return;
-    // Rien à mémoriser tant que le client n'a pas commencé (accueil seul).
-    const started = messages.length > 1 || Boolean(quote) || Boolean(manualDepart);
-    if (!started) return;
-    saveReserverSession({
-      lang: L,
-      messages,
-      quote,
-      form,
-      manualDepart,
-      manualDepartCoord,
-      reservationId,
-      suiviId,
-    });
-  }, [messages, quote, form, manualDepart, manualDepartCoord, reservationId, suiviId, L]);
+    const persist = () => {
+      if (!hydratedRef.current) return;
+      // Rien à mémoriser tant que le client n'a pas commencé (accueil seul).
+      const started = messages.length > 1 || Boolean(quote) || Boolean(manualDepart);
+      if (!started) return;
+      saveReserverSession({
+        lang: L,
+        messages,
+        quote,
+        form,
+        manualDepart,
+        manualDepartCoord,
+        reservationId,
+        suiviId,
+        recapOpen,
+      });
+    };
+    sessionSnapshotRef.current = persist;
+    persist();
+  }, [messages, quote, form, manualDepart, manualDepartCoord, reservationId, suiviId, recapOpen, L]);
+
+  // Retour arrière navigateur / onglet masqué / bfcache : on fige l'état exact
+  // avant que la page ne soit démontée ou mise en cache.
+  useEffect(() => {
+    const flush = () => sessionSnapshotRef.current?.();
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("beforeunload", flush);
+    document.addEventListener("visibilitychange", flush);
+    return () => {
+      flush();
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("beforeunload", flush);
+      document.removeEventListener("visibilitychange", flush);
+    };
+  }, []);
 
   function resetConversation() {
     clearReserverSession();
@@ -971,6 +993,7 @@ function ReserverPage() {
     setReservationId(null);
     setSuiviId(null);
     setFormErrors({});
+    setRecapOpen(false);
     setForm({ nom: "", telephone: "", email: "", passagers: "1", bagages: "0", note: "", agree: false });
   }
 
