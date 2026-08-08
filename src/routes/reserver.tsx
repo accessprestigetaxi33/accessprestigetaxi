@@ -1197,18 +1197,17 @@ function ReserverPage() {
 
   const voiceStartingRef = useRef(false);
 
-  async function toggleVoice() {
-    if (listening) {
-      stopVoice();
-      return;
-    }
-    if (voiceStartingRef.current) return;
+  async function startRecording() {
+    if (listening || voiceStartingRef.current) return;
     voiceStartingRef.current = true;
+    setVoiceError(null);
+    setVoicePartial("");
 
     try {
       const Ctx: typeof AudioContext | undefined =
         typeof window !== "undefined" ? window.AudioContext || (window as any).webkitAudioContext : undefined;
       if (!Ctx || !navigator.mediaDevices?.getUserMedia) {
+        setVoiceError(TXT[L].voice_unsupported);
         toast.error(TXT[L].voice_unsupported);
         return;
       }
@@ -1220,12 +1219,21 @@ function ReserverPage() {
         });
       } catch (err: any) {
         const name = err?.name || err?.message;
-        if (name === "NotAllowedError" || name === "SecurityError") toast.error(TXT[L].voice_denied);
-        else if (name === "NotFoundError" || name === "OverconstrainedError") toast.error(TXT[L].voice_no_mic);
-        else toast.error(TXT[L].voice_error);
+        let msg = TXT[L].voice_error;
+        if (name === "NotAllowedError" || name === "SecurityError") {
+          msg = TXT[L].voice_denied;
+          setMicPermission("denied");
+          setMicGate(true);
+        } else if (name === "NotFoundError" || name === "OverconstrainedError") {
+          msg = TXT[L].voice_no_mic;
+        }
+        setVoiceError(msg);
+        toast.error(msg);
         return;
       }
       mediaStreamRef.current = stream;
+      setMicPermission("granted");
+      setMicGate(false);
 
       const ctx = new Ctx();
       audioCtxRef.current = ctx;
@@ -1251,6 +1259,10 @@ function ReserverPage() {
         for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
         const rms = Math.sqrt(sum / data.length);
         const now = Date.now();
+        if (now - levelTickRef.current > 80) {
+          levelTickRef.current = now;
+          setVoiceLevel(Math.min(1, rms * 8));
+        }
         if (rms > SILENCE_RMS) {
           hasSpokenRef.current = true;
           lastLoudRef.current = now;
@@ -1275,12 +1287,69 @@ function ReserverPage() {
     } catch (err) {
       console.error("[voice] start failed", err);
       cleanupMic();
+      setVoiceError(TXT[L].voice_error);
       toast.error(TXT[L].voice_error);
       setListening(false);
     } finally {
       voiceStartingRef.current = false;
     }
   }
+
+  const startRecordingRef = useRef(startRecording);
+  startRecordingRef.current = startRecording;
+
+  async function toggleVoice() {
+    if (listening) {
+      stopVoice();
+      return;
+    }
+    // Écran d'explication avant la 1re demande d'autorisation (ou après un refus)
+    let state: string = micPermission;
+    try {
+      const perm = await (navigator as any).permissions?.query?.({ name: "microphone" as PermissionName });
+      if (perm?.state) {
+        state = perm.state;
+        setMicPermission(perm.state);
+      }
+    } catch {
+      /* Safari : Permissions API micro non supportée */
+    }
+    const seen = typeof window !== "undefined" && localStorage.getItem("apt_mic_intro") === "1";
+    if (state === "granted" || (seen && state !== "denied")) {
+      void startRecording();
+      return;
+    }
+    setVoiceError(null);
+    setMicGate(true);
+  }
+
+  // Relance automatique dès que l'autorisation micro passe à "granted"
+  useEffect(() => {
+    let perm: any;
+    let cancelled = false;
+    (async () => {
+      try {
+        perm = await (navigator as any).permissions?.query?.({ name: "microphone" as PermissionName });
+      } catch {
+        return;
+      }
+      if (!perm || cancelled) return;
+      setMicPermission(perm.state);
+      perm.onchange = () => {
+        setMicPermission(perm.state);
+        if (perm.state === "granted") {
+          setVoiceError(null);
+          setMicGate(false);
+          void startRecordingRef.current();
+        }
+      };
+    })();
+    return () => {
+      cancelled = true;
+      if (perm) perm.onchange = null;
+    };
+  }, []);
+
 
 
   useEffect(() => {
