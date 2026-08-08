@@ -65,7 +65,100 @@ type Quote = {
   prix_estime?: number;
   depart_resolu?: string;
   arrivee_resolu?: string;
+  pickup_datetime?: string;
 };
+
+// ─── Récapitulatif / validations avant confirmation ────────────────────────
+const MAX_INPUT = 800;
+
+const RECAP: Record<"fr" | "en", Record<string, string>> = {
+  fr: {
+    open: "Vérifier et confirmer",
+    title: "Récapitulatif de votre course",
+    subtitle: "Vérifiez les informations avant de confirmer définitivement.",
+    from: "Départ",
+    to: "Arrivée",
+    when: "Date et heure",
+    dist: "Distance / durée",
+    price: "Tarif estimé",
+    contact: "Vos coordonnées",
+    name: "Nom et prénom",
+    phone: "Téléphone",
+    email: "E-mail",
+    pax: "Passagers",
+    bags: "Bagages",
+    note: "Précision (optionnel)",
+    note_ph: "Siège bébé, étage, bagages volumineux…",
+    agree: "Je confirme l'exactitude de ces informations.",
+    cancel: "Modifier",
+    submit: "Confirmer la réservation",
+    err_name: "Indiquez votre nom (2 caractères minimum).",
+    err_phone: "Numéro invalide : 10 chiffres, ex. 06 12 34 56 78.",
+    err_email: "Adresse e-mail invalide.",
+    err_agree: "Merci de cocher la case de confirmation.",
+    err_pax: "Entre 1 et 7 passagers.",
+    err_bags: "Entre 0 et 7 bagages.",
+    err_input: `Message trop long (${MAX_INPUT} caractères maximum).`,
+    err_depart: "Précisez une adresse de départ complète (rue et ville).",
+    err_quote: "Demandez d'abord un devis à l'assistante.",
+    ok_title: "Réservation confirmée",
+    ok_desc: "Votre chauffeur est prévenu. Vous recevez la confirmation par e-mail.",
+    ok_ref: "Référence de suivi",
+    ok_cta: "Suivre ma course",
+    counter: "caractères restants",
+  },
+  en: {
+    open: "Review and confirm",
+    title: "Your ride summary",
+    subtitle: "Please check the details before confirming.",
+    from: "Pickup",
+    to: "Drop-off",
+    when: "Date and time",
+    dist: "Distance / duration",
+    price: "Estimated fare",
+    contact: "Your details",
+    name: "Full name",
+    phone: "Phone",
+    email: "Email",
+    pax: "Passengers",
+    bags: "Luggage",
+    note: "Note (optional)",
+    note_ph: "Baby seat, floor number, large luggage…",
+    agree: "I confirm these details are correct.",
+    cancel: "Edit",
+    submit: "Confirm booking",
+    err_name: "Please enter your name (2 characters minimum).",
+    err_phone: "Invalid number: 10 digits, e.g. 06 12 34 56 78.",
+    err_email: "Invalid email address.",
+    err_agree: "Please tick the confirmation box.",
+    err_pax: "Between 1 and 7 passengers.",
+    err_bags: "Between 0 and 7 pieces of luggage.",
+    err_input: `Message too long (${MAX_INPUT} characters maximum).`,
+    err_depart: "Please enter a complete pickup address (street and town).",
+    err_quote: "Ask the assistant for a quote first.",
+    ok_title: "Booking confirmed",
+    ok_desc: "Your driver has been notified. A confirmation email is on its way.",
+    ok_ref: "Tracking reference",
+    ok_cta: "Track my ride",
+    counter: "characters left",
+  },
+};
+
+const PHONE_RE = /^(?:\+33|0)[1-9](?:[ .-]?\d{2}){4}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+
+function formatPickup(iso: string | undefined, lang: "fr" | "en"): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleString(lang === "en" ? "en-GB" : "fr-FR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 // ─── Textes bilingues (FR/EN) de la page ───────────────────────────────────
 type TxtKey =
