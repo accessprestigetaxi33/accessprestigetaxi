@@ -1,12 +1,15 @@
 /**
  * useDriverArrival — Le chauffeur déclenche "J'arrive dans ~5 min".
- * 1) Met à jour reservations.status → 'en_route'
+ * 1) Met à jour reservations.status → 'en_route' via une server function
+ *    protégée par le jeton chauffeur (aucune écriture directe côté navigateur :
+ *    les RLS interdisent la modification des réservations depuis le client).
  * 2) Envoie une push au client via notifyReservationStatus (server function)
  */
 import { useCallback, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { supabase } from '@/integrations/supabase/client';
 import { notifyReservationStatus } from '@/lib/push.functions';
+import { driverSetReservationStatus } from '@/lib/driver-courses.functions';
+import { getDriverToken } from '@/lib/driver-token';
 
 type ArrivalStatus = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -14,18 +17,23 @@ export function useDriverArrival() {
   const [status, setStatus] = useState<ArrivalStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const notify = useServerFn(notifyReservationStatus);
+  const setReservationStatus = useServerFn(driverSetReservationStatus);
 
   const notifyArrival = useCallback(
     async (reservationId: string): Promise<boolean> => {
       if (!reservationId) return false;
+      const token = getDriverToken();
+      if (!token) {
+        setError('Session chauffeur expirée');
+        setStatus('error');
+        return false;
+      }
       setStatus('sending');
       setError(null);
       try {
-        const { error: updateError } = await supabase
-          .from('reservations')
-          .update({ status: 'en_route' })
-          .eq('id', reservationId);
-        if (updateError) throw new Error(updateError.message);
+        await setReservationStatus({
+          data: { token, reservation_id: reservationId, status: 'en_route' },
+        });
 
         try {
           await notify({ data: { reservation_id: reservationId, status: 'en_route' } });
@@ -43,7 +51,7 @@ export function useDriverArrival() {
         return false;
       }
     },
-    [notify],
+    [notify, setReservationStatus],
   );
 
   const reset = useCallback(() => {
