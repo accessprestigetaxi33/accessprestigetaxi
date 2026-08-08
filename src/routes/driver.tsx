@@ -2777,6 +2777,7 @@ function CourseCard({
       >
         {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
       </button>
+      </div>
     </div>
   );
 }
