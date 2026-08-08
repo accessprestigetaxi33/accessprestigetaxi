@@ -158,11 +158,12 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
     // ── Push client : réponse chauffeur (redirige vers /suivi/$id) ───────────
     if (!data.skip_push) {
       try {
-        const { sendPushToAudience } = await import("@/lib/push.server");
+        const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+        const { driverName } = await resolveReservationDriver(data.reservation_id);
         await sendPushToAudience(
           "client",
           {
-            title: "💬 Patricia a répondu à votre message",
+            title: `💬 ${driverName} a répondu à votre message`,
             body: data.content.slice(0, 100),
             url: `/suivi/${suiviId}`,
             tag: `chat-client-resa-${data.reservation_id}`,
@@ -175,6 +176,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
         console.warn("[chat] push client (resa) failed (non-blocking)", e);
       }
     }
+
 
     return row as ChatMessage;
   });
