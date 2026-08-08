@@ -147,20 +147,27 @@ export const updateReservationTime = createServerFn({ method: "POST" })
     if (error) throw new Error("UPDATE_FAILED");
 
     try {
-      const { sendPushToAudience } = await import("@/lib/push.server");
+      const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+      const { driverId } = await resolveReservationDriver(data.reservation_id);
       const when = new Date(data.pickup_datetime).toLocaleString("fr-FR", {
         dateStyle: "short",
         timeStyle: "short",
         timeZone: "Europe/Paris",
       });
-      await sendPushToAudience("chauffeur", {
-        title: "⏰ Modification d'heure",
-        body: `Le client a modifié l'heure de sa course : ${when}`,
-        url: "/driver",
-        tag: `modif-heure-${data.reservation_id}`,
-        requireInteraction: true,
-      });
+      await sendPushToAudience(
+        "chauffeur",
+        {
+          title: "⏰ Modification d'heure",
+          body: `Le client a modifié l'heure de sa course : ${when}`,
+          url: "/driver",
+          tag: `modif-heure-${data.reservation_id}`,
+          requireInteraction: true,
+          data: { reservation_id: data.reservation_id, kind: "reschedule" },
+        },
+        { driverId },
+      );
     } catch (e) {
+
       console.warn("[client] push modif-heure failed", e);
     }
 
