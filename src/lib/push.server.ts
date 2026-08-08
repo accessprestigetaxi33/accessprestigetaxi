@@ -299,7 +299,7 @@ export async function sendPushToAudience(
   }
   if (error || !data || data.length === 0) return { sent: 0, removed: 0 };
 
-  const claimed = await claimPushSendOnce(audience, payload.tag, opts.reservationId);
+  const claimed = await claimPushSendOnce(audience, payload.tag, opts.dedupTtlMinutes ?? 60);
   if (!claimed) return { sent: 0, removed: 0 };
 
 
