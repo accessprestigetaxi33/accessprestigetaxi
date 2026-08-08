@@ -38,6 +38,8 @@ export type ReserverSession = {
   manualDepartCoord: { lat: number; lng: number } | null;
   reservationId: string | null;
   suiviId: string | null;
+  /** Récapitulatif ouvert au moment où le client a quitté la page. */
+  recapOpen?: boolean;
 };
 
 const KEY = "apt_reserver_state_v1";
