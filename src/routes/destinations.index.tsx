@@ -4,7 +4,7 @@ import { ArrowRight, MapPin } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DESTINATIONS } from "@/data/destinations";
 
-const SITE = "https://accessprestigetaxi.lovable.app";
+const SITE = "https://accessprestigetaxi.fr";
 const TITLE = "Destinations taxi Charente-Maritime — Access Prestige Taxi";
 const DESC =
   "Nos trajets taxi les plus réservés en Charente-Maritime : gare TGV d'Angoulême, aéroport de Bordeaux, île de Ré, Royan, vignobles de Cognac et transport conventionné.";
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/destinations/")({
 const COPY = {
   fr: {
     eyebrow: "Destinations",
-    h1: "Là où l'on vous emmène",
+    h1: "Destinations taxi en Charente-Maritime",
     lead:
       "Chaque trajet dispose de sa page dédiée : distance, durée, tarif de départ et conseils pratiques. Deux chauffeurs, une BMW iX1 électrique et un van Mercedes 7 places, zéro émission en Charente-Maritime.",
     from: "À partir de",
@@ -71,7 +71,7 @@ const COPY = {
   },
   en: {
     eyebrow: "Destinations",
-    h1: "Where we take you",
+    h1: "Taxi destinations across Charente-Maritime",
     lead:
       "Every route has its own page: distance, duration, starting fare and practical tips. Two drivers, one electric BMW iX1 and one 7-seat Mercedes van, zero emissions across Charente-Maritime.",
     from: "From",

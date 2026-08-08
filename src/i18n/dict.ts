@@ -199,7 +199,7 @@ const fr: Dict = {
   "services.title": "Un service taxi pour chaque besoin",
   "services.intro": "À Bordeaux, en Gironde et partout en France : un seul interlocuteur, un service haut de gamme.",
   "services.cta": "Réserver",
-  "services.b1": "",
+  "services.b1": "Trajets sans limite de distance",
   "services.b2": "Jusqu'à 4 passagers",
   "services.b3": "Taxi professionnel",
   "svcp.airport.title": "Transferts Aéroport de Bordeaux",
@@ -265,6 +265,7 @@ const fr: Dict = {
 
   // About page
   "about.eyebrow": "Notre histoire",
+  "about.b.section": "Nos engagements",
   "about.title": "À propos de Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -1324,7 +1325,7 @@ const en: Dict = {
   "services.title": "A taxi service for every need",
   "services.intro": "In Bordeaux, across Gironde and all over France: one contact, premium service.",
   "services.cta": "Book",
-  "services.b1": "",
+  "services.b1": "Rides with no distance limit",
   "services.b2": "Up to 4 passengers",
   "services.b3": "Professional driver",
   "svcp.airport.title": "Bordeaux Airport transfers",
@@ -1386,6 +1387,7 @@ const en: Dict = {
   "city.stemilion": "Saint-Émilion",
 
   "about.eyebrow": "Our story",
+  "about.b.section": "Our commitments",
   "about.title": "About Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -2443,7 +2445,7 @@ const es: Dict = {
   "services.title": "Un servicio de taxi para cada necesidad",
   "services.intro": "En Burdeos, en la Gironda y en toda Francia: un único interlocutor, servicio premium.",
   "services.cta": "Reservar",
-  "services.b1": "",
+  "services.b1": "Trayectos sin límite de distancia",
   "services.b2": "Hasta 4 pasajeros",
   "services.b3": "Chófer profesional",
   "svcp.airport.title": "Traslados al aeropuerto de Burdeos",
@@ -2504,6 +2506,7 @@ const es: Dict = {
   "city.stemilion": "Saint-Émilion",
 
   "about.eyebrow": "Nuestra historia",
+  "about.b.section": "Nuestros compromisos",
   "about.title": "Sobre Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -3546,7 +3549,7 @@ const it: Dict = {
   "services.title": "Un servizio taxi per ogni esigenza",
   "services.intro": "A Bordeaux, in Gironda e in tutta la Francia: un solo interlocutore, servizio premium.",
   "services.cta": "Prenota",
-  "services.b1": "",
+  "services.b1": "Corse senza limiti di distanza",
   "services.b2": "Fino a 4 persone",
   "services.b3": "Autista professionale",
   "svcp.airport.title": "Trasferimenti Aeroporto di Bordeaux",
@@ -3608,6 +3611,7 @@ const it: Dict = {
   "city.stemilion": "Saint-Émilion",
 
   "about.eyebrow": "La nostra storia",
+  "about.b.section": "I nostri impegni",
   "about.title": "Chi siamo — Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":
@@ -4648,7 +4652,7 @@ const ar: Dict = {
   "services.title": "خدمة تاكسي لكل احتياج",
   "services.intro": "في بوردو، عبر جيروند وكل أنحاء فرنسا: جهة اتصال واحدة، خدمة مميزة.",
   "services.cta": "احجز",
-  "services.b1": "",
+  "services.b1": "رحلات بدون حد للمسافة",
   "services.b2": "حتى 4 ركاب",
   "services.b3": "سائق محترف",
   "svcp.airport.title": "نقل من وإلى مطار بوردو",
@@ -4707,6 +4711,7 @@ const ar: Dict = {
   "city.stemilion": "سان إيميليون",
 
   "about.eyebrow": "قصتنا",
+  "about.b.section": "التزاماتنا",
   "about.title": "عن تاكسي سيتي بوردو",
   "about.p1.brand": "تاكسي سيتي بوردو",
   "about.p1": "شركة تاكسي مستقلة في بوردو. نهدف لتقديم خدمة تليق بأناقة بوردو: دقة، راحة، وتكتم.",
@@ -5754,7 +5759,7 @@ const pt: Dict = {
   "services.title": "Um serviço de táxi para cada necessidade",
   "services.intro": "Em Bordéus, na Gironde e em toda a França: um único interlocutor, um serviço de alta qualidade.",
   "services.cta": "Reservar",
-  "services.b1": "",
+  "services.b1": "Viagens sem limite de distância",
   "services.b2": "Até 4 passageiros",
   "services.b3": "Motorista profissional",
   "svcp.airport.title": "Transferes Aeroporto de Bordeaux",
@@ -5817,6 +5822,7 @@ const pt: Dict = {
 
   // About page
   "about.eyebrow": "A nossa história",
+  "about.b.section": "Os nossos compromissos",
   "about.title": "Sobre Access Prestige Taxi",
   "about.p1.brand": "Access Prestige Taxi",
   "about.p1":

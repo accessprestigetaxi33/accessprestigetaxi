@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Access Prestige Taxi — Taxi 100 % électrique en Charente-Maritime" },
+      { title: "Access Prestige Taxi | Taxi & transport conventionné (17)" },
       {
         name: "description",
         content:
@@ -90,7 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Access Prestige Taxi" },
       { property: "og:site_name", content: "Access Prestige Taxi" },
-      { property: "og:title", content: "Access Prestige Taxi" },
+      { property: "og:title", content: "Access Prestige Taxi — Taxi électrique en Charente-Maritime" },
       {
         property: "og:description",
         content: "L'excellence à chaque trajet — taxi 100 % électrique en Charente-Maritime.",
@@ -113,18 +113,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "Organization",
-              "@id": "https://accessprestigetaxi.lovable.app/#organization",
+              "@id": "https://accessprestigetaxi.fr/#organization",
               name: "Access Prestige Taxi",
-              url: "https://accessprestigetaxi.lovable.app",
+              url: "https://accessprestigetaxi.fr",
               slogan: "L'excellence à chaque trajet",
-              logo: "https://accessprestigetaxi.lovable.app/favicon.png",
+              logo: "https://accessprestigetaxi.fr/favicon.png",
             },
             {
               "@type": "WebSite",
-              "@id": "https://accessprestigetaxi.lovable.app/#website",
+              "@id": "https://accessprestigetaxi.fr/#website",
               name: "Access Prestige Taxi",
-              url: "https://accessprestigetaxi.lovable.app",
-              publisher: { "@id": "https://accessprestigetaxi.lovable.app/#organization" },
+              url: "https://accessprestigetaxi.fr",
+              publisher: { "@id": "https://accessprestigetaxi.fr/#organization" },
             },
           ],
         }),
