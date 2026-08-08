@@ -153,6 +153,15 @@ const css = `
   }
   .drv-section { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
   .drv-card { background: #FDFBF7; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+  .drv-swipe { position: relative; margin-bottom: 10px; border-radius: 16px; overflow: hidden; }
+  .drv-swipe .drv-card { margin-bottom: 0; }
+  .drv-swipe-content { position: relative; z-index: 1; touch-action: pan-y; will-change: transform; }
+  .drv-swipe-action {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 96px; z-index: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    background: #dc2626; color: #fff; border: none; font-size: 20px; font-weight: 700; cursor: pointer;
+  }
+  .drv-swipe-action span { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
   .drv-card.pending { border-color: #f59e0b; }
   .drv-card.new { border-color: #3b82f6; box-shadow: 0 0 0 3px #3b82f620; }
   .drv-card.done { opacity: 0.5; }
