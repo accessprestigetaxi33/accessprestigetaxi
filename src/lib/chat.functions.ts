@@ -111,18 +111,25 @@ export const sendClientMessage = createServerFn({ method: "POST" })
     // ── Push chauffeur : nouveau message client (course) ─────────────────────
     if (!data.skip_push) {
       try {
-        const { sendPushToAudience } = await import("@/lib/push.server");
-        await sendPushToAudience("chauffeur", {
-          title: `💬 Message de ${clientName}`,
-          body: data.content.slice(0, 100),
-          url: "/driver",
-          tag: `chat-driver-resa-${data.reservation_id}-${Date.now()}`,
-          requireInteraction: false,
-        });
+        const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+        const { driverId } = await resolveReservationDriver(data.reservation_id);
+        await sendPushToAudience(
+          "chauffeur",
+          {
+            title: `💬 Message de ${clientName}`,
+            body: data.content.slice(0, 100),
+            url: "/driver",
+            tag: `chat-driver-resa-${data.reservation_id}-${Date.now()}`,
+            requireInteraction: false,
+            data: { reservation_id: data.reservation_id, kind: "chat" },
+          },
+          { driverId },
+        );
       } catch (e) {
         console.warn("[chat] push chauffeur (resa) failed (non-blocking)", e);
       }
     }
+
 
     return row as ChatMessage;
   });
