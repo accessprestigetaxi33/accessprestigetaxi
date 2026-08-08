@@ -111,18 +111,25 @@ export const sendClientMessage = createServerFn({ method: "POST" })
     // ── Push chauffeur : nouveau message client (course) ─────────────────────
     if (!data.skip_push) {
       try {
-        const { sendPushToAudience } = await import("@/lib/push.server");
-        await sendPushToAudience("chauffeur", {
-          title: `💬 Message de ${clientName}`,
-          body: data.content.slice(0, 100),
-          url: "/driver",
-          tag: `chat-driver-resa-${data.reservation_id}-${Date.now()}`,
-          requireInteraction: false,
-        });
+        const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+        const { driverId } = await resolveReservationDriver(data.reservation_id);
+        await sendPushToAudience(
+          "chauffeur",
+          {
+            title: `💬 Message de ${clientName}`,
+            body: data.content.slice(0, 100),
+            url: "/driver",
+            tag: `chat-driver-resa-${data.reservation_id}-${Date.now()}`,
+            requireInteraction: false,
+            data: { reservation_id: data.reservation_id, kind: "chat" },
+          },
+          { driverId },
+        );
       } catch (e) {
         console.warn("[chat] push chauffeur (resa) failed (non-blocking)", e);
       }
     }
+
 
     return row as ChatMessage;
   });
@@ -158,11 +165,12 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
     // ── Push client : réponse chauffeur (redirige vers /suivi/$id) ───────────
     if (!data.skip_push) {
       try {
-        const { sendPushToAudience } = await import("@/lib/push.server");
+        const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+        const { driverName } = await resolveReservationDriver(data.reservation_id);
         await sendPushToAudience(
           "client",
           {
-            title: "💬 Patricia a répondu à votre message",
+            title: `💬 ${driverName} a répondu à votre message`,
             body: data.content.slice(0, 100),
             url: `/suivi/${suiviId}`,
             tag: `chat-client-resa-${data.reservation_id}`,
@@ -175,6 +183,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
         console.warn("[chat] push client (resa) failed (non-blocking)", e);
       }
     }
+
 
     return row as ChatMessage;
   });
@@ -399,17 +408,24 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
 
     try {
-      const { sendPushToAudience } = await import("@/lib/push.server");
-      await sendPushToAudience("chauffeur", {
-        title: `💬 Message de ${clientName}`,
-        body: data.content.slice(0, 100),
-        url: "/driver",
-        tag: `chat-driver-resa-${r.id}-${Date.now()}`,
-        requireInteraction: false,
-      });
+      const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+      const { driverId } = await resolveReservationDriver(r.id);
+      await sendPushToAudience(
+        "chauffeur",
+        {
+          title: `💬 Message de ${clientName}`,
+          body: data.content.slice(0, 100),
+          url: "/driver",
+          tag: `chat-driver-resa-${r.id}-${Date.now()}`,
+          requireInteraction: false,
+          data: { reservation_id: r.id, kind: "chat" },
+        },
+        { driverId },
+      );
     } catch (e) {
       console.warn("[chat] push chauffeur (suivi) failed (non-blocking)", e);
     }
+
 
     return row as ChatMessage;
   });
@@ -551,6 +567,9 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
   .inputValidator((input) => directSendSchema.extend({ role: z.literal("chauffeur") }).parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
+    const { resolveDriverIdentity } = await import("@/lib/driver-auth.server");
+    const identity = resolveDriverIdentity(data.token);
+    const driverName = identity && identity.id !== "admin" ? identity.name : "Votre chauffeur";
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
       .from("direct_messages")
@@ -571,7 +590,7 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
       await sendPushToAudience(
         "client",
         {
-          title: "💬 Patricia a répondu à votre message",
+          title: `💬 ${driverName} a répondu à votre message`,
           body: data.content.slice(0, 100),
           url: "/client/chat",
           tag: `chat-client-direct-${accountId}`,
@@ -582,6 +601,7 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
     } catch (e) {
       console.warn("[chat] push client (direct) failed (non-blocking)", e);
     }
+
 
     return row as DirectMessage;
   });

@@ -207,27 +207,65 @@ function isLikelyIosWebPush(userAgent: string | null): boolean {
   return /iPhone|iPad|iPod/i.test(userAgent) || (/Macintosh/i.test(userAgent) && /Mobile|Safari/i.test(userAgent));
 }
 
+/**
+ * Résout le chauffeur assigné à une réservation (site bi-chauffeur).
+ * Retourne la clé (`alain` / `patricia`) et le prénom affichable.
+ */
+export async function resolveReservationDriver(
+  reservationId: string,
+): Promise<{ driverId: string | null; driverName: string }> {
+  try {
+    const { data } = await supabaseAdmin
+      .from("reservations")
+      .select("assigned_driver")
+      .eq("id", reservationId)
+      .maybeSingle();
+    const key = String((data as any)?.assigned_driver ?? "").toLowerCase().trim();
+    if (key === "alain") return { driverId: "alain", driverName: "Alain" };
+    if (key === "patricia") return { driverId: "patricia", driverName: "Patricia" };
+  } catch (e) {
+    console.warn("[push] resolveReservationDriver failed", e);
+  }
+  return { driverId: null, driverName: "Votre chauffeur" };
+}
+
 export async function sendPushToAudience(
   audience: PushAudience,
   payload: PushPayload,
-  opts: { reservationId?: string; accountId?: string } = {},
+  opts: { reservationId?: string; accountId?: string; driverId?: string | null } = {},
 ): Promise<{ sent: number; removed: number }> {
-  let q = supabaseAdmin
-    .from("push_subscriptions")
-    .select("id, fcm_token, user_agent, last_seen_at, created_at")
-    .eq("audience", audience)
-    .not("fcm_token", "is", null);
+  const baseQuery = () =>
+    supabaseAdmin
+      .from("push_subscriptions")
+      .select("id, fcm_token, user_agent, last_seen_at, created_at")
+      .eq("audience", audience)
+      .not("fcm_token", "is", null);
+
+  let q = baseQuery();
   if (audience === "client" && opts.reservationId) {
     q = q.eq("reservation_id", opts.reservationId);
   }
   if (audience === "client" && opts.accountId) {
     q = q.eq("client_account_id", opts.accountId);
   }
-  const { data, error } = await q;
+  // Bi-chauffeur : quand la course est attribuée, seul le chauffeur concerné
+  // est notifié. Si ce chauffeur n'a aucun appareil enregistré, on retombe sur
+  // l'ensemble des appareils chauffeur pour ne jamais perdre une notification.
+  if (audience === "chauffeur" && opts.driverId) {
+    q = q.eq("driver_id", opts.driverId);
+  }
+
+  let { data, error } = await q;
+  if (audience === "chauffeur" && opts.driverId && (!data || data.length === 0)) {
+    const fallback = await baseQuery();
+    data = fallback.data;
+    error = fallback.error;
+  }
   if (error || !data || data.length === 0) return { sent: 0, removed: 0 };
 
   const claimed = await claimPushSendOnce(audience, payload.tag, opts.reservationId);
   if (!claimed) return { sent: 0, removed: 0 };
+
 
   // Dédup device : même fcm_token + cas iOS où plusieurs anciens tokens restent
   // valides pour le même device après rotation Safari/PWA.
