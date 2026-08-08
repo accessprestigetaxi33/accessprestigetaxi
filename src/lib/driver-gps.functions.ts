@@ -59,20 +59,17 @@ export const stopMyDriverPosition = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Dernières positions connues (le chauffeur voit la sienne, l'admin les deux). */
+/** Dernières positions connues (Alain et Patricia se voient mutuellement, l'admin aussi). */
 export const listDriverPositions = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => TokenSchema.parse(input))
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
-    const identity = assertDriverToken(data.token);
+    const identity = assertDriverToken(data.token); // valide le token → accès réservé aux 2 chauffeurs + admin
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    let q = supabaseAdmin
+    const { data: rows, error } = await supabaseAdmin
       .from("driver_gps")
       .select("id, latitude, longitude, accuracy, speed, heading, is_active, updated_at");
-    if (identity.id !== "admin") q = q.eq("id", identity.id);
-
-    const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
     return {
