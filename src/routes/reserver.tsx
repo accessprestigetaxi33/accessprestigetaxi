@@ -40,6 +40,7 @@ import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { seoLinks } from "@/lib/seo-hreflang";
+import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 
 // ─── Géolocalisation : même configuration que Start Fresh Here ──────────────
 const MAX_AUTO_GEO_ACCURACY_M = 1500;
@@ -170,6 +171,14 @@ const RECAP: Record<"fr" | "en", Record<string, string>> = {
     restored: "Nous avons retrouvé votre réservation en cours.",
     restored_cta: "Recommencer à zéro",
     map_error_title: "Carte indisponible",
+    calc_title: "Détail du calcul",
+    calc_base: "Prise en charge",
+    calc_day: "Kilomètres tarif jour",
+    calc_night: "Kilomètres tarif nuit",
+    calc_dist: "Distance totale",
+    calc_dur: "Durée estimée",
+    calc_total: "Total estimé",
+    calc_rule: `Tarif jour de ${HEURE_DEBUT_JOUR}h à ${HEURE_FIN_JOUR}h (heure de Paris). Tarif nuit de ${HEURE_FIN_JOUR}h à ${HEURE_DEBUT_JOUR}h, ainsi que les dimanches et jours fériés toute la journée. Une course à cheval sur la frontière est facturée au prorata des kilomètres parcourus dans chaque plage.`,
   },
   en: {
     open: "Review and confirm",
@@ -217,6 +226,14 @@ const RECAP: Record<"fr" | "en", Record<string, string>> = {
     restored: "We restored your booking in progress.",
     restored_cta: "Start over",
     map_error_title: "Map unavailable",
+    calc_title: "How this fare is calculated",
+    calc_base: "Pick-up charge",
+    calc_day: "Kilometres at day rate",
+    calc_night: "Kilometres at night rate",
+    calc_dist: "Total distance",
+    calc_dur: "Estimated duration",
+    calc_total: "Estimated total",
+    calc_rule: `Day rate from ${HEURE_DEBUT_JOUR}am to ${HEURE_FIN_JOUR - 12}pm (Paris time). Night rate from ${HEURE_FIN_JOUR - 12}pm to ${HEURE_DEBUT_JOUR}am, and all day on Sundays and public holidays. A ride crossing the boundary is billed pro rata to the kilometres driven in each period.`,
   },
 };
 
@@ -284,6 +301,12 @@ type TxtKey =
   | "gps_enter"
   | "gps_placeholder"
   | "gps_back"
+  | "gps_out_zone"
+  | "gps_out_zone_msg"
+  | "gps_ip_note"
+  | "gps_enter_arrivee"
+  | "gps_arrivee_ph"
+  | "gps_use_addresses"
   | "ask_destination"
   | "map_label"
   | "map_zone"
@@ -351,6 +374,13 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     gps_enter: "Saisissez votre adresse de départ",
     gps_placeholder: "Ex : Vieux-Port, La Rochelle",
     gps_back: "Revenir à ma position GPS",
+    gps_out_zone: "Position hors zone de détection automatique",
+    gps_out_zone_msg:
+      "Votre position détectée se situe à plus de 130 km de Saintes : nous ne pouvons pas la reprendre automatiquement. Nous assurons pourtant tous les trajets, sans limite de distance — saisissez simplement votre adresse de départ et votre destination ci-dessous.",
+    gps_ip_note: "Position approximative estimée d'après votre connexion Internet (repli IP).",
+    gps_enter_arrivee: "Saisissez votre adresse d'arrivée",
+    gps_arrivee_ph: "Ex : Aéroport de La Rochelle",
+    gps_use_addresses: "Calculer le tarif avec ces adresses",
     ask_destination: "Quelle est votre destination ?",
     map_label: "Carte du trajet",
     map_zone: "Charente-Maritime et longue distance",
@@ -416,6 +446,13 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     gps_enter: "Enter your pickup address",
     gps_placeholder: "E.g. Old Port, La Rochelle",
     gps_back: "Back to my GPS location",
+    gps_out_zone: "Location outside the automatic detection area",
+    gps_out_zone_msg:
+      "Your detected location is more than 130 km from Saintes, so we cannot use it automatically. We still cover every journey with no distance limit — simply enter your pickup and drop-off addresses below.",
+    gps_ip_note: "Approximate location estimated from your internet connection (IP fallback).",
+    gps_enter_arrivee: "Enter your drop-off address",
+    gps_arrivee_ph: "E.g. La Rochelle airport",
+    gps_use_addresses: "Get a fare with these addresses",
     ask_destination: "What is your destination?",
     map_label: "Route map",
     map_zone: "Charente-Maritime and long distance",
