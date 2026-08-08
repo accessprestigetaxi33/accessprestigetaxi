@@ -49,8 +49,7 @@ const BLOG_PICKS = ["hotel", "restaurant", "visite"]
 const SLOGAN_FR = "L'excellence à chaque trajet";
 const SLOGAN_EN = "Excellence on every journey";
 
-// TODO : remplace par le domaine définitif si tu passes sur un nom de domaine perso
-// (ex: https://accessprestigetaxi.fr). Sert à générer des URLs absolues pour
+// Domaine canonique du site — sert à générer les URLs absolues pour
 // og:url / og:image / twitter:image, obligatoires selon la spec Open Graph.
 const SITE_URL = "https://accessprestigetaxi.fr";
 
