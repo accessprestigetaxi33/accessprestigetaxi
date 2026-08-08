@@ -993,6 +993,7 @@ function ReserverPage() {
     setReservationId(null);
     setSuiviId(null);
     setFormErrors({});
+    setRecapOpen(false);
     setForm({ nom: "", telephone: "", email: "", passagers: "1", bagages: "0", note: "", agree: false });
   }
 
