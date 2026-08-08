@@ -127,27 +127,31 @@ function ClientDashboard() {
       .finally(() => setLoading(false));
   }, [ready, session]);
 
-  // Realtime refresh
+  // Rafraîchissement live — SANS postgres_changes.
+  // Lecture de `reservations` volontairement fermée côté RLS (aucune policy
+  // SELECT pour anon / authenticated) : un abonnement postgres_changes ne
+  // recevrait jamais de ligne. On écoute le broadcast `suivi:<id>` du chauffeur.
   useEffect(() => {
     if (!session || !rows || rows.length === 0) return;
+    const token = session.token;
     const ids = rows.map((r) => r.id);
-    const channel = supabase
-      .channel("cd-home-status")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "reservations", filter: `id=in.(${ids.join(",")})` },
-        () => {
-          if (!session) return;
-          listClientReservations({ data: { token: session.token } })
-            .then(setRows)
-            .catch(() => {});
-        },
-      )
-      .subscribe();
+    const reload = () => {
+      listClientReservations({ data: { token } })
+        .then(setRows)
+        .catch(() => {});
+    };
+    const channels = ids.map((id) => {
+      const ch = (supabase as any).channel(`suivi:${id}`, {
+        config: { broadcast: { self: false } },
+      });
+      ch.on("broadcast", { event: "update" }, reload).subscribe();
+      return ch;
+    });
     return () => {
-      supabase.removeChannel(channel);
+      channels.forEach((ch) => supabase.removeChannel(ch));
     };
   }, [session, rows]);
+
 
   const greeting = useMemo(() => session?.name?.split(" ")[0] || c.you, [session]);
   const activeRide = rows?.find((r) => ACTIVE_STATUSES.has(r.status));
