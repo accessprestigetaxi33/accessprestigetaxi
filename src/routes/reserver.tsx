@@ -1263,6 +1263,13 @@ function ReserverPage() {
 
   const pickupLabel = formatPickup(quote?.pickup_datetime, L);
 
+  /** Décomposition officielle du prix (mêmes règles que le simulateur). */
+  const fareDetail =
+    quote?.distance_km != null && quote.distance_km > 0
+      ? detaillerPrix(quote.distance_km, quote.pickup_datetime ?? new Date().toISOString(), quote.duree_min)
+      : null;
+  const eur = (n: number) => `${n.toFixed(2)} €`;
+
   /** Toutes les valeurs qui partiront au chauffeur, relues avant validation. */
   const reviewRows = [
     { icon: MapPin, label: R.from, value: quote?.depart_resolu ?? manualDepart ?? "" },
@@ -1596,9 +1603,9 @@ function ReserverPage() {
                     }}
                     placeholder={tx("gps_placeholder")}
                   />
-                  <label htmlFor="manual-arrivee" className="block pt-1 text-[11px] font-medium text-muted-foreground">
+                  <span className="block pt-1 text-[11px] font-medium text-muted-foreground">
                     {tx("gps_enter_arrivee")}
-                  </label>
+                  </span>
                   <AddressAutocomplete
                     value={manualArrivee}
                     onChange={(v) => setManualArrivee(v)}
@@ -1755,6 +1762,49 @@ function ReserverPage() {
                   </dd>
                 </div>
               </dl>
+
+              {fareDetail && (
+                <section className="mt-3 rounded-2xl border border-border bg-background/60 p-4">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {R.calc_title}
+                  </h4>
+                  <dl className="mt-2 space-y-1.5 text-[13px]">
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{R.calc_base}</dt>
+                      <dd className="font-medium text-foreground">{eur(fareDetail.priseEnCharge)}</dd>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{R.calc_dist}</dt>
+                      <dd className="font-medium text-foreground">{fareDetail.distanceKm.toFixed(1)} km</dd>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{R.calc_dur}</dt>
+                      <dd className="font-medium text-foreground">~{Math.round(fareDetail.dureeMin)} min</dd>
+                    </div>
+                    {fareDetail.kmJour > 0 && (
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-muted-foreground">
+                          ☀️ {R.calc_day} · {fareDetail.kmJour.toFixed(1)} km × {eur(fareDetail.tarifKmJour)}/km
+                        </dt>
+                        <dd className="font-medium text-foreground">{eur(fareDetail.prixJour)}</dd>
+                      </div>
+                    )}
+                    {fareDetail.kmNuit > 0 && (
+                      <div className="flex justify-between gap-3">
+                        <dt className="text-muted-foreground">
+                          🌙 {R.calc_night} · {fareDetail.kmNuit.toFixed(1)} km × {eur(fareDetail.tarifKmNuit)}/km
+                        </dt>
+                        <dd className="font-medium text-foreground">{eur(fareDetail.prixNuit)}</dd>
+                      </div>
+                    )}
+                    <div className="flex justify-between gap-3 border-t border-border pt-1.5">
+                      <dt className="font-semibold text-foreground">{R.calc_total}</dt>
+                      <dd className="font-display font-bold text-accent">{eur(fareDetail.total)}</dd>
+                    </div>
+                  </dl>
+                  <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{R.calc_rule}</p>
+                </section>
+              )}
 
               <form
                 className="mt-4 space-y-3"
