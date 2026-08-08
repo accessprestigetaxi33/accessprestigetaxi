@@ -75,22 +75,27 @@ function ClientTrajets() {
     if (session) refresh();
   }, [session, refresh]);
 
-  // Realtime — re-fetch dès qu'une réservation active change
+  // Rafraîchissement live — SANS postgres_changes.
+  // La table `reservations` n'expose aucune policy SELECT aux rôles anon /
+  // authenticated (lecture volontairement fermée : les données client passent
+  // uniquement par des fonctions serveur authentifiées). Un abonnement
+  // postgres_changes ne recevrait donc jamais aucune ligne. On écoute à la
+  // place le broadcast `suivi:<id>` émis par le chauffeur à chaque changement.
   useEffect(() => {
     if (!session || !rows || rows.length === 0) return;
     const ids = rows.map((r) => r.id);
-    const channel = supabase
-      .channel("trajets-realtime")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "reservations", filter: `id=in.(${ids.join(",")})` },
-        () => refresh(),
-      )
-      .subscribe();
+    const channels = ids.map((id) => {
+      const ch = (supabase as any).channel(`suivi:${id}`, {
+        config: { broadcast: { self: false } },
+      });
+      ch.on("broadcast", { event: "update" }, () => refresh()).subscribe();
+      return ch;
+    });
     return () => {
-      supabase.removeChannel(channel);
+      channels.forEach((ch) => supabase.removeChannel(ch));
     };
   }, [session, rows, refresh]);
+
 
   if (!session) return null;
 
