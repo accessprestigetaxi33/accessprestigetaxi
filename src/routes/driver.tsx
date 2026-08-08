@@ -356,8 +356,9 @@ function isToday(iso: string) {
 function DriverPage() {
   const { token } = Route.useSearch();
   const verify = useServerFn(verifyDriverToken);
+  const openSession = useServerFn(openDriverSession);
   const [status, setStatus] = useState<"checking" | "denied" | "granted">("checking");
-  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [driverLabel, setDriverLabel] = useState("");
   const [driverId, setDriverId] = useState<string>("");
