@@ -333,7 +333,18 @@ type TxtKey =
   | "voice_start"
   | "voice_stop"
   | "voice_listening"
-  | "voice_empty";
+  | "voice_empty"
+  | "voice_hint_title"
+  | "voice_hint_desc"
+  | "voice_hint_1"
+  | "voice_hint_2"
+  | "voice_hint_3"
+  | "voice_hint_cta"
+  | "voice_hint_later"
+  | "voice_denied_help"
+  | "voice_review"
+  | "voice_transcribing"
+  | "voice_level";
 
 const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
   fr: {
@@ -408,6 +419,17 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     voice_stop: "Arrêter le micro",
     voice_listening: "Écoute en cours",
     voice_empty: "Rien n'a été compris. Réessayez.",
+    voice_hint_title: "Autoriser le micro",
+    voice_hint_desc: "Pour dicter votre trajet, votre navigateur va demander l'accès au microphone.",
+    voice_hint_1: "Cliquez sur « Autoriser » dans la fenêtre du navigateur.",
+    voice_hint_2: "Sur iPhone : Réglages → Safari → Microphone → Autoriser.",
+    voice_hint_3: "L'enregistrement démarre automatiquement dès l'autorisation.",
+    voice_hint_cta: "Autoriser et parler",
+    voice_hint_later: "Plus tard",
+    voice_denied_help: "Micro bloqué : ouvrez l'icône du cadenas dans la barre d'adresse et réautorisez le microphone.",
+    voice_review: "Transcription enregistrée dans le champ : relisez, corrigez puis envoyez.",
+    voice_transcribing: "Transcription en cours…",
+    voice_level: "Niveau sonore",
   },
   en: {
     kicker: "Access Prestige Taxi · Charente-Maritime",
@@ -480,6 +502,17 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     voice_stop: "Stop microphone",
     voice_listening: "Listening…",
     voice_empty: "Nothing was understood. Please try again.",
+    voice_hint_title: "Allow microphone",
+    voice_hint_desc: "To dictate your trip, your browser will ask for microphone access.",
+    voice_hint_1: "Click “Allow” in the browser prompt.",
+    voice_hint_2: "On iPhone: Settings → Safari → Microphone → Allow.",
+    voice_hint_3: "Recording starts automatically once access is granted.",
+    voice_hint_cta: "Allow and speak",
+    voice_hint_later: "Later",
+    voice_denied_help: "Microphone blocked: open the lock icon in the address bar and allow the microphone again.",
+    voice_review: "Transcript saved in the field: review, edit, then send.",
+    voice_transcribing: "Transcribing…",
+    voice_level: "Input level",
   },
 };
 
