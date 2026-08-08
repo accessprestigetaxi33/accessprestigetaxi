@@ -59,123 +59,182 @@ type ConfirmationPayload = {
   trackingLink?: string;
 };
 
-function renderConfirmation(lang: string, p: ConfirmationPayload) {
-  const en = lang === "en";
-  const subject = en
-    ? `Your ${SITE_NAME} booking is confirmed — ${p.pickupDatetime}`
-    : `Réservation confirmée — ${p.pickupDatetime} · ${SITE_NAME}`;
-  const rows: Array<[string, string]> = [
-    [en ? "Date & time" : "Date et heure", p.pickupDatetime],
-    [en ? "Pickup" : "Départ", p.depart],
-    [en ? "Drop-off" : "Arrivée", p.arrivee],
-    ...(p.priceEstimate ? ([[en ? "Estimated fare" : "Prix estimé", `${p.priceEstimate} €`]] as Array<[string, string]>) : []),
-    [en ? "Booking reference" : "Référence", p.trackingId],
-  ];
-  const html = `<!doctype html><html><body style="margin:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#0B0B0D;">
-  <div style="max-width:560px;margin:0 auto;padding:28px 24px;">
-    <div style="font-weight:800;letter-spacing:2px;color:#C6A24A;font-size:13px;">ACCESS PRESTIGE TAXI</div>
-    <h1 style="font-size:22px;margin:12px 0 6px;">${en ? "Your booking is confirmed" : "Votre réservation est confirmée"}</h1>
-    <p style="font-size:14px;line-height:1.6;">${en ? "Hello" : "Bonjour"} ${p.clientName},<br/>${
-      en
-        ? "Thank you for choosing our electric chauffeur service in Charente-Maritime."
-        : "Merci d'avoir choisi notre service de chauffeur électrique en Charente-Maritime."
-    }</p>
-    <table style="width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;">
-      ${rows
-        .map(
-          ([k, v]) =>
-            `<tr><td style="padding:8px 0;color:#6b7280;">${k}</td><td style="padding:8px 0;text-align:right;font-weight:700;">${v}</td></tr>`,
-        )
-        .join("")}
-    </table>
-    ${
-      p.trackingLink
-        ? `<p style="margin:20px 0;"><a href="${p.trackingLink}" style="background:#C6A24A;color:#0B0B0D;text-decoration:none;padding:12px 20px;border-radius:10px;font-weight:800;display:inline-block;">${
-            en ? "Track my taxi" : "Suivre mon taxi"
-          }</a></p>`
-        : ""
-    }
-    <p style="font-size:12px;color:#6b7280;">${
-      en ? "Need a change? Reply to this email or call us." : "Un changement ? Répondez à cet e-mail ou appelez-nous."
-    }</p>
-  </div></body></html>`;
-  const text = [
-    en ? "Your booking is confirmed" : "Votre réservation est confirmée",
-    ...rows.map(([k, v]) => `${k}: ${v}`),
-    p.trackingLink ?? "",
-  ].join("\n");
-  return { subject, html, text };
+const SITE_URL = "https://accessprestigetaxi.fr";
+
+function normLang(lang?: string | null): "fr" | "en" {
+  return lang === "en" ? "en" : "fr";
 }
 
 /**
- * Repli e-mail : envoie (via la file transactionnelle) la confirmation de
- * réservation. Utilisé quand le client n'a pas autorisé le push, ou en doublon
- * volontaire lorsqu'une adresse e-mail est fournie.
+ * Confirmation client par e-mail (modèle bilingue FR/EN, envoi géré par
+ * l'infrastructure e-mail Lovable — suppression/rebonds gérés côté serveur).
  */
-export async function enqueueClientConfirmationEmail(
+export async function sendClientConfirmationEmail(
   reservationId: string,
   email: string,
   lang: string,
   payload: ConfirmationPayload,
 ) {
-  const supabaseAdmin = (await import("@/integrations/supabase/client.server")).supabaseAdmin;
+  const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
-  const messageId = `resa-${reservationId}`;
-  const { subject, html, text } = renderConfirmation(lang, payload);
+  const trackingLink = payload.trackingLink ?? `${SITE_URL}/suivi/${payload.trackingId}`;
 
   try {
-    await supabaseAdmin.from("email_send_log").insert({
-      message_id: messageId,
-      template_name: "reservation-client-confirmation",
-      recipient_email: email,
-      status: "pending",
-      idempotency_key: messageId,
-    });
-
-    const { error } = await supabaseAdmin.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        message_id: messageId,
-        to: email,
-        from: `${SITE_NAME} <noreply@${SENDER_DOMAIN}>`,
-        reply_to: ADMIN_EMAIL,
-        sender_domain: SENDER_DOMAIN,
-        subject,
-        html,
-        text,
-        purpose: "transactional",
-        label: "reservation-client-confirmation",
-        idempotency_key: messageId,
-        queued_at: new Date().toISOString(),
-      } as any,
+    const result = await sendTemplateEmail("reservation-client-confirmation", email, {
+      idempotencyKey: `reservation-client-confirmation-${reservationId}`,
+      replyTo: ADMIN_EMAIL,
+      templateData: {
+        lang: normLang(lang),
+        nom: payload.clientName,
+        pickup_datetime: payload.pickupDatetime,
+        depart: payload.depart,
+        arrivee: payload.arrivee,
+        reservation_id: reservationId,
+        suivi_url: trackingLink,
+      },
     });
 
     await logPushSend({
       channel: "email",
       audience: "client",
-      status: error ? "failed" : "fallback_email",
+      status: result.sent ? "sent" : "skipped",
       reservationId,
       recipient: email,
-      title: subject,
-      errorCode: error?.message ?? null,
+      title: `confirmation (${normLang(lang)})`,
+      errorCode: result.sent ? null : result.reason,
     });
+    return result;
   } catch (err: any) {
-    console.error("[email] confirmation enqueue failed", err);
+    console.error("[email] confirmation send failed", err);
     await logPushSend({
       channel: "email",
       audience: "client",
       status: "failed",
       reservationId,
       recipient: email,
-      errorCode: String(err?.message ?? err).slice(0, 200),
+      errorCode: String(err?.code ?? err?.message ?? err).slice(0, 200),
     });
+    return { sent: false as const, reason: "error" };
+  }
+}
+
+/** Alias historique — conservé pour les appels existants. */
+export const enqueueClientConfirmationEmail = sendClientConfirmationEmail;
+
+/** E-mail d'annulation de réservation (FR/EN). */
+export async function sendClientCancellationEmail(args: {
+  reservationId: string;
+  email: string;
+  lang?: string | null;
+  clientName?: string | null;
+  pickupDatetime?: string | null;
+  depart?: string | null;
+  arrivee?: string | null;
+  reason?: string | null;
+}) {
+  const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+  const { logPushSend } = await import("@/lib/push-log.server");
+  try {
+    const result = await sendTemplateEmail("reservation-cancelled", args.email, {
+      idempotencyKey: `reservation-cancelled-${args.reservationId}`,
+      replyTo: ADMIN_EMAIL,
+      templateData: {
+        lang: normLang(args.lang),
+        nom: args.clientName ?? "",
+        pickup_datetime: args.pickupDatetime ?? undefined,
+        depart: args.depart ?? undefined,
+        arrivee: args.arrivee ?? undefined,
+        reservation_id: args.reservationId,
+        reason: args.reason ?? undefined,
+        rebook_url: `${SITE_URL}/reserver`,
+      },
+    });
+    await logPushSend({
+      channel: "email",
+      audience: "client",
+      status: result.sent ? "sent" : "skipped",
+      reservationId: args.reservationId,
+      recipient: args.email,
+      title: `annulation (${normLang(args.lang)})`,
+      errorCode: result.sent ? null : result.reason,
+    });
+    return result;
+  } catch (err: any) {
+    console.error("[email] cancellation send failed", err);
+    await logPushSend({
+      channel: "email",
+      audience: "client",
+      status: "failed",
+      reservationId: args.reservationId,
+      recipient: args.email,
+      errorCode: String(err?.code ?? err?.message ?? err).slice(0, 200),
+    });
+    return { sent: false as const, reason: "error" };
+  }
+}
+
+/** E-mail de suivi de course (confirmée / en route / arrivé / terminée). */
+export async function sendClientTrackingEmail(args: {
+  reservationId: string;
+  email: string;
+  stage: "accepted" | "en_route" | "arrived" | "completed";
+  lang?: string | null;
+  clientName?: string | null;
+  depart?: string | null;
+  arrivee?: string | null;
+  pickupDatetime?: string | null;
+  driverName?: string | null;
+  etaMinutes?: number | null;
+  trackingId?: string | null;
+}) {
+  const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+  const { logPushSend } = await import("@/lib/push-log.server");
+  const suiviUrl = `${SITE_URL}/suivi/${args.trackingId ?? args.reservationId}`;
+  try {
+    const result = await sendTemplateEmail("reservation-tracking", args.email, {
+      idempotencyKey: `reservation-tracking-${args.stage}-${args.reservationId}`,
+      replyTo: ADMIN_EMAIL,
+      templateData: {
+        lang: normLang(args.lang),
+        stage: args.stage,
+        nom: args.clientName ?? "",
+        depart: args.depart ?? undefined,
+        arrivee: args.arrivee ?? undefined,
+        pickup_datetime: args.pickupDatetime ?? undefined,
+        driver_name: args.driverName ?? undefined,
+        eta_minutes: args.etaMinutes ?? undefined,
+        reservation_id: args.reservationId,
+        suivi_url: suiviUrl,
+      },
+    });
+    await logPushSend({
+      channel: "email",
+      audience: "client",
+      status: result.sent ? "sent" : "skipped",
+      reservationId: args.reservationId,
+      recipient: args.email,
+      title: `suivi ${args.stage} (${normLang(args.lang)})`,
+      errorCode: result.sent ? null : result.reason,
+    });
+    return result;
+  } catch (err: any) {
+    console.error("[email] tracking send failed", err);
+    await logPushSend({
+      channel: "email",
+      audience: "client",
+      status: "failed",
+      reservationId: args.reservationId,
+      recipient: args.email,
+      errorCode: String(err?.code ?? err?.message ?? err).slice(0, 200),
+    });
+    return { sent: false as const, reason: "error" };
   }
 }
 
 /**
- * Confirmation client : push si l'appareil est abonné, sinon repli e-mail.
- * Si une adresse e-mail est fournie et qu'aucun push n'est parti, l'e-mail
- * garantit que le client reçoit bien sa confirmation.
+ * Confirmation client : push (si abonné) ET e-mail systématique dès qu'une
+ * adresse est fournie — le client doit toujours recevoir son récapitulatif
+ * et son lien de suivi.
  */
 export async function deliverClientConfirmation(args: {
   reservationId: string;
@@ -195,9 +254,7 @@ export async function deliverClientConfirmation(args: {
         "client",
         {
           title: en ? "Booking confirmed" : "Réservation confirmée",
-          body: en
-            ? `${payload.pickupDatetime} · ${payload.depart} → ${payload.arrivee}`
-            : `${payload.pickupDatetime} · ${payload.depart} → ${payload.arrivee}`,
+          body: `${payload.pickupDatetime} · ${payload.depart} → ${payload.arrivee}`,
           url: payload.trackingLink ?? `/suivi/${payload.trackingId}`,
           tag: `res-${reservationId}-confirmed`,
           requireInteraction: true,
@@ -210,25 +267,13 @@ export async function deliverClientConfirmation(args: {
     console.error("[push] client confirmation failed", err);
   }
 
-  if (pushSent === 0 && email) {
-    await enqueueClientConfirmationEmail(reservationId, email, lang, payload);
-    return { push: 0, email: true };
-  }
-
+  let emailSent = false;
   if (email) {
-    // Push délivré : on garde une trace, sans doubler l'e-mail.
-    const { logPushSend } = await import("@/lib/push-log.server");
-    await logPushSend({
-      audience: "client",
-      status: "skipped",
-      channel: "email",
-      reservationId,
-      recipient: email,
-      title: en ? "Email fallback skipped (push delivered)" : "Repli e-mail ignoré (push délivré)",
-    });
+    const result = await sendClientConfirmationEmail(reservationId, email, lang, payload);
+    emailSent = result.sent === true;
   }
 
-  return { push: pushSent, email: false };
+  return { push: pushSent, email: emailSent };
 }
 
 export async function logReservationEvent(
