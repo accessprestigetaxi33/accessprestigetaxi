@@ -547,12 +547,16 @@ function ReserverPage() {
 
   const [listening, setListening] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
-  const mediaRecRef = useRef<MediaRecorder | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const silenceRafRef = useRef<number | null>(null);
+  const procRef = useRef<ScriptProcessorNode | null>(null);
+  const srcNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const pcmRef = useRef<Float32Array[]>([]);
+  const recStartRef = useRef(0);
+  const lastLoudRef = useRef(0);
+  const hasSpokenRef = useRef(false);
+  const stoppingRef = useRef(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInst = useRef<any>(null);
