@@ -1550,13 +1550,27 @@ function ReserverPage() {
                           ? tx("gps_detected")
                           : gpsError === "denied"
                             ? tx("gps_denied")
-                            : tx("gps_unavailable")}
+                            : gpsError === "out_of_zone"
+                              ? tx("gps_out_zone")
+                              : tx("gps_unavailable")}
                   </p>
                   <p className="mt-0.5 break-words text-[11px] text-muted-foreground">
                     {manualDepart || gps?.label || tx("gps_auto")}
                   </p>
+                  {!gpsBusy && gpsFromIp && gps && !manualDepart && (
+                    <p className="mt-1 break-words text-[11px] text-muted-foreground">{tx("gps_ip_note")}</p>
+                  )}
                 </div>
               </div>
+
+              {!gpsBusy && gpsError === "out_of_zone" && (
+                <p
+                  role="status"
+                  className="mt-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-[11px] leading-relaxed text-foreground"
+                >
+                  {tx("gps_out_zone_msg")}
+                </p>
+              )}
 
               {!gpsBusy && (gps || gpsError) && !showManualDepart && (
                 <button
@@ -1582,6 +1596,29 @@ function ReserverPage() {
                     }}
                     placeholder={tx("gps_placeholder")}
                   />
+                  <label htmlFor="manual-arrivee" className="block pt-1 text-[11px] font-medium text-muted-foreground">
+                    {tx("gps_enter_arrivee")}
+                  </label>
+                  <AddressAutocomplete
+                    value={manualArrivee}
+                    onChange={(v) => setManualArrivee(v)}
+                    placeholder={tx("gps_arrivee_ph")}
+                  />
+                  {manualDepart.trim().length > 2 && manualArrivee.trim().length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const msg =
+                          L === "en"
+                            ? `Pickup: ${manualDepart.trim()}. Drop-off: ${manualArrivee.trim()}.`
+                            : `Départ : ${manualDepart.trim()}. Arrivée : ${manualArrivee.trim()}.`;
+                        void send(msg);
+                      }}
+                      className="w-full rounded-xl bg-accent px-3 py-2 text-[12px] font-semibold text-accent-foreground transition hover:opacity-90"
+                    >
+                      {tx("gps_use_addresses")}
+                    </button>
+                  )}
                   {gps && showManualDepart && (
                     <button
                       type="button"
