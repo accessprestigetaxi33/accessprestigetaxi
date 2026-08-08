@@ -76,15 +76,23 @@ export async function sendClientConfirmationEmail(
   const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
   const { claimNotificationOnce } = await import("@/lib/push.server");
+  const { buildIdempotencyKey } = await import("@/lib/idempotency");
+  const confirmationKey = buildIdempotencyKey({
+    event: "reservation.created",
+    entity: "res",
+    id: reservationId,
+    channel: "email",
+    discriminator: "client-confirmation",
+  });
   // Garde-fou : un webhook/serverFn rejoué ne renvoie pas deux confirmations.
-  if (!(await claimNotificationOnce(`email-confirmation-${reservationId}`, "email", 24 * 60))) {
+  if (!(await claimNotificationOnce(confirmationKey, "email", 24 * 60))) {
     return { sent: false as const, reason: "duplicate" };
   }
   const trackingLink = payload.trackingLink ?? `${SITE_URL}/suivi/${payload.trackingId}`;
 
   try {
     const result = await sendTemplateEmail("reservation-client-confirmation", email, {
-      idempotencyKey: `reservation-client-confirmation-${reservationId}`,
+      idempotencyKey: confirmationKey,
       replyTo: ADMIN_EMAIL,
       templateData: {
         lang: normLang(lang),
@@ -138,12 +146,19 @@ export async function sendClientCancellationEmail(args: {
   const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
   const { claimNotificationOnce } = await import("@/lib/push.server");
-  if (!(await claimNotificationOnce(`email-cancelled-${args.reservationId}`, "email", 24 * 60))) {
+  const { buildIdempotencyKey } = await import("@/lib/idempotency");
+  const cancelKey = buildIdempotencyKey({
+    event: "reservation.cancelled",
+    entity: "res",
+    id: args.reservationId,
+    channel: "email",
+  });
+  if (!(await claimNotificationOnce(cancelKey, "email", 24 * 60))) {
     return { sent: false as const, reason: "duplicate" };
   }
   try {
     const result = await sendTemplateEmail("reservation-cancelled", args.email, {
-      idempotencyKey: `reservation-cancelled-${args.reservationId}`,
+      idempotencyKey: cancelKey,
       replyTo: ADMIN_EMAIL,
       templateData: {
         lang: normLang(args.lang),
@@ -197,15 +212,20 @@ export async function sendClientTrackingEmail(args: {
   const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
   const { logPushSend } = await import("@/lib/push-log.server");
   const { claimNotificationOnce } = await import("@/lib/push.server");
-  if (
-    !(await claimNotificationOnce(`email-tracking-${args.stage}-${args.reservationId}`, "email", 24 * 60))
-  ) {
+  const { buildIdempotencyKey, reservationStatusEvent } = await import("@/lib/idempotency");
+  const trackingKey = buildIdempotencyKey({
+    event: reservationStatusEvent(args.stage),
+    entity: "res",
+    id: args.reservationId,
+    channel: "email",
+  });
+  if (!(await claimNotificationOnce(trackingKey, "email", 24 * 60))) {
     return { sent: false as const, reason: "duplicate" };
   }
   const suiviUrl = `${SITE_URL}/suivi/${args.trackingId ?? args.reservationId}`;
   try {
     const result = await sendTemplateEmail("reservation-tracking", args.email, {
-      idempotencyKey: `reservation-tracking-${args.stage}-${args.reservationId}`,
+      idempotencyKey: trackingKey,
       replyTo: ADMIN_EMAIL,
       templateData: {
         lang: normLang(args.lang),
