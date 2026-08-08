@@ -455,6 +455,19 @@ function ReserverPage() {
   const [busy, setBusy] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [reservationId, setReservationId] = useState<string | null>(null);
+  const [suiviId, setSuiviId] = useState<string | null>(null);
+  // Récapitulatif avant soumission
+  const [recapOpen, setRecapOpen] = useState(false);
+  const [form, setForm] = useState({
+    nom: "",
+    telephone: "",
+    email: "",
+    passagers: "1",
+    bagages: "0",
+    note: "",
+    agree: false,
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [gps, setGps] = useState<{ lat: number; lng: number; label?: string } | null>(null);
   const [gpsBusy, setGpsBusy] = useState(false);
   const [gpsError, setGpsError] = useState<"denied" | "unavailable" | "timeout" | "low_accuracy" | null>(null);
@@ -682,9 +695,25 @@ function ReserverPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, busy]);
 
+  const R = RECAP[L];
+
+  /** Validations claires côté client, avant tout appel à l'assistante. */
+  function validateBeforeSend(clean: string): string | null {
+    if (clean.length > MAX_INPUT) return R.err_input;
+    // Une adresse de départ saisie à la main doit être exploitable.
+    const manual = manualDepartRef.current?.trim() ?? "";
+    if (manual && manual.length < 6) return R.err_depart;
+    return null;
+  }
+
   async function send(text: string) {
     const clean = text.trim();
     if (!clean || busy) return;
+    const invalid = validateBeforeSend(clean);
+    if (invalid) {
+      toast.error(invalid);
+      return;
+    }
     const next = [...messages, { role: "user" as const, content: clean }];
     setMessages(next);
     setInput("");
@@ -720,7 +749,10 @@ function ReserverPage() {
         setReservationId(res.reservation_id);
         toast.success(TXT[L].success);
         const trackId = res.suivi_id ?? res.reservation_id;
-        setTimeout(() => navigate({ to: "/suivi/$id", params: { id: trackId! } }), 1500);
+        setSuiviId(trackId ?? null);
+        setRecapOpen(false);
+        // Laisse le temps de lire la confirmation avant la redirection.
+        setTimeout(() => navigate({ to: "/suivi/$id", params: { id: trackId! } }), 6000);
       }
     } catch (e: any) {
       toast.error(e?.message ?? TXT[L].error);
