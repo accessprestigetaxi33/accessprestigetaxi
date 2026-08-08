@@ -22,9 +22,9 @@ const LOCAL_COPY = {
 const PHONE = "0650260015";
 const PHONE_DISPLAY = "06 50 26 00 15";
 
-const PICKUP_FEE = 2.83;
-const RATE_DAY = 2.16; // 7h–19h
-const RATE_NIGHT = 3.24; // 19h–7h
+const PICKUP_FEE = TARIFS.PRISE_EN_CHARGE;
+const RATE_DAY = TARIFS.TARIF_JOUR; // 7h–19h
+const RATE_NIGHT = TARIFS.TARIF_NUIT; // 19h–7h
 
 function formatEUR(value: number) {
   return new Intl.NumberFormat("fr-FR", {
