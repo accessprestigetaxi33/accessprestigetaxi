@@ -249,9 +249,9 @@ export async function resolveReservationDriver(
       .select("assigned_driver")
       .eq("id", reservationId)
       .maybeSingle();
-    const key = String((data as any)?.assigned_driver ?? "").toLowerCase().trim();
-    if (key === "alain") return { driverId: "alain", driverName: "Alain" };
-    if (key === "patricia") return { driverId: "patricia", driverName: "Patricia" };
+    const { normalizeDriverKey } = await import("@/lib/webhook-security.server");
+    const key = normalizeDriverKey((data as any)?.assigned_driver);
+    if (key) return { driverId: key, driverName: key[0]!.toUpperCase() + key.slice(1) };
   } catch (e) {
     console.warn("[push] resolveReservationDriver failed", e);
   }
