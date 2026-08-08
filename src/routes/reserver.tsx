@@ -954,6 +954,35 @@ function ReserverPage() {
     return () => cleanupMic();
   }, []);
 
+  function submitRecap() {
+    const errors: Record<string, string> = {};
+    const nom = form.nom.trim();
+    const tel = form.telephone.trim();
+    const email = form.email.trim();
+    const pax = Number(form.passagers);
+    const bags = Number(form.bagages);
+
+    if (nom.length < 2) errors.nom = R.err_name;
+    if (!PHONE_RE.test(tel.replace(/\s+/g, " "))) errors.telephone = R.err_phone;
+    if (!EMAIL_RE.test(email)) errors.email = R.err_email;
+    if (!Number.isFinite(pax) || pax < 1 || pax > 7) errors.passagers = R.err_pax;
+    if (!Number.isFinite(bags) || bags < 0 || bags > 7) errors.bagages = R.err_bags;
+    if (!form.agree) errors.agree = R.err_agree;
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    const note = form.note.trim();
+    const msg =
+      L === "en"
+        ? `I confirm the booking. Name: ${nom}. Phone: ${tel}. Email: ${email}. Passengers: ${pax}. Luggage: ${bags}.${note ? ` Note: ${note}.` : ""}`
+        : `Je confirme la réservation. Nom : ${nom}. Téléphone : ${tel}. Email : ${email}. Passagers : ${pax}. Bagages : ${bags}.${note ? ` Précision : ${note}.` : ""}`;
+    setRecapOpen(false);
+    void send(msg);
+  }
+
+  const pickupLabel = formatPickup(quote?.pickup_datetime, L);
+
   const sugg = [tx("sug1"), tx("sug2"), tx("sug3"), tx("sug4")];
   const stepsLabels = [tx("step1"), tx("step2"), tx("step3"), tx("step4")];
   const currentStep = reservationId ? 3 : quote ? 2 : messages.length > 1 ? 1 : 0;
@@ -1065,8 +1094,15 @@ function ReserverPage() {
                 rows={1}
                 disabled={busy || !!reservationId}
                 placeholder={reservationId ? tx("sent") : tx("placeholder")}
+                maxLength={MAX_INPUT}
+                aria-invalid={input.length > MAX_INPUT}
                 className="max-h-32 min-h-[44px] flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-accent"
               />
+              {input.length > MAX_INPUT - 200 && (
+                <span className="self-center text-[11px] text-muted-foreground" aria-live="polite">
+                  {MAX_INPUT - input.length} {R.counter}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={toggleVoice}
@@ -1139,6 +1175,45 @@ function ReserverPage() {
                 </li>
               </ul>
             </div>
+
+            {/* Récapitulatif avant soumission / confirmation multilingue */}
+            {reservationId ? (
+              <div
+                className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm"
+                role="status"
+                aria-live="polite"
+              >
+                <p className="flex items-center gap-2 font-display text-base font-bold text-foreground">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" /> {R.ok_title}
+                </p>
+                <p className="mt-1 text-muted-foreground">{R.ok_desc}</p>
+                {suiviId && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {R.ok_ref} :{" "}
+                    <span className="font-mono font-semibold text-foreground">{suiviId}</span>
+                  </p>
+                )}
+                {suiviId && (
+                  <Link
+                    to="/suivi/$id"
+                    params={{ id: suiviId }}
+                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90"
+                  >
+                    <Car className="h-4 w-4" /> {R.ok_cta}
+                  </Link>
+                )}
+              </div>
+            ) : (
+              quote?.prix_estime != null && (
+                <button
+                  type="button"
+                  onClick={() => setRecapOpen(true)}
+                  className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                >
+                  {R.open}
+                </button>
+              )
+            )}
 
             {/* GPS status (auto) + manual fallback */}
             <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4" aria-live="polite">
