@@ -18,6 +18,8 @@ import { listDriverCourses, setCourseDriver } from "@/lib/driver-courses.functio
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
+import { updateMyDriverPosition, stopMyDriverPosition } from "@/lib/driver-gps.functions";
+import { reverseGeocode } from "@/lib/geocode";
 
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
@@ -706,6 +708,9 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
           </div>
         )}
 
+        {/* Position GPS */}
+        <GpsCard driverLabel={driverLabel} />
+
         {/* Tabs */}
         <div className="drv-tabs">
           {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "appareils"] as Tab[]).map((t) => (
@@ -773,6 +778,264 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
         </div>
       </div>
     </>
+  );
+}
+
+
+// ── Carte GPS (position du chauffeur, activation automatique) ───────────────
+function GpsCard({ driverLabel }: { driverLabel?: string }) {
+  const pushPos = useServerFn(updateMyDriverPosition);
+  const stopPos = useServerFn(stopMyDriverPosition);
+
+  const [pos, setPos] = useState<{ lat: number; lng: number; acc: number | null; speed: number | null } | null>(null);
+  const [addr, setAddr] = useState<string | null>(null);
+  const [state, setState] = useState<"idle" | "on" | "denied" | "error" | "off">("idle");
+  const [lastSync, setLastSync] = useState<Date | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const watchRef = useRef<number | null>(null);
+  const lastSentRef = useRef<{ t: number; lat: number; lng: number } | null>(null);
+  const addrRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  const start = useCallback(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setState("error");
+      return;
+    }
+    if (watchRef.current != null) return;
+    watchRef.current = navigator.geolocation.watchPosition(
+      (p) => {
+        const lat = p.coords.latitude;
+        const lng = p.coords.longitude;
+        setState("on");
+        setPos({
+          lat,
+          lng,
+          acc: Number.isFinite(p.coords.accuracy) ? Math.round(p.coords.accuracy) : null,
+          speed: p.coords.speed != null && Number.isFinite(p.coords.speed) ? Math.max(0, p.coords.speed) : null,
+        });
+
+        // Envoi throttlé : 15 s minimum, ou déplacement > ~30 m.
+        const prev = lastSentRef.current;
+        const dist = prev
+          ? Math.hypot((lat - prev.lat) * 111320, (lng - prev.lng) * 111320 * Math.cos((lat * Math.PI) / 180))
+          : Infinity;
+        if (!prev || Date.now() - prev.t > 15000 || dist > 30) {
+          lastSentRef.current = { t: Date.now(), lat, lng };
+          pushPos({
+            data: {
+              token: getDriverToken() ?? "",
+              latitude: lat,
+              longitude: lng,
+              accuracy: p.coords.accuracy ?? null,
+              speed: p.coords.speed != null && p.coords.speed >= 0 ? Math.min(500, p.coords.speed) : null,
+              heading: p.coords.heading != null && Number.isFinite(p.coords.heading) ? ((p.coords.heading % 360) + 360) % 360 : null,
+              is_active: true,
+            },
+          })
+            .then(() => setLastSync(new Date()))
+            .catch(() => {});
+        }
+
+        // Adresse lisible, rafraîchie seulement si on a bougé de > 100 m.
+        const a = addrRef.current;
+        const moved = !a || Math.hypot((lat - a.lat) * 111320, (lng - a.lng) * 111320) > 100;
+        if (moved) {
+          addrRef.current = { lat, lng };
+          reverseGeocode(lat, lng).then((r) => r && setAddr(r)).catch(() => {});
+        }
+      },
+      (err) => {
+        setState(err.code === err.PERMISSION_DENIED ? "denied" : "error");
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
+    );
+  }, [pushPos]);
+
+  const stop = useCallback(() => {
+    if (watchRef.current != null && typeof navigator !== "undefined") {
+      navigator.geolocation.clearWatch(watchRef.current);
+      watchRef.current = null;
+    }
+    setState("off");
+    stopPos({ data: { token: getDriverToken() ?? "" } }).catch(() => {});
+  }, [stopPos]);
+
+  // Activation automatique à l'ouverture du panneau.
+  useEffect(() => {
+    start();
+    return () => {
+      if (watchRef.current != null && typeof navigator !== "undefined") {
+        navigator.geolocation.clearWatch(watchRef.current);
+        watchRef.current = null;
+      }
+    };
+  }, [start]);
+
+  const dot = state === "on" ? "#16a34a" : state === "denied" || state === "error" ? "#dc2626" : "#94a3b8";
+  const label =
+    state === "on"
+      ? "GPS actif"
+      : state === "denied"
+        ? "GPS refusé — autorise la localisation"
+        : state === "error"
+          ? "GPS indisponible"
+          : state === "off"
+            ? "GPS en pause"
+            : "Activation du GPS…";
+
+  return (
+    <div
+      style={{
+        margin: "10px 16px 0",
+        border: "1px solid #e2e8f0",
+        borderRadius: 14,
+        background: "#FDFBF7",
+        overflow: "hidden",
+        fontFamily: "'DM Sans', sans-serif",
+      }}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          background: "transparent",
+          border: "none",
+          padding: "11px 14px",
+          cursor: "pointer",
+          textAlign: "left",
+        }}
+      >
+        <span
+          style={{
+            width: 9,
+            height: 9,
+            borderRadius: "50%",
+            background: dot,
+            boxShadow: state === "on" ? `0 0 0 4px ${dot}22` : "none",
+            flexShrink: 0,
+          }}
+        />
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
+          📍 Ma position {driverLabel ? `— ${driverLabel}` : ""}
+        </span>
+        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "#64748b" }}>
+          {addr ?? label} {open ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {open && (
+        <div style={{ padding: "0 14px 14px" }}>
+          <div style={{ fontSize: 12.5, color: "#334155", lineHeight: 1.7, marginBottom: 10 }}>
+            <div>
+              <b>État :</b> {label}
+            </div>
+            {addr && (
+              <div>
+                <b>Adresse :</b> {addr}
+              </div>
+            )}
+            {pos && (
+              <>
+                <div>
+                  <b>Coordonnées :</b> {pos.lat.toFixed(5)}, {pos.lng.toFixed(5)}
+                  {pos.acc != null ? ` (±${pos.acc} m)` : ""}
+                </div>
+                {pos.speed != null && (
+                  <div>
+                    <b>Vitesse :</b> {Math.round(pos.speed * 3.6)} km/h
+                  </div>
+                )}
+              </>
+            )}
+            <div>
+              <b>Dernier envoi :</b>{" "}
+              {lastSync ? lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "—"}
+            </div>
+          </div>
+
+          {pos && (
+            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #e2e8f0", marginBottom: 10 }}>
+              <iframe
+                title="Ma position"
+                src={`https://www.google.com/maps?q=${pos.lat},${pos.lng}&z=15&output=embed`}
+                style={{ width: "100%", height: 170, border: "none", display: "block" }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          )}
+
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {state === "on" ? (
+              <button
+                onClick={stop}
+                style={{
+                  flex: 1,
+                  minWidth: 130,
+                  background: "#fff",
+                  color: "#b91c1c",
+                  border: "1px solid #fecaca",
+                  borderRadius: 10,
+                  padding: "9px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                ⏸ Mettre en pause
+              </button>
+            ) : (
+              <button
+                onClick={start}
+                style={{
+                  flex: 1,
+                  minWidth: 130,
+                  background: "#0f172a",
+                  color: "#FDFBF7",
+                  border: "none",
+                  borderRadius: 10,
+                  padding: "9px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                ▶ Activer le GPS
+              </button>
+            )}
+            {pos && (
+              <a
+                href={`https://www.google.com/maps?q=${pos.lat},${pos.lng}`}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  flex: 1,
+                  minWidth: 130,
+                  textAlign: "center",
+                  background: "#f8fafc",
+                  color: "#0f172a",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 10,
+                  padding: "9px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                🗺 Ouvrir dans Maps
+              </a>
+            )}
+          </div>
+          <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 8, lineHeight: 1.5 }}>
+            La position est partagée uniquement avec le client pendant une course acceptée.
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
