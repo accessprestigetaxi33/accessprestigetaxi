@@ -47,3 +47,12 @@ export function assertDriverToken(token: unknown): DriverIdentity {
   if (!identity) throw new Error("UNAUTHORIZED");
   return identity;
 }
+
+/** Renvoie le code serveur associé à un chauffeur (accès sans mot de passe). */
+export function tokenForDriver(id: "patricia" | "alain"): string | null {
+  const envName = id === "patricia" ? "DRIVER_CODE_PATRICIA" : "DRIVER_CODE_ALAIN";
+  const direct = (process.env[envName] || "").trim();
+  if (direct) return direct;
+  const fallback = (process.env["DRIVER_PANEL_TOKEN"] || "").trim();
+  return fallback || null;
+}
