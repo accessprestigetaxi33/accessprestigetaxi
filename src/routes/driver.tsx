@@ -21,7 +21,6 @@ import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driv
 import { updateMyDriverPosition, stopMyDriverPosition } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/geocode";
 
-
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
@@ -103,7 +102,7 @@ export const Route = createFileRoute("/driver")({
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Espace Patricia" },
+      { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
     ],
     links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
   }),
@@ -124,6 +123,30 @@ const css = `
     max-width: 480px; margin: 0 auto;
     display: flex; flex-direction: column;
     background: #FDFBF7;
+  }
+  /* Tablette (iPad portrait et paysage) : colonne élargie, toujours centrée,
+     avec un liseré pour la distinguer du fond gris de l'écran. */
+  @media (min-width: 700px) {
+    html, body { background: #e2e8f0; }
+    .drv-root {
+      max-width: 620px;
+      box-shadow: 0 0 0 1px #e2e8f0, 0 20px 60px -20px rgba(15, 23, 42, 0.25);
+    }
+  }
+  /* Desktop / grand écran : colonne encore plus large, texte légèrement agrandi. */
+  @media (min-width: 1024px) {
+    .drv-root { max-width: 760px; }
+    .drv-body { padding: 20px 28px; }
+    .drv-card { padding: 16px; }
+  }
+  /* Souris/trackpad (pas d'écran tactile) : hover discret sur les éléments cliquables,
+     la logique :active seule (pensée pour le tactile) ne suffit pas sur PC. */
+  @media (hover: hover) and (pointer: fine) {
+    .drv-tab:hover { color: #0f172a; }
+    .drv-btn-primary:hover { background: #1e293b; }
+    .drv-btn-secondary:hover { background: #e2e8f0; }
+    .drv-btn-danger:hover { background: #fee2e2; }
+    .drv-card:hover, .drv-route-opt:hover, .drv-chat-thread:hover { border-color: #cbd5e1; }
   }
   .drv-header {
     background: #0f172a; color: #FDFBF7; display: flex; align-items: center; gap: 10px;
@@ -426,7 +449,12 @@ function DriverPage() {
     });
   }, []);
 
-  if (status !== "granted") {
+  // Chargement initial très bref (vérif du token en cache) : seul cet état
+  // bloque l'écran. Dès qu'on sait qu'il n'y a pas de session valide, on
+  // n'affiche plus de mur de connexion — on entre directement dans l'appli ;
+  // le choix "Alain / Patricia" devient un simple bouton dans le header,
+  // utile pour le suivi GPS et les notifications, jamais bloquant.
+  if (status === "checking") {
     return (
       <div
         style={{
@@ -436,68 +464,53 @@ function DriverPage() {
           height: "100dvh",
           fontFamily: "DM Sans,sans-serif",
           color: "#64748b",
-          padding: 24,
         }}
       >
-        <div style={{ textAlign: "center", maxWidth: 320, width: "100%" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🚕</div>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>
-            {status === "checking" ? "Vérification…" : "Espace chauffeur"}
-          </div>
-          {status === "denied" && (
-            <>
-              <div style={{ fontSize: 13, marginBottom: 16 }}>Choisissez votre profil</div>
-              <div style={{ display: "grid", gap: 10 }}>
-                {([
-                  { id: "alain", name: "Alain" },
-                  { id: "patricia", name: "Patricia" },
-                ] as const).map((d) => (
-                  <button
-                    key={d.id}
-                    type="button"
-                    disabled={busy !== null}
-                    onClick={async () => {
-                      setError(null);
-                      setBusy(d.id);
-                      try {
-                        const res: any = await openSession({ data: { driver: d.id } });
-                        const ok = res?.ok && res.token ? await tryToken(res.token) : false;
-                        if (!ok) setError("Accès indisponible, réessayez.");
-                      } catch {
-                        setError("Accès indisponible, réessayez.");
-                      } finally {
-                        setBusy(null);
-                      }
-                    }}
-                    style={{
-                      padding: "14px 16px",
-                      borderRadius: 12,
-                      border: "none",
-                      background: "var(--background)",
-                      color: "var(--gold)",
-                      fontWeight: 700,
-                      fontSize: 16,
-                      cursor: busy ? "wait" : "pointer",
-                      opacity: busy && busy !== d.id ? 0.5 : 1,
-                    }}
-                  >
-                    {busy === d.id ? "Connexion…" : d.name}
-                  </button>
-                ))}
-              </div>
-              {error && <div style={{ color: "#dc2626", fontSize: 13, marginTop: 10 }}>{error}</div>}
-            </>
-          )}
-        </div>
-
+        <div style={{ fontSize: 40 }}>🚕</div>
       </div>
     );
   }
 
-  return <DriverApp driverLabel={driverLabel} driverId={driverId} />;
+  const identify = async (id: "alain" | "patricia"): Promise<boolean> => {
+    setError(null);
+    setBusy(id);
+    try {
+      const res: any = await openSession({ data: { driver: id } });
+      const ok = res?.ok && res.token ? await tryToken(res.token) : false;
+      if (!ok) setError("Accès indisponible, réessayez.");
+      return ok;
+    } catch {
+      setError("Accès indisponible, réessayez.");
+      return false;
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <DriverApp
+      driverLabel={driverLabel}
+      driverId={driverId}
+      onIdentify={identify}
+      identifyBusy={busy}
+      identifyError={error}
+    />
+  );
 }
 
-function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?: string }) {
+function DriverApp({
+  driverLabel,
+  driverId,
+  onIdentify,
+  identifyBusy,
+  identifyError,
+}: {
+  driverLabel?: string;
+  driverId?: string;
+  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
+  identifyBusy: string | null;
+  identifyError: string | null;
+}) {
   const listCoursesFn = useServerFn(listDriverCourses);
   const [tab, setTab] = useState<Tab>("courses");
 
@@ -505,7 +518,10 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({ autoAudience: "chauffeur", driverId: driverId ?? null });
+  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
+    autoAudience: "chauffeur",
+    driverId: driverId ?? null,
+  });
 
   // Capture le prompt d'installation PWA
   useEffect(() => {
@@ -632,7 +648,15 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
       <div className="drv-root">
         <div className="drv-header">
           <span style={{ fontSize: 26 }}>🚕</span>
-          <h1>{driverLabel ? `Espace ${driverLabel}` : "Espace chauffeur"}</h1>
+          <h1 style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Espace chauffeur</span>
+            <DriverIdentitySwitcher
+              driverId={driverId}
+              onIdentify={onIdentify}
+              busy={identifyBusy}
+              error={identifyError}
+            />
+          </h1>
 
           {installPrompt ? (
             <button
@@ -739,58 +763,65 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
         )}
 
         {/* Position GPS */}
-        <GpsCard driverLabel={driverLabel} />
+        <GpsCard
+          driverId={driverId}
+          onIdentify={onIdentify}
+          identifyBusy={identifyBusy}
+          identifyError={identifyError}
+        />
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "appareils"] as Tab[]).map((t) => (
-            <button
-              key={t}
-              className={`drv-tab${tab === t ? " active" : ""}`}
-              onClick={() => {
-                setTab(t);
-                gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
-                // Reset optimiste du badge chat à l'ouverture de l'onglet ;
-                // le prochain refresh Realtime/reconcile remettra la vraie valeur.
-                if (t === "courses") setUnreadChat(0);
-              }}
-            >
-              <div style={{ position: "relative", display: "inline-block" }}>
-                {t === "courses" && (
-                  <>
-                    <IconBell />
-                    {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
-                  </>
-                )}
-                {t === "planning" && <IconCalendar />}
-                {t === "avis" && (
-                  <>
-                    <IconStar />
-                    {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
-                  </>
-                )}
-                {t === "clients" && <IconUsers />}
-                {t === "stats" && <IconChart />}
-                {t === "historique" && <IconCalendar />}
-                {t === "simulateur" && <IconCalc />}
-                {t === "appareils" && <IconBell />}
-              </div>
-              <span>
-                {
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "appareils"] as Tab[]).map(
+            (t) => (
+              <button
+                key={t}
+                className={`drv-tab${tab === t ? " active" : ""}`}
+                onClick={() => {
+                  setTab(t);
+                  gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
+                  // Reset optimiste du badge chat à l'ouverture de l'onglet ;
+                  // le prochain refresh Realtime/reconcile remettra la vraie valeur.
+                  if (t === "courses") setUnreadChat(0);
+                }}
+              >
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  {t === "courses" && (
+                    <>
+                      <IconBell />
+                      {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
+                    </>
+                  )}
+                  {t === "planning" && <IconCalendar />}
+                  {t === "avis" && (
+                    <>
+                      <IconStar />
+                      {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
+                    </>
+                  )}
+                  {t === "clients" && <IconUsers />}
+                  {t === "stats" && <IconChart />}
+                  {t === "historique" && <IconCalendar />}
+                  {t === "simulateur" && <IconCalc />}
+                  {t === "appareils" && <IconBell />}
+                </div>
+                <span>
                   {
-                    courses: "Course + chat client",
-                    planning: "Planning",
-                    avis: "Avis",
-                    clients: "Clients",
-                    stats: "Stats",
-                    historique: "Historique",
-                    simulateur: "Simu",
-                    appareils: "Appareils",
-                  }[t]
-                }
-              </span>
-            </button>
-          ))}
+                    {
+                      courses: "Course + chat client",
+                      planning: "Planning",
+                      avis: "Avis",
+                      clients: "Clients",
+                      stats: "Stats",
+                      historique: "Historique",
+                      simulateur: "Simu",
+                      appareils: "Appareils",
+                    }[t]
+                  }
+                </span>
+              </button>
+            ),
+          )}
         </div>
 
         <div className="drv-body">
@@ -811,9 +842,125 @@ function DriverApp({ driverLabel, driverId }: { driverLabel?: string; driverId?:
   );
 }
 
+// ── Sélecteur d'identité (Alain / Patricia) ─────────────────────────────────
+// Remplace l'ancien mur de connexion : un simple bouton dans le header,
+// jamais bloquant. Utile pour attribuer correctement le suivi GPS et les
+// notifications push à la bonne personne — pas une obligation pour utiliser
+// le reste de l'appli (courses, chat, stats… déjà accessibles sans identité).
+function DriverIdentitySwitcher({
+  driverId,
+  onIdentify,
+  busy,
+  error,
+}: {
+  driverId?: string;
+  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
+  busy: string | null;
+  error: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [open]);
+
+  return (
+    <div ref={rootRef} style={{ position: "relative", flexShrink: 0 }}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 5,
+          background: "rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          borderRadius: 999,
+          padding: "5px 11px 5px 9px",
+          color: "#FDFBF7",
+          fontSize: 12,
+          fontWeight: 700,
+          cursor: "pointer",
+          minHeight: 32,
+        }}
+      >
+        👤 {driverId === "patricia" ? "Patricia" : driverId === "alain" ? "Alain" : "Choisir"}
+        <span style={{ fontSize: 9, opacity: 0.8 }}>▾</span>
+      </button>
+      {open && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 6px)",
+            right: 0,
+            background: "#FDFBF7",
+            border: "1px solid #e2e8f0",
+            borderRadius: 14,
+            boxShadow: "0 10px 30px -8px rgba(15,23,42,0.35)",
+            padding: 8,
+            display: "grid",
+            gap: 6,
+            minWidth: 160,
+            zIndex: 50,
+          }}
+        >
+          {(
+            [
+              { id: "alain", name: "Alain" },
+              { id: "patricia", name: "Patricia" },
+            ] as const
+          ).map((d) => (
+            <button
+              key={d.id}
+              type="button"
+              disabled={busy !== null}
+              onClick={async () => {
+                const ok = await onIdentify(d.id);
+                if (ok) setOpen(false);
+              }}
+              style={{
+                textAlign: "left",
+                padding: "10px 12px",
+                borderRadius: 10,
+                border: "1px solid " + (driverId === d.id ? "#0f172a" : "#e2e8f0"),
+                background: driverId === d.id ? "#f1f5f9" : "#FDFBF7",
+                color: "#0f172a",
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: busy ? "wait" : "pointer",
+                minHeight: 40,
+              }}
+            >
+              {busy === d.id ? "Connexion…" : d.name}
+              {driverId === d.id ? " ✓" : ""}
+            </button>
+          ))}
+          {error && <div style={{ color: "#dc2626", fontSize: 12, padding: "0 2px" }}>{error}</div>}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ── Carte GPS (position du chauffeur, activation automatique) ───────────────
-function GpsCard({ driverLabel }: { driverLabel?: string }) {
+function GpsCard({
+  driverId,
+  onIdentify,
+  identifyBusy,
+  identifyError,
+}: {
+  driverId?: string;
+  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
+  identifyBusy: string | null;
+  identifyError: string | null;
+}) {
+  const identified = driverId === "alain" || driverId === "patricia";
   const pushPos = useServerFn(updateMyDriverPosition);
   const stopPos = useServerFn(stopMyDriverPosition);
 
@@ -859,7 +1006,10 @@ function GpsCard({ driverLabel }: { driverLabel?: string }) {
               longitude: lng,
               accuracy: p.coords.accuracy ?? null,
               speed: p.coords.speed != null && p.coords.speed >= 0 ? Math.min(500, p.coords.speed) : null,
-              heading: p.coords.heading != null && Number.isFinite(p.coords.heading) ? ((p.coords.heading % 360) + 360) % 360 : null,
+              heading:
+                p.coords.heading != null && Number.isFinite(p.coords.heading)
+                  ? ((p.coords.heading % 360) + 360) % 360
+                  : null,
               is_active: true,
             },
           })
@@ -872,7 +1022,9 @@ function GpsCard({ driverLabel }: { driverLabel?: string }) {
         const moved = !a || Math.hypot((lat - a.lat) * 111320, (lng - a.lng) * 111320) > 100;
         if (moved) {
           addrRef.current = { lat, lng };
-          reverseGeocode(lat, lng).then((r) => r && setAddr(r)).catch(() => {});
+          reverseGeocode(lat, lng)
+            .then((r) => r && setAddr(r))
+            .catch(() => {});
         }
       },
       (err) => {
@@ -891,8 +1043,11 @@ function GpsCard({ driverLabel }: { driverLabel?: string }) {
     stopPos({ data: { token: getDriverToken() ?? "" } }).catch(() => {});
   }, [stopPos]);
 
-  // Activation automatique à l'ouverture du panneau.
+  // Activation automatique à l'ouverture du panneau — seulement une fois
+  // l'identité (Alain/Patricia) connue, sinon deux appareils écraseraient
+  // la même position côté serveur.
   useEffect(() => {
+    if (!identified) return;
     start();
     return () => {
       if (watchRef.current != null && typeof navigator !== "undefined") {
@@ -900,7 +1055,7 @@ function GpsCard({ driverLabel }: { driverLabel?: string }) {
         watchRef.current = null;
       }
     };
-  }, [start]);
+  }, [start, identified]);
 
   const dot = state === "on" ? "#16a34a" : state === "denied" || state === "error" ? "#dc2626" : "#94a3b8";
   const label =
@@ -913,6 +1068,51 @@ function GpsCard({ driverLabel }: { driverLabel?: string }) {
           : state === "off"
             ? "GPS en pause"
             : "Activation du GPS…";
+
+  if (!identified) {
+    return (
+      <div
+        style={{
+          margin: "10px 16px 0",
+          border: "1px solid #fde68a",
+          borderRadius: 14,
+          background: "#fffbeb",
+          padding: "11px 14px",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        <span style={{ fontSize: 18 }}>📍</span>
+        <div style={{ flex: 1, fontSize: 12.5, color: "#92400e", fontWeight: 600 }}>
+          Indique qui conduit pour activer le suivi GPS en direct.
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+          {(["alain", "patricia"] as const).map((id) => (
+            <button
+              key={id}
+              disabled={identifyBusy !== null}
+              onClick={() => onIdentify(id)}
+              style={{
+                background: "#0f172a",
+                color: "#FDFBF7",
+                border: "none",
+                borderRadius: 8,
+                padding: "7px 10px",
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: identifyBusy ? "wait" : "pointer",
+              }}
+            >
+              {identifyBusy === id ? "…" : id === "alain" ? "Alain" : "Patricia"}
+            </button>
+          ))}
+        </div>
+        {identifyError && <div style={{ color: "#dc2626", fontSize: 11 }}>{identifyError}</div>}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -983,7 +1183,9 @@ function GpsCard({ driverLabel }: { driverLabel?: string }) {
             )}
             <div>
               <b>Dernier envoi :</b>{" "}
-              {lastSync ? lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "—"}
+              {lastSync
+                ? lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                : "—"}
             </div>
           </div>
 
@@ -1083,7 +1285,7 @@ function CoursesTab({
   const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
-  const [onlyMine, setOnlyMine] = useState(true);
+  const [onlyMine, setOnlyMine] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "accepted" | "en_route" | "arrived" | "done">(
     "all",
@@ -1383,7 +1585,13 @@ function CoursesTab({
           type="date"
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
-          style={{ border: "1px solid var(--border)", borderRadius: 12, padding: "9px 10px", fontSize: 13, minHeight: 40 }}
+          style={{
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: "9px 10px",
+            fontSize: 13,
+            minHeight: 40,
+          }}
         />
       </div>
       <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
@@ -1643,7 +1851,9 @@ function CourseCard({
             if (estTarifJourParis(t)) jourKm += frac;
             else nuitKm += frac;
           }
-          const prix_estime = parseFloat((TARIFS.PRISE_EN_CHARGE + jourKm * TARIFS.TARIF_JOUR + nuitKm * TARIFS.TARIF_NUIT).toFixed(2));
+          const prix_estime = parseFloat(
+            (TARIFS.PRISE_EN_CHARGE + jourKm * TARIFS.TARIF_JOUR + nuitKm * TARIFS.TARIF_NUIT).toFixed(2),
+          );
           const estJour = estTarifJourParis(pickupIso);
           const tarifLabel = jourKm > 0 && nuitKm > 0 ? "Tarif mixte 🌗" : estJour ? "Tarif jour ☀️" : "Tarif nuit 🌙";
 
@@ -2087,721 +2297,732 @@ function CourseCard({
       </button>
       <div
         className={`drv-card drv-swipe-content${resa.status === "pending" ? " new" : ""}`}
-        style={{ transform: `translateX(${swipeX}px)`, transition: swipeStart.current ? "none" : "transform .22s ease" }}
+        style={{
+          transform: `translateX(${swipeX}px)`,
+          transition: swipeStart.current ? "none" : "transform .22s ease",
+        }}
         onTouchStart={onSwipeStart}
         onTouchMove={onSwipeMove}
         onTouchEnd={onSwipeEnd}
         onTouchCancel={onSwipeEnd}
       >
-      {/* En-tête */}
-      <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
-        <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
-        <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
-      </div>
-      {resa.client_name && <div className="drv-name">{resa.client_name}</div>}
-      <div className="drv-route">
-        <span>📍 {resa.depart}</span>
-        <span>🏁 {resa.destination}</span>
-      </div>
+        {/* En-tête */}
+        <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
+          <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
+          <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
+        </div>
+        {resa.client_name && <div className="drv-name">{resa.client_name}</div>}
+        <div className="drv-route">
+          <span>📍 {resa.depart}</span>
+          <span>🏁 {resa.destination}</span>
+        </div>
 
-      {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
-      {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
-        (() => {
-          const qb: React.CSSProperties = {
-            flex: "1 1 auto",
-            minWidth: 120,
-            borderRadius: 12,
-            padding: "11px 10px",
-            fontSize: 13,
-            fontWeight: 800,
-            cursor: "pointer",
-            minHeight: 44,
-          };
-          return (
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
-              {resa.status === "pending" && (
-                <>
+        {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
+        {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
+          (() => {
+            const qb: React.CSSProperties = {
+              flex: "1 1 auto",
+              minWidth: 120,
+              borderRadius: 12,
+              padding: "11px 10px",
+              fontSize: 13,
+              fontWeight: 800,
+              cursor: "pointer",
+              minHeight: 44,
+            };
+            return (
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+                {resa.status === "pending" && (
+                  <>
+                    <button
+                      onClick={handleAccept}
+                      disabled={busy}
+                      style={{
+                        ...qb,
+                        background: "var(--background)",
+                        border: "2px solid var(--background)",
+                        color: "var(--gold)",
+                      }}
+                    >
+                      {busy ? "…" : "✅ Accepter"}
+                    </button>
+                    <button
+                      onClick={handleRefuse}
+                      disabled={busy}
+                      style={{ ...qb, background: "#FDFBF7", border: "2px solid #fecaca", color: "#b91c1c" }}
+                    >
+                      ✖ Refuser
+                    </button>
+                  </>
+                )}
+                {resa.status === "accepted" && (
                   <button
-                    onClick={handleAccept}
-                    disabled={busy}
-                    style={{ ...qb, background: "var(--background)", border: "2px solid var(--background)", color: "var(--gold)" }}
+                    onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
+                    disabled={progressing}
+                    style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
                   >
-                    {busy ? "…" : "✅ Accepter"}
+                    {progressing ? "…" : "🚖 Je pars"}
                   </button>
+                )}
+                {(resa.status === "accepted" || resa.status === "en_route") && (
                   <button
-                    onClick={handleRefuse}
-                    disabled={busy}
-                    style={{ ...qb, background: "#FDFBF7", border: "2px solid #fecaca", color: "#b91c1c" }}
+                    onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
+                    disabled={progressing}
+                    style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
                   >
-                    ✖ Refuser
+                    {progressing ? "…" : "✅ Prise en charge"}
                   </button>
-                </>
-              )}
-              {resa.status === "accepted" && (
-                <button
-                  onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
-                  disabled={progressing}
-                  style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
-                >
-                  {progressing ? "…" : "🚖 Je pars"}
-                </button>
-              )}
-              {(resa.status === "accepted" || resa.status === "en_route") && (
-                <button
-                  onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
-                  disabled={progressing}
-                  style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
-                >
-                  {progressing ? "…" : "✅ Prise en charge"}
-                </button>
-              )}
-              {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-                <button
-                  onClick={handleComplete}
-                  disabled={completing}
-                  style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
-                >
-                  {completing ? "…" : "🏁 Terminée"}
-                </button>
-              )}
+                )}
+                {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                  <button
+                    onClick={handleComplete}
+                    disabled={completing}
+                    style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
+                  >
+                    {completing ? "…" : "🏁 Terminée"}
+                  </button>
+                )}
+              </div>
+            );
+          })()}
+
+        {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
+        {resa.message && resa.message.trim().length > 0 && (
+          <div
+            style={{
+              marginTop: 10,
+              padding: "10px 12px",
+              background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
+              border: "1px solid #f59e0b",
+              borderRadius: 12,
+              fontSize: 13,
+              color: "#78350f",
+              lineHeight: 1.45,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+                marginBottom: 4,
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                color: "#b45309",
+              }}
+            >
+              <span>✨ Demande spéciale</span>
             </div>
-          );
-        })()}
+            <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{resa.message}</div>
+            {unreadByClient > 0 && (
+              <div
+                style={{
+                  marginTop: 8,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "3px 8px",
+                  borderRadius: 999,
+                  background: "#fee2e2",
+                  color: "#991b1b",
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+                title={`${unreadByClient} message(s) chauffeur non lu(s) par le client`}
+              >
+                ⏳ Réponse envoyée — non lue par le client ({unreadByClient})
+              </div>
+            )}
+          </div>
+        )}
 
-      {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
-      {resa.message && resa.message.trim().length > 0 && (
-        <div
-          style={{
-            marginTop: 10,
-            padding: "10px 12px",
-            background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
-            border: "1px solid #f59e0b",
-            borderRadius: 12,
-            fontSize: 13,
-            color: "#78350f",
-            lineHeight: 1.45,
-          }}
-        >
+        {/* Chat client ↔ chauffeur — TOUJOURS visible, en haut de la carte,
+          reste affiché même quand "Voir détail" / "Itinéraire" est ouvert. */}
+        <div style={{ marginTop: 8 }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 8,
-              marginBottom: 4,
-              fontSize: 11,
+              background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
+              border: "1px solid #334155",
+              borderRadius: "10px 10px 0 0",
+              color: "#E8C96D",
+              fontSize: 13,
               fontWeight: 700,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              color: "#b45309",
+              padding: "8px 12px",
             }}
           >
-            <span>✨ Demande spéciale</span>
-          </div>
-          <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{resa.message}</div>
-          {unreadByClient > 0 && (
-            <div
-              style={{
-                marginTop: 8,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "3px 8px",
-                borderRadius: 999,
-                background: "#fee2e2",
-                color: "#991b1b",
-                fontSize: 11,
-                fontWeight: 700,
-              }}
-              title={`${unreadByClient} message(s) chauffeur non lu(s) par le client`}
-            >
-              ⏳ Réponse envoyée — non lue par le client ({unreadByClient})
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Chat client ↔ chauffeur — TOUJOURS visible, en haut de la carte,
-          reste affiché même quand "Voir détail" / "Itinéraire" est ouvert. */}
-      <div style={{ marginTop: 8 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 8,
-            background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
-            border: "1px solid #334155",
-            borderRadius: "10px 10px 0 0",
-            color: "#E8C96D",
-            fontSize: 13,
-            fontWeight: 700,
-            padding: "8px 12px",
-          }}
-        >
-          <span>💬 Chat avec {resa.client_name || "le client"}</span>
-          {unreadCount > 0 ? (
-            <span
-              title={unreadTooltip}
-              aria-label={unreadTooltip}
-              style={{
-                minWidth: 20,
-                height: 20,
-                padding: "0 6px",
-                borderRadius: 10,
-                background: "#ef4444",
-                color: "#FDFBF7",
-                fontSize: 11,
-                fontWeight: 800,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {unreadCount}
-            </span>
-          ) : (
-            <span
-              style={{
-                fontSize: 10,
-                color: "#E8C96D99",
-                fontWeight: 600,
-                letterSpacing: "0.02em",
-              }}
-            >
-              ✓ à jour
-            </span>
-          )}
-        </div>
-        <div
-          style={{
-            borderLeft: "1px solid #334155",
-            borderRight: "1px solid #334155",
-            borderBottom: "1px solid #334155",
-            borderRadius: "0 0 10px 10px",
-            padding: 8,
-            background: "#0b1220",
-          }}
-        >
-          <InlineDriverChat reservationId={resa.id} />
-        </div>
-      </div>
-
-      {/* Résumé km/prix — priorité à la route sélectionnée si chargée, sinon valeurs BDD */}
-
-      {(() => {
-        const previewPrix = (() => {
-          const v = parseFloat((customPrix || "").trim().replace(",", "."));
-          return !isNaN(v) && v > 0 ? v : null;
-        })();
-        const displayPrix = previewPrix ?? routes[selectedRoute]?.prix_estime ?? resa.prix_estime;
-        const displayKm = routes[selectedRoute]?.distanceKm ?? resa.distance_km;
-        if (!displayKm && displayPrix == null && routes.length === 0) return null;
-        return (
-          <div className="drv-meta">
-            {displayKm != null && <span>🛣 {displayKm} km</span>}
-            {displayPrix != null && (
-              <span style={previewPrix != null ? { color: "#b45309", fontWeight: 700 } : undefined}>
-                💶 {displayPrix.toFixed(2)} €{previewPrix != null ? " (perso)" : ""}
-              </span>
-            )}
-            {previewPrix == null && routes[selectedRoute]?.tarifLabel && (
-              <span style={{ color: routes[selectedRoute].tarifLabel.includes("nuit") ? "#1d4ed8" : "#15803d" }}>
-                {routes[selectedRoute].tarifLabel}
-              </span>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* Détail expandable */}
-      {expanded && (
-        <>
-          <hr className="drv-divider" />
-
-          {/* Carte Google Maps */}
-          <div className="drv-map" ref={mapRef} />
-
-          {/* Itinéraires */}
-          {loadingRoutes && (
-            <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "10px 0" }}>
-              Calcul des itinéraires…
-            </div>
-          )}
-
-          {routes.length > 0 && (
-            <>
-              <p className="drv-section">Choisir un itinéraire</p>
-              {routes.map((r, i) => (
-                <div
-                  key={i}
-                  className={`drv-route-opt${selectedRoute === i ? " selected" : ""}`}
-                  onClick={async () => {
-                    setSelectedRoute(i);
-                    try {
-                      window.localStorage.setItem(routeStorageKey, String(i));
-                    } catch {}
-                    try {
-                      await driverUpdateReservation({
-                        data: {
-                          token: getDriverToken(),
-                          reservation_id: resa.id,
-                          patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
-                        },
-                      });
-                      toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
-                      onRefresh();
-                    } catch (e: any) {
-                      toast.error("Erreur mise à jour itinéraire : " + (e.message ?? e));
-                    }
-                  }}
-                >
-                  <div className="drv-route-opt-head">
-                    <span className="drv-route-label">
-                      {i === 0 ? "🏆 Recommandé" : i === 1 ? "🔀 Alternatif" : "⏱ Rapide"} — {r.summary}
-                    </span>
-                    <span className="drv-route-price">{r.prix_estime.toFixed(2)} €</span>
-                  </div>
-                  <div className="drv-route-meta">
-                    <span>🛣 {r.distanceKm} km</span>
-                    <span>⏱ {r.dureeMin} min</span>
-                    <span style={{ color: r.tarifLabel === "Tarif jour" ? "#15803d" : "#1d4ed8" }}>{r.tarifLabel}</span>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-
-          {/* Contact — tel / SMS / WhatsApp / Email, identique à l'admin */}
-          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") &&
-            (() => {
-              const phone = resa.client_phone;
-              const mail = resa.client_email || resa.email;
-              const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
-              const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
-              const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
-              const mailBody = trackUrl
-                ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nAccess Prestige Taxi`
-                : `Bonjour ${resa.client_name || ""},\n\nAccess Prestige Taxi`;
-              if (!phone && !mail) return null;
-              const contactBtn: React.CSSProperties = {
-                flex: "1 1 auto",
-                minWidth: 78,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                border: "1px solid #e2e8f0",
-                borderRadius: 12,
-                padding: "10px",
-                fontWeight: 700,
-                fontSize: 12.5,
-                textDecoration: "none",
-                color: "#0f172a",
-              };
-              return (
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                  {phone && (
-                    <>
-                      <a
-                        href={`tel:${phone}`}
-                        style={{ ...contactBtn, background: "#eff6ff", borderColor: "#bfdbfe", color: "#0369a1" }}
-                      >
-                        📞 Appeler
-                      </a>
-                      <a
-                        href={`sms:${phone}?body=${encodeURIComponent(body)}`}
-                        style={{ ...contactBtn, background: "#faf5ff", borderColor: "#e9d5ff", color: "#7e22ce" }}
-                      >
-                        💬 SMS
-                      </a>
-                      <a
-                        href={`https://wa.me/${phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}?text=${encodeURIComponent(body)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ ...contactBtn, background: "#f0fdf4", borderColor: "#bbf7d0", color: "#15803d" }}
-                      >
-                        🟢 WhatsApp
-                      </a>
-                    </>
-                  )}
-                  {mail && (
-                    <a
-                      href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
-                      style={{ ...contactBtn, background: "#FDFBF7beb", borderColor: "#fde68a", color: "#92400e" }}
-                    >
-                      ✉️ Email
-                    </a>
-                  )}
-                </div>
-              );
-            })()}
-
-          {/* Gestion avancée — visible une fois la course acceptée */}
-          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-            <>
-              {/* Prix custom */}
-              <button
-                onClick={() => setCustomPrixOpen((o) => !o)}
+            <span>💬 Chat avec {resa.client_name || "le client"}</span>
+            {unreadCount > 0 ? (
+              <span
+                title={unreadTooltip}
+                aria-label={unreadTooltip}
                 style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: "#f8fafc",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 12,
-                  padding: "10px 14px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#0f172a",
-                  cursor: "pointer",
-                  marginBottom: customPrixOpen ? 8 : 10,
+                  minWidth: 20,
+                  height: 20,
+                  padding: "0 6px",
+                  borderRadius: 10,
+                  background: "#ef4444",
+                  color: "#FDFBF7",
+                  fontSize: 11,
+                  fontWeight: 800,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                💶 {customPrixOpen ? "▲" : "▼"} Envoyer un prix personnalisé
-              </button>
-              {customPrixOpen && (
-                <div style={{ marginBottom: 12 }}>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Prix en € (ex : 18,50)"
-                    value={customPrix}
-                    onChange={(e) => setCustomPrix(e.target.value)}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = "#E8C96D";
-                      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,109,0.25)";
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                    className="drv-custom-prix-input"
-                    style={{
-                      width: "100%",
-                      padding: "12px 14px",
-                      borderRadius: 10,
-                      border: "1px solid var(--border)",
-                      fontSize: 16,
-                      marginBottom: 8,
-                      fontFamily: "'DM Sans', sans-serif",
-                      background: "#FDFBF7fff",
-                      color: "#0f172a",
-                      fontWeight: 600,
-                      outline: "none",
-                      transition: "border-color 120ms ease, box-shadow 120ms ease",
-                      WebkitAppearance: "none",
-                      appearance: "none",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    <button
-                      onClick={() => handleSendCustomPrix("sms")}
-                      disabled={customPrixSending}
-                      style={{
-                        flex: 1,
-                        minWidth: 70,
-                        background: "#faf5ff",
-                        border: "1px solid #e9d5ff",
-                        color: "#7e22ce",
-                        borderRadius: 10,
-                        padding: "8px",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      💬 SMS
-                    </button>
-                    <button
-                      onClick={() => handleSendCustomPrix("whatsapp")}
-                      disabled={customPrixSending}
-                      style={{
-                        flex: 1,
-                        minWidth: 70,
-                        background: "#f0fdf4",
-                        border: "1px solid #bbf7d0",
-                        color: "#15803d",
-                        borderRadius: 10,
-                        padding: "8px",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      🟢 WhatsApp
-                    </button>
-                    <button
-                      onClick={() => handleSendCustomPrix("email")}
-                      disabled={customPrixSending}
-                      style={{
-                        flex: 1,
-                        minWidth: 70,
-                        background: "#FDFBF7beb",
-                        border: "1px solid #fde68a",
-                        color: "#92400e",
-                        borderRadius: 10,
-                        padding: "8px",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {customPrixSending ? "…" : "✉️ Email"}
-                    </button>
-                  </div>
-                </div>
+                {unreadCount}
+              </span>
+            ) : (
+              <span
+                style={{
+                  fontSize: 10,
+                  color: "#E8C96D99",
+                  fontWeight: 600,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                ✓ à jour
+              </span>
+            )}
+          </div>
+          <div
+            style={{
+              borderLeft: "1px solid #334155",
+              borderRight: "1px solid #334155",
+              borderBottom: "1px solid #334155",
+              borderRadius: "0 0 10px 10px",
+              padding: 8,
+              background: "#0b1220",
+            }}
+          >
+            <InlineDriverChat reservationId={resa.id} />
+          </div>
+        </div>
+
+        {/* Résumé km/prix — priorité à la route sélectionnée si chargée, sinon valeurs BDD */}
+
+        {(() => {
+          const previewPrix = (() => {
+            const v = parseFloat((customPrix || "").trim().replace(",", "."));
+            return !isNaN(v) && v > 0 ? v : null;
+          })();
+          const displayPrix = previewPrix ?? routes[selectedRoute]?.prix_estime ?? resa.prix_estime;
+          const displayKm = routes[selectedRoute]?.distanceKm ?? resa.distance_km;
+          if (!displayKm && displayPrix == null && routes.length === 0) return null;
+          return (
+            <div className="drv-meta">
+              {displayKm != null && <span>🛣 {displayKm} km</span>}
+              {displayPrix != null && (
+                <span style={previewPrix != null ? { color: "#b45309", fontWeight: 700 } : undefined}>
+                  💶 {displayPrix.toFixed(2)} €{previewPrix != null ? " (perso)" : ""}
+                </span>
               )}
+              {previewPrix == null && routes[selectedRoute]?.tarifLabel && (
+                <span style={{ color: routes[selectedRoute].tarifLabel.includes("nuit") ? "#1d4ed8" : "#15803d" }}>
+                  {routes[selectedRoute].tarifLabel}
+                </span>
+              )}
+            </div>
+          );
+        })()}
 
-              {/* Reprogrammer l'heure */}
-              <button
-                onClick={() => setChangeHeureOpen((o) => !o)}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: "#f8fafc",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 12,
-                  padding: "10px 14px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#0f172a",
-                  cursor: "pointer",
-                  marginBottom: changeHeureOpen ? 8 : 10,
-                }}
-              >
-                🕐 {changeHeureOpen ? "▲" : "▼"} Reprogrammer l'heure
-              </button>
-              {changeHeureOpen && (
-                <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
-                  <input
-                    type="datetime-local"
-                    value={newDatetime}
-                    onChange={(e) => setNewDatetime(e.target.value)}
-                    style={{
-                      flex: 1,
-                      padding: "10px 12px",
-                      borderRadius: 10,
-                      border: "1px solid #e2e8f0",
-                      fontSize: 16,
-                      fontFamily: "'DM Sans', sans-serif",
+        {/* Détail expandable */}
+        {expanded && (
+          <>
+            <hr className="drv-divider" />
+
+            {/* Carte Google Maps */}
+            <div className="drv-map" ref={mapRef} />
+
+            {/* Itinéraires */}
+            {loadingRoutes && (
+              <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "10px 0" }}>
+                Calcul des itinéraires…
+              </div>
+            )}
+
+            {routes.length > 0 && (
+              <>
+                <p className="drv-section">Choisir un itinéraire</p>
+                {routes.map((r, i) => (
+                  <div
+                    key={i}
+                    className={`drv-route-opt${selectedRoute === i ? " selected" : ""}`}
+                    onClick={async () => {
+                      setSelectedRoute(i);
+                      try {
+                        window.localStorage.setItem(routeStorageKey, String(i));
+                      } catch {}
+                      try {
+                        await driverUpdateReservation({
+                          data: {
+                            token: getDriverToken(),
+                            reservation_id: resa.id,
+                            patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
+                          },
+                        });
+                        toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
+                        onRefresh();
+                      } catch (e: any) {
+                        toast.error("Erreur mise à jour itinéraire : " + (e.message ?? e));
+                      }
                     }}
-                  />
-                  <button
-                    onClick={handleChangeHeure}
-                    disabled={changeHeureSending || !newDatetime}
-                    className="drv-btn-primary"
-                    style={{ flex: "0 0 auto", padding: "10px 16px" }}
                   >
-                    {changeHeureSending ? "…" : "OK"}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
+                    <div className="drv-route-opt-head">
+                      <span className="drv-route-label">
+                        {i === 0 ? "🏆 Recommandé" : i === 1 ? "🔀 Alternatif" : "⏱ Rapide"} — {r.summary}
+                      </span>
+                      <span className="drv-route-price">{r.prix_estime.toFixed(2)} €</span>
+                    </div>
+                    <div className="drv-route-meta">
+                      <span>🛣 {r.distanceKm} km</span>
+                      <span>⏱ {r.dureeMin} min</span>
+                      <span style={{ color: r.tarifLabel === "Tarif jour" ? "#15803d" : "#1d4ed8" }}>
+                        {r.tarifLabel}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
 
-          {/* Actions */}
-          {resa.status === "pending" && (
-            <div className="drv-btns">
-              <button className="drv-btn-danger" onClick={handleRefuse} disabled={busy}>
-                Refuser
-              </button>
-              <button className="drv-btn-primary" onClick={handleAccept} disabled={busy}>
-                {busy ? "…" : "Accepter"}
-              </button>
-            </div>
-          )}
-          {resa.status === "accepted" && (
-            <>
-              {(() => {
-                // Utilise les coords géocodées si disponibles (plus précis que le texte brut)
-                const chosen = routes[selectedRoute];
-                const origCoord = chosen ? `${chosen.originLatLng.lat},${chosen.originLatLng.lng}` : resa.depart;
-                const destCoord = chosen ? `${chosen.destLatLng.lat},${chosen.destLatLng.lng}` : resa.destination;
-                // Waypoint milieu pour forcer le même itinéraire dans Maps
-                const wp = chosen?.waypointLatLng;
-                const waypointParam = wp ? `&waypoints=${wp.lat},${wp.lng}` : "";
-                const waypointCoord = wp ? `${wp.lat},${wp.lng}` : null;
-                // For web we percent-encode components; for native apps prefer encodeURI
-                // so commas in lat,lng are preserved (Google Maps expects `lat,lng`).
-                const originParam = encodeURIComponent(origCoord);
-                const destinationParam = encodeURIComponent(destCoord);
-                const originNative = encodeURI(origCoord);
-                const destinationNative = encodeURI(destCoord);
-                const googleMapsWeb = `https://www.google.com/maps/dir/?api=1&origin=${originParam}&destination=${destinationParam}${waypointParam}&travelmode=driving&dir_action=navigate`;
+            {/* Contact — tel / SMS / WhatsApp / Email, identique à l'admin */}
+            {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") &&
+              (() => {
+                const phone = resa.client_phone;
+                const mail = resa.client_email || resa.email;
+                const trackUrl =
+                  typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
+                const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
+                const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
+                const mailBody = trackUrl
+                  ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nAccess Prestige Taxi`
+                  : `Bonjour ${resa.client_name || ""},\n\nAccess Prestige Taxi`;
+                if (!phone && !mail) return null;
+                const contactBtn: React.CSSProperties = {
+                  flex: "1 1 auto",
+                  minWidth: 78,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 12,
+                  padding: "10px",
+                  fontWeight: 700,
+                  fontSize: 12.5,
+                  textDecoration: "none",
+                  color: "#0f172a",
+                };
                 return (
-                  <div style={{ marginBottom: 10 }}>
-                    <button
-                      onClick={() => {
-                        const ua = navigator.userAgent;
-                        const isIOS = /iPad|iPhone|iPod/.test(ua);
-                        const isAndroid = /Android/.test(ua);
-                        // Debug: log generated URLs to help testing
-                        const debug_googleMapsWeb = googleMapsWeb;
-                        const debug_wp = waypointParam || "";
-                        const debug_origin = originNative;
-                        const debug_destination = destinationNative;
-                        const debug_android_waypoint = waypointCoord ? `${waypointCoord}` : "";
-                        const debug_android_intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${debug_android_waypoint}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
-                        const debug_android_navigation = `google.navigation:q=${destinationNative}&mode=d`;
-                        console.debug("[Démarrer GPS] UA:", ua);
-                        console.debug("[Démarrer GPS] origin:", debug_origin);
-                        console.debug("[Démarrer GPS] destination:", debug_destination);
-                        console.debug("[Démarrer GPS] waypoint:", debug_wp);
-                        console.debug("[Démarrer GPS] android_intent:", debug_android_intent);
-                        console.debug("[Démarrer GPS] android_navigation:", debug_android_navigation);
-                        console.debug("[Démarrer GPS] web:", debug_googleMapsWeb);
-                        if (isIOS) {
-                          // iOS : open Google Maps app with explicit origin + waypoint + start navigation
-                          const gmaps = waypointCoord
-                            ? `comgooglemaps://?saddr=${originNative}&daddr=${waypointCoord}+to:${destinationNative}&directionsmode=driving&dir_action=navigate`
-                            : `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&directionsmode=driving&dir_action=navigate`;
-                          window.location.href = gmaps;
-                          setTimeout(() => {
-                            window.location.href = googleMapsWeb;
-                          }, 1200);
-                        } else if (isAndroid) {
-                          const androidNavigation = `google.navigation:q=${destinationNative}&mode=d`;
-                          const gmapsAndroid = waypointCoord
-                            ? `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&waypoints=${waypointCoord}&directionsmode=driving&dir_action=navigate`
-                            : androidNavigation;
-                          const intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${waypointCoord}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
-                          window.location.href = gmapsAndroid;
-                          setTimeout(() => {
-                            window.location.href = intent;
-                          }, 1200);
-                          setTimeout(() => {
-                            window.location.href = androidNavigation;
-                          }, 2400);
-                          setTimeout(() => {
-                            window.open(googleMapsWeb, "_blank");
-                          }, 3600);
-                        } else {
-                          window.open(googleMapsWeb, "_blank");
-                        }
-                      }}
-                      style={{
-                        width: "100%",
-                        display: "block",
-                        textAlign: "center",
-                        background: "#0f172a",
-                        color: "#FDFBF7",
-                        border: "none",
-                        borderRadius: 12,
-                        padding: "13px 8px",
-                        fontSize: 14,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        fontFamily: "'DM Sans', sans-serif",
-                      }}
-                    >
-                      🗺 Lancer Google Maps
-                    </button>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                    {phone && (
+                      <>
+                        <a
+                          href={`tel:${phone}`}
+                          style={{ ...contactBtn, background: "#eff6ff", borderColor: "#bfdbfe", color: "#0369a1" }}
+                        >
+                          📞 Appeler
+                        </a>
+                        <a
+                          href={`sms:${phone}?body=${encodeURIComponent(body)}`}
+                          style={{ ...contactBtn, background: "#faf5ff", borderColor: "#e9d5ff", color: "#7e22ce" }}
+                        >
+                          💬 SMS
+                        </a>
+                        <a
+                          href={`https://wa.me/${phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}?text=${encodeURIComponent(body)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ ...contactBtn, background: "#f0fdf4", borderColor: "#bbf7d0", color: "#15803d" }}
+                        >
+                          🟢 WhatsApp
+                        </a>
+                      </>
+                    )}
+                    {mail && (
+                      <a
+                        href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
+                        style={{ ...contactBtn, background: "#FDFBF7beb", borderColor: "#fde68a", color: "#92400e" }}
+                      >
+                        ✉️ Email
+                      </a>
+                    )}
                   </div>
                 );
               })()}
-            </>
-          )}
 
-          {resa.status === "accepted" && (
+            {/* Gestion avancée — visible une fois la course acceptée */}
+            {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+              <>
+                {/* Prix custom */}
+                <button
+                  onClick={() => setCustomPrixOpen((o) => !o)}
+                  style={{
+                    width: "100%",
+                    textAlign: "left",
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: 12,
+                    padding: "10px 14px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#0f172a",
+                    cursor: "pointer",
+                    marginBottom: customPrixOpen ? 8 : 10,
+                  }}
+                >
+                  💶 {customPrixOpen ? "▲" : "▼"} Envoyer un prix personnalisé
+                </button>
+                {customPrixOpen && (
+                  <div style={{ marginBottom: 12 }}>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="Prix en € (ex : 18,50)"
+                      value={customPrix}
+                      onChange={(e) => setCustomPrix(e.target.value)}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = "#E8C96D";
+                        e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,109,0.25)";
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = "var(--border)";
+                        e.currentTarget.style.boxShadow = "none";
+                      }}
+                      className="drv-custom-prix-input"
+                      style={{
+                        width: "100%",
+                        padding: "12px 14px",
+                        borderRadius: 10,
+                        border: "1px solid var(--border)",
+                        fontSize: 16,
+                        marginBottom: 8,
+                        fontFamily: "'DM Sans', sans-serif",
+                        background: "#FDFBF7fff",
+                        color: "#0f172a",
+                        fontWeight: 600,
+                        outline: "none",
+                        transition: "border-color 120ms ease, box-shadow 120ms ease",
+                        WebkitAppearance: "none",
+                        appearance: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <button
+                        onClick={() => handleSendCustomPrix("sms")}
+                        disabled={customPrixSending}
+                        style={{
+                          flex: 1,
+                          minWidth: 70,
+                          background: "#faf5ff",
+                          border: "1px solid #e9d5ff",
+                          color: "#7e22ce",
+                          borderRadius: 10,
+                          padding: "8px",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                        }}
+                      >
+                        💬 SMS
+                      </button>
+                      <button
+                        onClick={() => handleSendCustomPrix("whatsapp")}
+                        disabled={customPrixSending}
+                        style={{
+                          flex: 1,
+                          minWidth: 70,
+                          background: "#f0fdf4",
+                          border: "1px solid #bbf7d0",
+                          color: "#15803d",
+                          borderRadius: 10,
+                          padding: "8px",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                        }}
+                      >
+                        🟢 WhatsApp
+                      </button>
+                      <button
+                        onClick={() => handleSendCustomPrix("email")}
+                        disabled={customPrixSending}
+                        style={{
+                          flex: 1,
+                          minWidth: 70,
+                          background: "#FDFBF7beb",
+                          border: "1px solid #fde68a",
+                          color: "#92400e",
+                          borderRadius: 10,
+                          padding: "8px",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {customPrixSending ? "…" : "✉️ Email"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Reprogrammer l'heure */}
+                <button
+                  onClick={() => setChangeHeureOpen((o) => !o)}
+                  style={{
+                    width: "100%",
+                    textAlign: "left",
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: 12,
+                    padding: "10px 14px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#0f172a",
+                    cursor: "pointer",
+                    marginBottom: changeHeureOpen ? 8 : 10,
+                  }}
+                >
+                  🕐 {changeHeureOpen ? "▲" : "▼"} Reprogrammer l'heure
+                </button>
+                {changeHeureOpen && (
+                  <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
+                    <input
+                      type="datetime-local"
+                      value={newDatetime}
+                      onChange={(e) => setNewDatetime(e.target.value)}
+                      style={{
+                        flex: 1,
+                        padding: "10px 12px",
+                        borderRadius: 10,
+                        border: "1px solid #e2e8f0",
+                        fontSize: 16,
+                        fontFamily: "'DM Sans', sans-serif",
+                      }}
+                    />
+                    <button
+                      onClick={handleChangeHeure}
+                      disabled={changeHeureSending || !newDatetime}
+                      className="drv-btn-primary"
+                      style={{ flex: "0 0 auto", padding: "10px 16px" }}
+                    >
+                      {changeHeureSending ? "…" : "OK"}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Actions */}
+            {resa.status === "pending" && (
+              <div className="drv-btns">
+                <button className="drv-btn-danger" onClick={handleRefuse} disabled={busy}>
+                  Refuser
+                </button>
+                <button className="drv-btn-primary" onClick={handleAccept} disabled={busy}>
+                  {busy ? "…" : "Accepter"}
+                </button>
+              </div>
+            )}
+            {resa.status === "accepted" && (
+              <>
+                {(() => {
+                  // Utilise les coords géocodées si disponibles (plus précis que le texte brut)
+                  const chosen = routes[selectedRoute];
+                  const origCoord = chosen ? `${chosen.originLatLng.lat},${chosen.originLatLng.lng}` : resa.depart;
+                  const destCoord = chosen ? `${chosen.destLatLng.lat},${chosen.destLatLng.lng}` : resa.destination;
+                  // Waypoint milieu pour forcer le même itinéraire dans Maps
+                  const wp = chosen?.waypointLatLng;
+                  const waypointParam = wp ? `&waypoints=${wp.lat},${wp.lng}` : "";
+                  const waypointCoord = wp ? `${wp.lat},${wp.lng}` : null;
+                  // For web we percent-encode components; for native apps prefer encodeURI
+                  // so commas in lat,lng are preserved (Google Maps expects `lat,lng`).
+                  const originParam = encodeURIComponent(origCoord);
+                  const destinationParam = encodeURIComponent(destCoord);
+                  const originNative = encodeURI(origCoord);
+                  const destinationNative = encodeURI(destCoord);
+                  const googleMapsWeb = `https://www.google.com/maps/dir/?api=1&origin=${originParam}&destination=${destinationParam}${waypointParam}&travelmode=driving&dir_action=navigate`;
+                  return (
+                    <div style={{ marginBottom: 10 }}>
+                      <button
+                        onClick={() => {
+                          const ua = navigator.userAgent;
+                          const isIOS = /iPad|iPhone|iPod/.test(ua);
+                          const isAndroid = /Android/.test(ua);
+                          // Debug: log generated URLs to help testing
+                          const debug_googleMapsWeb = googleMapsWeb;
+                          const debug_wp = waypointParam || "";
+                          const debug_origin = originNative;
+                          const debug_destination = destinationNative;
+                          const debug_android_waypoint = waypointCoord ? `${waypointCoord}` : "";
+                          const debug_android_intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${debug_android_waypoint}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
+                          const debug_android_navigation = `google.navigation:q=${destinationNative}&mode=d`;
+                          console.debug("[Démarrer GPS] UA:", ua);
+                          console.debug("[Démarrer GPS] origin:", debug_origin);
+                          console.debug("[Démarrer GPS] destination:", debug_destination);
+                          console.debug("[Démarrer GPS] waypoint:", debug_wp);
+                          console.debug("[Démarrer GPS] android_intent:", debug_android_intent);
+                          console.debug("[Démarrer GPS] android_navigation:", debug_android_navigation);
+                          console.debug("[Démarrer GPS] web:", debug_googleMapsWeb);
+                          if (isIOS) {
+                            // iOS : open Google Maps app with explicit origin + waypoint + start navigation
+                            const gmaps = waypointCoord
+                              ? `comgooglemaps://?saddr=${originNative}&daddr=${waypointCoord}+to:${destinationNative}&directionsmode=driving&dir_action=navigate`
+                              : `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&directionsmode=driving&dir_action=navigate`;
+                            window.location.href = gmaps;
+                            setTimeout(() => {
+                              window.location.href = googleMapsWeb;
+                            }, 1200);
+                          } else if (isAndroid) {
+                            const androidNavigation = `google.navigation:q=${destinationNative}&mode=d`;
+                            const gmapsAndroid = waypointCoord
+                              ? `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&waypoints=${waypointCoord}&directionsmode=driving&dir_action=navigate`
+                              : androidNavigation;
+                            const intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${waypointCoord}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
+                            window.location.href = gmapsAndroid;
+                            setTimeout(() => {
+                              window.location.href = intent;
+                            }, 1200);
+                            setTimeout(() => {
+                              window.location.href = androidNavigation;
+                            }, 2400);
+                            setTimeout(() => {
+                              window.open(googleMapsWeb, "_blank");
+                            }, 3600);
+                          } else {
+                            window.open(googleMapsWeb, "_blank");
+                          }
+                        }}
+                        style={{
+                          width: "100%",
+                          display: "block",
+                          textAlign: "center",
+                          background: "#0f172a",
+                          color: "#FDFBF7",
+                          border: "none",
+                          borderRadius: 12,
+                          padding: "13px 8px",
+                          fontSize: 14,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          fontFamily: "'DM Sans', sans-serif",
+                        }}
+                      >
+                        🗺 Lancer Google Maps
+                      </button>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+
+            {resa.status === "accepted" && (
+              <button
+                onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
+                disabled={progressing}
+                style={{
+                  width: "100%",
+                  background: "#eff6ff",
+                  border: "2px solid #2563eb",
+                  color: "#1d4ed8",
+                  borderRadius: 12,
+                  padding: "12px",
+                  fontSize: 14,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  marginBottom: 10,
+                }}
+              >
+                {progressing ? "…" : "🚖 Je pars vers le client"}
+              </button>
+            )}
+
+            {(resa.status === "accepted" || resa.status === "en_route") && (
+              <button
+                onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
+                disabled={progressing}
+                style={{
+                  width: "100%",
+                  background: "#f5f3ff",
+                  border: "2px solid #7c3aed",
+                  color: "#6d28d9",
+                  borderRadius: 12,
+                  padding: "12px",
+                  fontSize: 14,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  marginBottom: 10,
+                }}
+              >
+                {progressing ? "…" : "📍 Je suis devant chez vous"}
+              </button>
+            )}
+
+            {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+              <button
+                onClick={handleComplete}
+                disabled={completing}
+                style={{
+                  width: "100%",
+                  background: "#f0fdf4",
+                  border: "2px solid #16a34a",
+                  color: "#15803d",
+                  borderRadius: 12,
+                  padding: "12px",
+                  fontSize: 14,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  marginBottom: 10,
+                }}
+              >
+                {completing ? "…" : "🏁 Course terminée"}
+              </button>
+            )}
+
+            {/* Supprimer définitivement */}
             <button
-              onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
-              disabled={progressing}
+              onClick={handleDeleteResa}
+              disabled={deleting}
               style={{
                 width: "100%",
-                background: "#eff6ff",
-                border: "2px solid #2563eb",
-                color: "#1d4ed8",
-                borderRadius: 12,
-                padding: "12px",
-                fontSize: 14,
-                fontWeight: 800,
+                marginTop: 4,
+                background: "none",
+                border: "none",
+                color: "#b91c1c",
+                fontSize: 11.5,
+                fontWeight: 600,
                 cursor: "pointer",
-                marginBottom: 10,
+                padding: "6px 0",
               }}
             >
-              {progressing ? "…" : "🚖 Je pars vers le client"}
+              {deleting ? "Suppression…" : "🗑 Supprimer cette course"}
             </button>
-          )}
+          </>
+        )}
 
-          {(resa.status === "accepted" || resa.status === "en_route") && (
-            <button
-              onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
-              disabled={progressing}
-              style={{
-                width: "100%",
-                background: "#f5f3ff",
-                border: "2px solid #7c3aed",
-                color: "#6d28d9",
-                borderRadius: 12,
-                padding: "12px",
-                fontSize: 14,
-                fontWeight: 800,
-                cursor: "pointer",
-                marginBottom: 10,
-              }}
-            >
-              {progressing ? "…" : "📍 Je suis devant chez vous"}
-            </button>
-          )}
-
-          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-            <button
-              onClick={handleComplete}
-              disabled={completing}
-              style={{
-                width: "100%",
-                background: "#f0fdf4",
-                border: "2px solid #16a34a",
-                color: "#15803d",
-                borderRadius: 12,
-                padding: "12px",
-                fontSize: 14,
-                fontWeight: 800,
-                cursor: "pointer",
-                marginBottom: 10,
-              }}
-            >
-              {completing ? "…" : "🏁 Course terminée"}
-            </button>
-          )}
-
-          {/* Supprimer définitivement */}
-          <button
-            onClick={handleDeleteResa}
-            disabled={deleting}
-            style={{
-              width: "100%",
-              marginTop: 4,
-              background: "none",
-              border: "none",
-              color: "#b91c1c",
-              fontSize: 11.5,
-              fontWeight: 600,
-              cursor: "pointer",
-              padding: "6px 0",
-            }}
-          >
-            {deleting ? "Suppression…" : "🗑 Supprimer cette course"}
-          </button>
-        </>
-      )}
-
-      <button
-        onClick={onToggle}
-        style={{
-          width: "100%",
-          marginTop: 8,
-          background: "none",
-          border: "none",
-          color: "#94a3b8",
-          fontSize: 12,
-          cursor: "pointer",
-          padding: "4px 0",
-        }}
-      >
-        {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
-      </button>
+        <button
+          onClick={onToggle}
+          style={{
+            width: "100%",
+            marginTop: 8,
+            background: "none",
+            border: "none",
+            color: "#94a3b8",
+            fontSize: 12,
+            cursor: "pointer",
+            padding: "4px 0",
+          }}
+        >
+          {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
+        </button>
       </div>
     </div>
   );
@@ -4669,21 +4890,42 @@ function AppareilsTab() {
     <div style={{ display: "grid", gap: 16 }}>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
         <span style={{ fontSize: 12, color: "#64748b" }}>
-          Permission navigateur : <b>{perm === "granted" ? "accordée" : perm === "denied" ? "refusée" : "non demandée"}</b>
+          Permission navigateur :{" "}
+          <b>{perm === "granted" ? "accordée" : perm === "denied" ? "refusée" : "non demandée"}</b>
         </span>
         <button
           onClick={load}
-          style={{ marginLeft: "auto", background: "#0f172a", color: "#FDFBF7", border: "none", borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+          style={{
+            marginLeft: "auto",
+            background: "#0f172a",
+            color: "#FDFBF7",
+            border: "none",
+            borderRadius: 8,
+            padding: "6px 12px",
+            fontSize: 12,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
         >
           🔄 Rafraîchir
         </button>
       </div>
 
-      {groups.length === 0 && <div style={{ color: "#64748b", fontSize: 14 }}>Aucun appareil inscrit pour le moment.</div>}
+      {groups.length === 0 && (
+        <div style={{ color: "#64748b", fontSize: 14 }}>Aucun appareil inscrit pour le moment.</div>
+      )}
 
       {groups.map(([driver, list]) => (
         <div key={driver} style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
-          <div style={{ background: "var(--background)", color: "var(--gold)", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
+          <div
+            style={{
+              background: "var(--background)",
+              color: "var(--gold)",
+              padding: "10px 14px",
+              fontWeight: 800,
+              fontSize: 14,
+            }}
+          >
             {DRIVER_LABELS[driver] ?? "Chauffeur inconnu"} — {list.length} appareil{list.length > 1 ? "s" : ""}
           </div>
           <div style={{ display: "grid" }}>
@@ -4707,7 +4949,17 @@ function AppareilsTab() {
                   <button
                     onClick={() => revoke(d.id, `${DRIVER_LABELS[driver] ?? driver} · ${d.platform}`)}
                     disabled={busy === d.id}
-                    style={{ marginLeft: "auto", background: "#dc2626", color: "#FDFBF7", border: "none", borderRadius: 8, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                    style={{
+                      marginLeft: "auto",
+                      background: "#dc2626",
+                      color: "#FDFBF7",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "5px 10px",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
                   >
                     {busy === d.id ? "…" : "Désinscrire"}
                   </button>
@@ -4739,9 +4991,21 @@ function AppareilsTab() {
           Journal des notifications — {stats.sent} envoyées · {stats.failed} en échec · {stats.email} repli e-mail
         </div>
         <div style={{ maxHeight: 320, overflowY: "auto" }}>
-          {log.length === 0 && <div style={{ padding: 12, color: "#64748b", fontSize: 13 }}>Aucun envoi enregistré.</div>}
+          {log.length === 0 && (
+            <div style={{ padding: 12, color: "#64748b", fontSize: 13 }}>Aucun envoi enregistré.</div>
+          )}
           {log.map((e) => (
-            <div key={e.id} style={{ padding: "8px 12px", borderTop: "1px solid #f1f5f9", fontSize: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div
+              key={e.id}
+              style={{
+                padding: "8px 12px",
+                borderTop: "1px solid #f1f5f9",
+                fontSize: 12,
+                display: "flex",
+                gap: 8,
+                flexWrap: "wrap",
+              }}
+            >
               <span style={{ color: "#94a3b8", minWidth: 96 }}>{fmtDate(e.created_at)}</span>
               <span
                 style={{
