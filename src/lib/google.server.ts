@@ -452,12 +452,15 @@ async function placesTextSearch(q: string): Promise<GoogleGeocode | null> {
 export async function geocodeGoogle(query: string): Promise<GoogleGeocode | null> {
   const q = query?.trim();
   if (!q || q.length < 2) return null;
-  const canonical = findCanonicalGeocode(q);
+  const outside = mentionsOtherCity(q);
+  const canonical = outside ? null : findCanonicalGeocode(q);
   if (canonical) return canonical;
   return geocodeCache.run(normalizeGeocodeKey(q), async () => {
     for (const v of normalize(q)) {
-      const c = findCanonicalGeocode(v);
-      if (c) return c;
+      if (!outside) {
+        const c = findCanonicalGeocode(v);
+        if (c) return c;
+      }
       const g = await geocodeOnce(v);
       if (g) return g;
     }
