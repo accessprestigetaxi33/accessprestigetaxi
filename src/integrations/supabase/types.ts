@@ -875,6 +875,65 @@ export type Database = {
           },
         ]
       }
+      recurring_rides: {
+        Row: {
+          active: boolean
+          client_name: string | null
+          created_at: string
+          day_of_week: number | null
+          depart: string
+          destination: string
+          frequency: string
+          id: string
+          mode_paiement: string
+          nb_bagages: number
+          nb_passagers: number
+          source_reservation_id: string | null
+          time_hhmm: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          client_name?: string | null
+          created_at?: string
+          day_of_week?: number | null
+          depart: string
+          destination: string
+          frequency?: string
+          id?: string
+          mode_paiement?: string
+          nb_bagages?: number
+          nb_passagers?: number
+          source_reservation_id?: string | null
+          time_hhmm?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          client_name?: string | null
+          created_at?: string
+          day_of_week?: number | null
+          depart?: string
+          destination?: string
+          frequency?: string
+          id?: string
+          mode_paiement?: string
+          nb_bagages?: number
+          nb_passagers?: number
+          source_reservation_id?: string | null
+          time_hhmm?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recurring_rides_source_reservation_id_fkey"
+            columns: ["source_reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservation_events: {
         Row: {
           client_name: string | null
@@ -1171,6 +1230,41 @@ export type Database = {
           reason?: string
         }
         Relationships: []
+      }
+      tracking_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          reservation_id: string | null
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          reservation_id?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          reservation_id?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_events_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
