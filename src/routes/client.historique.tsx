@@ -9,7 +9,7 @@ import type { ClientSession } from "@/lib/client-auth.functions";
 import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
 import { downloadReceiptPDF, exportReservationsCSV } from "@/lib/client-receipt";
 import { useT } from "@/i18n/I18nProvider";
-import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/client/historique")({
   head: () => ({
