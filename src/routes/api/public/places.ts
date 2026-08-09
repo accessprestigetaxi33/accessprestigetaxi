@@ -217,27 +217,29 @@ export const Route = createFileRoute("/api/public/places")({
           if (action === "autocomplete") {
             const q = String(payload?.query ?? "").trim().slice(0, 200);
             if (q.length < 3) return json({ suggestions: [] });
-            return json({ suggestions: await autocomplete(q, lang) });
+            const s = await cacheAutocomplete(`${lang}|${norm(q)}`, () => autocomplete(q, lang));
+            return json({ suggestions: s ?? [] });
           }
           if (action === "details") {
             const id = String(payload?.place_id ?? "").slice(0, 300);
             if (!id) return json({ error: "missing_place_id" }, 400);
-            const d = await details(id, lang);
+            const d = await cacheDetails(`${lang}|${id}`, () => details(id, lang));
             return d ? json(d) : json({ error: "not_found" }, 404);
           }
           if (action === "geocode") {
             const q = String(payload?.query ?? "").trim().slice(0, 300);
             if (q.length < 3) return json({ error: "too_short" }, 400);
-            const g = await geocode(q, lang);
+            const g = await cacheGeocode(`${lang}|${norm(q)}`, () => geocode(q, lang));
             return g ? json(g) : json({ error: "not_found" }, 404);
           }
           if (action === "reverse") {
             const lat = Number(payload?.lat);
             const lng = Number(payload?.lng);
             if (!Number.isFinite(lat) || !Number.isFinite(lng)) return json({ error: "bad_coords" }, 400);
-            const r = await reverse(lat, lng, lang);
+            const r = await cacheReverse(`${lang}|${coordKey(lat, lng)}`, () => reverse(lat, lng, lang));
             return r ? json(r) : json({ error: "not_found" }, 404);
           }
+
           if (action === "geolocate") {
             const g = await geolocate();
             return g ? json(g) : json({ error: "not_found" }, 404);
