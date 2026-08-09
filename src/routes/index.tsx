@@ -1027,6 +1027,7 @@ function Index() {
                       {c.callPrefix} {d.name} · {d.display}
                     </span>
                   </a>
+                  </div>
                 </article>
               </Reveal>
             ))}
