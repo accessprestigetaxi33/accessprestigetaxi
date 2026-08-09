@@ -39,7 +39,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       try {
         window.localStorage.setItem(
           persistenceKey(audience),
-          JSON.stringify({ token: fcm, registeredAt: Date.now() }),
+          JSON.stringify({
+            token: fcm,
+            registeredAt: Date.now(),
+            // On mémorise l'état d'autorisation accordé sur CET appareil :
+            // tant qu'il ne change pas, aucune nouvelle demande n'est faite,
+            // même après un rafraîchissement du navigateur.
+            permission: typeof Notification !== "undefined" ? Notification.permission : "granted",
+          }),
         );
       } catch {
         /* Le navigateur peut interdire le stockage privé : la souscription reste active. */
@@ -47,6 +54,26 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     },
     [persistenceKey],
   );
+
+  /** Lit la souscription persistée pour cet appareil (token + permission). */
+  const readRegistration = useCallback(
+    (audience: PushAudience): { token: string | null; permission: string | null } => {
+      try {
+        const saved = JSON.parse(window.localStorage.getItem(persistenceKey(audience)) ?? "null") as {
+          token?: unknown;
+          permission?: unknown;
+        } | null;
+        return {
+          token: typeof saved?.token === "string" ? saved.token : null,
+          permission: typeof saved?.permission === "string" ? saved.permission : null,
+        };
+      } catch {
+        return { token: null, permission: null };
+      }
+    },
+    [persistenceKey],
+  );
+
 
   // ── Détection support initial ──
   useEffect(() => {
