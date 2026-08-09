@@ -2359,6 +2359,34 @@ function ReserverPage() {
           </div>
         )}
 
+        {/* Aide contextuelle adresses */}
+        <details className="group mt-6 overflow-hidden rounded-2xl border border-border bg-card">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-foreground">
+            <span className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-accent" aria-hidden="true" />
+              {tx("addr_help_title")}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground group-open:hidden">+</span>
+            <span className="hidden text-[11px] font-medium text-muted-foreground group-open:inline">−</span>
+          </summary>
+          <div className="border-t border-border/60 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            <p>{tx("addr_help_desc")}</p>
+            <ul className="mt-2 list-disc space-y-1 pl-4">
+              <li>{tx("addr_help_1")}</li>
+              <li>{tx("addr_help_2")}</li>
+              <li>{tx("addr_help_3")}</li>
+            </ul>
+            <p className="mt-3 font-semibold text-foreground">{tx("addr_help_ex_title")}</p>
+            <ul className="mt-1 list-disc space-y-1 pl-4">
+              <li>{tx("addr_help_ex_1")}</li>
+              <li>{tx("addr_help_ex_2")}</li>
+              <li>{tx("addr_help_ex_3")}</li>
+              <li>{tx("addr_help_ex_4")}</li>
+            </ul>
+            <p className="mt-3 text-[11px] italic">{tx("addr_help_note")}</p>
+          </div>
+        </details>
+
         {/* Map */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
