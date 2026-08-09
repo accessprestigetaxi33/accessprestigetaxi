@@ -1772,6 +1772,8 @@ function ReserverPage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <SocialMetaSync lang={L} fr={RESERVER_SOCIAL_FR} en={RESERVER_SOCIAL_EN} />
+
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <div className="text-center">
           <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
