@@ -93,10 +93,41 @@ interface RouteOption {
 // ── Route definition ───────────────────────────────────────────────────────
 export const Route = createFileRoute("/driver")({
   validateSearch: (s: Record<string, unknown>) => ({ token: String(s.token ?? "") }),
-  head: () => ({
+  // ?lang=en / ?lang=fr : choisit la langue du visuel et des textes de partage.
+  validateSearch: (search: Record<string, unknown>) => ({
+    lang:
+      search['lang'] === "en"
+        ? ("en" as const)
+        : search['lang'] === "fr"
+          ? ("fr" as const)
+          : undefined,
+  }),
+  head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
+    const isEn = ctx?.match?.search?.lang === "en";
+    const social = isEn ? DRIVER_SOCIAL_EN : DRIVER_SOCIAL_FR;
+    return {
     meta: [
-      { title: "Espace chauffeur" },
+      { title: social.title },
+      { name: "description", content: social.description },
       { name: "robots", content: "noindex, nofollow" },
+      { property: "og:site_name", content: "Access Prestige Taxi" },
+      { property: "og:title", content: social.title },
+      { property: "og:description", content: social.description },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: social.url },
+      { property: "og:image", content: social.image },
+      { property: "og:image:secure_url", content: social.image },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: social.alt },
+      { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
+      { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: social.title },
+      { name: "twitter:description", content: social.description },
+      { name: "twitter:image", content: social.image },
+      { name: "twitter:image:alt", content: social.alt },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0f172a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -105,7 +136,9 @@ export const Route = createFileRoute("/driver")({
       { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
     ],
     links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
-  }),
+    };
+  },
+
   component: DriverPage,
 });
 
