@@ -40,6 +40,13 @@ import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { seoLinks, SITE_URL } from "@/lib/seo-hreflang";
+import {
+  businessRef,
+  localBusinessNode,
+  SOCIAL_IMAGE,
+  SOCIAL_IMAGE_HEIGHT,
+  SOCIAL_IMAGE_WIDTH,
+} from "@/lib/business";
 import { DRIVERS } from "@/data/drivers";
 import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 import { placesGeolocate } from "@/lib/places";
