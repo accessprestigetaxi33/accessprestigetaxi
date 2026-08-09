@@ -628,6 +628,12 @@ function Index() {
 
   return (
     <main>
+      <SocialMetaSync
+        lang={lang === "en" ? "en" : "fr"}
+        fr={HOME_SOCIAL_FR}
+        en={HOME_SOCIAL_EN}
+      />
+
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
       <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
         {(() => {
