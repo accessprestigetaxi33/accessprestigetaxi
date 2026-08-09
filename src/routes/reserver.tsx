@@ -101,6 +101,17 @@ const RESERVER_DESC_EN =
   "Book your taxi in Charente-Maritime by chatting (or speaking) with our assistant. Instant quote, verified time slots, immediate confirmation.";
 const RESERVER_URL = `${SITE_URL}/reserver`;
 
+// Visuels de partage localisés : version FR (par défaut) et version EN,
+// déclarée en second og:image pour les partages anglophones.
+const OG_IMAGE_FR = `${SITE_URL}${ogReserverFr.url}`;
+const OG_IMAGE_EN = `${SITE_URL}${ogReserverEn.url}`;
+const OG_IMAGE_W = "1200";
+const OG_IMAGE_H = "630";
+const OG_ALT_FR =
+  "Access Prestige Taxi — réservez votre taxi en Charente-Maritime, BMW iX1 électrique et van Mercedes 7 places";
+const OG_ALT_EN =
+  "Access Prestige Taxi — book your taxi in Charente-Maritime, electric BMW iX1 and 7-seater Mercedes van";
+
 export const Route = createFileRoute("/reserver")({
   head: () => ({
     meta: [
