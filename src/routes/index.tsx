@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
+import { ogImageUrl, ogPageUrl } from "@/lib/og";
+import { SocialMetaSync } from "@/components/SocialMetaSync";
+import ogHomeFr from "@/assets/apt-og-home-fr.png.asset.json";
+import ogHomeEn from "@/assets/apt-og-home-en.png.asset.json";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
@@ -454,43 +458,73 @@ const COPY = {
   },
 } as const;
 
+// Métadonnées sociales localisées : visuel, titre et description dédiés
+// FR / EN, avec cache-busting sur l'image (voir src/lib/og.ts).
+const HOME_SOCIAL_FR = {
+  title: "Access Prestige Taxi — L'excellence à chaque trajet",
+  description:
+    "L'excellence à chaque trajet : réservation vocale ou écrite en moins d'une minute, BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes 7 places en Charente-Maritime.",
+  image: ogImageUrl(ogHomeFr.url),
+  alt: "Access Prestige Taxi — taxi 100 % électrique en Charente-Maritime, BMW iX1 et van Mercedes V-Class",
+  url: ogPageUrl("/", "fr"),
+};
+const HOME_SOCIAL_EN = {
+  title: "Access Prestige Taxi — Excellence on every journey",
+  description:
+    "Book by voice or text in under a minute: 100% electric BMW iX1 and Audi Q6 e-tron, plus a 7-seat Mercedes van across Charente-Maritime.",
+  image: ogImageUrl(ogHomeEn.url),
+  alt: "Access Prestige Taxi — 100% electric taxi in Charente-Maritime, BMW iX1 and Mercedes V-Class van",
+  url: ogPageUrl("/", "en"),
+};
+
 export const Route = createFileRoute("/")({
   component: Index,
-  head: () => ({
+  // ?lang=en / ?lang=fr : force la langue du visuel et des textes sociaux
+  // pour les partages (la page reste servie sur la même URL).
+  validateSearch: (search: Record<string, unknown>) => ({
+    lang:
+      search['lang'] === "en"
+        ? ("en" as const)
+        : search['lang'] === "fr"
+          ? ("fr" as const)
+          : undefined,
+  }),
+  head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
+    const isEn = ctx?.match?.search?.lang === "en";
+    const social = isEn ? HOME_SOCIAL_EN : HOME_SOCIAL_FR;
+    return {
     meta: [
-      { title: "Taxi électrique Charente-Maritime | Access Prestige" },
+      {
+        title: isEn
+          ? "Electric taxi in Charente-Maritime | Access Prestige"
+          : "Taxi électrique Charente-Maritime | Access Prestige",
+      },
       {
         name: "description",
-        content:
-          "Taxi 100 % électrique en Charente-Maritime : BMW iX1, Audi Q6 e-tron, van 7 places, transport conventionné, gares et aéroports.",
+        content: isEn
+          ? "100% electric taxi in Charente-Maritime: BMW iX1, Audi Q6 e-tron, 7-seat van, medical transport, stations and airports."
+          : "Taxi 100 % électrique en Charente-Maritime : BMW iX1, Audi Q6 e-tron, van 7 places, transport conventionné, gares et aéroports.",
       },
-      { property: "og:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
-      {
-        property: "og:description",
-        content:
-          "L'excellence à chaque trajet : réservation vocale ou écrite en moins d'une minute, BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes 7 places en Charente-Maritime.",
-      },
+      { property: "og:site_name", content: "Access Prestige Taxi" },
+      { property: "og:title", content: social.title },
+      { property: "og:description", content: social.description },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: absoluteUrl("/") },
-      { property: "og:image", content: absoluteUrl(heroCars.url) },
-      { property: "og:image:width", content: "1376" },
-      { property: "og:image:height", content: "768" },
-      {
-        property: "og:image:alt",
-        content: "Access Prestige Taxi — BMW iX1, Audi Q6 et van Mercedes V-Class, transport transferts déplacements 100% électrique",
-      },
-      { property: "og:locale", content: "fr_FR" },
-      { property: "og:locale:alternate", content: "en_GB" },
-      { property: "og:image:alt:en", content: "Access Prestige Taxi — BMW iX1, Audi Q6 e-tron and Mercedes V-Class van, 100% electric taxi fleet in Charente-Maritime" },
+      { property: "og:url", content: social.url },
+      { property: "og:image", content: social.image },
+      { property: "og:image:secure_url", content: social.image },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: social.alt },
+      { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
+      { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Access Prestige Taxi — L'excellence à chaque trajet" },
-      {
-        name: "twitter:description",
-        content:
-          "Taxi haut de gamme 100 % électrique en Charente-Maritime. Réservation en moins d'une minute.",
-      },
-      { name: "twitter:image", content: absoluteUrl(heroCars.url) },
+      { name: "twitter:title", content: social.title },
+      { name: "twitter:description", content: social.description },
+      { name: "twitter:image", content: social.image },
+      { name: "twitter:image:alt", content: social.alt },
     ],
+
     links: seoLinks("/"),
     scripts: [
       {
@@ -581,9 +615,10 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
-
-  }),
+    };
+  },
 });
+
 
 function Index() {
   const { lang } = useI18n();
@@ -593,6 +628,12 @@ function Index() {
 
   return (
     <main>
+      <SocialMetaSync
+        lang={lang === "en" ? "en" : "fr"}
+        fr={HOME_SOCIAL_FR}
+        en={HOME_SOCIAL_EN}
+      />
+
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
       <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
         {(() => {

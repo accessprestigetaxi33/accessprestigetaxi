@@ -40,6 +40,8 @@ import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { SITE_URL } from "@/lib/seo-hreflang";
+import { ogImageUrl } from "@/lib/og";
+import { SocialMetaSync } from "@/components/SocialMetaSync";
 import {
   businessRef,
   localBusinessNode,
@@ -102,8 +104,8 @@ const RESERVER_URL = `${SITE_URL}/reserver`;
 
 // Visuels de partage localisés : version FR (par défaut) et version EN,
 // déclarée en second og:image pour les partages anglophones.
-const OG_IMAGE_FR = `${SITE_URL}${ogReserverFr.url}`;
-const OG_IMAGE_EN = `${SITE_URL}${ogReserverEn.url}`;
+const OG_IMAGE_FR = ogImageUrl(ogReserverFr.url);
+const OG_IMAGE_EN = ogImageUrl(ogReserverEn.url);
 const OG_IMAGE_W = "1200";
 const OG_IMAGE_H = "630";
 const OG_ALT_FR =
@@ -111,18 +113,39 @@ const OG_ALT_FR =
 const OG_ALT_EN =
   "Access Prestige Taxi — book your taxi in Charente-Maritime, electric BMW iX1 and 7-seater Mercedes van";
 
+const RESERVER_SOCIAL_FR = {
+  title: RESERVER_TITLE_FR,
+  description: RESERVER_DESC_FR,
+  image: OG_IMAGE_FR,
+  alt: OG_ALT_FR,
+  url: RESERVER_URL,
+};
+const RESERVER_SOCIAL_EN = {
+  title: RESERVER_TITLE_EN,
+  description: RESERVER_DESC_EN,
+  image: OG_IMAGE_EN,
+  alt: OG_ALT_EN,
+  url: `${RESERVER_URL}?lang=en`,
+};
+
 export const Route = createFileRoute("/reserver")({
-  // ?lang=en permet aux partages anglophones d'obtenir le visuel et les
-  // textes sociaux en anglais (la page reste servie sur la même URL).
+  // ?lang=en / ?lang=fr permettent aux partages de forcer la langue du visuel
+  // et des textes sociaux (la page reste servie sur la même URL).
   validateSearch: (search: Record<string, unknown>) => ({
-    lang: search['lang'] === "en" ? ("en" as const) : undefined,
+    lang:
+      search['lang'] === "en"
+        ? ("en" as const)
+        : search['lang'] === "fr"
+          ? ("fr" as const)
+          : undefined,
   }),
-  head: (ctx: { match?: { search?: { lang?: "en" } } }) => {
+  head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
     const isEn = ctx?.match?.search?.lang === "en";
     const title = isEn ? RESERVER_TITLE_EN : RESERVER_TITLE_FR;
     const desc = isEn ? RESERVER_DESC_EN : RESERVER_DESC_FR;
     const image = isEn ? OG_IMAGE_EN : OG_IMAGE_FR;
     const alt = isEn ? OG_ALT_EN : OG_ALT_FR;
+
     return {
     meta: [
       { title },
@@ -1749,6 +1772,8 @@ function ReserverPage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <SocialMetaSync lang={L} fr={RESERVER_SOCIAL_FR} en={RESERVER_SOCIAL_EN} />
+
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <div className="text-center">
           <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
