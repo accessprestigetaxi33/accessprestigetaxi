@@ -1039,11 +1039,124 @@ function Index() {
                     ? "Our premium fully electric SUV, available on request for business transfers, airport runs and long distances: silent cabin, generous luggage space and extended range across Charente-Maritime."
                     : "Notre SUV haut de gamme 100 % électrique, disponible sur demande pour les transferts affaires, les aéroports et les longues distances : habitacle silencieux, coffre généreux et grande autonomie en Charente-Maritime."}
                 </p>
+                {alain ? (
+                  <a
+                    href={`tel:${alain.tel}`}
+                    aria-label={`${c.callPrefix} ${alain.name} — ${alain.display}`}
+                    className="mt-5 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Phone className="h-4 w-4 shrink-0" />
+                    <span className="tabular-nums">
+                      {c.callPrefix} {alain.name} · {alain.display}
+                    </span>
+                  </a>
+                ) : null}
               </div>
             </article>
           </Reveal>
         </div>
       </section>
+
+      {/* INSTALLER L'APPLI */}
+      <section id="application" className="border-t border-border bg-background py-20">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="flex flex-col items-center text-center">
+              <img
+                src={lang === "en" ? heroCarsEn.url : heroCars.url}
+                alt={
+                  lang === "en"
+                    ? "Access Prestige Taxi app icon"
+                    : "Icône de l'application Access Prestige Taxi"
+                }
+                loading="lazy"
+                width={512}
+                height={512}
+                className="h-24 w-24 rounded-3xl border border-primary/30 object-cover shadow-[var(--shadow-gold)]"
+              />
+              <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-primary">
+                {lang === "en" ? "Web app" : "Application"}
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+                {lang === "en"
+                  ? "Install Access Prestige Taxi on your phone"
+                  : "Installez Access Prestige Taxi sur votre téléphone"}
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {lang === "en"
+                  ? "Add the site to your home screen and get a real app icon: book in one tap, follow your driver live, find your rides, receipts and invoices, and chat directly with Alain or Patricia."
+                  : "Ajoutez le site à votre écran d'accueil pour obtenir une vraie icône d'application : réservez en un geste, suivez votre chauffeur en direct, retrouvez vos courses, reçus et factures, et discutez directement avec Alain ou Patricia."}
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            <Reveal>
+              <article className={`h-full p-6 ${CARD}`}>
+                <h3 className="font-display text-lg font-semibold text-card-foreground">
+                  {lang === "en" ? "iPhone & iPad (Safari)" : "iPhone et iPad (Safari)"}
+                </h3>
+                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
+                    {lang === "en"
+                      ? "Open accessprestigetaxi.fr in Safari."
+                      : "Ouvrez accessprestigetaxi.fr dans Safari."}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Tap the Share button at the bottom of the screen."
+                      : "Touchez le bouton Partager en bas de l'écran."}
+                  </li>
+                  <li>
+                    3.{" "}
+                    {lang === "en"
+                      ? "Choose “Add to Home Screen”, then Add."
+                      : "Choisissez « Sur l'écran d'accueil », puis Ajouter."}
+                  </li>
+                </ol>
+              </article>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <article className={`h-full p-6 ${CARD}`}>
+                <h3 className="font-display text-lg font-semibold text-card-foreground">
+                  {lang === "en" ? "Android (Chrome)" : "Android (Chrome)"}
+                </h3>
+                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
+                    {lang === "en"
+                      ? "Open accessprestigetaxi.fr in Chrome."
+                      : "Ouvrez accessprestigetaxi.fr dans Chrome."}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Open the ⋮ menu at the top right."
+                      : "Ouvrez le menu ⋮ en haut à droite."}
+                  </li>
+                  <li>
+                    3.{" "}
+                    {lang === "en"
+                      ? "Choose “Install app” / “Add to Home screen”."
+                      : "Choisissez « Installer l'application » / « Ajouter à l'écran d'accueil »."}
+                  </li>
+                </ol>
+              </article>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.14}>
+            <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+              {lang === "en"
+                ? "Alain and Patricia use a separate private app for drivers."
+                : "Alain et Patricia disposent d'une application chauffeur privée séparée."}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
 
       {/* DESTINATIONS */}
       <section className="border-t border-border bg-background py-20">
