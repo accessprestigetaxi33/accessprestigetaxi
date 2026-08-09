@@ -302,6 +302,24 @@ const CANONICAL_PLACES: Array<{ match: RegExp; label: string; lat: number; lng: 
     lat: 45.69,
     lng: -1.175,
   },
+  {
+    match: /gare.*surgeres|surgeres.*gare/,
+    label: "Gare de Surgères, 17700 Surgères",
+    lat: 46.1078,
+    lng: -0.7508,
+  },
+  {
+    match: /phare.*baleines/,
+    label: "Phare des Baleines, 17590 Saint-Clément-des-Baleines",
+    lat: 46.2442,
+    lng: -1.5619,
+  },
+  {
+    match: /citadelle.*saint.*martin|saint.*martin.*re/,
+    label: "Saint-Martin-de-Ré, 17410",
+    lat: 46.2034,
+    lng: -1.3671,
+  },
 ];
 
 function findCanonicalGeocode(query: string): GoogleGeocode | null {

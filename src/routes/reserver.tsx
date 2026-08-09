@@ -549,6 +549,14 @@ const CANONICAL_PLACES: Array<{ match: RegExp; label: string; coord: [number, nu
   { match: /zoo.*palmyre|palmyre/, label: "Zoo de La Palmyre, 17570 Les Mathes", coord: [45.6828, -1.1675] },
   { match: /ile.*de.*re|^re$/, label: "Île de Ré, 17580 Saint-Martin-de-Ré", coord: [46.2019, -1.3667] },
   { match: /ile.*d.*oleron|oleron/, label: "Île d'Oléron, 17310 Saint-Pierre-d'Oléron", coord: [45.9436, -1.3086] },
+  { match: /fort.*boyard/, label: "Fort Boyard, Charente-Maritime", coord: [45.9992, -1.2133] },
+  { match: /gare.*surgeres|surgeres.*gare/, label: "Gare de Surgères, 17700 Surgères", coord: [46.1078, -0.7508] },
+  { match: /port.*rochefort|arsenal.*rochefort/, label: "Arsenal maritime de Rochefort, 17300 Rochefort", coord: [45.9368, -0.9588] },
+  { match: /citadelle.*saint.*martin|saint.*martin.*re/, label: "Saint-Martin-de-Ré, 17410", coord: [46.2034, -1.3671] },
+  { match: /phare.*baleines/, label: "Phare des Baleines, 17590 Saint-Clément-des-Baleines", coord: [46.2442, -1.5619] },
+  { match: /palais.*royan|palais.*congres/, label: "Palais des Congrès de Royan, 17200 Royan", coord: [45.6218, -1.0334] },
+  { match: /gare.*saint.*jean|saint.*jean.*bordeaux/, label: "Gare de Bordeaux Saint-Jean, 33800 Bordeaux", coord: [44.8259, -0.5563] },
+  { match: /aeroport.*bordeaux|merignac.*aeroport/, label: "Aéroport de Bordeaux-Mérignac, 33700 Mérignac", coord: [44.8283, -0.7156] },
 ];
 
 function normalizeAddressText(value: string): string {
@@ -1029,7 +1037,10 @@ function ReserverPage() {
       if (!manualDepartRef.current && gpsBusyRef.current) {
         await Promise.race([gpsReadyRef.current, new Promise<void>((resolve) => setTimeout(resolve, 5000))]);
       }
-      const usableGps = gpsErrorRef.current === "low_accuracy" ? null : gpsRef.current;
+      // Une position PC issue du Wi-Fi/IP peut être moins précise, mais ses
+      // coordonnées restent exploitables pour le calcul. La retirer ici faisait
+      // croire à Margot qu'aucun départ n'avait été détecté.
+      const usableGps = gpsRef.current;
       const departure = manualDepartRef.current
         ? {
             label: manualDepartRef.current,

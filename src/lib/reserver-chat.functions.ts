@@ -385,8 +385,14 @@ export const aiChatReservation = createServerFn({ method: "POST" })
       data.gps?.label ??
       (data.gps ? `${data.gps.lat.toFixed(5)}, ${data.gps.lng.toFixed(5)}` : null);
     const hasDeparture = !!departureLabel;
+    const departureCoords = data.departure?.lat != null && data.departure?.lng != null
+      ? ` Coordonnées fiables pour le calcul : ${data.departure.lat}, ${data.departure.lng}.`
+      : data.gps
+        ? ` Coordonnées fiables pour le calcul : ${data.gps.lat}, ${data.gps.lng}.`
+        : "";
     const departureContext = hasDeparture
-      ? `ADRESSE DE DÉPART CONFIRMÉE (à utiliser telle quelle, ne JAMAIS la redemander) : "${departureLabel}"`
+      ? `DÉPART DÉJÀ DÉTECTÉ ET CONFIRMÉ : "${departureLabel}".${departureCoords}
+RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si son libellé est seulement une ville ou un quartier. Ne demande JAMAIS de numéro de rue. Lors de compute_quote, recopie exactement ce libellé afin que les coordonnées détectées soient utilisées.`
       : `ADRESSE DE DÉPART : non disponible — demande-la au client.`;
 
     const msgs: ChatMsg[] = [
