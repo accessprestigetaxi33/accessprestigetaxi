@@ -105,16 +105,16 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     // Une autorisation accordée reste valable sans limite sur cet appareil.
     // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a
     // pas ce marqueur et sera inscrit une seule fois.
-    const sig = persistenceKey(autoAudience);
-    let registeredToken: string | null = null;
-    try {
-      const saved = JSON.parse(window.localStorage.getItem(sig) ?? "null") as { token?: unknown } | null;
-      registeredToken = typeof saved?.token === "string" ? saved.token : null;
-    } catch {
-      registeredToken = null;
-    }
+    const { token: registeredToken, permission: savedPermission } = readRegistration(autoAudience);
     if (Notification.permission === "denied") {
       setStatus("denied");
+      return;
+    }
+    // Token déjà enregistré ET permission inchangée depuis : rien à redemander,
+    // même après un rafraîchissement du navigateur.
+    if (registeredToken && (savedPermission == null || savedPermission === Notification.permission)) {
+      setToken(registeredToken);
+      setStatus(Notification.permission === "granted" ? "granted" : "idle");
       return;
     }
     if (Notification.permission === "default") {
@@ -127,6 +127,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       setStatus("granted");
       return;
     }
+
 
     let cancelled = false;
 
