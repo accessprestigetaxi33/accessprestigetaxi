@@ -44,25 +44,33 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/a-propos", changefreq: "monthly", priority: "0.7" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
           { path: "/carte", changefreq: "monthly", priority: "0.5" },
+          // Espace chauffeurs (page publique d'accès + page d'installation PWA).
+          { path: "/driver", changefreq: "monthly", priority: "0.3" },
+          { path: "/driver-install.html", changefreq: "yearly", priority: "0.3" },
           { path: "/mentions-legales", changefreq: "yearly", priority: "0.3" },
           { path: "/confidentialite", changefreq: "yearly", priority: "0.3" },
         ];
 
-        const urls = entries.map((e) =>
-          [
+        const urls = entries.map((e) => {
+          const loc = `${BASE_URL}${e.path}`;
+          return [
             `  <url>`,
-            `    <loc>${BASE_URL}${e.path}</loc>`,
+            `    <loc>${loc}</loc>`,
+            ...ALT_LANGS.map(
+              (l) =>
+                `    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${loc}" />`,
+            ),
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
             `  </url>`,
           ]
             .filter(Boolean)
-            .join("\n"),
-        );
+            .join("\n");
+        });
 
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
-          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">`,
           ...urls,
           `</urlset>`,
         ].join("\n");
