@@ -1036,9 +1036,14 @@ function Index() {
           {/* Véhicule complémentaire 100 % électrique */}
           <Reveal delay={0.16}>
             <article className={`mt-5 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:p-7 ${CARD}`}>
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40">
-                <Leaf className="h-5 w-5 text-primary" />
-              </span>
+              <img
+                src={photoAudiReal.url}
+                alt="Audi Q6 e-tron — Access Prestige Taxi"
+                loading="lazy"
+                width={1600}
+                height={900}
+                className="aspect-[16/10] w-full shrink-0 rounded-2xl border border-border object-cover sm:w-64"
+              />
               <div className="min-w-0">
                 <h3 className="font-display text-xl font-semibold text-card-foreground">
                   Audi Q6 e-tron
