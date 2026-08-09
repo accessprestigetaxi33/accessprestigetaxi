@@ -51,6 +51,7 @@ import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocod
 import { Route as ApiPublicMapsConfigRouteImport } from './routes/api/public/maps-config'
 import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/public/notify-reservation'
 import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
+import { Route as ApiPublicPlacesRouteImport } from './routes/api/public/places'
 import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
 import { Route as ApiPublicReviewsRouteImport } from './routes/api/public/reviews'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
@@ -272,6 +273,11 @@ const ApiPublicNotifyReservationClientRoute =
     path: '/api/public/notify-reservation-client',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPlacesRoute = ApiPublicPlacesRouteImport.update({
+  id: '/api/public/places',
+  path: '/api/public/places',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPushDedupCheckRoute = ApiPublicPushDedupCheckRouteImport.update({
   id: '/api/public/push-dedup-check',
   path: '/api/public/push-dedup-check',
@@ -360,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/api/public/maps-config': typeof ApiPublicMapsConfigRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
+  '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -412,6 +419,7 @@ export interface FileRoutesByTo {
   '/api/public/maps-config': typeof ApiPublicMapsConfigRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
+  '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -465,6 +473,7 @@ export interface FileRoutesById {
   '/api/public/maps-config': typeof ApiPublicMapsConfigRoute
   '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
   '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
+  '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -519,6 +528,7 @@ export interface FileRouteTypes {
     | '/api/public/maps-config'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
+    | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
     | '/lovable/email/events'
@@ -571,6 +581,7 @@ export interface FileRouteTypes {
     | '/api/public/maps-config'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
+    | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
     | '/lovable/email/events'
@@ -623,6 +634,7 @@ export interface FileRouteTypes {
     | '/api/public/maps-config'
     | '/api/public/notify-reservation'
     | '/api/public/notify-reservation-client'
+    | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
     | '/lovable/email/events'
@@ -675,6 +687,7 @@ export interface RootRouteChildren {
   ApiPublicMapsConfigRoute: typeof ApiPublicMapsConfigRoute
   ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
   ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
+  ApiPublicPlacesRoute: typeof ApiPublicPlacesRoute
   ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
   ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
@@ -980,6 +993,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNotifyReservationClientRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/places': {
+      id: '/api/public/places'
+      path: '/api/public/places'
+      fullPath: '/api/public/places'
+      preLoaderRoute: typeof ApiPublicPlacesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/push-dedup-check': {
       id: '/api/public/push-dedup-check'
       path: '/api/public/push-dedup-check'
@@ -1104,6 +1124,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicMapsConfigRoute: ApiPublicMapsConfigRoute,
   ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
   ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
+  ApiPublicPlacesRoute: ApiPublicPlacesRoute,
   ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
   ApiPublicReviewsRoute: ApiPublicReviewsRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
@@ -1116,13 +1137,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
