@@ -55,7 +55,22 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     )
       return;
 
+    // Souscription déjà enregistrée récemment pour cette signature : on évite
+    // de redemander un token (source de « re-souscription » à chaque visite).
+    const sig = `push_sub:${autoAudience}:${driverId ?? ""}:${clientAccountId ?? ""}`;
+    let alreadyFresh = false;
+    try {
+      const ts = Number(window.localStorage.getItem(sig) ?? 0);
+      alreadyFresh = Number.isFinite(ts) && Date.now() - ts < 12 * 60 * 60 * 1000;
+    } catch {
+      alreadyFresh = false;
+    }
+    if (alreadyFresh && Notification.permission === "granted") {
+      setStatus("granted");
+    }
+
     let cancelled = false;
+
     const run = async () => {
       try {
         const fcm = await getFcmToken(); // rotation auto si token > 50 jours
