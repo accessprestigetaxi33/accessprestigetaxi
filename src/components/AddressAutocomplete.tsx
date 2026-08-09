@@ -172,10 +172,9 @@ export function AddressAutocomplete({
               className="cursor-pointer rounded-sm px-3 py-2 text-sm hover:bg-accent"
               onMouseDown={(e) => {
                 e.preventDefault();
-                onChange(s.label, s);
-                setOpen(false);
-                inputRef.current?.blur();
+                void pick(s);
               }}
+
             >
               {s.label}
             </li>
