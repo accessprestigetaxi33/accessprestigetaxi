@@ -11,12 +11,12 @@ import {
   Baby,
   BatteryCharging,
   BriefcaseBusiness,
-  Leaf,
   Phone,
   PlaneTakeoff,
   ShieldCheck,
   Stethoscope,
   Users,
+  Bell,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -30,9 +30,6 @@ import heroCars from "@/assets/apt-hero-fr.png.asset.json";
 import heroCarsEn from "@/assets/apt-hero-en.png.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
-import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
-import photoVan from "@/assets/apt-van.jpg.asset.json";
-import photoAudi from "@/assets/apt-audi-q6.jpg";
 import photoBmwReal from "@/assets/apt-bmw-real.jpg.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.jpg.asset.json";
 import photoVanReal from "@/assets/apt-van-real.jpg.asset.json";
@@ -91,7 +88,7 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "bmw",
-      src: photoExterior.url,
+      src: photoBmwReal.url,
       alt: en
         ? "BMW iX1 100% electric taxi driven by Patricia, Access Prestige Taxi in Charente-Maritime"
         : "Taxi BMW iX1 100 % électrique conduit par Patricia, Access Prestige Taxi en Charente-Maritime",
@@ -105,7 +102,7 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "audi",
-      src: photoAudi,
+      src: photoAudiReal.url,
       alt: en
         ? "Audi Q6 e-tron, 100% electric premium SUV for business transfers, Access Prestige Taxi"
         : "Audi Q6 e-tron, SUV premium 100 % électrique pour transferts affaires, Access Prestige Taxi",
@@ -119,7 +116,7 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "van",
-      src: photoVan.url,
+      src: photoVanReal.url,
       alt: en
         ? "Mercedes V-Class 7-seat van driven by Alain for group transport, Access Prestige Taxi"
         : "Van Mercedes V-Class 7 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
@@ -950,7 +947,7 @@ function Index() {
       </section>
 
       {/* BANNIÈRE PHOTO PLEINE LARGEUR */}
-      <section className="relative isolate overflow-hidden border-y border-border">
+      <section className="dark relative isolate overflow-hidden border-y border-border">
         <img
           src={photoBmwReal.url}
           alt={c.bannerTitle}
@@ -992,7 +989,16 @@ function Index() {
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {DRIVERS.map((d, i) => (
               <Reveal key={d.tel} delay={i * 0.08}>
-                <article className={`h-full p-6 sm:p-7 ${CARD}`}>
+                <article className={`h-full overflow-hidden ${CARD}`}>
+                  <img
+                    src={d.electric ? photoBmwReal.url : photoVanReal.url}
+                    alt={lang === "en" ? `${d.name} — ${d.vehicle.en}` : `${d.name} — ${d.vehicle.fr}`}
+                    loading="lazy"
+                    width={1600}
+                    height={900}
+                    className="aspect-[16/10] w-full object-cover"
+                  />
+                  <div className="p-6 sm:p-7">
                   <div className="flex items-center gap-4">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40 font-display text-lg font-semibold text-primary">
                       {d.name.charAt(0)}
@@ -1018,6 +1024,7 @@ function Index() {
                       {c.callPrefix} {d.name} · {d.display}
                     </span>
                   </a>
+                  </div>
                 </article>
               </Reveal>
             ))}
@@ -1026,9 +1033,14 @@ function Index() {
           {/* Véhicule complémentaire 100 % électrique */}
           <Reveal delay={0.16}>
             <article className={`mt-5 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:p-7 ${CARD}`}>
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40">
-                <Leaf className="h-5 w-5 text-primary" />
-              </span>
+              <img
+                src={photoAudiReal.url}
+                alt="Audi Q6 e-tron — Access Prestige Taxi"
+                loading="lazy"
+                width={1600}
+                height={900}
+                className="aspect-[16/10] w-full shrink-0 rounded-2xl border border-border object-cover sm:w-64"
+              />
               <div className="min-w-0">
                 <h3 className="font-display text-xl font-semibold text-card-foreground">
                   Audi Q6 e-tron
@@ -1148,6 +1160,48 @@ function Index() {
               </article>
             </Reveal>
           </div>
+
+          <Reveal delay={0.1}>
+            <article className="mt-6 rounded-2xl border border-destructive/50 bg-destructive/10 p-6">
+              <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-destructive">
+                <Bell className="h-5 w-5 shrink-0" />
+                {lang === "en"
+                  ? "Turn on notifications — and what they are for"
+                  : "Comment activer les notifications et à quoi servent-elles"}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+                {lang === "en"
+                  ? "Notifications tell you the moment your ride is confirmed, when Alain or Patricia is on the way, when the driver has arrived, and when a new message or your receipt is available."
+                  : "Les notifications vous préviennent dès que votre course est confirmée, quand Alain ou Patricia est en route, à l'arrivée du chauffeur, et lorsqu'un nouveau message ou votre reçu est disponible."}
+              </p>
+              <ol className="mt-4 space-y-2 text-sm leading-relaxed text-foreground/90">
+                <li>
+                  1.{" "}
+                  {lang === "en"
+                    ? "Install the app on your home screen (steps above) — required on iPhone and iPad."
+                    : "Installez l'application sur votre écran d'accueil (étapes ci-dessus) — obligatoire sur iPhone et iPad."}
+                </li>
+                <li>
+                  2.{" "}
+                  {lang === "en"
+                    ? "Open the app from its icon, then sign in to your client area."
+                    : "Ouvrez l'application depuis son icône, puis connectez-vous à votre espace client."}
+                </li>
+                <li>
+                  3.{" "}
+                  {lang === "en"
+                    ? "Tap “Allow” when your phone asks for notification permission."
+                    : "Touchez « Autoriser » quand votre téléphone demande l'autorisation de notification."}
+                </li>
+                <li>
+                  4.{" "}
+                  {lang === "en"
+                    ? "If you declined: Settings › Notifications › Access Prestige Taxi › Allow notifications."
+                    : "Si vous avez refusé : Réglages › Notifications › Access Prestige Taxi › Autoriser les notifications."}
+                </li>
+              </ol>
+            </article>
+          </Reveal>
 
           <Reveal delay={0.14}>
             <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">

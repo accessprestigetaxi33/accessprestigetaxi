@@ -585,21 +585,11 @@ function DriverApp({
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
-  const [installPrompt, setInstallPrompt] = useState<any>(null);
   const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
   });
 
-  // Capture le prompt d'installation PWA
-  useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setInstallPrompt(e);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
 
   // Force le manifest driver au runtime (remplace le manifest global)
   useEffect(() => {
@@ -716,44 +706,6 @@ function DriverApp({
             />
           </h1>
 
-          {installPrompt ? (
-            <button
-              onClick={async () => {
-                installPrompt.prompt();
-                const r = await installPrompt.userChoice;
-                if (r.outcome === "accepted") setInstallPrompt(null);
-              }}
-              style={{
-                flexShrink: 0,
-                background: "#0ea5e9",
-                color: "#FDFBF7",
-                border: "none",
-                borderRadius: 8,
-                padding: "6px 10px",
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              📲 Installer
-            </button>
-          ) : (
-            <a
-              href="/driver-install.html"
-              style={{
-                flexShrink: 0,
-                background: "#0ea5e9",
-                color: "#FDFBF7",
-                borderRadius: 8,
-                padding: "8px 10px",
-                fontSize: 11,
-                fontWeight: 700,
-                textDecoration: "none",
-              }}
-            >
-              📲 Installer
-            </a>
-          )}
           <a
             href="/"
             style={{
