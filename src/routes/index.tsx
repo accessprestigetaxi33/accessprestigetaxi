@@ -11,7 +11,6 @@ import {
   Baby,
   BatteryCharging,
   BriefcaseBusiness,
-  Leaf,
   Phone,
   PlaneTakeoff,
   ShieldCheck,
@@ -31,9 +30,6 @@ import heroCars from "@/assets/apt-hero-fr.png.asset.json";
 import heroCarsEn from "@/assets/apt-hero-en.png.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
-import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
-import photoVan from "@/assets/apt-van.jpg.asset.json";
-import photoAudi from "@/assets/apt-audi-q6.jpg";
 import photoBmwReal from "@/assets/apt-bmw-real.jpg.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.jpg.asset.json";
 import photoVanReal from "@/assets/apt-van-real.jpg.asset.json";

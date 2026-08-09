@@ -585,7 +585,6 @@ function DriverApp({
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
-  const [installPrompt, setInstallPrompt] = useState<any>(null);
   const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
