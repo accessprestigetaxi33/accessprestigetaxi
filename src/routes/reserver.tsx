@@ -40,6 +40,13 @@ import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { seoLinks, SITE_URL } from "@/lib/seo-hreflang";
+import {
+  businessRef,
+  localBusinessNode,
+  SOCIAL_IMAGE,
+  SOCIAL_IMAGE_HEIGHT,
+  SOCIAL_IMAGE_WIDTH,
+} from "@/lib/business";
 import { DRIVERS } from "@/data/drivers";
 import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 import { placesGeolocate } from "@/lib/places";
@@ -89,21 +96,41 @@ async function ipGeolocate(): Promise<{ lat: number; lng: number } | null> {
 const RESERVER_TITLE_FR = "Réserver un taxi en Charente-Maritime — Access Prestige Taxi";
 const RESERVER_DESC_FR =
   "Réservez votre taxi en Charente-Maritime en discutant (ou à la voix) avec notre assistante. Devis instantané, créneaux vérifiés, confirmation immédiate.";
+const RESERVER_TITLE_EN = "Book a taxi in Charente-Maritime — Access Prestige Taxi";
+const RESERVER_DESC_EN =
+  "Book your taxi in Charente-Maritime by chatting (or speaking) with our assistant. Instant quote, verified time slots, immediate confirmation.";
+const RESERVER_URL = `${SITE_URL}/reserver`;
 
 export const Route = createFileRoute("/reserver")({
   head: () => ({
     meta: [
       { title: RESERVER_TITLE_FR },
       { name: "description", content: RESERVER_DESC_FR },
+      { property: "og:site_name", content: "Access Prestige Taxi" },
       { property: "og:title", content: RESERVER_TITLE_FR },
       { property: "og:description", content: RESERVER_DESC_FR },
-      { property: "og:url", content: `${SITE_URL}/reserver` },
+      { property: "og:url", content: RESERVER_URL },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: SOCIAL_IMAGE },
+      { property: "og:image:secure_url", content: SOCIAL_IMAGE },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: SOCIAL_IMAGE_WIDTH },
+      { property: "og:image:height", content: SOCIAL_IMAGE_HEIGHT },
+      {
+        property: "og:image:alt",
+        content:
+          "Access Prestige Taxi — réservation de taxi en Charente-Maritime, BMW iX1 électrique et van Mercedes 7 places",
+      },
+      { property: "og:locale", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "en_GB" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: RESERVER_TITLE_FR },
       { name: "twitter:description", content: RESERVER_DESC_FR },
-      { property: "og:locale", content: "fr_FR" },
-      { property: "og:locale:alternate", content: "en_GB" },
+      { name: "twitter:image", content: SOCIAL_IMAGE },
+      {
+        name: "twitter:image:alt",
+        content: "Access Prestige Taxi — book a taxi in Charente-Maritime",
+      },
       {
         name: "viewport",
         content:
@@ -113,7 +140,44 @@ export const Route = createFileRoute("/reserver")({
     ],
     links: seoLinks("/reserver"),
     scripts: [
-      // TaxiService (LocalBusiness) + action de réservation : décrit le service
+      // Entité métier unique du site (adresse, coordonnées GPS, horaires),
+      // partagée par toutes les pages via son @id.
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            localBusinessNode(),
+            {
+              "@type": "WebPage",
+              "@id": `${RESERVER_URL}#webpage`,
+              url: RESERVER_URL,
+              name: RESERVER_TITLE_FR,
+              description: RESERVER_DESC_FR,
+              inLanguage: "fr-FR",
+              isPartOf: { "@id": `${SITE_URL}/#website` },
+              about: businessRef,
+              primaryImageOfPage: SOCIAL_IMAGE,
+              workTranslation: {
+                "@type": "WebPage",
+                url: RESERVER_URL,
+                name: RESERVER_TITLE_EN,
+                description: RESERVER_DESC_EN,
+                inLanguage: "en-GB",
+              },
+            },
+            {
+              "@type": "WebSite",
+              "@id": `${SITE_URL}/#website`,
+              url: `${SITE_URL}/`,
+              name: "Access Prestige Taxi",
+              inLanguage: ["fr-FR", "en-GB"],
+              publisher: businessRef,
+            },
+          ],
+        }),
+      },
+      // TaxiService + action de réservation : décrit le service
       // réservable depuis cette page, avec zone desservie, horaires et téléphones.
       {
         type: "application/ld+json",
@@ -122,49 +186,21 @@ export const Route = createFileRoute("/reserver")({
           "@type": "TaxiService",
           "@id": `${SITE_URL}/#taxiservice`,
           name: "Access Prestige Taxi",
-          url: `${SITE_URL}/reserver`,
+          url: RESERVER_URL,
           description: RESERVER_DESC_FR,
-          address: {
-            "@type": "PostalAddress",
-            addressRegion: "Charente-Maritime",
-            addressCountry: "FR",
-          },
+          alternateName: RESERVER_TITLE_EN,
           areaServed: [
             { "@type": "AdministrativeArea", name: "Charente-Maritime" },
             { "@type": "Country", name: "France" },
           ],
-          telephone: DRIVERS.map((d) => d.intl),
           availableLanguage: ["fr", "en"],
-          openingHoursSpecification: [
-            {
-              "@type": "OpeningHoursSpecification",
-              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              opens: "08:00",
-              closes: "20:00",
-            },
-          ],
-          priceRange: "€€",
-          currenciesAccepted: "EUR",
-          provider: {
-            "@type": "LocalBusiness",
-            "@id": `${SITE_URL}/#localbusiness`,
-            name: "Access Prestige Taxi",
-            url: SITE_URL,
-            telephone: DRIVERS[0]?.intl,
-            email: "taxipatricia@gmail.com",
-            priceRange: "€€",
-            address: {
-              "@type": "PostalAddress",
-              addressRegion: "Charente-Maritime",
-              addressCountry: "FR",
-            },
-          },
+          provider: businessRef,
           potentialAction: {
             "@type": "ReserveAction",
             name: "Réserver un taxi",
             target: {
               "@type": "EntryPoint",
-              urlTemplate: `${SITE_URL}/reserver`,
+              urlTemplate: RESERVER_URL,
               inLanguage: ["fr", "en"],
               actionPlatform: [
                 "https://schema.org/DesktopWebPlatform",

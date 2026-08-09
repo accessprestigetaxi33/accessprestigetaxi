@@ -12,12 +12,15 @@ Allow: /
 
 User-agent: *
 Allow: /
-Disallow: /driver
+Allow: /reserver
+Allow: /driver
+Allow: /driver-install.html
+# Pages personnelles (contiennent un identifiant de course ou de client) :
+# elles ne doivent pas être indexées.
 Disallow: /client
 Disallow: /suivi/
 Disallow: /course/
 Disallow: /reservation/
 Disallow: /qr-generator
-
 
 Sitemap: https://accessprestigetaxi.fr/sitemap.xml
