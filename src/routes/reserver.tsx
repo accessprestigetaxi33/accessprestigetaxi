@@ -39,7 +39,7 @@ import { geocodeAddress, reverseGeocode } from "@/lib/googleGeocode";
 import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
-import { seoLinks, SITE_URL } from "@/lib/seo-hreflang";
+import { SITE_URL } from "@/lib/seo-hreflang";
 import {
   businessRef,
   localBusinessNode,
