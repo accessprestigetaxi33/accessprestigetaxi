@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
+import { ogImageUrl, ogPageUrl } from "@/lib/og";
+import { SocialMetaSync } from "@/components/SocialMetaSync";
+import ogHomeFr from "@/assets/apt-og-home-fr.png.asset.json";
+import ogHomeEn from "@/assets/apt-og-home-en.png.asset.json";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
