@@ -658,6 +658,8 @@ export async function geocodeGoogle(query: string): Promise<GoogleGeocode | null
   const q = query?.trim();
   if (!q || q.length < 2) return null;
   const outside = mentionsOtherCity(q);
+  const outsideCanonical = findOutsideCanonicalGeocode(q);
+  if (outsideCanonical) return outsideCanonical;
   const canonical = outside ? null : findCanonicalGeocode(q);
   if (canonical) return canonical;
   return geocodeCache.run(normalizeGeocodeKey(q), async () => {
