@@ -28,6 +28,26 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
 
   const subscribeFn = useServerFn(subscribePush);
 
+  const persistenceKey = useCallback(
+    (audience: PushAudience) =>
+      `apt_push_registered:v2:${audience}:${audience === "chauffeur" ? (driverId ?? "") : (clientAccountId ?? reservationId ?? "generic")}`,
+    [clientAccountId, driverId, reservationId],
+  );
+
+  const rememberRegistration = useCallback(
+    (audience: PushAudience, fcm: string) => {
+      try {
+        window.localStorage.setItem(
+          persistenceKey(audience),
+          JSON.stringify({ token: fcm, registeredAt: Date.now() }),
+        );
+      } catch {
+        /* Le navigateur peut interdire le stockage privé : la souscription reste active. */
+      }
+    },
+    [persistenceKey],
+  );
+
   // ── Détection support initial ──
   useEffect(() => {
     if (
@@ -55,18 +75,30 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     )
       return;
 
-    // Souscription déjà enregistrée récemment pour cette signature : on évite
-    // de redemander un token (source de « re-souscription » à chaque visite).
-    const sig = `push_sub:${autoAudience}:${driverId ?? ""}:${clientAccountId ?? ""}`;
-    let alreadyFresh = false;
+    // Une autorisation accordée reste valable sans limite sur cet appareil.
+    // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a
+    // pas ce marqueur et sera inscrit une seule fois.
+    const sig = persistenceKey(autoAudience);
+    let registeredToken: string | null = null;
     try {
-      const ts = Number(window.localStorage.getItem(sig) ?? 0);
-      alreadyFresh = Number.isFinite(ts) && Date.now() - ts < 12 * 60 * 60 * 1000;
+      const saved = JSON.parse(window.localStorage.getItem(sig) ?? "null") as { token?: unknown } | null;
+      registeredToken = typeof saved?.token === "string" ? saved.token : null;
     } catch {
-      alreadyFresh = false;
+      registeredToken = null;
     }
-    if (alreadyFresh && Notification.permission === "granted") {
+    if (Notification.permission === "denied") {
+      setStatus("denied");
+      return;
+    }
+    if (Notification.permission === "default") {
+      // Ne jamais déclencher la boîte de permission au simple chargement.
+      setStatus("idle");
+      return;
+    }
+    if (registeredToken) {
+      setToken(registeredToken);
       setStatus("granted");
+      return;
     }
 
     let cancelled = false;
@@ -87,10 +119,8 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         });
         if (!cancelled) {
           try {
-            window.localStorage.setItem(sig, String(Date.now()));
-          } catch {
-            /* stockage indisponible : on continue */
-          }
+            rememberRegistration(autoAudience, fcm);
+          } catch {}
           setToken(fcm);
           setStatus("granted");
         }
@@ -108,17 +138,12 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     };
     run();
 
-    // Rafraîchit last_seen_at en DB toutes les heures.
-    // getFcmToken gère lui-même la rotation du token (tous les 50 jours automatiquement).
-    const interval = setInterval(() => run(), 60 * 60 * 1000);
-
     return () => {
       cancelled = true;
-      clearInterval(interval);
     };
     // reservationId volontairement exclu : on ne re-subscribe pas si l'id change après le montage
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoAudience, clientAccountId, driverId]);
+  }, [autoAudience, clientAccountId, driverId, persistenceKey, rememberRegistration]);
 
   // ── Subscribe manuel (pour les appels explicites) ──
   const subscribe = useCallback(
@@ -140,6 +165,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
+        rememberRegistration(audience, fcm);
         setToken(fcm);
         setStatus("granted");
         return true;
@@ -151,7 +177,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         return false;
       }
     },
-    [subscribeFn, reservationId, clientAccountId, driverId],
+    [subscribeFn, reservationId, clientAccountId, driverId, rememberRegistration],
   );
 
   const testNotification = useCallback(async () => {
@@ -179,13 +205,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
+        rememberRegistration(audience, fcm);
         setToken(fcm);
         setStatus("granted");
       } catch (e) {
         console.warn("[push] refreshToken failed", e);
       }
     },
-    [subscribeFn, reservationId, clientAccountId, driverId],
+    [subscribeFn, reservationId, clientAccountId, driverId, rememberRegistration],
   );
 
   return { status, subscription: token, subscribe, testNotification, refreshToken };

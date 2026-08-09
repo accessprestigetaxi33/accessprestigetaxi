@@ -568,16 +568,6 @@ function DriverApp({
     };
   }, []);
 
-  // Rafraîchit le token FCM à chaque reprise de la page.
-  // getFcmToken retourne le cache immédiatement sauf si token > 50j → rotation silencieuse auto.
-  useEffect(() => {
-    const refresh = () => {
-      if (document.visibilityState === "visible") subscribePush("chauffeur");
-    };
-    document.addEventListener("visibilitychange", refresh);
-    return () => document.removeEventListener("visibilitychange", refresh);
-  }, [subscribePush]);
-
   // Rafraîchissement badge courses (via serveur : anon n'a aucun accès en
   // lecture aux réservations — RLS PII).
   useEffect(() => {
@@ -739,26 +729,24 @@ function DriverApp({
         </div>
 
         {/* Bandeau activation notifications */}
-        {(pushStatus === "idle" || pushStatus === "denied" || pushStatus === "granted") && (
+        {(pushStatus === "idle" || pushStatus === "denied") && (
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 10,
-              background: pushStatus === "denied" ? "#fef2f2" : pushStatus === "granted" ? "#f0fdf4" : "#eff6ff",
+               background: pushStatus === "denied" ? "#fef2f2" : "#eff6ff",
               borderBottom: "1px solid #e2e8f0",
               padding: "10px 16px",
               fontSize: 12.5,
-              color: pushStatus === "denied" ? "#b91c1c" : pushStatus === "granted" ? "#15803d" : "#1d4ed8",
+               color: pushStatus === "denied" ? "#b91c1c" : "#1d4ed8",
             }}
           >
             <span>
               {pushStatus === "denied"
                 ? "🔕 Notifications bloquées — active-les dans les réglages."
-                : pushStatus === "granted"
-                  ? "🔔 Notifications actives"
-                  : "🔔 Active les notifications pour ne rater aucune nouvelle course."}
+                 : "🔔 Active les notifications pour ne rater aucune nouvelle course."}
             </span>
             {pushStatus !== "denied" && (
               <button
@@ -775,7 +763,7 @@ function DriverApp({
                   cursor: "pointer",
                 }}
               >
-                {pushStatus === "granted" ? "🔄 Ré-activer" : "Activer"}
+                 Activer
               </button>
             )}
           </div>
