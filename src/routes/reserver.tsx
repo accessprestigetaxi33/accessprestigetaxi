@@ -41,6 +41,8 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
+import { placesGeolocate } from "@/lib/places";
+
 
 // ─── Géolocalisation : même configuration que Start Fresh Here ──────────────
 const MAX_AUTO_GEO_ACCURACY_M = 1500;
