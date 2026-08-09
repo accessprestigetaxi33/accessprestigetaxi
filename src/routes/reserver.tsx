@@ -1775,7 +1775,14 @@ function ReserverPage() {
       <SocialMetaSync lang={L} fr={RESERVER_SOCIAL_FR} en={RESERVER_SOCIAL_EN} />
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+        <Link
+          to="/"
+          className="mb-6 inline-flex min-h-[44px] touch-manipulation items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:border-primary/60 hover:text-foreground"
+        >
+          ↩ {L === "en" ? "Back to site" : "Retour au site"}
+        </Link>
         <div className="text-center">
+
           <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
             <Sparkles className="h-3.5 w-3.5" /> {tx("kicker")}
           </p>
