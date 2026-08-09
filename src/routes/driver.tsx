@@ -770,7 +770,7 @@ function DriverApp({
               minHeight: 30,
             }}
           >
-            ↩ Site
+            ↩ Retour au site
           </a>
           <span style={{ fontSize: 12, color: "#94a3b8" }}>
             {new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}

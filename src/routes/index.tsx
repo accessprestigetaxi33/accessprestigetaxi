@@ -33,6 +33,9 @@ import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
 import photoVan from "@/assets/apt-van.jpg.asset.json";
 import photoAudi from "@/assets/apt-audi-q6.jpg";
+import photoBmwReal from "@/assets/apt-bmw-real.jpg.asset.json";
+import photoAudiReal from "@/assets/apt-audi-real.jpg.asset.json";
+import photoVanReal from "@/assets/apt-van-real.jpg.asset.json";
 
 import photoMedical from "@/assets/apt-medical.jpg";
 import photoAirport from "@/assets/apt-airport.jpg";
@@ -211,7 +214,7 @@ const COPY = {
       },
       { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Disponible sur réservation",
         d: "Réservation immédiate ou planifiée.",
       },
@@ -232,7 +235,7 @@ const COPY = {
     whyTitle: "L'élégance électrique, sans compromis",
     why: [
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Zéro émission",
         d: "La BMW iX1 de Patricia roule 100 % à l'électrique, sans bruit ni vibration.",
       },
@@ -254,7 +257,7 @@ const COPY = {
       { img: photoGare, from: "Rochefort", to: "Gare TGV", meta: "≈ 20 min · accueil quai" },
       { img: photoIleDeRe, from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · pont inclus" },
       { img: photoRoyan, from: "Saintes", to: "Royan", meta: "≈ 45 min · côte de Beauté" },
-      { img: photoVan.url, from: "Groupe", to: "Van 7 places", meta: "Transferts à plusieurs" },
+      { img: photoVanReal.url, from: "Groupe", to: "Van 7 places", meta: "Transferts à plusieurs" },
       { img: photoMedical, from: "Domicile", to: "Hôpital / clinique", meta: "Conventionné CPAM" },
     ],
     bestEyebrow: "Les best-sellers",
@@ -274,7 +277,7 @@ const COPY = {
       },
       {
         n: "03",
-        img: photoVan.url,
+        img: photoVanReal.url,
         t: "Groupes jusqu'à 7 personnes",
         d: "Van Mercedes, bagages inclus, un seul véhicule pour tout le monde.",
       },
@@ -351,7 +354,7 @@ const COPY = {
       },
       { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Available on booking",
         d: "Instant or scheduled booking.",
       },
@@ -372,7 +375,7 @@ const COPY = {
     whyTitle: "Electric elegance, no compromise",
     why: [
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Zero emissions",
         d: "Patricia's BMW iX1 is fully electric — no noise, no vibration.",
       },
@@ -394,7 +397,7 @@ const COPY = {
       { img: photoGare, from: "Rochefort", to: "TGV station", meta: "≈ 20 min · platform meet" },
       { img: photoIleDeRe, from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · bridge included" },
       { img: photoRoyan, from: "Saintes", to: "Royan", meta: "≈ 45 min · Atlantic coast" },
-      { img: photoVan.url, from: "Group", to: "7-seat van", meta: "Group transfers" },
+      { img: photoVanReal.url, from: "Group", to: "7-seat van", meta: "Group transfers" },
       { img: photoMedical, from: "Home", to: "Hospital / clinic", meta: "Medical transport" },
     ],
     bestEyebrow: "Best-sellers",
@@ -414,7 +417,7 @@ const COPY = {
       },
       {
         n: "03",
-        img: photoVan.url,
+        img: photoVanReal.url,
         t: "Groups of up to 7",
         d: "Mercedes van, luggage included, one vehicle for everyone.",
       },
@@ -585,7 +588,7 @@ export const Route = createFileRoute("/")({
               position: 1,
               name: "BMW iX1 100 % électrique",
               alternateName: "BMW iX1 100% electric",
-              image: absoluteUrl(photoExterior.url),
+              image: absoluteUrl(photoBmwReal.url),
               vehicleSeatingCapacity: 4,
               fuelType: "Electric",
               description:
@@ -595,7 +598,7 @@ export const Route = createFileRoute("/")({
               "@type": "Car",
               position: 2,
               name: "Audi Q6 e-tron",
-              image: absoluteUrl(photoAudi),
+              image: absoluteUrl(photoAudiReal.url),
               vehicleSeatingCapacity: 4,
               fuelType: "Electric",
               description:
@@ -606,7 +609,7 @@ export const Route = createFileRoute("/")({
               position: 3,
               name: "Van Mercedes V-Class 7 places",
               alternateName: "Mercedes V-Class 7-seat van",
-              image: absoluteUrl(photoVan.url),
+              image: absoluteUrl(photoVanReal.url),
               vehicleSeatingCapacity: 7,
               description:
                 "Van Mercedes conduit par Alain : transport de groupe jusqu'à 7 passagers avec bagages, tarif unique.",
@@ -623,6 +626,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
+  const alain = DRIVERS.find((d) => d.name === "Alain");
+
   const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
   const { index: slideIndex, canAnimate, select } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
@@ -911,7 +916,7 @@ function Index() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
           <Reveal className="lg:order-2">
             <img
-              src={photoVan.url}
+              src={photoVanReal.url}
               alt={c.groupTitle}
               loading="lazy"
               width={1600}
@@ -947,7 +952,7 @@ function Index() {
       {/* BANNIÈRE PHOTO PLEINE LARGEUR */}
       <section className="relative isolate overflow-hidden border-y border-border">
         <img
-          src={photoExterior.url}
+          src={photoBmwReal.url}
           alt={c.bannerTitle}
           loading="lazy"
           width={1600}
@@ -1036,11 +1041,124 @@ function Index() {
                     ? "Our premium fully electric SUV, available on request for business transfers, airport runs and long distances: silent cabin, generous luggage space and extended range across Charente-Maritime."
                     : "Notre SUV haut de gamme 100 % électrique, disponible sur demande pour les transferts affaires, les aéroports et les longues distances : habitacle silencieux, coffre généreux et grande autonomie en Charente-Maritime."}
                 </p>
+                {alain ? (
+                  <a
+                    href={`tel:${alain.tel}`}
+                    aria-label={`${c.callPrefix} ${alain.name} — ${alain.display}`}
+                    className="mt-5 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Phone className="h-4 w-4 shrink-0" />
+                    <span className="tabular-nums">
+                      {c.callPrefix} {alain.name} · {alain.display}
+                    </span>
+                  </a>
+                ) : null}
               </div>
             </article>
           </Reveal>
         </div>
       </section>
+
+      {/* INSTALLER L'APPLI */}
+      <section id="application" className="border-t border-border bg-background py-20">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="flex flex-col items-center text-center">
+              <img
+                src={lang === "en" ? heroCarsEn.url : heroCars.url}
+                alt={
+                  lang === "en"
+                    ? "Access Prestige Taxi app icon"
+                    : "Icône de l'application Access Prestige Taxi"
+                }
+                loading="lazy"
+                width={512}
+                height={512}
+                className="h-24 w-24 rounded-3xl border border-primary/30 object-cover shadow-[var(--shadow-gold)]"
+              />
+              <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-primary">
+                {lang === "en" ? "Web app" : "Application"}
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+                {lang === "en"
+                  ? "Install Access Prestige Taxi on your phone"
+                  : "Installez Access Prestige Taxi sur votre téléphone"}
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                {lang === "en"
+                  ? "Add the site to your home screen and get a real app icon: book in one tap, follow your driver live, find your rides, receipts and invoices, and chat directly with Alain or Patricia."
+                  : "Ajoutez le site à votre écran d'accueil pour obtenir une vraie icône d'application : réservez en un geste, suivez votre chauffeur en direct, retrouvez vos courses, reçus et factures, et discutez directement avec Alain ou Patricia."}
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            <Reveal>
+              <article className={`h-full p-6 ${CARD}`}>
+                <h3 className="font-display text-lg font-semibold text-card-foreground">
+                  {lang === "en" ? "iPhone & iPad (Safari)" : "iPhone et iPad (Safari)"}
+                </h3>
+                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
+                    {lang === "en"
+                      ? "Open accessprestigetaxi.fr in Safari."
+                      : "Ouvrez accessprestigetaxi.fr dans Safari."}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Tap the Share button at the bottom of the screen."
+                      : "Touchez le bouton Partager en bas de l'écran."}
+                  </li>
+                  <li>
+                    3.{" "}
+                    {lang === "en"
+                      ? "Choose “Add to Home Screen”, then Add."
+                      : "Choisissez « Sur l'écran d'accueil », puis Ajouter."}
+                  </li>
+                </ol>
+              </article>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <article className={`h-full p-6 ${CARD}`}>
+                <h3 className="font-display text-lg font-semibold text-card-foreground">
+                  {lang === "en" ? "Android (Chrome)" : "Android (Chrome)"}
+                </h3>
+                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
+                    {lang === "en"
+                      ? "Open accessprestigetaxi.fr in Chrome."
+                      : "Ouvrez accessprestigetaxi.fr dans Chrome."}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Open the ⋮ menu at the top right."
+                      : "Ouvrez le menu ⋮ en haut à droite."}
+                  </li>
+                  <li>
+                    3.{" "}
+                    {lang === "en"
+                      ? "Choose “Install app” / “Add to Home screen”."
+                      : "Choisissez « Installer l'application » / « Ajouter à l'écran d'accueil »."}
+                  </li>
+                </ol>
+              </article>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.14}>
+            <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+              {lang === "en"
+                ? "Alain and Patricia use a separate private app for drivers."
+                : "Alain et Patricia disposent d'une application chauffeur privée séparée."}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
 
       {/* DESTINATIONS */}
       <section className="border-t border-border bg-background py-20">

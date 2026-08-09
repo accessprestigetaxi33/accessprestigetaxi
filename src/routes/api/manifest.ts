@@ -5,28 +5,38 @@ export const Route = createFileRoute("/api/manifest")({
     handlers: {
       GET: async ({ request }) => {
         const url = new URL(request.url);
-        const role = url.searchParams.get("role");
-
-        const isDriver = role === "driver";
+        const isDriver = url.searchParams.get("role") === "driver";
 
         const manifest = {
           id: isDriver ? "/driver" : "/",
-          name: "Access Prestige Taxi",
-          short_name: isDriver ? "TCB Chauffeur" : "Taxi Bordeaux",
-          description: "Réservez votre taxi à Bordeaux",
-          start_url: isDriver ? "/driver" : "/",
-          scope: isDriver ? "/driver" : "/",
+          name: isDriver ? "Access Prestige Taxi — Chauffeur" : "Access Prestige Taxi",
+          short_name: isDriver ? "APT Chauffeur" : "Access Taxi",
+          description: isDriver
+            ? "Espace chauffeur Access Prestige Taxi (Alain & Patricia)"
+            : "Réservez votre taxi 100 % électrique en Charente-Maritime : réservation vocale ou écrite, suivi en direct, factures et reçus.",
+          lang: "fr",
+          dir: "ltr",
+          categories: ["travel", "business"],
+          start_url: isDriver ? "/driver" : "/?source=pwa",
+          scope: "/",
           display: "standalone",
-          background_color: isDriver ? "#151515" : "#151515",
-          theme_color: isDriver ? "#151515" : "#151515",
+          background_color: "#0B0B0D",
+          theme_color: "#0B0B0D",
           orientation: "portrait",
           icons: [
-            { src: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+            { src: "/favicon.png", sizes: "48x48", type: "image/png" },
             { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
             { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
             { src: "/icon-192-maskable.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
             { src: "/icon-512-maskable.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
           ],
+          shortcuts: isDriver
+            ? []
+            : [
+                { name: "Réserver", short_name: "Réserver", url: "/reserver" },
+                { name: "Espace client", short_name: "Client", url: "/client/dashboard" },
+                { name: "Contact", short_name: "Contact", url: "/contact" },
+              ],
         };
 
         return new Response(JSON.stringify(manifest), {

@@ -97,6 +97,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: "#0B0B0D" },
+      { name: "application-name", content: "Access Prestige Taxi" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "Access Taxi" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+
     ],
     links: [
       {
