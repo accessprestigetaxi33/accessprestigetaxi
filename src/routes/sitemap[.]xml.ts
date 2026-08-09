@@ -12,6 +12,13 @@ interface SitemapEntry {
   priority?: string;
 }
 
+/** Langues déclarées : le site sert la même URL en FR et EN (i18n côté client). */
+const ALT_LANGS: Array<{ hreflang: string }> = [
+  { hreflang: "fr" },
+  { hreflang: "en" },
+  { hreflang: "x-default" },
+];
+
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
