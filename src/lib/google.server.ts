@@ -322,12 +322,199 @@ const CANONICAL_PLACES: Array<{ match: RegExp; label: string; lat: number; lng: 
   },
 ];
 
+// Grands sites, gares, aéroports et quartiers hors Charente-Maritime
+// (Bordeaux métropole en priorité) : ils sont résolus AVANT Google, ce qui
+// évite de demander un numéro de rue pour un point de repère évident.
+const OUTSIDE_CANONICAL_PLACES: Array<{ match: RegExp; label: string; lat: number; lng: number }> = [
+  // ── Gares & aéroports ─────────────────────────────────────────────
+  {
+    match: /gare.*(saint\s*jean|st\s*jean).*bordeaux|bordeaux.*gare.*(saint\s*jean|st\s*jean)|^gare\s+(saint|st)\s*jean$|charles\s+domercq/,
+    label: "Gare de Bordeaux Saint-Jean, 33800 Bordeaux",
+    lat: 44.8262,
+    lng: -0.5561,
+  },
+  {
+    match: /(aeroport|airport).*(bordeaux|merignac)|bordeaux.*(aeroport|airport)|\bbod\b/,
+    label: "Aéroport de Bordeaux-Mérignac (BOD), 33700 Mérignac",
+    lat: 44.8286,
+    lng: -0.7156,
+  },
+  {
+    match: /gare.*(bordeaux\s+belcier|belcier)/,
+    label: "Bordeaux Belcier, 33800 Bordeaux",
+    lat: 44.8285,
+    lng: -0.5522,
+  },
+  {
+    match: /gare.*(pessac|talence|begles|bègles)/,
+    label: "Gare de Pessac, 33600 Pessac",
+    lat: 44.8065,
+    lng: -0.6316,
+  },
+  // ── Monuments & lieux emblématiques ───────────────────────────────
+  {
+    match: /place\s+de\s+la\s+bourse|miroir\s+d\s*eau/,
+    label: "Place de la Bourse, 33000 Bordeaux",
+    lat: 44.8412,
+    lng: -0.5697,
+  },
+  {
+    match: /(place\s+des\s+)?quinconces/,
+    label: "Esplanade des Quinconces, 33000 Bordeaux",
+    lat: 44.8449,
+    lng: -0.5747,
+  },
+  {
+    match: /grand\s+theatre.*bordeaux|bordeaux.*grand\s+theatre|place\s+de\s+la\s+comedie.*bordeaux/,
+    label: "Grand Théâtre, Place de la Comédie, 33000 Bordeaux",
+    lat: 44.8421,
+    lng: -0.5745,
+  },
+  {
+    match: /cite\s+du\s+vin/,
+    label: "La Cité du Vin, 134 Quai de Bacalan, 33300 Bordeaux",
+    lat: 44.8626,
+    lng: -0.5507,
+  },
+  {
+    match: /(stade\s+)?matmut\s+atlantique|nouveau\s+stade.*bordeaux/,
+    label: "Matmut Atlantique, 33300 Bordeaux",
+    lat: 44.8975,
+    lng: -0.5617,
+  },
+  {
+    match: /cathedrale.*(saint\s*andre|st\s*andre).*bordeaux|pey\s*berland/,
+    label: "Cathédrale Saint-André, Place Pey-Berland, 33000 Bordeaux",
+    lat: 44.8378,
+    lng: -0.5776,
+  },
+  {
+    match: /porte\s+de\s+bourgogne|pont\s+de\s+pierre/,
+    label: "Pont de Pierre, 33000 Bordeaux",
+    lat: 44.8377,
+    lng: -0.5642,
+  },
+  {
+    match: /darwin.*(bordeaux|caserne)|caserne\s+niel/,
+    label: "Darwin, 87 Quai des Queyries, 33100 Bordeaux",
+    lat: 44.8395,
+    lng: -0.5545,
+  },
+  {
+    match: /parc\s+bordelais/,
+    label: "Parc Bordelais, 33200 Bordeaux",
+    lat: 44.8493,
+    lng: -0.6032,
+  },
+  {
+    match: /jardin\s+public.*bordeaux/,
+    label: "Jardin Public, 33000 Bordeaux",
+    lat: 44.8492,
+    lng: -0.5787,
+  },
+  {
+    match: /bassins\s+(de\s+)?lumieres|base\s+sous\s*marine.*bordeaux/,
+    label: "Bassins des Lumières, 33300 Bordeaux",
+    lat: 44.8676,
+    lng: -0.5551,
+  },
+  {
+    match: /(palais\s+des\s+congres|parc\s+des\s+expositions).*bordeaux|bordeaux.*parc\s+des\s+expositions/,
+    label: "Parc des Expositions de Bordeaux, 33300 Bordeaux",
+    lat: 44.8836,
+    lng: -0.5666,
+  },
+  {
+    match: /arkea\s+arena|bordeaux\s+metropole\s+arena/,
+    label: "Arkéa Arena, 33520 Floirac",
+    lat: 44.8305,
+    lng: -0.5273,
+  },
+  // ── Hôpitaux & campus ─────────────────────────────────────────────
+  {
+    match: /(chu|hopital).*pellegrin|pellegrin/,
+    label: "CHU Pellegrin, Place Amélie Raba-Léon, 33000 Bordeaux",
+    lat: 44.8319,
+    lng: -0.6012,
+  },
+  {
+    match: /(chu|hopital).*haut\s*leveque|haut\s*leveque/,
+    label: "Hôpital Haut-Lévêque, 33604 Pessac",
+    lat: 44.7889,
+    lng: -0.6303,
+  },
+  {
+    match: /(hopital|chu).*saint\s*andre.*bordeaux/,
+    label: "Hôpital Saint-André, 1 Rue Jean Burguet, 33000 Bordeaux",
+    lat: 44.8342,
+    lng: -0.5722,
+  },
+  {
+    match: /campus.*(talence|pessac|bordeaux)|universite\s+de\s+bordeaux/,
+    label: "Université de Bordeaux, Campus Talence-Pessac, 33400 Talence",
+    lat: 44.8005,
+    lng: -0.5955,
+  },
+  // ── Quartiers & communes de la métropole ──────────────────────────
+  {
+    match: /\bchartrons\b/,
+    label: "Quartier des Chartrons, 33000 Bordeaux",
+    lat: 44.8551,
+    lng: -0.5697,
+  },
+  { match: /\bbacalan\b/, label: "Bacalan, 33300 Bordeaux", lat: 44.8672, lng: -0.5591 },
+  { match: /\bsaint\s*michel\b.*bordeaux|bordeaux.*saint\s*michel/, label: "Quartier Saint-Michel, 33800 Bordeaux", lat: 44.8329, lng: -0.5665 },
+  { match: /\bsaint\s*pierre\b.*bordeaux/, label: "Quartier Saint-Pierre, 33000 Bordeaux", lat: 44.8397, lng: -0.5714 },
+  { match: /\bnansouty\b/, label: "Nansouty, 33800 Bordeaux", lat: 44.8228, lng: -0.5747 },
+  { match: /\bcaudéran\b|\bcauderan\b/, label: "Caudéran, 33200 Bordeaux", lat: 44.8459, lng: -0.6112 },
+  { match: /\bbastide\b.*bordeaux|bordeaux.*bastide/, label: "La Bastide, 33100 Bordeaux", lat: 44.8419, lng: -0.5548 },
+  { match: /\bginko\b|berges\s+du\s+lac/, label: "Ginko / Bordeaux Lac, 33300 Bordeaux", lat: 44.8863, lng: -0.5769 },
+  { match: /\beuratlantique\b/, label: "Bordeaux Euratlantique, 33800 Bordeaux", lat: 44.8231, lng: -0.5527 },
+  { match: /\bmerignac\b|\bmérignac\b/, label: "Mérignac, 33700", lat: 44.8386, lng: -0.6455 },
+  { match: /\bpessac\b/, label: "Pessac, 33600", lat: 44.8067, lng: -0.6311 },
+  { match: /\btalence\b/, label: "Talence, 33400", lat: 44.8078, lng: -0.5892 },
+  { match: /\bbegles\b|\bbègles\b/, label: "Bègles, 33130", lat: 44.8086, lng: -0.5478 },
+  { match: /\ble\s+bouscat\b|\bbouscat\b/, label: "Le Bouscat, 33110", lat: 44.8654, lng: -0.5989 },
+  { match: /\bbruges\b.*(33|bordeaux)|^bruges$/, label: "Bruges, 33520", lat: 44.8783, lng: -0.6003 },
+  { match: /\bfloirac\b/, label: "Floirac, 33270", lat: 44.8283, lng: -0.5286 },
+  { match: /\bcenon\b/, label: "Cenon, 33150", lat: 44.8556, lng: -0.5314 },
+  { match: /\blormont\b/, label: "Lormont, 33310", lat: 44.8756, lng: -0.5203 },
+  { match: /\bgradignan\b/, label: "Gradignan, 33170", lat: 44.7725, lng: -0.6156 },
+  { match: /\bvillenave\s+d\s*ornon\b/, label: "Villenave-d'Ornon, 33140", lat: 44.7803, lng: -0.5661 },
+  { match: /\bsaint\s*medard\s+en\s+jalles\b/, label: "Saint-Médard-en-Jalles, 33160", lat: 44.8969, lng: -0.7169 },
+  { match: /\beysines\b/, label: "Eysines, 33320", lat: 44.8836, lng: -0.6489 },
+  { match: /\bblanquefort\b/, label: "Blanquefort, 33290", lat: 44.9114, lng: -0.6386 },
+  { match: /\bambares\b/, label: "Ambarès-et-Lagrave, 33440", lat: 44.9214, lng: -0.4739 },
+  { match: /^bordeaux$|bordeaux\s+centre|centre\s+ville\s+bordeaux/, label: "Bordeaux, 33000", lat: 44.8378, lng: -0.5792 },
+  // ── Autres pôles régionaux fréquents ──────────────────────────────
+  { match: /\barcachon\b/, label: "Arcachon, 33120", lat: 44.6586, lng: -1.1683 },
+  { match: /dune\s+du\s+pilat|dune\s+du\s+pyla/, label: "Dune du Pilat, 33115 La Teste-de-Buch", lat: 44.5892, lng: -1.2136 },
+  { match: /gare.*angouleme|angouleme.*gare/, label: "Gare d'Angoulême, 16000 Angoulême", lat: 45.6552, lng: 0.1637 },
+  { match: /gare.*niort|niort.*gare/, label: "Gare de Niort, 79000 Niort", lat: 46.3172, lng: -0.4636 },
+  { match: /gare.*poitiers|poitiers.*gare/, label: "Gare de Poitiers, 86000 Poitiers", lat: 46.5822, lng: 0.3336 },
+  { match: /(aeroport|airport).*nantes|nantes\s+atlantique/, label: "Aéroport Nantes-Atlantique (NTE), 44340 Bouguenais", lat: 47.1532, lng: -1.6108 },
+  { match: /(aeroport|airport).*(roissy|charles\s+de\s+gaulle)|\bcdg\b/, label: "Aéroport Paris-Charles-de-Gaulle (CDG), 95700 Roissy", lat: 49.0097, lng: 2.5479 },
+  { match: /(aeroport|airport).*orly|\bory\b/, label: "Aéroport Paris-Orly (ORY), 94390 Orly", lat: 48.7233, lng: 2.3794 },
+  { match: /gare\s+montparnasse/, label: "Gare Montparnasse, 75015 Paris", lat: 48.8412, lng: 2.3200 },
+];
+
 function findCanonicalGeocode(query: string): GoogleGeocode | null {
   const normalized = normalizeAddressText(query);
   const place = CANONICAL_PLACES.find((p) => p.match.test(normalized));
   if (!place) return null;
   return { lat: place.lat, lng: place.lng, label: place.label, confidence: 1 };
 }
+
+/** Points de repère hors Charente-Maritime (Bordeaux & grands pôles). */
+function findOutsideCanonicalGeocode(query: string): GoogleGeocode | null {
+  const normalized = normalizeAddressText(query);
+  // Une adresse précise (numéro + rue) doit rester géocodée par Google.
+  if (/^\s*\d{1,4}\s+\S/.test(normalized) && !/charles\s+domercq/.test(normalized)) return null;
+  const place = OUTSIDE_CANONICAL_PLACES.find((p) => p.match.test(normalized));
+  if (!place) return null;
+  return { lat: place.lat, lng: place.lng, label: place.label, confidence: 1 };
+}
+
 
 const ALIASES: Record<string, string> = {
   aeroport: "Aéroport La Rochelle-Île de Ré",
