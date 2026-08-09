@@ -7,7 +7,7 @@
 import { SITE_URL } from "./seo-hreflang";
 
 /** À incrémenter à CHAQUE remplacement d'un visuel og:image / twitter:image. */
-export const OG_VERSION = "20260809a";
+export const OG_VERSION = "20260809b";
 
 export type OgLang = "fr" | "en";
 
