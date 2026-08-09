@@ -167,13 +167,14 @@ export const Route = createFileRoute("/reserver")({
               inLanguage: "fr-FR",
               isPartOf: { "@id": `${SITE_URL}/#website` },
               about: businessRef,
-              primaryImageOfPage: SOCIAL_IMAGE,
+              primaryImageOfPage: OG_IMAGE_FR,
               workTranslation: {
                 "@type": "WebPage",
                 url: RESERVER_URL,
                 name: RESERVER_TITLE_EN,
                 description: RESERVER_DESC_EN,
                 inLanguage: "en-GB",
+                primaryImageOfPage: OG_IMAGE_EN,
               },
             },
             {
