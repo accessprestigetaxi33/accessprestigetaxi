@@ -20,6 +20,62 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_maps";
 // Biais Charente-Maritime (La Rochelle) — sans jamais bloquer les autres villes.
 const BIAS = { lat: 46.16, lng: -1.15, radiusM: 50_000 };
 
+/* ------------------------------------------------------------------ */
+/* Cache mémoire (par instance serveur) + dédoublonnage des requêtes.  */
+/* Les adresses changent très peu : on garde 24 h les résultats positifs */
+/* et 60 s les absences, avec fusion des appels concurrents identiques. */
+/* ------------------------------------------------------------------ */
+type Entry<T> = { at: number; value: T | null };
+function makeCache<T>(ttlMs: number, negativeTtlMs: number, max: number) {
+  const store = new Map<string, Entry<T>>();
+  const inflight = new Map<string, Promise<T | null>>();
+  return async function run(key: string, fn: () => Promise<T | null>): Promise<T | null> {
+    const hit = store.get(key);
+    if (hit && Date.now() - hit.at <= (hit.value == null ? negativeTtlMs : ttlMs)) {
+      store.delete(key);
+      store.set(key, hit); // LRU touch
+      return hit.value;
+    }
+    if (hit) store.delete(key);
+    const pending = inflight.get(key);
+    if (pending) return pending;
+    const p = (async () => {
+      try {
+        const v = await fn();
+        store.set(key, { at: Date.now(), value: v ?? null });
+        while (store.size > max) {
+          const first = store.keys().next().value;
+          if (!first) break;
+          store.delete(first);
+        }
+        return v ?? null;
+      } finally {
+        inflight.delete(key);
+      }
+    })();
+    inflight.set(key, p);
+    return p;
+  };
+}
+
+const norm = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[.,;:!?'"`()\[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+// Arrondi ~11 m : deux relevés GPS voisins partagent la même adresse.
+const coordKey = (lat: number, lng: number) => `${lat.toFixed(4)},${lng.toFixed(4)}`;
+
+const cacheAutocomplete = makeCache<Suggestion[]>(10 * 60_000, 30_000, 400);
+const cacheDetails = makeCache<{ lat: number; lng: number; label: string }>(24 * 60 * 60_000, 60_000, 500);
+const cacheGeocode = makeCache<{ lat: number; lng: number; label: string }>(24 * 60 * 60_000, 60_000, 800);
+const cacheReverse = makeCache<{ label: string }>(24 * 60 * 60_000, 60_000, 800);
+
+
 const json = (body: unknown, status = 200, cache = "no-store") =>
   new Response(JSON.stringify(body), {
     status,
