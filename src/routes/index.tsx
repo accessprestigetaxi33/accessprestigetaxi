@@ -611,9 +611,10 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
-
-  }),
+    };
+  },
 });
+
 
 function Index() {
   const { lang } = useI18n();
