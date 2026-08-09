@@ -1,242 +1,98 @@
 // lib/googleGeocode.ts
-// Remplace lib/geocode.ts — mêmes signatures (drop-in), implémenté avec
-// Google Geocoding API au lieu de Nominatim.
+// Géocodage / recherche d'adresses côté client.
+//
+// Tout passe désormais par /api/public/places (proxy serveur Google Maps) :
+// la clé navigateur est restreinte par référent et échoue en preview, sur le
+// domaine personnalisé ou en PWA. Le SDK JS reste réservé à l'affichage des
+// cartes. Les signatures sont inchangées (drop-in).
 
-import { loadGoogleMaps } from "./googleMaps";
+import { placeDetails, placesAutocomplete, placesGeocode, placesReverse } from "./places";
 
 export type GeoCoord = { lat: number; lng: number };
 export type SearchResult = { coord: [number, number]; label: string };
 
-type GoogleGeocoder = any;
-type GoogleGeocoderResult = any;
-type GoogleAutocompleteService = any;
-type GooglePlacesService = any;
-type GoogleAutocompletePrediction = any;
-type GooglePlaceResult = any;
-
-let geocoder: GoogleGeocoder | null = null;
-async function getGeocoder() {
-  if (geocoder) return geocoder;
-  const g = await loadGoogleMaps();
-  const nextGeocoder = new g.maps.Geocoder();
-  geocoder = nextGeocoder;
-  return nextGeocoder;
-}
-
-// Bordeaux — biais de zone pour préférer les résultats locaux (comme l'ancien
-// rayon de validation 80km Nominatim), sans bloquer les résultats hors zone.
-const BORDEAUX_BOUNDS = {
-  north: 45.2,
-  south: 44.5,
-  west: -1.0,
-  east: 0.1,
-};
-
-// Lieux clés de Bordeaux dont la Geocoding API se trompe régulièrement
-// (elle est conçue pour des adresses, pas des POI/lieux-dits — un aéroport,
-// une gare ou une place peuvent être résolus sur une rue homonyme proche du
-// centre-ville plutôt que le vrai lieu, faussant les distances calculées).
-// Même correctif que celui déjà appliqué côté ATB : on court-circuite
-// Google pour ces requêtes avec des coordonnées vérifiées.
+// Lieux de Charente-Maritime que le géocodeur résout parfois sur une rue
+// homonyme : on court-circuite avec des coordonnées vérifiées.
 const CANONICAL_PLACES: Array<{ match: RegExp; label: string; coord: GeoCoord }> = [
   {
-    match: /a[eé]roport|merignac|m[ée]rignac/i,
-    label: "Aéroport de Bordeaux-Mérignac",
-    coord: { lat: 44.8283, lng: -0.7156 },
+    match: /a[ée]roport.*(la\s*rochelle|r[ée]|lrh)|la\s*rochelle.*a[ée]roport/i,
+    label: "Aéroport La Rochelle-Île de Ré (LRH)",
+    coord: { lat: 46.1792, lng: -1.1953 },
   },
   {
-    match: /gare\s*saint[\s-]?jean|st[\s-]?jean.*gare|gare.*st[\s-]?jean/i,
-    label: "Gare de Bordeaux-Saint-Jean",
-    coord: { lat: 44.8256, lng: -0.5563 },
+    match: /gare\s*(sncf\s*)?(de\s*)?la\s*rochelle|la\s*rochelle.*gare/i,
+    label: "Gare de La Rochelle",
+    coord: { lat: 46.1531, lng: -1.1458 },
   },
-  { match: /place\s*de\s*la\s*bourse/i, label: "Place de la Bourse", coord: { lat: 44.8412, lng: -0.5697 } },
-  { match: /place\s*(des\s*)?quinconces/i, label: "Esplanade des Quinconces", coord: { lat: 44.8459, lng: -0.5733 } },
+  { match: /vieux[\s-]?port.*rochelle/i, label: "Vieux-Port de La Rochelle", coord: { lat: 46.1558, lng: -1.1528 } },
+  { match: /aquarium.*rochelle/i, label: "Aquarium de La Rochelle", coord: { lat: 46.1539, lng: -1.1508 } },
+  { match: /gare\s*(de\s*)?royan/i, label: "Gare de Royan", coord: { lat: 45.6256, lng: -1.0275 } },
+  { match: /gare\s*(de\s*)?saintes/i, label: "Gare de Saintes", coord: { lat: 45.7486, lng: -0.6236 } },
+  { match: /gare\s*(de\s*)?rochefort/i, label: "Gare de Rochefort", coord: { lat: 45.9447, lng: -0.9636 } },
+  { match: /gare\s*(de\s*)?surg[eè]res/i, label: "Gare de Surgères", coord: { lat: 46.1078, lng: -0.7508 } },
+  { match: /zoo.*palmyre|palmyre.*zoo/i, label: "Zoo de La Palmyre", coord: { lat: 45.6828, lng: -1.1675 } },
+  { match: /fort\s*boyard/i, label: "Fort Boyard", coord: { lat: 45.9992, lng: -1.2133 } },
 ];
 
-function matchCanonicalPlace(query: string): GeoCoord | null {
-  const found = CANONICAL_PLACES.find((p) => p.match.test(query));
-  return found ? found.coord : null;
+function matchCanonicalPlace(query: string): { label: string; coord: GeoCoord } | null {
+  return CANONICAL_PLACES.find((p) => p.match.test(query)) ?? null;
 }
 
-/**
- * Géocode une adresse texte → coordonnées. Retourne null si rien trouvé.
- * Même signature que l'ancien geocodeAddress (Nominatim).
- */
+/** Géocode une adresse texte → coordonnées. Retourne null si rien trouvé. */
 export async function geocodeAddress(query: string): Promise<GeoCoord | null> {
+  if (!query?.trim()) return null;
   const canonical = matchCanonicalPlace(query);
-  if (canonical) return canonical;
-  try {
-    const api = await loadGoogleMaps();
-    const g = await getGeocoder();
-    const result = await new Promise<GoogleGeocoderResult[] | null>((resolve) => {
-      g.geocode(
-        {
-          address: query,
-          region: "fr",
-          bounds: new api.maps.LatLngBounds(
-            { lat: BORDEAUX_BOUNDS.south, lng: BORDEAUX_BOUNDS.west },
-            { lat: BORDEAUX_BOUNDS.north, lng: BORDEAUX_BOUNDS.east },
-          ),
-        },
-        (results: GoogleGeocoderResult[] | null, status: string) => {
-          if (status !== api.maps.GeocoderStatus.OK || !results?.length) {
-            resolve(null);
-            return;
-          }
-          resolve(results);
-        },
-      );
-    });
-    if (!result?.[0]) return null;
-    const loc = result[0].geometry.location;
-    return { lat: loc.lat(), lng: loc.lng() };
-  } catch {
-    return null;
-  }
+  if (canonical) return canonical.coord;
+  const g = await placesGeocode(query);
+  return g ? { lat: g.lat, lng: g.lng } : null;
 }
 
-/**
- * Recherche d'adresses avec plusieurs résultats (autocomplete-like).
- * Même signature que l'ancien searchAddress(query, limit).
- */
+/** Recherche d'adresses avec plusieurs résultats (autocomplete-like). */
 export async function searchAddress(query: string, limit = 5): Promise<SearchResult[]> {
-  const canonical = CANONICAL_PLACES.find((p) => p.match.test(query));
-  if (canonical) return [{ coord: [canonical.coord.lat, canonical.coord.lng], label: canonical.label }];
-  try {
-    const api = await loadGoogleMaps();
-    const g = await getGeocoder();
-    const results = await new Promise<GoogleGeocoderResult[] | null>((resolve) => {
-      g.geocode(
-        {
-          address: query,
-          region: "fr",
-          bounds: new api.maps.LatLngBounds(
-            { lat: BORDEAUX_BOUNDS.south, lng: BORDEAUX_BOUNDS.west },
-            { lat: BORDEAUX_BOUNDS.north, lng: BORDEAUX_BOUNDS.east },
-          ),
-        },
-        (res: GoogleGeocoderResult[] | null, status: string) => {
-          if (status !== api.maps.GeocoderStatus.OK || !res?.length) {
-            resolve(null);
-            return;
-          }
-          resolve(res);
-        },
-      );
-    });
-    if (!results) return [];
-    return results.slice(0, limit).map((r) => ({
-      coord: [r.geometry.location.lat(), r.geometry.location.lng()] as [number, number],
-      label: r.formatted_address,
-    }));
-  } catch {
-    return [];
+  if (!query?.trim()) return [];
+  const out: SearchResult[] = [];
+  const canonical = matchCanonicalPlace(query);
+  if (canonical) out.push({ coord: [canonical.coord.lat, canonical.coord.lng], label: canonical.label });
+
+  const remote = await placesAutocomplete(query);
+  for (const r of remote) {
+    if (out.length >= limit) break;
+    if (typeof r.lat === "number" && typeof r.lng === "number") {
+      out.push({ coord: [r.lat, r.lng], label: r.label });
+      continue;
+    }
+    if (!r.placeId) continue;
+    const d = await placeDetails(r.placeId);
+    if (d) out.push({ coord: [d.lat, d.lng], label: d.label || r.label });
   }
+
+  if (out.length === 0) {
+    const g = await placesGeocode(query);
+    if (g) out.push({ coord: [g.lat, g.lng], label: g.label });
+  }
+  return out.slice(0, limit);
 }
 
-/**
- * Reverse geocoding : coordonnées → adresse formatée la plus proche.
- * Retourne null si rien trouvé.
- * Utilisé pour : pré-remplir l'adresse de départ après géolocalisation
- * navigateur, et enrichir le label des POIs sans rue connue (supermarchés…).
- */
+/** Reverse geocoding : coordonnées → adresse formatée la plus proche. */
 export async function reverseGeocode(lat: number, lng: number): Promise<string | null> {
-  try {
-    const api = await loadGoogleMaps();
-    const g = await getGeocoder();
-    const results = await new Promise<GoogleGeocoderResult[] | null>((resolve) => {
-      g.geocode({ location: { lat, lng } }, (res: GoogleGeocoderResult[] | null, status: string) => {
-        if (status !== api.maps.GeocoderStatus.OK || !res?.length) {
-          resolve(null);
-          return;
-        }
-        resolve(res);
-      });
-    });
-    if (!results?.[0]) return null;
-    return results[0].formatted_address;
-  } catch {
-    return null;
-  }
+  return placesReverse(lat, lng);
 }
 
 // ── Autocomplete temps réel (saisie utilisateur) ────────────────────────────
 
-let autocompleteService: GoogleAutocompleteService | null = null;
-let placesService: GooglePlacesService | null = null;
-
-async function getAutocompleteService() {
-  if (autocompleteService) return autocompleteService;
-  const g = await loadGoogleMaps();
-  const nextAutocompleteService = new g.maps.places.AutocompleteService();
-  autocompleteService = nextAutocompleteService;
-  return nextAutocompleteService;
-}
-
-async function getPlacesService() {
-  if (placesService) return placesService;
-  const api = await loadGoogleMaps();
-  const div = document.createElement("div");
-  const nextPlacesService = new api.maps.places.PlacesService(div);
-  placesService = nextPlacesService;
-  return nextPlacesService;
-}
-
 export type PlaceSuggestion = { placeId: string; description: string };
 
-/**
- * Suggestions d'adresses en temps réel pendant la saisie (debounce à gérer
- * côté composant). Biaisé sur Bordeaux/Gironde.
- */
+/** Suggestions d'adresses pendant la saisie (debounce côté composant). */
 export async function getAddressSuggestions(input: string): Promise<PlaceSuggestion[]> {
   if (!input || input.trim().length < 3) return [];
-  try {
-    const api = await loadGoogleMaps();
-    const service = await getAutocompleteService();
-    const predictions = await new Promise<GoogleAutocompletePrediction[] | null>((resolve) => {
-      service.getPlacePredictions(
-        {
-          input,
-          componentRestrictions: { country: "fr" },
-          location: new api.maps.LatLng(44.8378, -0.5792),
-          radius: 80_000,
-        },
-        (preds: GoogleAutocompletePrediction[] | null, status: string) => {
-          if (status !== api.maps.places.PlacesServiceStatus.OK || !preds) {
-            resolve(null);
-            return;
-          }
-          resolve(preds);
-        },
-      );
-    });
-    if (!predictions) return [];
-    return predictions.map((p) => ({ placeId: p.place_id, description: p.description }));
-  } catch {
-    return [];
-  }
+  const remote = await placesAutocomplete(input);
+  return remote
+    .filter((r): r is typeof r & { placeId: string } => Boolean(r.placeId))
+    .map((r) => ({ placeId: r.placeId, description: r.label }));
 }
 
-/**
- * Résout un placeId (choisi dans les suggestions) en coordonnées précises.
- */
+/** Résout un placeId (choisi dans les suggestions) en coordonnées précises. */
 export async function resolvePlaceId(placeId: string): Promise<GeoCoord | null> {
-  try {
-    const api = await loadGoogleMaps();
-    const service = await getPlacesService();
-    const place = await new Promise<GooglePlaceResult | null>((resolve) => {
-      service.getDetails({ placeId, fields: ["geometry"] }, (result: GooglePlaceResult | null, status: string) => {
-        if (status !== api.maps.places.PlacesServiceStatus.OK || !result?.geometry?.location) {
-          resolve(null);
-          return;
-        }
-        resolve(result);
-      });
-    });
-    const loc = place?.geometry?.location;
-    if (!loc) return null;
-    return { lat: loc.lat(), lng: loc.lng() };
-  } catch {
-    return null;
-  }
+  const d = await placeDetails(placeId);
+  return d ? { lat: d.lat, lng: d.lng } : null;
 }
