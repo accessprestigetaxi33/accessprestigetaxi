@@ -33,6 +33,9 @@ import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoExterior from "@/assets/apt-exterior.jpg.asset.json";
 import photoVan from "@/assets/apt-van.jpg.asset.json";
 import photoAudi from "@/assets/apt-audi-q6.jpg";
+import photoBmwReal from "@/assets/apt-bmw-real.jpg.asset.json";
+import photoAudiReal from "@/assets/apt-audi-real.jpg.asset.json";
+import photoVanReal from "@/assets/apt-van-real.jpg.asset.json";
 
 import photoMedical from "@/assets/apt-medical.jpg";
 import photoAirport from "@/assets/apt-airport.jpg";
@@ -211,7 +214,7 @@ const COPY = {
       },
       { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Disponible sur réservation",
         d: "Réservation immédiate ou planifiée.",
       },
@@ -232,7 +235,7 @@ const COPY = {
     whyTitle: "L'élégance électrique, sans compromis",
     why: [
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Zéro émission",
         d: "La BMW iX1 de Patricia roule 100 % à l'électrique, sans bruit ni vibration.",
       },
@@ -254,7 +257,7 @@ const COPY = {
       { img: photoGare, from: "Rochefort", to: "Gare TGV", meta: "≈ 20 min · accueil quai" },
       { img: photoIleDeRe, from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · pont inclus" },
       { img: photoRoyan, from: "Saintes", to: "Royan", meta: "≈ 45 min · côte de Beauté" },
-      { img: photoVan.url, from: "Groupe", to: "Van 7 places", meta: "Transferts à plusieurs" },
+      { img: photoVanReal.url, from: "Groupe", to: "Van 7 places", meta: "Transferts à plusieurs" },
       { img: photoMedical, from: "Domicile", to: "Hôpital / clinique", meta: "Conventionné CPAM" },
     ],
     bestEyebrow: "Les best-sellers",
@@ -274,7 +277,7 @@ const COPY = {
       },
       {
         n: "03",
-        img: photoVan.url,
+        img: photoVanReal.url,
         t: "Groupes jusqu'à 7 personnes",
         d: "Van Mercedes, bagages inclus, un seul véhicule pour tout le monde.",
       },
@@ -351,7 +354,7 @@ const COPY = {
       },
       { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Available on booking",
         d: "Instant or scheduled booking.",
       },
@@ -372,7 +375,7 @@ const COPY = {
     whyTitle: "Electric elegance, no compromise",
     why: [
       {
-        photo: photoExterior.url,
+        photo: photoBmwReal.url,
         t: "Zero emissions",
         d: "Patricia's BMW iX1 is fully electric — no noise, no vibration.",
       },
@@ -394,7 +397,7 @@ const COPY = {
       { img: photoGare, from: "Rochefort", to: "TGV station", meta: "≈ 20 min · platform meet" },
       { img: photoIleDeRe, from: "La Rochelle", to: "Île de Ré", meta: "≈ 35 min · bridge included" },
       { img: photoRoyan, from: "Saintes", to: "Royan", meta: "≈ 45 min · Atlantic coast" },
-      { img: photoVan.url, from: "Group", to: "7-seat van", meta: "Group transfers" },
+      { img: photoVanReal.url, from: "Group", to: "7-seat van", meta: "Group transfers" },
       { img: photoMedical, from: "Home", to: "Hospital / clinic", meta: "Medical transport" },
     ],
     bestEyebrow: "Best-sellers",
@@ -414,7 +417,7 @@ const COPY = {
       },
       {
         n: "03",
-        img: photoVan.url,
+        img: photoVanReal.url,
         t: "Groups of up to 7",
         d: "Mercedes van, luggage included, one vehicle for everyone.",
       },
@@ -585,7 +588,7 @@ export const Route = createFileRoute("/")({
               position: 1,
               name: "BMW iX1 100 % électrique",
               alternateName: "BMW iX1 100% electric",
-              image: absoluteUrl(photoExterior.url),
+              image: absoluteUrl(photoBmwReal.url),
               vehicleSeatingCapacity: 4,
               fuelType: "Electric",
               description:
@@ -595,7 +598,7 @@ export const Route = createFileRoute("/")({
               "@type": "Car",
               position: 2,
               name: "Audi Q6 e-tron",
-              image: absoluteUrl(photoAudi),
+              image: absoluteUrl(photoAudiReal.url),
               vehicleSeatingCapacity: 4,
               fuelType: "Electric",
               description:
@@ -606,7 +609,7 @@ export const Route = createFileRoute("/")({
               position: 3,
               name: "Van Mercedes V-Class 7 places",
               alternateName: "Mercedes V-Class 7-seat van",
-              image: absoluteUrl(photoVan.url),
+              image: absoluteUrl(photoVanReal.url),
               vehicleSeatingCapacity: 7,
               description:
                 "Van Mercedes conduit par Alain : transport de groupe jusqu'à 7 passagers avec bagages, tarif unique.",
@@ -911,7 +914,7 @@ function Index() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
           <Reveal className="lg:order-2">
             <img
-              src={photoVan.url}
+              src={photoVanReal.url}
               alt={c.groupTitle}
               loading="lazy"
               width={1600}
@@ -947,7 +950,7 @@ function Index() {
       {/* BANNIÈRE PHOTO PLEINE LARGEUR */}
       <section className="relative isolate overflow-hidden border-y border-border">
         <img
-          src={photoExterior.url}
+          src={photoBmwReal.url}
           alt={c.bannerTitle}
           loading="lazy"
           width={1600}
