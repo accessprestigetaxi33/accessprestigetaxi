@@ -1,14 +1,16 @@
 // Helper pour générer les balises hreflang.
-// Toutes les pages sont servies à la même URL avec i18n client — on déclare
-// donc les 2 langues (fr/en) sur la même URL + x-default (français).
-const LANGS = ["fr", "en"] as const;
-
+// Le site est bilingue avec i18n côté client : la version anglaise d'une page
+// est la même URL suffixée de ?lang=en. On déclare donc fr → URL nue,
+// en → URL?lang=en, et x-default → URL nue (français).
 export function hreflangLinks(url: string) {
+  const en = `${url}${url.includes("?") ? "&" : "?"}lang=en`;
   return [
-    ...LANGS.map((l) => ({ rel: "alternate" as const, hrefLang: l, href: url })),
+    { rel: "alternate" as const, hrefLang: "fr", href: url },
+    { rel: "alternate" as const, hrefLang: "en", href: en },
     { rel: "alternate" as const, hrefLang: "x-default", href: url },
   ];
 }
+
 
 export const SITE_URL = "https://accessprestigetaxi.fr";
 
