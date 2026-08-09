@@ -39,14 +39,13 @@ import { geocodeAddress, reverseGeocode } from "@/lib/googleGeocode";
 import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
-import { seoLinks, SITE_URL } from "@/lib/seo-hreflang";
+import { SITE_URL } from "@/lib/seo-hreflang";
 import {
   businessRef,
   localBusinessNode,
-  SOCIAL_IMAGE,
-  SOCIAL_IMAGE_HEIGHT,
-  SOCIAL_IMAGE_WIDTH,
 } from "@/lib/business";
+import ogReserverFr from "@/assets/apt-og-reserver-fr.png.asset.json";
+import ogReserverEn from "@/assets/apt-og-reserver-en.png.asset.json";
 import { DRIVERS } from "@/data/drivers";
 import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 import { placesGeolocate } from "@/lib/places";
@@ -101,36 +100,51 @@ const RESERVER_DESC_EN =
   "Book your taxi in Charente-Maritime by chatting (or speaking) with our assistant. Instant quote, verified time slots, immediate confirmation.";
 const RESERVER_URL = `${SITE_URL}/reserver`;
 
+// Visuels de partage localisés : version FR (par défaut) et version EN,
+// déclarée en second og:image pour les partages anglophones.
+const OG_IMAGE_FR = `${SITE_URL}${ogReserverFr.url}`;
+const OG_IMAGE_EN = `${SITE_URL}${ogReserverEn.url}`;
+const OG_IMAGE_W = "1200";
+const OG_IMAGE_H = "630";
+const OG_ALT_FR =
+  "Access Prestige Taxi — réservez votre taxi en Charente-Maritime, BMW iX1 électrique et van Mercedes 7 places";
+const OG_ALT_EN =
+  "Access Prestige Taxi — book your taxi in Charente-Maritime, electric BMW iX1 and 7-seater Mercedes van";
+
 export const Route = createFileRoute("/reserver")({
-  head: () => ({
+  // ?lang=en permet aux partages anglophones d'obtenir le visuel et les
+  // textes sociaux en anglais (la page reste servie sur la même URL).
+  validateSearch: (search: Record<string, unknown>) => ({
+    lang: search['lang'] === "en" ? ("en" as const) : undefined,
+  }),
+  head: (ctx: { match?: { search?: { lang?: "en" } } }) => {
+    const isEn = ctx?.match?.search?.lang === "en";
+    const title = isEn ? RESERVER_TITLE_EN : RESERVER_TITLE_FR;
+    const desc = isEn ? RESERVER_DESC_EN : RESERVER_DESC_FR;
+    const image = isEn ? OG_IMAGE_EN : OG_IMAGE_FR;
+    const alt = isEn ? OG_ALT_EN : OG_ALT_FR;
+    return {
     meta: [
-      { title: RESERVER_TITLE_FR },
-      { name: "description", content: RESERVER_DESC_FR },
+      { title },
+      { name: "description", content: desc },
       { property: "og:site_name", content: "Access Prestige Taxi" },
-      { property: "og:title", content: RESERVER_TITLE_FR },
-      { property: "og:description", content: RESERVER_DESC_FR },
-      { property: "og:url", content: RESERVER_URL },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
+      { property: "og:url", content: isEn ? `${RESERVER_URL}?lang=en` : RESERVER_URL },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: SOCIAL_IMAGE },
-      { property: "og:image:secure_url", content: SOCIAL_IMAGE },
+      { property: "og:image", content: image },
+      { property: "og:image:secure_url", content: image },
       { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: SOCIAL_IMAGE_WIDTH },
-      { property: "og:image:height", content: SOCIAL_IMAGE_HEIGHT },
-      {
-        property: "og:image:alt",
-        content:
-          "Access Prestige Taxi — réservation de taxi en Charente-Maritime, BMW iX1 électrique et van Mercedes 7 places",
-      },
-      { property: "og:locale", content: "fr_FR" },
-      { property: "og:locale:alternate", content: "en_GB" },
+      { property: "og:image:width", content: OG_IMAGE_W },
+      { property: "og:image:height", content: OG_IMAGE_H },
+      { property: "og:image:alt", content: alt },
+      { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
+      { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: RESERVER_TITLE_FR },
-      { name: "twitter:description", content: RESERVER_DESC_FR },
-      { name: "twitter:image", content: SOCIAL_IMAGE },
-      {
-        name: "twitter:image:alt",
-        content: "Access Prestige Taxi — book a taxi in Charente-Maritime",
-      },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: desc },
+      { name: "twitter:image", content: image },
+      { name: "twitter:image:alt", content: alt },
       {
         name: "viewport",
         content:
@@ -138,7 +152,12 @@ export const Route = createFileRoute("/reserver")({
       },
       { name: "theme-color", content: "#F5F0E6" },
     ],
-    links: seoLinks("/reserver"),
+    links: [
+      { rel: "canonical" as const, href: RESERVER_URL },
+      { rel: "alternate" as const, hrefLang: "fr", href: RESERVER_URL },
+      { rel: "alternate" as const, hrefLang: "en", href: `${RESERVER_URL}?lang=en` },
+      { rel: "alternate" as const, hrefLang: "x-default", href: RESERVER_URL },
+    ],
     scripts: [
       // Entité métier unique du site (adresse, coordonnées GPS, horaires),
       // partagée par toutes les pages via son @id.
@@ -157,13 +176,14 @@ export const Route = createFileRoute("/reserver")({
               inLanguage: "fr-FR",
               isPartOf: { "@id": `${SITE_URL}/#website` },
               about: businessRef,
-              primaryImageOfPage: SOCIAL_IMAGE,
+              primaryImageOfPage: OG_IMAGE_FR,
               workTranslation: {
                 "@type": "WebPage",
                 url: RESERVER_URL,
                 name: RESERVER_TITLE_EN,
                 description: RESERVER_DESC_EN,
                 inLanguage: "en-GB",
+                primaryImageOfPage: OG_IMAGE_EN,
               },
             },
             {
@@ -291,7 +311,8 @@ export const Route = createFileRoute("/reserver")({
         }),
       },
     ],
-  }),
+    };
+  },
 
   component: ReserverPage,
 });
