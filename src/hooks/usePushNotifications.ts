@@ -171,7 +171,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     };
     // reservationId volontairement exclu : on ne re-subscribe pas si l'id change après le montage
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoAudience, clientAccountId, driverId, persistenceKey, rememberRegistration]);
+  }, [autoAudience, clientAccountId, driverId, persistenceKey, readRegistration, rememberRegistration]);
 
   // ── Subscribe manuel (pour les appels explicites) ──
   const subscribe = useCallback(
