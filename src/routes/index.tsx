@@ -1164,6 +1164,48 @@ function Index() {
             </Reveal>
           </div>
 
+          <Reveal delay={0.1}>
+            <article className="mt-6 rounded-2xl border border-destructive/50 bg-destructive/10 p-6">
+              <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-destructive">
+                <Bell className="h-5 w-5 shrink-0" />
+                {lang === "en"
+                  ? "Turn on notifications — and what they are for"
+                  : "Comment activer les notifications et à quoi servent-elles"}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+                {lang === "en"
+                  ? "Notifications tell you the moment your ride is confirmed, when Alain or Patricia is on the way, when the driver has arrived, and when a new message or your receipt is available."
+                  : "Les notifications vous préviennent dès que votre course est confirmée, quand Alain ou Patricia est en route, à l'arrivée du chauffeur, et lorsqu'un nouveau message ou votre reçu est disponible."}
+              </p>
+              <ol className="mt-4 space-y-2 text-sm leading-relaxed text-foreground/90">
+                <li>
+                  1.{" "}
+                  {lang === "en"
+                    ? "Install the app on your home screen (steps above) — required on iPhone and iPad."
+                    : "Installez l'application sur votre écran d'accueil (étapes ci-dessus) — obligatoire sur iPhone et iPad."}
+                </li>
+                <li>
+                  2.{" "}
+                  {lang === "en"
+                    ? "Open the app from its icon, then sign in to your client area."
+                    : "Ouvrez l'application depuis son icône, puis connectez-vous à votre espace client."}
+                </li>
+                <li>
+                  3.{" "}
+                  {lang === "en"
+                    ? "Tap “Allow” when your phone asks for notification permission."
+                    : "Touchez « Autoriser » quand votre téléphone demande l'autorisation de notification."}
+                </li>
+                <li>
+                  4.{" "}
+                  {lang === "en"
+                    ? "If you declined: Settings › Notifications › Access Prestige Taxi › Allow notifications."
+                    : "Si vous avez refusé : Réglages › Notifications › Access Prestige Taxi › Autoriser les notifications."}
+                </li>
+              </ol>
+            </article>
+          </Reveal>
+
           <Reveal delay={0.14}>
             <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
               {lang === "en"
