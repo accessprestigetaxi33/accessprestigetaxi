@@ -86,9 +86,15 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
           },
         });
         if (!cancelled) {
+          try {
+            window.localStorage.setItem(sig, String(Date.now()));
+          } catch {
+            /* stockage indisponible : on continue */
+          }
           setToken(fcm);
           setStatus("granted");
         }
+
       } catch (e) {
         if (!cancelled) {
           console.warn("[push] auto-subscribe failed", autoAudience, e);
