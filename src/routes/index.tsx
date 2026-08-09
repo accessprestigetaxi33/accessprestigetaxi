@@ -91,7 +91,7 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "bmw",
-      src: photoExterior.url,
+      src: photoBmwReal.url,
       alt: en
         ? "BMW iX1 100% electric taxi driven by Patricia, Access Prestige Taxi in Charente-Maritime"
         : "Taxi BMW iX1 100 % électrique conduit par Patricia, Access Prestige Taxi en Charente-Maritime",
@@ -105,7 +105,7 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "audi",
-      src: photoAudi,
+      src: photoAudiReal.url,
       alt: en
         ? "Audi Q6 e-tron, 100% electric premium SUV for business transfers, Access Prestige Taxi"
         : "Audi Q6 e-tron, SUV premium 100 % électrique pour transferts affaires, Access Prestige Taxi",
@@ -119,7 +119,7 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "van",
-      src: photoVan.url,
+      src: photoVanReal.url,
       alt: en
         ? "Mercedes V-Class 7-seat van driven by Alain for group transport, Access Prestige Taxi"
         : "Van Mercedes V-Class 7 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
@@ -950,7 +950,7 @@ function Index() {
       </section>
 
       {/* BANNIÈRE PHOTO PLEINE LARGEUR */}
-      <section className="relative isolate overflow-hidden border-y border-border">
+      <section className="dark relative isolate overflow-hidden border-y border-border">
         <img
           src={photoBmwReal.url}
           alt={c.bannerTitle}
