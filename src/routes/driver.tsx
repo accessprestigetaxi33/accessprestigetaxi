@@ -1,4 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ogImageUrl, ogPageUrl } from "@/lib/og";
+import ogDriverFr from "@/assets/apt-og-driver-fr.png.asset.json";
+import ogDriverEn from "@/assets/apt-og-driver-en.png.asset.json";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,17 +93,30 @@ interface RouteOption {
   waypointLatLng: { lat: number; lng: number } | null;
 }
 
+// Visuels de partage localisés de l'espace chauffeur (page privée : noindex,
+// mais le lien est partagé par SMS/WhatsApp à Alain et Patricia).
+const DRIVER_SOCIAL_FR = {
+  title: "Espace Chauffeur — Access Prestige Taxi",
+  description: "Application privée d'Alain et Patricia : courses, GPS, messagerie et notifications.",
+  image: ogImageUrl(ogDriverFr.url),
+  alt: "Espace Chauffeur Access Prestige Taxi — application privée Alain & Patricia",
+  url: ogPageUrl("/driver", "fr"),
+};
+const DRIVER_SOCIAL_EN = {
+  title: "Driver App — Access Prestige Taxi",
+  description: "Private app for Alain and Patricia: rides, GPS, messaging and notifications.",
+  image: ogImageUrl(ogDriverEn.url),
+  alt: "Access Prestige Taxi Driver App — private app for Alain & Patricia",
+  url: ogPageUrl("/driver", "en"),
+};
+
 // ── Route definition ───────────────────────────────────────────────────────
 export const Route = createFileRoute("/driver")({
-  validateSearch: (s: Record<string, unknown>) => ({ token: String(s.token ?? "") }),
   // ?lang=en / ?lang=fr : choisit la langue du visuel et des textes de partage.
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>) => ({
+    token: String(s.token ?? ""),
     lang:
-      search['lang'] === "en"
-        ? ("en" as const)
-        : search['lang'] === "fr"
-          ? ("fr" as const)
-          : undefined,
+      s['lang'] === "en" ? ("en" as const) : s['lang'] === "fr" ? ("fr" as const) : undefined,
   }),
   head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
     const isEn = ctx?.match?.search?.lang === "en";
