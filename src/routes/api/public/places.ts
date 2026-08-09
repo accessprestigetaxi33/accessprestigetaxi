@@ -20,6 +20,62 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_maps";
 // Biais Charente-Maritime (La Rochelle) — sans jamais bloquer les autres villes.
 const BIAS = { lat: 46.16, lng: -1.15, radiusM: 50_000 };
 
+/* ------------------------------------------------------------------ */
+/* Cache mémoire (par instance serveur) + dédoublonnage des requêtes.  */
+/* Les adresses changent très peu : on garde 24 h les résultats positifs */
+/* et 60 s les absences, avec fusion des appels concurrents identiques. */
+/* ------------------------------------------------------------------ */
+type Entry<T> = { at: number; value: T | null };
+function makeCache<T>(ttlMs: number, negativeTtlMs: number, max: number) {
+  const store = new Map<string, Entry<T>>();
+  const inflight = new Map<string, Promise<T | null>>();
+  return async function run(key: string, fn: () => Promise<T | null>): Promise<T | null> {
+    const hit = store.get(key);
+    if (hit && Date.now() - hit.at <= (hit.value == null ? negativeTtlMs : ttlMs)) {
+      store.delete(key);
+      store.set(key, hit); // LRU touch
+      return hit.value;
+    }
+    if (hit) store.delete(key);
+    const pending = inflight.get(key);
+    if (pending) return pending;
+    const p = (async () => {
+      try {
+        const v = await fn();
+        store.set(key, { at: Date.now(), value: v ?? null });
+        while (store.size > max) {
+          const first = store.keys().next().value;
+          if (!first) break;
+          store.delete(first);
+        }
+        return v ?? null;
+      } finally {
+        inflight.delete(key);
+      }
+    })();
+    inflight.set(key, p);
+    return p;
+  };
+}
+
+const norm = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[.,;:!?'"`()\[\]]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+// Arrondi ~11 m : deux relevés GPS voisins partagent la même adresse.
+const coordKey = (lat: number, lng: number) => `${lat.toFixed(4)},${lng.toFixed(4)}`;
+
+const cacheAutocomplete = makeCache<Suggestion[]>(10 * 60_000, 30_000, 400);
+const cacheDetails = makeCache<{ lat: number; lng: number; label: string }>(24 * 60 * 60_000, 60_000, 500);
+const cacheGeocode = makeCache<{ lat: number; lng: number; label: string }>(24 * 60 * 60_000, 60_000, 800);
+const cacheReverse = makeCache<{ label: string }>(24 * 60 * 60_000, 60_000, 800);
+
+
 const json = (body: unknown, status = 200, cache = "no-store") =>
   new Response(JSON.stringify(body), {
     status,
@@ -161,27 +217,29 @@ export const Route = createFileRoute("/api/public/places")({
           if (action === "autocomplete") {
             const q = String(payload?.query ?? "").trim().slice(0, 200);
             if (q.length < 3) return json({ suggestions: [] });
-            return json({ suggestions: await autocomplete(q, lang) });
+            const s = await cacheAutocomplete(`${lang}|${norm(q)}`, () => autocomplete(q, lang));
+            return json({ suggestions: s ?? [] });
           }
           if (action === "details") {
             const id = String(payload?.place_id ?? "").slice(0, 300);
             if (!id) return json({ error: "missing_place_id" }, 400);
-            const d = await details(id, lang);
+            const d = await cacheDetails(`${lang}|${id}`, () => details(id, lang));
             return d ? json(d) : json({ error: "not_found" }, 404);
           }
           if (action === "geocode") {
             const q = String(payload?.query ?? "").trim().slice(0, 300);
             if (q.length < 3) return json({ error: "too_short" }, 400);
-            const g = await geocode(q, lang);
+            const g = await cacheGeocode(`${lang}|${norm(q)}`, () => geocode(q, lang));
             return g ? json(g) : json({ error: "not_found" }, 404);
           }
           if (action === "reverse") {
             const lat = Number(payload?.lat);
             const lng = Number(payload?.lng);
             if (!Number.isFinite(lat) || !Number.isFinite(lng)) return json({ error: "bad_coords" }, 400);
-            const r = await reverse(lat, lng, lang);
+            const r = await cacheReverse(`${lang}|${coordKey(lat, lng)}`, () => reverse(lat, lng, lang));
             return r ? json(r) : json({ error: "not_found" }, 404);
           }
+
           if (action === "geolocate") {
             const g = await geolocate();
             return g ? json(g) : json({ error: "not_found" }, 404);

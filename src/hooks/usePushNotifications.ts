@@ -39,7 +39,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       try {
         window.localStorage.setItem(
           persistenceKey(audience),
-          JSON.stringify({ token: fcm, registeredAt: Date.now() }),
+          JSON.stringify({
+            token: fcm,
+            registeredAt: Date.now(),
+            // On mémorise l'état d'autorisation accordé sur CET appareil :
+            // tant qu'il ne change pas, aucune nouvelle demande n'est faite,
+            // même après un rafraîchissement du navigateur.
+            permission: typeof Notification !== "undefined" ? Notification.permission : "granted",
+          }),
         );
       } catch {
         /* Le navigateur peut interdire le stockage privé : la souscription reste active. */
@@ -47,6 +54,26 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     },
     [persistenceKey],
   );
+
+  /** Lit la souscription persistée pour cet appareil (token + permission). */
+  const readRegistration = useCallback(
+    (audience: PushAudience): { token: string | null; permission: string | null } => {
+      try {
+        const saved = JSON.parse(window.localStorage.getItem(persistenceKey(audience)) ?? "null") as {
+          token?: unknown;
+          permission?: unknown;
+        } | null;
+        return {
+          token: typeof saved?.token === "string" ? saved.token : null,
+          permission: typeof saved?.permission === "string" ? saved.permission : null,
+        };
+      } catch {
+        return { token: null, permission: null };
+      }
+    },
+    [persistenceKey],
+  );
+
 
   // ── Détection support initial ──
   useEffect(() => {
@@ -78,16 +105,16 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     // Une autorisation accordée reste valable sans limite sur cet appareil.
     // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a
     // pas ce marqueur et sera inscrit une seule fois.
-    const sig = persistenceKey(autoAudience);
-    let registeredToken: string | null = null;
-    try {
-      const saved = JSON.parse(window.localStorage.getItem(sig) ?? "null") as { token?: unknown } | null;
-      registeredToken = typeof saved?.token === "string" ? saved.token : null;
-    } catch {
-      registeredToken = null;
-    }
+    const { token: registeredToken, permission: savedPermission } = readRegistration(autoAudience);
     if (Notification.permission === "denied") {
       setStatus("denied");
+      return;
+    }
+    // Token déjà enregistré ET permission inchangée depuis : rien à redemander,
+    // même après un rafraîchissement du navigateur.
+    if (registeredToken && (savedPermission == null || savedPermission === Notification.permission)) {
+      setToken(registeredToken);
+      setStatus(Notification.permission === "granted" ? "granted" : "idle");
       return;
     }
     if (Notification.permission === "default") {
@@ -100,6 +127,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       setStatus("granted");
       return;
     }
+
 
     let cancelled = false;
 
@@ -143,7 +171,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     };
     // reservationId volontairement exclu : on ne re-subscribe pas si l'id change après le montage
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoAudience, clientAccountId, driverId, persistenceKey, rememberRegistration]);
+  }, [autoAudience, clientAccountId, driverId, persistenceKey, readRegistration, rememberRegistration]);
 
   // ── Subscribe manuel (pour les appels explicites) ──
   const subscribe = useCallback(

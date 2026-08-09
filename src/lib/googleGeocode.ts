@@ -32,7 +32,25 @@ const CANONICAL_PLACES: Array<{ match: RegExp; label: string; coord: GeoCoord }>
   { match: /gare\s*(de\s*)?surg[eè]res/i, label: "Gare de Surgères", coord: { lat: 46.1078, lng: -0.7508 } },
   { match: /zoo.*palmyre|palmyre.*zoo/i, label: "Zoo de La Palmyre", coord: { lat: 45.6828, lng: -1.1675 } },
   { match: /fort\s*boyard/i, label: "Fort Boyard", coord: { lat: 45.9992, lng: -1.2133 } },
+  // Grands repères hors Charente-Maritime (Bordeaux métropole & pôles)
+  {
+    match: /gare\s*(sncf\s*)?(de\s*)?bordeaux|gare\s*(saint|st)[\s-]*jean|charles\s*domercq/i,
+    label: "Gare de Bordeaux Saint-Jean, 33800 Bordeaux",
+    coord: { lat: 44.8262, lng: -0.5561 },
+  },
+  {
+    match: /a[ée]roport.*(bordeaux|m[ée]rignac)|bordeaux.*a[ée]roport/i,
+    label: "Aéroport de Bordeaux-Mérignac (BOD)",
+    coord: { lat: 44.8286, lng: -0.7156 },
+  },
+  { match: /place\s*de\s*la\s*bourse|miroir\s*d'?eau/i, label: "Place de la Bourse, Bordeaux", coord: { lat: 44.8412, lng: -0.5697 } },
+  { match: /quinconces/i, label: "Esplanade des Quinconces, Bordeaux", coord: { lat: 44.8449, lng: -0.5747 } },
+  { match: /cit[ée]\s*du\s*vin/i, label: "La Cité du Vin, Bordeaux", coord: { lat: 44.8626, lng: -0.5507 } },
+  { match: /matmut\s*atlantique/i, label: "Matmut Atlantique, Bordeaux", coord: { lat: 44.8975, lng: -0.5617 } },
+  { match: /pellegrin/i, label: "CHU Pellegrin, Bordeaux", coord: { lat: 44.8319, lng: -0.6012 } },
+  { match: /dune\s*du\s*(pilat|pyla)/i, label: "Dune du Pilat", coord: { lat: 44.5892, lng: -1.2136 } },
 ];
+
 
 function matchCanonicalPlace(query: string): { label: string; coord: GeoCoord } | null {
   return CANONICAL_PLACES.find((p) => p.match.test(query)) ?? null;

@@ -301,6 +301,17 @@ type TxtKey =
   | "gps_manual"
   | "gps_auto"
   | "gps_low"
+  | "addr_help_title"
+  | "addr_help_desc"
+  | "addr_help_1"
+  | "addr_help_2"
+  | "addr_help_3"
+  | "addr_help_ex_title"
+  | "addr_help_ex_1"
+  | "addr_help_ex_2"
+  | "addr_help_ex_3"
+  | "addr_help_ex_4"
+  | "addr_help_note"
   | "gps_ask_manual"
   | "gps_use_other"
   | "gps_enter"
@@ -385,6 +396,19 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     gps_manual: "Départ manuel",
     gps_auto: "Votre départ est détecté automatiquement.",
     gps_low: "Votre position n'est pas assez précise",
+    addr_help_title: "Comment indiquer une adresse précise",
+    addr_help_desc:
+      "Si l'adresse n'est pas reconnue ou si la position détectée reste approximative, donnez un repère plus complet : nous desservons toute la France, sans limite de distance.",
+    addr_help_1: "Numéro + rue + ville : « 12 rue du Palais, La Rochelle ».",
+    addr_help_2: "Ou un point de repère connu : gare, aéroport, hôpital, monument, quartier.",
+    addr_help_3: "Ajoutez le code postal si plusieurs communes portent le même nom.",
+    addr_help_ex_title: "Exemples à Bordeaux",
+    addr_help_ex_1: "Gare de Bordeaux Saint-Jean (37 rue Charles Domercq, 33800)",
+    addr_help_ex_2: "Aéroport de Bordeaux-Mérignac, 33700 Mérignac",
+    addr_help_ex_3: "Place de la Bourse / Quinconces / Cité du Vin, 33000 Bordeaux",
+    addr_help_ex_4: "CHU Pellegrin, place Amélie Raba-Léon, 33000 Bordeaux",
+    addr_help_note:
+      "Astuce : quartiers (Chartrons, Bacalan, La Bastide) et communes (Mérignac, Pessac, Talence) suffisent, une précision au numéro n'est demandée que pour une rue.",
     gps_ask_manual: "Merci d'indiquer votre adresse de départ exacte, puis votre destination.",
     gps_use_other: "Utiliser une autre adresse de départ",
     gps_enter: "Saisissez votre adresse de départ",
@@ -468,6 +492,19 @@ const TXT: Record<"fr" | "en", Record<TxtKey, string>> = {
     gps_manual: "Manual pickup",
     gps_auto: "Your pickup point is detected automatically.",
     gps_low: "Your location is not accurate enough",
+    addr_help_title: "How to give a precise address",
+    addr_help_desc:
+      "If an address isn't recognised or your detected position stays approximate, give a fuller landmark: we cover the whole country, with no distance limit.",
+    addr_help_1: "Street number + street + city: “12 rue du Palais, La Rochelle”.",
+    addr_help_2: "Or a known landmark: train station, airport, hospital, monument, district.",
+    addr_help_3: "Add the postcode when several towns share the same name.",
+    addr_help_ex_title: "Examples in Bordeaux",
+    addr_help_ex_1: "Bordeaux Saint-Jean station (37 rue Charles Domercq, 33800)",
+    addr_help_ex_2: "Bordeaux-Mérignac Airport, 33700 Mérignac",
+    addr_help_ex_3: "Place de la Bourse / Quinconces / Cité du Vin, 33000 Bordeaux",
+    addr_help_ex_4: "Pellegrin Hospital, place Amélie Raba-Léon, 33000 Bordeaux",
+    addr_help_note:
+      "Tip: districts (Chartrons, Bacalan, La Bastide) and towns (Mérignac, Pessac, Talence) are enough — a street number is only needed for a street address.",
     gps_ask_manual: "Please enter your exact pickup address, then your destination.",
     gps_use_other: "Use another pickup address",
     gps_enter: "Enter your pickup address",
@@ -2321,6 +2358,34 @@ function ReserverPage() {
             </div>
           </div>
         )}
+
+        {/* Aide contextuelle adresses */}
+        <details className="group mt-6 overflow-hidden rounded-2xl border border-border bg-card">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-foreground">
+            <span className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-accent" aria-hidden="true" />
+              {tx("addr_help_title")}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground group-open:hidden">+</span>
+            <span className="hidden text-[11px] font-medium text-muted-foreground group-open:inline">−</span>
+          </summary>
+          <div className="border-t border-border/60 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            <p>{tx("addr_help_desc")}</p>
+            <ul className="mt-2 list-disc space-y-1 pl-4">
+              <li>{tx("addr_help_1")}</li>
+              <li>{tx("addr_help_2")}</li>
+              <li>{tx("addr_help_3")}</li>
+            </ul>
+            <p className="mt-3 font-semibold text-foreground">{tx("addr_help_ex_title")}</p>
+            <ul className="mt-1 list-disc space-y-1 pl-4">
+              <li>{tx("addr_help_ex_1")}</li>
+              <li>{tx("addr_help_ex_2")}</li>
+              <li>{tx("addr_help_ex_3")}</li>
+              <li>{tx("addr_help_ex_4")}</li>
+            </ul>
+            <p className="mt-3 text-[11px] italic">{tx("addr_help_note")}</p>
+          </div>
+        </details>
 
         {/* Map */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
