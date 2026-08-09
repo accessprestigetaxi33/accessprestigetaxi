@@ -590,15 +590,6 @@ function DriverApp({
     driverId: driverId ?? null,
   });
 
-  // Capture le prompt d'installation PWA
-  useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setInstallPrompt(e);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
 
   // Force le manifest driver au runtime (remplace le manifest global)
   useEffect(() => {
