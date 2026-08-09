@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Stethoscope,
   Users,
+  Bell,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
