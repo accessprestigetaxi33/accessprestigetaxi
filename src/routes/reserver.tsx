@@ -112,35 +112,39 @@ const OG_ALT_EN =
   "Access Prestige Taxi — book your taxi in Charente-Maritime, electric BMW iX1 and 7-seater Mercedes van";
 
 export const Route = createFileRoute("/reserver")({
-  head: () => ({
+  // ?lang=en permet aux partages anglophones d'obtenir le visuel et les
+  // textes sociaux en anglais (la page reste servie sur la même URL).
+  validateSearch: (search: Record<string, unknown>) => ({
+    lang: search['lang'] === "en" ? ("en" as const) : undefined,
+  }),
+  head: (ctx: { match?: { search?: { lang?: "en" } } }) => {
+    const isEn = ctx?.match?.search?.lang === "en";
+    const title = isEn ? RESERVER_TITLE_EN : RESERVER_TITLE_FR;
+    const desc = isEn ? RESERVER_DESC_EN : RESERVER_DESC_FR;
+    const image = isEn ? OG_IMAGE_EN : OG_IMAGE_FR;
+    const alt = isEn ? OG_ALT_EN : OG_ALT_FR;
+    return {
     meta: [
-      { title: RESERVER_TITLE_FR },
-      { name: "description", content: RESERVER_DESC_FR },
+      { title },
+      { name: "description", content: desc },
       { property: "og:site_name", content: "Access Prestige Taxi" },
-      { property: "og:title", content: RESERVER_TITLE_FR },
-      { property: "og:description", content: RESERVER_DESC_FR },
-      { property: "og:url", content: RESERVER_URL },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
+      { property: "og:url", content: isEn ? `${RESERVER_URL}?lang=en` : RESERVER_URL },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: OG_IMAGE_FR },
-      { property: "og:image:secure_url", content: OG_IMAGE_FR },
+      { property: "og:image", content: image },
+      { property: "og:image:secure_url", content: image },
       { property: "og:image:type", content: "image/png" },
       { property: "og:image:width", content: OG_IMAGE_W },
       { property: "og:image:height", content: OG_IMAGE_H },
-      { property: "og:image:alt", content: OG_ALT_FR },
-      // Variante anglaise du visuel de partage
-      { property: "og:image", content: OG_IMAGE_EN },
-      { property: "og:image:secure_url", content: OG_IMAGE_EN },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: OG_IMAGE_W },
-      { property: "og:image:height", content: OG_IMAGE_H },
-      { property: "og:image:alt", content: OG_ALT_EN },
-      { property: "og:locale", content: "fr_FR" },
-      { property: "og:locale:alternate", content: "en_GB" },
+      { property: "og:image:alt", content: alt },
+      { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
+      { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: RESERVER_TITLE_FR },
-      { name: "twitter:description", content: RESERVER_DESC_FR },
-      { name: "twitter:image", content: OG_IMAGE_FR },
-      { name: "twitter:image:alt", content: OG_ALT_FR },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: desc },
+      { name: "twitter:image", content: image },
+      { name: "twitter:image:alt", content: alt },
       {
         name: "viewport",
         content:
@@ -148,7 +152,12 @@ export const Route = createFileRoute("/reserver")({
       },
       { name: "theme-color", content: "#F5F0E6" },
     ],
-    links: seoLinks("/reserver"),
+    links: [
+      { rel: "canonical" as const, href: RESERVER_URL },
+      { rel: "alternate" as const, hrefLang: "fr", href: RESERVER_URL },
+      { rel: "alternate" as const, hrefLang: "en", href: `${RESERVER_URL}?lang=en` },
+      { rel: "alternate" as const, hrefLang: "x-default", href: RESERVER_URL },
+    ],
     scripts: [
       // Entité métier unique du site (adresse, coordonnées GPS, horaires),
       // partagée par toutes les pages via son @id.
