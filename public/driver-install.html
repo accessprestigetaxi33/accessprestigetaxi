@@ -11,6 +11,55 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#0B0B0D" />
     <meta name="robots" content="noindex, nofollow" />
+    <!-- Partage social (FR par défaut, EN via ?lang=en). L'URL des visuels
+         porte un jeton ?v= : incrémentez-le à chaque nouveau visuel pour que
+         Facebook/X re-scrapent immédiatement. -->
+    <link rel="canonical" href="https://accessprestigetaxi.fr/driver-install.html" />
+    <link rel="alternate" hreflang="fr" href="https://accessprestigetaxi.fr/driver-install.html" />
+    <link rel="alternate" hreflang="en" href="https://accessprestigetaxi.fr/driver-install.html?lang=en" />
+    <meta property="og:site_name" content="Access Prestige Taxi" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://accessprestigetaxi.fr/driver-install.html" />
+    <meta property="og:title" content="Espace Chauffeur — Access Prestige Taxi" />
+    <meta property="og:description" content="Application privée d'Alain et Patricia : installation sur iPhone et iPad en deux gestes." />
+    <meta property="og:image" content="https://accessprestigetaxi.fr/__l5e/assets-v1/e536b943-0439-4981-8527-d302f5e99fbe/apt-og-driver-fr.png?v=20260809a" />
+    <meta property="og:image:secure_url" content="https://accessprestigetaxi.fr/__l5e/assets-v1/e536b943-0439-4981-8527-d302f5e99fbe/apt-og-driver-fr.png?v=20260809a" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Espace Chauffeur Access Prestige Taxi — application privée Alain & Patricia" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Espace Chauffeur — Access Prestige Taxi" />
+    <meta name="twitter:description" content="Application privée d'Alain et Patricia : installation sur iPhone et iPad en deux gestes." />
+    <meta name="twitter:image" content="https://accessprestigetaxi.fr/__l5e/assets-v1/e536b943-0439-4981-8527-d302f5e99fbe/apt-og-driver-fr.png?v=20260809a" />
+    <meta name="twitter:image:alt" content="Espace Chauffeur Access Prestige Taxi — application privée Alain & Patricia" />
+    <script>
+      // Bascule EN quand l'URL porte ?lang=en (les crawlers voient la version FR
+      // par défaut ; le lien anglais est déclaré en hreflang ci-dessus).
+      (function () {
+        try {
+          if (new URLSearchParams(location.search).get("lang") !== "en") return;
+          var IMG = "https://accessprestigetaxi.fr/__l5e/assets-v1/b9be8d40-ad4e-4057-b5db-e065bd0f6db1/apt-og-driver-en.png?v=20260809a";
+          var T = "Driver App — Access Prestige Taxi";
+          var D = "Private app for Alain and Patricia: install on iPhone and iPad in two taps.";
+          var set = function (attr, key, val) {
+            var el = document.head.querySelector("meta[" + attr + '="' + key + '"]');
+            if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+            el.setAttribute("content", val);
+          };
+          document.documentElement.lang = "en";
+          document.title = T;
+          set("property", "og:title", T); set("property", "og:description", D);
+          set("property", "og:image", IMG); set("property", "og:image:secure_url", IMG);
+          set("property", "og:url", "https://accessprestigetaxi.fr/driver-install.html?lang=en");
+          set("property", "og:locale", "en_GB"); set("property", "og:locale:alternate", "fr_FR");
+          set("name", "twitter:title", T); set("name", "twitter:description", D);
+          set("name", "twitter:image", IMG);
+        } catch (e) {}
+      })();
+    </script>
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
