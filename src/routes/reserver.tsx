@@ -96,7 +96,7 @@ export const Route = createFileRoute("/reserver")({
       { name: "description", content: RESERVER_DESC_FR },
       { property: "og:title", content: RESERVER_TITLE_FR },
       { property: "og:description", content: RESERVER_DESC_FR },
-      { property: "og:url", content: "https://accessprestigetaxi.lovable.app/reserver" },
+      { property: "og:url", content: `${SITE_URL}/reserver` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: RESERVER_TITLE_FR },
@@ -111,7 +111,151 @@ export const Route = createFileRoute("/reserver")({
       { name: "theme-color", content: "#F5F0E6" },
     ],
     links: seoLinks("/reserver"),
+    scripts: [
+      // TaxiService (LocalBusiness) + action de réservation : décrit le service
+      // réservable depuis cette page, avec zone desservie, horaires et téléphones.
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "TaxiService",
+          "@id": `${SITE_URL}/#taxiservice`,
+          name: "Access Prestige Taxi",
+          url: `${SITE_URL}/reserver`,
+          description: RESERVER_DESC_FR,
+          address: {
+            "@type": "PostalAddress",
+            addressRegion: "Charente-Maritime",
+            addressCountry: "FR",
+          },
+          areaServed: [
+            { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+            { "@type": "Country", name: "France" },
+          ],
+          telephone: DRIVERS.map((d) => d.intl),
+          availableLanguage: ["fr", "en"],
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              opens: "08:00",
+              closes: "20:00",
+            },
+          ],
+          priceRange: "€€",
+          currenciesAccepted: "EUR",
+          provider: {
+            "@type": "LocalBusiness",
+            "@id": `${SITE_URL}/#localbusiness`,
+            name: "Access Prestige Taxi",
+            url: SITE_URL,
+            telephone: DRIVERS[0]?.intl,
+            email: "taxipatricia@gmail.com",
+            priceRange: "€€",
+            address: {
+              "@type": "PostalAddress",
+              addressRegion: "Charente-Maritime",
+              addressCountry: "FR",
+            },
+          },
+          potentialAction: {
+            "@type": "ReserveAction",
+            name: "Réserver un taxi",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate: `${SITE_URL}/reserver`,
+              inLanguage: ["fr", "en"],
+              actionPlatform: [
+                "https://schema.org/DesktopWebPlatform",
+                "https://schema.org/MobileWebPlatform",
+              ],
+            },
+            result: { "@type": "Reservation", name: "Réservation de course en taxi" },
+          },
+        }),
+      },
+      // FAQ de la page réservation : questions réellement traitées par le service.
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "@id": `${SITE_URL}/reserver#faq`,
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Comment réserver un taxi chez Access Prestige Taxi ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Sur la page Réserver, indiquez votre adresse de départ, votre destination et l'heure souhaitée, à la voix ou par écrit. L'assistante vous donne aussitôt le tarif estimé, puis vous confirmez la course en une étape.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Puis-je réserver par la voix ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Oui. Le bouton micro permet de dicter votre trajet en français ou en anglais ; la réservation reste possible entièrement par écrit si vous préférez.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Quels sont les horaires de réservation ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Les courses sont assurées du lundi au vendredi, de 8h à 20h. Les réservations à l'avance peuvent être enregistrées à tout moment depuis le site.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Comment le prix de la course est-il calculé ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Le tarif estimé combine la prise en charge et le prix au kilomètre, avec un tarif jour (07h-19h) et un tarif nuit. La distance, la durée et le détail du calcul s'affichent dans le récapitulatif avant confirmation.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Y a-t-il une limite de distance ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Non. Nous assurons tous les trajets sans limite de kilométrage, y compris les longues distances au départ ou à destination de la Charente-Maritime.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Proposez-vous des sièges bébé et le transport de groupe ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Oui. Sièges bébé et rehausseurs enfants sont disponibles sur demande, et le van Mercedes permet de transporter jusqu'à 7 passagers avec leurs bagages.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Assurez-vous le transport sanitaire conventionné ?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Oui, nous sommes conventionnés pour le transport sanitaire : consultations, hospitalisations, dialyses et examens médicaux, sur prescription.",
+              },
+            },
+          ],
+        }),
+      },
+      // Fil d'Ariane pour la page de réservation.
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Accueil", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Réserver", item: `${SITE_URL}/reserver` },
+          ],
+        }),
+      },
+    ],
   }),
+
   component: ReserverPage,
 });
 
