@@ -992,7 +992,16 @@ function Index() {
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {DRIVERS.map((d, i) => (
               <Reveal key={d.tel} delay={i * 0.08}>
-                <article className={`h-full p-6 sm:p-7 ${CARD}`}>
+                <article className={`h-full overflow-hidden ${CARD}`}>
+                  <img
+                    src={d.electric ? photoBmwReal.url : photoVanReal.url}
+                    alt={lang === "en" ? `${d.name} — ${d.vehicle.en}` : `${d.name} — ${d.vehicle.fr}`}
+                    loading="lazy"
+                    width={1600}
+                    height={900}
+                    className="aspect-[16/10] w-full object-cover"
+                  />
+                  <div className="p-6 sm:p-7">
                   <div className="flex items-center gap-4">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40 font-display text-lg font-semibold text-primary">
                       {d.name.charAt(0)}
