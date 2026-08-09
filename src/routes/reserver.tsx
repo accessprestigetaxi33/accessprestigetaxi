@@ -62,8 +62,10 @@ function isInServiceZone(lat: number, lng: number): boolean {
   return distanceKmBetween(ZONE_CENTER, [lat, lng]) <= MAX_AUTO_GEO_DISTANCE_KM;
 }
 
-/** Fallback géolocalisation IP si le GPS du navigateur échoue. */
+/** Repli si le GPS du navigateur échoue : Google Geolocation (plus précis que l'IP brute). */
 async function ipGeolocate(): Promise<{ lat: number; lng: number } | null> {
+  const g = await placesGeolocate();
+  if (g) return { lat: g.lat, lng: g.lng };
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 5000);
@@ -79,6 +81,7 @@ async function ipGeolocate(): Promise<{ lat: number; lng: number } | null> {
     return null;
   }
 }
+
 
 const RESERVER_TITLE_FR = "Réserver un taxi en Charente-Maritime — Access Prestige Taxi";
 const RESERVER_DESC_FR =
