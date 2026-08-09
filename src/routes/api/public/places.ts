@@ -18,7 +18,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_maps";
 
 // Biais Charente-Maritime (La Rochelle) — sans jamais bloquer les autres villes.
-const BIAS = { lat: 46.16, lng: -1.15, radiusM: 90_000 };
+const BIAS = { lat: 46.16, lng: -1.15, radiusM: 50_000 };
 
 const json = (body: unknown, status = 200, cache = "no-store") =>
   new Response(JSON.stringify(body), {
