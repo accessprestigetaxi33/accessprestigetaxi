@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Loader2, MapPin } from "lucide-react";
+import { placesAutocomplete, placeDetails, type PlaceSuggestion } from "@/lib/places";
 
 export type GeocodeSuggestion = {
   label: string;
@@ -17,8 +18,13 @@ type Props = {
   onFocus?: () => void;
   onBlur?: () => void;
   className?: string;
+  lang?: string;
 };
 
+type Item = { label: string; placeId: string | null; lat: number | null; lng: number | null };
+
+// Lieux emblématiques de Charente-Maritime proposés instantanément (sans appel
+// réseau) ; le reste vient de Google Places via /api/public/places.
 const CANONICAL: GeocodeSuggestion[] = [
   { label: "Aéroport La Rochelle-Île de Ré (LRH)", lat: 46.1792, lng: -1.1953 },
   { label: "Gare de La Rochelle", lat: 46.1531, lng: -1.1458 },
@@ -34,6 +40,9 @@ const CANONICAL: GeocodeSuggestion[] = [
   { label: "Saint-Georges-de-Didonne", lat: 45.6286, lng: -0.9986 },
 ];
 
+const fold = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 export function AddressAutocomplete({
   value,
   onChange,
@@ -43,52 +52,48 @@ export function AddressAutocomplete({
   onFocus,
   onBlur,
   className,
+  lang = "fr",
 }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<Item[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const seqRef = useRef(0);
 
-  const fetchSuggestions = useCallback(async (q: string) => {
-    if (!q || q.length < 3) {
-      setSuggestions([]);
-      return;
-    }
-    setLoading(true);
-    try {
-      const normalized = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const canonicalHits = CANONICAL.filter((c) =>
-        c.label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(normalized),
-      );
-      if (canonicalHits.length) {
-        setSuggestions(canonicalHits.slice(0, 6));
-        setLoading(false);
+  const fetchSuggestions = useCallback(
+    async (q: string) => {
+      if (!q || q.trim().length < 3) {
+        setSuggestions([]);
         return;
       }
-      // Fallback geocoding via browser Google Maps if available
-      if (typeof window !== "undefined" && (window as any).google?.maps?.places?.AutocompleteService) {
-        const service = new (window as any).google.maps.places.AutocompleteService();
-        const res = await new Promise<any>((resolve) => {
-          service.getPlacePredictions(
-            { input: q, componentRestrictions: { country: "fr" }, location: new (window as any).google.maps.LatLng(46.15, -1.15), radius: 80_000 },
-            (predictions: any[], status: string) => resolve({ predictions: predictions ?? [], status }),
-          );
-        });
-        const mapped = (res.predictions ?? []).slice(0, 5).map((p: any) => ({
-          label: p.description,
-          lat: 0,
-          lng: 0,
+      const seq = ++seqRef.current;
+      setLoading(true);
+      try {
+        const normalized = fold(q);
+        const canonicalHits: Item[] = CANONICAL.filter((c) => fold(c.label).includes(normalized)).map((c) => ({
+          label: c.label,
+          placeId: null,
+          lat: c.lat,
+          lng: c.lng,
         }));
-        setSuggestions(mapped);
-      } else {
-        setSuggestions([]);
+
+        const remote: PlaceSuggestion[] = await placesAutocomplete(q, lang);
+        if (seq !== seqRef.current) return;
+
+        const merged: Item[] = [...canonicalHits];
+        for (const r of remote) {
+          if (merged.some((m) => fold(m.label) === fold(r.label))) continue;
+          merged.push({ label: r.label, placeId: r.placeId, lat: r.lat, lng: r.lng });
+        }
+        setSuggestions(merged.slice(0, 6));
+      } finally {
+        if (seq === seqRef.current) setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [lang],
+  );
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -101,6 +106,29 @@ export function AddressAutocomplete({
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [value, fetchSuggestions]);
+
+  const pick = useCallback(
+    async (item: Item) => {
+      setOpen(false);
+      inputRef.current?.blur();
+      if (typeof item.lat === "number" && typeof item.lng === "number") {
+        onChange(item.label, { label: item.label, lat: item.lat, lng: item.lng });
+        return;
+      }
+      // Coordonnées résolues à la sélection (place_id → détails).
+      onChange(item.label);
+      if (!item.placeId) return;
+      setLoading(true);
+      try {
+        const d = await placeDetails(item.placeId, lang);
+        if (d) onChange(d.label || item.label, { label: d.label || item.label, lat: d.lat, lng: d.lng });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [onChange, lang],
+  );
+
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
