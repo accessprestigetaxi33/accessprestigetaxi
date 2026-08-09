@@ -40,6 +40,8 @@ import { loadGoogleMaps } from "@/lib/googleMaps";
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { SITE_URL } from "@/lib/seo-hreflang";
+import { ogImageUrl } from "@/lib/og";
+import { SocialMetaSync } from "@/components/SocialMetaSync";
 import {
   businessRef,
   localBusinessNode,
