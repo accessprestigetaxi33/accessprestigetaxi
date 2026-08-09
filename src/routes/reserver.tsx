@@ -311,7 +311,8 @@ export const Route = createFileRoute("/reserver")({
         }),
       },
     ],
-  }),
+    };
+  },
 
   component: ReserverPage,
 });
