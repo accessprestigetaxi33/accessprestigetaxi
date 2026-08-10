@@ -1,9 +1,11 @@
-// Full client reset:
-//  - Unregister ANY service worker still installed on this origin (legacy
-//    Workbox / vite-plugin-pwa / hand-rolled SWs from older builds).
-//  - Wipe Cache Storage so no stale HTML/JS chunks can be served.
-//  - On a new APP_VERSION, force a single hard reload so users always land
-//    on the latest deploy on mobile and desktop.
+// Gestion du service worker de l'application (site client + espace chauffeur).
+//
+//  - En preview Lovable / dev / iframe : aucun service worker applicatif n'est
+//    enregistré, et tout SW obsolète est supprimé (le worker Firebase Messaging
+//    est toujours préservé : il gère les notifications push).
+//  - En production : on enregistre /sw.js (généré par vite-plugin-pwa) pour
+//    disposer d'un cache hors-ligne des pages essentielles.
+//  - `?sw=off` désinstalle tout, comme interrupteur d'urgence.
 import { APP_VERSION } from "@/lib/version";
 
 const VERSION_KEY = "app:version";
@@ -17,19 +19,19 @@ function isLovablePreviewHost(hostname: string): boolean {
   return false;
 }
 
-async function unregisterAllServiceWorkers(): Promise<boolean> {
+function isMessagingWorker(url: string): boolean {
+  return url.includes("firebase-messaging-sw");
+}
+
+async function unregisterAppServiceWorkers(): Promise<boolean> {
   if (!("serviceWorker" in navigator)) return false;
   let didUnregister = false;
   try {
     const regs = await navigator.serviceWorker.getRegistrations();
     for (const reg of regs) {
-      // Keep Firebase Cloud Messaging worker — required for push notifications.
-      const url =
-        reg.active?.scriptURL ||
-        reg.waiting?.scriptURL ||
-        reg.installing?.scriptURL ||
-        "";
-      if (url.includes("firebase-messaging-sw")) continue;
+      const url = reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || "";
+      // Ne jamais toucher au worker de notifications push.
+      if (isMessagingWorker(url)) continue;
       const ok = await reg.unregister();
       didUnregister = didUnregister || ok;
     }
@@ -45,7 +47,6 @@ async function clearAppCaches(): Promise<boolean> {
   try {
     const names = await caches.keys();
     for (const name of names) {
-      // Preserve FCM caches (separate scope), wipe everything else.
       if (name.includes("firebase")) continue;
       const ok = await caches.delete(name);
       didClear = didClear || ok;
@@ -61,14 +62,25 @@ export async function registerPWA(): Promise<void> {
 
   const inIframe = window.self !== window.top;
   const previewHost = isLovablePreviewHost(window.location.hostname);
+  const killSwitch = new URLSearchParams(window.location.search).get("sw") === "off";
+  const blocked = !import.meta.env.PROD || inIframe || previewHost || killSwitch;
 
-  // Always purge stale SWs and caches — both in preview and in production.
-  const unregistered = await unregisterAllServiceWorkers();
-  const cleared = await clearAppCaches();
+  if (blocked) {
+    await unregisterAppServiceWorkers();
+    await clearAppCaches();
+    return;
+  }
 
-  // Skip the version check / hard reload inside the Lovable editor iframe
-  // (would create a reload loop in preview).
-  if (inIframe || previewHost) return;
+  // ── Production : cache hors-ligne actif ──
+  if ("serviceWorker" in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      // Cherche une nouvelle version à chaque ouverture de l'app.
+      void reg.update().catch(() => {});
+    } catch {
+      /* noop */
+    }
+  }
 
   try {
     const stored = window.localStorage.getItem(VERSION_KEY);
@@ -76,10 +88,8 @@ export async function registerPWA(): Promise<void> {
 
     if (stored !== APP_VERSION) {
       window.localStorage.setItem(VERSION_KEY, APP_VERSION);
-      if (!alreadyReloaded && (stored !== null || unregistered || cleared)) {
+      if (!alreadyReloaded && stored !== null) {
         window.sessionStorage.setItem(RELOADED_FLAG, APP_VERSION);
-        // Hard reload with cache-busting query so the document, manifest and
-        // icons are all re-fetched from the network.
         const u = new URL(window.location.href);
         u.searchParams.set("_v", APP_VERSION);
         window.location.replace(u.toString());
