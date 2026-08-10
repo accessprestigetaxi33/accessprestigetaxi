@@ -1,3 +1,4 @@
+import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { useMemo, useState } from "react";
