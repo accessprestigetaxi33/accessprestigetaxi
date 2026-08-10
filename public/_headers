@@ -1,0 +1,42 @@
+# En-têtes de cache Cloudflare (la compression gzip/brotli est appliquée
+# automatiquement par le CDN sur tout contenu texte : HTML, JS, CSS, JSON, XML).
+
+# Bundles JS/CSS : nom de fichier avec empreinte → cache navigateur d'un an.
+/assets/*
+  cache-control: public, max-age=31536000, immutable
+
+# Images, polices et icônes servies depuis /public : 30 jours + revalidation.
+/*.webp
+  cache-control: public, max-age=2592000, stale-while-revalidate=86400
+/*.png
+  cache-control: public, max-age=2592000, stale-while-revalidate=86400
+/*.jpg
+  cache-control: public, max-age=2592000, stale-while-revalidate=86400
+/*.svg
+  cache-control: public, max-age=2592000, stale-while-revalidate=86400
+/*.woff2
+  cache-control: public, max-age=31536000, immutable
+/*.ico
+  cache-control: public, max-age=2592000
+
+# Service worker et manifests : jamais mis en cache, sinon la mise à jour
+# de la PWA ne parvient jamais aux appareils déjà installés.
+/sw.js
+  cache-control: no-cache
+/firebase-messaging-sw.js
+  cache-control: no-cache
+/manifest.webmanifest
+  cache-control: no-cache
+/driver-manifest.json
+  cache-control: no-cache
+
+# SEO : réponses courtes mais revalidables.
+/sitemap.xml
+  cache-control: public, max-age=3600
+/robots.txt
+  cache-control: public, max-age=86400
+
+# Pages HTML : toujours revalidées (contenu dynamique SSR).
+/*
+  x-content-type-options: nosniff
+  referrer-policy: strict-origin-when-cross-origin

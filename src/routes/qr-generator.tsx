@@ -279,13 +279,14 @@ function QrGeneratorPage() {
     out.toBlob((b) => b && triggerDownload(b, `qr-${slug(form.name)}-55mm-300dpi.png`), "image/png");
   }
 
-  function downloadA4() {
+  async function downloadA4() {
     // PDF au format physique exact 55×55 mm — identique à Allo Taxi Bordeaux.
     // Pas de page A4, pas de marge : la page PDF fait 55×55 mm et le QR remplit
     // toute la page pour une impression 1:1 sans risque de mise à l'échelle.
     if (!printRef.current) return;
     const dataUrl = printRef.current.toDataURL("image/png");
-    const pdf = new jsPDF({
+    const { jsPDF } = await import("jspdf");
+    const pdf: JsPDFType = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: [55, 55],
