@@ -39,14 +39,17 @@ export const Route = createFileRoute("/api/public/maps-config")({
         // connecteur Lovable est une clé de passerelle (préfixe "lovc_") : elle
         // fait échouer le chargement de la carte si on la sert au navigateur.
         const isBrowserKey = (v: string) => /^AIza[0-9A-Za-z_-]{10,}$/.test(v);
-        const prodKey =
+        // Clé personnelle du client : autorisée sur accessprestigetaxi.fr.
+        const customKey =
+          [
+            clean(process.env["GOOGLE_API_KEY"]),
+            clean(process.env["GOOGLE_MAPS_API_KEY2"]),
+            clean(process.env["GOOGLE_MAPS_API_KEY"]),
+          ].find(isBrowserKey) ?? "";
+        // Clé gérée par Lovable : autorisée uniquement sur *.lovable.app / *.lovableproject.com.
+        const lovableKey =
           [
             clean(process.env["GOOGLE_MAPS_BROWSER_KEY"]),
-            clean(process.env["GOOGLE_MAPS_API_KEY"]),
-            clean(process.env["GOOGLE_MAPS_API_KEY2"]),
-            clean(process.env["GOOGLE_API_KEY"]),
-            // La clé gérée par Lovable ne couvre que les domaines Lovable : elle
-            // doit rester le dernier recours après la clé personnalisée.
             clean(process.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"]),
           ].find(isBrowserKey) ?? "";
         const devKey = [clean(process.env["GOOGLE_MAPS_DEV_API_KEY"])].find(isBrowserKey) ?? "";
@@ -58,9 +61,18 @@ export const Route = createFileRoute("/api/public/maps-config")({
           host = "";
         }
         const dev = isDevHost(host);
-        // En dev, la clé de test passe en premier ; la clé de prod reste en
-        // repli (elle fonctionne si le domaine a été ajouté aux référents).
-        const keys = (dev ? [devKey, prodKey] : [prodKey, devKey]).filter(Boolean);
+        const onLovableHost = host.endsWith(".lovable.app") || host.endsWith(".lovableproject.com");
+        // L'ordre décide de la clé essayée en premier : chaque clé n'est valide
+        // que sur ses propres référents, l'autre sert de repli automatique.
+        const keys = Array.from(
+          new Set(
+            (onLovableHost || host.startsWith("localhost") || host.startsWith("127.0.0.1")
+              ? [devKey, lovableKey, customKey]
+              : [customKey, lovableKey, devKey]
+            ).filter(Boolean),
+          ),
+        );
+
 
         const scheme = host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https";
         const allowlist = Array.from(
