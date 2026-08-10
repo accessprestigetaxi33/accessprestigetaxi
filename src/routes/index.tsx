@@ -31,9 +31,9 @@ import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
 import heroCarsEn from "@/assets/apt-hero-en.webp.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
-import photoBmwReal from "@/assets/apt-bmw-real.jpg.asset.json";
-import photoAudiReal from "@/assets/apt-audi-real.jpg.asset.json";
-import photoVanReal from "@/assets/apt-van-real.jpg.asset.json";
+import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
+import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
+import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
 
 import photoMedical from "@/assets/apt-medical.jpg";
 import photoAirport from "@/assets/apt-airport.jpg";
