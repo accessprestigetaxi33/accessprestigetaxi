@@ -180,7 +180,7 @@ export const Route = createFileRoute("/reserver")({
     // Canonical auto-référent : /reserver?lang=en se canonicalise sur lui-même
     // (sinon Google ignore l'alternate anglais), tout autre paramètre retombe
     // sur l'URL propre.
-    links: seoLinks("/reserver", match.search),
+    links: seoLinks("/reserver", ctx?.match?.search),
     scripts: [
       // Entité métier unique du site (adresse, coordonnées GPS, horaires),
       // partagée par toutes les pages via son @id.
