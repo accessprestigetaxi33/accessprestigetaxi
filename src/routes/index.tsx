@@ -25,7 +25,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { FaqSeo } from "@/components/FaqSeo";
 import { Reveal, Counter } from "@/components/motion-ui";
-import { GUIDE_ENTRIES } from "@/data/guide-charente";
+import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import { DESTINATIONS } from "@/data/destinations";
 import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
 import heroCarsEn from "@/assets/apt-hero-en.webp.asset.json";
@@ -47,9 +47,7 @@ import photoStepVoice from "@/assets/apt-step-voice.webp";
 import photoStepConfirm from "@/assets/apt-step-confirm.webp";
 import photoStepTrack from "@/assets/apt-step-track.webp";
 
-const BLOG_PICKS = ["hotel", "restaurant", "visite"]
-  .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))
-  .filter((e): e is (typeof GUIDE_ENTRIES)[number] => Boolean(e));
+const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 
 const SLOGAN_FR = "L'excellence à chaque trajet";
 const SLOGAN_EN = "Excellence on every journey";
@@ -1450,7 +1448,7 @@ function Index() {
                   className={`group block h-full overflow-hidden ${CARD}`}
                 >
                   <img
-                    src={e.photos[0]}
+                    src={e.photo}
                     alt={`${e.name} — ${e.city}`}
                     loading="lazy"
                     className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
@@ -1459,7 +1457,7 @@ function Index() {
                     <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
                     <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
                     <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                      {lang === "en" ? e.en.teaser : e.fr.teaser}
+                      {lang === "en" ? e.en : e.fr}
                     </p>
                   </div>
                 </Link>

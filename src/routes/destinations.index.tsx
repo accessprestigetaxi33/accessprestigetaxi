@@ -1,3 +1,4 @@
+import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowRight, MapPin } from "lucide-react";
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/destinations/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
+      ...socialImageMeta(TITLE),
     ],
     links: seoLinks("/destinations"),
     scripts: [

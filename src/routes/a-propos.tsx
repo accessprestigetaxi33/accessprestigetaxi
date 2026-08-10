@@ -1,3 +1,4 @@
+import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { Award, MapPin, Clock, Heart } from "lucide-react";
@@ -7,7 +8,7 @@ import { DRIVERS, SERVICE_HOURS } from "@/data/drivers";
 const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
 const ABOUT_DESC =
   "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente-Maritime.";
-const ABOUT_URL = "https://accessprestigetaxi.lovable.app/a-propos";
+const ABOUT_URL = "https://accessprestigetaxi.fr/a-propos";
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/a-propos")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: ABOUT_TITLE },
       { name: "twitter:description", content: ABOUT_DESC },
+      ...socialImageMeta(ABOUT_TITLE),
     ],
     links: seoLinks("/a-propos"),
     scripts: [

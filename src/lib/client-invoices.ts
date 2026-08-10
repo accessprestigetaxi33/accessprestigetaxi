@@ -1,6 +1,11 @@
 // Génération PDF de factures mensuelles / annuelles pour l'espace client.
 // Réutilise jsPDF. TVA française taxi : 10 % par défaut.
-import jsPDF from "jspdf";
+// jsPDF (~400 Ko) est chargé à la demande : il ne pèse plus sur le premier rendu.
+import type jsPDF from "jspdf";
+
+async function loadJsPDF() {
+  return (await import("jspdf")).default;
+}
 import type { InvoiceRow, CompanyInfo } from "@/lib/client-billing.functions";
 
 const GOLD = "#C9A84C";
@@ -169,7 +174,7 @@ function makeInvoiceNumber(accountId: string, period: string) {
   return `TC-${period}-${hash}`;
 }
 
-export function downloadMonthlyInvoicePDF(opts: {
+export async function downloadMonthlyInvoicePDF(opts: {
   accountId: string;
   year: number;
   month: number; // 1-12
@@ -177,7 +182,8 @@ export function downloadMonthlyInvoicePDF(opts: {
   client: { name: string; email: string; phone: string };
   company: CompanyInfo;
 }) {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const JsPDF = await loadJsPDF();
+  const doc = new JsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
   const period = `${opts.year}-${String(opts.month).padStart(2, "0")}`;
   const periodLabel = new Date(opts.year, opts.month - 1, 1).toLocaleDateString("fr-FR", {
@@ -198,14 +204,15 @@ export function downloadMonthlyInvoicePDF(opts: {
   doc.save(`facture-taxicity-${period}.pdf`);
 }
 
-export function downloadYearlyInvoicePDF(opts: {
+export async function downloadYearlyInvoicePDF(opts: {
   accountId: string;
   year: number;
   rows: InvoiceRow[];
   client: { name: string; email: string; phone: string };
   company: CompanyInfo;
 }) {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const JsPDF = await loadJsPDF();
+  const doc = new JsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
   const period = `${opts.year}`;
   const invoiceNumber = makeInvoiceNumber(opts.accountId, `Y${period}`);
