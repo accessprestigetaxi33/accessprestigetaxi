@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { useEffect, useState } from "react";
-import logoSrc from "@/assets/tcb-logo-badge.png";
+import logoSrc from "@/assets/tcb-logo-badge.webp";
 
 const CARTE_URL = "https://accessprestigetaxi.lovable.app/carte";
 const CARTE_TITLE = "Access Prestige Taxi — Contact rapide";

@@ -11,7 +11,7 @@ import type { ClientSession } from "@/lib/client-auth.functions";
 import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
-import logo from "@/assets/tcb-logo-badge.png";
+import logo from "@/assets/tcb-logo-badge.webp";
 import { supabase } from "@/integrations/supabase/client";
 
 const ACTIVE_STATUSES = new Set(["nouvelle", "pending", "accepted", "en_route", "arrived"]);

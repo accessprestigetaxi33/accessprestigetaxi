@@ -35,17 +35,17 @@ import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
 
-import photoMedical from "@/assets/apt-medical.jpg";
-import photoAirport from "@/assets/apt-airport.jpg";
-import photoBusiness from "@/assets/apt-business.jpg";
-import photoPrice from "@/assets/apt-price.jpg";
-import photoLaRochelle from "@/assets/apt-larochelle.jpg";
-import photoIleDeRe from "@/assets/apt-ile-de-re.jpg";
-import photoRoyan from "@/assets/apt-royan.jpg";
-import photoGare from "@/assets/apt-gare.jpg";
-import photoStepVoice from "@/assets/apt-step-voice.jpg";
-import photoStepConfirm from "@/assets/apt-step-confirm.jpg";
-import photoStepTrack from "@/assets/apt-step-track.jpg";
+import photoMedical from "@/assets/apt-medical.webp";
+import photoAirport from "@/assets/apt-airport.webp";
+import photoBusiness from "@/assets/apt-business.webp";
+import photoPrice from "@/assets/apt-price.webp";
+import photoLaRochelle from "@/assets/apt-larochelle.webp";
+import photoIleDeRe from "@/assets/apt-ile-de-re.webp";
+import photoRoyan from "@/assets/apt-royan.webp";
+import photoGare from "@/assets/apt-gare.webp";
+import photoStepVoice from "@/assets/apt-step-voice.webp";
+import photoStepConfirm from "@/assets/apt-step-confirm.webp";
+import photoStepTrack from "@/assets/apt-step-track.webp";
 
 const BLOG_PICKS = ["hotel", "restaurant", "visite"]
   .map((cat) => GUIDE_ENTRIES.find((e) => e.category === cat))

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Phone, MessageCircle, MapPin, Clock, ShieldCheck } from "lucide-react";
-import logo from "@/assets/tcb-logo-badge.png";
+import logo from "@/assets/tcb-logo-badge.webp";
 import { useT } from "@/i18n/I18nProvider";
 
 const PHONE = "0650260015";

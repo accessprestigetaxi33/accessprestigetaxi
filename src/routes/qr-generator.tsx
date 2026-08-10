@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import QRCode from "qrcode";
 import jsQR from "jsqr";
 import { jsPDF } from "jspdf";
-import logoSrc from "@/assets/tcb-logo-badge.png";
+import logoSrc from "@/assets/tcb-logo-badge.webp";
 
 export const Route = createFileRoute("/qr-generator")({
   head: () => ({
