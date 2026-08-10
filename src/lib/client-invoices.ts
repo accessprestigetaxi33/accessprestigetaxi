@@ -83,7 +83,7 @@ function emitterBlock(doc: jsPDF, W: number, y: number, invoiceNumber: string, p
   doc.setTextColor("#333");
   doc.text("Access Prestige Taxi", x, y + 16);
   doc.text("33000 Bordeaux", x, y + 28);
-  doc.text("taxi.city033@gmail.com", x, y + 40);
+  doc.text("accessprestigetaxi@gmail.com", x, y + 40);
   doc.text("06 50 26 00 15", x, y + 52);
 
   doc.setFont("helvetica", "bold");
@@ -162,7 +162,7 @@ function footer(doc: jsPDF, W: number) {
   doc.setFontSize(8);
   doc.setTextColor("#888");
   doc.text(
-    "Access Prestige Taxi — taxi.city033@gmail.com — 06 50 26 00 15 — TVA 10 % incluse",
+    "Access Prestige Taxi — accessprestigetaxi@gmail.com — 06 50 26 00 15 — TVA 10 % incluse",
     W / 2,
     810,
     { align: "center" },

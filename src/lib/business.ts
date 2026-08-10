@@ -6,7 +6,7 @@ import { SITE_URL } from "@/lib/seo-hreflang";
 import socialImage from "@/assets/apt-hero-fr.webp.asset.json";
 
 export const BUSINESS_ID = `${SITE_URL}/#localbusiness`;
-export const BUSINESS_EMAIL = "taxipatricia@gmail.com";
+export const BUSINESS_EMAIL = "accessprestigetaxi@gmail.com";
 export const BUSINESS_NAME = "Access Prestige Taxi";
 
 /** Image de partage social par défaut (absolue, requise par Open Graph). */

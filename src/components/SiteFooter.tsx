@@ -227,7 +227,7 @@ export function SiteFooter() {
           </p>
           <div style={{ marginTop: 14, display: "flex", gap: 10 }}>
             <a
-              href="mailto:taxipatricia@gmail.com"
+              href="mailto:accessprestigetaxi@gmail.com"
               aria-label="Email"
               className="footer-social-btn"
               style={{ border: "1px solid rgba(0,0,0,0.08)" }}
@@ -276,8 +276,8 @@ export function SiteFooter() {
               </a>
             </li>
             <li>
-              <a href="mailto:taxipatricia@gmail.com" className="footer-link" style={{ wordBreak: "break-all" }}>
-                ✉️ taxipatricia@gmail.com
+              <a href="mailto:accessprestigetaxi@gmail.com" className="footer-link" style={{ wordBreak: "break-all" }}>
+                ✉️ accessprestigetaxi@gmail.com
               </a>
             </li>
             <li className="footer-li-text">{c.zone}</li>

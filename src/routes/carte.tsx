@@ -34,7 +34,7 @@ const CONTACT = {
   org: "Access Prestige Taxi",
   tel: "+33650260015",
   telDisplay: "06\u00A073\u00A007\u00A023\u00A022",
-  email: "taxi.city033@gmail.com",
+  email: "accessprestigetaxi@gmail.com",
   site: "https://accessprestigetaxi.lovable.app",
   reserve: "/reserver",
 };

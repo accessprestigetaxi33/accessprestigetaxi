@@ -48,7 +48,7 @@ const DEFAULTS: Form = {
   url: "https://accessprestigetaxi.lovable.app/carte",
   name: "Josè",
   phone: "0650260015",
-  email: "taxi.city033@gmail.com",
+  email: "accessprestigetaxi@gmail.com",
   site: "https://accessprestigetaxi.lovable.app",
   org: "Access Prestige Taxi",
 };
