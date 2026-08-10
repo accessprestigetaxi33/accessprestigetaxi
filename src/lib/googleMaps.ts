@@ -8,7 +8,7 @@ import {
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_TRACKING_ID,
-  getMapsRuntimeConfig,
+  
   resolveGoogleMapsApiKeys,
 } from "./googleConfig";
 
