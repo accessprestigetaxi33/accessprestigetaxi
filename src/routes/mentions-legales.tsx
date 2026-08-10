@@ -10,7 +10,7 @@ const DESC_FR =
   "Mentions légales d'Access Prestige Taxi : éditeur du site, hébergement, propriété intellectuelle et contact.";
 
 export const Route = createFileRoute("/mentions-legales")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/mentions-legales")({
       ...socialImageMeta(TITLE_FR),
       { name: "robots", content: "index,follow" },
     ],
-    links: seoLinks("/mentions-legales"),
+    links: seoLinks("/mentions-legales", match.search),
   }),
   component: MentionsLegalesPage,
 });

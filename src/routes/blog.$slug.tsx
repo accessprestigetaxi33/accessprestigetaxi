@@ -43,7 +43,7 @@ export const Route = createFileRoute("/blog/$slug")({
     return { entry };
   },
   component: BlogArticle,
-  head: ({ params }) => {
+  head: ({ params, match }) => {
     const e = getGuideEntry(params.slug);
     if (!e) return {};
     const title = `${e.name}, ${e.city} — Guide Charente-Maritime | Access Prestige Taxi`;
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/blog/$slug")({
         { name: "twitter:description", content: desc },
         { name: "twitter:image", content: e.photos[0] },
       ],
-      links: seoLinks(`/blog/${e.slug}`),
+      links: seoLinks(`/blog/${e.slug}`, match.search),
       scripts: [
         {
           type: "application/ld+json",

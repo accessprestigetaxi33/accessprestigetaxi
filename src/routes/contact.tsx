@@ -15,7 +15,7 @@ const CONTACT_DESC =
 const CONTACT_URL = "https://accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: CONTACT_TITLE },
       { name: "description", content: CONTACT_DESC },
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/contact")({
       { name: "twitter:description", content: CONTACT_DESC },
       ...socialImageMeta(CONTACT_TITLE),
     ],
-    links: seoLinks("/contact"),
+    links: seoLinks("/contact", match.search),
     scripts: [
       {
         type: "application/ld+json",

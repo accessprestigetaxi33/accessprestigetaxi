@@ -524,7 +524,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image:alt", content: social.alt },
     ],
 
-    links: seoLinks("/"),
+    links: seoLinks("/", match.search),
     scripts: [
       {
         type: "application/ld+json",

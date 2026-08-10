@@ -14,7 +14,7 @@ export const Route = createFileRoute("/destinations/$slug")({
     if (!dest) throw notFound();
     return { slug: dest.slug };
   },
-  head: ({ params }) => {
+  head: ({ params, match }) => {
     const dest = getDestination(params.slug);
     if (!dest) {
       return { meta: [{ title: "Destination introuvable" }, { name: "robots", content: "noindex" }] };
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/destinations/$slug")({
         { name: "twitter:description", content: dest.fr.metaDescription },
         ...socialImageMeta(dest.fr.metaTitle),
       ],
-      links: seoLinks(`/destinations/${params.slug}`),
+      links: seoLinks(`/destinations/${params.slug}`, match.search),
     };
   },
   notFoundComponent: () => {
