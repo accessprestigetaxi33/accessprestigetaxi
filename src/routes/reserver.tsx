@@ -2636,8 +2636,9 @@ function ReserverPage() {
           <div className="relative h-[360px] w-full">
             <div ref={mapRef} className="absolute inset-0" />
             {mapError && (
-              <MapFallback lang={L} lat={46.1591} lng={-1.152} zoom={10} label={R.map_error_title} detail={mapError} />
+              <MapFallback lang={L} lat={46.1591} lng={-1.152} zoom={10} label={R.map_error_title} />
             )}
+
 
           </div>
         </div>
