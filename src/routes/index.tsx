@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { NotificationOptInStep } from "@/components/NotificationOptInStep";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { FaqSeo } from "@/components/FaqSeo";
