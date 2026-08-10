@@ -34,11 +34,20 @@ export const Route = createFileRoute("/api/public/maps-config")({
   server: {
     handlers: {
       GET: ({ request }) => {
+        // IMPORTANT : seule une vraie clé navigateur Google (préfixe "AIza") est
+        // utilisable dans l'URL du script Maps. Le secret GOOGLE_MAPS_API_KEY du
+        // connecteur Lovable est une clé de passerelle (préfixe "lovc_") : elle
+        // fait échouer le chargement de la carte si on la sert au navigateur.
+        const isBrowserKey = (v: string) => /^AIza[0-9A-Za-z_-]{10,}$/.test(v);
         const prodKey =
-          clean(process.env["GOOGLE_MAPS_API_KEY"]) ||
-          clean(process.env["GOOGLE_MAPS_API_KEY2"]) ||
-          clean(process.env["GOOGLE_API_KEY"]);
-        const devKey = clean(process.env["GOOGLE_MAPS_DEV_API_KEY"]);
+          [
+            clean(process.env["GOOGLE_MAPS_BROWSER_KEY"]),
+            clean(process.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"]),
+            clean(process.env["GOOGLE_MAPS_API_KEY"]),
+            clean(process.env["GOOGLE_MAPS_API_KEY2"]),
+            clean(process.env["GOOGLE_API_KEY"]),
+          ].find(isBrowserKey) ?? "";
+        const devKey = [clean(process.env["GOOGLE_MAPS_DEV_API_KEY"])].find(isBrowserKey) ?? "";
 
         let host = "";
         try {
