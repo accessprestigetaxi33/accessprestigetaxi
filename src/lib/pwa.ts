@@ -52,7 +52,7 @@ async function clearAppCaches(): Promise<boolean> {
   return didClear;
 }
 
-export function registerPWA(onUpdateReady: () => void): () => void {
+export function registerPWA(onUpdateReady: (applyUpdate: () => void) => void): () => void {
   if (typeof window === "undefined") return () => {};
 
   const inIframe = window.self !== window.top;
@@ -80,7 +80,9 @@ export function registerPWA(onUpdateReady: () => void): () => void {
     const watch = (worker: ServiceWorker | null) => {
       if (!worker) return;
       worker.addEventListener("statechange", () => {
-        if (!disposed && worker.state === "installed" && navigator.serviceWorker.controller) onUpdateReady();
+        if (!disposed && worker.state === "installed" && navigator.serviceWorker.controller) {
+          onUpdateReady(() => worker.postMessage({ type: "SKIP_WAITING" }));
+        }
       });
     };
     watch(registration.installing);

@@ -303,7 +303,10 @@ function BlogIndex() {
                         src={e.photos[0]}
                         alt={`${e.name}, ${e.city} — ${isEn ? "Charente-Maritime guide by Access Prestige Taxi" : "guide Charente-Maritime par Access Prestige Taxi"}`}
                         loading={i < 3 ? "eager" : "lazy"}
+                       fetchPriority={i === 0 ? "high" : "auto"}
                         decoding="async"
+                       width={960}
+                       height={720}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                       <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">

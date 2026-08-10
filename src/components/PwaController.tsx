@@ -8,7 +8,7 @@ export function PwaController() {
   const { lang } = useI18n();
 
   useEffect(() => {
-    return registerPWA(() => {
+    return registerPWA((applyUpdate) => {
       const en = lang === "en";
       toast(en ? "A new version is ready" : "Une nouvelle version est prête", {
         description: en
@@ -18,7 +18,7 @@ export function PwaController() {
         icon: <RefreshCw className="h-4 w-4" />,
         action: {
           label: en ? "Refresh" : "Actualiser",
-          onClick: () => window.location.reload(),
+          onClick: applyUpdate,
         },
       });
     });

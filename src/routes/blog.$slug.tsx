@@ -128,6 +128,8 @@ function BlogArticle() {
               alt={`${entry.name}, ${entry.city}`}
               fetchPriority="high"
               decoding="async"
+              width={960}
+              height={640}
               className="h-full w-full object-cover"
             />
           </div>
@@ -204,6 +206,8 @@ function BlogArticle() {
                   alt={`${entry.name} — ${isEn ? "photo" : "photo"} ${i + 1}`}
                   loading="lazy"
                   decoding="async"
+                  width={960}
+                  height={720}
                   className="aspect-[4/3] w-full object-cover"
                 />
               </figure>
@@ -251,6 +255,8 @@ function BlogArticle() {
                   alt={`${o.name}, ${o.city}`}
                   loading="lazy"
                   decoding="async"
+                  width={960}
+                  height={600}
                   className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="p-4">

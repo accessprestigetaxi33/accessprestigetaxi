@@ -140,7 +140,15 @@ const P = {
   ],
 } as const;
 
-const trio = (a: readonly string[]): [string, string, string] => [a[0], a[1], a[2]];
+/** Wikimedia thumbnails are capped at 960px: enough for the displayed cards/gallery, much lighter on mobile. */
+const optimizeGuideImage = (url: string): string =>
+  url.replace(/\/(?:1280|1920)px-([^/]+)$/i, "/960px-$1");
+
+const trio = (a: readonly string[]): [string, string, string] => [
+  optimizeGuideImage(a[0]),
+  optimizeGuideImage(a[1]),
+  optimizeGuideImage(a[2]),
+];
 
 export const GUIDE_ENTRIES: GuideEntry[] = [
   {
