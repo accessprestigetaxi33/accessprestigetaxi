@@ -6,11 +6,6 @@
 //  - En production : on enregistre /sw.js (généré par vite-plugin-pwa) pour
 //    disposer d'un cache hors-ligne des pages essentielles.
 //  - `?sw=off` désinstalle tout, comme interrupteur d'urgence.
-import { APP_VERSION } from "@/lib/version";
-
-const VERSION_KEY = "app:version";
-const RELOADED_FLAG = "app:version-reloaded";
-
 function isLovablePreviewHost(hostname: string): boolean {
   if (hostname === "lovableproject.com" || hostname.endsWith(".lovableproject.com")) return true;
   if (hostname === "lovableproject-dev.com" || hostname.endsWith(".lovableproject-dev.com")) return true;
@@ -57,8 +52,8 @@ async function clearAppCaches(): Promise<boolean> {
   return didClear;
 }
 
-export async function registerPWA(): Promise<void> {
-  if (typeof window === "undefined") return;
+export function registerPWA(onUpdateReady: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
 
   const inIframe = window.self !== window.top;
   const previewHost = isLovablePreviewHost(window.location.hostname);
@@ -66,36 +61,35 @@ export async function registerPWA(): Promise<void> {
   const blocked = !import.meta.env.PROD || inIframe || previewHost || killSwitch;
 
   if (blocked) {
-    await unregisterAppServiceWorkers();
-    await clearAppCaches();
-    return;
+    void unregisterAppServiceWorkers();
+    void clearAppCaches();
+    return () => {};
   }
 
-  // ── Production : cache hors-ligne actif ──
-  if ("serviceWorker" in navigator) {
-    try {
-      const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-      // Cherche une nouvelle version à chaque ouverture de l'app.
-      void reg.update().catch(() => {});
-    } catch {
-      /* noop */
-    }
-  }
+  if (!("serviceWorker" in navigator)) return () => {};
+  let disposed = false;
+  let refreshing = false;
+  const onControllerChange = () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  };
+  navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
-  try {
-    const stored = window.localStorage.getItem(VERSION_KEY);
-    const alreadyReloaded = window.sessionStorage.getItem(RELOADED_FLAG) === APP_VERSION;
+  void navigator.serviceWorker.register("/sw.js", { scope: "/" }).then((registration) => {
+    const watch = (worker: ServiceWorker | null) => {
+      if (!worker) return;
+      worker.addEventListener("statechange", () => {
+        if (!disposed && worker.state === "installed" && navigator.serviceWorker.controller) onUpdateReady();
+      });
+    };
+    watch(registration.installing);
+    registration.addEventListener("updatefound", () => watch(registration.installing));
+    void registration.update().catch(() => {});
+  }).catch(() => {});
 
-    if (stored !== APP_VERSION) {
-      window.localStorage.setItem(VERSION_KEY, APP_VERSION);
-      if (!alreadyReloaded && stored !== null) {
-        window.sessionStorage.setItem(RELOADED_FLAG, APP_VERSION);
-        const u = new URL(window.location.href);
-        u.searchParams.set("_v", APP_VERSION);
-        window.location.replace(u.toString());
-      }
-    }
-  } catch {
-    /* noop */
-  }
+  return () => {
+    disposed = true;
+    navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+  };
 }

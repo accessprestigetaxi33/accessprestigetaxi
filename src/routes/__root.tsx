@@ -18,6 +18,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ServiceStrip } from "@/components/ServiceStrip";
 import { Toaster } from "@/components/ui/sonner";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
+import { PwaController } from "@/components/PwaController";
 
 function NotFoundComponent() {
   return (
@@ -185,6 +186,7 @@ function RootComponent() {
           </div>
         )}
         <Toaster />
+        <PwaController />
         <AnalyticsTracker />
       </I18nProvider>
     </QueryClientProvider>
