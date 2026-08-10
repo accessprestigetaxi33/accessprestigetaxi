@@ -133,7 +133,8 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
           }, 500);
         };
         (win as any).gm_authFailure = () => {
-          notifyAuthFailure(refererHelp());
+          // On ne prévient l'UI que si aucune autre clé ne peut prendre le relais.
+          if (index + 1 >= apiKeys.length) notifyAuthFailure(refererHelp());
           fail(refererHelp());
         };
 
