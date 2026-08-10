@@ -30,8 +30,10 @@ export function hreflangLinks(url: string) {
 
 /** URL absolue et normalisée (sans slash final, sans paramètre) d'un chemin. */
 export function absoluteUrl(path: string) {
-  const clean = path === "/" ? "" : path.replace(/\/+$/, "");
-  return `${SITE_URL}${clean}` || `${SITE_URL}/`;
+  // La racine garde son slash final (https://…​.fr/) : c'est la forme servie
+  // et celle déclarée dans le sitemap, sinon Google voit deux URL.
+  const clean = path === "/" ? "/" : path.replace(/\/+$/, "");
+  return `${SITE_URL}${clean}`;
 }
 
 /** true si les paramètres d'URL demandent la version anglaise. */
