@@ -42,10 +42,12 @@ export const Route = createFileRoute("/api/public/maps-config")({
         const prodKey =
           [
             clean(process.env["GOOGLE_MAPS_BROWSER_KEY"]),
-            clean(process.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"]),
             clean(process.env["GOOGLE_MAPS_API_KEY"]),
             clean(process.env["GOOGLE_MAPS_API_KEY2"]),
             clean(process.env["GOOGLE_API_KEY"]),
+            // La clé gérée par Lovable ne couvre que les domaines Lovable : elle
+            // doit rester le dernier recours après la clé personnalisée.
+            clean(process.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"]),
           ].find(isBrowserKey) ?? "";
         const devKey = [clean(process.env["GOOGLE_MAPS_DEV_API_KEY"])].find(isBrowserKey) ?? "";
 

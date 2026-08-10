@@ -89,13 +89,9 @@ export function getRuntimeGoogleMapsKeys(): Promise<string[]> {
 export async function resolveGoogleMapsApiKeys(): Promise<string[]> {
   const buildKeys = getGoogleMapsApiKeysForCurrentHost();
   const runtime = await getRuntimeGoogleMapsKeys();
-  const host = typeof window !== "undefined" ? window.location.hostname : "";
-  const isDevHost =
-    host === "localhost" ||
-    host === "127.0.0.1" ||
-    host.endsWith(".lovableproject.com") ||
-    host.endsWith(".lovable.app");
-  const ordered = isDevHost ? [...runtime, ...buildKeys] : [...buildKeys, ...runtime];
+  // La route runtime connaît l'hôte courant et privilégie la clé personnalisée
+  // compatible avec le domaine public. Les clés injectées au build restent un repli.
+  const ordered = [...runtime, ...buildKeys];
   return Array.from(new Set(ordered));
 }
 
