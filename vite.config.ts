@@ -7,6 +7,7 @@
 import path from "node:path";
 import { loadEnv } from "vite";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { VitePWA } from "vite-plugin-pwa";
 
 // Load non-VITE_ env vars into process.env for server-side code only.
 // These are NOT injected into the client bundle.
