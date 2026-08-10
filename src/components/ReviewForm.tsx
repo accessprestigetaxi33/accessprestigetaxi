@@ -1,10 +1,17 @@
-import { useMemo, useState } from "react";
-import { Star, Loader2, Check, CloudOff } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Star, Loader2, Check, CloudOff, RefreshCw, CloudUpload, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/I18nProvider";
 import { toast } from "sonner";
 import { notifyNewReview } from "@/lib/push.functions";
-import { queueReview, type QueuedReview } from "@/lib/review-queue";
+import {
+  queueReview,
+  subscribeReviewSync,
+  flushQueuedReviews,
+  type QueuedReview,
+  type ReviewSyncState,
+} from "@/lib/review-queue";
+
 import { Button } from "@/components/ui/button";
 
 /** Questionnaire professionnel : note globale + critères détaillés + avis écrit. */
