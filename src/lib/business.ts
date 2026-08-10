@@ -3,7 +3,7 @@
 // l'entreprise en une seule entité.
 import { DRIVERS } from "@/data/drivers";
 import { SITE_URL } from "@/lib/seo-hreflang";
-import socialImage from "@/assets/apt-hero-fr.png.asset.json";
+import socialImage from "@/assets/apt-hero-fr.webp.asset.json";
 
 export const BUSINESS_ID = `${SITE_URL}/#localbusiness`;
 export const BUSINESS_EMAIL = "taxipatricia@gmail.com";

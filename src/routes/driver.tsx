@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
-import ogDriverFr from "@/assets/apt-og-driver-fr.png.asset.json";
-import ogDriverEn from "@/assets/apt-og-driver-en.png.asset.json";
+import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
+import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";

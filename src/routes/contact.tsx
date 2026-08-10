@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, MessageCircle, Clock, HeartPulse } from "lucide-re
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { ContactForm } from "@/components/ContactForm";
-import heroLogo from "@/assets/apt-logo-lockup.png";
+import heroLogo from "@/assets/apt-logo-lockup.webp";
 
 const CONTACT_EMAIL = "taxipatricia@gmail.com";
 const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
