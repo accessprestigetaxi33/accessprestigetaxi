@@ -1016,6 +1016,11 @@ function ReserverPage() {
         disableDefaultUI: false,
         clickableIcons: false,
       });
+      // La carte s'affiche vraiment → on annule tout repli affiché à tort.
+      g.maps.event.addListenerOnce(mapInst.current, "tilesloaded", () => {
+        clearGoogleMapsAuthFailure();
+        setMapError(null);
+      });
     })();
     return () => {
       mounted = false;
