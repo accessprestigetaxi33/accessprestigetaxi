@@ -8,24 +8,15 @@ import {
   GOOGLE_MAPS_LIBRARIES,
   GOOGLE_MAPS_REGION,
   GOOGLE_MAPS_TRACKING_ID,
-  getMapsRuntimeConfig,
+  
   resolveGoogleMapsApiKeys,
 } from "./googleConfig";
 
-/** Message actionnable quand Google refuse la clé sur le domaine courant. */
+/** Message neutre quand Google refuse la clé sur le domaine courant. */
 function refererHelp(): string {
-  const cfg = getMapsRuntimeConfig();
-  const host = typeof window !== "undefined" ? window.location.origin : cfg.host;
-  const list = (cfg.allowlist.length > 0 ? cfg.allowlist : [`${host}/*`]).join("\n  • ");
-  return [
-    `Google Maps refuse la clé sur ${host}.`,
-    "",
-    "Dans Google Cloud Console → Identifiants → votre clé Maps → Restrictions d'application (référents HTTP), ajoutez :",
-    `  • ${list}`,
-    "",
-    "Alternative pour tester en preview/localhost sans toucher à la clé de production : créez une seconde clé Maps autorisée sur ces domaines et enregistrez-la dans le secret GOOGLE_MAPS_DEV_API_KEY — elle sera utilisée automatiquement en preview.",
-  ].join("\n");
+  return "Carte dynamique indisponible sur ce domaine : un aperçu statique est affiché à la place.";
 }
+
 
 export type GoogleMapsApi = any;
 
