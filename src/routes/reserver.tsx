@@ -1067,117 +1067,72 @@ function ReserverPage() {
     })();
   }, [quote]);
 
-  // AUTO geoloc on mount — no button. Même configuration que Start Fresh Here :
-  // 1) GPS haute précision, 2) retry basse précision avec cache, 3) fallback IP.
+  // AUTO geoloc on mount — cascade robuste (GPS précis → GPS en cache →
+  // estimation réseau → géo-IP) avec message clair sur la précision, la ville
+  // et la marche à suivre quand la position est approximative ou refusée.
   useEffect(() => {
-    const noGeo = typeof navigator === "undefined" || !navigator.geolocation;
+    let cancelled = false;
     setGpsBusy(true);
 
-    const applyDetectedPosition = async (lat: number, lng: number, approximate: boolean, fromIp = false) => {
-      setGpsFromIp(fromIp);
-      const label = (await reverseGeocode(lat, lng)) ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-      setGps({ lat, lng, label });
-      setGpsError(approximate ? "low_accuracy" : null);
-      setGpsBusy(false);
-      markGpsReady();
-      setMessages((prev) => {
-        if (prev.length === 1 && prev[0].role === "assistant") {
-          return [
-            {
-              role: "assistant",
-              content: approximate
-                ? `📍 ${TXT[L].gps_low}. ${TXT[L].gps_ask_manual}\n${label}`
-                : `📍 ${TXT[L].gps_detected} : ${label}.\n${TXT[L].ask_destination}`,
-            },
-          ];
-        }
-        return prev;
-      });
+    const setGreeting = (content: string) =>
+      setMessages((prev) =>
+        prev.length === 1 && prev[0].role === "assistant" ? [{ role: "assistant", content }] : prev,
+      );
+
+    const placeMarker = (lat: number, lng: number, approximate: boolean) => {
       const map = mapInst.current;
       const g = (window as any).google;
-      if (map && g?.maps) {
-        const pos2 = { lat, lng };
-        if (gpsMarker.current) gpsMarker.current.setPosition(pos2);
-        else
-          gpsMarker.current = new g.maps.Marker({
-            position: pos2,
-            map,
-            title: TXT[L].map_from,
-            label: { text: "🧭", fontSize: "18px" },
-          });
-        map.setCenter(pos2);
-        map.setZoom(approximate ? 11 : 14);
-      }
-    };
-
-    const failWith = (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
-      setGpsBusy(false);
-      setGpsError(code);
-      setGpsFromIp(false);
-      markGpsReady();
-      setShowManualDepart(true);
-      if (code === "out_of_zone") {
-        setMessages((prev) => {
-          if (prev.length === 1 && prev[0].role === "assistant") {
-            return [{ role: "assistant", content: `📍 ${TXT[L].gps_out_zone}. ${TXT[L].gps_out_zone_msg}` }];
-          }
-          return prev;
+      if (!map || !g?.maps) return;
+      const pos = { lat, lng };
+      if (gpsMarker.current) gpsMarker.current.setPosition(pos);
+      else
+        gpsMarker.current = new g.maps.Marker({
+          position: pos,
+          map,
+          title: TXT[L].map_from,
+          label: { text: "🧭", fontSize: "18px" },
         });
-      }
+      map.setCenter(pos);
+      map.setZoom(approximate ? 11 : 14);
     };
 
-    const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
-      const ip = await ipGeolocate();
-      if (ip) {
-        // Aucune limite de distance : on accepte la position même hors
-        // Charente-Maritime, elle est simplement marquée comme approximative.
-        await applyDetectedPosition(ip.lat, ip.lng, true, true);
-        return;
-      }
-      failWith(code);
-    };
+    (async () => {
+      const outcome = await locateUser();
+      if (cancelled) return;
 
-    const onSuccess = (pos: GeolocationPosition, _allowApproximate: boolean) => {
-      const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        void tryIpFallback("unavailable");
+      if (!outcome.ok) {
+        setGpsBusy(false);
+        setGpsFromIp(false);
+        setGpsError(outcome.reason);
+        markGpsReady();
+        setShowManualDepart(true);
+        setGreeting(`📍 ${failureMessage(outcome.reason, L)}`);
         return;
       }
-      // Sur ordinateur la précision Wi-Fi dépasse souvent le kilomètre : on ne
-      // jette plus la position (c'était la cause du « je ne vous trouve pas »),
-      // on la garde en signalant qu'elle est approximative. Idem hors zone :
-      // les prestations n'ont plus de limite de distance.
-      const approximate =
-        (typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M) || !isInServiceZone(lat, lng);
-      void applyDetectedPosition(lat, lng, approximate);
-    };
 
-    const onFirstError = (firstErr: GeolocationPositionError) => {
-      if (firstErr?.code === 1) {
-        void tryIpFallback("denied");
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (cached) => onSuccess(cached, true),
-        (secondErr) => {
-          const err = secondErr || firstErr;
-          void tryIpFallback(err?.code === 1 ? "denied" : err?.code === 3 ? "timeout" : "unavailable");
-        },
-        { enableHighAccuracy: false, maximumAge: 120000, timeout: 8000 },
+      const fix = outcome.fix;
+      const { label, city } = await describePosition(fix.lat, fix.lng, L);
+      if (cancelled) return;
+
+      setGpsFromIp(fix.source === "ip" || fix.source === "network");
+      setGps({ lat: fix.lat, lng: fix.lng, label });
+      setGpsError(fix.approximate ? "low_accuracy" : null);
+      setGpsBusy(false);
+      markGpsReady();
+      if (fix.approximate) setShowManualDepart(true);
+      setGreeting(
+        fix.approximate
+          ? `📍 ${positionMessage(fix, city, L)}\n${label}`
+          : `📍 ${positionMessage(fix, city, L)}\n${TXT[L].ask_destination}`,
       );
+      placeMarker(fix.lat, fix.lng, fix.approximate);
+    })();
+
+    return () => {
+      cancelled = true;
     };
-
-    if (noGeo) {
-      void tryIpFallback("unavailable");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition((pos) => onSuccess(pos, false), onFirstError, {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 18000,
-    });
   }, []);
+
 
   // When user picks a manual departure, update greeting & map
   useEffect(() => {
