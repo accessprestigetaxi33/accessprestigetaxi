@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/I18nProvider";
 import { toast } from "sonner";
 import { notifyNewReview } from "@/lib/push.functions";
-import { flushQueuedReviews, queueReview, type QueuedReview } from "@/lib/review-queue";
+import { queueReview, type QueuedReview } from "@/lib/review-queue";
 import { Button } from "@/components/ui/button";
 
 /** Questionnaire professionnel : note globale + critères détaillés + avis écrit. */
@@ -37,7 +37,6 @@ const COPY = {
     errSubmit: "Envoi impossible pour le moment, réessayez.",
     success: "Merci ! Votre avis a bien été envoyé et sera publié après relecture.",
     queued: "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
-    synced: "Votre avis enregistré hors ligne vient d'être envoyé.",
     optional: "facultatif",
     outOf: "sur 5",
   },
@@ -61,7 +60,6 @@ const COPY = {
     errSubmit: "Could not send right now, please try again.",
     success: "Thank you! Your review was sent and will be published after review.",
     queued: "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
-    synced: "Your offline review has just been sent.",
     optional: "optional",
     outOf: "out of 5",
   },
@@ -119,17 +117,6 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const [service, setService] = useState("");
   const [recommend, setRecommend] = useState<"yes" | "no" | "">("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const sync = () => {
-      void flushQueuedReviews().then((count) => {
-        if (count > 0) toast.success(c.synced);
-      }).catch(() => {});
-    };
-    sync();
-    window.addEventListener("online", sync);
-    return () => window.removeEventListener("online", sync);
-  }, [c.synced]);
 
   const average = useMemo(() => {
     const values = Object.values(scores).filter((v) => v > 0);

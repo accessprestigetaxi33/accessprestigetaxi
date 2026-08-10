@@ -3,6 +3,7 @@ import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/I18nProvider";
 import { registerPWA } from "@/lib/pwa";
+import { startReviewQueueSync } from "@/lib/review-queue";
 
 export function PwaController() {
   const { lang } = useI18n();
@@ -21,6 +22,16 @@ export function PwaController() {
           onClick: applyUpdate,
         },
       });
+    });
+  }, [lang]);
+
+  useEffect(() => {
+    return startReviewQueueSync(() => {
+      toast.success(
+        lang === "en"
+          ? "Your offline review has just been sent."
+          : "Votre avis enregistré hors ligne vient d'être envoyé.",
+      );
     });
   }, [lang]);
 

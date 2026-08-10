@@ -69,3 +69,23 @@ export async function flushQueuedReviews(): Promise<number> {
   }
   return sent;
 }
+
+export function startReviewQueueSync(onSynced?: (count: number) => void): () => void {
+  if (typeof window === "undefined" || typeof indexedDB === "undefined") return () => {};
+  let active = true;
+  const sync = () => {
+    void flushQueuedReviews().then((count) => {
+      if (active && count > 0) onSynced?.(count);
+    }).catch(() => {});
+  };
+  sync();
+  window.addEventListener("online", sync);
+  window.addEventListener("focus", sync);
+  document.addEventListener("visibilitychange", sync);
+  return () => {
+    active = false;
+    window.removeEventListener("online", sync);
+    window.removeEventListener("focus", sync);
+    document.removeEventListener("visibilitychange", sync);
+  };
+}
