@@ -1386,6 +1386,24 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_site_event: {
+        Args: {
+          p_event: string
+          p_page?: string
+          p_referrer?: string
+          p_session_id: string
+        }
+        Returns: boolean
+      }
+      log_tracking_event: {
+        Args: {
+          p_event_type: string
+          p_key: string
+          p_source?: string
+          p_user_agent?: string
+        }
+        Returns: boolean
+      }
       mark_gps_validated: {
         Args: { p_reservation_id: string }
         Returns: boolean
@@ -1410,6 +1428,15 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      request_recurring_ride: {
+        Args: {
+          p_day_of_week: number
+          p_frequency: string
+          p_key: string
+          p_time_hhmm: string
+        }
+        Returns: boolean
       }
       unsubscribe_push: { Args: { p_endpoint: string }; Returns: boolean }
     }
