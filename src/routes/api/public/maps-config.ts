@@ -54,11 +54,29 @@ export const Route = createFileRoute("/api/public/maps-config")({
           ].find(isBrowserKey) ?? "";
         const devKey = [clean(process.env["GOOGLE_MAPS_DEV_API_KEY"])].find(isBrowserKey) ?? "";
 
-        let host = "";
-        try {
-          host = new URL(request.url).host;
-        } catch {
-          host = "";
+        // IMPORTANT : derrière le proxy Lovable/Cloudflare, request.url pointe sur
+        // l'hôte interne (localhost). On lit donc l'hôte public réel dans les
+        // en-têtes, sinon le domaine perso est traité comme une preview et reçoit
+        // la clé Lovable — d'où « RefererNotAllowedMapError » et l'aperçu statique.
+        const headerHost = (name: string) => clean(request.headers.get(name)).split(",")[0]?.trim() ?? "";
+        const fromUrl = (raw: string) => {
+          try {
+            return raw ? new URL(raw).host : "";
+          } catch {
+            return "";
+          }
+        };
+        let host =
+          headerHost("x-forwarded-host") ||
+          fromUrl(headerHost("origin")) ||
+          fromUrl(headerHost("referer")) ||
+          headerHost("host");
+        if (!host) {
+          try {
+            host = new URL(request.url).host;
+          } catch {
+            host = "";
+          }
         }
         const dev = isDevHost(host);
         const onLovableHost = host.endsWith(".lovable.app") || host.endsWith(".lovableproject.com");
