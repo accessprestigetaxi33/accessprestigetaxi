@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { CanonicalSync } from "@/components/CanonicalSync";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ServiceStrip } from "@/components/ServiceStrip";
@@ -172,6 +173,8 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
+        {/* canonical + hreflang recalculés à chaque navigation / changement de langue */}
+        <CanonicalSync />
         {standalone ? (
           <Outlet />
         ) : (

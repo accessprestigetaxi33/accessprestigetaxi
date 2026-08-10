@@ -41,9 +41,26 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   // Après le montage seulement : on lit la langue stockée et on bascule dessus.
   // Ce re-render se produit APRÈS l'hydratation, donc pas de mismatch possible.
   useEffect(() => {
-    const stored = readStoredLang();
-    if (stored !== "fr") setLangState(stored);
-    applyDocDir(stored);
+    // Priorité au paramètre d'URL `?lang=en` : c'est l'URL déclarée en
+    // hreflang="en" et dans le sitemap. Sans cette lecture, l'URL anglaise
+    // servirait le contenu français — donc du contenu dupliqué pour Google.
+    let fromUrl: Lang | null = null;
+    try {
+      const raw = new URLSearchParams(window.location.search).get("lang");
+      if (raw && isLang(raw)) fromUrl = raw;
+    } catch {
+      /* noop */
+    }
+    const next = fromUrl ?? readStoredLang();
+    if (next !== "fr") setLangState(next);
+    if (fromUrl) {
+      try {
+        localStorage.setItem(STORAGE_KEY, fromUrl);
+      } catch {
+        /* noop */
+      }
+    }
+    applyDocDir(next);
   }, []);
 
   const setLang = (l: Lang) => {
