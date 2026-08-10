@@ -29,6 +29,28 @@ function refererHelp(): string {
 
 export type GoogleMapsApi = any;
 
+/** Abonnement aux refus de clé (RefererNotAllowedMapError), y compris après chargement. */
+const authFailureListeners = new Set<(detail: string) => void>();
+let lastAuthFailure: string | null = null;
+
+export function onGoogleMapsAuthFailure(cb: (detail: string) => void): () => void {
+  authFailureListeners.add(cb);
+  if (lastAuthFailure) cb(lastAuthFailure);
+  return () => authFailureListeners.delete(cb);
+}
+
+function notifyAuthFailure(detail: string) {
+  lastAuthFailure = detail;
+  authFailureListeners.forEach((cb) => {
+    try {
+      cb(detail);
+    } catch {
+      /* noop */
+    }
+  });
+}
+
+
 let mapsLoadPromise: Promise<GoogleMapsApi> | null = null;
 let mapsScriptAttempt = 0;
 
@@ -103,17 +125,21 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
             if (timeoutId) clearTimeout(timeoutId);
             try {
               delete (win as any)[callbackName];
-              delete (win as any).gm_authFailure;
             } catch {
               (win as any)[callbackName] = undefined;
-              (win as any).gm_authFailure = undefined;
             }
+            // gm_authFailure reste branché : Google ne vérifie le référent
+            // qu'à la création de la première carte, donc l'échec peut
+            // survenir après la résolution du chargement.
+            (win as any).gm_authFailure = () => notifyAuthFailure(refererHelp());
             resolve(win.google);
           }, 500);
         };
         (win as any).gm_authFailure = () => {
+          notifyAuthFailure(refererHelp());
           fail(refererHelp());
         };
+
 
       const script = document.createElement("script");
       script.id = "google-maps-sdk";

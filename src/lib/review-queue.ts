@@ -40,9 +40,12 @@ async function withStore<T>(
   });
 }
 
-export function queueReview(review: QueuedReview): Promise<IDBValidKey> {
-  return withStore("readwrite", (store) => store.put(review));
+export async function queueReview(review: QueuedReview): Promise<IDBValidKey> {
+  const result = await withStore("readwrite", (store) => store.put(review));
+  await refreshReviewSyncState();
+  return result;
 }
+
 
 export function listQueuedReviews(): Promise<QueuedReview[]> {
   return withStore("readonly", (store) => store.getAll());
@@ -52,9 +55,59 @@ function deleteQueuedReview(id: string): Promise<undefined> {
   return withStore("readwrite", (store) => store.delete(id) as IDBRequest<undefined>);
 }
 
+/** État de synchronisation exposé à l'interface. */
+export type ReviewSyncState = {
+  phase: "idle" | "queued" | "sending" | "sent" | "error";
+  pending: number;
+  total: number;
+  sent: number;
+  lastSyncedAt: string | null;
+};
+
+let syncState: ReviewSyncState = { phase: "idle", pending: 0, total: 0, sent: 0, lastSyncedAt: null };
+const listeners = new Set<(s: ReviewSyncState) => void>();
+
+function setSyncState(patch: Partial<ReviewSyncState>) {
+  syncState = { ...syncState, ...patch };
+  listeners.forEach((l) => l(syncState));
+}
+
+export function getReviewSyncState(): ReviewSyncState {
+  return syncState;
+}
+
+export function subscribeReviewSync(listener: (s: ReviewSyncState) => void): () => void {
+  listeners.add(listener);
+  listener(syncState);
+  return () => listeners.delete(listener);
+}
+
+/** Recalcule le nombre d'avis en attente et met l'état à jour. */
+export async function refreshReviewSyncState(): Promise<number> {
+  if (typeof indexedDB === "undefined") return 0;
+  try {
+    const queued = await listQueuedReviews();
+    setSyncState({
+      pending: queued.length,
+      phase: queued.length > 0 ? "queued" : syncState.phase === "sent" ? "sent" : "idle",
+    });
+    return queued.length;
+  } catch {
+    return 0;
+  }
+}
+
 export async function flushQueuedReviews(): Promise<number> {
-  if (typeof navigator !== "undefined" && !navigator.onLine) return 0;
+  if (typeof navigator !== "undefined" && !navigator.onLine) {
+    await refreshReviewSyncState();
+    return 0;
+  }
   const queued = await listQueuedReviews();
+  if (queued.length === 0) {
+    setSyncState({ pending: 0, total: 0 });
+    return 0;
+  }
+  setSyncState({ phase: "sending", pending: queued.length, total: queued.length, sent: 0 });
   let sent = 0;
   for (const review of queued) {
     const { error } = await (supabase as any).from("avis").insert({
@@ -63,10 +116,20 @@ export async function flushQueuedReviews(): Promise<number> {
       commentaire: review.commentaire,
       status: review.status,
     });
-    if (error) continue;
+    if (error) {
+      setSyncState({ phase: "error" });
+      continue;
+    }
     await deleteQueuedReview(review.id);
     sent += 1;
+    setSyncState({ sent, pending: queued.length - sent });
   }
+  const remaining = queued.length - sent;
+  setSyncState({
+    phase: remaining > 0 ? (sent > 0 ? "queued" : "error") : "sent",
+    pending: remaining,
+    lastSyncedAt: sent > 0 ? new Date().toISOString() : syncState.lastSyncedAt,
+  });
   return sent;
 }
 
@@ -78,7 +141,9 @@ export function startReviewQueueSync(onSynced?: (count: number) => void): () => 
       if (active && count > 0) onSynced?.(count);
     }).catch(() => {});
   };
+  void refreshReviewSyncState();
   sync();
+
   window.addEventListener("online", sync);
   window.addEventListener("focus", sync);
   document.addEventListener("visibilitychange", sync);

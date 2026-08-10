@@ -36,7 +36,9 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { aiChatReservation } from "@/lib/reserver-chat.functions";
 import { transcribeAudio } from "@/lib/stt.functions";
 import { geocodeAddress, reverseGeocode } from "@/lib/googleGeocode";
-import { loadGoogleMaps } from "@/lib/googleMaps";
+import { loadGoogleMaps, onGoogleMapsAuthFailure } from "@/lib/googleMaps";
+import { MapFallback } from "@/components/MapFallback";
+
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { SITE_URL } from "@/lib/seo-hreflang";
@@ -991,9 +993,13 @@ function ReserverPage() {
     });
   }, [L]);
 
+  // refus de clé signalé par Google même après chargement du SDK
+  useEffect(() => onGoogleMapsAuthFailure((detail) => setMapError(detail)), []);
+
   // init Google Map
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       let g: any;
       try {
@@ -2630,17 +2636,9 @@ function ReserverPage() {
           <div className="relative h-[360px] w-full">
             <div ref={mapRef} className="absolute inset-0" />
             {mapError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/95 p-4" role="status">
-                <div className="max-h-full max-w-full overflow-auto rounded-lg border border-destructive/30 bg-destructive/10 p-3">
-                  <p className="flex items-center gap-2 text-xs font-semibold text-destructive">
-                    <AlertCircle className="h-4 w-4" aria-hidden="true" /> {R.map_error_title}
-                  </p>
-                  <pre className="mt-1.5 whitespace-pre-wrap text-[11px] leading-relaxed text-destructive">
-                    {mapError}
-                  </pre>
-                </div>
-              </div>
+              <MapFallback lang={L} lat={46.1591} lng={-1.152} zoom={10} label={R.map_error_title} detail={mapError} />
             )}
+
           </div>
         </div>
 

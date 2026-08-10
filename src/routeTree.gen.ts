@@ -54,6 +54,7 @@ import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/a
 import { Route as ApiPublicPlacesRouteImport } from './routes/api/public/places'
 import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
 import { Route as ApiPublicReviewsRouteImport } from './routes/api/public/reviews'
+import { Route as ApiPublicStaticMapRouteImport } from './routes/api/public/static-map'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicContactVcfRouteImport } from './routes/api/public/contact.vcf'
 import { Route as ApiPublicHooksRecomputeDurationsTickRouteImport } from './routes/api/public/hooks/recompute-durations-tick'
@@ -288,6 +289,11 @@ const ApiPublicReviewsRoute = ApiPublicReviewsRouteImport.update({
   path: '/api/public/reviews',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStaticMapRoute = ApiPublicStaticMapRouteImport.update({
+  id: '/api/public/static-map',
+  path: '/api/public/static-map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
   id: '/lovable/email/events',
   path: '/lovable/email/events',
@@ -369,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
+  '/api/public/static-map': typeof ApiPublicStaticMapRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
@@ -422,6 +429,7 @@ export interface FileRoutesByTo {
   '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
+  '/api/public/static-map': typeof ApiPublicStaticMapRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
@@ -476,6 +484,7 @@ export interface FileRoutesById {
   '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
+  '/api/public/static-map': typeof ApiPublicStaticMapRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
@@ -531,6 +540,7 @@ export interface FileRouteTypes {
     | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
+    | '/api/public/static-map'
     | '/lovable/email/events'
     | '/api/public/contact/vcf'
     | '/api/public/hooks/recompute-durations-tick'
@@ -584,6 +594,7 @@ export interface FileRouteTypes {
     | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
+    | '/api/public/static-map'
     | '/lovable/email/events'
     | '/api/public/contact/vcf'
     | '/api/public/hooks/recompute-durations-tick'
@@ -637,6 +648,7 @@ export interface FileRouteTypes {
     | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
+    | '/api/public/static-map'
     | '/lovable/email/events'
     | '/api/public/contact/vcf'
     | '/api/public/hooks/recompute-durations-tick'
@@ -690,6 +702,7 @@ export interface RootRouteChildren {
   ApiPublicPlacesRoute: typeof ApiPublicPlacesRoute
   ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
   ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
+  ApiPublicStaticMapRoute: typeof ApiPublicStaticMapRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   ApiPublicHooksRecomputeDurationsTickRoute: typeof ApiPublicHooksRecomputeDurationsTickRoute
   ApiPublicHooksRecurringRidesTickRoute: typeof ApiPublicHooksRecurringRidesTickRoute
@@ -1014,6 +1027,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicReviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/static-map': {
+      id: '/api/public/static-map'
+      path: '/api/public/static-map'
+      fullPath: '/api/public/static-map'
+      preLoaderRoute: typeof ApiPublicStaticMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/events': {
       id: '/lovable/email/events'
       path: '/lovable/email/events'
@@ -1127,6 +1147,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPlacesRoute: ApiPublicPlacesRoute,
   ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
   ApiPublicReviewsRoute: ApiPublicReviewsRoute,
+  ApiPublicStaticMapRoute: ApiPublicStaticMapRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
   ApiPublicHooksRecomputeDurationsTickRoute:
     ApiPublicHooksRecomputeDurationsTickRoute,

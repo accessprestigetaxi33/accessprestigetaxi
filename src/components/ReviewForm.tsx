@@ -1,10 +1,17 @@
-import { useMemo, useState } from "react";
-import { Star, Loader2, Check, CloudOff } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Star, Loader2, Check, CloudOff, RefreshCw, CloudUpload, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/I18nProvider";
 import { toast } from "sonner";
 import { notifyNewReview } from "@/lib/push.functions";
-import { queueReview, type QueuedReview } from "@/lib/review-queue";
+import {
+  queueReview,
+  subscribeReviewSync,
+  flushQueuedReviews,
+  type QueuedReview,
+  type ReviewSyncState,
+} from "@/lib/review-queue";
+
 import { Button } from "@/components/ui/button";
 
 /** Questionnaire professionnel : note globale + critères détaillés + avis écrit. */
@@ -39,9 +46,16 @@ const COPY = {
     queued: "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
     optional: "facultatif",
     outOf: "sur 5",
+    syncQueued: "avis en attente d'envoi sur cet appareil",
+    syncSending: "Envoi en cours…",
+    syncSent: "Tous vos avis hors ligne ont été envoyés.",
+    syncError: "Envoi impossible pour l'instant — nouvelle tentative au retour du réseau.",
+    syncRetry: "Réessayer maintenant",
+    syncProgress: "envoyé(s)",
   },
   en: {
     title: "Your review of the ride",
+
     intro:
       "It only takes seconds: rate your ride, score each criterion and leave a comment. Every review is checked before publication.",
     global: "Overall rating",
@@ -62,7 +76,14 @@ const COPY = {
     queued: "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
     optional: "optional",
     outOf: "out of 5",
+    syncQueued: "review(s) waiting to be sent from this device",
+    syncSending: "Sending…",
+    syncSent: "All your offline reviews have been sent.",
+    syncError: "Cannot send right now — we will retry as soon as you are back online.",
+    syncRetry: "Retry now",
+    syncProgress: "sent",
   },
+
 } as const;
 
 function Stars({
@@ -104,10 +125,67 @@ function Stars({
   );
 }
 
+function ReviewSyncStatus({ c }: { c: (typeof COPY)["fr"] | (typeof COPY)["en"] }) {
+  const [state, setState] = useState<ReviewSyncState | null>(null);
+  const [retrying, setRetrying] = useState(false);
+
+  useEffect(() => subscribeReviewSync(setState), []);
+
+  if (!state) return null;
+  const { phase, pending, total, sent } = state;
+  if (phase === "idle" || (pending === 0 && phase !== "sent" && phase !== "sending")) return null;
+
+  const progress = total > 0 ? Math.round((sent / total) * 100) : phase === "sent" ? 100 : 0;
+  const tone =
+    phase === "sent"
+      ? "border-primary/40 bg-primary/5"
+      : phase === "error"
+        ? "border-destructive/40 bg-destructive/5"
+        : "border-border bg-muted/40";
+
+  return (
+    <div className={`mt-4 rounded-xl border p-3 text-xs ${tone}`} role="status" aria-live="polite">
+      <p className="flex items-center gap-2 font-medium text-foreground">
+        {phase === "sending" && <CloudUpload className="h-4 w-4 animate-pulse text-primary" aria-hidden="true" />}
+        {phase === "queued" && <CloudOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
+        {phase === "sent" && <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" />}
+        {phase === "error" && <CloudOff className="h-4 w-4 text-destructive" aria-hidden="true" />}
+        {phase === "sending"
+          ? `${c.syncSending} ${sent}/${total} ${c.syncProgress}`
+          : phase === "sent"
+            ? c.syncSent
+            : phase === "error"
+              ? c.syncError
+              : `${pending} ${c.syncQueued}`}
+      </p>
+      {(phase === "sending" || phase === "sent") && (
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+          <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
+        </div>
+      )}
+      {(phase === "queued" || phase === "error") && (
+        <button
+          type="button"
+          disabled={retrying}
+          onClick={() => {
+            setRetrying(true);
+            void flushQueuedReviews().finally(() => setRetrying(false));
+          }}
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 font-medium text-foreground transition hover:border-primary disabled:opacity-60"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${retrying ? "animate-spin" : ""}`} aria-hidden="true" />
+          {c.syncRetry}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
   const isEn = lang === "en";
+
 
   const [name, setName] = useState("");
   const [text, setText] = useState("");
@@ -196,6 +274,8 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
     >
       <h3 className="font-display text-2xl font-semibold">{c.title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{c.intro}</p>
+      <ReviewSyncStatus c={c} />
+
 
       <fieldset className="mt-6">
         <legend className="text-sm font-semibold text-foreground">{c.global}</legend>
