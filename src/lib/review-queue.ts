@@ -40,9 +40,12 @@ async function withStore<T>(
   });
 }
 
-export function queueReview(review: QueuedReview): Promise<IDBValidKey> {
-  return withStore("readwrite", (store) => store.put(review));
+export async function queueReview(review: QueuedReview): Promise<IDBValidKey> {
+  const result = await withStore("readwrite", (store) => store.put(review));
+  await refreshReviewSyncState();
+  return result;
 }
+
 
 export function listQueuedReviews(): Promise<QueuedReview[]> {
   return withStore("readonly", (store) => store.getAll());
