@@ -1,5 +1,10 @@
 // Génération PDF d'un reçu de course côté navigateur.
-import jsPDF from "jspdf";
+// jsPDF (~400 Ko) est chargé à la demande, au clic sur « Reçu PDF ».
+import type jsPDF from "jspdf";
+
+async function loadJsPDF() {
+  return (await import("jspdf")).default;
+}
 import type { ClientReservation } from "@/lib/client-reservations.functions";
 
 const GOLD = "#C9A84C";
@@ -17,11 +22,12 @@ function fmtDate(iso: string) {
   }
 }
 
-export function downloadReceiptPDF(
+export async function downloadReceiptPDF(
   r: ClientReservation,
   client: { name: string; email: string; phone: string },
 ) {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const JsPDF = await loadJsPDF();
+  const doc = new JsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
 
   // Header band
