@@ -14,6 +14,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as CarteRouteImport } from './routes/carte'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DiagnosticRouteImport } from './routes/diagnostic'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -85,6 +86,11 @@ const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiagnosticRoute = DiagnosticRouteImport.update({
+  id: '/diagnostic',
+  path: '/diagnostic',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriverRoute = DriverRouteImport.update({
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
@@ -389,6 +396,7 @@ export interface FileRoutesByTo {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
@@ -444,6 +452,7 @@ export interface FileRoutesById {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
@@ -500,6 +509,7 @@ export interface FileRouteTypes {
     | '/carte'
     | '/confidentialite'
     | '/contact'
+    | '/diagnostic'
     | '/driver'
     | '/mentions-legales'
     | '/notifications'
@@ -554,6 +564,7 @@ export interface FileRouteTypes {
     | '/carte'
     | '/confidentialite'
     | '/contact'
+    | '/diagnostic'
     | '/driver'
     | '/mentions-legales'
     | '/notifications'
@@ -608,6 +619,7 @@ export interface FileRouteTypes {
     | '/carte'
     | '/confidentialite'
     | '/contact'
+    | '/diagnostic'
     | '/driver'
     | '/mentions-legales'
     | '/notifications'
@@ -663,6 +675,7 @@ export interface RootRouteChildren {
   CarteRoute: typeof CarteRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
+  DiagnosticRoute: typeof DiagnosticRoute
   DriverRoute: typeof DriverRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -745,6 +758,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnostic': {
+      id: '/diagnostic'
+      path: '/diagnostic'
+      fullPath: '/diagnostic'
+      preLoaderRoute: typeof DiagnosticRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/driver': {
@@ -1108,6 +1128,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarteRoute: CarteRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
+  DiagnosticRoute: DiagnosticRoute,
   DriverRoute: DriverRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   NotificationsRoute: NotificationsRoute,
