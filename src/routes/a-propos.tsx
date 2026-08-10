@@ -21,6 +21,7 @@ export const Route = createFileRoute("/a-propos")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: ABOUT_TITLE },
       { name: "twitter:description", content: ABOUT_DESC },
+      ...socialImageMeta(ABOUT_TITLE),
     ],
     links: seoLinks("/a-propos"),
     scripts: [

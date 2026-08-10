@@ -21,6 +21,7 @@ export const Route = createFileRoute("/destinations/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
+      ...socialImageMeta(TITLE),
     ],
     links: seoLinks("/destinations"),
     scripts: [

@@ -85,6 +85,7 @@ export const Route = createFileRoute("/blog/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: BLOG_TITLE },
       { name: "twitter:description", content: BLOG_OG_DESC },
+      ...socialImageMeta(BLOG_TITLE),
     ],
     links: seoLinks("/blog"),
     scripts: [
