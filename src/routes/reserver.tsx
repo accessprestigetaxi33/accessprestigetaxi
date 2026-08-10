@@ -1127,30 +1127,27 @@ function ReserverPage() {
 
     const tryIpFallback = async (code: "denied" | "timeout" | "unavailable" | "low_accuracy" | "out_of_zone") => {
       const ip = await ipGeolocate();
-      if (ip && isInServiceZone(ip.lat, ip.lng)) {
+      if (ip) {
+        // Aucune limite de distance : on accepte la position même hors
+        // Charente-Maritime, elle est simplement marquée comme approximative.
         await applyDetectedPosition(ip.lat, ip.lng, true, true);
         return;
       }
-      // Repli IP indisponible ou lui aussi hors zone : on l'annonce clairement
-      // et on bascule sur la saisie manuelle départ/arrivée.
-      failWith(ip ? "out_of_zone" : code);
+      failWith(code);
     };
 
-    const onSuccess = (pos: GeolocationPosition, allowApproximate: boolean) => {
+    const onSuccess = (pos: GeolocationPosition, _allowApproximate: boolean) => {
       const { latitude: lat, longitude: lng, accuracy } = pos.coords;
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
         void tryIpFallback("unavailable");
         return;
       }
-      if (!isInServiceZone(lat, lng)) {
-        void tryIpFallback("out_of_zone");
-        return;
-      }
-      const approximate = typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M;
-      if (approximate && !allowApproximate) {
-        void tryIpFallback("low_accuracy");
-        return;
-      }
+      // Sur ordinateur la précision Wi-Fi dépasse souvent le kilomètre : on ne
+      // jette plus la position (c'était la cause du « je ne vous trouve pas »),
+      // on la garde en signalant qu'elle est approximative. Idem hors zone :
+      // les prestations n'ont plus de limite de distance.
+      const approximate =
+        (typeof accuracy === "number" && accuracy > MAX_AUTO_GEO_ACCURACY_M) || !isInServiceZone(lat, lng);
       void applyDetectedPosition(lat, lng, approximate);
     };
 
