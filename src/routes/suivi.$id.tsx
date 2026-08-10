@@ -968,22 +968,15 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await (supabase as any).from("recurring_rides").insert([
-        {
-          source_reservation_id: reservation.id,
-          depart: reservation.depart,
-          destination: reservation.destination ?? reservation.arrivee,
-          nb_passagers: reservation.nb_passagers ?? 1,
-          nb_bagages: reservation.nb_bagages ?? 0,
-          mode_paiement: reservation.mode_paiement ?? "cb",
-          client_name: reservation.client_name,
-          frequency: freq,
-          day_of_week: dayOfWeek,
-          time_hhmm: time,
-          active: true,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      // Écriture sécurisée : la fonction serveur vérifie la clé de suivi et
+      // recopie elle-même les détails du trajet (aucune donnée client de confiance).
+      const { data: ok, error } = await (supabase as any).rpc("request_recurring_ride", {
+        p_key: reservation.suivi_id ?? reservation.tracking_id ?? reservation.id,
+        p_frequency: freq,
+        p_day_of_week: dayOfWeek,
+        p_time_hhmm: time,
+      });
+      if (!error && ok === false) throw new Error("INVALID_REQUEST");
       if (error) throw error;
       setSaved(true);
       toast.success(t("suivi.rec_success"));
