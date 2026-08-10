@@ -85,8 +85,32 @@ export async function sendTemplateEmail(
     if (error instanceof EmailAPIError && error.code === 'recipient_suppressed') {
       return { sent: false, reason: 'recipient_suppressed' }
     }
+    // Repli Resend : si l'envoi managé échoue (domaine non vérifié, incident,
+    // quota), l'e-mail part quand même via la clé Resend du projet.
+    const resendKey = process.env['RESEND_API_KEY']
+    if (resendKey) {
+      const resp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${resendKey}`,
+        },
+        body: JSON.stringify({
+          from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+          to: [recipient],
+          subject,
+          html,
+          text,
+          reply_to: options.replyTo,
+        }),
+      })
+      if (resp.ok) return { sent: true }
+      const body = await resp.text().catch(() => '')
+      console.error(`[send-email] Resend fallback failed [${resp.status}]: ${body}`)
+    }
     throw error
   }
+
 
   return { sent: true }
 }
