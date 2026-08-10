@@ -21,16 +21,16 @@ function refererHelp(): string {
 export type GoogleMapsApi = any;
 
 /** Abonnement aux refus de clé (RefererNotAllowedMapError), y compris après chargement. */
-const authFailureListeners = new Set<(detail: string) => void>();
+const authFailureListeners = new Set<(detail: string | null) => void>();
 let lastAuthFailure: string | null = null;
 
-export function onGoogleMapsAuthFailure(cb: (detail: string) => void): () => void {
+export function onGoogleMapsAuthFailure(cb: (detail: string | null) => void): () => void {
   authFailureListeners.add(cb);
   if (lastAuthFailure) cb(lastAuthFailure);
   return () => authFailureListeners.delete(cb);
 }
 
-function notifyAuthFailure(detail: string) {
+function notifyAuthFailure(detail: string | null) {
   lastAuthFailure = detail;
   authFailureListeners.forEach((cb) => {
     try {
@@ -40,6 +40,12 @@ function notifyAuthFailure(detail: string) {
     }
   });
 }
+
+/** À appeler dès qu'une carte s'affiche réellement : annule un repli affiché à tort. */
+export function clearGoogleMapsAuthFailure() {
+  if (lastAuthFailure !== null) notifyAuthFailure(null);
+}
+
 
 
 let mapsLoadPromise: Promise<GoogleMapsApi> | null = null;
@@ -127,7 +133,8 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
           }, 500);
         };
         (win as any).gm_authFailure = () => {
-          notifyAuthFailure(refererHelp());
+          // On ne prévient l'UI que si aucune autre clé ne peut prendre le relais.
+          if (index + 1 >= apiKeys.length) notifyAuthFailure(refererHelp());
           fail(refererHelp());
         };
 
