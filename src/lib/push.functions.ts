@@ -195,7 +195,7 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
 
       const emailPayload = {
         templateName: "new-reservation-admin",
-        recipientEmail: "taxi.city033@gmail.com",
+        recipientEmail: "accessprestigetaxi@gmail.com",
         idempotencyKey: `new-res-admin-${r.id}`,
         templateData: {
           id: r.id,

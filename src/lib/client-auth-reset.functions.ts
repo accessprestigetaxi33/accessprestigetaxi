@@ -95,7 +95,7 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
           message_id: messageId,
           to: account.email,
           from: "Access Prestige Taxi <noreply@notify.accessprestigetaxi.lovable.app>",
-          reply_to: "taxi.city033@gmail.com",
+          reply_to: "accessprestigetaxi@gmail.com",
           sender_domain: "notify.accessprestigetaxi.lovable.app",
           subject,
           html,

@@ -44,7 +44,7 @@ const COPY = {
           <strong>Access Prestige Taxi</strong> — Patricia & Alain, chauffeurs de taxi indépendants, Charente (16) et
           Charente-Maritime (17), France.
           <br />
-          Contact&nbsp;: <a href="mailto:taxipatricia@gmail.com" className="text-primary hover:underline">taxipatricia@gmail.com</a>
+          Contact&nbsp;: <a href="mailto:accessprestigetaxi@gmail.com" className="text-primary hover:underline">accessprestigetaxi@gmail.com</a>
         </>
       ),
     },
@@ -90,7 +90,7 @@ const COPY = {
     ],
     rightsOutro: (
       <>
-        Pour exercer vos droits&nbsp;: <a href="mailto:taxipatricia@gmail.com" className="text-primary hover:underline">taxipatricia@gmail.com</a>.
+        Pour exercer vos droits&nbsp;: <a href="mailto:accessprestigetaxi@gmail.com" className="text-primary hover:underline">accessprestigetaxi@gmail.com</a>.
       </>
     ),
     cookiesTitle: "Cookies",
@@ -119,7 +119,7 @@ const COPY = {
           <strong>Access Prestige Taxi</strong> — Patricia & Alain, independent licensed taxi drivers, Charente (16) and
           Charente-Maritime (17), France.
           <br />
-          Contact: <a href="mailto:taxipatricia@gmail.com" className="text-primary hover:underline">taxipatricia@gmail.com</a>
+          Contact: <a href="mailto:accessprestigetaxi@gmail.com" className="text-primary hover:underline">accessprestigetaxi@gmail.com</a>
         </>
       ),
     },
@@ -164,7 +164,7 @@ const COPY = {
     ],
     rightsOutro: (
       <>
-        To exercise your rights: <a href="mailto:taxipatricia@gmail.com" className="text-primary hover:underline">taxipatricia@gmail.com</a>.
+        To exercise your rights: <a href="mailto:accessprestigetaxi@gmail.com" className="text-primary hover:underline">accessprestigetaxi@gmail.com</a>.
       </>
     ),
     cookiesTitle: "Cookies",

@@ -3,7 +3,7 @@
 // l'audience "chauffeur". Les e-mails passent par les modèles FR/EN et
 // l'infrastructure e-mail gérée (rebonds/plaintes/désabonnements gérés côté serveur).
 
-const ADMIN_EMAIL = "taxipatricia@gmail.com";
+const ADMIN_EMAIL = "accessprestigetaxi@gmail.com";
 
 /**
  * Notifie les chauffeurs d'une nouvelle course (audience partagée "chauffeur").
