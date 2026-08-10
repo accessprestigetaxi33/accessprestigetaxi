@@ -993,9 +993,13 @@ function ReserverPage() {
     });
   }, [L]);
 
+  // refus de clé signalé par Google même après chargement du SDK
+  useEffect(() => onGoogleMapsAuthFailure((detail) => setMapError(detail)), []);
+
   // init Google Map
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       let g: any;
       try {
