@@ -1684,12 +1684,11 @@ function SuiviPage() {
     if (!resolvedId) return;
     const src = new URLSearchParams(window.location.search).get("src") ?? "direct";
     (supabase as any)
-      .from("tracking_events")
-      .insert({
-        reservation_id: resolvedId,
-        event_type: "tracking_opened",
-        source: src,
-        user_agent: navigator.userAgent.slice(0, 200),
+      .rpc("log_tracking_event", {
+        p_key: resolvedId,
+        p_event_type: "tracking_opened",
+        p_source: src,
+        p_user_agent: navigator.userAgent.slice(0, 200),
       })
       .then(() => {}); // fire & forget
   }, [resolvedId]);
