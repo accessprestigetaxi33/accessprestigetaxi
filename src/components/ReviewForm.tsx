@@ -76,7 +76,14 @@ const COPY = {
     queued: "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
     optional: "optional",
     outOf: "out of 5",
+    syncQueued: "review(s) waiting to be sent from this device",
+    syncSending: "Sending…",
+    syncSent: "All your offline reviews have been sent.",
+    syncError: "Cannot send right now — we will retry as soon as you are back online.",
+    syncRetry: "Retry now",
+    syncProgress: "sent",
   },
+
 } as const;
 
 function Stars({
