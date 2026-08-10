@@ -125,10 +125,67 @@ function Stars({
   );
 }
 
+function ReviewSyncStatus({ c }: { c: (typeof COPY)["fr"] | (typeof COPY)["en"] }) {
+  const [state, setState] = useState<ReviewSyncState | null>(null);
+  const [retrying, setRetrying] = useState(false);
+
+  useEffect(() => subscribeReviewSync(setState), []);
+
+  if (!state) return null;
+  const { phase, pending, total, sent } = state;
+  if (phase === "idle" || (pending === 0 && phase !== "sent" && phase !== "sending")) return null;
+
+  const progress = total > 0 ? Math.round((sent / total) * 100) : phase === "sent" ? 100 : 0;
+  const tone =
+    phase === "sent"
+      ? "border-primary/40 bg-primary/5"
+      : phase === "error"
+        ? "border-destructive/40 bg-destructive/5"
+        : "border-border bg-muted/40";
+
+  return (
+    <div className={`mt-4 rounded-xl border p-3 text-xs ${tone}`} role="status" aria-live="polite">
+      <p className="flex items-center gap-2 font-medium text-foreground">
+        {phase === "sending" && <CloudUpload className="h-4 w-4 animate-pulse text-primary" aria-hidden="true" />}
+        {phase === "queued" && <CloudOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
+        {phase === "sent" && <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" />}
+        {phase === "error" && <CloudOff className="h-4 w-4 text-destructive" aria-hidden="true" />}
+        {phase === "sending"
+          ? `${c.syncSending} ${sent}/${total} ${c.syncProgress}`
+          : phase === "sent"
+            ? c.syncSent
+            : phase === "error"
+              ? c.syncError
+              : `${pending} ${c.syncQueued}`}
+      </p>
+      {(phase === "sending" || phase === "sent") && (
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+          <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
+        </div>
+      )}
+      {(phase === "queued" || phase === "error") && (
+        <button
+          type="button"
+          disabled={retrying}
+          onClick={() => {
+            setRetrying(true);
+            void flushQueuedReviews().finally(() => setRetrying(false));
+          }}
+          className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 font-medium text-foreground transition hover:border-primary disabled:opacity-60"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${retrying ? "animate-spin" : ""}`} aria-hidden="true" />
+          {c.syncRetry}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
   const isEn = lang === "en";
+
 
   const [name, setName] = useState("");
   const [text, setText] = useState("");
