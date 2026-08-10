@@ -52,8 +52,10 @@ const COPY = {
     syncError: "Envoi impossible pour l'instant — nouvelle tentative au retour du réseau.",
     syncRetry: "Réessayer maintenant",
     syncProgress: "envoyé(s)",
-
+  },
+  en: {
     title: "Your review of the ride",
+
     intro:
       "It only takes seconds: rate your ride, score each criterion and leave a comment. Every review is checked before publication.",
     global: "Overall rating",
