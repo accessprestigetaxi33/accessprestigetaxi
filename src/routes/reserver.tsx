@@ -37,6 +37,8 @@ import { aiChatReservation } from "@/lib/reserver-chat.functions";
 import { transcribeAudio } from "@/lib/stt.functions";
 import { geocodeAddress, reverseGeocode } from "@/lib/googleGeocode";
 import { loadGoogleMaps } from "@/lib/googleMaps";
+import { MapFallback } from "@/components/MapFallback";
+
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { SITE_URL } from "@/lib/seo-hreflang";
