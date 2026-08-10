@@ -274,6 +274,8 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
     >
       <h3 className="font-display text-2xl font-semibold">{c.title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{c.intro}</p>
+      <ReviewSyncStatus c={c} />
+
 
       <fieldset className="mt-6">
         <legend className="text-sm font-semibold text-foreground">{c.global}</legend>
