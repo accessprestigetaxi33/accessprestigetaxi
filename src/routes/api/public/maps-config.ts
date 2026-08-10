@@ -65,16 +65,17 @@ export const Route = createFileRoute("/api/public/maps-config")({
         // L'ordre décide de la clé essayée en premier : chaque clé n'est valide
         // que sur ses propres référents, l'autre sert de repli automatique.
         // Vérifié en navigateur réel (08/2026) :
-        //  - GOOGLE_API_KEY  -> autorisée sur *.lovable.app / *.lovableproject.com
-        //  - GOOGLE_MAPS_DEV_API_KEY -> autorisée sur accessprestigetaxi.fr
+        //  - GOOGLE_API_KEY (clé du client)  -> autorisée sur accessprestigetaxi.fr
+        //  - GOOGLE_MAPS_BROWSER_KEY (Lovable) -> autorisée sur *.lovable.app
         const keys = Array.from(
           new Set(
             (onLovableHost || host.startsWith("localhost") || host.startsWith("127.0.0.1")
-              ? [customKey, lovableKey, devKey]
-              : [devKey, customKey, lovableKey]
+              ? [lovableKey, devKey, customKey]
+              : [customKey, lovableKey, devKey]
             ).filter(Boolean),
           ),
         );
+
 
 
 
