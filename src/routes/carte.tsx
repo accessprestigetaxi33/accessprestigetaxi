@@ -1,9 +1,10 @@
+import { socialImageMeta } from "@/lib/og";
 import { createFileRoute } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.webp";
 
-const CARTE_URL = "https://accessprestigetaxi.lovable.app/carte";
+const CARTE_URL = "https://accessprestigetaxi.fr/carte";
 const CARTE_TITLE = "Access Prestige Taxi — Contact rapide";
 const CARTE_DESC =
   "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Access Prestige Taxi en un clic.";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/carte")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: CARTE_TITLE },
       { name: "twitter:description", content: CARTE_DESC },
+      ...socialImageMeta(CARTE_TITLE),
     ],
     links: seoLinks("/carte"),
   }),

@@ -1,3 +1,4 @@
+import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { Plane, Train, Briefcase, Wrench, ShieldCheck, MapPin, Users, Clock, HelpCircle } from "lucide-react";
@@ -42,6 +43,12 @@ export const Route = createFileRoute("/services")({
       { property: "og:description", content: SERVICES_DESC },
       { property: "og:url", content: SERVICES_URL },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "en_GB" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SERVICES_TITLE },
+      { name: "twitter:description", content: SERVICES_DESC },
+      ...socialImageMeta(SERVICES_TITLE),
     ],
     links: seoLinks("/services"),
     scripts: [

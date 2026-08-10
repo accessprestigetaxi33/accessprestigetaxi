@@ -1,3 +1,4 @@
+import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/confidentialite")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE_FR },
       { name: "twitter:description", content: DESC_FR },
+      ...socialImageMeta(TITLE_FR),
       { name: "robots", content: "index,follow" },
     ],
     links: seoLinks("/confidentialite"),
