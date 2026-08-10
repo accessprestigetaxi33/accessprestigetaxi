@@ -22,7 +22,7 @@ import { driverUpdateReservation, driverListReservations, driverDeleteClient } f
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
 import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
-import { reverseGeocode } from "@/lib/geocode";
+import { reverseGeocode } from "@/lib/googleGeocode";
 
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
@@ -981,8 +981,7 @@ function useDriverGpsTracking(driverId?: string) {
       return;
     }
     if (watchRef.current != null) return;
-    watchRef.current = navigator.geolocation.watchPosition(
-      (p) => {
+    const handlePosition = (p: GeolocationPosition) => {
         const lat = p.coords.latitude;
         const lng = p.coords.longitude;
         setState("on");
@@ -1027,9 +1026,23 @@ function useDriverGpsTracking(driverId?: string) {
             .then((r) => r && setAddr(r))
             .catch(() => {});
         }
-      },
+    };
+
+    watchRef.current = navigator.geolocation.watchPosition(
+      handlePosition,
       (err) => {
-        setState(err.code === err.PERMISSION_DENIED ? "denied" : "error");
+        if (err.code === err.PERMISSION_DENIED) {
+          setState("denied");
+          return;
+        }
+        // Sur ordinateur (et en intérieur) le GPS haute précision expire
+        // souvent : on retente une position basse précision avant d'afficher
+        // une erreur, sinon le chauffeur n'a plus aucune localisation.
+        navigator.geolocation.getCurrentPosition(handlePosition, () => setState("error"), {
+          enableHighAccuracy: false,
+          maximumAge: 120000,
+          timeout: 15000,
+        });
       },
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
     );
