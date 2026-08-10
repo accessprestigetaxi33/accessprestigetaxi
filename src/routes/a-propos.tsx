@@ -11,7 +11,7 @@ const ABOUT_DESC =
 const ABOUT_URL = "https://accessprestigetaxi.fr/a-propos";
 
 export const Route = createFileRoute("/a-propos")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: ABOUT_TITLE },
       { name: "description", content: ABOUT_DESC },
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/a-propos")({
       { name: "twitter:description", content: ABOUT_DESC },
       ...socialImageMeta(ABOUT_TITLE),
     ],
-    links: seoLinks("/a-propos"),
+    links: seoLinks("/a-propos", match.search),
     scripts: [
       {
         type: "application/ld+json",

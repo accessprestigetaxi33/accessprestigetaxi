@@ -13,14 +13,33 @@ Allow: /
 User-agent: *
 Allow: /
 Allow: /reserver
-Allow: /driver
-Allow: /driver-install.html
+
+# Versions anglaises : ce sont les mêmes URL suffixées de ?lang=en, déclarées
+# en hreflang="en" et dans le sitemap. Elles doivent rester explorables — c'est
+# le canonical auto-référent de chaque page qui gère la relation FR/EN, pas un
+# blocage robots (une URL bloquée ici ne peut pas transmettre son canonical).
+Allow: /*?lang=en
+
+# Paramètres de tracking : variantes strictement identiques à la page propre.
+# Le canonical les dédoublonne déjà ; on évite en plus de gaspiller le budget
+# d'exploration.
+Disallow: /*?*utm_
+Disallow: /*&utm_
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+
+# Espace chauffeur (privé, réservé à Alain et Patricia) : en noindex côté page.
+Disallow: /driver
+Disallow: /driver-install.html
+
 # Pages personnelles (contiennent un identifiant de course ou de client) :
 # elles ne doivent pas être indexées.
 Disallow: /client
 Disallow: /suivi/
 Disallow: /course/
 Disallow: /reservation/
+Disallow: /reservation
+Disallow: /notifications
 Disallow: /qr-generator
 
 Sitemap: https://accessprestigetaxi.fr/sitemap.xml

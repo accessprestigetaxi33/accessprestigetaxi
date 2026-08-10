@@ -10,7 +10,7 @@ const CARTE_DESC =
   "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Access Prestige Taxi en un clic.";
 
 export const Route = createFileRoute("/carte")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: CARTE_TITLE },
       { name: "description", content: CARTE_DESC },
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/carte")({
       { name: "twitter:description", content: CARTE_DESC },
       ...socialImageMeta(CARTE_TITLE),
     ],
-    links: seoLinks("/carte"),
+    links: seoLinks("/carte", match.search),
   }),
   component: CartePage,
 });

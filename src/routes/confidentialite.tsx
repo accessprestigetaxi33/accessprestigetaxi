@@ -13,7 +13,7 @@ const DESC_EN =
   "Access Prestige Taxi privacy policy: data collected, purposes, retention periods and your GDPR rights.";
 
 export const Route = createFileRoute("/confidentialite")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/confidentialite")({
       ...socialImageMeta(TITLE_FR),
       { name: "robots", content: "index,follow" },
     ],
-    links: seoLinks("/confidentialite"),
+    links: seoLinks("/confidentialite", match.search),
   }),
   component: ConfidentialitePage,
 });

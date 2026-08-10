@@ -11,7 +11,7 @@ const DESC =
   "Chauffeurs de taxi agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente-Maritime.";
 
 export const Route = createFileRoute("/securite")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: TITLE },
       { name: "description", content: DESC },
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/securite")({
       { name: "twitter:description", content: DESC },
       ...socialImageMeta(TITLE),
     ],
-    links: seoLinks("/securite"),
+    links: seoLinks("/securite", match.search),
   }),
   component: SecuritePage,
 });

@@ -75,7 +75,7 @@ const BLOG_OG_DESC =
 
 export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: BLOG_TITLE },
       { name: "description", content: BLOG_DESC },
@@ -88,7 +88,7 @@ export const Route = createFileRoute("/blog/")({
       { name: "twitter:description", content: BLOG_OG_DESC },
       ...socialImageMeta(BLOG_TITLE),
     ],
-    links: seoLinks("/blog"),
+    links: seoLinks("/blog", match.search),
     scripts: [
       {
         type: "application/ld+json",

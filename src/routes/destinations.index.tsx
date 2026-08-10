@@ -11,7 +11,7 @@ const DESC =
   "Nos trajets taxi les plus réservés en Charente-Maritime : gare TGV d'Angoulême, aéroport de Bordeaux, île de Ré, Royan, vignobles de Cognac et transport conventionné.";
 
 export const Route = createFileRoute("/destinations/")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: TITLE },
       { name: "description", content: DESC },
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/destinations/")({
       { name: "twitter:description", content: DESC },
       ...socialImageMeta(TITLE),
     ],
-    links: seoLinks("/destinations"),
+    links: seoLinks("/destinations", match.search),
     scripts: [
       {
         type: "application/ld+json",

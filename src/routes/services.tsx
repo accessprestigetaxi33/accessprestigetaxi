@@ -35,7 +35,7 @@ const SERVICES_FAQ = [
 ];
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
+  head: ({ match }) => ({
     meta: [
       { title: SERVICES_TITLE },
       { name: "description", content: SERVICES_DESC },
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/services")({
       { name: "twitter:description", content: SERVICES_DESC },
       ...socialImageMeta(SERVICES_TITLE),
     ],
-    links: seoLinks("/services"),
+    links: seoLinks("/services", match.search),
     scripts: [
       {
         type: "application/ld+json",
