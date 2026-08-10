@@ -3,8 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
 import { SocialMetaSync } from "@/components/SocialMetaSync";
-import ogHomeFr from "@/assets/apt-og-home-fr.png.asset.json";
-import ogHomeEn from "@/assets/apt-og-home-en.png.asset.json";
+import ogHomeFr from "@/assets/apt-og-home-fr.jpg.asset.json";
+import ogHomeEn from "@/assets/apt-og-home-en.jpg.asset.json";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
@@ -20,14 +20,15 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { NotificationOptInStep } from "@/components/NotificationOptInStep";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { FaqSeo } from "@/components/FaqSeo";
 import { Reveal, Counter } from "@/components/motion-ui";
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-fr.png.asset.json";
-import heroCarsEn from "@/assets/apt-hero-en.png.asset.json";
+import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
+import heroCarsEn from "@/assets/apt-hero-en.webp.asset.json";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoBmwReal from "@/assets/apt-bmw-real.jpg.asset.json";
@@ -1202,6 +1203,11 @@ function Index() {
               </ol>
             </article>
           </Reveal>
+
+          <Reveal delay={0.12}>
+            <NotificationOptInStep />
+          </Reveal>
+
 
           <Reveal delay={0.14}>
             <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">

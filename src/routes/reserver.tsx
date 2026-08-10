@@ -46,8 +46,8 @@ import {
   businessRef,
   localBusinessNode,
 } from "@/lib/business";
-import ogReserverFr from "@/assets/apt-og-reserver-fr.png.asset.json";
-import ogReserverEn from "@/assets/apt-og-reserver-en.png.asset.json";
+import ogReserverFr from "@/assets/apt-og-reserver-fr.jpg.asset.json";
+import ogReserverEn from "@/assets/apt-og-reserver-en.jpg.asset.json";
 import { DRIVERS } from "@/data/drivers";
 import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 import { placesGeolocate } from "@/lib/places";

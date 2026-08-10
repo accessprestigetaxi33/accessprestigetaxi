@@ -2,8 +2,17 @@
 // Configuration centralisée de la clé Google Maps + vérification au démarrage.
 // Importé par googleMaps.ts (chargement SDK) et par le root route (warning dev).
 
-const cleanEnv = (value: unknown): string | undefined =>
-  typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
+// Une clé navigateur Google valide commence toujours par "AIza". Les clés de
+// passerelle du connecteur Lovable ("lovc_…") ne doivent JAMAIS être passées au
+// script Maps : elles provoquent un InvalidKeyMapError (carte vide).
+const isBrowserKey = (v: string): boolean => /^AIza[0-9A-Za-z_-]{10,}$/.test(v);
+
+const cleanEnv = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  const v = value.trim();
+  if (!v || !isBrowserKey(v)) return undefined;
+  return v;
+};
 
 // Priorité au connecteur Google Maps Platform : en mode custom, c'est cette
 // variable qui contient la clé autorisée pour accessprestigetaxi.lovable.app. L'ancienne
