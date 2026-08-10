@@ -103,17 +103,21 @@ export function loadGoogleMaps(): Promise<GoogleMapsApi> {
             if (timeoutId) clearTimeout(timeoutId);
             try {
               delete (win as any)[callbackName];
-              delete (win as any).gm_authFailure;
             } catch {
               (win as any)[callbackName] = undefined;
-              (win as any).gm_authFailure = undefined;
             }
+            // gm_authFailure reste branché : Google ne vérifie le référent
+            // qu'à la création de la première carte, donc l'échec peut
+            // survenir après la résolution du chargement.
+            (win as any).gm_authFailure = () => notifyAuthFailure(refererHelp());
             resolve(win.google);
           }, 500);
         };
         (win as any).gm_authFailure = () => {
+          notifyAuthFailure(refererHelp());
           fail(refererHelp());
         };
+
 
       const script = document.createElement("script");
       script.id = "google-maps-sdk";
