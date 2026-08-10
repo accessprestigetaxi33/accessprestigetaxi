@@ -29,6 +29,28 @@ function refererHelp(): string {
 
 export type GoogleMapsApi = any;
 
+/** Abonnement aux refus de clé (RefererNotAllowedMapError), y compris après chargement. */
+const authFailureListeners = new Set<(detail: string) => void>();
+let lastAuthFailure: string | null = null;
+
+export function onGoogleMapsAuthFailure(cb: (detail: string) => void): () => void {
+  authFailureListeners.add(cb);
+  if (lastAuthFailure) cb(lastAuthFailure);
+  return () => authFailureListeners.delete(cb);
+}
+
+function notifyAuthFailure(detail: string) {
+  lastAuthFailure = detail;
+  authFailureListeners.forEach((cb) => {
+    try {
+      cb(detail);
+    } catch {
+      /* noop */
+    }
+  });
+}
+
+
 let mapsLoadPromise: Promise<GoogleMapsApi> | null = null;
 let mapsScriptAttempt = 0;
 
