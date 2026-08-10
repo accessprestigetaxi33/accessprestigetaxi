@@ -1203,6 +1203,11 @@ function Index() {
             </article>
           </Reveal>
 
+          <Reveal delay={0.12}>
+            <NotificationOptInStep />
+          </Reveal>
+
+
           <Reveal delay={0.14}>
             <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
               {lang === "en"
