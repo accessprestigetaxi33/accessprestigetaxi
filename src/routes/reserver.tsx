@@ -36,7 +36,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { aiChatReservation } from "@/lib/reserver-chat.functions";
 import { transcribeAudio } from "@/lib/stt.functions";
 import { geocodeAddress, reverseGeocode } from "@/lib/googleGeocode";
-import { loadGoogleMaps, onGoogleMapsAuthFailure } from "@/lib/googleMaps";
+import { loadGoogleMaps, onGoogleMapsAuthFailure, clearGoogleMapsAuthFailure } from "@/lib/googleMaps";
 import { MapFallback } from "@/components/MapFallback";
 
 import { useI18n } from "@/i18n/I18nProvider";
