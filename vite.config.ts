@@ -27,7 +27,7 @@ export default defineConfig({
       // désactive en dev / preview Lovable.
       VitePWA({
         strategies: "generateSW",
-        registerType: "autoUpdate",
+        registerType: "prompt",
         injectRegister: null,
         filename: "sw.js",
         manifest: false,
@@ -37,7 +37,7 @@ export default defineConfig({
           navigateFallback: null,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
-          skipWaiting: true,
+          skipWaiting: false,
           navigationPreload: true,
           runtimeCaching: [
             {
@@ -47,6 +47,7 @@ export default defineConfig({
               options: {
                 cacheName: "apt-pages",
                 networkTimeoutSeconds: 4,
+                cacheableResponse: { statuses: [0, 200] },
                 expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 7 },
               },
             },

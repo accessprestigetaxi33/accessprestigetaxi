@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
-import { Star, Loader2, Check } from "lucide-react";
+import { Star, Loader2, Check, CloudOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/i18n/I18nProvider";
 import { toast } from "sonner";
 import { notifyNewReview } from "@/lib/push.functions";
+import { queueReview, type QueuedReview } from "@/lib/review-queue";
+import { Button } from "@/components/ui/button";
 
 /** Questionnaire professionnel : note globale + critères détaillés + avis écrit. */
 const CRITERIA = [
@@ -34,6 +36,7 @@ const COPY = {
     errFields: "Merci d'indiquer votre nom, une note globale et un commentaire.",
     errSubmit: "Envoi impossible pour le moment, réessayez.",
     success: "Merci ! Votre avis a bien été envoyé et sera publié après relecture.",
+    queued: "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
     optional: "facultatif",
     outOf: "sur 5",
   },
@@ -56,6 +59,7 @@ const COPY = {
     errFields: "Please provide your name, an overall rating and a comment.",
     errSubmit: "Could not send right now, please try again.",
     success: "Thank you! Your review was sent and will be published after review.",
+    queued: "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
     optional: "optional",
     outOf: "out of 5",
   },
@@ -141,21 +145,37 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
     setLoading(true);
     const commentaire = buildComment();
     // Table "avis" — colonnes : author_name, note, commentaire, status…
-    const { error } = await (supabase as any).from("avis").insert({
+    const review: QueuedReview = {
+      id: crypto.randomUUID(),
       author_name: name.trim().slice(0, 80),
       note: rating,
       commentaire,
       status: "pending",
-    });
+      queued_at: new Date().toISOString(),
+    };
+    const { error } = navigator.onLine
+      ? await (supabase as any).from("avis").insert({
+          author_name: review.author_name,
+          note: review.note,
+          commentaire: review.commentaire,
+          status: review.status,
+        })
+      : { error: new Error("offline") };
     setLoading(false);
     if (error) {
-      toast.error(c.errSubmit);
-      return;
+      try {
+        await queueReview(review);
+        toast.info(c.queued, { icon: <CloudOff className="h-4 w-4" />, duration: 7000 });
+      } catch {
+        toast.error(c.errSubmit);
+        return;
+      }
+    } else {
+      toast.success(c.success);
+      void notifyNewReview({
+        data: { author_name: review.author_name, note: rating, commentaire: commentaire.slice(0, 500) },
+      }).catch(() => {});
     }
-    toast.success(c.success);
-    void notifyNewReview({
-      data: { author_name: name.trim().slice(0, 80), note: rating, commentaire: commentaire.slice(0, 500) },
-    }).catch(() => {});
     setName("");
     setText("");
     setRating(0);
@@ -283,14 +303,14 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         />
       </div>
 
-      <button
+      <Button
         type="submit"
         disabled={loading}
-        className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90 disabled:opacity-60"
+        className="mt-5 h-auto rounded-xl px-6 py-3 shadow-[var(--shadow-gold)]"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         {c.submit}
-      </button>
+      </Button>
     </form>
   );
 }
