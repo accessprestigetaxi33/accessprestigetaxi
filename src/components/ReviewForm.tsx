@@ -46,8 +46,13 @@ const COPY = {
     queued: "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
     optional: "facultatif",
     outOf: "sur 5",
-  },
-  en: {
+    syncQueued: "avis en attente d'envoi sur cet appareil",
+    syncSending: "Envoi en cours…",
+    syncSent: "Tous vos avis hors ligne ont été envoyés.",
+    syncError: "Envoi impossible pour l'instant — nouvelle tentative au retour du réseau.",
+    syncRetry: "Réessayer maintenant",
+    syncProgress: "envoyé(s)",
+
     title: "Your review of the ride",
     intro:
       "It only takes seconds: rate your ride, score each criterion and leave a comment. Every review is checked before publication.",
