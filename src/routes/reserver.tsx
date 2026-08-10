@@ -53,6 +53,7 @@ import ogReserverEn from "@/assets/apt-og-reserver-en.jpg.asset.json";
 import { DRIVERS } from "@/data/drivers";
 import { detaillerPrix, HEURE_DEBUT_JOUR, HEURE_FIN_JOUR } from "@/lib/tarif";
 import { placesGeolocate } from "@/lib/places";
+import { locateUser, describePosition, positionMessage, failureMessage } from "@/lib/geolocation";
 
 
 // ─── Géolocalisation : même configuration que Start Fresh Here ──────────────
