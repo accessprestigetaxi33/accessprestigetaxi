@@ -41,7 +41,7 @@ import { MapFallback } from "@/components/MapFallback";
 
 import { useI18n } from "@/i18n/I18nProvider";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
-import { SITE_URL } from "@/lib/seo-hreflang";
+import { SITE_URL, seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl } from "@/lib/og";
 import { SocialMetaSync } from "@/components/SocialMetaSync";
 import {
@@ -177,12 +177,10 @@ export const Route = createFileRoute("/reserver")({
       },
       { name: "theme-color", content: "#F5F0E6" },
     ],
-    links: [
-      { rel: "canonical" as const, href: RESERVER_URL },
-      { rel: "alternate" as const, hrefLang: "fr", href: RESERVER_URL },
-      { rel: "alternate" as const, hrefLang: "en", href: `${RESERVER_URL}?lang=en` },
-      { rel: "alternate" as const, hrefLang: "x-default", href: RESERVER_URL },
-    ],
+    // Canonical auto-référent : /reserver?lang=en se canonicalise sur lui-même
+    // (sinon Google ignore l'alternate anglais), tout autre paramètre retombe
+    // sur l'URL propre.
+    links: seoLinks("/reserver", match.search),
     scripts: [
       // Entité métier unique du site (adresse, coordonnées GPS, horaires),
       // partagée par toutes les pages via son @id.
