@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import QRCode from "qrcode";
 import jsQR from "jsqr";
-import { jsPDF } from "jspdf";
+// jsPDF est chargé à la demande (au clic sur « PDF ») : ~400 Ko en moins au chargement.
+import type { jsPDF as JsPDFType } from "jspdf";
 import logoSrc from "@/assets/tcb-logo-badge.webp";
 
 export const Route = createFileRoute("/qr-generator")({

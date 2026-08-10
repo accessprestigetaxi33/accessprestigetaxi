@@ -44,9 +44,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/a-propos", changefreq: "monthly", priority: "0.7" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
           { path: "/carte", changefreq: "monthly", priority: "0.5" },
-          // Espace chauffeurs (page publique d'accès + page d'installation PWA).
-          { path: "/driver", changefreq: "monthly", priority: "0.3" },
-          { path: "/driver-install.html", changefreq: "yearly", priority: "0.3" },
+          // NB : /driver et /driver-install.html sont en noindex (espace privé
+          // des chauffeurs) — ils ne doivent donc PAS figurer dans le sitemap.
           { path: "/mentions-legales", changefreq: "yearly", priority: "0.3" },
           { path: "/confidentialite", changefreq: "yearly", priority: "0.3" },
         ];
@@ -56,9 +55,14 @@ export const Route = createFileRoute("/sitemap.xml")({
           return [
             `  <url>`,
             `    <loc>${loc}</loc>`,
+            // La version anglaise est la même URL suffixée de ?lang=en :
+            // déclarer la même href pour fr et en ferait ignorer l'alternance
+            // par Google. On génère donc la bonne URL par langue.
             ...ALT_LANGS.map(
               (l) =>
-                `    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${loc}" />`,
+                `    <xhtml:link rel="alternate" hreflang="${l.hreflang}" href="${
+                  l.hreflang === "en" ? `${loc}?lang=en` : loc
+                }" />`,
             ),
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
