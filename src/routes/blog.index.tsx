@@ -289,7 +289,7 @@ function BlogIndex() {
         {visible.length === 0 ? (
           <p className="py-12 text-center text-sm text-muted-foreground">{c.empty}</p>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-6">
             {visible.map((e, i) => {
               const Icon = CAT_ICON[e.category];
               const txt = isEn ? e.en : e.fr;
@@ -302,13 +302,15 @@ function BlogIndex() {
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                       <img
-                        src={e.photos[0]}
+                        src={imgAt(e.photos[0], 640)}
+                        srcSet={imgSrcSet(e.photos[0], [320, 480, 640, 960])}
+                        sizes="(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
                         alt={`${e.name}, ${e.city} — ${isEn ? "Charente-Maritime guide by Access Prestige Taxi" : "guide Charente-Maritime par Access Prestige Taxi"}`}
                         loading={i < 3 ? "eager" : "lazy"}
-                       fetchPriority={i === 0 ? "high" : "auto"}
+                        fetchPriority={i === 0 ? "high" : "auto"}
                         decoding="async"
-                       width={960}
-                       height={720}
+                        width={640}
+                        height={480}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                       <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
