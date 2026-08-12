@@ -26,11 +26,11 @@ export function SiteHeader() {
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between md:gap-4 lg:gap-6">
         <Link
           to="/"
-          className="flex min-w-0 items-center leading-none"
+          className="flex min-w-0 items-center leading-none md:shrink-0"
           onClick={() => setOpen(false)}
           aria-label="Access Prestige Taxi"
         >
-          <span className="truncate whitespace-nowrap font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-sm sm:tracking-[0.12em] lg:text-base lg:tracking-[0.2em]">
+          <span className="truncate whitespace-nowrap md:overflow-visible font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-sm sm:tracking-[0.12em] lg:text-base lg:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
           </span>
         </Link>
@@ -57,7 +57,7 @@ export function SiteHeader() {
               key={d.tel}
               href={`tel:${d.tel}`}
               aria-label={`Appeler ${d.name} au ${d.display}`}
-              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-xs font-semibold transition hover:border-primary lg:inline-flex lg:px-3"
+              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-xs font-semibold transition hover:border-primary xl:inline-flex xl:px-3"
             >
               <Phone className="h-4 w-4 shrink-0 text-primary" />
               <span className="flex flex-col items-start leading-tight">
@@ -72,7 +72,7 @@ export function SiteHeader() {
             className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-sm font-semibold transition hover:border-primary lg:px-3"
           >
             <UserCircle2 className="h-4 w-4 shrink-0 text-primary" />
-            <span className="hidden lg:inline">{t("nav.account")}</span>
+            <span className="hidden xl:inline">{t("nav.account")}</span>
           </Link>
           <Link
             to="/reservation"
