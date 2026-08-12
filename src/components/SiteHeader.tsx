@@ -23,33 +23,33 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]">
-      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between">
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between md:gap-4 lg:gap-6">
         <Link
           to="/"
           className="flex min-w-0 items-center leading-none"
           onClick={() => setOpen(false)}
           aria-label="Access Prestige Taxi"
         >
-          <span className="truncate font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-base sm:tracking-[0.2em]">
+          <span className="truncate whitespace-nowrap font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-sm sm:tracking-[0.12em] lg:text-base lg:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-4 md:flex lg:gap-6 xl:gap-7">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: l.to === "/" }}
               activeProps={{ className: "text-primary" }}
-              className="text-sm font-medium text-foreground/80 transition hover:text-primary"
+              className="whitespace-nowrap text-[13px] font-medium text-foreground/80 transition hover:text-primary lg:text-sm"
             >
               {l.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden shrink-0 items-center gap-1.5 md:flex lg:gap-2">
           <ThemeToggle />
           <LanguageSwitcher />
           {DRIVERS.map((d) => (
@@ -57,7 +57,7 @@ export function SiteHeader() {
               key={d.tel}
               href={`tel:${d.tel}`}
               aria-label={`Appeler ${d.name} au ${d.display}`}
-              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-semibold transition hover:border-primary lg:text-sm"
+              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-xs font-semibold transition hover:border-primary lg:inline-flex lg:px-3"
             >
               <Phone className="h-4 w-4 shrink-0 text-primary" />
               <span className="flex flex-col items-start leading-tight">
@@ -69,13 +69,14 @@ export function SiteHeader() {
           <Link
             to="/client/login"
             aria-label="Espace client"
-            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-semibold transition hover:border-primary"
+            className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-sm font-semibold transition hover:border-primary lg:px-3"
           >
-            <UserCircle2 className="h-4 w-4 text-primary" /> {t("nav.account")}
+            <UserCircle2 className="h-4 w-4 shrink-0 text-primary" />
+            <span className="hidden lg:inline">{t("nav.account")}</span>
           </Link>
           <Link
             to="/reservation"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90"
+            className="shrink-0 whitespace-nowrap rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground lg:px-4 shadow-[var(--shadow-gold)] transition hover:opacity-90"
           >
             {t("nav.book")}
           </Link>
