@@ -257,12 +257,14 @@ function BlogArticle() {
                 className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
               >
                 <img
-                  src={o.photos[0]}
+                  src={imgAt(o.photos[0], 640)}
+                  srcSet={imgSrcSet(o.photos[0], [320, 480, 640, 960])}
+                  sizes="(min-width: 640px) 25vw, 100vw"
                   alt={`${o.name}, ${o.city}`}
                   loading="lazy"
                   decoding="async"
-                  width={960}
-                  height={600}
+                  width={640}
+                  height={400}
                   className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="p-4">
