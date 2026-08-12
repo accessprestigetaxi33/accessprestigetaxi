@@ -286,7 +286,7 @@ function BlogIndex() {
       </section>
 
       {/* GRILLE */}
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
         {visible.length === 0 ? (
           <p className="py-12 text-center text-sm text-muted-foreground">{c.empty}</p>
         ) : (
