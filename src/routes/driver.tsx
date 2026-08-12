@@ -113,7 +113,7 @@ const DRIVER_SOCIAL_EN = {
 // ── Route definition ───────────────────────────────────────────────────────
 export const Route = createFileRoute("/driver")({
   // ?lang=en / ?lang=fr : choisit la langue du visuel et des textes de partage.
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { token: string; lang?: "en" | "fr" } => ({
     token: String(s.token ?? ""),
     lang:
       s['lang'] === "en" ? ("en" as const) : s['lang'] === "fr" ? ("fr" as const) : undefined,

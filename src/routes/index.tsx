@@ -480,7 +480,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   // ?lang=en / ?lang=fr : force la langue du visuel et des textes sociaux
   // pour les partages (la page reste servie sur la même URL).
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { lang?: "en" | "fr" } => ({
     lang:
       search['lang'] === "en"
         ? ("en" as const)

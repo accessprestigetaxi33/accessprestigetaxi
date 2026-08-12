@@ -28,6 +28,7 @@ import {
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { getReservationForFinPublic } from "@/lib/reservation.functions";
+import { logTrackingEvent, requestRecurringRide } from "@/lib/public-events.functions";
 import { recomputeReservationDuration } from "@/lib/reservation-recompute.functions";
 import { durationSecondsToMinutes, durationSecondsToMs } from "@/lib/duration";
 import { listSuiviMessages, sendSuiviClientMessage, markReservationMessagesRead, countUnreadClientForReservation, type ChatMessage } from "@/lib/chat.functions";
@@ -970,14 +971,15 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
     try {
       // Écriture sécurisée : la fonction serveur vérifie la clé de suivi et
       // recopie elle-même les détails du trajet (aucune donnée client de confiance).
-      const { data: ok, error } = await (supabase as any).rpc("request_recurring_ride", {
-        p_key: reservation.suivi_id ?? reservation.tracking_id ?? reservation.id,
-        p_frequency: freq,
-        p_day_of_week: dayOfWeek,
-        p_time_hhmm: time,
+      const res = await requestRecurringRide({
+        data: {
+          key: String(reservation.suivi_id ?? reservation.tracking_id ?? reservation.id),
+          frequency: freq as "weekly" | "biweekly" | "monthly",
+          day_of_week: dayOfWeek,
+          time_hhmm: time,
+        },
       });
-      if (!error && ok === false) throw new Error("INVALID_REQUEST");
-      if (error) throw error;
+      if (!res.ok) throw new Error(res.error ?? "INVALID_REQUEST");
       setSaved(true);
       toast.success(t("suivi.rec_success"));
       setTimeout(onClose, 1800);
@@ -1683,14 +1685,14 @@ function SuiviPage() {
   useEffect(() => {
     if (!resolvedId) return;
     const src = new URLSearchParams(window.location.search).get("src") ?? "direct";
-    (supabase as any)
-      .rpc("log_tracking_event", {
-        p_key: resolvedId,
-        p_event_type: "tracking_opened",
-        p_source: src,
-        p_user_agent: navigator.userAgent.slice(0, 200),
-      })
-      .then(() => {}); // fire & forget
+    void logTrackingEvent({
+      data: {
+        key: String(resolvedId),
+        event_type: "tracking_opened",
+        source: src.slice(0, 60),
+        user_agent: navigator.userAgent.slice(0, 200),
+      },
+    }).catch(() => {}); // fire & forget
   }, [resolvedId]);
 
   // ── Realtime connection state ──

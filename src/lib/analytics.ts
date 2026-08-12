@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { logSiteEvent } from "@/lib/public-events.functions";
 import { gaEvent } from "@/lib/ga4";
 
 const SESSION_KEY = "apt.analytics.sid";
@@ -42,20 +42,20 @@ export function trackEvent(event: AnalyticsEvent, meta?: Record<string, unknown>
     window.location.search +
     (meta && Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : "");
 
-  // Écriture via fonction serveur validée + limitée (pas d'insertion anonyme directe).
-  void (supabase as any)
-    .rpc("log_site_event", {
-      p_event: event.slice(0, 100),
-      p_session_id: getSessionId().slice(0, 100),
-      p_page: page.slice(0, 500),
-      p_referrer: (document.referrer || "").slice(0, 1000),
-    })
-    .then(({ error }: { error: { message: string } | null }) => {
-      if (error && import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.warn("[analytics] insert failed:", error.message);
-      }
-    });
+  // Écriture via fonction serveur validée + limitée (aucun accès Data API anonyme).
+  void logSiteEvent({
+    data: {
+      event: event.slice(0, 100),
+      session_id: getSessionId().slice(0, 100),
+      page: page.slice(0, 500),
+      referrer: (document.referrer || "").slice(0, 1000),
+    },
+  }).catch((e: unknown) => {
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.warn("[analytics] insert failed:", e);
+    }
+  });
 }
 
 export type CtaEvent = {
