@@ -122,19 +122,22 @@ function BlogArticle() {
       <article>
         {/* HERO IMAGE */}
         <div className="relative">
-          <div className="aspect-[16/10] w-full overflow-hidden bg-secondary sm:aspect-[21/9]">
+          <div className="aspect-[16/10] w-full overflow-hidden bg-secondary sm:aspect-[21/9] lg:max-h-[560px]">
             <img
-              src={entry.photos[0]}
+              src={imgAt(entry.photos[0], 1280)}
+              srcSet={imgSrcSet(entry.photos[0], [640, 960, 1280, 1600])}
+              sizes="100vw"
               alt={`${entry.name}, ${entry.city}`}
               fetchPriority="high"
               decoding="async"
-              width={960}
-              height={640}
+              width={1280}
+              height={720}
               className="h-full w-full object-cover"
             />
           </div>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
+
 
         <div className="mx-auto mt-6 max-w-3xl px-4 sm:-mt-20 sm:px-6">
           <Link
