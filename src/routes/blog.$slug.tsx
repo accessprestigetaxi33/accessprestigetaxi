@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { imgAt, imgSrcSet } from "@/lib/img";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { ArrowLeft, ArrowRight, MapPin, Phone, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -122,19 +123,22 @@ function BlogArticle() {
       <article>
         {/* HERO IMAGE */}
         <div className="relative">
-          <div className="aspect-[16/10] w-full overflow-hidden bg-secondary sm:aspect-[21/9]">
+          <div className="aspect-[16/10] w-full overflow-hidden bg-secondary sm:aspect-[21/9] lg:max-h-[560px]">
             <img
-              src={entry.photos[0]}
+              src={imgAt(entry.photos[0], 1280)}
+              srcSet={imgSrcSet(entry.photos[0], [640, 960, 1280, 1600])}
+              sizes="100vw"
               alt={`${entry.name}, ${entry.city}`}
               fetchPriority="high"
               decoding="async"
-              width={960}
-              height={640}
+              width={1280}
+              height={720}
               className="h-full w-full object-cover"
             />
           </div>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
+
 
         <div className="mx-auto mt-6 max-w-3xl px-4 sm:-mt-20 sm:px-6">
           <Link
@@ -202,12 +206,14 @@ function BlogArticle() {
             {entry.photos.map((src, i) => (
               <figure key={i} className="overflow-hidden rounded-2xl border border-border bg-secondary">
                 <img
-                  src={src}
+                  src={imgAt(src, 800)}
+                  srcSet={imgSrcSet(src, [400, 600, 800, 1200])}
+                  sizes="(min-width: 640px) 33vw, 100vw"
                   alt={`${entry.name} — ${isEn ? "photo" : "photo"} ${i + 1}`}
                   loading="lazy"
                   decoding="async"
-                  width={960}
-                  height={720}
+                  width={800}
+                  height={600}
                   className="aspect-[4/3] w-full object-cover"
                 />
               </figure>
@@ -251,12 +257,14 @@ function BlogArticle() {
                 className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
               >
                 <img
-                  src={o.photos[0]}
+                  src={imgAt(o.photos[0], 640)}
+                  srcSet={imgSrcSet(o.photos[0], [320, 480, 640, 960])}
+                  sizes="(min-width: 640px) 25vw, 100vw"
                   alt={`${o.name}, ${o.city}`}
                   loading="lazy"
                   decoding="async"
-                  width={960}
-                  height={600}
+                  width={640}
+                  height={400}
                   className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="p-4">
