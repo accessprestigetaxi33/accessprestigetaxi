@@ -1685,14 +1685,14 @@ function SuiviPage() {
   useEffect(() => {
     if (!resolvedId) return;
     const src = new URLSearchParams(window.location.search).get("src") ?? "direct";
-    (supabase as any)
-      .rpc("log_tracking_event", {
-        p_key: resolvedId,
-        p_event_type: "tracking_opened",
-        p_source: src,
-        p_user_agent: navigator.userAgent.slice(0, 200),
-      })
-      .then(() => {}); // fire & forget
+    void logTrackingEvent({
+      data: {
+        key: String(resolvedId),
+        event_type: "tracking_opened",
+        source: src.slice(0, 60),
+        user_agent: navigator.userAgent.slice(0, 200),
+      },
+    }).catch(() => {}); // fire & forget
   }, [resolvedId]);
 
   // ── Realtime connection state ──
