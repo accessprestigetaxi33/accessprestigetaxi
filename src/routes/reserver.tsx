@@ -134,7 +134,7 @@ const RESERVER_SOCIAL_EN = {
 export const Route = createFileRoute("/reserver")({
   // ?lang=en / ?lang=fr permettent aux partages de forcer la langue du visuel
   // et des textes sociaux (la page reste servie sur la même URL).
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { lang?: "en" | "fr" } => ({
     lang:
       search['lang'] === "en"
         ? ("en" as const)
