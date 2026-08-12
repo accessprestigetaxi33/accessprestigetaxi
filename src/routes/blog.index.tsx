@@ -182,7 +182,7 @@ function BlogIndex() {
 
       {/* FILTRES : recherche + catégories + thématiques + villes */}
       <section className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur sm:top-20">
-        <div className="mx-auto max-w-6xl space-y-2.5 px-3 py-3 sm:px-6">
+        <div className="mx-auto max-w-7xl space-y-2.5 px-3 py-3 sm:px-6">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -261,7 +261,7 @@ function BlogIndex() {
       </section>
 
       {/* NAVIGATION PAR VILLE ET VILLAGE */}
-      <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
         <h2 className="text-[11px] uppercase tracking-[0.28em] text-primary">{c.filterCity}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {GUIDE_CITY_STATS.map((s) => (
