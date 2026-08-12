@@ -57,7 +57,7 @@ export function SiteHeader() {
               key={d.tel}
               href={`tel:${d.tel}`}
               aria-label={`Appeler ${d.name} au ${d.display}`}
-              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2 py-2 text-xs font-semibold transition hover:border-primary xl:inline-flex 2xl:px-3"
+              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2 py-2 text-xs font-semibold transition hover:border-primary 2xl:inline-flex 2xl:px-3"
             >
               <Phone className="h-4 w-4 shrink-0 text-primary" />
               <span className="flex flex-col items-start leading-tight">
