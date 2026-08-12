@@ -206,12 +206,14 @@ function BlogArticle() {
             {entry.photos.map((src, i) => (
               <figure key={i} className="overflow-hidden rounded-2xl border border-border bg-secondary">
                 <img
-                  src={src}
+                  src={imgAt(src, 800)}
+                  srcSet={imgSrcSet(src, [400, 600, 800, 1200])}
+                  sizes="(min-width: 640px) 33vw, 100vw"
                   alt={`${entry.name} — ${isEn ? "photo" : "photo"} ${i + 1}`}
                   loading="lazy"
                   decoding="async"
-                  width={960}
-                  height={720}
+                  width={800}
+                  height={600}
                   className="aspect-[4/3] w-full object-cover"
                 />
               </figure>
