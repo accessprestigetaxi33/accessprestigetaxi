@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { logSiteEvent } from "@/lib/public-events.functions";
 import { gaEvent } from "@/lib/ga4";
 
 const SESSION_KEY = "apt.analytics.sid";
