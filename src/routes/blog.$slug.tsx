@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { imgAt, imgSrcSet } from "@/lib/img";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { ArrowLeft, ArrowRight, MapPin, Phone, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
