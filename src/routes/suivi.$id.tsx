@@ -28,6 +28,7 @@ import {
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { getReservationForFinPublic } from "@/lib/reservation.functions";
+import { logTrackingEvent, requestRecurringRide } from "@/lib/public-events.functions";
 import { recomputeReservationDuration } from "@/lib/reservation-recompute.functions";
 import { durationSecondsToMinutes, durationSecondsToMs } from "@/lib/duration";
 import { listSuiviMessages, sendSuiviClientMessage, markReservationMessagesRead, countUnreadClientForReservation, type ChatMessage } from "@/lib/chat.functions";
