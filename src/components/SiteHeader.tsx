@@ -23,19 +23,19 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]">
-      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 md:flex md:justify-between md:gap-4 lg:gap-6">
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 lg:flex lg:justify-between lg:gap-5 xl:gap-6">
         <Link
           to="/"
-          className="flex min-w-0 items-center leading-none md:shrink-0"
+          className="flex min-w-0 items-center leading-none lg:shrink-0"
           onClick={() => setOpen(false)}
           aria-label="Access Prestige Taxi"
         >
-          <span className="truncate whitespace-nowrap md:overflow-visible font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-sm sm:tracking-[0.12em] lg:text-base lg:tracking-[0.2em]">
+          <span className="truncate whitespace-nowrap lg:overflow-visible font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-sm sm:tracking-[0.12em] lg:text-base lg:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-4 md:flex lg:gap-6 xl:gap-7">
+        <nav className="hidden items-center gap-4 lg:flex xl:gap-6">
           {links.map((l) => (
             <Link
               key={l.to}
@@ -49,7 +49,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-1.5 md:flex lg:gap-2">
+        <div className="hidden shrink-0 items-center gap-1.5 lg:flex xl:gap-2">
           <ThemeToggle />
           <LanguageSwitcher />
           {DRIVERS.map((d) => (
@@ -82,7 +82,7 @@ export function SiteHeader() {
           </Link>
         </div>
 
-        <div className="site-header-mobile-actions flex min-w-0 shrink-0 items-center gap-1 md:hidden">
+        <div className="site-header-mobile-actions flex min-w-0 shrink-0 items-center gap-1 lg:hidden">
           {DRIVERS.map((d) => (
             <a
               key={d.tel}
@@ -110,7 +110,7 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-border bg-background md:hidden">
+        <div className="border-t border-border bg-background lg:hidden">
           <nav className="flex flex-col px-4 py-2">
             {links.map((l) => (
               <Link
