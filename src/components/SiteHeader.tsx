@@ -14,7 +14,6 @@ export function SiteHeader() {
   if (location.pathname === "/driver") return null;
 
   const links = [
-    { to: "/", label: t("nav.home") },
     { to: "/services", label: t("nav.services") },
     { to: "/blog", label: t("nav.blog") },
     { to: "/a-propos", label: t("nav.about") },
