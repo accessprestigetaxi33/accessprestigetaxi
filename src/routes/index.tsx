@@ -25,6 +25,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { FaqSeo } from "@/components/FaqSeo";
 import { Reveal, Counter } from "@/components/motion-ui";
+import { imgAt, imgSrcSet } from "@/lib/img";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import { DESTINATIONS } from "@/data/destinations";
 import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
