@@ -1,40 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useLocation, Link } from "@tanstack/react-router";
-import { MessageCircle, Phone, FileText } from "lucide-react";
+import { useLocation } from "@tanstack/react-router";
+import { MessageCircle, Phone, Mail } from "lucide-react";
 import { useReservationDraft } from "@/lib/reservation-draft";
 import { buildReservationMessage, whatsappLink } from "@/lib/whatsapp";
 import { useI18n } from "@/i18n/I18nProvider";
 import { trackCtaClick } from "@/lib/analytics";
-
-const PHONE = "0650260015";
+import { DRIVERS } from "@/data/drivers";
+import { BUSINESS_EMAIL } from "@/lib/business";
 
 export function WhatsAppFloat() {
   const { t, lang } = useI18n();
   const location = useLocation();
 
-  const isHiddenPage =
-    location.pathname.startsWith("/tracking/") ||
-    location.pathname.startsWith("/reservation/") ||
-    location.pathname.startsWith("/scan/") ||
-    location.pathname.startsWith("/admin") ||
-    location.pathname.startsWith("/reserver") ||
-    location.pathname.startsWith("/client") ||
-    location.pathname.startsWith("/suivi") ||
-    location.pathname === "/driver";
+  // Uniquement sur la page d'accueil
+  const isHomePage = location.pathname === "/";
 
   const draft = useReservationDraft();
   const message = draft ? buildReservationMessage(draft, lang) : t("wa.default");
   const waHref = whatsappLink(message);
 
-  const handleClick = (action: "whatsapp" | "call" | "quote", variant: "mobile_sticky" | "desktop_float") => () => {
-    trackCtaClick({
-      event_type: action === "whatsapp" ? "whatsapp_click" : action === "call" ? "call_click" : "quote_click",
-      variant,
-      has_draft: Boolean(draft),
-      lang,
-    });
-  };
+  const handleClick =
+    (action: "whatsapp" | "call" | "email", variant: "mobile_sticky" | "desktop_float") => () => {
+      trackCtaClick({
+        event_type:
+          action === "whatsapp" ? "whatsapp_click" : action === "call" ? "call_click" : "quote_click",
+        variant,
+        has_draft: Boolean(draft),
+        lang,
+      });
+    };
 
   const barRef = useRef<HTMLDivElement | null>(null);
   const [barHeight, setBarHeight] = useState<number>(0);
@@ -61,83 +56,68 @@ export function WhatsAppFloat() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--mobile-action-bar-h", `${barHeight}px`);
-  }, [barHeight]);
+    document.documentElement.style.setProperty(
+      "--mobile-action-bar-h",
+      `${isHomePage ? barHeight : 0}px`,
+    );
+  }, [barHeight, isHomePage]);
 
   // Ne rien rendre côté serveur ni avant hydratation
-  if (!mounted || typeof document === "undefined" || isHiddenPage) return null;
+  if (!mounted || typeof document === "undefined" || !isHomePage) return null;
 
-  const btnBase: React.CSSProperties = {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    padding: "10px 6px",
-    borderRadius: 12,
-    fontWeight: 700,
-    fontSize: "clamp(11px, 3.2vw, 13px)",
-    textDecoration: "none",
-    color: "#fff",
-    minHeight: 56,
-    lineHeight: 1.1,
-  };
+  const itemClass =
+    "flex flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-2 text-center font-bold leading-tight text-white no-underline transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 min-h-[54px] sm:min-h-[58px] sm:flex-row sm:gap-2 sm:px-4 sm:py-2.5";
 
   const content = (
-    <>
-      {/* Barre horizontale fixe (mobile + desktop) — 3 boutons */}
-      <div
-        ref={barRef}
-        style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 9999,
-          background: "rgba(15,23,42,0.96)",
-          backdropFilter: "blur(10px)",
-          borderTop: "1px solid rgba(148,163,184,0.2)",
-          padding: "8px 10px calc(8px + env(safe-area-inset-bottom)) 10px",
-          display: "flex",
-          gap: 8,
-        }}
-        role="navigation"
-        aria-label={t("wa.aria.nav")}
-      >
+    <div
+      ref={barRef}
+      role="navigation"
+      aria-label={t("wa.aria.nav")}
+      className="fixed inset-x-0 bottom-0 z-[9999] border-t border-white/10 bg-[rgba(15,23,42,0.96)] px-2 pb-[calc(8px+env(safe-area-inset-bottom))] pt-2 backdrop-blur-md sm:px-4 sm:pb-[calc(10px+env(safe-area-inset-bottom))] sm:pt-2.5"
+    >
+      <div className="mx-auto flex w-full max-w-3xl items-stretch gap-1.5 sm:gap-3 lg:max-w-4xl">
         <a
           href={waHref}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick("whatsapp", "mobile_sticky")}
-          style={{ ...btnBase, background: "#25D366" }}
           aria-label={t("wa.aria.whatsapp")}
+          className={`${itemClass} bg-[#25D366]`}
         >
-          <MessageCircle size={20} aria-hidden="true" />
-          <span>{t("wa.btn.whatsapp")}</span>
+          <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span className="text-[11px] sm:text-sm">{t("wa.btn.whatsapp")}</span>
         </a>
-        <a
-          href={`tel:${PHONE}`}
-          onClick={handleClick("call", "mobile_sticky")}
-          style={{ ...btnBase, background: "#1d4ed8" }}
-          aria-label={t("wa.btn.call")}
-        >
-          <Phone size={20} aria-hidden="true" />
-          <span>{t("wa.btn.call")}</span>
-        </a>
-        <Link
-          to="/reserver"
-          onClick={handleClick("quote", "mobile_sticky")}
-          style={{ ...btnBase, background: "#0ea5e9" }}
-          aria-label={t("wa.btn.quote")}
-        >
-          <FileText size={20} aria-hidden="true" />
-          <span>{t("wa.btn.quote")}</span>
-        </Link>
-      </div>
-    </>
-  );
 
+        {DRIVERS.map((d, i) => (
+          <a
+            key={d.tel}
+            href={`tel:${d.tel}`}
+            onClick={handleClick("call", "mobile_sticky")}
+            aria-label={`${t("wa.aria.call")} ${d.name} — ${d.display}`}
+            className={`${itemClass} ${i === 0 ? "bg-[#1d4ed8]" : "bg-[#0f766e]"}`}
+          >
+            <Phone className="h-5 w-5 shrink-0" aria-hidden="true" />
+            <span className="flex flex-col items-center sm:items-start">
+              <span className="text-[11px] sm:text-sm">{d.name}</span>
+              <span className="hidden text-[11px] font-semibold tabular-nums opacity-90 md:block">
+                {d.display}
+              </span>
+            </span>
+          </a>
+        ))}
+
+        <a
+          href={`mailto:${BUSINESS_EMAIL}`}
+          onClick={handleClick("email", "mobile_sticky")}
+          aria-label={`${t("wa.aria.email")} — ${BUSINESS_EMAIL}`}
+          className={`${itemClass} bg-[#b45309]`}
+        >
+          <Mail className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <span className="text-[11px] sm:text-sm">{t("wa.btn.email")}</span>
+        </a>
+      </div>
+    </div>
+  );
 
   return createPortal(content, document.body);
 }
