@@ -39,7 +39,6 @@ export function SiteHeader() {
             <Link
               key={l.to}
               to={l.to}
-              activeOptions={{ exact: l.to === "/" }}
               activeProps={{ className: "text-primary" }}
               className="whitespace-nowrap text-[13px] font-medium text-foreground/80 transition hover:text-primary lg:text-sm"
             >
@@ -117,8 +116,7 @@ export function SiteHeader() {
               <Link
                 key={l.to}
                 to={l.to}
-                activeOptions={{ exact: l.to === "/" }}
-                activeProps={{ className: "text-primary" }}
+                  activeProps={{ className: "text-primary" }}
                 onClick={() => setOpen(false)}
                 className="border-b border-border/50 py-3.5 text-base font-medium text-foreground/85"
               >
