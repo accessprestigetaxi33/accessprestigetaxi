@@ -303,8 +303,8 @@ function BlogIndex() {
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                       <img
-                        src={imgAt(e.photos[0], 640)}
-                        srcSet={imgSrcSet(e.photos[0], [320, 480, 640, 960])}
+                        src={imgAt(e.photos[0], 500)}
+                        srcSet={imgSrcSet(e.photos[0], [250, 330, 500])}
                         sizes="(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
                         alt={`${e.name}, ${e.city} — ${isEn ? "Charente-Maritime guide by Access Prestige Taxi" : "guide Charente-Maritime par Access Prestige Taxi"}`}
                         loading={i < 3 ? "eager" : "lazy"}

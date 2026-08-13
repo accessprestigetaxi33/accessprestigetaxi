@@ -126,7 +126,7 @@ function BlogArticle() {
           <div className="aspect-[16/10] w-full overflow-hidden bg-secondary sm:aspect-[21/9] lg:max-h-[560px]">
             <img
               src={imgAt(entry.photos[0], 1280)}
-              srcSet={imgSrcSet(entry.photos[0], [640, 960, 1280, 1600])}
+              srcSet={imgSrcSet(entry.photos[0], [500, 1280, 1920])}
               sizes="100vw"
               alt={`${entry.name}, ${entry.city}`}
               fetchPriority="high"
@@ -206,8 +206,8 @@ function BlogArticle() {
             {entry.photos.map((src, i) => (
               <figure key={i} className="overflow-hidden rounded-2xl border border-border bg-secondary">
                 <img
-                  src={imgAt(src, 800)}
-                  srcSet={imgSrcSet(src, [400, 600, 800, 1200])}
+                  src={imgAt(src, 500)}
+                  srcSet={imgSrcSet(src, [250, 330, 500, 1280])}
                   sizes="(min-width: 640px) 33vw, 100vw"
                   alt={`${entry.name} — ${isEn ? "photo" : "photo"} ${i + 1}`}
                   loading="lazy"
@@ -257,8 +257,8 @@ function BlogArticle() {
                 className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
               >
                 <img
-                  src={imgAt(o.photos[0], 640)}
-                  srcSet={imgSrcSet(o.photos[0], [320, 480, 640, 960])}
+                  src={imgAt(o.photos[0], 500)}
+                  srcSet={imgSrcSet(o.photos[0], [250, 330, 500])}
                   sizes="(min-width: 640px) 25vw, 100vw"
                   alt={`${o.name}, ${o.city}`}
                   loading="lazy"
