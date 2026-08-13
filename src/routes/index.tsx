@@ -25,6 +25,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { FaqSeo } from "@/components/FaqSeo";
 import { Reveal, Counter } from "@/components/motion-ui";
+import { imgAt, imgSrcSet } from "@/lib/img";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import { DESTINATIONS } from "@/data/destinations";
 import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
@@ -1448,11 +1449,17 @@ function Index() {
                   className={`group block h-full overflow-hidden ${CARD}`}
                 >
                   <img
-                    src={e.photo}
+                    src={imgAt(e.photo, 500)}
+                    srcSet={imgSrcSet(e.photo, [250, 330, 500])}
+                    sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 100vw"
                     alt={`${e.name} — ${e.city}`}
                     loading="lazy"
+                    decoding="async"
+                    width={500}
+                    height={352}
                     className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
                   />
+
                   <div className="p-5">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
                     <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
