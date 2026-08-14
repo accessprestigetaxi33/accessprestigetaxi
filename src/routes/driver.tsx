@@ -3368,11 +3368,20 @@ function PlanningTab() {
 
   useEffect(() => {
     load();
+    const poll = setInterval(load, 15000);
+    const onVisible = () => {
+      if (!document.hidden) load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
     const ch = (supabase as any)
       .channel("drv-planning")
       .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, load)
       .subscribe();
     return () => {
+      clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
       supabase.removeChannel(ch);
     };
   }, [load]);
@@ -3703,12 +3712,21 @@ function ClientsTab() {
 
   useEffect(() => {
     load();
+    const poll = setInterval(load, 20000);
+    const onVisible = () => {
+      if (!document.hidden) load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
     const ch = (supabase as any)
       .channel("drv-clients")
       .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, load)
       .subscribe();
     return () => {
+      clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
       supabase.removeChannel(ch);
     };
   }, [load]);
@@ -4943,8 +4961,15 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
       .channel("drv-history")
       .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
       .subscribe();
+    const onVis = () => {
+      if (!document.hidden) load();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("focus", onVis);
     return () => {
       clearInterval(t);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", onVis);
       supabase.removeChannel(ch);
     };
   }, [load]);

@@ -20,6 +20,7 @@ import { ServiceStrip } from "@/components/ServiceStrip";
 import { Toaster } from "@/components/ui/sonner";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { PwaController } from "@/components/PwaController";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 
 function NotFoundComponent() {
   return (
@@ -181,11 +182,12 @@ function RootComponent() {
           <div className="flex min-h-screen flex-col bg-background">
             <SiteHeader />
             <ServiceStrip />
-            <div className="flex-1">
+            <div className="flex-1 pb-[var(--mobile-action-bar-h,0px)]">
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
               <Outlet />
             </div>
             <SiteFooter />
+            <WhatsAppFloat />
           </div>
         )}
         <Toaster />

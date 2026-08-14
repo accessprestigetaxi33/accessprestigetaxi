@@ -2,7 +2,7 @@
 // Restaurants, hôtels (étoilés), randonnées et lieux à visiter.
 // Photos : Wikimedia Commons (licences libres), 3 par article.
 
-export type GuideCategory = "restaurant" | "hotel" | "randonnee" | "visite";
+export type GuideCategory = "restaurant" | "hotel" | "randonnee" | "visite" | "surf";
 export type Dept = "17";
 
 export type GuideEntry = {
@@ -137,6 +137,46 @@ const P = {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/003_Salles-sur-Mer_%28_17220_%29.JPG/1280px-003_Salles-sur-Mer_%28_17220_%29.JPG",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Ch%C3%A2telaillon-Plage_La_grande_plage.jpg/1920px-Ch%C3%A2telaillon-Plage_La_grande_plage.jpg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Ch%C3%A2telaillon-Plage_Rathaus.JPG/1920px-Ch%C3%A2telaillon-Plage_Rathaus.JPG",
+  ],
+  surfGrandeCote: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Saint-Palais-sur-Mer_17_Grande_C%C3%B4te_P%C3%AAcheurs_2014.jpg/1280px-Saint-Palais-sur-Mer_17_Grande_C%C3%B4te_P%C3%AAcheurs_2014.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Saint-Palais-sur-Mer_Grande_C%C3%B4te_Am%C3%A9nagement_2014.jpg/1280px-Saint-Palais-sur-Mer_Grande_C%C3%B4te_Am%C3%A9nagement_2014.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Saint-Palais-sur-Mer_17_Grande_C%C3%B4te_%C3%89cole_de_chars_%C3%A0_voile_2014.jpg/1280px-Saint-Palais-sur-Mer_17_Grande_C%C3%B4te_%C3%89cole_de_chars_%C3%A0_voile_2014.jpg",
+  ],
+  surfVertBois: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Vert_bois_-_2016a.jpg/1280px-Vert_bois_-_2016a.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Vert_bois_-_2016b.jpg/1280px-Vert_bois_-_2016b.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Le_blockhaus_de_Vert_Bois.JPG/1280px-Le_blockhaus_de_Vert_Bois.JPG",
+  ],
+  surfChatelaillon: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Ch%C3%A2telaillon-Plage_La_grande_plage.jpg/1280px-Ch%C3%A2telaillon-Plage_La_grande_plage.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Ch%C3%A2telaillon-Plage_%2817%29_Ici_commence_la_mer_392.jpg/1280px-Ch%C3%A2telaillon-Plage_%2817%29_Ici_commence_la_mer_392.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Chatellaillon-Plage_%284149872525%29.jpg/1280px-Chatellaillon-Plage_%284149872525%29.jpg",
+  ],
+  surfPalmyre: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Plage_de_La_Palmyre.jpg/1280px-Plage_de_La_Palmyre.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/La_plage_de_La_Palmyre.JPG/1280px-La_plage_de_La_Palmyre.JPG",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Plage_des_Pins_de_Cordouan.jpg/1280px-Plage_des_Pins_de_Cordouan.jpg",
+  ],
+  surfGatseau: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Plage_de_Gatseau.JPG/1280px-Plage_de_Gatseau.JPG",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Plage_de_Gatseau_%282%29.JPG/1280px-Plage_de_Gatseau_%282%29.JPG",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Plage_de_Saint-Trojan.JPG/1280px-Plage_de_Saint-Trojan.JPG",
+  ],
+  surfRonce: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Ronce-les-Bains.JPG/1280px-Ronce-les-Bains.JPG",
+    "https://upload.wikimedia.org/wikipedia/commons/f/fa/Ausritt_am_Strand_bei_Ronce_les_Bains_-_panoramio.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/8/84/Strand_bei_Ronce_les_Bains_III_-_panoramio.jpg",
+  ],
+  surfChassiron: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Pointe_De_Chassiron_Ol%C3%A9ron_%28235290031%29.jpeg/1280px-Pointe_De_Chassiron_Ol%C3%A9ron_%28235290031%29.jpeg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Avis_De_Temp%C3%AAte_%28235301291%29.jpeg/1280px-Avis_De_Temp%C3%AAte_%28235301291%29.jpeg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Phare_De_Chassiron_%28235347163%29.jpeg/1280px-Phare_De_Chassiron_%28235347163%29.jpeg",
+  ],
+  surfHuttes: [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/CairnPlagedesHuttesOl%C3%A9ron.jpg/1280px-CairnPlagedesHuttesOl%C3%A9ron.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Dunes_%C3%A0_Saint-Georges_d%27Ol%C3%A9ron.JPG/1280px-Dunes_%C3%A0_Saint-Georges_d%27Ol%C3%A9ron.JPG",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Anse_de_la_Perroche.jpg/1280px-Anse_de_la_Perroche.jpg",
   ],
 } as const;
 
@@ -9715,6 +9755,190 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     },
     photos: ["https://commons.wikimedia.org/wiki/Special:FilePath/Village_de_Loix.jpg?width=1200", "https://commons.wikimedia.org/wiki/Special:FilePath/Marais_salants_de_Loix.jpg?width=1200", "https://commons.wikimedia.org/wiki/Special:FilePath/Port_de_Loix.jpg?width=1200"],
   },
+  {
+    slug: "surf-la-grande-cote-saint-palais",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de la Grande Côte",
+    city: "Saint-Palais-sur-Mer",
+    facts: [
+      { fr: "Beach-break exposé, houle d’ouest", en: "Exposed beach break, west swell" },
+      { fr: "Tous niveaux à marée basse et mi-marée", en: "All levels at low to mid tide" },
+      { fr: "Écoles de surf et de char à voile", en: "Surf and sand-yacht schools" },
+    ],
+    fr: {
+      teaser: "La plus longue plage de la côte de Beauté : un beach-break puissant, ouvert plein ouest, qui fonctionne presque toute l’année.",
+      history: "La Grande Côte prolonge la Côte Sauvage jusqu’aux dunes de la Coubre. Ce littoral, longtemps redouté des marins pour ses bancs de sable mouvants, a été fixé au XIXᵉ siècle par les plantations de pins maritimes voulues sous le Second Empire. Les blockhaus du Mur de l’Atlantique, aujourd’hui basculés dans le sable et couverts de graffitis, rappellent la poche de Royan tenue jusqu’en avril 1945. Le surf est arrivé ici dans les années 1960 avec les premiers clubs royannais.",
+      tips: "Baignade et surf uniquement dans les zones surveillées en été : les courants de baïne sont violents. Dépose possible au plus près par le taxi, au parking de la Grande Côte.",
+    },
+    en: {
+      teaser: "The longest beach of the Côte de Beauté: a powerful, west-facing beach break that works nearly all year.",
+      history: "La Grande Côte extends the Wild Coast up to the Coubre dunes. Long feared by sailors for its shifting sandbanks, the shore was stabilised in the 19th century by the maritime pine plantations of the Second Empire. Atlantic Wall bunkers, now tipped into the sand and covered in graffiti, recall the Royan pocket held until April 1945. Surfing arrived in the 1960s with the first Royan clubs.",
+      tips: "Swim and surf only in lifeguarded zones in summer: rip currents are strong. Taxi drop-off right by the Grande Côte car park.",
+    },
+    photos: trio(P.surfGrandeCote),
+  },
+  {
+    slug: "surf-vert-bois-oleron",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de Vert-Bois",
+    city: "Dolus-d'Oléron",
+    facts: [
+      { fr: "Spot historique de l’île d’Oléron", en: "Oléron’s historic surf spot" },
+      { fr: "Beach-break rapide, houle d’ouest", en: "Fast beach break, west swell" },
+      { fr: "Parking et sentier dunaire", en: "Car park and dune path" },
+    ],
+    fr: {
+      teaser: "Le spot mythique d’Oléron : de longs bancs de sable, une dune sauvage et des vagues qui creusent au premier souffle d’ouest.",
+      history: "Vert-Bois ouvre la Côte Sauvage d’Oléron, une bande de dunes et de pinède plantée au XIXᵉ siècle pour stopper l’ensablement des villages. Le blockhaus échoué sur l’estran, vestige du Mur de l’Atlantique, sert de repère aux surfeurs depuis les années 1970, quand les premiers clubs oléronais s’y sont installés. La plage reste non urbanisée, protégée au titre des espaces naturels sensibles.",
+      tips: "Marée montante conseillée ; évitez la basse mer par gros temps. Combinaison indispensable hors juillet-août.",
+    },
+    en: {
+      teaser: "Oléron’s legendary spot: long sandbars, a wild dune and waves that stand up on the first west swell.",
+      history: "Vert-Bois opens Oléron’s Wild Coast, a belt of dunes and pine forest planted in the 19th century to stop villages being buried by sand. The stranded Atlantic Wall bunker on the foreshore has been a surfers’ landmark since the 1970s, when the island’s first clubs settled here. The beach remains undeveloped, protected as a sensitive natural area.",
+      tips: "Incoming tide is best; avoid low tide in heavy weather. A wetsuit is essential outside July and August.",
+    },
+    photos: trio(P.surfVertBois),
+  },
+  {
+    slug: "surf-grande-plage-chatelaillon",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de la Grande Plage",
+    city: "Châtelaillon-Plage",
+    facts: [
+      { fr: "Spot d’initiation, vagues courtes", en: "Beginner spot, short waves" },
+      { fr: "Idéal petites houles et vent d’ouest", en: "Best on small swell with west wind" },
+      { fr: "À 15 min de La Rochelle", en: "15 min from La Rochelle" },
+    ],
+    fr: {
+      teaser: "Trois kilomètres de sable fin face au pertuis d’Antioche : le spot le plus doux du département, parfait pour débuter.",
+      history: "Châtelaillon fut d’abord une place forte médiévale, capitale de ses propres seigneurs avant d’être rasée par les ducs d’Aquitaine au XIIᵉ siècle ; la mer a fini par engloutir la vieille ville. La station balnéaire naît en 1890 avec l’arrivée du chemin de fer et ses villas Belle Époque, encore alignées sur le front de mer. La plage, rechargée en sable chaque année, accueille aujourd’hui écoles de surf, longboard et paddle.",
+      tips: "Vagues modestes : privilégiez les jours de forte houle d’ouest. Location de matériel sur le front de mer, arrêt taxi devant le casino.",
+    },
+    en: {
+      teaser: "Three kilometres of fine sand facing the Antioche strait: the county’s gentlest spot, perfect for beginners.",
+      history: "Châtelaillon was first a medieval stronghold, capital of its own lords before being razed by the dukes of Aquitaine in the 12th century; the sea later swallowed the old town. The resort was born in 1890 with the railway and its Belle Époque villas, still lining the seafront. The beach, replenished with sand each year, now hosts surf, longboard and paddle schools.",
+      tips: "Waves are modest: aim for big west-swell days. Board hire on the seafront; taxi drop-off by the casino.",
+    },
+    photos: trio(P.surfChatelaillon),
+  },
+  {
+    slug: "surf-la-palmyre-les-mathes",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de La Palmyre",
+    city: "Les Mathes",
+    facts: [
+      { fr: "Beach-break abrité par la pinède", en: "Beach break sheltered by pine forest" },
+      { fr: "Bon compromis famille et surf", en: "Good mix of family beach and surf" },
+      { fr: "À deux pas de Bonne Anse", en: "Steps from Bonne Anse bay" },
+    ],
+    fr: {
+      teaser: "Entre forêt de la Coubre et océan, une plage large où la houle arrive filtrée : idéale pour progresser en famille.",
+      history: "La Palmyre est née de la forêt : 8 000 hectares de pins semés à partir de 1808 pour fixer les dunes qui menaçaient les villages de la presqu’île d’Arvert. La station se développe dans les années 1960 autour de son zoo et de son port. Bonne Anse, lagune formée par la flèche de sable de la Coubre, se déplace de plusieurs mètres chaque année et remodèle sans cesse les bancs de sable du spot.",
+      tips: "Consultez les horaires de marée : le spot fonctionne mieux à mi-marée montante. Nombreux parkings ombragés sous les pins.",
+    },
+    en: {
+      teaser: "Between the Coubre forest and the ocean, a wide beach where the swell arrives filtered: ideal for family progression.",
+      history: "La Palmyre was born from the forest: 8,000 hectares of pines sown from 1808 to fix the dunes threatening the villages of the Arvert peninsula. The resort grew in the 1960s around its zoo and marina. Bonne Anse, a lagoon formed by the Coubre sand spit, shifts several metres a year and constantly reshapes the sandbars.",
+      tips: "Check tide times: the spot works best on mid incoming tide. Plenty of shaded parking under the pines.",
+    },
+    photos: trio(P.surfPalmyre),
+  },
+  {
+    slug: "surf-gatseau-saint-trojan",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de Gatseau",
+    city: "Saint-Trojan-les-Bains",
+    facts: [
+      { fr: "Pointe sud d’Oléron, houle longue", en: "Southern tip of Oléron, long swell" },
+      { fr: "Spot calme, cadre forestier", en: "Quiet spot, forest setting" },
+      { fr: "Accès par le p’tit train ou la route", en: "Reached by the little train or by road" },
+    ],
+    fr: {
+      teaser: "La pointe sud d’Oléron : de longues lignes d’écume, une dune préservée et presque personne hors saison.",
+      history: "Gatseau borde la forêt domaniale de Saint-Trojan, plantée au XIXᵉ siècle pour arrêter des dunes qui avançaient de plusieurs mètres par an. Depuis 1963, un petit train touristique traverse la pinède jusqu’à la plage, unique en France. La pointe fait face au pertuis de Maumusson, l’un des passages les plus dangereux de la côte atlantique : vagues longues, mais courants puissants.",
+      tips: "Maumusson est réservé aux surfeurs expérimentés : ne jamais ramer seul vers la pointe. Dépose possible au bout de la route forestière.",
+    },
+    en: {
+      teaser: "Oléron’s southern tip: long lines of whitewater, a preserved dune and almost nobody out of season.",
+      history: "Gatseau borders the state forest of Saint-Trojan, planted in the 19th century to halt dunes advancing several metres a year. Since 1963 a little tourist train has crossed the pines to the beach, unique in France. The point faces the Maumusson strait, one of the Atlantic coast’s most dangerous passes: long waves, but powerful currents.",
+      tips: "Maumusson is for experienced surfers only: never paddle out alone towards the point. Taxi drop-off at the end of the forest road.",
+    },
+    photos: trio(P.surfGatseau),
+  },
+  {
+    slug: "surf-ronce-les-bains-la-tremblade",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de Ronce-les-Bains",
+    city: "La Tremblade",
+    facts: [
+      { fr: "Plage abritée, vagues douces", en: "Sheltered beach, gentle waves" },
+      { fr: "Parfait pour longboard et paddle", en: "Perfect for longboard and paddle" },
+      { fr: "Face à l’île d’Oléron", en: "Facing Oléron island" },
+    ],
+    fr: {
+      teaser: "Face au viaduc d’Oléron, une plage protégée où l’on rame au lever du jour : le spot des sessions tranquilles.",
+      history: "Ronce-les-Bains naît vers 1860 comme station climatique, quand les médecins vantent l’air résineux de la forêt de la Coubre contre la tuberculose. Villas de bord de mer, chapelle de 1901 et souvenir du tramway de Royan racontent cette Belle Époque balnéaire. Protégée par la pointe d’Arvert, la plage reçoit une houle atténuée : idéale pour le longboard, le paddle et l’initiation.",
+      tips: "Attention aux courants du coureau d’Oléron à marée descendante. Cabanes ostréicoles à proximité pour finir la session.",
+    },
+    en: {
+      teaser: "Facing the Oléron bridge, a sheltered beach for dawn paddles: the spot for calm sessions.",
+      history: "Ronce-les-Bains was founded around 1860 as a health resort, when doctors praised the resinous air of the Coubre forest against tuberculosis. Seafront villas, a 1901 chapel and memories of the Royan tramway tell of that seaside Belle Époque. Shielded by the Arvert point, the beach gets a softened swell: ideal for longboard, paddle and lessons.",
+      tips: "Beware of currents in the Oléron channel on the ebb. Oyster huts nearby to end the session.",
+    },
+    photos: trio(P.surfRonce),
+  },
+  {
+    slug: "surf-pointe-de-chassiron-oleron",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de la pointe de Chassiron",
+    city: "Saint-Denis-d'Oléron",
+    facts: [
+      { fr: "Reef et estran rocheux, niveau confirmé", en: "Reef and rocky foreshore, advanced level" },
+      { fr: "Sous le phare de Chassiron", en: "Below the Chassiron lighthouse" },
+      { fr: "Meilleur par houle de nord-ouest", en: "Best on north-west swell" },
+    ],
+    fr: {
+      teaser: "Sous le phare rayé de noir et blanc, un spot de caractère : dalles rocheuses, écluses à poissons et vagues sérieuses.",
+      history: "Le phare de Chassiron, allumé en 1836 et rayé de noir en 1926 pour être reconnaissable de jour, veille sur la pointe nord d’Oléron. En contrebas s’étendent les écluses à poissons, murets de pierre sèche médiévaux qui piégeaient le poisson à marée descendante ; certaines sont encore entretenues. Le plateau rocheux qui les porte lève, par houle de nord-ouest, des vagues rapides et creuses réservées aux surfeurs aguerris.",
+      tips: "Chaussons obligatoires : entrée et sortie de l’eau sont délicates. Vérifiez les coefficients, le spot est impraticable à basse mer.",
+    },
+    en: {
+      teaser: "Beneath the black-and-white striped lighthouse, a spot with character: rock slabs, fish locks and serious waves.",
+      history: "Chassiron lighthouse, lit in 1836 and striped in black in 1926 to be recognisable by day, watches over Oléron’s northern tip. Below stretch the fish locks, medieval dry-stone walls that trapped fish on the ebb; some are still maintained. On north-west swell the rock platform throws fast, hollow waves for experienced surfers only.",
+      tips: "Booties required; entry and exit are tricky. Check tide coefficients: the spot is unusable at low water.",
+    },
+    photos: trio(P.surfChassiron),
+  },
+  {
+    slug: "surf-les-huttes-chaucre-saint-georges",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf des Huttes et de Chaucre",
+    city: "Saint-Georges-d'Oléron",
+    facts: [
+      { fr: "Côte Sauvage nord, houle constante", en: "Northern Wild Coast, constant swell" },
+      { fr: "Bancs de sable mobiles", en: "Shifting sandbars" },
+      { fr: "Sentier dunaire depuis le parking", en: "Dune path from the car park" },
+    ],
+    fr: {
+      teaser: "La Côte Sauvage côté nord : dunes blanches, bancs de sable changeants et de la houle presque tous les jours.",
+      history: "Entre Les Huttes et Chaucre s’étire un cordon dunaire classé, où l’on trouve encore des cairns dressés par les promeneurs et le souvenir des cabanes de pêcheurs qui ont donné leur nom à la plage. La forêt des Saumonards et les dunes voisines furent plantées sous Napoléon III pour protéger les cultures de l’ensablement. Le fond de sable, remodelé à chaque tempête, offre des pics différents d’une semaine à l’autre.",
+      tips: "Surveillance estivale limitée à la plage des Huttes ; ailleurs, surfez accompagné. Prévoyez 5 à 10 min de marche depuis le parking.",
+    },
+    en: {
+      teaser: "The northern Wild Coast: white dunes, shifting sandbars and swell almost every day.",
+      history: "Between Les Huttes and Chaucre runs a protected dune belt, still dotted with walkers’ cairns and the memory of the fishermen’s huts that gave the beach its name. The nearby Saumonards forest and dunes were planted under Napoleon III to shield farmland from drifting sand. The sandy bottom, reshaped by every storm, offers different peaks week after week.",
+      tips: "Summer lifeguards cover Les Huttes beach only; elsewhere surf with a partner. Allow a 5-10 min walk from the car park.",
+    },
+    photos: trio(P.surfHuttes),
+  },
 ];
 
 export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] = [
@@ -9722,6 +9946,7 @@ export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] 
   { key: "hotel", fr: "Hôtels", en: "Hotels" },
   { key: "randonnee", fr: "Randonnées", en: "Hikes" },
   { key: "visite", fr: "À visiter", en: "To visit" },
+  { key: "surf", fr: "Spots de surf", en: "Surf spots" },
 ];
 
 export const DEPTS: { key: Dept; fr: string; en: string }[] = [
@@ -9749,7 +9974,8 @@ export type GuideTag =
   | "terroir"
   | "velo"
   | "panorama"
-  | "gastronomie";
+  | "gastronomie"
+  | "surf";
 
 export const GUIDE_TAGS: { key: GuideTag; fr: string; en: string }[] = [
   { key: "mer", fr: "Bord de mer", en: "Seaside" },
@@ -9760,6 +9986,7 @@ export const GUIDE_TAGS: { key: GuideTag; fr: string; en: string }[] = [
   { key: "velo", fr: "Vélo", en: "Cycling" },
   { key: "panorama", fr: "Panorama", en: "Panoramic view" },
   { key: "gastronomie", fr: "Gastronomie", en: "Fine dining" },
+  { key: "surf", fr: "Surf", en: "Surf" },
 ];
 
 const TAG_RULES: { key: GuideTag; re: RegExp }[] = [
@@ -9771,6 +9998,7 @@ const TAG_RULES: { key: GuideTag; re: RegExp }[] = [
   { key: "velo", re: /v[ée]lo|cycl|v[ée]lodyss[ée]e|piste/i },
   { key: "panorama", re: /panorama|point de vue|vue sur|belv[ée]d[èe]re|falaise/i },
   { key: "gastronomie", re: /michelin|étoil|gastronomi|chef\b|table\b/i },
+  { key: "surf", re: /surf|houle|beach-break|vague/i },
 ];
 
 /** Tags calculés à partir du texte FR + des infos pratiques de la fiche. */
@@ -9786,6 +10014,10 @@ export function guideTags(e: GuideEntry): GuideTag[] {
   const tags = TAG_RULES.filter((r) => r.re.test(hay)).map((r) => r.key);
   if (e.michelin && !tags.includes("gastronomie")) tags.push("gastronomie");
   if (e.category === "randonnee" && !tags.includes("nature")) tags.push("nature");
+  if (e.category === "surf") {
+    if (!tags.includes("surf")) tags.push("surf");
+    if (!tags.includes("mer")) tags.push("mer");
+  }
   return tags;
 }
 
