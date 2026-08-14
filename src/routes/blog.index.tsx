@@ -3,7 +3,7 @@ import { imgAt, imgSrcSet } from "@/lib/img";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { useMemo, useState } from "react";
-import { ArrowRight, MapPin, Search, Star, UtensilsCrossed, BedDouble, Footprints, Landmark, X } from "lucide-react";
+import { ArrowRight, MapPin, Search, Star, UtensilsCrossed, BedDouble, Footprints, Landmark, Waves, X } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import {
   GUIDE_ENTRIES,
@@ -21,6 +21,7 @@ const CAT_ICON: Record<GuideCategory, typeof UtensilsCrossed> = {
   hotel: BedDouble,
   randonnee: Footprints,
   visite: Landmark,
+  surf: Waves,
 };
 
 const COPY = {
