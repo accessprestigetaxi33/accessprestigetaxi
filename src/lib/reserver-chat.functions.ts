@@ -264,58 +264,81 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   const depart = (quote as any).depart_resolu ?? args.depart;
   const arrivee = (quote as any).arrivee_resolu ?? args.arrivee;
   const distanceKm = (quote as any).distance_km ?? args.distance_km ?? null;
-  // reservation-create.functions.ts exige duree_s entier (z.number().int()) :
-  // args.duree_min vient du modèle et n'est pas garanti entier, on arrondit
-  // pour éviter un rejet de validation silencieux.
+  // duree_s doit être un entier en base : args.duree_min vient du modèle et
+  // n'est pas garanti entier, on arrondit pour éviter une valeur invalide.
   const dureeS = (quote as any).duree_s ?? (args.duree_min ? Math.round(args.duree_min * 60) : null);
   const prix = (quote as any).prix_estime ?? args.prix_estime ?? null;
 
   const suiviId = newSuiviId();
 
-  const { createReservationPublic } = await import("@/lib/reservation-create.functions");
-  let inserted: { id: string; suivi_id: string | null };
-  try {
-    // parseAsParisTime(...).toISOString() peut lever (date invalide) : on le
-    // garde DANS ce try, sinon l'exception n'est jamais attrapée et fait
-    // planter tout le handler (boucle IA comprise) au lieu de simplement
-    // faire échouer cette réservation.
-    const pickupIso = parseAsParisTime(args.pickup_datetime).toISOString();
-    inserted = await createReservationPublic({
-      data: {
-        nom: String(args.nom).slice(0, 200),
-        telephone: String(args.telephone).slice(0, 30),
-        email: normalizedEmail,
-        depart,
-        arrivee,
-        pickup_datetime: pickupIso,
-        passagers: Number(args.passagers) > 0 ? Math.min(Number(args.passagers), 12) : 1,
-        bagages: Number.isFinite(Number(args.bagages)) ? Math.max(0, Math.min(Number(args.bagages), 20)) : 0,
-        suivi_id: suiviId,
-        distance_km: distanceKm,
-        duree_s: dureeS,
-        paiement: null,
-        tarif_jour: estTarifJourParis(args.pickup_datetime),
-        prix_estime: prix,
-        lang: langCode,
-        message: args.message ?? null,
-        service_type: args.service_type ?? "standard",
-        source: "chat",
-      },
-    });
-  } catch (e: any) {
+  // Validation ISO en amont (hors try d'insertion) pour renvoyer un message
+  // clair au modèle plutôt qu'un crash si la date est mal formée.
+  const parsedPickup = parseAsParisTime(args.pickup_datetime);
+  if (Number.isNaN(parsedPickup.getTime())) {
+    return { ok: false as const, error: "DATE_INVALIDE: reformule la date/heure au format demandé et réessaie." };
+  }
+  const pickupIso = parsedPickup.toISOString();
+
+  // Insertion DIRECTE via supabaseAdmin — comme dans le projet de référence
+  // qui fonctionne. On évite d'appeler une autre createServerFn
+  // (createReservationPublic) DEPUIS ce handler : cet appel imbriqué peut
+  // échouer silencieusement en production (contexte de requête non transmis
+  // à l'appel interne, round-trip qui échoue) sans jamais faire remonter
+  // d'erreur exploitable — c'est ce qui empêchait le console.error d'avant
+  // de jamais rien afficher alors que la réservation échouait à chaque fois.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const payload = {
+    nom: String(args.nom).slice(0, 200),
+    telephone: String(args.telephone).slice(0, 30),
+    email: normalizedEmail,
+    depart,
+    arrivee,
+    pickup_datetime: pickupIso,
+    date_heure: pickupIso,
+    passagers: Number(args.passagers) > 0 ? Math.min(Math.round(Number(args.passagers)), 12) : 1,
+    bagages: Number.isFinite(Number(args.bagages)) ? Math.max(0, Math.min(Math.round(Number(args.bagages)), 20)) : 0,
+    service_type: args.service_type ?? "standard",
+    status: "pending",
+    suivi_id: suiviId,
+    client_name: String(args.nom).slice(0, 200),
+    client_phone: String(args.telephone).slice(0, 30),
+    client_email: normalizedEmail,
+    destination: arrivee,
+    distance_km: distanceKm,
+    duree_s: dureeS,
+    nb_passagers: Number(args.passagers) > 0 ? Math.min(Math.round(Number(args.passagers)), 12) : 1,
+    paiement: null,
+    tarif_jour: estTarifJourParis(args.pickup_datetime),
+    prix_estime: prix,
+    source: "chat",
+    lang: langCode,
+    message: args.message ?? null,
+  };
+
+  const { data: inserted, error } = await supabaseAdmin
+    .from("reservations")
+    .insert(payload as any)
+    .select("id, suivi_id")
+    .single();
+
+  if (error) {
     // Avant : l'erreur réelle (contrainte DB, RLS, champ manquant…) était
-    // avalée — seul un message générique repartait vers le modèle, qui
-    // n'avait aucun cas prévu pour ça et finissait par improviser une
-    // excuse ("réessayez plus tard, appelez-nous") sans que ça n'apparaisse
-    // nulle part dans les logs. On journalise maintenant la cause exacte
-    // pour pouvoir la corriger.
-    console.error("[chat] confirm_reservation insert failed:", e?.message ?? e, {
+    // avalée par l'appel imbriqué — seul un message générique repartait vers
+    // le modèle, qui n'avait aucun cas prévu pour ça et finissait par
+    // improviser une excuse, sans que la vraie cause n'apparaisse nulle part.
+    // On journalise maintenant l'erreur Postgres complète (code/détails/hint
+    // en plus du message) pour pouvoir la corriger si ça se reproduit.
+    console.error("[chat] confirm_reservation insert failed:", {
+      message: error.message,
+      code: (error as any).code,
+      details: (error as any).details,
+      hint: (error as any).hint,
       nom: args?.nom,
       depart,
       arrivee,
       pickup_datetime: args?.pickup_datetime,
     });
-    return { ok: false as const, error: e?.message ?? "insert_failed" };
+    return { ok: false as const, error: error.message ?? "insert_failed" };
   }
 
   const trackingLink = `https://accessprestigetaxi.lovable.app/suivi/${suiviId}`;
