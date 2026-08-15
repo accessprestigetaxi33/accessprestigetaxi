@@ -112,9 +112,9 @@ const OG_IMAGE_EN = ogImageUrl(ogReserverEn.url);
 const OG_IMAGE_W = "1200";
 const OG_IMAGE_H = "630";
 const OG_ALT_FR =
-  "Access Prestige Taxi — réservez votre taxi en Charente-Maritime, BMW iX1 électrique et van Mercedes 7 places";
+  "Access Prestige Taxi — réservez votre taxi en Charente-Maritime, BMW iX1 et Audi Q6 électriques 5 places, van Mercedes 8 places";
 const OG_ALT_EN =
-  "Access Prestige Taxi — book your taxi in Charente-Maritime, electric BMW iX1 and 7-seater Mercedes van";
+  "Access Prestige Taxi — book your taxi in Charente-Maritime, 5-seat electric BMW iX1 and Audi Q6, 8-seat Mercedes van";
 
 const RESERVER_SOCIAL_FR = {
   title: RESERVER_TITLE_FR,
@@ -2178,7 +2178,7 @@ function ReserverPage() {
                 href="tel:+33650321923"
                 className="mt-1 inline-flex items-center gap-2 text-base font-bold text-accent hover:underline"
               >
-                <Phone className="h-4 w-4" /> Alain 06 50 32 19 23
+                <Phone className="h-4 w-4" /> Alain 06 03 44 48 63
               </a>
               <a
                 href="tel:+33650260015"

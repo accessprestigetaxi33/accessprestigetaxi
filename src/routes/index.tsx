@@ -367,7 +367,7 @@ const COPY = {
     groupText:
       "Family, team, wedding, night out or a group airport transfer: Alain's Mercedes van seats up to 7 passengers with their luggage — one ride, one fare.",
     groupBullets: ["7 passengers + luggage", "One fare, one vehicle", "Hourly hire available"],
-    groupCta: "Book the 7-seat van",
+    groupCta: "Book the 8-seat van",
     whyEyebrow: "Why us",
     whyTitle: "Electric elegance, no compromise",
     why: [
@@ -463,7 +463,7 @@ const COPY = {
 const HOME_SOCIAL_FR = {
   title: "Access Prestige Taxi — L'excellence à chaque trajet",
   description:
-    "L'excellence à chaque trajet : réservation vocale ou écrite en moins d'une minute, BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes 7 places en Charente-Maritime.",
+    "L'excellence à chaque trajet : réservation vocale ou écrite en moins d'une minute, BMW iX1 et Audi Q6 e-tron 5 places électriques, van Mercedes 8 places en Charente-Maritime.",
   image: ogImageUrl(ogHomeFr.url),
   alt: "Access Prestige Taxi — taxi 100 % électrique en Charente-Maritime, BMW iX1 et van Mercedes V-Class",
   url: ogPageUrl("/", "fr"),
@@ -471,7 +471,7 @@ const HOME_SOCIAL_FR = {
 const HOME_SOCIAL_EN = {
   title: "Access Prestige Taxi — Excellence on every journey",
   description:
-    "Book by voice or text in under a minute: 100% electric BMW iX1 and Audi Q6 e-tron, plus a 7-seat Mercedes van across Charente-Maritime.",
+    "Book by voice or text in under a minute: 5-seat electric BMW iX1 and Audi Q6 e-tron, plus an 8-seat Mercedes van across Charente-Maritime.",
   image: ogImageUrl(ogHomeEn.url),
   alt: "Access Prestige Taxi — 100% electric taxi in Charente-Maritime, BMW iX1 and Mercedes V-Class van",
   url: ogPageUrl("/", "en"),
@@ -502,8 +502,8 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content: isEn
-          ? "100% electric taxi in Charente-Maritime: BMW iX1, Audi Q6 e-tron, 7-seat van, medical transport, stations and airports."
-          : "Taxi 100 % électrique en Charente-Maritime : BMW iX1, Audi Q6 e-tron, van 7 places, transport conventionné, gares et aéroports.",
+          ? "Taxi in Charente-Maritime: 5-seat electric BMW iX1 and Audi Q6 e-tron, 8-seat van, wheelchair medical transport, all stations and airports."
+          : "Taxi en Charente-Maritime : BMW iX1 et Audi Q6 e-tron électriques 5 places, van 8 places, transport sanitaire avec fauteuil roulant, toutes gares et aéroports.",
       },
       { property: "og:site_name", content: "Access Prestige Taxi" },
       { property: "og:title", content: social.title },
@@ -604,8 +604,8 @@ export const Route = createFileRoute("/")({
             {
               "@type": "Car",
               position: 3,
-              name: "Van Mercedes V-Class 7 places",
-              alternateName: "Mercedes V-Class 7-seat van",
+              name: "Van Mercedes V-Class 8 places",
+              alternateName: "Mercedes V-Class 8-seat van",
               image: absoluteUrl(photoVanReal.url),
               vehicleSeatingCapacity: 7,
               description:
@@ -908,7 +908,7 @@ function Index() {
         </div>
       </section>
 
-      {/* TRANSPORT DE GROUPE — VAN 7 PLACES */}
+      {/* TRANSPORT DE GROUPE — VAN 8 PLACES */}
       <section className="border-t border-border py-20">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
           <Reveal className="lg:order-2">
