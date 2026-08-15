@@ -3,7 +3,6 @@ import { z } from "zod";
 import { createLovableAiGatewayProvider, getLovableAiGatewayRunId } from "@/lib/ai-gateway.server";
 import { resolveAddress } from "@/lib/address-resolver.server";
 import { geocodeGoogle, routeGoogle } from "@/lib/google.server";
-import { createReservationPublic } from "@/lib/reservation-create.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, partsParis } from "@/lib/tarif";
 import { deliverClientConfirmation, logReservationEvent, sendDriverPush } from "@/lib/reservation-notifications.server";
 import { formatInTimeZone } from "date-fns-tz";
@@ -106,7 +105,6 @@ function nextOpenSlot(): Date {
   return candidate;
 }
 
-
 function buildTrackingLink(suiviId: string, lang: string) {
   return `https://accessprestigetaxi.lovable.app/${lang === "en" ? "tracking" : "suivi"}?id=${encodeURIComponent(suiviId)}`;
 }
@@ -163,7 +161,11 @@ export async function runReservationChat(input: ReservationChatInput, request: R
   // Contexte temporel explicite : sans lui, le modèle invente la date du jour
   // et déclare "déjà passé" un créneau situé dans le futur.
   const nowIso = toParisIso(new Date());
-  const nowHuman = formatInTimeZone(new Date(), TIMEZONE, lang === "en" ? "EEEE d MMMM yyyy, HH:mm" : "EEEE d MMMM yyyy, HH:mm");
+  const nowHuman = formatInTimeZone(
+    new Date(),
+    TIMEZONE,
+    lang === "en" ? "EEEE d MMMM yyyy, HH:mm" : "EEEE d MMMM yyyy, HH:mm",
+  );
   const timeContext =
     lang === "en"
       ? `\n\nCURRENT TIME CONTEXT (authoritative): now in Paris it is ${nowHuman} (ISO ${nowIso}, timezone Europe/Paris).
@@ -198,11 +200,19 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
         z.object({
           depart: z.string().describe("Adresse de départ / Pickup address"),
           arrivee: z.string().describe("Adresse d'arrivée / Drop-off address"),
-          pickup_datetime: z.string().nullable().describe("ISO datetime de prise en charge (optionnel) / Pickup ISO datetime (optional)"),
+          pickup_datetime: z
+            .string()
+            .nullable()
+            .describe("ISO datetime de prise en charge (optionnel) / Pickup ISO datetime (optional)"),
           passagers: z.number().int().nullable().describe("Nombre de passagers / Passenger count"),
         }),
       ),
-      execute: async (args: { depart: string; arrivee: string; pickup_datetime: string | null; passagers: number | null }) => {
+      execute: async (args: {
+        depart: string;
+        arrivee: string;
+        pickup_datetime: string | null;
+        passagers: number | null;
+      }) => {
         const from = await resolveAddress(args.depart, "depart", lang);
         const to = await resolveAddress(args.arrivee, "arrivee", lang);
         if (!from.ok) return { error: from.hint } as const;
@@ -365,8 +375,16 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
           lang,
           message:
             [
-              state.childSeats ? (lang === "en" ? `${state.childSeats} child seat(s)` : `${state.childSeats} siège(s) enfant`) : null,
-              state.babySeats ? (lang === "en" ? `${state.babySeats} baby seat(s)` : `${state.babySeats} siège(s) bébé`) : null,
+              state.childSeats
+                ? lang === "en"
+                  ? `${state.childSeats} child seat(s)`
+                  : `${state.childSeats} siège(s) enfant`
+                : null,
+              state.babySeats
+                ? lang === "en"
+                  ? `${state.babySeats} baby seat(s)`
+                  : `${state.babySeats} siège(s) bébé`
+                : null,
               state.notes || null,
             ]
               .filter(Boolean)
@@ -376,7 +394,61 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
         };
 
         try {
-          const inserted = await createReservationPublic({ data: payload });
+          // Insertion DIRECTE via supabaseAdmin plutôt que d'appeler
+          // createReservationPublic (une autre createServerFn) depuis ce
+          // handler : cet appel imbriqué peut échouer silencieusement en
+          // production (contexte de requête non transmis à l'appel interne,
+          // round-trip qui échoue) sans jamais faire remonter d'erreur
+          // exploitable dans les logs.
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data: inserted, error } = await supabaseAdmin
+            .from("reservations")
+            .insert({
+              nom: payload.nom,
+              telephone: payload.telephone,
+              email: payload.email,
+              depart: payload.depart,
+              arrivee: payload.arrivee,
+              destination: payload.arrivee,
+              pickup_datetime: payload.pickup_datetime,
+              passagers: payload.passagers,
+              nb_passagers: payload.passagers,
+              bagages: payload.bagages,
+              suivi_id: payload.suivi_id,
+              distance_km: payload.distance_km,
+              duree_s: payload.duree_s,
+              paiement: payload.paiement,
+              tarif_jour: payload.tarif_jour,
+              prix_estime: payload.prix_estime,
+              lang: payload.lang,
+              message: payload.message,
+              service_type: payload.service_type,
+              source: payload.source,
+              status: "pending",
+              client_name: payload.nom,
+              client_phone: payload.telephone,
+              client_email: payload.email,
+            } as any)
+            .select("id, suivi_id")
+            .single();
+
+          if (error) {
+            console.error("[confirm_reservation] insert failed", {
+              message: error.message,
+              code: (error as any).code,
+              details: (error as any).details,
+              hint: (error as any).hint,
+              payload,
+            });
+            return {
+              ok: false,
+              message:
+                lang === "en"
+                  ? "We could not finalize your reservation. Please call us or try again."
+                  : "Nous n'avons pas pu finaliser votre réservation. Appelez-nous ou réessayez.",
+            };
+          }
+
           const trackingLink = buildTrackingLink(suiviId, lang);
 
           await deliverClientConfirmation({
@@ -394,9 +466,24 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
             },
           });
 
-          await logReservationEvent(inserted.id, "created_from_chat", null, null, null, state.nom!, from.geocode.label, to.geocode.label);
+          await logReservationEvent(
+            inserted.id,
+            "created_from_chat",
+            null,
+            null,
+            null,
+            state.nom!,
+            from.geocode.label,
+            to.geocode.label,
+          );
 
-          await sendDriverPush("chauffeur", lang === "en" ? "New booking" : "Nouvelle réservation", `${state.nom!} — ${from.geocode.label} → ${to.geocode.label}`, trackingLink, inserted.id);
+          await sendDriverPush(
+            "chauffeur",
+            lang === "en" ? "New booking" : "Nouvelle réservation",
+            `${state.nom!} — ${from.geocode.label} → ${to.geocode.label}`,
+            trackingLink,
+            inserted.id,
+          );
 
           return {
             ok: true,
@@ -409,7 +496,7 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
                 : `Votre réservation est confirmée pour le ${formatPickupDateTime(when, lang)}. Suivez votre taxi en direct ici : ${trackingLink}`,
           };
         } catch (err: any) {
-          console.error("[confirm_reservation] error", err);
+          console.error("[confirm_reservation] unexpected error", err?.message ?? err, payload);
           return {
             ok: false,
             message:
