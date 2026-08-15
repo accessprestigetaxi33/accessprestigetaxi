@@ -23,7 +23,6 @@ const COPY = {
     ],
     contactTitle: "Contact",
     zone: "📍 Charente-Maritime",
-    hours: "🕒 ·",
     rights: "Tous droits réservés.",
     security: "Sécurité & garanties",
     destinations: "Destinations",
@@ -51,7 +50,6 @@ const COPY = {
     ],
     contactTitle: "Contact",
     zone: "📍 Charente-Maritime",
-    hours: "🕒",
     rights: "All rights reserved.",
     security: "Safety & guarantees",
     destinations: "Destinations",
@@ -271,8 +269,8 @@ export function SiteFooter() {
               </a>
             </li>
             <li>
-              <a href="tel:0650321923" className="footer-link">
-                📞 Alain · 06 50 32 19 23
+              <a href="tel:0603444863" className="footer-link">
+                📞 Alain · 06 03 44 48 63
               </a>
             </li>
             <li>
@@ -281,7 +279,6 @@ export function SiteFooter() {
               </a>
             </li>
             <li className="footer-li-text">{c.zone}</li>
-            <li className="footer-li-text">{c.hours}</li>
           </ul>
 
         </div>

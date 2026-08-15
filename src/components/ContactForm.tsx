@@ -5,7 +5,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 const COPY = {
   fr: {
     title: "Écrivez-nous",
-    sub: "Réponse sous quelques heures, du lundi au vendredi (8h–20h).",
+    sub: "Nous vous répondons dans les meilleurs délais.",
     nom: "Nom et prénom",
     email: "E-mail",
     tel: "Téléphone (facultatif)",
@@ -20,7 +20,7 @@ const COPY = {
   },
   en: {
     title: "Write to us",
-    sub: "We reply within a few hours, Monday to Friday (8am–8pm).",
+    sub: "We reply as quickly as possible.",
     nom: "Full name",
     email: "Email",
     tel: "Phone (optional)",

@@ -95,9 +95,9 @@ const heroSlides = (lang: "fr" | "en") => {
       label: "BMW iX1 · Patricia",
       title: en ? "BMW iX1 — 100% electric" : "BMW iX1 — 100 % électrique",
       desc: en
-        ? "Silent, zero-emission rides for airport transfers, medical trips and daily journeys, up to 4 passengers."
-        : "Trajets silencieux et zéro émission pour transferts aéroport, courses médicales et déplacements du quotidien, jusqu'à 4 passagers.",
-      specs: en ? ["4 passengers", "Zero emission", "Child seats"] : ["4 passagers", "Zéro émission", "Sièges enfants"],
+        ? "Silent, zero-emission rides for station, airport and medical trips in a 5-seat vehicle."
+        : "Trajets silencieux et zéro émission vers toutes les gares, tous les aéroports et pour le transport sanitaire, en véhicule 5 places.",
+      specs: en ? ["5 seats", "Zero emission", "Child seats"] : ["5 places", "Zéro émission", "Sièges enfants"],
       pan: { x: 18, y: 6 },
     },
     {
@@ -111,21 +111,21 @@ const heroSlides = (lang: "fr" | "en") => {
       desc: en
         ? "Our electric flagship for business travel and long-distance transfers: generous space, deep comfort, total discretion."
         : "Notre vaisseau amiral électrique pour les déplacements professionnels et les longues distances : espace généreux, confort profond, discrétion totale.",
-      specs: en ? ["Business", "Long distance", "100% electric"] : ["Affaires", "Longue distance", "100 % électrique"],
+      specs: en ? ["5 seats", "All distances", "100% electric"] : ["5 places", "Toutes distances", "100 % électrique"],
       pan: { x: -16, y: -8 },
     },
     {
       id: "van",
       src: photoVanReal.url,
       alt: en
-        ? "Mercedes V-Class 7-seat van driven by Alain for group transport, Access Prestige Taxi"
-        : "Van Mercedes V-Class 7 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
+        ? "Mercedes V-Class 8-seat van driven by Alain for group transport, Access Prestige Taxi"
+        : "Van Mercedes V-Class 8 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
       label: "Mercedes Van · Alain",
-      title: en ? "Mercedes van — up to 7 seats" : "Van Mercedes — jusqu'à 7 places",
+      title: en ? "Mercedes van — 8 seats" : "Van Mercedes — 8 places",
       desc: en
-        ? "Family, team or wedding: seven passengers plus luggage in one trip, at one single fare."
-        : "Famille, équipe ou mariage : sept passagers et leurs bagages en un seul trajet, à un seul tarif.",
-      specs: en ? ["7 passengers", "Luggage", "Single fare"] : ["7 passagers", "Bagages", "Tarif unique"],
+        ? "Family, team or wedding: an 8-seat vehicle for groups and luggage."
+        : "Famille, équipe ou mariage : un véhicule 8 places pour les groupes et leurs bagages.",
+      specs: en ? ["8 seats", "Luggage", "Single fare"] : ["8 places", "Bagages", "Tarif unique"],
       pan: { x: 16, y: -10 },
     },
     {
@@ -177,10 +177,10 @@ function useHeroSlideshow(count: number, durationMs: number) {
 
 const COPY = {
   fr: {
-    kicker: "10 ans d'expérience · Transport sanitaire conventionné · Charente-Maritime",
+    kicker: "20 ans d'expérience · Transport sanitaire avec fauteuil roulant · Charente-Maritime",
     h1: "Taxi 100 % électrique en Charente-Maritime",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une BMW iX1 100 % électrique et un van Mercedes 7 places. Transport sanitaire conventionné et courses sans limite de distance, pour tous types de prestations.",
+    lead: "Deux chauffeurs, une BMW iX1 électrique 5 places, un Audi Q6 e-tron 5 places et un van Mercedes 8 places. Transport sanitaire avec fauteuil roulant et prestations toutes distances.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
@@ -191,19 +191,19 @@ const COPY = {
     stats: [
       { n: 2, suffix: "", l: "chauffeurs dédiés" },
       { n: 100, suffix: " %", l: "électrique (BMW iX1)" },
-      { n: 7, suffix: " places", l: "van Mercedes" },
-      { n: 1, suffix: "", l: "SUV Audi Q6 e-tron électrique" },
+      { n: 8, suffix: " places", l: "van Mercedes" },
+      { n: 5, suffix: " places", l: "Audi Q6 e-tron électrique" },
     ],
     servicesEyebrow: "Nos services",
     servicesTitle: "Une prestation pensée pour chaque trajet",
     services: [
-      { photo: photoMedical, t: "Transport conventionné", d: "Trajets médicaux assis, prise en charge simplifiée." },
+      { photo: photoMedical, t: "Transport conventionné", d: "Transport sanitaire possible avec fauteuil roulant." },
       {
         photo: photoInterior.url,
         t: "Confort intérieur",
         d: "Habitacle soigné, silence électrique, eau et chargeurs à bord.",
       },
-      { photo: photoAirport, t: "Gares & aéroports", d: "Suivi des vols et des trains, accueil en gare." },
+      { photo: photoAirport, t: "Toutes gares & tous aéroports", d: "Transferts, suivi des vols et des trains, accueil sur demande." },
       {
         photo: photoDriver.url,
         t: "Chauffeurs agréés",
@@ -223,11 +223,11 @@ const COPY = {
     seatsItems: ["Siège bébé (0-13 kg)", "Siège enfant (9-18 kg)", "Rehausseur (15-36 kg)"],
     seatsCta: "Choisir mon siège à la réservation",
     groupEyebrow: "Transport de groupe",
-    groupTitle: "Jusqu'à 7 personnes dans le van Mercedes",
+    groupTitle: "Van Mercedes 8 places pour vos groupes",
     groupText:
-      "Famille, équipe, mariage, sortie entre amis ou transfert aéroport à plusieurs : le van Mercedes d'Alain accueille jusqu'à 7 passagers avec leurs bagages, en un seul trajet et à un seul tarif.",
-    groupBullets: ["7 passagers + bagages", "Un seul tarif, un seul véhicule", "Mise à disposition à l'heure"],
-    groupCta: "Réserver le van 7 places",
+      "Famille, équipe, mariage, sortie entre amis ou transfert à plusieurs : le van Mercedes d'Alain offre 8 places et un grand volume de bagages.",
+    groupBullets: ["8 places", "Un seul tarif, un seul véhicule", "Toutes distances"],
+    groupCta: "Réserver le van 8 places",
     whyEyebrow: "Pourquoi nous",
     whyTitle: "L'élégance électrique, sans compromis",
     why: [
@@ -317,10 +317,10 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "10 years of experience · Approved medical transport · Charente-Maritime",
+    kicker: "20 years of experience · Medical transport with wheelchair · Charente-Maritime",
     h1: "100% electric taxi in Charente-Maritime",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, one fully electric BMW iX1 and one 7-seat Mercedes van. Approved medical transport and rides with no distance limit, for every type of service.",
+    lead: "Two drivers, a 5-seat electric BMW iX1, a 5-seat Audi Q6 e-tron and an 8-seat Mercedes van. Medical transport with wheelchair and all-distance services.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
@@ -331,8 +331,8 @@ const COPY = {
     stats: [
       { n: 2, suffix: "", l: "dedicated drivers" },
       { n: 100, suffix: "%", l: "electric (BMW iX1)" },
-      { n: 7, suffix: " seats", l: "Mercedes van" },
-      { n: 1, suffix: "", l: "Audi Q6 e-tron electric SUV" },
+      { n: 8, suffix: " seats", l: "Mercedes van" },
+      { n: 5, suffix: " seats", l: "Audi Q6 e-tron electric SUV" },
     ],
     servicesEyebrow: "Our services",
     servicesTitle: "A service designed for every journey",

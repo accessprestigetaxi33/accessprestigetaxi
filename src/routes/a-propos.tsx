@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
-import { DRIVERS, SERVICE_HOURS } from "@/data/drivers";
+import { DRIVERS } from "@/data/drivers";
 
 const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
 const ABOUT_DESC =
@@ -37,12 +37,6 @@ export const Route = createFileRoute("/a-propos")({
           url: ABOUT_URL,
           telephone: DRIVERS.map((d) => d.intl),
           areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
-          openingHoursSpecification: {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            opens: "08:00",
-            closes: "20:00",
-          },
         }),
       },
     ],

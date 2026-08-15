@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export function broadcastSuiviUpdate(reservationId: string | null | undefined, kind: string = "update") {
   if (!reservationId) return;
+  broadcastDriverFeed(`reservation:${kind}`);
   try {
     const ch = (supabase as any).channel(`suivi:${reservationId}`, {
       config: { broadcast: { self: false, ack: false } },
