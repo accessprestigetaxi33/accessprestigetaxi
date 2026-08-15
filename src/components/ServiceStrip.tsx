@@ -3,14 +3,14 @@ import { useI18n } from "@/i18n/I18nProvider";
 
 const COPY = {
   fr: [
-    { icon: HeartPulse, label: "Transport sanitaire conventionné" },
-    { icon: RouteIcon, label: "Aucune limite de distance — toutes prestations" },
-    { icon: Award, label: "10 ans d'expérience" },
+    { icon: HeartPulse, label: "Transport sanitaire · fauteuil roulant" },
+    { icon: RouteIcon, label: "Toutes distances — toutes prestations" },
+    { icon: Award, label: "20 ans d'expérience" },
   ],
   en: [
-    { icon: HeartPulse, label: "Approved medical transport (conventionné)" },
-    { icon: RouteIcon, label: "No distance limit — all services" },
-    { icon: Award, label: "10 years of experience" },
+    { icon: HeartPulse, label: "Approved medical transport · wheelchair" },
+    { icon: RouteIcon, label: "All distances — all services" },
+    { icon: Award, label: "20 years of experience" },
   ],
 } as const;
 

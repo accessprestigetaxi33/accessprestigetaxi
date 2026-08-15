@@ -33,13 +33,6 @@ export const BUSINESS_GEO = {
   longitude: -0.6337,
 } as const;
 
-export const OPENING_HOURS = {
-  "@type": "OpeningHoursSpecification",
-  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  opens: "08:00",
-  closes: "20:00",
-} as const;
-
 /** Nœud LocalBusiness complet, réutilisable ou référençable par @id. */
 export function localBusinessNode() {
   return {
@@ -63,7 +56,6 @@ export function localBusinessNode() {
       { "@type": "Country", name: "France" },
     ],
     availableLanguage: ["fr", "en"],
-    openingHoursSpecification: [OPENING_HOURS],
     contactPoint: DRIVERS.map((d) => ({
       "@type": "ContactPoint",
       name: d.name,
