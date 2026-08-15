@@ -2378,7 +2378,7 @@ function CourseCard({
                     disabled={progressing}
                     style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
                   >
-                    {progressing ? "…" : "🚖 Je pars"}
+                    {progressing ? "…" : "🚕 Votre taxi arrive"}
                   </button>
                 )}
                 {(resa.status === "accepted" || resa.status === "en_route") && (
@@ -2387,7 +2387,7 @@ function CourseCard({
                     disabled={progressing}
                     style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
                   >
-                    {progressing ? "…" : "✅ Prise en charge"}
+                    {progressing ? "…" : "📍 Votre taxi est arrivé"}
                   </button>
                 )}
                 {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
@@ -2396,7 +2396,7 @@ function CourseCard({
                     disabled={completing}
                     style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
                   >
-                    {completing ? "…" : "🏁 Terminée"}
+                    {completing ? "…" : "✓ Terminée"}
                   </button>
                 )}
               </div>
@@ -2958,7 +2958,7 @@ function CourseCard({
                   marginBottom: 10,
                 }}
               >
-                {progressing ? "…" : "🚖 Je pars vers le client"}
+                {progressing ? "…" : "🚕 Votre taxi arrive"}
               </button>
             )}
 
@@ -2979,7 +2979,7 @@ function CourseCard({
                   marginBottom: 10,
                 }}
               >
-                {progressing ? "…" : "📍 Je suis devant chez vous"}
+                {progressing ? "…" : "📍 Votre taxi est arrivé"}
               </button>
             )}
 
@@ -3000,7 +3000,7 @@ function CourseCard({
                   marginBottom: 10,
                 }}
               >
-                {completing ? "…" : "🏁 Course terminée"}
+                {completing ? "…" : "✓ Terminée"}
               </button>
             )}
 
