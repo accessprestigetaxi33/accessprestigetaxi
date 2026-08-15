@@ -115,43 +115,42 @@ export const Route = createFileRoute("/driver")({
   // ?lang=en / ?lang=fr : choisit la langue du visuel et des textes de partage.
   validateSearch: (s: Record<string, unknown>): { token: string; lang?: "en" | "fr" } => ({
     token: String(s.token ?? ""),
-    lang:
-      s['lang'] === "en" ? ("en" as const) : s['lang'] === "fr" ? ("fr" as const) : undefined,
+    lang: s["lang"] === "en" ? ("en" as const) : s["lang"] === "fr" ? ("fr" as const) : undefined,
   }),
   head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
     const isEn = ctx?.match?.search?.lang === "en";
     const social = isEn ? DRIVER_SOCIAL_EN : DRIVER_SOCIAL_FR;
     return {
-    meta: [
-      { title: social.title },
-      { name: "description", content: social.description },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:site_name", content: "Access Prestige Taxi" },
-      { property: "og:title", content: social.title },
-      { property: "og:description", content: social.description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: social.url },
-      { property: "og:image", content: social.image },
-      { property: "og:image:secure_url", content: social.image },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: social.alt },
-      { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
-      { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: social.title },
-      { name: "twitter:description", content: social.description },
-      { name: "twitter:image", content: social.image },
-      { name: "twitter:image:alt", content: social.alt },
-      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0f172a" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
-    ],
-    links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
+      meta: [
+        { title: social.title },
+        { name: "description", content: social.description },
+        { name: "robots", content: "noindex, nofollow" },
+        { property: "og:site_name", content: "Access Prestige Taxi" },
+        { property: "og:title", content: social.title },
+        { property: "og:description", content: social.description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: social.url },
+        { property: "og:image", content: social.image },
+        { property: "og:image:secure_url", content: social.image },
+        { property: "og:image:type", content: "image/png" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:image:alt", content: social.alt },
+        { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
+        { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: social.title },
+        { name: "twitter:description", content: social.description },
+        { name: "twitter:image", content: social.image },
+        { name: "twitter:image:alt", content: social.alt },
+        { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
+        { name: "theme-color", content: "#0f172a" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+        { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
+      ],
+      links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
     };
   },
 
@@ -219,7 +218,7 @@ const css = `
   .drv-tab svg { width: 22px; height: 22px; }
   .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
   .drv-body {
-    flex: 1; padding: 16px;
+    flex: 1; min-height: 0; padding: 16px;
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
   }
@@ -590,7 +589,6 @@ function DriverApp({
     driverId: driverId ?? null,
   });
 
-
   // Force le manifest driver au runtime (remplace le manifest global)
   useEffect(() => {
     const existing = document.querySelector('link[rel="manifest"]');
@@ -737,17 +735,17 @@ function DriverApp({
               alignItems: "center",
               justifyContent: "space-between",
               gap: 10,
-               background: pushStatus === "denied" ? "#fef2f2" : "#eff6ff",
+              background: pushStatus === "denied" ? "#fef2f2" : "#eff6ff",
               borderBottom: "1px solid #e2e8f0",
               padding: "10px 16px",
               fontSize: 12.5,
-               color: pushStatus === "denied" ? "#b91c1c" : "#1d4ed8",
+              color: pushStatus === "denied" ? "#b91c1c" : "#1d4ed8",
             }}
           >
             <span>
               {pushStatus === "denied"
                 ? "🔕 Notifications bloquées — active-les dans les réglages."
-                 : "🔔 Active les notifications pour ne rater aucune nouvelle course."}
+                : "🔔 Active les notifications pour ne rater aucune nouvelle course."}
             </span>
             {pushStatus !== "denied" && (
               <button
@@ -764,82 +762,86 @@ function DriverApp({
                   cursor: "pointer",
                 }}
               >
-                 Activer
+                Activer
               </button>
             )}
           </div>
         )}
 
-        {/* Position et GPS de l'équipe regroupés au même endroit. */}
-        {(driverId === "alain" || driverId === "patricia") && (
-          <>
-            <TeamMapCard driverId={driverId} />
-            <GpsTab
-              driverId={driverId}
-              driverLabel={driverLabel}
-              gps={gps}
-              onIdentify={onIdentify}
-              identifyBusy={identifyBusy}
-              identifyError={identifyError}
-            />
-          </>
-        )}
-
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map(
-            (t) => (
-              <button
-                key={t}
-                className={`drv-tab${tab === t ? " active" : ""}`}
-                onClick={() => {
-                  setTab(t);
-                  gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
-                  // Reset optimiste du badge chat à l'ouverture de l'onglet ;
-                  // le prochain refresh Realtime/reconcile remettra la vraie valeur.
-                  if (t === "courses") setUnreadChat(0);
-                }}
-              >
-                <div style={{ position: "relative", display: "inline-block" }}>
-                  {t === "courses" && (
-                    <>
-                      <IconBell />
-                      {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
-                    </>
-                  )}
-                  {t === "planning" && <IconCalendar />}
-                  {t === "avis" && (
-                    <>
-                      <IconStar />
-                      {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
-                    </>
-                  )}
-                  {t === "clients" && <IconUsers />}
-                  {t === "stats" && <IconChart />}
-                  {t === "historique" && <IconCalendar />}
-                  {t === "simulateur" && <IconCalc />}
-                  {t === "gps" && <IconGps />}
-                </div>
-                <span>
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map((t) => (
+            <button
+              key={t}
+              className={`drv-tab${tab === t ? " active" : ""}`}
+              onClick={() => {
+                setTab(t);
+                gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
+                // Reset optimiste du badge chat à l'ouverture de l'onglet ;
+                // le prochain refresh Realtime/reconcile remettra la vraie valeur.
+                if (t === "courses") setUnreadChat(0);
+              }}
+            >
+              <div style={{ position: "relative", display: "inline-block" }}>
+                {t === "courses" && (
+                  <>
+                    <IconBell />
+                    {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
+                  </>
+                )}
+                {t === "planning" && <IconCalendar />}
+                {t === "avis" && (
+                  <>
+                    <IconStar />
+                    {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
+                  </>
+                )}
+                {t === "clients" && <IconUsers />}
+                {t === "stats" && <IconChart />}
+                {t === "historique" && <IconCalendar />}
+                {t === "simulateur" && <IconCalc />}
+                {t === "gps" && <IconGps />}
+              </div>
+              <span>
+                {
                   {
-                    {
-                      courses: "Course + chat client",
-                      planning: "Planning",
-                      avis: "Avis",
-                      clients: "Clients",
-                      stats: "Stats",
-                      historique: "Historique",
-                      simulateur: "Simu",
-                      gps: "GPS",
-                    }[t]
-                  }
-                </span>
-              </button>
-            ),
-          )}
+                    courses: "Course + chat client",
+                    planning: "Planning",
+                    avis: "Avis",
+                    clients: "Clients",
+                    stats: "Stats",
+                    historique: "Historique",
+                    simulateur: "Simu",
+                    gps: "GPS",
+                  }[t]
+                }
+              </span>
+            </button>
+          ))}
         </div>
 
         <div className="drv-body">
+          {/* Position et GPS de l'équipe regroupés au même endroit. Placé ICI
+              (dans la zone scrollable .drv-body, au-dessus du contenu de
+              l'onglet actif) plutôt qu'au-dessus de la barre d'onglets :
+              sinon, sur un écran court, ces deux cartes GPS pouvaient à elles
+              seules dépasser la hauteur de l'écran et rendre la barre
+              d'onglets + tout le contenu (avis, clients…) inaccessibles,
+              sans aucun moyen de scroller pour les atteindre. */}
+          {(driverId === "alain" || driverId === "patricia") && (
+            <>
+              <TeamMapCard driverId={driverId} />
+              <GpsTab
+                driverId={driverId}
+                driverLabel={driverLabel}
+                gps={gps}
+                onIdentify={onIdentify}
+                identifyBusy={identifyBusy}
+                identifyError={identifyError}
+              />
+            </>
+          )}
+
           {tab === "courses" && (
             <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
           )}
@@ -984,50 +986,50 @@ function useDriverGpsTracking(driverId?: string) {
     }
     if (watchRef.current != null) return;
     const handlePosition = (p: GeolocationPosition) => {
-        const lat = p.coords.latitude;
-        const lng = p.coords.longitude;
-        setState("on");
-        setPos({
-          lat,
-          lng,
-          acc: Number.isFinite(p.coords.accuracy) ? Math.round(p.coords.accuracy) : null,
-          speed: p.coords.speed != null && Number.isFinite(p.coords.speed) ? Math.max(0, p.coords.speed) : null,
-        });
+      const lat = p.coords.latitude;
+      const lng = p.coords.longitude;
+      setState("on");
+      setPos({
+        lat,
+        lng,
+        acc: Number.isFinite(p.coords.accuracy) ? Math.round(p.coords.accuracy) : null,
+        speed: p.coords.speed != null && Number.isFinite(p.coords.speed) ? Math.max(0, p.coords.speed) : null,
+      });
 
-        // Envoi throttlé : 15 s minimum, ou déplacement > ~30 m.
-        const prev = lastSentRef.current;
-        const dist = prev
-          ? Math.hypot((lat - prev.lat) * 111320, (lng - prev.lng) * 111320 * Math.cos((lat * Math.PI) / 180))
-          : Infinity;
-        if (!prev || Date.now() - prev.t > 15000 || dist > 30) {
-          lastSentRef.current = { t: Date.now(), lat, lng };
-          pushPos({
-            data: {
-              token: getDriverToken() ?? "",
-              latitude: lat,
-              longitude: lng,
-              accuracy: p.coords.accuracy ?? null,
-              speed: p.coords.speed != null && p.coords.speed >= 0 ? Math.min(500, p.coords.speed) : null,
-              heading:
-                p.coords.heading != null && Number.isFinite(p.coords.heading)
-                  ? ((p.coords.heading % 360) + 360) % 360
-                  : null,
-              is_active: true,
-            },
-          })
-            .then(() => setLastSync(new Date()))
-            .catch(() => {});
-        }
+      // Envoi throttlé : 15 s minimum, ou déplacement > ~30 m.
+      const prev = lastSentRef.current;
+      const dist = prev
+        ? Math.hypot((lat - prev.lat) * 111320, (lng - prev.lng) * 111320 * Math.cos((lat * Math.PI) / 180))
+        : Infinity;
+      if (!prev || Date.now() - prev.t > 15000 || dist > 30) {
+        lastSentRef.current = { t: Date.now(), lat, lng };
+        pushPos({
+          data: {
+            token: getDriverToken() ?? "",
+            latitude: lat,
+            longitude: lng,
+            accuracy: p.coords.accuracy ?? null,
+            speed: p.coords.speed != null && p.coords.speed >= 0 ? Math.min(500, p.coords.speed) : null,
+            heading:
+              p.coords.heading != null && Number.isFinite(p.coords.heading)
+                ? ((p.coords.heading % 360) + 360) % 360
+                : null,
+            is_active: true,
+          },
+        })
+          .then(() => setLastSync(new Date()))
+          .catch(() => {});
+      }
 
-        // Adresse lisible, rafraîchie seulement si on a bougé de > 100 m.
-        const a = addrRef.current;
-        const moved = !a || Math.hypot((lat - a.lat) * 111320, (lng - a.lng) * 111320) > 100;
-        if (moved) {
-          addrRef.current = { lat, lng };
-          reverseGeocode(lat, lng)
-            .then((r) => r && setAddr(r))
-            .catch(() => {});
-        }
+      // Adresse lisible, rafraîchie seulement si on a bougé de > 100 m.
+      const a = addrRef.current;
+      const moved = !a || Math.hypot((lat - a.lat) * 111320, (lng - a.lng) * 111320) > 100;
+      if (moved) {
+        addrRef.current = { lat, lng };
+        reverseGeocode(lat, lng)
+          .then((r) => r && setAddr(r))
+          .catch(() => {});
+      }
     };
 
     watchRef.current = navigator.geolocation.watchPosition(
