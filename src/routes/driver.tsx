@@ -11,7 +11,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useServerFn } from "@tanstack/react-start";
 import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
-import { broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
+import { broadcastDriverFeed, broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
 import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
@@ -3463,7 +3463,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   useEffect(() => {
     load();
     const ch = (supabase as any)
-      .channel("driver-feed-avis", { config: { broadcast: { self: false } } })
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
       .on("broadcast", { event: "reservation" }, load)
       .subscribe();
     const poll = setInterval(load, 8000);
@@ -4772,7 +4772,7 @@ function StatsTab() {
     load();
     const t = setInterval(load, 8000);
     const ch = (supabase as any)
-      .channel("driver-feed-stats", { config: { broadcast: { self: false } } })
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
       .on("broadcast", { event: "reservation" }, () => load())
       .subscribe();
     const onVis = () => {
@@ -4961,7 +4961,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
     load();
     const t = setInterval(load, 8000);
     const ch = (supabase as any)
-      .channel("driver-feed-history", { config: { broadcast: { self: false } } })
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
       .on("broadcast", { event: "reservation" }, () => load())
       .subscribe();
     const onVis = () => {
