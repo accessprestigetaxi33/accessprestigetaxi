@@ -247,11 +247,20 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
     };
 
   // Sécurité tarifaire : on ne fait jamais confiance au prix renvoyé par le modèle.
-  const quote = await computeQuote(
-    { depart: args.depart, arrivee: args.arrivee, pickup_datetime: args.pickup_datetime },
-    langCode,
-    null,
-  );
+  // Cet appel réseau (Google) ne doit JAMAIS faire échouer une réservation par
+  // ailleurs valide (créneau OK, coordonnées OK) : un timeout/429/credentials
+  // manquants sur ce simple recalcul de contrôle ne doit dégrader que le
+  // détail du prix, jamais bloquer la création de la course.
+  let quote: any = { ok: false };
+  try {
+    quote = await computeQuote(
+      { depart: args.depart, arrivee: args.arrivee, pickup_datetime: args.pickup_datetime },
+      langCode,
+      null,
+    );
+  } catch (e) {
+    console.warn("[chat] price safety recompute failed, falling back to model-provided values", e);
+  }
   const depart = (quote as any).depart_resolu ?? args.depart;
   const arrivee = (quote as any).arrivee_resolu ?? args.arrivee;
   const distanceKm = (quote as any).distance_km ?? args.distance_km ?? null;

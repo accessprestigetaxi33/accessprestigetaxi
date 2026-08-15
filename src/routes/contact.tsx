@@ -176,10 +176,6 @@ function ContactPage() {
         <ContactForm />
       </div>
 
-      <div className="mt-5 rounded-2xl border border-primary/30 bg-card p-4 text-center sm:mt-8 sm:p-5">
-        <Clock className="mx-auto h-6 w-6 text-primary sm:h-7 sm:w-7" />
-        <p className="mt-2 font-display text-base font-semibold sm:text-lg">{t("common.available_247")}</p>
-      </div>
     </div>
   );
 }

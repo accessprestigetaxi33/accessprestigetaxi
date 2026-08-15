@@ -43,7 +43,7 @@ const COPY = {
     read: "Lire l'article",
     count: (n: number) => `${n} adresse${n > 1 ? "s" : ""}`,
     ctaTitle: "On vous y emmène",
-    ctaText: "Trajet à la demande dans toute la Charente-Maritime, en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 7 places.",
+    ctaText: "Trajet à la demande dans toute la Charente-Maritime, en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
     ctaBtn: "Réserver ma course",
   },
   en: {
@@ -64,7 +64,7 @@ const COPY = {
     read: "Read the article",
     count: (n: number) => `${n} place${n > 1 ? "s" : ""}`,
     ctaTitle: "We'll take you there",
-    ctaText: "On-demand rides across Charente-Maritime in an electric BMW iX1, Audi Q6 e-tron or 7-seat Mercedes van.",
+    ctaText: "On-demand rides across Charente-Maritime in an electric BMW iX1, Audi Q6 e-tron or 8-seat Mercedes van.",
     ctaBtn: "Book a ride",
   },
 } as const;
