@@ -39,6 +39,17 @@ export const createReservationPublic = createServerFn({ method: "POST" })
       depart: data.depart,
       arrivee: data.arrivee,
       pickup_datetime: data.pickup_datetime,
+      // La table "reservations" a deux colonnes de date : `date_heure`
+      // (historique, utilisée par l'espace chauffeur en repli quand
+      // `pickup_datetime` est vide — cf. driver.tsx) et `pickup_datetime`
+      // (actuelle). Ce chemin de création (réservation via l'assistante IA)
+      // ne renseignait QUE `pickup_datetime` : si `date_heure` est NOT NULL
+      // en base, l'insertion échoue à chaque tentative, ce qui correspond
+      // exactement au message "impossible d'enregistrer la réservation"
+      // renvoyé systématiquement par l'IA. Le formulaire de réservation
+      // classique du site renseignait probablement déjà les deux colonnes,
+      // d'où un bug isolé au seul parcours chat.
+      date_heure: data.pickup_datetime,
       passagers: data.passagers,
       bagages: data.bagages ?? 0,
       service_type: data.service_type,
