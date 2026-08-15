@@ -31,7 +31,13 @@ import { getReservationForFinPublic } from "@/lib/reservation.functions";
 import { logTrackingEvent, requestRecurringRide } from "@/lib/public-events.functions";
 import { recomputeReservationDuration } from "@/lib/reservation-recompute.functions";
 import { durationSecondsToMinutes, durationSecondsToMs } from "@/lib/duration";
-import { listSuiviMessages, sendSuiviClientMessage, markReservationMessagesRead, countUnreadClientForReservation, type ChatMessage } from "@/lib/chat.functions";
+import {
+  listSuiviMessages,
+  sendSuiviClientMessage,
+  markReservationMessagesRead,
+  countUnreadClientForReservation,
+  type ChatMessage,
+} from "@/lib/chat.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getTaxiSupabase } from "@/lib/taxi-supabase";
@@ -325,7 +331,15 @@ function PremiumTimeline({ status }: { status: string }) {
 }
 
 // ─── Chat Component (anonyme, scopé par clé URL /suivi/$id) ──────────────────
-function ChatSection({ suiviKey, reservationId, t }: { suiviKey: string; reservationId: string; t: (k: string) => string }) {
+function ChatSection({
+  suiviKey,
+  reservationId,
+  t,
+}: {
+  suiviKey: string;
+  reservationId: string;
+  t: (k: string) => string;
+}) {
   const [unread, setUnread] = useState(0);
   return (
     <div
@@ -488,9 +502,7 @@ function AnonChat({
       try {
         await markReadFn({ data: { suivi_key: suiviKey, role: "client" } });
         if (!cancelled) {
-          setMessages((prev) =>
-            prev.map((m) => (!m.read_by_client ? { ...m, read_by_client: true } : m)),
-          );
+          setMessages((prev) => prev.map((m) => (!m.read_by_client ? { ...m, read_by_client: true } : m)));
           setUnreadSql(0);
         }
       } catch {}
@@ -1167,7 +1179,15 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
 }
 
 // ─── Avis ──────────────────────────────────────────────────────────────────────────
-function ReviewBlock({ reservationId, authorName, t }: { reservationId: string; authorName?: string | null; t: (k: string) => string }) {
+function ReviewBlock({
+  reservationId,
+  authorName,
+  t,
+}: {
+  reservationId: string;
+  authorName?: string | null;
+  t: (k: string) => string;
+}) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
@@ -1560,10 +1580,29 @@ function SuiviPage() {
   const [error, setError] = useState<string | null>(null);
   const [showRecurring, setShowRecurring] = useState(false);
   const assignedDriver =
-    DRIVERS.find(
-      (d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase(),
-    ) ?? DRIVERS[0];
+    DRIVERS.find((d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase()) ?? DRIVERS[0];
   const josePhone = assignedDriver?.tel ?? JOSE_PHONE;
+
+  // ── Historique des changements de prix (RPC SECURITY DEFINER, lien public) ──
+  const [priceHistory, setPriceHistory] = useState<
+    Array<{ id: string; old_price: number | null; new_price: number; motif: string | null; created_at: string }>
+  >([]);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const { data, error } = await (supabase as any).rpc("get_price_history_for_suivi", { p_key: id });
+        if (!cancelled && !error && Array.isArray(data)) setPriceHistory(data);
+      } catch {
+        /* silencieux */
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, reservation?.prix_estime, reservation?.id]);
+
   const [pushDismissed, setPushDismissed] = useState(false);
   const { status: pushStatus, subscribe: pushSubscribe } = usePushNotifications();
   const [pushActivatedHere, setPushActivatedHere] = useState(false);
@@ -2386,6 +2425,76 @@ function SuiviPage() {
           )}
         </div>
 
+        {/* Historique des changements de prix */}
+        {priceHistory.length > 0 &&
+          (() => {
+            const L: Record<string, { title: string; from: string; to: string; motif: string }> = {
+              fr: { title: "Historique des prix", from: "Ancien prix", to: "Nouveau prix", motif: "Motif" },
+              en: { title: "Price history", from: "Previous price", to: "New price", motif: "Reason" },
+              es: { title: "Historial de precios", from: "Precio anterior", to: "Nuevo precio", motif: "Motivo" },
+              it: { title: "Storico prezzi", from: "Prezzo precedente", to: "Nuovo prezzo", motif: "Motivo" },
+              pt: { title: "Histórico de preços", from: "Preço anterior", to: "Novo preço", motif: "Motivo" },
+              de: { title: "Preisverlauf", from: "Vorheriger Preis", to: "Neuer Preis", motif: "Grund" },
+              ar: { title: "سجل الأسعار", from: "السعر السابق", to: "السعر الجديد", motif: "السبب" },
+            };
+            const s = L[String(locale).slice(0, 2)] ?? L.en;
+            const money = (v: number) =>
+              new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(v);
+            return (
+              <div className="suivi-premium suivi-card" style={{ marginBottom: "16px", padding: "16px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                    color: "#92400e",
+                    marginBottom: 10,
+                  }}
+                >
+                  <CreditCard size={16} /> {s.title}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {priceHistory.map((h) => (
+                    <div
+                      key={h.id}
+                      style={{
+                        border: "1px solid #fde68a",
+                        background: "#fffbeb",
+                        borderRadius: 10,
+                        padding: "10px 12px",
+                      }}
+                    >
+                      <div style={{ fontSize: 11, color: "#a16207", marginBottom: 4 }}>
+                        {new Date(h.created_at).toLocaleString(locale, {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                          timeZone: "Europe/Paris",
+                        })}
+                      </div>
+                      <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 600 }}>
+                        {h.old_price != null && (
+                          <span style={{ color: "#94a3b8", textDecoration: "line-through", marginRight: 8 }}>
+                            {money(Number(h.old_price))}
+                          </span>
+                        )}
+                        <span style={{ color: "#92400e", fontWeight: 800 }}>{money(Number(h.new_price))}</span>
+                      </div>
+                      {h.motif && (
+                        <div style={{ fontSize: 12, color: "#78350f", marginTop: 4, whiteSpace: "pre-wrap" }}>
+                          {s.motif} : {h.motif}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
         {/* Contact Jose */}
         {!isCompleted && (
           <div className="suivi-premium suivi-card" style={{ marginBottom: "16px", padding: "16px" }}>
@@ -2462,7 +2571,11 @@ function SuiviPage() {
         {isCompleted && (
           <>
             <InvoiceBlock reservation={reservation} locale={locale} t={t} />
-            <ReviewBlock reservationId={reservation.id} authorName={reservation.client_name ?? reservation.nom ?? "Client"} t={t} />
+            <ReviewBlock
+              reservationId={reservation.id}
+              authorName={reservation.client_name ?? reservation.nom ?? "Client"}
+              t={t}
+            />
             {/* Actions post-course */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
               {/* 🔁 Rebooker le même trajet */}
