@@ -11,7 +11,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useServerFn } from "@tanstack/react-start";
 import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
-import { broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
+import { broadcastDriverFeed, broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
 import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
 import { ChatPanel } from "@/components/ChatPanel";
 import { InlineDriverChat } from "@/components/InlineDriverChat";
@@ -770,12 +770,24 @@ function DriverApp({
           </div>
         )}
 
-        {/* Position de l'équipe (Alain / Patricia) */}
-        {(driverId === "alain" || driverId === "patricia") && <TeamMapCard driverId={driverId} />}
+        {/* Position et GPS de l'équipe regroupés au même endroit. */}
+        {(driverId === "alain" || driverId === "patricia") && (
+          <>
+            <TeamMapCard driverId={driverId} />
+            <GpsTab
+              driverId={driverId}
+              driverLabel={driverLabel}
+              gps={gps}
+              onIdentify={onIdentify}
+              identifyBusy={identifyBusy}
+              identifyError={identifyError}
+            />
+          </>
+        )}
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "gps"] as Tab[]).map(
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map(
             (t) => (
               <button
                 key={t}
@@ -838,16 +850,6 @@ function DriverApp({
           {tab === "stats" && <StatsTab />}
           {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
-          {tab === "gps" && (
-            <GpsTab
-              driverId={driverId}
-              driverLabel={driverLabel}
-              gps={gps}
-              onIdentify={onIdentify}
-              identifyBusy={identifyBusy}
-              identifyError={identifyError}
-            />
-          )}
         </div>
       </div>
     </>
@@ -3368,15 +3370,15 @@ function PlanningTab() {
 
   useEffect(() => {
     load();
-    const poll = setInterval(load, 15000);
+    const poll = setInterval(load, 8000);
     const onVisible = () => {
       if (!document.hidden) load();
     };
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", onVisible);
     const ch = (supabase as any)
-      .channel("drv-planning")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, load)
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, load)
       .subscribe();
     return () => {
       clearInterval(poll);
@@ -3461,10 +3463,10 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   useEffect(() => {
     load();
     const ch = (supabase as any)
-      .channel("drv-avis")
-      .on("postgres_changes", { event: "*", schema: "public", table: "avis" }, load)
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, load)
       .subscribe();
-    const poll = setInterval(load, 15000);
+    const poll = setInterval(load, 8000);
     const onVisible = () => {
       if (!document.hidden) load();
     };
@@ -3498,6 +3500,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
               : "Avis refusé",
       );
       load();
+      broadcastDriverFeed("review-moderated");
     } catch (e: any) {
       toast.error("Erreur : " + (e.message ?? e));
     } finally {
@@ -3518,6 +3521,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
       if (!response.ok) throw new Error(result.error || "suppression impossible");
       toast.success("Avis supprimé");
       load();
+      broadcastDriverFeed("review-deleted");
     } catch (e: any) {
       toast.error("Erreur : " + (e.message ?? e));
     } finally {
@@ -3712,16 +3716,15 @@ function ClientsTab() {
 
   useEffect(() => {
     load();
-    const poll = setInterval(load, 20000);
+    const poll = setInterval(load, 8000);
     const onVisible = () => {
       if (!document.hidden) load();
     };
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", onVisible);
     const ch = (supabase as any)
-      .channel("drv-clients")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, load)
-      .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, load)
+      .channel("driver-feed-clients", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, load)
       .subscribe();
     return () => {
       clearInterval(poll);
@@ -4767,10 +4770,10 @@ function StatsTab() {
   useEffect(() => {
     setLoading(true);
     load();
-    const t = setInterval(load, 15000);
+    const t = setInterval(load, 8000);
     const ch = (supabase as any)
-      .channel("drv-stats")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, () => load())
       .subscribe();
     const onVis = () => {
       if (!document.hidden) load();
@@ -4956,10 +4959,10 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
   useEffect(() => {
     setLoading(true);
     load();
-    const t = setInterval(load, 20000);
+    const t = setInterval(load, 8000);
     const ch = (supabase as any)
-      .channel("drv-history")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .channel("driver-feed", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, () => load())
       .subscribe();
     const onVis = () => {
       if (!document.hidden) load();

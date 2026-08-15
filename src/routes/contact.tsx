@@ -1,7 +1,7 @@
 import { socialImageMeta } from "@/lib/og";
 import { createFileRoute } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Phone, Mail, MapPin, MessageCircle, Clock, HeartPulse } from "lucide-react";
+import { Phone, Mail, MapPin, MessageCircle, HeartPulse } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { ContactForm } from "@/components/ContactForm";
@@ -11,7 +11,7 @@ const heroLogo = heroLogoAsset.url;
 const CONTACT_EMAIL = "accessprestigetaxi@gmail.com";
 const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
 const CONTACT_DESC =
-  "Contactez Access Prestige Taxi : 06 50 32 19 23, accessprestigetaxi@gmail.com. Transport sanitaire conventionné, toutes distances, base Charente-Maritime.";
+  "Contactez Access Prestige Taxi : 06 03 44 48 63, accessprestigetaxi@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
 const CONTACT_URL = "https://accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
@@ -42,13 +42,7 @@ export const Route = createFileRoute("/contact")({
           telephone: DRIVERS.map((d) => d.intl),
           email: CONTACT_EMAIL,
           areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
-          knowsAbout: ["Transport sanitaire conventionné", "Longue distance sans limite de kilométrage"],
-          openingHoursSpecification: {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            opens: "08:00",
-            closes: "20:00",
-          },
+          knowsAbout: ["Transport sanitaire avec fauteuil roulant", "Prestations toutes distances"],
         }),
       },
     ],
@@ -64,11 +58,11 @@ const COPY = {
     zoneTitle: "Zone d'intervention",
     zoneMain: "Charente-Maritime",
     zoneSub: "Tout le département (17) et au-delà",
-    zoneLong: "Aucune limite de distance : toute la France et l'Europe, pour tous types de prestations.",
+    zoneLong: "Toutes distances : France et Europe, pour tous types de prestations.",
     cmuTitle: "Transport sanitaire conventionné",
     cmuText:
       "Consultations, hospitalisations, dialyses, chimiothérapies : prise en charge conventionnée sur prescription médicale.",
-    badge: "10 ans d'expérience",
+    badge: "20 ans d'expérience",
   },
   en: {
     whatsappTitle: "WhatsApp",
@@ -77,11 +71,11 @@ const COPY = {
     zoneTitle: "Service area",
     zoneMain: "Charente-Maritime",
     zoneSub: "The whole area (17) and beyond",
-    zoneLong: "No distance limit: anywhere in France and Europe, for every type of journey.",
+    zoneLong: "All distances: anywhere in France and Europe, for every type of journey.",
     cmuTitle: "Approved medical transport",
     cmuText:
       "Appointments, hospital stays, dialysis, chemotherapy: covered medical transport with a doctor's prescription.",
-    badge: "10 years of experience",
+    badge: "20 years of experience",
   },
 } as const;
 
@@ -182,10 +176,6 @@ function ContactPage() {
         <ContactForm />
       </div>
 
-      <div className="mt-5 rounded-2xl border border-primary/30 bg-card p-4 text-center sm:mt-8 sm:p-5">
-        <Clock className="mx-auto h-6 w-6 text-primary sm:h-7 sm:w-7" />
-        <p className="mt-2 font-display text-base font-semibold sm:text-lg">{t("common.available_247")}</p>
-      </div>
     </div>
   );
 }

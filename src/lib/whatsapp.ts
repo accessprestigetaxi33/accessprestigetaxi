@@ -31,7 +31,7 @@ const LOCALE_MAP: Record<Lang, string> = {
 
 const STRINGS = {
   fr: {
-    intro: "Bonjour, je souhaite réserver un taxi.",
+    intro: "Bonjour, quelle est votre demande ?",
     name: "Nom",
     phone: "Téléphone",
     pickup: "Prise en charge",
@@ -50,7 +50,7 @@ const STRINGS = {
     outro: "Merci de me confirmer la disponibilité.",
   },
   en: {
-    intro: "Hello, I would like to book a taxi.",
+    intro: "Hello, how can we help?",
     name: "Name",
     phone: "Phone",
     pickup: "Pickup",

@@ -38,7 +38,7 @@ const STR: Record<Lang, Record<string, string>> = {
     ref: "N° de réservation",
     reason: "Motif",
     cta: "Réserver un nouveau trajet",
-    foot: "Access Prestige Taxi — Charente-Maritime · Transport conventionné · 5j/7, 8h-20h",
+    foot: "Access Prestige Taxi — Charente-Maritime · Transport sanitaire · Toutes distances",
     subj: "Annulation de votre réservation — Access Prestige Taxi",
   },
   en: {
@@ -53,7 +53,7 @@ const STR: Record<Lang, Record<string, string>> = {
     ref: "Booking number",
     reason: "Reason",
     cta: "Book a new ride",
-    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · Mon-Fri, 8am-8pm",
+    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · All distances",
     subj: "Your booking has been cancelled — Access Prestige Taxi",
   },
 };

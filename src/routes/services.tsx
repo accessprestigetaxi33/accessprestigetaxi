@@ -1,7 +1,7 @@
 import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Plane, Train, Briefcase, Wrench, ShieldCheck, MapPin, Users, Clock, HelpCircle } from "lucide-react";
+import { Plane, Train, Briefcase, Accessibility, ShieldCheck, MapPin, Users, Route as RouteIcon, HelpCircle } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
 import { BulletedList } from "@/components/BulletedList";
 
@@ -11,9 +11,9 @@ const SERVICES_DESC =
 const SERVICES_URL = "https://accessprestigetaxi.lovable.app/services";
 
 const SERVICE_LIST = [
-  { name: "Transfert aéroport", description: "Transferts vers et depuis les aéroports en Charente-Maritime." },
-  { name: "Transfert gare", description: "Transferts vers et depuis les gares en Charente-Maritime." },
-  { name: "Transport conventionné CPAM", description: "Transport médical assis conventionné, prise en charge Assurance Maladie." },
+  { name: "Transfert tous aéroports", description: "Transferts vers et depuis tous les aéroports." },
+  { name: "Transfert toutes gares", description: "Transferts vers et depuis toutes les gares." },
+  { name: "Transport conventionné CPAM", description: "Transport sanitaire conventionné, possible avec fauteuil roulant." },
   { name: "Mariages et événements", description: "Mise à disposition pour mariages et événements." },
   { name: "Trajets professionnels", description: "Déplacements business et mise à disposition avec chauffeur." },
   { name: "Longues distances", description: "Trajets longue distance en France et en Europe sur réservation." },
@@ -116,7 +116,7 @@ function ServicesPage() {
       points: [t("svcp.business.p1"), t("svcp.business.p2"), t("svcp.business.p3")],
     },
     {
-      icon: Wrench,
+      icon: Accessibility,
       title: t("svcp.wedding.title"),
       desc: t("svcp.wedding.desc"),
       points: [t("svcp.wedding.p1"), t("svcp.wedding.p2"), t("svcp.wedding.p3")],
@@ -170,7 +170,7 @@ function ServicesPage() {
       {/* Badges: 1-col on mobile, 3-col on md */}
       <div className="mt-10 grid gap-3 sm:mt-16 sm:grid-cols-3 sm:gap-4">
         {[
-          { icon: Clock, label: t("services.b1") },
+          { icon: RouteIcon, label: t("services.b1") },
           { icon: Users, label: t("services.b2") },
           { icon: ShieldCheck, label: t("services.b3") },
         ].map((b) => (

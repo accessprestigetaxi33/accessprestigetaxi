@@ -51,9 +51,9 @@ Puis confirm_reservation. Passagers=1, bagages=0 par défaut.
 
 Règles métier :
 • Tarifs : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit (19h-7h), le dimanche et les jours fériés. Tarif mixte automatique.
-• Flotte : Patricia conduit une BMW iX1 100 % électrique (4 passagers). Alain conduit un van Mercedes jusqu'à 7 passagers — propose-le spontanément dès 5 passagers ou pour un groupe.
+• Flotte : BMW iX1 électrique (5 places), Audi Q6 e-tron électrique (5 places) et van Mercedes (8 places). Propose le van dès 6 passagers ou pour un groupe.
 • Sièges bébé et sièges enfant disponibles sur demande, sans supplément.
-• Zone : Charente-Maritime (La Rochelle, Rochefort, Royan, Saintes, Île de Ré, Île d'Oléron, Châtelaillon-Plage…) et longue distance (Bordeaux, Nantes, Paris, aéroports, gares).
+• Zone SEO : Charente-Maritime (La Rochelle, Rochefort, Royan, Saintes, Île de Ré, Île d'Oléron, Châtelaillon-Plage…). Prestations toutes distances vers la France et l'Europe, toutes gares et tous aéroports.
 • Synonymes : "aéroport" → "Aéroport La Rochelle-Île de Ré", "gare" → "Gare de La Rochelle", "zoo" → "Zoo de La Palmyre".
 • Paiement : carte bancaire à bord, espèces, virement.
 • Si le départ ou l'arrivée n'est pas situé précisément : demande avec empathie le numéro et la rue, la ville, ou un point de repère connu. Ne dis jamais "erreur", "invalide", "introuvable".
@@ -247,11 +247,20 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
     };
 
   // Sécurité tarifaire : on ne fait jamais confiance au prix renvoyé par le modèle.
-  const quote = await computeQuote(
-    { depart: args.depart, arrivee: args.arrivee, pickup_datetime: args.pickup_datetime },
-    langCode,
-    null,
-  );
+  // Cet appel réseau (Google) ne doit JAMAIS faire échouer une réservation par
+  // ailleurs valide (créneau OK, coordonnées OK) : un timeout/429/credentials
+  // manquants sur ce simple recalcul de contrôle ne doit dégrader que le
+  // détail du prix, jamais bloquer la création de la course.
+  let quote: any = { ok: false };
+  try {
+    quote = await computeQuote(
+      { depart: args.depart, arrivee: args.arrivee, pickup_datetime: args.pickup_datetime },
+      langCode,
+      null,
+    );
+  } catch (e) {
+    console.warn("[chat] price safety recompute failed, falling back to model-provided values", e);
+  }
   const depart = (quote as any).depart_resolu ?? args.depart;
   const arrivee = (quote as any).arrivee_resolu ?? args.arrivee;
   const distanceKm = (quote as any).distance_km ?? args.distance_km ?? null;
@@ -454,6 +463,15 @@ RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si 
           if (result.ok) {
             lastReservationId = result.reservation_id;
             lastSuiviId = result.suivi_id;
+            return {
+              reply:
+                data.lang_code === "en"
+                  ? "Your booking is confirmed. Your driver has been notified and your confirmation is on its way."
+                  : "Votre réservation est confirmée. Votre chauffeur est prévenu et votre confirmation est en cours d’envoi.",
+              reservation_id: lastReservationId,
+              suivi_id: lastSuiviId,
+              quote: lastQuote,
+            };
           }
         } else {
           result = { error: "unknown_tool" };
@@ -464,7 +482,11 @@ RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si 
 
     return {
       reply: sanitizeAssistantReply(
-        data.lang_code === "en"
+        lastReservationId
+          ? data.lang_code === "en"
+            ? "Your booking is confirmed. Your driver has been notified."
+            : "Votre réservation est confirmée. Votre chauffeur est prévenu."
+          : data.lang_code === "en"
           ? "One moment please, I could not complete your request. Could you rephrase it?"
           : "Un instant s'il vous plaît, je n'ai pas pu finaliser votre demande. Pourriez-vous la reformuler ?",
         data.lang_code,

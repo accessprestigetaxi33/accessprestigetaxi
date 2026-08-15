@@ -22,14 +22,9 @@ function tokenFrom(request: Request) {
   return request.headers.get("x-driver-token") || url.searchParams.get("token") || "";
 }
 
-function assertDriver(request: Request) {
-  const expected = (process.env.DRIVER_PANEL_TOKEN || "").trim();
-  if (!expected) return false;
-  const provided = tokenFrom(request).trim();
-  if (provided.length !== expected.length) return false;
-  let diff = 0;
-  for (let i = 0; i < provided.length; i++) diff |= provided.charCodeAt(i) ^ expected.charCodeAt(i);
-  return diff === 0;
+async function assertDriver(request: Request) {
+  const { isDriverToken } = await import("@/lib/driver-auth.server");
+  return isDriverToken(tokenFrom(request));
 }
 
 export const Route = createFileRoute("/api/public/reviews")({
@@ -54,7 +49,7 @@ export const Route = createFileRoute("/api/public/reviews")({
           return Response.json({ hasReview: !!data, status: data?.status ?? null });
         }
 
-        if (!assertDriver(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await assertDriver(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
         const columns = "id,author_name,note,commentaire,created_at,status,reservation_id,chauffeur_id";
         const [{ data: pending, error: pendingError }, { data: published, error: publishedError }, { data: flagged }] = await Promise.all([
@@ -138,7 +133,7 @@ export const Route = createFileRoute("/api/public/reviews")({
       },
 
       PATCH: async ({ request }) => {
-        if (!assertDriver(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await assertDriver(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
         const { getTaxiSupabaseAdmin } = await import("@/lib/taxi-supabase.server");
         let raw: unknown;
         try {
@@ -154,7 +149,7 @@ export const Route = createFileRoute("/api/public/reviews")({
       },
 
       DELETE: async ({ request }) => {
-        if (!assertDriver(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        if (!(await assertDriver(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
         const { getTaxiSupabaseAdmin } = await import("@/lib/taxi-supabase.server");
         let raw: unknown;
         try {

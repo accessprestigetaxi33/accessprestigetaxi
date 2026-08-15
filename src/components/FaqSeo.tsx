@@ -21,19 +21,15 @@ const COPY: Record<"fr" | "en", { eyebrow: string; title: string; lead: string; 
       },
       {
         q: "Vos véhicules sont-ils vraiment 100 % électriques ?",
-        a: "La BMW iX1 de Patricia et l'Audi Q6 e-tron sont 100 % électriques : zéro émission à l'usage, aucune vibration, un habitacle silencieux. Le van Mercedes V-Class d'Alain, utilisé pour les groupes jusqu'à 7 personnes, est thermique afin d'assurer les longues distances avec bagages.",
+        a: "La BMW iX1 de Patricia et l'Audi Q6 e-tron sont 100 % électriques, chacun en 5 places : zéro émission à l'usage, aucune vibration, un habitacle silencieux. Le van Mercedes V-Class d'Alain est un véhicule 8 places adapté aux groupes et aux bagages.",
       },
       {
         q: "Quel véhicule choisir selon mon trajet ?",
-        a: "BMW iX1 pour 1 à 4 passagers au quotidien, Audi Q6 e-tron pour les déplacements professionnels et les longues distances en SUV premium, van Mercedes 7 places pour les familles, les équipes et les transferts aéroport avec beaucoup de bagages.",
-      },
-      {
-        q: "Quelles sont vos disponibilités ?",
-        a: "Nous roulons 5 jours sur 7, de 8h à 20h, sur toute la Charente-Maritime. En dehors de ces créneaux, réservez à l'avance : nous organisons les départs très tôt et les retours tardifs sur demande.",
+        a: "BMW iX1 5 places pour les trajets du quotidien, Audi Q6 e-tron 5 places pour les déplacements professionnels et les prestations toutes distances, van Mercedes 8 places pour les familles, les équipes et les transferts avec beaucoup de bagages.",
       },
       {
         q: "Combien de bagages puis-je emporter ?",
-        a: "Comptez 2 valises cabine et 2 grandes valises dans la BMW iX1 ou l'Audi Q6 e-tron. Le van Mercedes accepte jusqu'à 7 passagers avec leurs bagages, ou moins de passagers et un volume de coffre bien plus important. Signalez vélos, planches de surf, poussettes ou instruments à la réservation : nous adaptons le véhicule.",
+        a: "Comptez 2 valises cabine et 2 grandes valises dans la BMW iX1 ou l'Audi Q6 e-tron. Le van Mercedes 8 places offre un volume bien plus important. Signalez vélos, planches de surf, poussettes, fauteuil roulant ou instruments à la réservation : nous adaptons le véhicule.",
       },
       {
         q: "Proposez-vous des sièges bébé et des sièges enfant ?",
@@ -41,7 +37,7 @@ const COPY: Record<"fr" | "en", { eyebrow: string; title: string; lead: string; 
       },
       {
         q: "Prenez-vous en charge le transport conventionné ?",
-        a: "Oui, pour les trajets médicaux assis avec prescription : consultations, hospitalisations, dialyses et cures. Nous gérons la feuille de route et le tiers payant, vous n'avancez pas les frais.",
+        a: "Oui, pour les trajets médicaux avec prescription, y compris avec fauteuil roulant selon le besoin : consultations, hospitalisations, dialyses et cures. Nous gérons la feuille de route et le tiers payant.",
       },
       {
         q: "Comment suivre ma course et récupérer ma facture ?",
@@ -49,7 +45,7 @@ const COPY: Record<"fr" | "en", { eyebrow: string; title: string; lead: string; 
       },
       {
         q: "Puis-je réserver un transport de groupe ?",
-        a: "Oui : le van Mercedes emmène jusqu'à 7 personnes en un seul trajet et à un seul tarif — mariages, séminaires, sorties, transferts gare ou aéroport.",
+        a: "Oui : le van Mercedes 8 places accueille les groupes en un seul trajet et à un seul tarif — mariages, séminaires, sorties, transferts vers toutes les gares et tous les aéroports.",
       },
     ],
   },
@@ -69,19 +65,15 @@ const COPY: Record<"fr" | "en", { eyebrow: string; title: string; lead: string; 
       },
       {
         q: "Are your vehicles really 100% electric?",
-        a: "Patricia's BMW iX1 and the Audi Q6 e-tron are 100% electric: zero tailpipe emissions, no vibration, a silent cabin. Alain's Mercedes V-Class van, used for groups of up to 7 people, runs on fuel so it can cover long distances fully loaded.",
+        a: "Patricia's BMW iX1 and the Audi Q6 e-tron are fully electric 5-seat vehicles: zero tailpipe emissions, no vibration and a silent cabin. Alain's Mercedes V-Class is an 8-seat vehicle for groups and luggage.",
       },
       {
         q: "Which vehicle should I choose?",
-        a: "BMW iX1 for 1 to 4 passengers on everyday trips, Audi Q6 e-tron for business travel and long-distance journeys in a premium SUV, and the 7-seat Mercedes van for families, teams and airport transfers with plenty of luggage.",
-      },
-      {
-        q: "When are you available?",
-        a: "We drive 5 days a week, from 8am to 8pm, across Charente-Maritime. Outside those hours, book in advance: very early departures and late returns are arranged on request.",
+        a: "The 5-seat BMW iX1 suits everyday trips, the 5-seat Audi Q6 e-tron suits business and all-distance services, and the 8-seat Mercedes van suits families, teams and transfers with plenty of luggage.",
       },
       {
         q: "How much luggage can I bring?",
-        a: "Expect 2 cabin bags and 2 large suitcases in the BMW iX1 or Audi Q6 e-tron. The Mercedes van carries up to 7 passengers with their luggage, or fewer passengers and a far larger boot. Mention bikes, surfboards, prams or instruments when booking and we'll match the right vehicle.",
+        a: "Expect 2 cabin bags and 2 large suitcases in the BMW iX1 or Audi Q6 e-tron. The 8-seat Mercedes van offers much more room. Mention bikes, surfboards, prams, wheelchairs or instruments when booking and we'll match the right vehicle.",
       },
       {
         q: "Do you provide baby and child seats?",
@@ -89,7 +81,7 @@ const COPY: Record<"fr" | "en", { eyebrow: string; title: string; lead: string; 
       },
       {
         q: "Do you handle medical transport?",
-        a: "Yes, for seated medical trips with a prescription: consultations, hospital stays, dialysis and treatment courses. We take care of the paperwork and direct billing, so you don't pay upfront.",
+        a: "Yes, for prescribed medical transport, including wheelchair needs where appropriate: consultations, hospital stays, dialysis and treatment courses. We handle the paperwork and direct billing.",
       },
       {
         q: "How do I track my ride and get my receipt?",
@@ -97,7 +89,7 @@ const COPY: Record<"fr" | "en", { eyebrow: string; title: string; lead: string; 
       },
       {
         q: "Can I book group transport?",
-        a: "Yes: the Mercedes van takes up to 7 people in one trip at a single fare — weddings, conferences, nights out, station and airport transfers.",
+        a: "Yes: the 8-seat Mercedes van carries groups in one trip at a single fare — weddings, conferences, nights out, and transfers to all stations and airports.",
       },
     ],
   },
