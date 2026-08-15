@@ -828,19 +828,7 @@ function DriverApp({
               seules dépasser la hauteur de l'écran et rendre la barre
               d'onglets + tout le contenu (avis, clients…) inaccessibles,
               sans aucun moyen de scroller pour les atteindre. */}
-          {(driverId === "alain" || driverId === "patricia") && (
-            <>
-              <TeamMapCard driverId={driverId} />
-              <GpsTab
-                driverId={driverId}
-                driverLabel={driverLabel}
-                gps={gps}
-                onIdentify={onIdentify}
-                identifyBusy={identifyBusy}
-                identifyError={identifyError}
-              />
-            </>
-          )}
+          {(driverId === "alain" || driverId === "patricia") && <TeamMapCard driverId={driverId} gps={gps} />}
 
           {tab === "courses" && (
             <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
@@ -1080,174 +1068,6 @@ function useDriverGpsTracking(driverId?: string) {
 
 type DriverGpsTracking = ReturnType<typeof useDriverGpsTracking>;
 
-// ── Onglet GPS — activation du GPS perso (la carte combinée vit dans TeamMapCard) ────
-const GPS_DRIVER_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
-
-function GpsTab({
-  driverId,
-  driverLabel,
-  gps,
-  onIdentify,
-  identifyBusy,
-  identifyError,
-}: {
-  driverId?: string;
-  driverLabel?: string;
-  gps: DriverGpsTracking;
-  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
-  identifyBusy: string | null;
-  identifyError: string | null;
-}) {
-  const listPos = useServerFn(listDriverPositions);
-  const [team, setTeam] = useState<
-    { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
-  >([]);
-
-  const refreshTeam = useCallback(async () => {
-    try {
-      const res: any = await listPos({ data: { token: getDriverToken() ?? "" } });
-      setTeam((res?.positions ?? []).filter((p: any) => p.id === "alain" || p.id === "patricia"));
-    } catch {}
-  }, [listPos]);
-
-  useEffect(() => {
-    refreshTeam();
-    const t = setInterval(refreshTeam, 15000);
-    return () => clearInterval(t);
-  }, [refreshTeam]);
-
-  if (!gps.identified) {
-    return (
-      <div
-        style={{
-          border: "1px solid #fde68a",
-          borderRadius: 14,
-          background: "#fffbeb",
-          padding: "14px",
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ fontSize: 13, color: "#92400e", fontWeight: 600, marginBottom: 10 }}>
-          Indique qui conduit pour activer le suivi GPS en direct des deux cartes.
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          {(["alain", "patricia"] as const).map((id) => (
-            <button
-              key={id}
-              disabled={identifyBusy !== null}
-              onClick={() => onIdentify(id)}
-              style={{
-                flex: 1,
-                background: "#0f172a",
-                color: "#FDFBF7",
-                border: "none",
-                borderRadius: 8,
-                padding: "9px 10px",
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: identifyBusy ? "wait" : "pointer",
-              }}
-            >
-              {identifyBusy === id ? "…" : GPS_DRIVER_NAMES[id]}
-            </button>
-          ))}
-        </div>
-        {identifyError && <div style={{ color: "#dc2626", fontSize: 11, marginTop: 8 }}>{identifyError}</div>}
-      </div>
-    );
-  }
-
-  const myLabel =
-    gps.state === "on"
-      ? "GPS actif"
-      : gps.state === "denied"
-        ? "GPS refusé — autorise la localisation"
-        : gps.state === "error"
-          ? "GPS indisponible"
-          : gps.state === "off"
-            ? "GPS en pause"
-            : "Activation du GPS…";
-  const myLastInfo = gps.lastSync
-    ? gps.lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-    : "—";
-
-  // La carte "Équipe" (TeamMapCard, au-dessus) affiche déjà la carte combinée
-  // et le statut des deux chauffeurs — on garde ici uniquement le contrôle
-  // d'activation du GPS pour soi, sans carte ni infos dupliquées.
-  const dot = gps.state === "on" ? "#0f172a" : "#94a3b8";
-
-  return (
-    <div
-      style={{
-        border: "1px solid #e2e8f0",
-        borderRadius: 14,
-        background: "#FDFBF7",
-        overflow: "hidden",
-        fontFamily: "'DM Sans', sans-serif",
-        padding: "11px 14px",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-        <span
-          style={{
-            width: 9,
-            height: 9,
-            borderRadius: "50%",
-            background: dot,
-            boxShadow: gps.state === "on" ? `0 0 0 4px ${dot}22` : "none",
-            flexShrink: 0,
-          }}
-        />
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>📍 Mon GPS</span>
-        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "#64748b" }}>{myLabel}</span>
-      </div>
-      <div style={{ fontSize: 11.5, color: "#64748b", marginBottom: 10 }}>Dernière position : {myLastInfo}</div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {gps.state === "on" ? (
-          <button
-            onClick={gps.stop}
-            style={{
-              flex: 1,
-              minWidth: 130,
-              background: "#fff",
-              color: "#b91c1c",
-              border: "1px solid #fecaca",
-              borderRadius: 10,
-              padding: "9px 12px",
-              fontSize: 12.5,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
-            ⏸ Mettre en pause
-          </button>
-        ) : (
-          <button
-            onClick={gps.start}
-            style={{
-              flex: 1,
-              minWidth: 130,
-              background: "#0f172a",
-              color: "#FDFBF7",
-              border: "none",
-              borderRadius: 10,
-              padding: "9px 12px",
-              fontSize: 12.5,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
-            ▶ Activer le GPS
-          </button>
-        )}
-      </div>
-      <p style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.5, margin: "10px 0 0" }}>
-        La position est partagée uniquement avec le client pendant une course acceptée.
-      </p>
-    </div>
-  );
-}
-
 // ── Carte équipe (positions Alain / Patricia) ────────────────────────────
 const TEAM_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
 const TEAM_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
@@ -1262,7 +1082,7 @@ function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: num
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 }
 
-function TeamMapCard({ driverId }: { driverId?: string }) {
+function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
   const listPos = useServerFn(listDriverPositions);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInst = useRef<any>(null);
@@ -1389,6 +1209,10 @@ function TeamMapCard({ driverId }: { driverId?: string }) {
 
           {(["alain", "patricia"] as const).map((id) => {
             const r = rows.find((x) => x.id === id);
+            const isMe = id === driverId;
+            const myLastSync = gps.lastSync
+              ? gps.lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+              : null;
             return (
               <div
                 key={id}
@@ -1406,15 +1230,48 @@ function TeamMapCard({ driverId }: { driverId?: string }) {
                     width: 9,
                     height: 9,
                     borderRadius: "50%",
-                    background: r?.is_active ? TEAM_COLORS[id] : "#cbd5e1",
+                    background: (isMe ? gps.state === "on" : r?.is_active) ? TEAM_COLORS[id] : "#cbd5e1",
                     flexShrink: 0,
                   }}
                 />
                 <b style={{ minWidth: 60 }}>{TEAM_NAMES[id]}</b>
                 <span style={{ color: "#64748b" }}>
-                  {r ? (r.is_active ? fmtAge(r.age_s) : "hors ligne") : "jamais connecté"}
-                  {id === driverId ? " · vous" : ""}
+                  {isMe
+                    ? gps.state === "on"
+                      ? myLastSync
+                        ? `actif · ${myLastSync}`
+                        : "actif"
+                      : gps.state === "denied"
+                        ? "refusé — autorise la localisation"
+                        : gps.state === "error"
+                          ? "indisponible"
+                          : "en pause"
+                    : r
+                      ? r.is_active
+                        ? fmtAge(r.age_s)
+                        : "hors ligne"
+                      : "jamais connecté"}
+                  {isMe ? " · vous" : ""}
                 </span>
+                {isMe && (
+                  <button
+                    onClick={gps.state === "on" ? gps.stop : gps.start}
+                    style={{
+                      marginLeft: "auto",
+                      background: gps.state === "on" ? "#fff" : "#0f172a",
+                      color: gps.state === "on" ? "#b91c1c" : "#FDFBF7",
+                      border: gps.state === "on" ? "1px solid #fecaca" : "none",
+                      borderRadius: 8,
+                      padding: "5px 10px",
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {gps.state === "on" ? "⏸ Pause" : "▶ Activer"}
+                  </button>
+                )}
               </div>
             );
           })}
