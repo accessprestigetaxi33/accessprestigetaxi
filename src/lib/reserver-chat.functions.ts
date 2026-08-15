@@ -264,15 +264,22 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   const depart = (quote as any).depart_resolu ?? args.depart;
   const arrivee = (quote as any).arrivee_resolu ?? args.arrivee;
   const distanceKm = (quote as any).distance_km ?? args.distance_km ?? null;
-  const dureeS = (quote as any).duree_s ?? (args.duree_min ? args.duree_min * 60 : null);
+  // reservation-create.functions.ts exige duree_s entier (z.number().int()) :
+  // args.duree_min vient du modèle et n'est pas garanti entier, on arrondit
+  // pour éviter un rejet de validation silencieux.
+  const dureeS = (quote as any).duree_s ?? (args.duree_min ? Math.round(args.duree_min * 60) : null);
   const prix = (quote as any).prix_estime ?? args.prix_estime ?? null;
 
   const suiviId = newSuiviId();
-  const pickupIso = parseAsParisTime(args.pickup_datetime).toISOString();
 
   const { createReservationPublic } = await import("@/lib/reservation-create.functions");
   let inserted: { id: string; suivi_id: string | null };
   try {
+    // parseAsParisTime(...).toISOString() peut lever (date invalide) : on le
+    // garde DANS ce try, sinon l'exception n'est jamais attrapée et fait
+    // planter tout le handler (boucle IA comprise) au lieu de simplement
+    // faire échouer cette réservation.
+    const pickupIso = parseAsParisTime(args.pickup_datetime).toISOString();
     inserted = await createReservationPublic({
       data: {
         nom: String(args.nom).slice(0, 200),
@@ -296,6 +303,18 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
       },
     });
   } catch (e: any) {
+    // Avant : l'erreur réelle (contrainte DB, RLS, champ manquant…) était
+    // avalée — seul un message générique repartait vers le modèle, qui
+    // n'avait aucun cas prévu pour ça et finissait par improviser une
+    // excuse ("réessayez plus tard, appelez-nous") sans que ça n'apparaisse
+    // nulle part dans les logs. On journalise maintenant la cause exacte
+    // pour pouvoir la corriger.
+    console.error("[chat] confirm_reservation insert failed:", e?.message ?? e, {
+      nom: args?.nom,
+      depart,
+      arrivee,
+      pickup_datetime: args?.pickup_datetime,
+    });
     return { ok: false as const, error: e?.message ?? "insert_failed" };
   }
 
@@ -321,9 +340,8 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   }
 
   try {
-    const { deliverClientConfirmation, logReservationEvent, sendDriverPush } = await import(
-      "@/lib/reservation-notifications.server"
-    );
+    const { deliverClientConfirmation, logReservationEvent, sendDriverPush } =
+      await import("@/lib/reservation-notifications.server");
     const when = new Date(pickupIso).toLocaleString(langCode === "en" ? "en-GB" : "fr-FR", {
       timeZone: "Europe/Paris",
       dateStyle: "long",
@@ -394,11 +412,12 @@ export const aiChatReservation = createServerFn({ method: "POST" })
       data.gps?.label ??
       (data.gps ? `${data.gps.lat.toFixed(5)}, ${data.gps.lng.toFixed(5)}` : null);
     const hasDeparture = !!departureLabel;
-    const departureCoords = data.departure?.lat != null && data.departure?.lng != null
-      ? ` Coordonnées fiables pour le calcul : ${data.departure.lat}, ${data.departure.lng}.`
-      : data.gps
-        ? ` Coordonnées fiables pour le calcul : ${data.gps.lat}, ${data.gps.lng}.`
-        : "";
+    const departureCoords =
+      data.departure?.lat != null && data.departure?.lng != null
+        ? ` Coordonnées fiables pour le calcul : ${data.departure.lat}, ${data.departure.lng}.`
+        : data.gps
+          ? ` Coordonnées fiables pour le calcul : ${data.gps.lat}, ${data.gps.lng}.`
+          : "";
     const departureContext = hasDeparture
       ? `DÉPART DÉJÀ DÉTECTÉ ET CONFIRMÉ : "${departureLabel}".${departureCoords}
 RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si son libellé est seulement une ville ou un quartier. Ne demande JAMAIS de numéro de rue. Lors de compute_quote, recopie exactement ce libellé afin que les coordonnées détectées soient utilisées.`
@@ -487,8 +506,8 @@ RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si 
             ? "Your booking is confirmed. Your driver has been notified."
             : "Votre réservation est confirmée. Votre chauffeur est prévenu."
           : data.lang_code === "en"
-          ? "One moment please, I could not complete your request. Could you rephrase it?"
-          : "Un instant s'il vous plaît, je n'ai pas pu finaliser votre demande. Pourriez-vous la reformuler ?",
+            ? "One moment please, I could not complete your request. Could you rephrase it?"
+            : "Un instant s'il vous plaît, je n'ai pas pu finaliser votre demande. Pourriez-vous la reformuler ?",
         data.lang_code,
       ),
       reservation_id: lastReservationId,
