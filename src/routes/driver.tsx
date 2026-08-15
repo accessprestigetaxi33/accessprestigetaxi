@@ -3463,8 +3463,8 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   useEffect(() => {
     load();
     const ch = (supabase as any)
-      .channel("drv-avis")
-      .on("postgres_changes", { event: "*", schema: "public", table: "avis" }, load)
+      .channel("driver-feed-avis", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, load)
       .subscribe();
     const poll = setInterval(load, 8000);
     const onVisible = () => {
@@ -3500,6 +3500,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
               : "Avis refusé",
       );
       load();
+      broadcastDriverFeed("review-moderated");
     } catch (e: any) {
       toast.error("Erreur : " + (e.message ?? e));
     } finally {
@@ -3520,6 +3521,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
       if (!response.ok) throw new Error(result.error || "suppression impossible");
       toast.success("Avis supprimé");
       load();
+      broadcastDriverFeed("review-deleted");
     } catch (e: any) {
       toast.error("Erreur : " + (e.message ?? e));
     } finally {
@@ -4768,10 +4770,10 @@ function StatsTab() {
   useEffect(() => {
     setLoading(true);
     load();
-    const t = setInterval(load, 15000);
+    const t = setInterval(load, 8000);
     const ch = (supabase as any)
-      .channel("drv-stats")
-      .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, () => load())
+      .channel("driver-feed-stats", { config: { broadcast: { self: false } } })
+      .on("broadcast", { event: "reservation" }, () => load())
       .subscribe();
     const onVis = () => {
       if (!document.hidden) load();

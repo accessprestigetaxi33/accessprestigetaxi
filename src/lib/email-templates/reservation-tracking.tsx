@@ -86,7 +86,7 @@ const UI: Record<Lang, Record<string, string>> = {
     ref: "N° de réservation",
     cta: "Suivre ma course en temps réel",
     link: "Lien de suivi :",
-    foot: "Access Prestige Taxi — Charente-Maritime · Transport conventionné · 5j/7, 8h-20h",
+    foot: "Access Prestige Taxi — Charente-Maritime · Transport sanitaire · Toutes distances",
     min: "min",
   },
   en: {
@@ -99,7 +99,7 @@ const UI: Record<Lang, Record<string, string>> = {
     ref: "Booking number",
     cta: "Track my ride in real time",
     link: "Tracking link:",
-    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · Mon-Fri, 8am-8pm",
+    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · All distances",
     min: "min",
   },
 };

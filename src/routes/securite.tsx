@@ -54,7 +54,7 @@ const COPY = {
       {
         icon: Sparkles,
         t: "Véhicules 100 % électriques",
-        d: "Une BMW iX1 électrique et un van Mercedes 7 places : aucune émission à l'échappement, freinage assisté, aides à la conduite et habitacle nettoyé entre chaque client.",
+        d: "BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places : aides à la conduite et habitacle nettoyé entre chaque client.",
       },
     ],
     childTitle: "Enfants, mobilité réduite et animaux",
@@ -104,7 +104,7 @@ const COPY = {
       {
         icon: Sparkles,
         t: "Fully electric fleet",
-        d: "One electric BMW iX1 and one 7-seat Mercedes van: no tailpipe emissions, driver assistance systems and a cabin cleaned between every passenger.",
+        d: "Electric 5-seat BMW iX1 and Audi Q6 e-tron, plus an 8-seat Mercedes van: driver assistance systems and a cabin cleaned between every passenger.",
       },
     ],
     childTitle: "Children, reduced mobility and pets",
