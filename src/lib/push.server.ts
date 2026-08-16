@@ -314,6 +314,12 @@ export async function sendPushToAudience(
 
   // Dédup device : même fcm_token + cas iOS où plusieurs anciens tokens restent
   // valides pour le même device après rotation Safari/PWA.
+  //
+  // ⚠️ La clé iOS ne doit JAMAIS être le user_agent seul : Alain et Patricia ont
+  // tous deux un iPhone et Safari renvoie une chaîne quasi identique → un des
+  // deux chauffeurs était silencieusement écarté du broadcast. On combine donc
+  // l'identité du destinataire (driver_id / compte / réservation) au UA, et on
+  // ne déduplique pas du tout quand cette identité est inconnue.
   const seenTokens = new Set<string>();
   const seenIosDevices = new Set<string>();
   const sortedSubs = [...(data as SubRow[])].sort((a, b) => {
@@ -321,11 +327,17 @@ export async function sendPushToAudience(
     const bt = Date.parse(b.last_seen_at || b.created_at || "") || 0;
     return bt - at;
   });
+  const identityOf = (s: SubRow): string | null =>
+    audience === "chauffeur"
+      ? s.driver_id
+      : (s.client_account_id ?? s.reservation_id ?? null);
   const uniqueSubs = sortedSubs.filter((s) => {
     if (!s.fcm_token || seenTokens.has(s.fcm_token)) return false;
     seenTokens.add(s.fcm_token);
-    if (isLikelyIosWebPush(s.user_agent)) {
-      const deviceKey = s.user_agent || "ios-device";
+    const identity = identityOf(s);
+    // Identité inconnue → on préfère un doublon éventuel à une notification perdue.
+    if (identity && isLikelyIosWebPush(s.user_agent)) {
+      const deviceKey = `${identity}::${s.user_agent || "ios-device"}`;
       if (seenIosDevices.has(deviceKey)) return false;
       seenIosDevices.add(deviceKey);
     }
