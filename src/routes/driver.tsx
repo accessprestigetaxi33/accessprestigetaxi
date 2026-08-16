@@ -584,10 +584,26 @@ function DriverApp({
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
+  const [pushBusy, setPushBusy] = useState(false);
   const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
   });
+
+  // Reconfirme silencieusement l'abonnement côté serveur à chaque retour sur
+  // l'app (la permission étant déjà accordée, aucun prompt système n'apparaît).
+  // Corrige le cas d'une ligne push_subscriptions supprimée après un échec FCM.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    const refresh = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Notification.permission !== "granted") return;
+      void subscribePush("chauffeur", null, null).catch(() => {});
+    };
+    document.addEventListener("visibilitychange", refresh);
+    return () => document.removeEventListener("visibilitychange", refresh);
+  }, [subscribePush]);
+
 
   // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
   // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
@@ -738,29 +754,44 @@ function DriverApp({
           </span>
         </div>
 
-        {/* Bandeau activation notifications */}
-        {(pushStatus === "idle" || pushStatus === "denied") && (
+        {/* Bandeau activation / reconfirmation notifications */}
+        {(pushStatus === "idle" || pushStatus === "denied" || pushStatus === "granted" || pushStatus === "loading") && (
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 10,
-              background: pushStatus === "denied" ? "#fef2f2" : "#eff6ff",
-              borderBottom: "1px solid #e2e8f0",
+              background:
+                pushStatus === "denied" ? "#fef2f2" : pushStatus === "granted" ? "#F4EFE4" : "#FDFBF7",
+              borderBottom: "1px solid #e6ddc9",
               padding: "10px 16px",
               fontSize: 12.5,
-              color: pushStatus === "denied" ? "#b91c1c" : "#1d4ed8",
+              color: pushStatus === "denied" ? "#b91c1c" : pushStatus === "granted" ? "#5b4a22" : "#7a6320",
             }}
           >
             <span>
               {pushStatus === "denied"
-                ? "🔕 Notifications bloquées — active-les dans les réglages."
-                : "🔔 Active les notifications pour ne rater aucune nouvelle course."}
+                ? "🔕 Notifications bloquées — Réglages iPhone → Notifications → « APT Chauffeur » → Autoriser les notifications, puis rouvrez l'app."
+                : pushStatus === "granted"
+                  ? "🔔 Notifications actives"
+                  : "🔔 Recevez une alerte à chaque nouvelle course, sans garder l'app ouverte."}
             </span>
             {pushStatus !== "denied" && (
               <button
-                onClick={() => subscribePush("chauffeur")}
+                onClick={async () => {
+                  setPushBusy(true);
+                  try {
+                    const ok = await subscribePush("chauffeur", null, null);
+                    if (ok) toast.success("Notifications activées sur cet appareil.");
+                    else toast.error("Impossible d'activer les notifications sur cet appareil.");
+                  } catch {
+                    toast.error("Impossible d'activer les notifications sur cet appareil.");
+                  } finally {
+                    setPushBusy(false);
+                  }
+                }}
+                disabled={pushBusy}
                 style={{
                   flexShrink: 0,
                   background: "#0f172a",
@@ -770,14 +801,17 @@ function DriverApp({
                   padding: "6px 12px",
                   fontSize: 12,
                   fontWeight: 700,
-                  cursor: "pointer",
+                  cursor: pushBusy ? "wait" : "pointer",
+                  opacity: pushBusy ? 0.6 : 1,
+                  minHeight: 32,
                 }}
               >
-                Activer
+                {pushBusy ? "Activation…" : pushStatus === "granted" ? "🔄 Ré-activer" : "Activer"}
               </button>
             )}
           </div>
         )}
+
 
         {/* Tabs */}
         <div className="drv-tabs">
