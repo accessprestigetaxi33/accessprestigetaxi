@@ -144,11 +144,11 @@ export const Route = createFileRoute("/driver")({
         { name: "twitter:image", content: social.image },
         { name: "twitter:image:alt", content: social.alt },
         { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
-        { name: "theme-color", content: "#0f172a" },
+        { name: "theme-color", content: "#FDFBF7" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "mobile-web-app-capable", content: "yes" },
-        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-        { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+        { name: "apple-mobile-web-app-title", content: "APT Chauffeur" },
       ],
       links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
     };
@@ -601,7 +601,7 @@ function DriverApp({
     }
     return () => {
       const el = document.querySelector('link[rel="manifest"]');
-      if (el) el.setAttribute("href", "/manifest.json");
+      if (el) el.setAttribute("href", "/api/manifest");
     };
   }, []);
 
