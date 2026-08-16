@@ -584,10 +584,26 @@ function DriverApp({
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
+  const [pushBusy, setPushBusy] = useState(false);
   const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
   });
+
+  // Reconfirme silencieusement l'abonnement côté serveur à chaque retour sur
+  // l'app (la permission étant déjà accordée, aucun prompt système n'apparaît).
+  // Corrige le cas d'une ligne push_subscriptions supprimée après un échec FCM.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    const refresh = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Notification.permission !== "granted") return;
+      void subscribePush("chauffeur", null, null).catch(() => {});
+    };
+    document.addEventListener("visibilitychange", refresh);
+    return () => document.removeEventListener("visibilitychange", refresh);
+  }, [subscribePush]);
+
 
   // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
   // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
