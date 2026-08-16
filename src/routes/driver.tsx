@@ -144,11 +144,11 @@ export const Route = createFileRoute("/driver")({
         { name: "twitter:image", content: social.image },
         { name: "twitter:image:alt", content: social.alt },
         { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
-        { name: "theme-color", content: "#0f172a" },
+        { name: "theme-color", content: "#FDFBF7" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "mobile-web-app-capable", content: "yes" },
-        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-        { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+        { name: "apple-mobile-web-app-title", content: "APT Chauffeur" },
       ],
       links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
     };
@@ -589,19 +589,30 @@ function DriverApp({
     driverId: driverId ?? null,
   });
 
-  // Force le manifest driver au runtime (remplace le manifest global)
+  // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
+  // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
+  // qu'aucun manifest client ne subsiste tant qu'on est sur /driver.
   useEffect(() => {
-    const existing = document.querySelector('link[rel="manifest"]');
-    if (existing) existing.setAttribute("href", "/api/manifest?role=driver");
-    else {
+    const links = Array.from(document.querySelectorAll('link[rel="manifest"]')) as HTMLLinkElement[];
+    if (links.length === 0) {
       const link = document.createElement("link");
       link.rel = "manifest";
       link.href = "/api/manifest?role=driver";
       document.head.appendChild(link);
+    } else {
+      links.forEach((l, i) => {
+        if (i === 0) l.setAttribute("href", "/api/manifest?role=driver");
+        else l.remove();
+      });
     }
+    // Titre iOS de l'icône sur l'écran d'accueil (Safari ignore le manifest).
+    const titleTag = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (titleTag) titleTag.setAttribute("content", "APT Chauffeur");
     return () => {
       const el = document.querySelector('link[rel="manifest"]');
-      if (el) el.setAttribute("href", "/manifest.json");
+      if (el) el.setAttribute("href", "/api/manifest");
+      const t = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if (t) t.setAttribute("content", "Access Taxi");
     };
   }, []);
 

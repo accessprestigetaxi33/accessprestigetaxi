@@ -20,8 +20,9 @@ export const Route = createFileRoute("/api/manifest")({
           start_url: isDriver ? "/driver" : "/?source=pwa",
           scope: "/",
           display: "standalone",
-          background_color: "#0B0B0D",
-          theme_color: "#0B0B0D",
+          // Espace chauffeur : thème beige (splash iOS cohérent avec l'UI).
+          background_color: isDriver ? "#FDFBF7" : "#0B0B0D",
+          theme_color: isDriver ? "#0f172a" : "#0B0B0D",
           orientation: "portrait",
           icons: [
             { src: "/favicon.png", sizes: "48x48", type: "image/png" },
