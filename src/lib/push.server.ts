@@ -181,7 +181,16 @@ async function sendFcmToToken(
   return { ok: false, status: res.status, errorCode };
 }
 
-type SubRow = { id: string; fcm_token: string | null; user_agent: string | null; last_seen_at: string | null; created_at: string | null };
+type SubRow = {
+  id: string;
+  fcm_token: string | null;
+  user_agent: string | null;
+  last_seen_at: string | null;
+  created_at: string | null;
+  driver_id: string | null;
+  reservation_id: string | null;
+  client_account_id: string | null;
+};
 
 /**
  * Garde-fou d'idempotence générique (push, e-mail, webhooks).
