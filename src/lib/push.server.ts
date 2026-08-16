@@ -282,7 +282,7 @@ export async function sendPushToAudience(
   const baseQuery = () =>
     supabaseAdmin
       .from("push_subscriptions")
-      .select("id, fcm_token, user_agent, last_seen_at, created_at")
+      .select("id, fcm_token, user_agent, last_seen_at, created_at, driver_id, reservation_id, client_account_id")
       .eq("audience", audience)
       .not("fcm_token", "is", null);
 
