@@ -302,6 +302,10 @@ export async function sendPushToAudience(
 
   let { data, error } = await q;
   if (audience === "chauffeur" && opts.driverId && (!data || data.length === 0)) {
+    // Aucun appareil enregistré pour ce chauffeur : on avertit (le driver_id
+    // n'est probablement pas enregistré à l'abonnement) et on broadcast plutôt
+    // que de perdre la notification.
+    console.warn("[push] no device for driver_id", opts.driverId, "→ broadcast fallback");
     const fallback = await baseQuery();
     data = fallback.data;
     error = fallback.error;
