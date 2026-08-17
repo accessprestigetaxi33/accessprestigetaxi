@@ -1,11 +1,15 @@
 // Firebase Cloud Messaging — client integration
 // Projet Firebase : access-prestige-taxi
-// Les credentials Web Firebase sont publics par design ; l'apiKey est servie
-// par /api/public/firebase-config (secret GOOGLE_API_KEY) pour rester hors dépôt.
+// Les credentials Web Firebase sont publics par design (ils ne protègent
+// aucune ressource backend — seules les Règles de sécurité Firebase le font).
+// Alignement sur l'approche de José (Taxi City) : config codée en dur, pas de
+// fetch réseau avant initializeApp — ça évite tout délai async entre le clic
+// utilisateur et Notification.requestPermission() (bug Safari iOS).
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
 import { deleteToken, getMessaging, getToken, onMessage, isSupported, type Messaging } from "firebase/messaging";
 
 export const firebaseConfig: FirebaseOptions = {
+  apiKey: "AIzaSyAFZbm2eneX6wwScKtDv4w_h6bpoq6YvkY",
   authDomain: "access-prestige-taxi.firebaseapp.com",
   projectId: "access-prestige-taxi",
   storageBucket: "access-prestige-taxi.firebasestorage.app",
@@ -13,23 +17,6 @@ export const firebaseConfig: FirebaseOptions = {
   appId: "1:214617543164:web:8094538b9f17694aa5e279",
   measurementId: "G-LFXHZHLHKE",
 };
-
-let configPromise: Promise<FirebaseOptions> | null = null;
-
-/** Récupère la config complète (avec apiKey) depuis le serveur, une seule fois. */
-async function loadFirebaseConfig(): Promise<FirebaseOptions> {
-  if (!configPromise) {
-    configPromise = fetch("/api/public/firebase-config")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`config ${r.status}`))))
-      .then((remote) => ({ ...firebaseConfig, ...remote }) as FirebaseOptions)
-      .catch((err) => {
-        console.error("[FCM] config fetch failed", err);
-        configPromise = null;
-        throw err;
-      });
-  }
-  return configPromise;
-}
 
 // Clé VAPID *Web Push* de Firebase (Console → Cloud Messaging → Web configuration)
 export const FCM_VAPID_KEY = "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
@@ -49,7 +36,7 @@ export async function initFirebase(): Promise<Messaging | null> {
       console.warn("[FCM] Not supported in this browser");
       return null;
     }
-    if (!app) app = initializeApp(await loadFirebaseConfig());
+    if (!app) app = initializeApp(firebaseConfig);
     if (!messaging) messaging = getMessaging(app);
     return messaging;
   } catch (err) {
@@ -62,29 +49,16 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
   if (typeof window === "undefined") return null;
   if (!("Notification" in window) || !("serviceWorker" in navigator)) return null;
 
-  // IMPORTANT (Safari iOS/macOS) : requestPermission() doit être appelé
-  // immédiatement dans le tour de tâche du geste utilisateur (le clic sur
-  // "Activer"), AVANT tout `await` réseau. `initFirebase()` fait un fetch
-  // vers /api/public/firebase-config ; le laisser passer avant casse
-  // l'activation utilisateur sur Safari → le prompt système n'apparaît
-  // jamais et la fonction retourne null en silence (aucune erreur). Chrome
-  // est plus tolérant, d'où "ça marche sur desktop mais pas sur iPhone".
-  let perm: NotificationPermission;
-  try {
-    perm = await Notification.requestPermission();
-  } catch (err) {
-    console.error("[FCM] requestPermission failed", err);
-    return null;
-  }
-  if (perm !== "granted") {
-    console.warn("[FCM] Permission refusée :", perm);
-    return null;
-  }
-
   const msg = await initFirebase();
   if (!msg) return null;
 
   try {
+    const perm = await Notification.requestPermission();
+    if (perm !== "granted") {
+      console.warn("[FCM] Permission refusée :", perm);
+      return null;
+    }
+
     // On cherche le SW Firebase par son scriptURL exact parmi tous les SW enregistrés.
     // getRegistration("/") retourne n'importe quel SW sur le scope "/" (ex: Vite HMR)
     // ce qui fait que FCM reçoit le mauvais SW → token OK sur desktop mais notifs silencieuses sur mobile.
@@ -100,7 +74,6 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       swReg = await navigator.serviceWorker.register(SW_URL, { scope: "/", updateViaCache: "none" });
     } else {
       await swReg.update().catch((err) => console.warn("[FCM] SW update check failed", err));
-      // Si une nouvelle version est en attente, force la prise de contrôle.
       if (swReg.waiting) {
         swReg.waiting.postMessage({ type: "FCM_SW_SKIP_WAITING" });
       }
@@ -117,11 +90,10 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
     } catch (_) {}
 
     // Attendre que le SW Firebase soit actif avant de demander le token
-    // Timeout de 8s pour éviter de bloquer indéfiniment si gstatic.com est lent
     if (swReg.installing || swReg.waiting) {
       await new Promise<void>((resolve) => {
         const sw = swReg!.installing ?? swReg!.waiting!;
-        const timeout = setTimeout(resolve, 8000); // résolution forcée si trop long
+        const timeout = setTimeout(resolve, 8000);
         sw.addEventListener("statechange", function handler() {
           if (sw.state === "activated" || sw.state === "redundant") {
             clearTimeout(timeout);
@@ -132,7 +104,6 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       });
     }
 
-    // Vérification finale : si le SW est toujours pas actif, on attend navigator.serviceWorker.ready
     if (!swReg.active) {
       const readyReg = await Promise.race([
         navigator.serviceWorker.ready,
@@ -143,7 +114,6 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       }
     }
 
-    // Retourner le token caché si valide et pas trop vieux (< 50 jours)
     const cachedToken = window.localStorage.getItem("fcm_token");
     const lastRefresh = parseInt(window.localStorage.getItem("fcm_token_last_refresh") ?? "0", 10);
     const tokenAge = Date.now() - lastRefresh;
@@ -154,7 +124,6 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       return cachedToken;
     }
 
-    // Token absent, expiré (>50j) ou forceRefresh explicite → rotation silencieuse
     if (cachedToken) {
       await deleteToken(msg).catch((err) => console.warn("[FCM] old token delete skipped", err));
       window.localStorage.removeItem("fcm_token");
@@ -211,15 +180,14 @@ export function setupForegroundNotifications(): () => void {
     const title = payload.notification?.title ?? "Access Prestige Taxi";
     const options = {
       body: payload.notification?.body ?? "",
-      icon: payload.notification?.icon ?? "/favicon.ico",
-      badge: "/favicon.ico",
+      icon: payload.notification?.icon ?? "/favicon.png",
+      badge: "/favicon.png",
       tag: payload.data?.tag ?? "taxi-fcm",
       data: payload.data ?? {},
       vibrate: [200, 100, 200],
       requireInteraction: true,
     } as NotificationOptions;
 
-    // Afficher via le Service Worker pour garantir l'affichage même en foreground
     navigator.serviceWorker.ready.then((reg) => {
       reg.showNotification(title, options);
     });
