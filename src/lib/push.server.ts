@@ -140,6 +140,9 @@ async function sendFcmToToken(
     click_url: clickUrl,
     tag: payload.tag || "taxi-fcm",
     audience,
+    // Marqueur unique pour différencier les deux apps en cas de collision
+    // Utile en cas de bug où une notif chauffeur arrive au client ou vice-versa
+    audience_marker: `${audience}:${Date.now()}`,
     ...(reservationId ? { reservation_id: reservationId } : {}),
   };
   // `notification` racine = requis pour iOS Safari PWA (sinon la notif ne
@@ -158,6 +161,36 @@ async function sendFcmToToken(
       webpush: {
         headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
         data: extraData,
+      },
+      // Android: requiert "HIGH" priority pour réveiller l'écran fermé (mode doze/deep sleep)
+      android: {
+        priority: "HIGH",
+        notification: {
+          title: payload.title,
+          body: payload.body,
+          clickAction: clickUrl,
+        },
+        data: extraData,
+      },
+      // iOS/APNs : configuration supplémentaire pour fiabilité en arrière-plan
+      apns: {
+        headers: {
+          "apns-priority": "10", // High priority pour notification immédiate
+          "apns-push-type": "alert", // Type alert (pas background)
+        },
+        payload: {
+          aps: {
+            alert: {
+              title: payload.title,
+              body: payload.body,
+            },
+            sound: "default",
+            "content-available": 1, // Important pour background
+            badge: 1,
+            mutableContent: true,
+          },
+          customData: extraData,
+        },
       },
       data: extraData,
     },

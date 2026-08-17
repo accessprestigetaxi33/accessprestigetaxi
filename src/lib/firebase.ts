@@ -106,11 +106,11 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
     } catch (_) {}
 
     // Attendre que le SW Firebase soit actif avant de demander le token
-    // Timeout de 8s pour éviter de bloquer indéfiniment si gstatic.com est lent
+    // Timeout de 15s (augmenté de 8s) pour accommoder les connexions 4G/3G
     if (swReg.installing || swReg.waiting) {
       await new Promise<void>((resolve) => {
         const sw = swReg!.installing ?? swReg!.waiting!;
-        const timeout = setTimeout(resolve, 8000); // résolution forcée si trop long
+        const timeout = setTimeout(resolve, 15000); // Augmenté de 8s à 15s
         sw.addEventListener("statechange", function handler() {
           if (sw.state === "activated" || sw.state === "redundant") {
             clearTimeout(timeout);

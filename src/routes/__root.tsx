@@ -20,6 +20,7 @@ import { ServiceStrip } from "@/components/ServiceStrip";
 import { Toaster } from "@/components/ui/sonner";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { PwaController } from "@/components/PwaController";
+import { FirebaseInitializer } from "@/components/FirebaseInitializer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 
 function NotFoundComponent() {
@@ -191,6 +192,7 @@ function RootComponent() {
           </div>
         )}
         <Toaster />
+        <FirebaseInitializer />
         <PwaController />
         <AnalyticsTracker />
       </I18nProvider>

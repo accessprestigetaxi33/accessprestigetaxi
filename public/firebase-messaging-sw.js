@@ -10,6 +10,15 @@ console.log("[FCM SW] boot version =", SW_VERSION);
 const DRIVER_URL = "/driver";
 const FORBIDDEN_PATH_PREFIXES = ["/admin"];
 
+// Event listener pour les messages du client (ex: SKIP_WAITING)
+self.addEventListener("message", (event) => {
+  const msgType = event.data?.type;
+  if (msgType === "FCM_SW_SKIP_WAITING" || msgType === "SKIP_WAITING") {
+    console.log("[FCM SW] SKIP_WAITING reçu, activation forcée immédiate");
+    self.skipWaiting();
+  }
+});
+
 // Ce listener doit être enregistré AVANT importScripts(Firebase) :
 // le SDK ajoute son propre notificationclick et peut court-circuiter le nôtre.
 self.addEventListener("notificationclick", (event) => {
@@ -53,14 +62,22 @@ const recentlyHandled = new Map();
 
 function claimOnce(key) {
   const now = Date.now();
-  for (const [k, ts] of recentlyHandled) if (now - ts > 15000) recentlyHandled.delete(k);
+  // Nettoyage des anciennes entrées (30s au lieu de 15s pour plus de marge)
+  for (const [k, ts] of recentlyHandled) if (now - ts > 30000) recentlyHandled.delete(k);
   if (recentlyHandled.has(key)) return false;
   recentlyHandled.set(key, now);
   return true;
 }
 
 function dedupeKey(data, notif) {
-  return [data.tag || notif.tag || "taxi-fcm", data.reservation_id || "", notif.title || data.title || ""].join("|");
+  // Inclure l'audience dans la clé pour éviter qu'une notif chauffeur
+  // déduplique une notif client pour la même course/reservation
+  return [
+    data.audience || "unknown",
+    data.tag || notif.tag || "taxi-fcm",
+    data.reservation_id || "",
+    notif.title || data.title || "",
+  ].join("|");
 }
 
 function firebasePayloadFromNotificationData(notifData) {
@@ -112,6 +129,12 @@ function showFrom(data, notif) {
   const body = notif.body || data.body || "";
   const url = sanitizeDeepLink(data.url || data.click_action, data.audience, data.reservation_id);
   const tag = data.tag || "taxi-fcm";
+  
+  // Sur iOS/mobile, reduire requireInteraction pour compatibilité
+  // Set false pour Android/web normal, true seulement si explicitement demandé
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const requireInteraction = isIOS ? false : (data.require_interaction === "true" || false);
+  
   return closeExistingNotifications(tag).then(() =>
     self.registration.showNotification(title, {
       body,
@@ -120,7 +143,7 @@ function showFrom(data, notif) {
       tag,
       data: { ...data, url, audience: data.audience, reservation_id: data.reservation_id, sw_version: SW_VERSION },
       vibrate: [200, 100, 200],
-      requireInteraction: true,
+      requireInteraction,
     }),
   );
 }
@@ -133,12 +156,34 @@ const ready = fetch("/api/public/firebase-config")
     messaging.onBackgroundMessage((payload) => {
       const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
       const notif = payload.webpush?.notification || payload.notification || {};
-      // Payload `notification` présent → l'affichage est géré par le SDK (iOS).
-      if (payload.notification || payload.webpush?.notification) {
-        claimOnce(dedupeKey(data, notif));
+      
+      const dedupKey = dedupeKey(data, notif);
+      
+      // Vérification audience : rejeter les notifs destinées à la mauvaise app
+      // Chauffeur (à /driver) ne doit pas afficher les notifs client, et vice-versa
+      if (data.audience) {
+        const isDriverPath = self.location.pathname.includes("/driver");
+        const expectedAudience = isDriverPath ? "chauffeur" : "client";
+        if (data.audience !== expectedAudience) {
+          console.log(
+            `[FCM SW] Notif audience mismatch (esperée: ${expectedAudience}, reçue: ${data.audience}), ignoring`,
+          );
+          return; // Ignorer silencieusement si destinée à l'autre app
+        }
+      }
+      
+      // Sur iOS, le SDK affiche la notification automatiquement.
+      // Mais sur Android/Web, il faut l'afficher manuellement même si `notification` existe.
+      // Donc on demande à l'user de TOUJOURS envoyer les données + notification structurées.
+      const isIOS = /iPad|iPhone|iPod/.test(self.navigator.userAgent);
+      
+      // Toujours afficher, sauf si dédupliquée récemment
+      if (!claimOnce(dedupKey)) {
+        console.log("[FCM SW] Notif dédupliquée (rejet):", dedupKey);
         return;
       }
-      if (!claimOnce(dedupeKey(data, notif))) return;
+      
+      console.log("[FCM SW] onBackgroundMessage -> showNotification", { audience: data.audience });
       return showFrom(data, notif);
     });
   })

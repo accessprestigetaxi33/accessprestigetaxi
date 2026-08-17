@@ -25,6 +25,10 @@
   cache-control: no-cache
 /firebase-messaging-sw.js
   cache-control: no-cache
+  Service-Worker-Allowed: /
+  Content-Type: application/javascript; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Access-Control-Allow-Origin: *
 /manifest.webmanifest
   cache-control: no-cache
 /driver-manifest.json
