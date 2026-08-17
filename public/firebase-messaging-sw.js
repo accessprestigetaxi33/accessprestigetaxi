@@ -1,10 +1,11 @@
 /* Firebase Cloud Messaging — Service Worker (notifications en arrière-plan)
  * Projet : access-prestige-taxi (bi-chauffeur)
- * Config chargée depuis /api/public/firebase-config (apiKey hors dépôt).
+ * Config codée en dur (alignée sur l'approche de José) — pas de fetch réseau,
+ * onBackgroundMessage est donc enregistré de façon synchrone dès le boot du SW.
  */
 /* eslint-disable */
 
-const SW_VERSION = "apt-2026-09.push-fallback-fix";
+const SW_VERSION = "apt-2026-09.hardcoded-config";
 console.log("[FCM SW] boot version =", SW_VERSION);
 
 const DRIVER_URL = "/driver";
@@ -49,6 +50,16 @@ self.addEventListener("notificationclick", (event) => {
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
+firebase.initializeApp({
+  apiKey: "AIzaSyAFZbm2eneX6wwScKtDv4w_h6bpoq6YvkY",
+  authDomain: "access-prestige-taxi.firebaseapp.com",
+  projectId: "access-prestige-taxi",
+  storageBucket: "access-prestige-taxi.firebasestorage.app",
+  messagingSenderId: "214617543164",
+  appId: "1:214617543164:web:8094538b9f17694aa5e279",
+});
+
+const messaging = firebase.messaging();
 const recentlyHandled = new Map();
 
 function claimOnce(key) {
@@ -107,55 +118,8 @@ function closeExistingNotifications(tag) {
   return self.registration.getNotifications({ tag }).then((existing) => existing.forEach((n) => n.close()));
 }
 
-function showFrom(data, notif) {
-  const title = notif.title || data.title || "Access Prestige Taxi";
-  const body = notif.body || data.body || "";
-  const url = sanitizeDeepLink(data.url || data.click_action, data.audience, data.reservation_id);
-  const tag = data.tag || "taxi-fcm";
-  return closeExistingNotifications(tag).then(() =>
-    self.registration.showNotification(title, {
-      body,
-      icon: notif.icon || "/favicon.png",
-      badge: "/favicon.png",
-      tag,
-      data: { ...data, url, audience: data.audience, reservation_id: data.reservation_id, sw_version: SW_VERSION },
-      vibrate: [200, 100, 200],
-      requireInteraction: true,
-    }),
-  );
-}
-
-// true seulement quand onBackgroundMessage a bien été enregistré : tant que ce
-// n'est pas le cas, le filet de sécurité `push` ci-dessous ne doit JAMAIS bail
-// sur la présence de payload.notification, sinon la notif est perdue en silence.
-let firebaseHandlerActive = false;
-
-const ready = fetch("/api/public/firebase-config")
-  .then((r) => r.json())
-  .then((config) => {
-    firebase.initializeApp(config);
-    const messaging = firebase.messaging();
-    messaging.onBackgroundMessage((payload) => {
-      const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
-      const notif = payload.webpush?.notification || payload.notification || {};
-      // Payload `notification` présent → l'affichage est géré par le SDK (iOS).
-      if (payload.notification || payload.webpush?.notification) {
-        claimOnce(dedupeKey(data, notif));
-        return;
-      }
-      if (!claimOnce(dedupeKey(data, notif))) return;
-      return showFrom(data, notif);
-    });
-    firebaseHandlerActive = true;
-  })
-  .catch((err) => {
-    console.error("[FCM SW] init failed", err);
-    firebaseHandlerActive = false;
-  });
-
-self.addEventListener("install", (event) => {
+self.addEventListener("install", () => {
   self.skipWaiting();
-  event.waitUntil(ready);
 });
 
 self.addEventListener("activate", (event) => {
@@ -178,51 +142,67 @@ self.addEventListener("message", (event) => {
   }
 });
 
-// Filet de sécurité pour Android quand le SDK n'a pas encore booté — ET pour
-// TOUS les navigateurs quand l'init Firebase du SW (fetch config + attach
-// onBackgroundMessage) a échoué ou n'est pas encore terminée. Dans ce dernier
-// cas, `firebaseHandlerActive` est false : on ne doit PAS faire confiance au
-// SDK pour afficher la notif, même si `payload.notification` est présent,
-// sinon la notification est perdue en silence (c'était le bug).
+messaging.onBackgroundMessage((payload) => {
+  const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
+  const notif = payload.webpush?.notification || payload.notification || {};
+  const title = notif.title || data.title || "Access Prestige Taxi";
+  const body = notif.body || data.body || "";
+
+  // Payload `notification` présent → l'affichage est géré par le SDK (iOS).
+  if (payload.notification || payload.webpush?.notification) {
+    claimOnce(dedupeKey(data, notif));
+    return;
+  }
+  if (!claimOnce(dedupeKey(data, notif))) return;
+
+  const url = sanitizeDeepLink(data.url || data.click_action, data.audience, data.reservation_id);
+  const tag = data.tag || "taxi-fcm";
+
+  return closeExistingNotifications(tag).then(() =>
+    self.registration.showNotification(title, {
+      body,
+      icon: notif.icon || "/favicon.png",
+      badge: "/favicon.png",
+      tag,
+      data: { ...data, url, audience: data.audience, reservation_id: data.reservation_id, sw_version: SW_VERSION },
+      vibrate: [200, 100, 200],
+      requireInteraction: true,
+    }),
+  );
+});
+
+// Filet de sécurité pour Android quand le SDK n'a pas encore booté.
 self.addEventListener("push", (event) => {
+  let payload = {};
+  try {
+    payload = event.data ? event.data.json() : {};
+  } catch (_) {
+    try {
+      payload = { notification: { title: event.data?.text() } };
+    } catch (_2) {}
+  }
+
+  const hasNotifPayload = !!(payload.notification || payload.webpush?.notification);
+  if (hasNotifPayload) return;
+
+  const data = payload.data || {};
+  const title = data.title || "Access Prestige Taxi";
+  const body = data.body || "";
+  if (!title && !body) return;
+  if (!claimOnce(dedupeKey(data, {}))) return;
+
+  const url = sanitizeDeepLink(data.url || data.click_action, data.audience, data.reservation_id);
+  const tag = data.tag || "taxi-fcm";
+
   event.waitUntil(
-    (async () => {
-      // On attend la fin de l'init (succès ou échec) avant de décider,
-      // pour ne pas rater une notif reçue juste après le réveil du SW.
-      await ready.catch(() => {});
-
-      let payload = {};
-      try {
-        payload = event.data ? event.data.json() : {};
-      } catch (_) {
-        try {
-          payload = { notification: { title: event.data?.text() } };
-        } catch (_2) {}
-      }
-
-      const notifFromPayload = payload.webpush?.notification || payload.notification || {};
-      const hasNotificationPayload = Boolean(payload.notification || payload.webpush?.notification);
-
-      if (hasNotificationPayload && firebaseHandlerActive) {
-        // Le SDK a bien démarré : il gère déjà l'affichage via
-        // onBackgroundMessage, on ne fait rien pour éviter un doublon.
-        return;
-      }
-
-      const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
-
-      if (hasNotificationPayload && !firebaseHandlerActive) {
-        // Le SDK n'a pas pu s'enregistrer (fetch config raté, etc.) : on
-        // affiche nous-mêmes à partir du payload.notification pour ne pas
-        // perdre la notif silencieusement.
-        if (!claimOnce(dedupeKey(data, notifFromPayload))) return;
-        return showFrom(data, notifFromPayload);
-      }
-
-      // Payload data-only classique (Android sans SDK actif).
-      if (!data.title && !data.body) return;
-      if (!claimOnce(dedupeKey(data, {}))) return;
-      return showFrom(data, {});
-    })(),
+    self.registration.showNotification(title, {
+      body,
+      icon: "/favicon.png",
+      badge: "/favicon.png",
+      tag,
+      data: { ...data, url, audience: data.audience, reservation_id: data.reservation_id, sw_version: SW_VERSION },
+      vibrate: [200, 100, 200],
+      requireInteraction: true,
+    }),
   );
 });
