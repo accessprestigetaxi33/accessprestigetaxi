@@ -148,12 +148,39 @@ async function sendFcmToToken(
   // notificationclick par défaut du SDK Firebase déclenche openWindow sur
   // l'URL absolue en parallèle du nôtre → sur iOS PWA le clic finit sur une
   // page externe ou "rien ne se passe". Notre handler lit `data.url` (relatif).
+  // Priorité de délivrance :
+  // - Android (FCM natif) : "priority": "high" fait sortir l'appareil du mode
+  //   Doze / App Standby pour livrer immédiatement.
+  // - iOS (APNs, via le pont FCM) : apns-priority: 10 = livraison immédiate.
+  //   Nécessite apns-push-type: alert dès qu'on envoie une alerte visible
+  //   (obligatoire depuis iOS 13, sinon APNs peut rejeter ou retarder).
+  // On force la priorité haute uniquement quand requireInteraction est vrai
+  // (courses / évènements qui doivent réveiller l'utilisateur immédiatement) ;
+  // sinon on reste sur les priorités par défaut de chaque plateforme.
   const body = {
     message: {
       token,
       notification: {
         title: payload.title,
         body: payload.body,
+      },
+      android: {
+        priority: payload.requireInteraction ? "high" : "normal",
+      },
+      apns: {
+        headers: {
+          "apns-priority": payload.requireInteraction ? "10" : "5",
+          "apns-push-type": "alert",
+        },
+        payload: {
+          aps: {
+            alert: {
+              title: payload.title,
+              body: payload.body,
+            },
+            sound: payload.requireInteraction ? "default" : undefined,
+          },
+        },
       },
       webpush: {
         headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
@@ -162,7 +189,6 @@ async function sendFcmToToken(
       data: extraData,
     },
   };
-
 
   const res = await fetch(url, {
     method: "POST",
@@ -202,11 +228,7 @@ type SubRow = {
  * @param scope  espace de noms (`client`, `chauffeur`, `email`, `webhook`…)
  * @param ttlMinutes durée de rétention de la clé (défaut 60 min)
  */
-export async function claimNotificationOnce(
-  key: string,
-  scope: string,
-  ttlMinutes = 60,
-): Promise<boolean> {
+export async function claimNotificationOnce(key: string, scope: string, ttlMinutes = 60): Promise<boolean> {
   if (!key) return true;
   const now = new Date();
   const expiresAt = new Date(now.getTime() + ttlMinutes * 60 * 1000).toISOString();
@@ -228,17 +250,12 @@ export async function claimNotificationOnce(
   return true;
 }
 
-async function claimPushSendOnce(
-  audience: PushAudience,
-  tag?: string,
-  ttlMinutes = 60,
-): Promise<boolean> {
+async function claimPushSendOnce(audience: PushAudience, tag?: string, ttlMinutes = 60): Promise<boolean> {
   // Les tags volontairement uniques (suffixe horodaté, ex. messages de tchat)
   // ne sont pas dédupliqués : chaque message est une notification distincte.
   if (!tag || /-\d{13}$/.test(tag)) return true;
   return claimNotificationOnce(tag, audience, ttlMinutes);
 }
-
 
 function isLikelyIosWebPush(userAgent: string | null): boolean {
   if (!userAgent) return false;
@@ -277,7 +294,6 @@ export async function sendPushToAudience(
     /** Fenêtre d'idempotence du tag (minutes). Défaut : 60. */
     dedupTtlMinutes?: number;
   } = {},
-
 ): Promise<{ sent: number; removed: number }> {
   const baseQuery = () =>
     supabaseAdmin
@@ -315,7 +331,6 @@ export async function sendPushToAudience(
   const claimed = await claimPushSendOnce(audience, payload.tag, opts.dedupTtlMinutes ?? 60);
   if (!claimed) return { sent: 0, removed: 0 };
 
-
   // Dédup device : même fcm_token + cas iOS où plusieurs anciens tokens restent
   // valides pour le même device après rotation Safari/PWA.
   //
@@ -332,9 +347,7 @@ export async function sendPushToAudience(
     return bt - at;
   });
   const identityOf = (s: SubRow): string | null =>
-    audience === "chauffeur"
-      ? s.driver_id
-      : (s.client_account_id ?? s.reservation_id ?? null);
+    audience === "chauffeur" ? s.driver_id : (s.client_account_id ?? s.reservation_id ?? null);
   const uniqueSubs = sortedSubs.filter((s) => {
     if (!s.fcm_token || seenTokens.has(s.fcm_token)) return false;
     seenTokens.add(s.fcm_token);
@@ -418,7 +431,6 @@ export async function sendPushToAudience(
 
   return { sent, removed: toRemove.length };
 }
-
 
 // Placeholder de compat — la vérif dedup était utilisée par un endpoint diag.
 export type DedupHealth = { ok: boolean; note?: string; error?: string };
