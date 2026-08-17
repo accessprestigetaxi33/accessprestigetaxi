@@ -120,7 +120,7 @@ export const sendClientMessage = createServerFn({ method: "POST" })
             body: data.content.slice(0, 100),
             url: "/driver",
             tag: `chat-driver-resa-${data.reservation_id}-${Date.now()}`,
-            requireInteraction: false,
+            requireInteraction: true,
             data: { reservation_id: data.reservation_id, kind: "chat" },
           },
           { driverId },
@@ -129,7 +129,6 @@ export const sendClientMessage = createServerFn({ method: "POST" })
         console.warn("[chat] push chauffeur (resa) failed (non-blocking)", e);
       }
     }
-
 
     return row as ChatMessage;
   });
@@ -174,7 +173,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
             body: data.content.slice(0, 100),
             url: `/suivi/${suiviId}`,
             tag: `chat-client-resa-${data.reservation_id}`,
-            requireInteraction: false,
+            requireInteraction: true,
             data: { reservation_id: data.reservation_id },
           },
           { reservationId: data.reservation_id, accountId },
@@ -183,7 +182,6 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
         console.warn("[chat] push client (resa) failed (non-blocking)", e);
       }
     }
-
 
     return row as ChatMessage;
   });
@@ -266,19 +264,16 @@ export const markReservationReadByChauffeur = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: count, error } = await supabaseAdmin.rpc(
-      "mark_reservation_read_by_chauffeur",
-      { p_reservation_id: data.reservation_id },
-    );
+    const { data: count, error } = await supabaseAdmin.rpc("mark_reservation_read_by_chauffeur", {
+      p_reservation_id: data.reservation_id,
+    });
     if (error) throw new Error(error.message);
     return { updated: (count as number) ?? 0 };
   });
 
 export const countUnreadForClient = createServerFn({ method: "POST" })
   .inputValidator((input) =>
-    z
-      .object({ reservation_ids: z.array(z.string().uuid()).max(200), driver_token: driverTokenSchema })
-      .parse(input),
+    z.object({ reservation_ids: z.array(z.string().uuid()).max(200), driver_token: driverTokenSchema }).parse(input),
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
@@ -301,50 +296,50 @@ export const countUnreadForClient = createServerFn({ method: "POST" })
 export const listAdminChatThreads = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
-  await requireDriver(data.driver_token);
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await requireDriver(data.driver_token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  const { data: msgs, error } = await supabaseAdmin
-    .from("reservation_messages")
-    .select("reservation_id, sender, content, read_by_chauffeur, created_at")
-    .order("created_at", { ascending: false })
-    .limit(2000);
-  if (error) throw new Error(error.message);
+    const { data: msgs, error } = await supabaseAdmin
+      .from("reservation_messages")
+      .select("reservation_id, sender, content, read_by_chauffeur, created_at")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    if (error) throw new Error(error.message);
 
-  const byRes = new Map<string, { last: any; unread: number }>();
-  for (const m of msgs ?? []) {
-    const cur = byRes.get(m.reservation_id);
-    if (!cur) byRes.set(m.reservation_id, { last: m, unread: 0 });
-    const entry = byRes.get(m.reservation_id)!;
-    if (m.sender === "client" && !m.read_by_chauffeur) entry.unread += 1;
-  }
-  const ids = Array.from(byRes.keys());
-  if (ids.length === 0) return [] as AdminChatThread[];
+    const byRes = new Map<string, { last: any; unread: number }>();
+    for (const m of msgs ?? []) {
+      const cur = byRes.get(m.reservation_id);
+      if (!cur) byRes.set(m.reservation_id, { last: m, unread: 0 });
+      const entry = byRes.get(m.reservation_id)!;
+      if (m.sender === "client" && !m.read_by_chauffeur) entry.unread += 1;
+    }
+    const ids = Array.from(byRes.keys());
+    if (ids.length === 0) return [] as AdminChatThread[];
 
-  const { data: resas } = await supabaseAdmin
-    .from("reservations")
-    .select("id, client_name, nom, client_phone, telephone, depart, destination, arrivee, status")
-    .in("id", ids);
+    const { data: resas } = await supabaseAdmin
+      .from("reservations")
+      .select("id, client_name, nom, client_phone, telephone, depart, destination, arrivee, status")
+      .in("id", ids);
 
-  const map = new Map((resas ?? []).map((r: any) => [r.id, r]));
-  const threads: AdminChatThread[] = ids.map((id) => {
-    const e = byRes.get(id)!;
-    const r: any = map.get(id) ?? {};
-    return {
-      reservation_id: id,
-      client_name: r.client_name || r.nom || null,
-      client_phone: r.client_phone || r.telephone || null,
-      depart: r.depart ?? null,
-      destination: r.destination || r.arrivee || null,
-      status: r.status ?? null,
-      last_message_at: e.last.created_at,
-      last_message_content: e.last.content,
-      unread_chauffeur: e.unread,
-    };
+    const map = new Map((resas ?? []).map((r: any) => [r.id, r]));
+    const threads: AdminChatThread[] = ids.map((id) => {
+      const e = byRes.get(id)!;
+      const r: any = map.get(id) ?? {};
+      return {
+        reservation_id: id,
+        client_name: r.client_name || r.nom || null,
+        client_phone: r.client_phone || r.telephone || null,
+        depart: r.depart ?? null,
+        destination: r.destination || r.arrivee || null,
+        status: r.status ?? null,
+        last_message_at: e.last.created_at,
+        last_message_content: e.last.content,
+        unread_chauffeur: e.unread,
+      };
+    });
+    threads.sort((a, b) => b.last_message_at.localeCompare(a.last_message_at));
+    return threads;
   });
-  threads.sort((a, b) => b.last_message_at.localeCompare(a.last_message_at));
-  return threads;
-});
 
 // ─── Chat anonyme depuis /suivi/$id (clé URL = preuve d'identité) ────────────
 
@@ -417,7 +412,7 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
           body: data.content.slice(0, 100),
           url: "/driver",
           tag: `chat-driver-resa-${r.id}-${Date.now()}`,
-          requireInteraction: false,
+          requireInteraction: true,
           data: { reservation_id: r.id, kind: "chat" },
         },
         { driverId },
@@ -425,7 +420,6 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
     } catch (e) {
       console.warn("[chat] push chauffeur (suivi) failed (non-blocking)", e);
     }
-
 
     return row as ChatMessage;
   });
@@ -554,7 +548,7 @@ export const sendDirectClientMessage = createServerFn({ method: "POST" })
         body: data.content.slice(0, 100),
         url: "/driver",
         tag: `chat-driver-direct-${accountId}-${Date.now()}`,
-        requireInteraction: false,
+        requireInteraction: true,
       });
     } catch (e) {
       console.warn("[chat] push chauffeur (direct) failed (non-blocking)", e);
@@ -594,14 +588,13 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
           body: data.content.slice(0, 100),
           url: "/client/chat",
           tag: `chat-client-direct-${accountId}`,
-          requireInteraction: false,
+          requireInteraction: true,
         },
         { accountId },
       );
     } catch (e) {
       console.warn("[chat] push client (direct) failed (non-blocking)", e);
     }
-
 
     return row as DirectMessage;
   });
@@ -632,9 +625,7 @@ export const listDirectMessages = createServerFn({ method: "POST" })
   });
 
 export const markDirectMessagesRead = createServerFn({ method: "POST" })
-  .inputValidator((input) =>
-    directAuthSchema.parse(input),
-  )
+  .inputValidator((input) => directAuthSchema.parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -654,39 +645,39 @@ export const markDirectMessagesRead = createServerFn({ method: "POST" })
 export const listAdminDirectThreads = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
-  await requireDriver(data.driver_token);
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: msgs, error } = await supabaseAdmin
-    .from("direct_messages")
-    .select("client_account_id,sender,content,read_by_chauffeur,created_at")
-    .order("created_at", { ascending: false })
-    .limit(2000);
-  if (error) throw new Error(error.message);
-  const byAccount = new Map<string, { last: any; unread: number }>();
-  for (const m of msgs ?? []) {
-    if (!byAccount.has(m.client_account_id)) byAccount.set(m.client_account_id, { last: m, unread: 0 });
-    const entry = byAccount.get(m.client_account_id)!;
-    if (m.sender === "client" && !m.read_by_chauffeur) entry.unread += 1;
-  }
-  const ids = Array.from(byAccount.keys());
-  if (ids.length === 0) return [] as AdminDirectThread[];
-  const { data: accounts } = await supabaseAdmin.from("client_accounts").select("id,client_name,email").in("id", ids);
-  const map = new Map((accounts ?? []).map((a: any) => [a.id, a]));
-  return ids
-    .map((id) => {
-      const e = byAccount.get(id)!;
-      const a: any = map.get(id) ?? {};
-      return {
-        client_account_id: id,
-        client_name: a.client_name ?? null,
-        client_email: a.email ?? null,
-        last_message_at: e.last.created_at,
-        last_message_content: e.last.content,
-        unread_chauffeur: e.unread,
-      };
-    })
-    .sort((a, b) => b.last_message_at.localeCompare(a.last_message_at));
-});
+    await requireDriver(data.driver_token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: msgs, error } = await supabaseAdmin
+      .from("direct_messages")
+      .select("client_account_id,sender,content,read_by_chauffeur,created_at")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    if (error) throw new Error(error.message);
+    const byAccount = new Map<string, { last: any; unread: number }>();
+    for (const m of msgs ?? []) {
+      if (!byAccount.has(m.client_account_id)) byAccount.set(m.client_account_id, { last: m, unread: 0 });
+      const entry = byAccount.get(m.client_account_id)!;
+      if (m.sender === "client" && !m.read_by_chauffeur) entry.unread += 1;
+    }
+    const ids = Array.from(byAccount.keys());
+    if (ids.length === 0) return [] as AdminDirectThread[];
+    const { data: accounts } = await supabaseAdmin.from("client_accounts").select("id,client_name,email").in("id", ids);
+    const map = new Map((accounts ?? []).map((a: any) => [a.id, a]));
+    return ids
+      .map((id) => {
+        const e = byAccount.get(id)!;
+        const a: any = map.get(id) ?? {};
+        return {
+          client_account_id: id,
+          client_name: a.client_name ?? null,
+          client_email: a.email ?? null,
+          last_message_at: e.last.created_at,
+          last_message_content: e.last.content,
+          unread_chauffeur: e.unread,
+        };
+      })
+      .sort((a, b) => b.last_message_at.localeCompare(a.last_message_at));
+  });
 
 // ─── Vue FUSIONNÉE pour Patricia (espace chauffeur) ──────────────────────────────
 // Agrège direct_messages (par compte client) et reservation_messages (par
@@ -727,26 +718,26 @@ export type MergedMessage = {
 export const countUnreadChauffeurMessages = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
-  await requireDriver(data.driver_token);
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const [dm, rm] = await Promise.all([
-    supabaseAdmin
-      .from("direct_messages")
-      .select("id", { count: "exact", head: true })
-      .eq("sender", "client")
-      .eq("read_by_chauffeur", false),
-    supabaseAdmin
-      .from("reservation_messages")
-      .select("id", { count: "exact", head: true })
-      .eq("sender", "client")
-      .eq("read_by_chauffeur", false),
-  ]);
+    await requireDriver(data.driver_token);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [dm, rm] = await Promise.all([
+      supabaseAdmin
+        .from("direct_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("sender", "client")
+        .eq("read_by_chauffeur", false),
+      supabaseAdmin
+        .from("reservation_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("sender", "client")
+        .eq("read_by_chauffeur", false),
+    ]);
 
-  if (dm.error) throw dm.error;
-  if (rm.error) throw rm.error;
+    if (dm.error) throw dm.error;
+    if (rm.error) throw rm.error;
 
-  return (dm.count ?? 0) + (rm.count ?? 0);
-});
+    return (dm.count ?? 0) + (rm.count ?? 0);
+  });
 
 export const countUnreadChauffeurForReservation = createServerFn({ method: "POST" })
   .inputValidator((input) =>
@@ -770,9 +761,7 @@ export const countUnreadChauffeurForReservation = createServerFn({ method: "POST
 // countUnreadChauffeurForReservation, pour garantir que les deux badges
 // (chauffeur / client) reflètent strictement la même vérité que la BDD.
 export const countUnreadClientForReservation = createServerFn({ method: "POST" })
-  .inputValidator((input) =>
-    z.object({ suivi_key: z.string().trim().min(6).max(200) }).parse(input),
-  )
+  .inputValidator((input) => z.object({ suivi_key: z.string().trim().min(6).max(200) }).parse(input))
   .handler(async ({ data }) => {
     const r = await resolveSuiviReservation(data.suivi_key);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -831,9 +820,7 @@ export const countUnreadClientForReservationById = createServerFn({ method: "POS
 export type UnreadMap = Record<string, { unread_chauffeur: number; unread_client: number }>;
 export const getUnreadCountsForReservations = createServerFn({ method: "POST" })
   .inputValidator((input) =>
-    z
-      .object({ reservation_ids: z.array(z.string().uuid()).max(500), driver_token: driverTokenSchema })
-      .parse(input),
+    z.object({ reservation_ids: z.array(z.string().uuid()).max(500), driver_token: driverTokenSchema }).parse(input),
   )
   .handler(async ({ data }): Promise<UnreadMap> => {
     await requireDriver(data.driver_token);
@@ -854,10 +841,6 @@ export const getUnreadCountsForReservations = createServerFn({ method: "POST" })
     }
     return out;
   });
-
-
-
-
 
 function normPhone(p?: string | null): string | null {
   if (!p) return null;
@@ -913,9 +896,7 @@ export const listMergedChauffeurThreads = createServerFn({ method: "GET" }).hand
 
   // 4) TOUS les comptes clients — permet de rattacher une résa "invitée"
   //    (sans account_id) à un compte existant via email/phone.
-  const { data: allAccts } = await supabaseAdmin
-    .from("client_accounts")
-    .select("id, client_name, email, phone");
+  const { data: allAccts } = await supabaseAdmin.from("client_accounts").select("id, client_name, email, phone");
   const acctById = new Map<string, any>();
   const acctByEmail = new Map<string, any>();
   const acctByPhone = new Map<string, any>();
@@ -1057,7 +1038,10 @@ export const listMergedChauffeurThreads = createServerFn({ method: "GET" }).hand
         }
         target.client_email = target.client_email ?? existing.client_email;
         target.client_phone = target.client_phone ?? existing.client_phone;
-        if (existing.active_pickup_at && (!target.active_pickup_at || existing.active_pickup_at > target.active_pickup_at)) {
+        if (
+          existing.active_pickup_at &&
+          (!target.active_pickup_at || existing.active_pickup_at > target.active_pickup_at)
+        ) {
           target.active_reservation_id = existing.active_reservation_id;
           target.active_pickup_at = existing.active_pickup_at;
           target.active_reservation_label = existing.active_reservation_label;
