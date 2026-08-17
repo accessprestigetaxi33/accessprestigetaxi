@@ -32,9 +32,7 @@ async function loadFirebaseConfig(): Promise<FirebaseOptions> {
 }
 
 // Clé VAPID *Web Push* de Firebase (Console → Cloud Messaging → Web configuration)
-export const FCM_VAPID_KEY =
-  "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
-
+export const FCM_VAPID_KEY = "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
 
 // FCM révoque les tokens après ~60 jours d'inactivité.
 // On force un refresh silencieux tous les 50 jours pour garder le token vivant indéfiniment.
@@ -64,16 +62,29 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
   if (typeof window === "undefined") return null;
   if (!("Notification" in window) || !("serviceWorker" in navigator)) return null;
 
+  // IMPORTANT (Safari iOS/macOS) : requestPermission() doit être appelé
+  // immédiatement dans le tour de tâche du geste utilisateur (le clic sur
+  // "Activer"), AVANT tout `await` réseau. `initFirebase()` fait un fetch
+  // vers /api/public/firebase-config ; le laisser passer avant casse
+  // l'activation utilisateur sur Safari → le prompt système n'apparaît
+  // jamais et la fonction retourne null en silence (aucune erreur). Chrome
+  // est plus tolérant, d'où "ça marche sur desktop mais pas sur iPhone".
+  let perm: NotificationPermission;
+  try {
+    perm = await Notification.requestPermission();
+  } catch (err) {
+    console.error("[FCM] requestPermission failed", err);
+    return null;
+  }
+  if (perm !== "granted") {
+    console.warn("[FCM] Permission refusée :", perm);
+    return null;
+  }
+
   const msg = await initFirebase();
   if (!msg) return null;
 
   try {
-    const perm = await Notification.requestPermission();
-    if (perm !== "granted") {
-      console.warn("[FCM] Permission refusée :", perm);
-      return null;
-    }
-
     // On cherche le SW Firebase par son scriptURL exact parmi tous les SW enregistrés.
     // getRegistration("/") retourne n'importe quel SW sur le scope "/" (ex: Vite HMR)
     // ce qui fait que FCM reçoit le mauvais SW → token OK sur desktop mais notifs silencieuses sur mobile.
