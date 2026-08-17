@@ -20,7 +20,7 @@ const card: React.CSSProperties = {
   padding: 12,
   margin: "10px 0",
   fontSize: 12.5,
-  color: "#3f3venir" as any,
+  color: "#5b4a22",
 };
 
 export default function PushDiagnosticsCard({
