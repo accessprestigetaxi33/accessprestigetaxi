@@ -29,7 +29,6 @@ const subSchema = z.object({
   user_agent: z.string().max(500).optional().nullable(),
 });
 
-
 export const subscribePush = createServerFn({ method: "POST" })
   .inputValidator((input) => subSchema.parse(input))
   .handler(async ({ data }) => {
@@ -87,7 +86,6 @@ export const subscribePush = createServerFn({ method: "POST" })
     };
     if (clientAccountId) insertPayload.client_account_id = clientAccountId;
     if (driverId) insertPayload.driver_id = driverId;
-
 
     let { error: insErr } = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
     if ((insErr as any)?.code === "23505") {
@@ -369,14 +367,15 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     }
 
     const clientName = r.client_name || r.nom || "Client";
-    const assignedKey = String((r as any).assigned_driver || "").toLowerCase().trim();
+    const assignedKey = String((r as any).assigned_driver || "")
+      .toLowerCase()
+      .trim();
     const assignedName =
       assignedKey === "patricia" ? "Patricia" : assignedKey === "alain" ? "Alain" : "Votre chauffeur";
     const trajet = `${r.depart} → ${r.arrivee || r.destination || "—"}`;
     const phone = r.client_phone || r.telephone || "";
     const smsPhone = phone.replace(/[^\d]/g, "").replace(/^0/, "+33");
     const url = `/suivi/${(r as any).suivi_id || r.id}`;
-
 
     // ── Push CHAUFFEUR désactivée (notification "Active ton GPS" retirée) ─
     const chauffeurResult = { sent: 0, removed: 0 };
@@ -406,7 +405,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           body: `${assignedName} a confirmé votre course : ${trajet}.`,
           url,
           tag: pushKey("accepted"),
-          requireInteraction: false,
+          requireInteraction: true,
           data: { reservation_id: r.id, status: "accepted" },
         },
         target,
@@ -421,7 +420,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           body: `Votre taxi arrive vers ${r.depart}${etaTxt}.`,
           url,
           tag: pushKey("en_route"),
-          requireInteraction: false,
+          requireInteraction: true,
           data: { reservation_id: r.id, status: "en_route", eta_minutes: eta ?? null },
         },
         target,
@@ -447,7 +446,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
           body: "Merci pour votre trajet avec Access Prestige Taxi.",
           url,
           tag: pushKey("completed"),
-          requireInteraction: false,
+          requireInteraction: true,
           data: { reservation_id: r.id, status: "completed" },
         },
         target,
@@ -481,8 +480,6 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
         }
       }
     }
-
-
 
     // SMS optionnel (lien wa.me/sms côté UI) — conservé
     let smsBody: string | null = null;

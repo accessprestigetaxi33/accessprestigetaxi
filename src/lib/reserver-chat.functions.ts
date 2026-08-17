@@ -41,7 +41,9 @@ ${departureContext}
 
 Objectif : réserver en EXACTEMENT 2 questions d'information (+ la confirmation du prix). Chaque question regroupe toutes les infos nécessaires en une seule phrase claire.
 
-Étape 1 — Trajet : UNE SEULE question qui demande ${hasDeparture ? "à la fois la **destination** et le **jour/heure**" : "à la fois le **départ**, la **destination** et le **jour/heure**"} (ex : "Avec plaisir. Quelle est votre destination, et à quelle heure souhaitez-vous être pris en charge ?"). ("demain 14h", "tout de suite" = maintenant + 15 min. Il est actuellement ${now}, heure de Paris — c'est ta seule référence pour "maintenant".)
+RÈGLE PRIORITAIRE — NE JAMAIS REDEMANDER UNE INFO DÉJÀ DONNÉE : avant de poser une question, relis TOUS les messages du client depuis le début de la conversation, y compris son tout premier message. S'il a déjà indiqué la destination, le jour/l'heure ("tout de suite", "demain 14h", un nom de lieu…), le nom, le téléphone ou l'email — même sans qu'on les lui ait demandés — ne repose jamais la question correspondante. Utilise directement ce qu'il a donné et ne demande que ce qui manque réellement. Si toutes les infos d'une étape sont déjà connues, saute directement à l'étape suivante (jusqu'à l'appel d'outil) sans reformuler la question.
+
+Étape 1 — Trajet : UNE SEULE question qui demande ${hasDeparture ? "à la fois la **destination** et le **jour/heure**" : "à la fois le **départ**, la **destination** et le **jour/heure**"} — mais uniquement pour les informations que le client n'a pas déjà données (ex : "Avec plaisir. Quelle est votre destination, et à quelle heure souhaitez-vous être pris en charge ?"). Si le client a déjà précisé l'heure ("tout de suite" = maintenant + 15 min) ou la destination dans un message précédent, ne demande que ce qui reste manquant, ou rien du tout si tout est déjà connu. Il est actuellement ${now}, heure de Paris — c'est ta seule référence pour "maintenant".
 
 FORMAT pickup_datetime OBLIGATOIRE : ISO 8601 en heure 24h, sans suffixe de fuseau, ex "2026-07-06T16:00:00". Un client qui dit "16h" ou "4h de l'après-midi" → toujours '16:00:00', JAMAIS '04:00:00'.
 Étape 2 — Devis : appelle compute_quote puis check_slot. Annonce prix + heure naturellement ("Comptez environ 32 € pour une prise en charge à 14h00."). Puis : "Souhaitez-vous que je confirme la réservation ?"
@@ -347,6 +349,11 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   if (clientFcmToken && /^[A-Za-z0-9_\-:]{50,500}$/.test(clientFcmToken)) {
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      // onConflict sur (fcm_token, audience) — contrainte unique réelle de la
+      // table — plutôt que sur "endpoint" (toujours nouveau ici puisqu'il
+      // inclut l'id de réservation) : évite d'insérer une ligne en doublon
+      // pour un token déjà abonné, ce qui percutait l'ancien index unique
+      // global sur fcm_token (23505 "push_subscriptions_fcm_token_unique").
       await supabaseAdmin.from("push_subscriptions").upsert(
         {
           audience: "client",
@@ -355,7 +362,7 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
           reservation_id: inserted.id,
           last_seen_at: new Date().toISOString(),
         } as any,
-        { onConflict: "endpoint" },
+        { onConflict: "fcm_token,audience" },
       );
     } catch (e) {
       console.warn("[chat] client push link failed", e);

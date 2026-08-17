@@ -167,17 +167,29 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
 
         // Push chauffeur — envoyé ici (côté serveur, à la création de
         // la résa) pour ne plus dépendre d'un onglet dashboard ouvert.
+        //
+        // IMPORTANT : une nouvelle réservation part TOUJOURS en broadcast
+        // vers les 2 chauffeurs (Alain + Patricia), même si "assigned_driver"
+        // est déjà renseigné sur la ligne. Le champ assigned_driver ne sert
+        // qu'à l'attribution ultérieure (après négociation entre chauffeurs
+        // selon qui est le plus proche) — il ne doit jamais filtrer QUI reçoit
+        // la notification de nouvelle course. On garde le champ en log pour
+        // traçabilité uniquement.
         const clientName = reservation.client_name || reservation.nom || "Client";
-        // Validation stricte du chauffeur : seules les clés connues du site
-        // bi-chauffeur sont acceptées, toute autre valeur est ignorée (broadcast).
-        const assignedKey = normalizeDriverKey((reservation as any).assigned_driver);
-        const assignedLabel = assignedKey ? assignedKey[0]!.toUpperCase() + assignedKey.slice(1) : "";
+        const assignedKeyForLog = normalizeDriverKey((reservation as any).assigned_driver);
+        console.log(
+          "[notify-reservation] assigned_driver brut:",
+          JSON.stringify((reservation as any).assigned_driver ?? null),
+          "→ push chauffeur envoyé en BROADCAST (Alain + Patricia) quoi qu'il arrive.",
+          "assigned_driver (info only):",
+          JSON.stringify(assignedKeyForLog),
+        );
         const trajet = `${reservation.depart} → ${reservation.arrivee || reservation.destination || "—"}`;
         try {
           const chauffeurResult = await sendPushToAudience(
             "chauffeur",
             {
-              title: assignedLabel ? `🚕 Nouvelle résa — ${assignedLabel}` : "🚕 Nouvelle résa",
+              title: "🚕 Nouvelle résa",
               body: `${clientName} — ${trajet}`,
               url: "/driver",
               tag: buildIdempotencyKey({
@@ -190,10 +202,10 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
               requireInteraction: true,
               data: { reservation_id: reservationId, kind: "new_reservation" },
             },
-            { driverId: assignedKey, dedupTtlMinutes: 24 * 60 },
+            { driverId: null, dedupTtlMinutes: 24 * 60 },
           );
 
-          console.log("[notify-reservation] push chauffeur:", JSON.stringify(chauffeurResult));
+          console.log("[notify-reservation] push chauffeur (broadcast):", JSON.stringify(chauffeurResult));
         } catch (pushErr) {
           console.error("[notify-reservation] push failed", pushErr);
           // On ne fait pas échouer la requête si le push échoue — l'email est déjà parti.

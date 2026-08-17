@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
 import { geocodeAddress } from "@/lib/googleGeocode";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
 import { useServerFn } from "@tanstack/react-start";
 import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
@@ -144,11 +145,11 @@ export const Route = createFileRoute("/driver")({
         { name: "twitter:image", content: social.image },
         { name: "twitter:image:alt", content: social.alt },
         { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
-        { name: "theme-color", content: "#0f172a" },
+        { name: "theme-color", content: "#FDFBF7" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "mobile-web-app-capable", content: "yes" },
-        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-        { name: "apple-mobile-web-app-title", content: "Espace chauffeur" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+        { name: "apple-mobile-web-app-title", content: "APT Chauffeur" },
       ],
       links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
     };
@@ -584,24 +585,51 @@ function DriverApp({
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
+  const [pushBusy, setPushBusy] = useState(false);
   const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
   });
 
-  // Force le manifest driver au runtime (remplace le manifest global)
+  // Reconfirme silencieusement l'abonnement côté serveur à chaque retour sur
+  // l'app (la permission étant déjà accordée, aucun prompt système n'apparaît).
+  // Corrige le cas d'une ligne push_subscriptions supprimée après un échec FCM.
   useEffect(() => {
-    const existing = document.querySelector('link[rel="manifest"]');
-    if (existing) existing.setAttribute("href", "/api/manifest?role=driver");
-    else {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    const refresh = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Notification.permission !== "granted") return;
+      void subscribePush("chauffeur", null, null).catch(() => {});
+    };
+    document.addEventListener("visibilitychange", refresh);
+    return () => document.removeEventListener("visibilitychange", refresh);
+  }, [subscribePush]);
+
+
+  // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
+  // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
+  // qu'aucun manifest client ne subsiste tant qu'on est sur /driver.
+  useEffect(() => {
+    const links = Array.from(document.querySelectorAll('link[rel="manifest"]')) as HTMLLinkElement[];
+    if (links.length === 0) {
       const link = document.createElement("link");
       link.rel = "manifest";
       link.href = "/api/manifest?role=driver";
       document.head.appendChild(link);
+    } else {
+      links.forEach((l, i) => {
+        if (i === 0) l.setAttribute("href", "/api/manifest?role=driver");
+        else l.remove();
+      });
     }
+    // Titre iOS de l'icône sur l'écran d'accueil (Safari ignore le manifest).
+    const titleTag = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (titleTag) titleTag.setAttribute("content", "APT Chauffeur");
     return () => {
       const el = document.querySelector('link[rel="manifest"]');
-      if (el) el.setAttribute("href", "/manifest.json");
+      if (el) el.setAttribute("href", "/api/manifest");
+      const t = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if (t) t.setAttribute("content", "Access Taxi");
     };
   }, []);
 
@@ -727,29 +755,44 @@ function DriverApp({
           </span>
         </div>
 
-        {/* Bandeau activation notifications */}
-        {(pushStatus === "idle" || pushStatus === "denied") && (
+        {/* Bandeau activation / reconfirmation notifications */}
+        {(pushStatus === "idle" || pushStatus === "denied" || pushStatus === "granted" || pushStatus === "loading") && (
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 10,
-              background: pushStatus === "denied" ? "#fef2f2" : "#eff6ff",
-              borderBottom: "1px solid #e2e8f0",
+              background:
+                pushStatus === "denied" ? "#fef2f2" : pushStatus === "granted" ? "#F4EFE4" : "#FDFBF7",
+              borderBottom: "1px solid #e6ddc9",
               padding: "10px 16px",
               fontSize: 12.5,
-              color: pushStatus === "denied" ? "#b91c1c" : "#1d4ed8",
+              color: pushStatus === "denied" ? "#b91c1c" : pushStatus === "granted" ? "#5b4a22" : "#7a6320",
             }}
           >
             <span>
               {pushStatus === "denied"
-                ? "🔕 Notifications bloquées — active-les dans les réglages."
-                : "🔔 Active les notifications pour ne rater aucune nouvelle course."}
+                ? "🔕 Notifications bloquées — Réglages iPhone → Notifications → « APT Chauffeur » → Autoriser les notifications, puis rouvrez l'app."
+                : pushStatus === "granted"
+                  ? "🔔 Notifications actives"
+                  : "🔔 Recevez une alerte à chaque nouvelle course, sans garder l'app ouverte."}
             </span>
             {pushStatus !== "denied" && (
               <button
-                onClick={() => subscribePush("chauffeur")}
+                onClick={async () => {
+                  setPushBusy(true);
+                  try {
+                    const ok = await subscribePush("chauffeur", null, null);
+                    if (ok) toast.success("Notifications activées sur cet appareil.");
+                    else toast.error("Impossible d'activer les notifications sur cet appareil.");
+                  } catch {
+                    toast.error("Impossible d'activer les notifications sur cet appareil.");
+                  } finally {
+                    setPushBusy(false);
+                  }
+                }}
+                disabled={pushBusy}
                 style={{
                   flexShrink: 0,
                   background: "#0f172a",
@@ -759,14 +802,23 @@ function DriverApp({
                   padding: "6px 12px",
                   fontSize: 12,
                   fontWeight: 700,
-                  cursor: "pointer",
+                  cursor: pushBusy ? "wait" : "pointer",
+                  opacity: pushBusy ? 0.6 : 1,
+                  minHeight: 32,
                 }}
               >
-                Activer
+                {pushBusy ? "Activation…" : pushStatus === "granted" ? "🔄 Ré-activer" : "Activer"}
               </button>
             )}
           </div>
         )}
+
+        <div style={{ padding: "0 16px" }}>
+          <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
+        </div>
+
+
+
 
         {/* Tabs */}
         <div className="drv-tabs">
@@ -828,19 +880,7 @@ function DriverApp({
               seules dépasser la hauteur de l'écran et rendre la barre
               d'onglets + tout le contenu (avis, clients…) inaccessibles,
               sans aucun moyen de scroller pour les atteindre. */}
-          {(driverId === "alain" || driverId === "patricia") && (
-            <>
-              <TeamMapCard driverId={driverId} />
-              <GpsTab
-                driverId={driverId}
-                driverLabel={driverLabel}
-                gps={gps}
-                onIdentify={onIdentify}
-                identifyBusy={identifyBusy}
-                identifyError={identifyError}
-              />
-            </>
-          )}
+          {(driverId === "alain" || driverId === "patricia") && <TeamMapCard driverId={driverId} gps={gps} />}
 
           {tab === "courses" && (
             <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
@@ -1080,340 +1120,6 @@ function useDriverGpsTracking(driverId?: string) {
 
 type DriverGpsTracking = ReturnType<typeof useDriverGpsTracking>;
 
-// ── Onglet GPS — deux cartes (Alain / Patricia), carte auto-affichée ────────
-const GPS_DRIVER_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
-const GPS_DRIVER_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
-
-function DriverGpsMapCard({
-  id,
-  mine,
-  lat,
-  lng,
-  acc,
-  speed,
-  addr,
-  isActive,
-  stateLabel,
-  lastInfo,
-  onStart,
-  onStop,
-}: {
-  id: "alain" | "patricia";
-  mine: boolean;
-  lat: number | null;
-  lng: number | null;
-  acc?: number | null;
-  speed?: number | null;
-  addr?: string | null;
-  isActive: boolean;
-  stateLabel: string;
-  lastInfo: string;
-  onStart?: () => void;
-  onStop?: () => void;
-}) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInst = useRef<any>(null);
-  const markerInst = useRef<any>(null);
-  const color = GPS_DRIVER_COLORS[id] ?? "#0f172a";
-
-  // Carte auto-affichée dès qu'une position existe, sans clic préalable.
-  useEffect(() => {
-    if (lat == null || lng == null) return;
-    (async () => {
-      try {
-        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
-        const pos = { lat, lng };
-        if (!mapInst.current) {
-          mapInst.current = new mapsApi.maps.Map(mapRef.current!, {
-            center: pos,
-            zoom: 15,
-            disableDefaultUI: true,
-            gestureHandling: "cooperative",
-            styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
-          });
-        } else {
-          mapInst.current.panTo(pos);
-        }
-        if (!markerInst.current) {
-          markerInst.current = new mapsApi.maps.Marker({
-            map: mapInst.current,
-            position: pos,
-            label: { text: (GPS_DRIVER_NAMES[id] ?? id)[0], color: "#fff", fontWeight: "700" },
-            icon: {
-              path: mapsApi.maps.SymbolPath.CIRCLE,
-              scale: 12,
-              fillColor: color,
-              fillOpacity: 1,
-              strokeColor: "#fff",
-              strokeWeight: 2,
-            },
-          });
-        } else {
-          markerInst.current.setPosition(pos);
-        }
-        markerInst.current.setOpacity(isActive ? 1 : 0.45);
-      } catch {}
-    })();
-  }, [lat, lng, isActive, id, color]);
-
-  const dot = isActive ? color : "#94a3b8";
-
-  return (
-    <div
-      style={{
-        border: "1px solid #e2e8f0",
-        borderRadius: 14,
-        background: "#FDFBF7",
-        overflow: "hidden",
-        fontFamily: "'DM Sans', sans-serif",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 14px" }}>
-        <span
-          style={{
-            width: 9,
-            height: 9,
-            borderRadius: "50%",
-            background: dot,
-            boxShadow: isActive ? `0 0 0 4px ${dot}22` : "none",
-            flexShrink: 0,
-          }}
-        />
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
-          📍 {GPS_DRIVER_NAMES[id]} {mine ? "— vous" : ""}
-        </span>
-        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "#64748b" }}>{addr ?? stateLabel}</span>
-      </div>
-
-      <div style={{ padding: "0 14px 14px" }}>
-        {lat != null && lng != null ? (
-          <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #e2e8f0", marginBottom: 10 }}>
-            <div ref={mapRef} style={{ width: "100%", height: 190 }} />
-          </div>
-        ) : (
-          <div style={{ fontSize: 12.5, color: "#64748b", marginBottom: 10 }}>
-            Aucune position partagée pour l'instant.
-          </div>
-        )}
-
-        <div style={{ fontSize: 12.5, color: "#334155", lineHeight: 1.7, marginBottom: mine ? 10 : 0 }}>
-          <div>
-            <b>État :</b> {stateLabel}
-          </div>
-          {lat != null && lng != null && (
-            <div>
-              <b>Coordonnées :</b> {lat.toFixed(5)}, {lng.toFixed(5)}
-              {acc != null ? ` (±${acc} m)` : ""}
-            </div>
-          )}
-          {speed != null && (
-            <div>
-              <b>Vitesse :</b> {Math.round(speed * 3.6)} km/h
-            </div>
-          )}
-          <div>
-            <b>Dernière position :</b> {lastInfo}
-          </div>
-        </div>
-
-        {mine && (
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {isActive ? (
-              <button
-                onClick={onStop}
-                style={{
-                  flex: 1,
-                  minWidth: 130,
-                  background: "#fff",
-                  color: "#b91c1c",
-                  border: "1px solid #fecaca",
-                  borderRadius: 10,
-                  padding: "9px 12px",
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                ⏸ Mettre en pause
-              </button>
-            ) : (
-              <button
-                onClick={onStart}
-                style={{
-                  flex: 1,
-                  minWidth: 130,
-                  background: "#0f172a",
-                  color: "#FDFBF7",
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "9px 12px",
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                ▶ Activer le GPS
-              </button>
-            )}
-            {lat != null && lng != null && (
-              <a
-                href={`https://www.google.com/maps?q=${lat},${lng}`}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  flex: 1,
-                  minWidth: 130,
-                  textAlign: "center",
-                  background: "#f8fafc",
-                  color: "#0f172a",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 10,
-                  padding: "9px 12px",
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  textDecoration: "none",
-                }}
-              >
-                🗺 Ouvrir dans Maps
-              </a>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function GpsTab({
-  driverId,
-  driverLabel,
-  gps,
-  onIdentify,
-  identifyBusy,
-  identifyError,
-}: {
-  driverId?: string;
-  driverLabel?: string;
-  gps: DriverGpsTracking;
-  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
-  identifyBusy: string | null;
-  identifyError: string | null;
-}) {
-  const listPos = useServerFn(listDriverPositions);
-  const [team, setTeam] = useState<
-    { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
-  >([]);
-
-  const refreshTeam = useCallback(async () => {
-    try {
-      const res: any = await listPos({ data: { token: getDriverToken() ?? "" } });
-      setTeam((res?.positions ?? []).filter((p: any) => p.id === "alain" || p.id === "patricia"));
-    } catch {}
-  }, [listPos]);
-
-  useEffect(() => {
-    refreshTeam();
-    const t = setInterval(refreshTeam, 15000);
-    return () => clearInterval(t);
-  }, [refreshTeam]);
-
-  if (!gps.identified) {
-    return (
-      <div
-        style={{
-          border: "1px solid #fde68a",
-          borderRadius: 14,
-          background: "#fffbeb",
-          padding: "14px",
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ fontSize: 13, color: "#92400e", fontWeight: 600, marginBottom: 10 }}>
-          Indique qui conduit pour activer le suivi GPS en direct des deux cartes.
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          {(["alain", "patricia"] as const).map((id) => (
-            <button
-              key={id}
-              disabled={identifyBusy !== null}
-              onClick={() => onIdentify(id)}
-              style={{
-                flex: 1,
-                background: "#0f172a",
-                color: "#FDFBF7",
-                border: "none",
-                borderRadius: 8,
-                padding: "9px 10px",
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: identifyBusy ? "wait" : "pointer",
-              }}
-            >
-              {identifyBusy === id ? "…" : GPS_DRIVER_NAMES[id]}
-            </button>
-          ))}
-        </div>
-        {identifyError && <div style={{ color: "#dc2626", fontSize: 11, marginTop: 8 }}>{identifyError}</div>}
-      </div>
-    );
-  }
-
-  const myLabel =
-    gps.state === "on"
-      ? "GPS actif"
-      : gps.state === "denied"
-        ? "GPS refusé — autorise la localisation"
-        : gps.state === "error"
-          ? "GPS indisponible"
-          : gps.state === "off"
-            ? "GPS en pause"
-            : "Activation du GPS…";
-  const myLastInfo = gps.lastSync
-    ? gps.lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-    : "—";
-
-  const otherId = (driverId === "alain" ? "patricia" : "alain") as "alain" | "patricia";
-  const otherRow = team.find((r) => r.id === otherId);
-  const otherLastInfo = otherRow
-    ? otherRow.is_active
-      ? otherRow.age_s < 60
-        ? `il y a ${otherRow.age_s}s`
-        : `il y a ${Math.round(otherRow.age_s / 60)} min`
-      : "hors ligne"
-    : "jamais connecté";
-
-  return (
-    <div style={{ display: "grid", gap: 12 }}>
-      <DriverGpsMapCard
-        id={driverId as "alain" | "patricia"}
-        mine
-        lat={gps.pos?.lat ?? null}
-        lng={gps.pos?.lng ?? null}
-        acc={gps.pos?.acc}
-        speed={gps.pos?.speed}
-        addr={gps.addr}
-        isActive={gps.state === "on"}
-        stateLabel={myLabel}
-        lastInfo={myLastInfo}
-        onStart={gps.start}
-        onStop={gps.stop}
-      />
-      <DriverGpsMapCard
-        id={otherId}
-        mine={false}
-        lat={otherRow?.lat ?? null}
-        lng={otherRow?.lng ?? null}
-        isActive={!!otherRow?.is_active}
-        stateLabel={otherRow ? (otherRow.is_active ? "GPS actif" : "GPS en pause") : "Jamais connecté"}
-        lastInfo={otherLastInfo}
-      />
-      <p style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>
-        La position est partagée uniquement avec le client pendant une course acceptée.
-      </p>
-    </div>
-  );
-}
-
 // ── Carte équipe (positions Alain / Patricia) ────────────────────────────
 const TEAM_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
 const TEAM_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
@@ -1428,7 +1134,7 @@ function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: num
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 }
 
-function TeamMapCard({ driverId }: { driverId?: string }) {
+function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
   const listPos = useServerFn(listDriverPositions);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInst = useRef<any>(null);
@@ -1555,6 +1261,10 @@ function TeamMapCard({ driverId }: { driverId?: string }) {
 
           {(["alain", "patricia"] as const).map((id) => {
             const r = rows.find((x) => x.id === id);
+            const isMe = id === driverId;
+            const myLastSync = gps.lastSync
+              ? gps.lastSync.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+              : null;
             return (
               <div
                 key={id}
@@ -1572,15 +1282,48 @@ function TeamMapCard({ driverId }: { driverId?: string }) {
                     width: 9,
                     height: 9,
                     borderRadius: "50%",
-                    background: r?.is_active ? TEAM_COLORS[id] : "#cbd5e1",
+                    background: (isMe ? gps.state === "on" : r?.is_active) ? TEAM_COLORS[id] : "#cbd5e1",
                     flexShrink: 0,
                   }}
                 />
                 <b style={{ minWidth: 60 }}>{TEAM_NAMES[id]}</b>
                 <span style={{ color: "#64748b" }}>
-                  {r ? (r.is_active ? fmtAge(r.age_s) : "hors ligne") : "jamais connecté"}
-                  {id === driverId ? " · vous" : ""}
+                  {isMe
+                    ? gps.state === "on"
+                      ? myLastSync
+                        ? `actif · ${myLastSync}`
+                        : "actif"
+                      : gps.state === "denied"
+                        ? "refusé — autorise la localisation"
+                        : gps.state === "error"
+                          ? "indisponible"
+                          : "en pause"
+                    : r
+                      ? r.is_active
+                        ? fmtAge(r.age_s)
+                        : "hors ligne"
+                      : "jamais connecté"}
+                  {isMe ? " · vous" : ""}
                 </span>
+                {isMe && (
+                  <button
+                    onClick={gps.state === "on" ? gps.stop : gps.start}
+                    style={{
+                      marginLeft: "auto",
+                      background: gps.state === "on" ? "#fff" : "#0f172a",
+                      color: gps.state === "on" ? "#b91c1c" : "#FDFBF7",
+                      border: gps.state === "on" ? "1px solid #fecaca" : "none",
+                      borderRadius: 8,
+                      padding: "5px 10px",
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {gps.state === "on" ? "⏸ Pause" : "▶ Activer"}
+                  </button>
+                )}
               </div>
             );
           })}
@@ -2687,7 +2430,7 @@ function CourseCard({
                     disabled={progressing}
                     style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
                   >
-                    {progressing ? "…" : "🚖 Je pars"}
+                    {progressing ? "…" : "🚕 Votre taxi arrive"}
                   </button>
                 )}
                 {(resa.status === "accepted" || resa.status === "en_route") && (
@@ -2696,7 +2439,7 @@ function CourseCard({
                     disabled={progressing}
                     style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
                   >
-                    {progressing ? "…" : "✅ Prise en charge"}
+                    {progressing ? "…" : "📍 Votre taxi est arrivé"}
                   </button>
                 )}
                 {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
@@ -2705,7 +2448,7 @@ function CourseCard({
                     disabled={completing}
                     style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
                   >
-                    {completing ? "…" : "🏁 Terminée"}
+                    {completing ? "…" : "✓ Terminée"}
                   </button>
                 )}
               </div>
@@ -3267,7 +3010,7 @@ function CourseCard({
                   marginBottom: 10,
                 }}
               >
-                {progressing ? "…" : "🚖 Je pars vers le client"}
+                {progressing ? "…" : "🚕 Votre taxi arrive"}
               </button>
             )}
 
@@ -3288,7 +3031,7 @@ function CourseCard({
                   marginBottom: 10,
                 }}
               >
-                {progressing ? "…" : "📍 Je suis devant chez vous"}
+                {progressing ? "…" : "📍 Votre taxi est arrivé"}
               </button>
             )}
 
@@ -3309,7 +3052,7 @@ function CourseCard({
                   marginBottom: 10,
                 }}
               >
-                {completing ? "…" : "🏁 Course terminée"}
+                {completing ? "…" : "✓ Terminée"}
               </button>
             )}
 

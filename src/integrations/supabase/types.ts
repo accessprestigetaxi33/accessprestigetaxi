@@ -1030,6 +1030,7 @@ export type Database = {
           client_phone: string | null
           created_at: string
           date_course: string | null
+          date_heure: string | null
           depart: string
           destination: string | null
           distance_km: number | null
@@ -1071,6 +1072,7 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           date_course?: string | null
+          date_heure?: string | null
           depart: string
           destination?: string | null
           distance_km?: number | null
@@ -1112,6 +1114,7 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           date_course?: string | null
+          date_heure?: string | null
           depart?: string
           destination?: string | null
           distance_km?: number | null
@@ -1341,6 +1344,7 @@ export type Database = {
           client_phone: string | null
           created_at: string
           date_course: string | null
+          date_heure: string | null
           depart: string
           destination: string | null
           distance_km: number | null
