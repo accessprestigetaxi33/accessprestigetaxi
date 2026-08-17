@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 
-const SW_VERSION = "apt-2026-09.push-click-open";
+const SW_VERSION = "apt-2026-09.push-fallback-fix";
 console.log("[FCM SW] boot version =", SW_VERSION);
 
 const DRIVER_URL = "/driver";
@@ -125,6 +125,11 @@ function showFrom(data, notif) {
   );
 }
 
+// true seulement quand onBackgroundMessage a bien été enregistré : tant que ce
+// n'est pas le cas, le filet de sécurité `push` ci-dessous ne doit JAMAIS bail
+// sur la présence de payload.notification, sinon la notif est perdue en silence.
+let firebaseHandlerActive = false;
+
 const ready = fetch("/api/public/firebase-config")
   .then((r) => r.json())
   .then((config) => {
@@ -141,8 +146,12 @@ const ready = fetch("/api/public/firebase-config")
       if (!claimOnce(dedupeKey(data, notif))) return;
       return showFrom(data, notif);
     });
+    firebaseHandlerActive = true;
   })
-  .catch((err) => console.error("[FCM SW] init failed", err));
+  .catch((err) => {
+    console.error("[FCM SW] init failed", err);
+    firebaseHandlerActive = false;
+  });
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -169,19 +178,51 @@ self.addEventListener("message", (event) => {
   }
 });
 
-// Filet de sécurité (data-only) pour Android quand le SDK n'a pas encore booté.
+// Filet de sécurité pour Android quand le SDK n'a pas encore booté — ET pour
+// TOUS les navigateurs quand l'init Firebase du SW (fetch config + attach
+// onBackgroundMessage) a échoué ou n'est pas encore terminée. Dans ce dernier
+// cas, `firebaseHandlerActive` est false : on ne doit PAS faire confiance au
+// SDK pour afficher la notif, même si `payload.notification` est présent,
+// sinon la notification est perdue en silence (c'était le bug).
 self.addEventListener("push", (event) => {
-  let payload = {};
-  try {
-    payload = event.data ? event.data.json() : {};
-  } catch (_) {
-    try {
-      payload = { notification: { title: event.data?.text() } };
-    } catch (_2) {}
-  }
-  if (payload.notification || payload.webpush?.notification) return;
-  const data = payload.data || {};
-  if (!data.title && !data.body) return;
-  if (!claimOnce(dedupeKey(data, {}))) return;
-  event.waitUntil(showFrom(data, {}));
+  event.waitUntil(
+    (async () => {
+      // On attend la fin de l'init (succès ou échec) avant de décider,
+      // pour ne pas rater une notif reçue juste après le réveil du SW.
+      await ready.catch(() => {});
+
+      let payload = {};
+      try {
+        payload = event.data ? event.data.json() : {};
+      } catch (_) {
+        try {
+          payload = { notification: { title: event.data?.text() } };
+        } catch (_2) {}
+      }
+
+      const notifFromPayload = payload.webpush?.notification || payload.notification || {};
+      const hasNotificationPayload = Boolean(payload.notification || payload.webpush?.notification);
+
+      if (hasNotificationPayload && firebaseHandlerActive) {
+        // Le SDK a bien démarré : il gère déjà l'affichage via
+        // onBackgroundMessage, on ne fait rien pour éviter un doublon.
+        return;
+      }
+
+      const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
+
+      if (hasNotificationPayload && !firebaseHandlerActive) {
+        // Le SDK n'a pas pu s'enregistrer (fetch config raté, etc.) : on
+        // affiche nous-mêmes à partir du payload.notification pour ne pas
+        // perdre la notif silencieusement.
+        if (!claimOnce(dedupeKey(data, notifFromPayload))) return;
+        return showFrom(data, notifFromPayload);
+      }
+
+      // Payload data-only classique (Android sans SDK actif).
+      if (!data.title && !data.body) return;
+      if (!claimOnce(dedupeKey(data, {}))) return;
+      return showFrom(data, {});
+    })(),
+  );
 });
