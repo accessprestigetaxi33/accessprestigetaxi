@@ -171,6 +171,15 @@ export const Route = createFileRoute("/api/public/notify-reservation")({
         // Validation stricte du chauffeur : seules les clés connues du site
         // bi-chauffeur sont acceptées, toute autre valeur est ignorée (broadcast).
         const assignedKey = normalizeDriverKey((reservation as any).assigned_driver);
+        // Log d'audit : permet de confirmer en prod qu'une résa non assignée
+        // produit bien assignedKey === null → broadcast Alain + Patricia.
+        console.log(
+          "[notify-reservation] assigned_driver brut:",
+          JSON.stringify((reservation as any).assigned_driver ?? null),
+          "→ normalizeDriverKey:",
+          JSON.stringify(assignedKey),
+          assignedKey ? "(ciblage chauffeur)" : "(BROADCAST tous chauffeurs)",
+        );
         const assignedLabel = assignedKey ? assignedKey[0]!.toUpperCase() + assignedKey.slice(1) : "";
         const trajet = `${reservation.depart} → ${reservation.arrivee || reservation.destination || "—"}`;
         try {

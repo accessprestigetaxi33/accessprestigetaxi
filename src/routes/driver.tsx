@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
 import { geocodeAddress } from "@/lib/googleGeocode";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
 import { useServerFn } from "@tanstack/react-start";
 import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
@@ -811,6 +812,12 @@ function DriverApp({
             )}
           </div>
         )}
+
+        <div style={{ padding: "0 16px" }}>
+          <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
+        </div>
+
+
 
 
         {/* Tabs */}
