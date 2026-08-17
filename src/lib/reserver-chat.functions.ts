@@ -349,6 +349,11 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   if (clientFcmToken && /^[A-Za-z0-9_\-:]{50,500}$/.test(clientFcmToken)) {
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      // onConflict sur (fcm_token, audience) — contrainte unique réelle de la
+      // table — plutôt que sur "endpoint" (toujours nouveau ici puisqu'il
+      // inclut l'id de réservation) : évite d'insérer une ligne en doublon
+      // pour un token déjà abonné, ce qui percutait l'ancien index unique
+      // global sur fcm_token (23505 "push_subscriptions_fcm_token_unique").
       await supabaseAdmin.from("push_subscriptions").upsert(
         {
           audience: "client",
@@ -357,7 +362,7 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
           reservation_id: inserted.id,
           last_seen_at: new Date().toISOString(),
         } as any,
-        { onConflict: "endpoint" },
+        { onConflict: "fcm_token,audience" },
       );
     } catch (e) {
       console.warn("[chat] client push link failed", e);
