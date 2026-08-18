@@ -157,11 +157,14 @@ const ready = fetch("/api/public/firebase-config")
       const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
       const notif = payload.webpush?.notification || payload.notification || {};
       
-      const dedupKey = dedupeKey(data, notif);
-      
       // Le service worker est toujours charge depuis /firebase-messaging-sw.js,
       // pas depuis /driver ou une page client. Il ne peut donc pas deduire
       // l'audience depuis self.location.pathname sans rejeter les push chauffeur.
+      // Avec un payload notification, FCM affiche deja la notification en
+      // arriere-plan. La re-afficher ici provoquerait un doublon.
+      if (notif.title || notif.body) return;
+      
+      const dedupKey = dedupeKey(data, notif);
       
       // Toujours afficher, sauf si dédupliquée récemment
       if (!claimOnce(dedupKey)) {
@@ -213,6 +216,9 @@ self.addEventListener("push", (event) => {
   const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
   const notif = payload.webpush?.notification || payload.notification || {};
   if (!data.title && !data.body && !notif.title && !notif.body) return;
+  // Les messages avec notification racine sont affiches automatiquement par
+  // FCM en arriere-plan. Ce handler ne gere que les messages data-only.
+  if (notif.title || notif.body) return;
   const key = dedupeKey(data, notif);
   if (!claimOnce(key)) return;
   event.waitUntil(showFrom(data, notif));
