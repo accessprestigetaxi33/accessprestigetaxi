@@ -31,12 +31,8 @@ function getServiceAccount(): ServiceAccount {
   const raw =
     process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
     process.env.FIREBASE_SERVICE_ACCOUNT ||
-    (typeof import.meta !== "undefined"
-      ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT_JSON
-      : undefined) ||
-    (typeof import.meta !== "undefined"
-      ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT
-      : undefined);
+    (typeof import.meta !== "undefined" ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT_JSON : undefined) ||
+    (typeof import.meta !== "undefined" ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT : undefined);
   if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON missing");
   cachedAccount = JSON.parse(raw) as ServiceAccount;
   return cachedAccount;
@@ -95,11 +91,7 @@ async function getAccessToken(): Promise<string> {
     false,
     ["sign"],
   );
-  const sigBuf = await crypto.subtle.sign(
-    "RSASSA-PKCS1-v1_5",
-    cryptoKey,
-    new TextEncoder().encode(data),
-  );
+  const sigBuf = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, new TextEncoder().encode(data));
   const jwt = `${data}.${base64UrlEncode(sigBuf)}`;
 
   const res = await fetch(tokenUri, {
@@ -125,6 +117,20 @@ function resolvePushUrl(url?: string): string {
   return `${APP_URL}${url.startsWith("/") ? url : `/${url}`}`;
 }
 
+// ⚠️ CORRECTIF : les valeurs de `data` FCM doivent être des chaînes.
+// payload.data (fourni par l'appelant, ex: { status: "accepted" }) était
+// jusqu'ici ignoré — seules les clés calculées en interne (url, tag...)
+// partaient. On le fusionne maintenant, les clés réservées ci-dessous
+// restant prioritaires en cas de collision de nom.
+function stringifyDataValues(obj: Record<string, unknown>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined || v === null) continue;
+    out[k] = typeof v === "string" ? v : JSON.stringify(v);
+  }
+  return out;
+}
+
 async function sendFcmToToken(
   accessToken: string,
   projectId: string,
@@ -144,6 +150,9 @@ async function sendFcmToToken(
         : `/${payload.url}`
       : clickUrl;
   const extraData = {
+    // ⚠️ CORRECTIF : payload.data en premier, les clés ci-dessous (réservées
+    // au fonctionnement du SW) gardent la priorité en cas de collision.
+    ...(payload.data ? stringifyDataValues(payload.data) : {}),
     url: relativeUrl,
     click_url: clickUrl,
     tag: payload.tag || "taxi-fcm",
@@ -168,6 +177,13 @@ async function sendFcmToToken(
   // On force la priorité haute uniquement quand requireInteraction est vrai
   // (courses / évènements qui doivent réveiller l'utilisateur immédiatement) ;
   // sinon on reste sur les priorités par défaut de chaque plateforme.
+  // ℹ️ NOTE (non bloquant) : tous les tokens obtenus ici viennent du SDK Web
+  // Firebase (getToken() côté navigateur, y compris pour la PWA iOS installée
+  // depuis Safari) — FCM les enregistre comme type "WEB", pas "ANDROID" ni
+  // "IOS". Les blocs `android` et `apns` ci-dessous sont donc ignorés par FCM
+  // pour ces tokens : seul `webpush` (headers Urgency/TTL + data) s'applique
+  // réellement, y compris sur iOS. On les laisse en place au cas où un token
+  // natif serait ajouté un jour, mais ils ne font rien actuellement.
   const body = {
     message: {
       token,
@@ -251,11 +267,7 @@ type SubRow = {
  * @param scope  espace de noms (`client`, `chauffeur`, `email`, `webhook`…)
  * @param ttlMinutes durée de rétention de la clé (défaut 60 min)
  */
-export async function claimNotificationOnce(
-  key: string,
-  scope: string,
-  ttlMinutes = 60,
-): Promise<boolean> {
+export async function claimNotificationOnce(key: string, scope: string, ttlMinutes = 60): Promise<boolean> {
   if (!key) return true;
   const now = new Date();
   const expiresAt = new Date(now.getTime() + ttlMinutes * 60 * 1000).toISOString();
@@ -277,11 +289,7 @@ export async function claimNotificationOnce(
   return true;
 }
 
-async function claimPushSendOnce(
-  audience: PushAudience,
-  tag?: string,
-  ttlMinutes = 60,
-): Promise<boolean> {
+async function claimPushSendOnce(audience: PushAudience, tag?: string, ttlMinutes = 60): Promise<boolean> {
   // Les tags volontairement uniques (suffixe horodaté, ex. messages de tchat)
   // ne sont pas dédupliqués : chaque message est une notification distincte.
   if (!tag || /-\d{13}$/.test(tag)) return true;
@@ -290,10 +298,7 @@ async function claimPushSendOnce(
 
 function isLikelyIosWebPush(userAgent: string | null): boolean {
   if (!userAgent) return false;
-  return (
-    /iPhone|iPad|iPod/i.test(userAgent) ||
-    (/Macintosh/i.test(userAgent) && /Mobile|Safari/i.test(userAgent))
-  );
+  return /iPhone|iPad|iPod/i.test(userAgent) || (/Macintosh/i.test(userAgent) && /Mobile|Safari/i.test(userAgent));
 }
 
 /**
@@ -332,9 +337,7 @@ export async function sendPushToAudience(
   const baseQuery = () =>
     supabaseAdmin
       .from("push_subscriptions")
-      .select(
-        "id, fcm_token, user_agent, last_seen_at, created_at, driver_id, reservation_id, client_account_id",
-      )
+      .select("id, fcm_token, user_agent, last_seen_at, created_at, driver_id, reservation_id, client_account_id")
       .eq("audience", audience)
       .not("fcm_token", "is", null);
 
@@ -408,14 +411,7 @@ export async function sendPushToAudience(
   await Promise.all(
     uniqueSubs.map(async (sub) => {
       if (!sub.fcm_token) return;
-      const r = await sendFcmToToken(
-        accessToken,
-        projectId,
-        sub.fcm_token,
-        payload,
-        audience,
-        opts.reservationId,
-      );
+      const r = await sendFcmToToken(accessToken, projectId, sub.fcm_token, payload, audience, opts.reservationId);
       const base = {
         audience,
         tag: payload.tag ?? null,
