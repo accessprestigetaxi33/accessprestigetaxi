@@ -29,7 +29,9 @@ export const listPushSubscriptions = createServerFn({ method: "POST" })
 
     let q = supabaseAdmin
       .from("push_subscriptions")
-      .select("id, audience, driver_id, fcm_token, user_agent, last_seen_at, created_at, reservation_id, client_account_id")
+      .select(
+        "id, audience, driver_id, fcm_token, user_agent, last_seen_at, created_at, reservation_id, client_account_id",
+      )
       .order("last_seen_at", { ascending: false })
       .limit(100);
     if (data.audience !== "all") q = q.eq("audience", data.audience);
@@ -139,5 +141,13 @@ export const sendChauffeurTestPush = createServerFn({ method: "POST" })
       { driverId: target, dedupTtlMinutes: 1 },
     );
     console.log("[push-admin] test push", JSON.stringify({ target, result }));
-    return result;
+    // ⚠️ CORRECTIF : { sent: 0, removed: 0 } sans info ressemble à un succès
+    // vide côté UI de debug. On rend le diagnostic explicite : si target est
+    // fourni et qu'aucune ligne n'a été trouvée, c'est que push_subscriptions
+    // n'a AUCUNE ligne avec driver_id = target — pas un souci d'envoi FCM.
+    const diagnostic =
+      result.reason === "no_matching_subscriptions" && target
+        ? `Aucun appareil enregistré avec driver_id="${target}" dans push_subscriptions. Vérifie via listPushSubscriptions si ${target} a bien une ligne, et que son driver_id n'est pas vide/null (ça arrive si l'appareil s'est authentifié avec un token "admin" partagé au lieu du token propre à ${target}).`
+        : undefined;
+    return { ...result, diagnostic };
   });
