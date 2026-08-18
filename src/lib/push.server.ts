@@ -209,11 +209,6 @@ async function sendFcmToToken(
           customData: extraData,
         },
       },
-      webpush: {
-        headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
-        data: extraData,
-      },
-
       data: extraData,
     },
   };
