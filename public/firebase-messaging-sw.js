@@ -10,12 +10,18 @@ console.log("[FCM SW] boot version =", SW_VERSION);
 const DRIVER_URL = "/driver";
 const FORBIDDEN_PATH_PREFIXES = ["/admin"];
 
-// Event listener pour les messages du client (ex: SKIP_WAITING)
+// Event listener pour les messages du client (SKIP_WAITING + demande de version).
+// ⚠️ CORRECTIF : ce listener était enregistré deux fois (ici et plus bas dans
+// le fichier), causant un double appel de self.skipWaiting() à chaque message.
+// Inoffensif en pratique (idempotent) mais fusionné en un seul handler.
 self.addEventListener("message", (event) => {
   const msgType = event.data?.type;
   if (msgType === "FCM_SW_SKIP_WAITING" || msgType === "SKIP_WAITING") {
     console.log("[FCM SW] SKIP_WAITING reçu, activation forcée immédiate");
     self.skipWaiting();
+  }
+  if (msgType === "FCM_SW_VERSION" && event.ports && event.ports[0]) {
+    event.ports[0].postMessage({ version: SW_VERSION });
   }
 });
 
@@ -129,12 +135,12 @@ function showFrom(data, notif) {
   const body = notif.body || data.body || "";
   const url = sanitizeDeepLink(data.url || data.click_action, data.audience, data.reservation_id);
   const tag = data.tag || "taxi-fcm";
-  
+
   // Sur iOS/mobile, reduire requireInteraction pour compatibilité
   // Set false pour Android/web normal, true seulement si explicitement demandé
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const requireInteraction = isIOS ? false : (data.require_interaction === "true" || false);
-  
+  const requireInteraction = isIOS ? false : data.require_interaction === "true" || false;
+
   return closeExistingNotifications(tag).then(() =>
     self.registration.showNotification(title, {
       body,
@@ -156,22 +162,22 @@ const ready = fetch("/api/public/firebase-config")
     messaging.onBackgroundMessage((payload) => {
       const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
       const notif = payload.webpush?.notification || payload.notification || {};
-      
+
       // Le service worker est toujours charge depuis /firebase-messaging-sw.js,
       // pas depuis /driver ou une page client. Il ne peut donc pas deduire
       // l'audience depuis self.location.pathname sans rejeter les push chauffeur.
       // Avec un payload notification, FCM affiche deja la notification en
       // arriere-plan. La re-afficher ici provoquerait un doublon.
       if (notif.title || notif.body) return;
-      
+
       const dedupKey = dedupeKey(data, notif);
-      
+
       // Toujours afficher, sauf si dédupliquée récemment
       if (!claimOnce(dedupKey)) {
         console.log("[FCM SW] Notif dédupliquée (rejet):", dedupKey);
         return;
       }
-      
+
       console.log("[FCM SW] onBackgroundMessage -> showNotification", { audience: data.audience });
       return showFrom(data, notif);
     });
@@ -195,13 +201,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-self.addEventListener("message", (event) => {
-  const type = event.data && event.data.type;
-  if (type === "FCM_SW_SKIP_WAITING") self.skipWaiting();
-  if (type === "FCM_SW_VERSION" && event.ports && event.ports[0]) {
-    event.ports[0].postMessage({ version: SW_VERSION });
-  }
-});
+// (listener "message" fusionné en haut du fichier — voir CORRECTIF ci-dessus)
 
 // Filet de sécurité (data-only) pour Android quand le SDK n'a pas encore booté.
 self.addEventListener("push", (event) => {
