@@ -121,7 +121,7 @@ function NotificationsPage() {
     setBusy(true);
     try {
       const token = typeof window !== "undefined" ? window.localStorage.getItem("fcm_token") : null;
-      if (token) await unsubscribe({ data: { fcm_token: token } });
+      if (token) await unsubscribe({ data: { audience: "client", fcm_token: token } });
       window.localStorage.removeItem("fcm_token");
       window.localStorage.removeItem("fcm_token_last_refresh");
       toast.success(c.offToast);

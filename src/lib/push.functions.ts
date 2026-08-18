@@ -112,7 +112,11 @@ export const subscribePush = createServerFn({ method: "POST" })
     if ((insErr as any)?.code === "23505") {
       // Certaines bases anciennes ont encore un index unique global sur fcm_token.
       // Dans ce cas on remplace la ligne du token pour ne pas bloquer Android/iOS.
-      await supabaseAdmin.from("push_subscriptions").delete().eq("fcm_token", data.fcm_token);
+      await supabaseAdmin
+        .from("push_subscriptions")
+        .delete()
+        .eq("fcm_token", data.fcm_token)
+        .eq("audience", data.audience);
       const retry = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
       insErr = retry.error;
     }
@@ -125,11 +129,22 @@ export const subscribePush = createServerFn({ method: "POST" })
   });
 
 export const unsubscribePush = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ fcm_token: z.string().min(10).max(500) }).parse(input))
+  .inputValidator((input) =>
+    z
+      .object({
+        audience: z.enum(["chauffeur", "client"]),
+        fcm_token: z.string().min(10).max(500),
+      })
+      .parse(input),
+  )
   .handler(async ({ data }) => {
     const { getTaxiSupabaseAdmin } = await import("@/lib/taxi-supabase.server");
     const supabaseAdmin = getTaxiSupabaseAdmin();
-    await supabaseAdmin.from("push_subscriptions").delete().eq("fcm_token", data.fcm_token);
+    await supabaseAdmin
+      .from("push_subscriptions")
+      .delete()
+      .eq("fcm_token", data.fcm_token)
+      .eq("audience", data.audience);
     return { ok: true };
   });
 
