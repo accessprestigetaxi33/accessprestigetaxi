@@ -210,9 +210,10 @@ self.addEventListener("push", (event) => {
       payload = { notification: { title: event.data?.text() } };
     } catch (_2) {}
   }
-  if (payload.notification || payload.webpush?.notification) return;
-  const data = payload.data || {};
-  if (!data.title && !data.body) return;
-  if (!claimOnce(dedupeKey(data, {}))) return;
-  event.waitUntil(showFrom(data, {}));
+  const data = Object.assign({}, payload.webpush?.data || {}, payload.data || {});
+  const notif = payload.webpush?.notification || payload.notification || {};
+  if (!data.title && !data.body && !notif.title && !notif.body) return;
+  const key = dedupeKey(data, notif);
+  if (!claimOnce(key)) return;
+  event.waitUntil(showFrom(data, notif));
 });

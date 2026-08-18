@@ -107,19 +107,9 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     // Une autorisation accordée reste valable sans limite sur cet appareil.
     // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a
     // pas ce marqueur et sera inscrit une seule fois.
-    const { token: registeredToken, permission: savedPermission } = readRegistration(autoAudience);
+    const { token: registeredToken } = readRegistration(autoAudience);
     if (Notification.permission === "denied") {
       setStatus("denied");
-      return;
-    }
-    // Token déjà enregistré ET permission inchangée depuis : rien à redemander,
-    // même après un rafraîchissement du navigateur.
-    if (
-      registeredToken &&
-      (savedPermission == null || savedPermission === Notification.permission)
-    ) {
-      setToken(registeredToken);
-      setStatus(Notification.permission === "granted" ? "granted" : "idle");
       return;
     }
     if (Notification.permission === "default") {
@@ -127,11 +117,10 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       setStatus("idle");
       return;
     }
-    if (registeredToken) {
-      setToken(registeredToken);
-      setStatus("granted");
-      return;
-    }
+
+    // Même avec un token local, réinscrire côté serveur: la ligne Supabase
+    // peut avoir été supprimée après un token FCM invalide ou une migration.
+    if (registeredToken) setToken(registeredToken);
 
     let cancelled = false;
 
