@@ -34,6 +34,7 @@ export default defineConfig({
         devOptions: { enabled: false },
         workbox: {
           globPatterns: ["**/*.{js,css,woff2}"],
+          globIgnores: ["**/firebase-messaging-w.js"],
           navigateFallback: null,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
