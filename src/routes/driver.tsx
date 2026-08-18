@@ -9,6 +9,10 @@ import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
 import { geocodeAddress } from "@/lib/googleGeocode";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
+// ⚠️ TEMPORAIRE — panneau de diagnostic bas d'écran (bouton ▶ Lancer), à
+// retirer une fois le problème notifications résolu. Distinct de
+// PushDiagnosticsCard ci-dessus, qui est un composant permanent différent.
+import { PushDebug } from "@/components/PushDebug";
 import { useServerFn } from "@tanstack/react-start";
 import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
@@ -605,7 +609,6 @@ function DriverApp({
     return () => document.removeEventListener("visibilitychange", refresh);
   }, [subscribePush]);
 
-
   // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
   // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
   // qu'aucun manifest client ne subsiste tant qu'on est sur /driver.
@@ -719,6 +722,7 @@ function DriverApp({
   return (
     <>
       <style>{css}</style>
+      <PushDebug />
       <div className="drv-root">
         <div className="drv-header">
           <span style={{ fontSize: 26 }}>🚕</span>
@@ -763,8 +767,7 @@ function DriverApp({
               alignItems: "center",
               justifyContent: "space-between",
               gap: 10,
-              background:
-                pushStatus === "denied" ? "#fef2f2" : pushStatus === "granted" ? "#F4EFE4" : "#FDFBF7",
+              background: pushStatus === "denied" ? "#fef2f2" : pushStatus === "granted" ? "#F4EFE4" : "#FDFBF7",
               borderBottom: "1px solid #e6ddc9",
               padding: "10px 16px",
               fontSize: 12.5,
@@ -816,9 +819,6 @@ function DriverApp({
         <div style={{ padding: "0 16px" }}>
           <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
         </div>
-
-
-
 
         {/* Tabs */}
         <div className="drv-tabs">
