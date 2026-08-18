@@ -4,10 +4,12 @@
  * À ajouter dans le layout racine ou chaque route principale.
  */
 import { useEffect } from "react";
-import { initFirebase } from "@/lib/firebase";
+import { initFirebase, setupForegroundNotifications } from "@/lib/firebase";
 
 export function FirebaseInitializer() {
   useEffect(() => {
+    const stopForegroundNotifications = setupForegroundNotifications();
+
     // Initialiser Firebase et charger le SW FCM dès que possible
     // C'est non-bloquant : s'il échoue, les hooks push la réessayeront
     initFirebase()
@@ -22,6 +24,8 @@ export function FirebaseInitializer() {
         console.warn("[Firebase] Initialisation précoce échouée (non-fatal)", err);
         // L'app continue, getFcmToken() réessayera plus tard
       });
+
+    return stopForegroundNotifications;
   }, []);
 
   return null;

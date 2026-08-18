@@ -10,6 +10,7 @@
 import { useState, useCallback } from "react";
 import { getFcmToken } from "@/lib/firebase";
 import { sendTestPush, subscribePush } from "@/lib/push.functions";
+import { getDriverToken } from "@/lib/driver-token";
 
 type LogLine = { time: string; level: "info" | "error" | "ok"; msg: string };
 
@@ -31,10 +32,17 @@ export function PushDebug() {
     log("info", `Notification in window: ${"Notification" in window}`);
     log("info", `serviceWorker in navigator: ${"serviceWorker" in navigator}`);
     log("info", `PushManager in window: ${"PushManager" in window}`);
-    log("info", `Permission actuelle: ${("Notification" in window) ? Notification.permission : "N/A"}`);
+    log(
+      "info",
+      `Permission actuelle: ${"Notification" in window ? Notification.permission : "N/A"}`,
+    );
     log("info", `UserAgent: ${navigator.userAgent.slice(0, 120)}`);
 
-    if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+    if (
+      !("Notification" in window) ||
+      !("serviceWorker" in navigator) ||
+      !("PushManager" in window)
+    ) {
       log("error", "❌ Push non supporté sur ce navigateur/OS");
       setRunning(false);
       return;
@@ -46,10 +54,15 @@ export function PushDebug() {
       log("info", `SW enregistrés: ${regs.length}`);
       regs.forEach((r, i) => {
         const state = r.active?.state ?? r.installing?.state ?? r.waiting?.state ?? "?";
-        log("info", `  SW[${i}]: ${r.active?.scriptURL ?? r.installing?.scriptURL ?? r.waiting?.scriptURL ?? "?"} (${state})`);
+        log(
+          "info",
+          `  SW[${i}]: ${r.active?.scriptURL ?? r.installing?.scriptURL ?? r.waiting?.scriptURL ?? "?"} (${state})`,
+        );
       });
       const fcmSW = regs.find((r) =>
-        [r.active, r.installing, r.waiting].some((w) => w?.scriptURL.includes("firebase-messaging-sw"))
+        [r.active, r.installing, r.waiting].some((w) =>
+          w?.scriptURL.includes("firebase-messaging-sw"),
+        ),
       );
       if (fcmSW) log("ok", "✅ firebase-messaging-sw.js trouvé");
       else log("error", "❌ firebase-messaging-sw.js NON trouvé parmi les SW");
@@ -65,8 +78,18 @@ export function PushDebug() {
         log("ok", `✅ Token obtenu: ${token.slice(0, 20)}…${token.slice(-10)}`);
         const ua = navigator.userAgent.slice(0, 500);
         await Promise.all([
-          subscribePush({ data: { audience: "client", fcm_token: token, reservation_id: null, user_agent: ua } }),
-          subscribePush({ data: { audience: "chauffeur", fcm_token: token, reservation_id: null, user_agent: ua } }),
+          subscribePush({
+            data: { audience: "client", fcm_token: token, reservation_id: null, user_agent: ua },
+          }),
+          subscribePush({
+            data: {
+              audience: "chauffeur",
+              fcm_token: token,
+              reservation_id: null,
+              driver_token: getDriverToken(),
+              user_agent: ua,
+            },
+          }),
         ]);
         log("ok", "✅ Token enregistré pour client + chauffeur sur cet appareil");
       } else {
@@ -80,7 +103,10 @@ export function PushDebug() {
     try {
       log("info", "Envoi d'une notification FCM serveur vers client...");
       const result = await sendTestPush({ data: { audience: "client" } });
-      log(result.sent > 0 ? "ok" : "error", `FCM serveur: sent=${result.sent}, removed=${result.removed}`);
+      log(
+        result.sent > 0 ? "ok" : "error",
+        `FCM serveur: sent=${result.sent}, removed=${result.removed}`,
+      );
     } catch (e: any) {
       log("error", `sendTestPush failed: ${e?.message ?? String(e)}`);
     }
@@ -109,21 +135,43 @@ export function PushDebug() {
   };
 
   return (
-    <div style={{
-      position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 9999,
-      background: "#0f172a", color: "#e2e8f0",
-      fontFamily: "monospace", fontSize: 12,
-      maxHeight: "55vh", display: "flex", flexDirection: "column",
-      borderTop: "2px solid #334155",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", padding: "6px 10px", gap: 8, borderBottom: "1px solid #334155" }}>
+    <div
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9999,
+        background: "#0f172a",
+        color: "#e2e8f0",
+        fontFamily: "monospace",
+        fontSize: 12,
+        maxHeight: "55vh",
+        display: "flex",
+        flexDirection: "column",
+        borderTop: "2px solid #334155",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: "6px 10px",
+          gap: 8,
+          borderBottom: "1px solid #334155",
+        }}
+      >
         <span style={{ flex: 1, fontWeight: "bold", fontSize: 13 }}>🔍 Push Debug</span>
         <button
           onClick={runDiag}
           disabled={running}
           style={{
-            background: running ? "#334155" : "#3b82f6", color: "#fff",
-            border: "none", borderRadius: 6, padding: "4px 12px", cursor: running ? "default" : "pointer",
+            background: running ? "#334155" : "#3b82f6",
+            color: "#fff",
+            border: "none",
+            borderRadius: 6,
+            padding: "4px 12px",
+            cursor: running ? "default" : "pointer",
             fontSize: 12,
           }}
         >
@@ -131,18 +179,29 @@ export function PushDebug() {
         </button>
         <button
           onClick={() => setLogs([])}
-          style={{ background: "#334155", color: "#fff", border: "none", borderRadius: 6, padding: "4px 8px", cursor: "pointer", fontSize: 12 }}
+          style={{
+            background: "#334155",
+            color: "#fff",
+            border: "none",
+            borderRadius: 6,
+            padding: "4px 8px",
+            cursor: "pointer",
+            fontSize: 12,
+          }}
         >
           Effacer
         </button>
       </div>
       <div style={{ overflowY: "auto", flex: 1, padding: "6px 10px" }}>
         {logs.length === 0 && (
-          <div style={{ color: "#475569", paddingTop: 8 }}>Appuie sur ▶ Lancer pour diagnostiquer le push sur cet appareil.</div>
+          <div style={{ color: "#475569", paddingTop: 8 }}>
+            Appuie sur ▶ Lancer pour diagnostiquer le push sur cet appareil.
+          </div>
         )}
         {logs.map((l, i) => (
           <div key={i} style={{ marginBottom: 3, color: levelColor[l.level] }}>
-            <span style={{ color: "#475569" }}>{l.time} </span>{l.msg}
+            <span style={{ color: "#475569" }}>{l.time} </span>
+            {l.msg}
           </div>
         ))}
       </div>

@@ -3,7 +3,14 @@
 // Les credentials Web Firebase sont publics par design ; l'apiKey est servie
 // par /api/public/firebase-config (secret GOOGLE_API_KEY) pour rester hors dépôt.
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
-import { deleteToken, getMessaging, getToken, onMessage, isSupported, type Messaging } from "firebase/messaging";
+import {
+  deleteToken,
+  getMessaging,
+  getToken,
+  onMessage,
+  isSupported,
+  type Messaging,
+} from "firebase/messaging";
 
 export const firebaseConfig: FirebaseOptions = {
   authDomain: "access-prestige-taxi.firebaseapp.com",
@@ -35,10 +42,10 @@ async function loadFirebaseConfig(): Promise<FirebaseOptions> {
 export const FCM_VAPID_KEY =
   "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
 
-
 // FCM révoque les tokens après ~60 jours d'inactivité.
 // On force un refresh silencieux tous les 50 jours pour garder le token vivant indéfiniment.
 const TOKEN_MAX_AGE_MS = 50 * 24 * 60 * 60 * 1000; // 50 jours
+const FCM_SCOPE = "/firebase/";
 
 let app: FirebaseApp | null = null;
 let messaging: Messaging | null = null;
@@ -60,7 +67,9 @@ export async function initFirebase(): Promise<Messaging | null> {
   }
 }
 
-export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Promise<string | null> {
+export async function getFcmToken(
+  options: { forceRefresh?: boolean } = {},
+): Promise<string | null> {
   if (typeof window === "undefined") return null;
   if (!("Notification" in window) || !("serviceWorker" in navigator)) return null;
 
@@ -79,14 +88,20 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
     // ce qui fait que FCM reçoit le mauvais SW → token OK sur desktop mais notifs silencieuses sur mobile.
     const SW_URL = "/firebase-messaging-sw.js";
     const allRegs = await navigator.serviceWorker.getRegistrations();
-    let swReg = allRegs.find(
+    const oldMessagingRegs = allRegs.filter(
       (r) =>
-        r.active?.scriptURL.includes(SW_URL) ||
-        r.installing?.scriptURL.includes(SW_URL) ||
-        r.waiting?.scriptURL.includes(SW_URL),
+        r.scope !== new URL(FCM_SCOPE, window.location.origin).href &&
+        (r.active?.scriptURL.includes(SW_URL) ||
+          r.installing?.scriptURL.includes(SW_URL) ||
+          r.waiting?.scriptURL.includes(SW_URL)),
     );
+    await Promise.all(oldMessagingRegs.map((r) => r.unregister()));
+    let swReg = allRegs.find((r) => r.scope === new URL(FCM_SCOPE, window.location.origin).href);
     if (!swReg) {
-      swReg = await navigator.serviceWorker.register(SW_URL, { scope: "/", updateViaCache: "none" });
+      swReg = await navigator.serviceWorker.register(SW_URL, {
+        scope: FCM_SCOPE,
+        updateViaCache: "none",
+      });
     } else {
       await swReg.update().catch((err) => console.warn("[FCM] SW update check failed", err));
       // Si une nouvelle version est en attente, force la prise de contrôle.
@@ -132,14 +147,20 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       }
     }
 
-    // Retourner le token caché si valide et pas trop vieux (< 50 jours)
+    // Un token obtenu avec un autre service worker ne doit pas etre reutilise
+    // apres une migration de scope : FCM l'associe a l'enregistrement fourni.
     const cachedToken = window.localStorage.getItem("fcm_token");
+    const cachedScope = window.localStorage.getItem("fcm_registration_scope");
     const lastRefresh = parseInt(window.localStorage.getItem("fcm_token_last_refresh") ?? "0", 10);
     const tokenAge = Date.now() - lastRefresh;
     const tokenExpired = tokenAge > TOKEN_MAX_AGE_MS;
 
-    if (!options.forceRefresh && cachedToken && !tokenExpired) {
-      console.log("[FCM] Token en cache utilisé :", cachedToken.slice(-8), `(${Math.floor(tokenAge / 86400000)}j)`);
+    if (!options.forceRefresh && cachedToken && cachedScope === FCM_SCOPE && !tokenExpired) {
+      console.log(
+        "[FCM] Token en cache utilisé :",
+        cachedToken.slice(-8),
+        `(${Math.floor(tokenAge / 86400000)}j)`,
+      );
       return cachedToken;
     }
 
@@ -158,6 +179,7 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       console.log("[FCM] Token obtenu :", token);
       window.localStorage.setItem("fcm_token", token);
       window.localStorage.setItem("fcm_token_last_refresh", String(Date.now()));
+      window.localStorage.setItem("fcm_registration_scope", FCM_SCOPE);
     } else {
       console.warn("[FCM] Token vide — vérifier VAPID key et SW");
     }

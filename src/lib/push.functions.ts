@@ -26,6 +26,8 @@ const subSchema = z.object({
   reservation_id: z.string().uuid().optional().nullable(),
   client_account_id: z.string().uuid().optional().nullable(),
   driver_id: z.string().max(40).optional().nullable(),
+  client_session_token: z.string().min(32).max(128).optional(),
+  driver_token: z.string().min(1).max(500).optional(),
   user_agent: z.string().max(500).optional().nullable(),
 });
 
@@ -34,8 +36,30 @@ export const subscribePush = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { getTaxiSupabaseAdmin } = await import("@/lib/taxi-supabase.server");
     const supabaseAdmin = getTaxiSupabaseAdmin();
+    let verifiedAccountId: string | null = null;
+    let verifiedDriverId: string | null = null;
+    if (data.audience === "client" && data.client_account_id) {
+      if (!data.client_session_token) throw new Error("client_session_required");
+      const { requireClientSession } = await import("@/lib/client-session.server");
+      const identity = await requireClientSession(data.client_session_token);
+      if (identity.account_id !== data.client_account_id)
+        throw new Error("client_account_mismatch");
+      verifiedAccountId = identity.account_id;
+    }
+    if (data.audience === "client" && data.reservation_id && !verifiedAccountId) {
+      throw new Error("client_session_required");
+    }
+    if (data.audience === "chauffeur") {
+      if (!data.driver_token) throw new Error("driver_token_required");
+      const { assertDriverToken } = await import("@/lib/driver-auth.server");
+      const identity = assertDriverToken(data.driver_token);
+      verifiedDriverId = identity.id === "admin" ? null : identity.id;
+      if (data.driver_id && verifiedDriverId && data.driver_id !== verifiedDriverId) {
+        throw new Error("driver_id_mismatch");
+      }
+    }
     const ua = data.user_agent ?? null;
-    const clientAccountId = data.audience === "client" ? (data.client_account_id ?? null) : null;
+    const clientAccountId = data.audience === "client" ? verifiedAccountId : null;
     const reservationId = data.audience === "client" ? (data.reservation_id ?? null) : null;
 
     // Endpoint stable par DEVICE (via hash du user_agent) + audience + cible.
@@ -49,7 +73,7 @@ export const subscribePush = createServerFn({ method: "POST" })
     // jamais l'ancienne ligne, et on accumule des lignes actives pour le même
     // device → notifications ×N côté iPhone. En gardant l'endpoint stable par
     // device (hash UA), la rotation de token remplace bien l'ancienne ligne.
-    const driverId = data.audience === "chauffeur" ? (data.driver_id ?? null) : null;
+    const driverId = data.audience === "chauffeur" ? verifiedDriverId : null;
     const targetKey = clientAccountId
       ? `account-${clientAccountId}`
       : reservationId
@@ -67,10 +91,7 @@ export const subscribePush = createServerFn({ method: "POST" })
     // (ex: client_account_id). On reste compatible en ne s'appuyant que sur
     // endpoint, qui encode déjà audience + cible + device.
     try {
-      await Promise.all([
-        supabaseAdmin.from("push_subscriptions").delete().eq("endpoint", endpoint),
-        supabaseAdmin.from("push_subscriptions").delete().eq("audience", data.audience).eq("fcm_token", data.fcm_token),
-      ]);
+      await supabaseAdmin.from("push_subscriptions").delete().eq("endpoint", endpoint);
     } catch (e) {
       console.warn("[push] pre-insert cleanup non-fatal error", e);
     }
@@ -143,7 +164,9 @@ export const notifyNewReview = createServerFn({ method: "POST" })
     const excerpt = (data.commentaire ?? "").trim().slice(0, 90);
     return sendPushToAudience("chauffeur", {
       title: `⭐ Nouvel avis ${stars}`,
-      body: excerpt ? `${who} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »` : `${who} vient de laisser un avis.`,
+      body: excerpt
+        ? `${who} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »`
+        : `${who} vient de laisser un avis.`,
       url: "/driver",
       tag: `new-review-${Date.now()}`,
     });
@@ -158,7 +181,9 @@ const APP_URL = "https://accessprestigetaxi.lovable.app";
 export const notifyNewReservation = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ reservation_id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const [{ getTaxiSupabaseAdmin, getTaxiSupabaseConfig }] = await Promise.all([import("@/lib/taxi-supabase.server")]);
+    const [{ getTaxiSupabaseAdmin, getTaxiSupabaseConfig }] = await Promise.all([
+      import("@/lib/taxi-supabase.server"),
+    ]);
 
     const supabaseAdmin = getTaxiSupabaseAdmin();
     console.log("[notifyNewReservation] start", data.reservation_id);
@@ -213,7 +238,10 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
         },
       };
 
-      console.log("[notifyNewReservation] sending email via bridge →", `${APP_URL}/lovable/email/transactional/send`);
+      console.log(
+        "[notifyNewReservation] sending email via bridge →",
+        `${APP_URL}/lovable/email/transactional/send`,
+      );
       const res = await fetch(`${APP_URL}/lovable/email/transactional/send`, {
         method: "POST",
         headers: {
@@ -272,7 +300,11 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
         clientEmailSent = clientRes.ok;
         if (!clientRes.ok) {
           const errBody = await clientRes.text().catch(() => "");
-          console.error("[notifyNewReservation] client email bridge failed", clientRes.status, errBody);
+          console.error(
+            "[notifyNewReservation] client email bridge failed",
+            clientRes.status,
+            errBody,
+          );
         } else {
           console.log("[notifyNewReservation] client email queued ok");
         }
@@ -371,7 +403,11 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
       .toLowerCase()
       .trim();
     const assignedName =
-      assignedKey === "patricia" ? "Patricia" : assignedKey === "alain" ? "Alain" : "Votre chauffeur";
+      assignedKey === "patricia"
+        ? "Patricia"
+        : assignedKey === "alain"
+          ? "Alain"
+          : "Votre chauffeur";
     const trajet = `${r.depart} → ${r.arrivee || r.destination || "—"}`;
     const phone = r.client_phone || r.telephone || "";
     const smsPhone = phone.replace(/[^\d]/g, "").replace(/^0/, "+33");
@@ -460,7 +496,8 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
       const clientEmail = (r as any).client_email || (r as any).email;
       if (clientEmail) {
         try {
-          const { sendClientTrackingEmail } = await import("@/lib/reservation-notifications.server");
+          const { sendClientTrackingEmail } =
+            await import("@/lib/reservation-notifications.server");
           const assigned = String((r as any).assigned_driver || "");
           await sendClientTrackingEmail({
             reservationId: r.id,
@@ -471,7 +508,8 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
             depart: r.depart ?? null,
             arrivee: (r as any).arrivee ?? (r as any).destination ?? null,
             pickupDatetime: (r as any).pickup_datetime ?? null,
-            driverName: assigned === "patricia" ? "Patricia" : assigned === "alain" ? "Alain" : null,
+            driverName:
+              assigned === "patricia" ? "Patricia" : assigned === "alain" ? "Alain" : null,
             etaMinutes: data.status === "en_route" ? (data.eta_minutes ?? null) : null,
             trackingId: (r as any).suivi_id ?? r.id,
           });
@@ -494,7 +532,12 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
       );
     }
 
-    return { client: clientResult, chauffeur: chauffeurResult, smsPhone: smsPhone || null, smsBody };
+    return {
+      client: clientResult,
+      chauffeur: chauffeurResult,
+      smsPhone: smsPhone || null,
+      smsBody,
+    };
   });
 
 // ── Mise à jour du trajet (km + prix) par le chauffeur depuis la page suivi ──
@@ -512,18 +555,24 @@ export const updateReservationRoute = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
-    const [{ getTaxiSupabaseAdmin }, { sendPushToAudience }, { calculerPrixMixte }, { buildPriceUpdatePush }] =
-      await Promise.all([
-        import("@/lib/taxi-supabase.server"),
-        import("@/lib/push.server"),
-        import("@/lib/tarif"),
-        import("@/lib/push-messages"),
-      ]);
+    const [
+      { getTaxiSupabaseAdmin },
+      { sendPushToAudience },
+      { calculerPrixMixte },
+      { buildPriceUpdatePush },
+    ] = await Promise.all([
+      import("@/lib/taxi-supabase.server"),
+      import("@/lib/push.server"),
+      import("@/lib/tarif"),
+      import("@/lib/push-messages"),
+    ]);
     const supabaseAdmin = getTaxiSupabaseAdmin();
 
     const { data: r, error: fetchErr } = await supabaseAdmin
       .from("reservations")
-      .select("id, suivi_id, pickup_datetime, prix_estime, distance_km, nom, client_name, lang, status")
+      .select(
+        "id, suivi_id, pickup_datetime, prix_estime, distance_km, nom, client_name, lang, status",
+      )
       .eq("id", data.reservation_id)
       .maybeSingle();
     if (fetchErr) throw new Error(`fetch_failed: ${fetchErr.message}`);

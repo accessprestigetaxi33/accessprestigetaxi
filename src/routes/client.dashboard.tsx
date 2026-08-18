@@ -8,7 +8,10 @@ import { BrandLoader } from "@/components/BrandLoader";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getClientSession, clearClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
-import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
+import {
+  listClientReservations,
+  type ClientReservation,
+} from "@/lib/client-reservations.functions";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import logo from "@/assets/tcb-logo-badge.webp";
@@ -17,13 +20,37 @@ import { supabase } from "@/integrations/supabase/client";
 const ACTIVE_STATUSES = new Set(["nouvelle", "pending", "accepted", "en_route", "arrived"]);
 
 const STATUS_META: Record<string, { label: { fr: string; en: string }; bg: string; fg: string }> = {
-  nouvelle: { label: { fr: "En attente", en: "Pending" }, bg: "rgba(234,179,8,0.15)", fg: "#facc15" },
-  pending: { label: { fr: "En attente", en: "Pending" }, bg: "rgba(234,179,8,0.15)", fg: "#facc15" },
-  accepted: { label: { fr: "Confirmée", en: "Confirmed" }, bg: "rgba(34,197,94,0.15)", fg: "#4ade80" },
-  en_route: { label: { fr: "En route", en: "On the way" }, bg: "rgba(59,130,246,0.18)", fg: "#60a5fa" },
+  nouvelle: {
+    label: { fr: "En attente", en: "Pending" },
+    bg: "rgba(234,179,8,0.15)",
+    fg: "#facc15",
+  },
+  pending: {
+    label: { fr: "En attente", en: "Pending" },
+    bg: "rgba(234,179,8,0.15)",
+    fg: "#facc15",
+  },
+  accepted: {
+    label: { fr: "Confirmée", en: "Confirmed" },
+    bg: "rgba(34,197,94,0.15)",
+    fg: "#4ade80",
+  },
+  en_route: {
+    label: { fr: "En route", en: "On the way" },
+    bg: "rgba(59,130,246,0.18)",
+    fg: "#60a5fa",
+  },
   arrived: { label: { fr: "Arrivé", en: "Arrived" }, bg: "rgba(99,102,241,0.18)", fg: "#a5b4fc" },
-  completed: { label: { fr: "Terminée", en: "Completed" }, bg: "rgba(148,163,184,0.18)", fg: "#cbd5e1" },
-  cancelled: { label: { fr: "Annulée", en: "Cancelled" }, bg: "rgba(239,68,68,0.18)", fg: "#fca5a5" },
+  completed: {
+    label: { fr: "Terminée", en: "Completed" },
+    bg: "rgba(148,163,184,0.18)",
+    fg: "#cbd5e1",
+  },
+  cancelled: {
+    label: { fr: "Annulée", en: "Cancelled" },
+    bg: "rgba(239,68,68,0.18)",
+    fg: "#fca5a5",
+  },
   refused: { label: { fr: "Refusée", en: "Refused" }, bg: "rgba(239,68,68,0.18)", fg: "#fca5a5" },
 };
 
@@ -91,7 +118,10 @@ export const Route = createFileRoute("/client/dashboard")({
     meta: [
       { title: "Mon espace client — Access Prestige Taxi" },
       { name: "robots", content: "noindex, nofollow" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
+      },
       { name: "theme-color", content: "#0f172a" },
     ],
   }),
@@ -151,7 +181,6 @@ function ClientDashboard() {
       channels.forEach((ch) => supabase.removeChannel(ch));
     };
   }, [session, rows]);
-
 
   const greeting = useMemo(() => session?.name?.split(" ")[0] || c.you, [session]);
   const activeRide = rows?.find((r) => ACTIVE_STATUSES.has(r.status));
@@ -224,7 +253,13 @@ function ClientDashboard() {
               {c.eyebrow}
             </p>
             <h1
-              style={{ color: "#fff", fontSize: 24, fontWeight: 800, margin: "0 0 20px", fontFamily: "'Syne', serif" }}
+              style={{
+                color: "#fff",
+                fontSize: 24,
+                fontWeight: 800,
+                margin: "0 0 20px",
+                fontFamily: "'Syne', serif",
+              }}
             >
               {c.hello(greeting)}
             </h1>
@@ -239,22 +274,54 @@ function ClientDashboard() {
                 marginBottom: 16,
               }}
             >
-              <p style={{ color: "rgba(255,255,255,0.72)", fontSize: 14, lineHeight: 1.75, margin: "0 0 10px" }}>
-                {t("client.dashboard.welcome_intro")} <strong style={{ color: "#E8C96D" }}>Access Prestige Taxi</strong>.
-                {" "}{t("client.dashboard.welcome_centralized")}
+              <p
+                style={{
+                  color: "rgba(255,255,255,0.72)",
+                  fontSize: 14,
+                  lineHeight: 1.75,
+                  margin: "0 0 10px",
+                }}
+              >
+                {t("client.dashboard.welcome_intro")}{" "}
+                <strong style={{ color: "#E8C96D" }}>Access Prestige Taxi</strong>.{" "}
+                {t("client.dashboard.welcome_centralized")}
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }}>
                 {[
-                  { icon: "🚕", title: t("client.trajets.title"), desc: t("client.dashboard.feat.trips_desc") },
-                  { icon: "📋", title: t("client.dashboard.feat.history_title"), desc: t("client.dashboard.feat.history_desc") },
-                  { icon: "💬", title: t("client.dashboard.feat.chat_title"), desc: t("client.dashboard.feat.chat_desc") },
-                  { icon: "👤", title: t("client.profil.title"), desc: t("client.dashboard.feat.profile_desc") },
+                  {
+                    icon: "🚕",
+                    title: t("client.trajets.title"),
+                    desc: t("client.dashboard.feat.trips_desc"),
+                  },
+                  {
+                    icon: "📋",
+                    title: t("client.dashboard.feat.history_title"),
+                    desc: t("client.dashboard.feat.history_desc"),
+                  },
+                  {
+                    icon: "💬",
+                    title: t("client.dashboard.feat.chat_title"),
+                    desc: t("client.dashboard.feat.chat_desc"),
+                  },
+                  {
+                    icon: "👤",
+                    title: t("client.profil.title"),
+                    desc: t("client.dashboard.feat.profile_desc"),
+                  },
                 ].map((item) => (
-                  <div key={item.title} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                  <div
+                    key={item.title}
+                    style={{ display: "flex", alignItems: "flex-start", gap: 10 }}
+                  >
                     <span style={{ fontSize: 16, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
                     <div>
-                      <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{item.title}</span>
-                      <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}> — {item.desc}</span>
+                      <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>
+                        {item.title}
+                      </span>
+                      <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
+                        {" "}
+                        — {item.desc}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -262,7 +329,7 @@ function ClientDashboard() {
             </div>
           </div>
 
-          <ClientPushOptInCard clientAccountId={session.id} />
+          <ClientPushOptInCard clientAccountId={session.id} clientSessionToken={session.token} />
 
           {/* Course active */}
           {activeRide && (
@@ -288,7 +355,12 @@ function ClientDashboard() {
                 }}
               >
                 <div
-                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: 8,
+                  }}
                 >
                   <span
                     style={{
@@ -300,7 +372,8 @@ function ClientDashboard() {
                       color: STATUS_META[activeRide.status]?.fg,
                     }}
                   >
-                    {STATUS_META[activeRide.status]?.label[lang === "en" ? "en" : "fr"] || activeRide.status}
+                    {STATUS_META[activeRide.status]?.label[lang === "en" ? "en" : "fr"] ||
+                      activeRide.status}
                   </span>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
                     {fmtDate(activeRide.pickup_datetime, lang)}
@@ -392,21 +465,34 @@ function ClientDashboard() {
                 textDecoration: "none",
               }}
             >
-              <Phone style={{ width: 16, height: 16 }} /> {c.call(DRIVERS[0].name, DRIVERS[0].display)}
+              <Phone style={{ width: 16, height: 16 }} />{" "}
+              {c.call(DRIVERS[0].name, DRIVERS[0].display)}
             </a>
           </div>
 
           {/* Raccourcis onglets */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
             {[
-              { to: "/client/trajets", icon: <Car style={{ width: 16, height: 16 }} />, label: c.trips },
+              {
+                to: "/client/trajets",
+                icon: <Car style={{ width: 16, height: 16 }} />,
+                label: c.trips,
+              },
               {
                 to: "/client/historique",
                 icon: <History style={{ width: 16, height: 16 }} />,
                 label: c.history,
               },
-              { to: "/client/chat", icon: <MessageCircle style={{ width: 16, height: 16 }} />, label: c.chat },
-              { to: "/client/profil", icon: <User style={{ width: 16, height: 16 }} />, label: c.profile },
+              {
+                to: "/client/chat",
+                icon: <MessageCircle style={{ width: 16, height: 16 }} />,
+                label: c.chat,
+              },
+              {
+                to: "/client/profil",
+                icon: <User style={{ width: 16, height: 16 }} />,
+                label: c.profile,
+              },
             ].map((item) => (
               <Link
                 key={item.to}
@@ -425,7 +511,14 @@ function ClientDashboard() {
                   fontWeight: 600,
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.8)" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    color: "rgba(255,255,255,0.8)",
+                  }}
+                >
                   <span style={{ color: "#E8C96D" }}>{item.icon}</span>
                   {item.label}
                 </div>

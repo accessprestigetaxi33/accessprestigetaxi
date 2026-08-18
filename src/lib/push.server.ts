@@ -31,8 +31,12 @@ function getServiceAccount(): ServiceAccount {
   const raw =
     process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
     process.env.FIREBASE_SERVICE_ACCOUNT ||
-    (typeof import.meta !== "undefined" ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT_JSON : undefined) ||
-    (typeof import.meta !== "undefined" ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT : undefined);
+    (typeof import.meta !== "undefined"
+      ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT_JSON
+      : undefined) ||
+    (typeof import.meta !== "undefined"
+      ? (import.meta as any).env?.FIREBASE_SERVICE_ACCOUNT
+      : undefined);
   if (!raw) throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON missing");
   cachedAccount = JSON.parse(raw) as ServiceAccount;
   return cachedAccount;
@@ -91,7 +95,11 @@ async function getAccessToken(): Promise<string> {
     false,
     ["sign"],
   );
-  const sigBuf = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, new TextEncoder().encode(data));
+  const sigBuf = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    cryptoKey,
+    new TextEncoder().encode(data),
+  );
   const jwt = `${data}.${base64UrlEncode(sigBuf)}`;
 
   const res = await fetch(tokenUri, {
@@ -166,24 +174,6 @@ async function sendFcmToToken(
       notification: {
         title: payload.title,
         body: payload.body,
-      },
-      android: {
-        priority: payload.requireInteraction ? "high" : "normal",
-      },
-      apns: {
-        headers: {
-          "apns-priority": payload.requireInteraction ? "10" : "5",
-          "apns-push-type": "alert",
-        },
-        payload: {
-          aps: {
-            alert: {
-              title: payload.title,
-              body: payload.body,
-            },
-            sound: payload.requireInteraction ? "default" : undefined,
-          },
-        },
       },
       webpush: {
         headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
@@ -261,7 +251,11 @@ type SubRow = {
  * @param scope  espace de noms (`client`, `chauffeur`, `email`, `webhook`…)
  * @param ttlMinutes durée de rétention de la clé (défaut 60 min)
  */
-export async function claimNotificationOnce(key: string, scope: string, ttlMinutes = 60): Promise<boolean> {
+export async function claimNotificationOnce(
+  key: string,
+  scope: string,
+  ttlMinutes = 60,
+): Promise<boolean> {
   if (!key) return true;
   const now = new Date();
   const expiresAt = new Date(now.getTime() + ttlMinutes * 60 * 1000).toISOString();
@@ -283,7 +277,11 @@ export async function claimNotificationOnce(key: string, scope: string, ttlMinut
   return true;
 }
 
-async function claimPushSendOnce(audience: PushAudience, tag?: string, ttlMinutes = 60): Promise<boolean> {
+async function claimPushSendOnce(
+  audience: PushAudience,
+  tag?: string,
+  ttlMinutes = 60,
+): Promise<boolean> {
   // Les tags volontairement uniques (suffixe horodaté, ex. messages de tchat)
   // ne sont pas dédupliqués : chaque message est une notification distincte.
   if (!tag || /-\d{13}$/.test(tag)) return true;
@@ -292,7 +290,10 @@ async function claimPushSendOnce(audience: PushAudience, tag?: string, ttlMinute
 
 function isLikelyIosWebPush(userAgent: string | null): boolean {
   if (!userAgent) return false;
-  return /iPhone|iPad|iPod/i.test(userAgent) || (/Macintosh/i.test(userAgent) && /Mobile|Safari/i.test(userAgent));
+  return (
+    /iPhone|iPad|iPod/i.test(userAgent) ||
+    (/Macintosh/i.test(userAgent) && /Mobile|Safari/i.test(userAgent))
+  );
 }
 
 /**
@@ -331,34 +332,30 @@ export async function sendPushToAudience(
   const baseQuery = () =>
     supabaseAdmin
       .from("push_subscriptions")
-      .select("id, fcm_token, user_agent, last_seen_at, created_at, driver_id, reservation_id, client_account_id")
+      .select(
+        "id, fcm_token, user_agent, last_seen_at, created_at, driver_id, reservation_id, client_account_id",
+      )
       .eq("audience", audience)
       .not("fcm_token", "is", null);
 
   let q = baseQuery();
-  if (audience === "client" && opts.reservationId) {
+  if (audience === "client" && opts.reservationId && opts.accountId) {
+    // Un appareil client peut etre inscrit au compte sans reservation_id
+    // (espace client), ou a une reservation pour un parcours invite.
+    q = q.or(`reservation_id.eq.${opts.reservationId},client_account_id.eq.${opts.accountId}`);
+  } else if (audience === "client" && opts.reservationId) {
     q = q.eq("reservation_id", opts.reservationId);
-  }
-  if (audience === "client" && opts.accountId) {
+  } else if (audience === "client" && opts.accountId) {
     q = q.eq("client_account_id", opts.accountId);
   }
   // Bi-chauffeur : quand la course est attribuée, seul le chauffeur concerné
-  // est notifié. Si ce chauffeur n'a aucun appareil enregistré, on retombe sur
-  // l'ensemble des appareils chauffeur pour ne jamais perdre une notification.
+  // est notifié. Une absence d'appareil ciblé ne doit pas diffuser la course
+  // au mauvais chauffeur.
   if (audience === "chauffeur" && opts.driverId) {
     q = q.eq("driver_id", opts.driverId);
   }
 
   let { data, error } = await q;
-  if (audience === "chauffeur" && opts.driverId && (!data || data.length === 0)) {
-    // Aucun appareil enregistré pour ce chauffeur : on avertit (le driver_id
-    // n'est probablement pas enregistré à l'abonnement) et on broadcast plutôt
-    // que de perdre la notification.
-    console.warn("[push] no device for driver_id", opts.driverId, "→ broadcast fallback");
-    const fallback = await baseQuery();
-    data = fallback.data;
-    error = fallback.error;
-  }
   if (error || !data || data.length === 0) return { sent: 0, removed: 0 };
 
   const claimed = await claimPushSendOnce(audience, payload.tag, opts.dedupTtlMinutes ?? 60);
@@ -411,7 +408,14 @@ export async function sendPushToAudience(
   await Promise.all(
     uniqueSubs.map(async (sub) => {
       if (!sub.fcm_token) return;
-      const r = await sendFcmToToken(accessToken, projectId, sub.fcm_token, payload, audience, opts.reservationId);
+      const r = await sendFcmToToken(
+        accessToken,
+        projectId,
+        sub.fcm_token,
+        payload,
+        audience,
+        opts.reservationId,
+      );
       const base = {
         audience,
         tag: payload.tag ?? null,

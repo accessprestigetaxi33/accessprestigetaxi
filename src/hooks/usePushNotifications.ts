@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { subscribePush, type PushAudience } from "@/lib/push.functions";
 import { getFcmToken } from "@/lib/firebase";
+import { getDriverToken } from "@/lib/driver-token";
 
 export type PushStatus = "idle" | "loading" | "granted" | "denied" | "unsupported";
 
@@ -16,15 +17,15 @@ interface UsePushOptions {
   reservationId?: string;
   /** client_account_id à associer (chat direct + espace client). */
   clientAccountId?: string | null;
+  clientSessionToken?: string;
   /** Identifiant chauffeur (patricia / alain / admin) pour l'audience "chauffeur". */
   driverId?: string | null;
 }
 
 export function usePushNotifications(opts: UsePushOptions = {}) {
-  const { autoAudience, reservationId, clientAccountId, driverId } = opts;
+  const { autoAudience, reservationId, clientAccountId, clientSessionToken, driverId } = opts;
   const [status, setStatus] = useState<PushStatus>("idle");
   const [token, setToken] = useState<string | null>(null);
-
 
   const subscribeFn = useServerFn(subscribePush);
 
@@ -59,7 +60,9 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   const readRegistration = useCallback(
     (audience: PushAudience): { token: string | null; permission: string | null } => {
       try {
-        const saved = JSON.parse(window.localStorage.getItem(persistenceKey(audience)) ?? "null") as {
+        const saved = JSON.parse(
+          window.localStorage.getItem(persistenceKey(audience)) ?? "null",
+        ) as {
           token?: unknown;
           permission?: unknown;
         } | null;
@@ -73,7 +76,6 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     },
     [persistenceKey],
   );
-
 
   // ── Détection support initial ──
   useEffect(() => {
@@ -112,7 +114,10 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     }
     // Token déjà enregistré ET permission inchangée depuis : rien à redemander,
     // même après un rafraîchissement du navigateur.
-    if (registeredToken && (savedPermission == null || savedPermission === Notification.permission)) {
+    if (
+      registeredToken &&
+      (savedPermission == null || savedPermission === Notification.permission)
+    ) {
       setToken(registeredToken);
       setStatus(Notification.permission === "granted" ? "granted" : "idle");
       return;
@@ -128,7 +133,6 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       return;
     }
 
-
     let cancelled = false;
 
     const run = async () => {
@@ -142,6 +146,8 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             reservation_id: reservationId ?? null,
             client_account_id: clientAccountId ?? null,
             driver_id: driverId ?? null,
+            client_session_token: clientSessionToken,
+            driver_token: autoAudience === "chauffeur" ? getDriverToken() : undefined,
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
@@ -152,12 +158,13 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
           setToken(fcm);
           setStatus("granted");
         }
-
       } catch (e) {
         if (!cancelled) {
           console.warn("[push] auto-subscribe failed", autoAudience, e);
           setStatus(
-            typeof window !== "undefined" && "Notification" in window && Notification.permission === "denied"
+            typeof window !== "undefined" &&
+              "Notification" in window &&
+              Notification.permission === "denied"
               ? "denied"
               : "idle",
           );
@@ -171,11 +178,23 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     };
     // reservationId volontairement exclu : on ne re-subscribe pas si l'id change après le montage
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoAudience, clientAccountId, driverId, persistenceKey, readRegistration, rememberRegistration]);
+  }, [
+    autoAudience,
+    clientAccountId,
+    driverId,
+    persistenceKey,
+    readRegistration,
+    rememberRegistration,
+  ]);
 
   // ── Subscribe manuel (pour les appels explicites) ──
   const subscribe = useCallback(
-    async (audience: PushAudience = "client", resId?: string | null, accountId?: string | null): Promise<boolean> => {
+    async (
+      audience: PushAudience = "client",
+      resId?: string | null,
+      accountId?: string | null,
+      sessionToken?: string,
+    ): Promise<boolean> => {
       setStatus("loading");
       try {
         const fcm = await getFcmToken();
@@ -190,6 +209,8 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             reservation_id: resId ?? reservationId ?? null,
             client_account_id: accountId ?? clientAccountId ?? null,
             driver_id: driverId ?? null,
+            client_session_token: sessionToken ?? clientSessionToken,
+            driver_token: audience === "chauffeur" ? getDriverToken() : undefined,
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
@@ -200,12 +221,23 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       } catch (err) {
         console.error("[push] subscribe error", err);
         setStatus(
-          typeof window !== "undefined" && "Notification" in window && Notification.permission === "denied" ? "denied" : "idle",
+          typeof window !== "undefined" &&
+            "Notification" in window &&
+            Notification.permission === "denied"
+            ? "denied"
+            : "idle",
         );
         return false;
       }
     },
-    [subscribeFn, reservationId, clientAccountId, driverId, rememberRegistration],
+    [
+      subscribeFn,
+      reservationId,
+      clientAccountId,
+      clientSessionToken,
+      driverId,
+      rememberRegistration,
+    ],
   );
 
   const testNotification = useCallback(async () => {
@@ -230,6 +262,8 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             reservation_id: reservationId ?? null,
             client_account_id: clientAccountId ?? null,
             driver_id: driverId ?? null,
+            client_session_token: clientSessionToken,
+            driver_token: audience === "chauffeur" ? getDriverToken() : undefined,
             user_agent: navigator.userAgent.slice(0, 500),
           },
         });
@@ -240,7 +274,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         console.warn("[push] refreshToken failed", e);
       }
     },
-    [subscribeFn, reservationId, clientAccountId, driverId, rememberRegistration],
+    [
+      subscribeFn,
+      reservationId,
+      clientAccountId,
+      clientSessionToken,
+      driverId,
+      rememberRegistration,
+    ],
   );
 
   return { status, subscription: token, subscribe, testNotification, refreshToken };

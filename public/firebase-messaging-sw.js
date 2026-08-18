@@ -159,23 +159,13 @@ const ready = fetch("/api/public/firebase-config")
       
       const dedupKey = dedupeKey(data, notif);
       
-      // Vérification audience : rejeter les notifs destinées à la mauvaise app
-      // Chauffeur (à /driver) ne doit pas afficher les notifs client, et vice-versa
-      if (data.audience) {
-        const isDriverPath = self.location.pathname.includes("/driver");
-        const expectedAudience = isDriverPath ? "chauffeur" : "client";
-        if (data.audience !== expectedAudience) {
-          console.log(
-            `[FCM SW] Notif audience mismatch (esperée: ${expectedAudience}, reçue: ${data.audience}), ignoring`,
-          );
-          return; // Ignorer silencieusement si destinée à l'autre app
-        }
-      }
+      // Le service worker est toujours charge depuis /firebase-messaging-sw.js,
+      // pas depuis /driver ou une page client. Il ne peut donc pas deduire
+      // l'audience depuis self.location.pathname sans rejeter les push chauffeur.
       
-      // Sur iOS, le SDK affiche la notification automatiquement.
-      // Mais sur Android/Web, il faut l'afficher manuellement même si `notification` existe.
-      // Donc on demande à l'user de TOUJOURS envoyer les données + notification structurées.
-      const isIOS = /iPad|iPhone|iPod/.test(self.navigator.userAgent);
+      // Avec un payload notification, FCM affiche deja la notification en
+      // arriere-plan. La re-afficher ici provoquerait un doublon.
+      if (notif.title || notif.body) return;
       
       // Toujours afficher, sauf si dédupliquée récemment
       if (!claimOnce(dedupKey)) {
