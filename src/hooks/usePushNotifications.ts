@@ -60,9 +60,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   const readRegistration = useCallback(
     (audience: PushAudience): { token: string | null; permission: string | null } => {
       try {
-        const saved = JSON.parse(
-          window.localStorage.getItem(persistenceKey(audience)) ?? "null",
-        ) as {
+        const saved = JSON.parse(window.localStorage.getItem(persistenceKey(audience)) ?? "null") as {
           token?: unknown;
           permission?: unknown;
         } | null;
@@ -118,6 +116,17 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       return;
     }
 
+    // ⚠️ CORRECTIF : le serveur exige client_session_token dès qu'un
+    // client_account_id est fourni. Si ce hook est monté avant que le token
+    // de session soit chargé côté parent, l'auto-subscribe échouait de façon
+    // silencieuse (throw "client_session_required" avalé par le catch plus
+    // bas, jamais retenté). On attend que le token soit là avant de lancer
+    // l'inscription ; clientSessionToken est maintenant dans les deps donc
+    // l'effet se relance dès qu'il devient disponible.
+    if (autoAudience === "client" && clientAccountId && !clientSessionToken) {
+      return;
+    }
+
     // Même avec un token local, réinscrire côté serveur: la ligne Supabase
     // peut avoir été supprimée après un token FCM invalide ou une migration.
     if (registeredToken) setToken(registeredToken);
@@ -151,9 +160,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         if (!cancelled) {
           console.warn("[push] auto-subscribe failed", autoAudience, e);
           setStatus(
-            typeof window !== "undefined" &&
-              "Notification" in window &&
-              Notification.permission === "denied"
+            typeof window !== "undefined" && "Notification" in window && Notification.permission === "denied"
               ? "denied"
               : "idle",
           );
@@ -170,6 +177,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   }, [
     autoAudience,
     clientAccountId,
+    clientSessionToken, // ⚠️ CORRECTIF : relance l'effet quand le token de session arrive après le montage
     driverId,
     persistenceKey,
     readRegistration,
@@ -210,23 +218,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       } catch (err) {
         console.error("[push] subscribe error", err);
         setStatus(
-          typeof window !== "undefined" &&
-            "Notification" in window &&
-            Notification.permission === "denied"
+          typeof window !== "undefined" && "Notification" in window && Notification.permission === "denied"
             ? "denied"
             : "idle",
         );
         return false;
       }
     },
-    [
-      subscribeFn,
-      reservationId,
-      clientAccountId,
-      clientSessionToken,
-      driverId,
-      rememberRegistration,
-    ],
+    [subscribeFn, reservationId, clientAccountId, clientSessionToken, driverId, rememberRegistration],
   );
 
   const testNotification = useCallback(async () => {
@@ -263,14 +262,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         console.warn("[push] refreshToken failed", e);
       }
     },
-    [
-      subscribeFn,
-      reservationId,
-      clientAccountId,
-      clientSessionToken,
-      driverId,
-      rememberRegistration,
-    ],
+    [subscribeFn, reservationId, clientAccountId, clientSessionToken, driverId, rememberRegistration],
   );
 
   return { status, subscription: token, subscribe, testNotification, refreshToken };
