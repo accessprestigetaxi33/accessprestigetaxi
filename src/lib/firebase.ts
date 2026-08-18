@@ -3,14 +3,7 @@
 // Les credentials Web Firebase sont publics par design ; l'apiKey est servie
 // par /api/public/firebase-config (secret GOOGLE_API_KEY) pour rester hors dépôt.
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
-import {
-  deleteToken,
-  getMessaging,
-  getToken,
-  onMessage,
-  isSupported,
-  type Messaging,
-} from "firebase/messaging";
+import { deleteToken, getMessaging, getToken, onMessage, isSupported, type Messaging } from "firebase/messaging";
 
 export const firebaseConfig: FirebaseOptions = {
   authDomain: "access-prestige-taxi.firebaseapp.com",
@@ -39,8 +32,7 @@ async function loadFirebaseConfig(): Promise<FirebaseOptions> {
 }
 
 // Clé VAPID *Web Push* de Firebase (Console → Cloud Messaging → Web configuration)
-export const FCM_VAPID_KEY =
-  "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
+export const FCM_VAPID_KEY = "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";
 
 // FCM révoque les tokens après ~60 jours d'inactivité.
 // On force un refresh silencieux tous les 50 jours pour garder le token vivant indéfiniment.
@@ -69,22 +61,34 @@ export async function initFirebase(): Promise<Messaging | null> {
   }
 }
 
-export async function getFcmToken(
-  options: { forceRefresh?: boolean } = {},
-): Promise<string | null> {
+export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Promise<string | null> {
   if (typeof window === "undefined") return null;
   if (!("Notification" in window) || !("serviceWorker" in navigator)) return null;
+
+  // ⚠️ CORRECTIF : sur Safari iOS (surtout en PWA installée), l'activation
+  // utilisateur (le clic) expire dès qu'un await réseau intervient avant
+  // Notification.requestPermission(). initFirebase() fait un fetch de config
+  // + isSupported() ; si on l'attend d'abord, le clic n'est plus "frais" et
+  // Safari ignore/refuse silencieusement la demande (aucune popup, aucune
+  // erreur visible). On demande donc la permission EN PREMIER, dans la
+  // continuité directe du clic, avant tout autre await.
+  if (Notification.permission === "denied") {
+    console.warn("[FCM] Permission déjà refusée");
+    return null;
+  }
+  let perm = Notification.permission;
+  if (perm !== "granted") {
+    perm = await Notification.requestPermission();
+  }
+  if (perm !== "granted") {
+    console.warn("[FCM] Permission refusée :", perm);
+    return null;
+  }
 
   const msg = await initFirebase();
   if (!msg) return null;
 
   try {
-    const perm = await Notification.requestPermission();
-    if (perm !== "granted") {
-      console.warn("[FCM] Permission refusée :", perm);
-      return null;
-    }
-
     // On cherche le SW Firebase par son scriptURL exact parmi tous les SW enregistrés.
     // getRegistration("/") retourne n'importe quel SW sur le scope "/" (ex: Vite HMR)
     // ce qui fait que FCM reçoit le mauvais SW → token OK sur desktop mais notifs silencieuses sur mobile.
@@ -103,7 +107,13 @@ export async function getFcmToken(
       [r.active, r.installing, r.waiting].some((worker) => worker?.scriptURL.includes(SW_URL));
     let swReg = allRegs.find((r) => r.scope === rootScope && isFirebaseRegistration(r));
     const wrongRootReg = allRegs.find((r) => r.scope === rootScope && !isFirebaseRegistration(r));
-    if (wrongRootReg) await wrongRootReg.unregister();
+    // ⚠️ CORRECTIF : on ne désenregistre plus aveuglément un SW au scope "/"
+    // qui n'est pas Firebase — ça pouvait supprimer un autre SW applicatif
+    // (cache offline, PWA) partageant le même scope. On se contente de
+    // logger pour diagnostic ; register() ci-dessous coexistera avec lui.
+    if (wrongRootReg) {
+      console.warn("[FCM] Autre SW détecté au scope racine (non désenregistré) :", wrongRootReg.active?.scriptURL);
+    }
     if (!swReg) {
       swReg = await navigator.serviceWorker.register(SW_URL, {
         scope: FCM_SCOPE,
@@ -163,11 +173,7 @@ export async function getFcmToken(
     const tokenExpired = tokenAge > TOKEN_MAX_AGE_MS;
 
     if (!options.forceRefresh && cachedToken && cachedScope === FCM_SCOPE && !tokenExpired) {
-      console.log(
-        "[FCM] Token en cache utilisé :",
-        cachedToken.slice(-8),
-        `(${Math.floor(tokenAge / 86400000)}j)`,
-      );
+      console.log("[FCM] Token en cache utilisé :", cachedToken.slice(-8), `(${Math.floor(tokenAge / 86400000)}j)`);
       return cachedToken;
     }
 
