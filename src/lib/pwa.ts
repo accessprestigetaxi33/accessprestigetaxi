@@ -8,7 +8,8 @@
 //  - `?sw=off` désinstalle tout, comme interrupteur d'urgence.
 function isLovablePreviewHost(hostname: string): boolean {
   if (hostname === "lovableproject.com" || hostname.endsWith(".lovableproject.com")) return true;
-  if (hostname === "lovableproject-dev.com" || hostname.endsWith(".lovableproject-dev.com")) return true;
+  if (hostname === "lovableproject-dev.com" || hostname.endsWith(".lovableproject-dev.com"))
+    return true;
   if (hostname === "beta.lovable.dev" || hostname.endsWith(".beta.lovable.dev")) return true;
   if (hostname.startsWith("id-preview--") || hostname.startsWith("preview--")) return true;
   return false;
@@ -24,7 +25,8 @@ async function unregisterAppServiceWorkers(): Promise<boolean> {
   try {
     const regs = await navigator.serviceWorker.getRegistrations();
     for (const reg of regs) {
-      const url = reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || "";
+      const url =
+        reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL || "";
       // Ne jamais toucher au worker de notifications push.
       if (isMessagingWorker(url)) continue;
       const ok = await reg.unregister();
@@ -53,6 +55,7 @@ async function clearAppCaches(): Promise<boolean> {
 }
 
 export function registerPWA(onUpdateReady: (applyUpdate: () => void) => void): () => void {
+  void onUpdateReady;
   if (typeof window === "undefined") return () => {};
 
   const inIframe = window.self !== window.top;
@@ -67,31 +70,10 @@ export function registerPWA(onUpdateReady: (applyUpdate: () => void) => void): (
   }
 
   if (!("serviceWorker" in navigator)) return () => {};
-  let disposed = false;
-  let refreshing = false;
-  const onControllerChange = () => {
-    if (refreshing) return;
-    refreshing = true;
-    window.location.reload();
-  };
-  navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
-  void navigator.serviceWorker.register("/sw.js", { scope: "/" }).then((registration) => {
-    const watch = (worker: ServiceWorker | null) => {
-      if (!worker) return;
-      worker.addEventListener("statechange", () => {
-        if (!disposed && worker.state === "installed" && navigator.serviceWorker.controller) {
-          onUpdateReady(() => worker.postMessage({ type: "SKIP_WAITING" }));
-        }
-      });
-    };
-    watch(registration.installing);
-    registration.addEventListener("updatefound", () => watch(registration.installing));
-    void registration.update().catch(() => {});
-  }).catch(() => {});
-
-  return () => {
-    disposed = true;
-    navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
-  };
+  // Firebase Messaging owns the root scope so background notifications keep
+  // working when the installed PWA is closed or the screen is locked.
+  // Workbox cannot share the same root registration with another worker.
+  void unregisterAppServiceWorkers();
+  return () => {};
 }

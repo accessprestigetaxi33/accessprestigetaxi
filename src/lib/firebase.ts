@@ -45,7 +45,9 @@ export const FCM_VAPID_KEY =
 // FCM révoque les tokens après ~60 jours d'inactivité.
 // On force un refresh silencieux tous les 50 jours pour garder le token vivant indéfiniment.
 const TOKEN_MAX_AGE_MS = 50 * 24 * 60 * 60 * 1000; // 50 jours
-const FCM_SCOPE = "/firebase/";
+// Keep the Firebase worker at the root scope, as required by the installed
+// PWA on iOS/iPadOS and by the working Taxi City deployment.
+const FCM_SCOPE = "/";
 
 let app: FirebaseApp | null = null;
 let messaging: Messaging | null = null;
