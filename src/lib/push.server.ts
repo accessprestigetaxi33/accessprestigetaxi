@@ -153,75 +153,71 @@ async function sendFcmToToken(
     // ⚠️ CORRECTIF : payload.data en premier, les clés ci-dessous (réservées
     // au fonctionnement du SW) gardent la priorité en cas de collision.
     ...(payload.data ? stringifyDataValues(payload.data) : {}),
+    // ⚠️ CORRECTIF MAJEUR (notifs en arrière-plan absentes) : title/body sont
+    // maintenant dans `data`, pas dans un `notification` racine — voir plus
+    // bas pourquoi.
+    title: payload.title,
+    body: payload.body,
+    icon: payload.icon || "",
     url: relativeUrl,
     click_url: clickUrl,
     tag: payload.tag || "taxi-fcm",
     audience,
+    require_interaction: payload.requireInteraction ? "true" : "false",
     // Marqueur unique pour différencier les deux apps en cas de collision
     // Utile en cas de bug où une notif chauffeur arrive au client ou vice-versa
     audience_marker: `${audience}:${Date.now()}`,
     ...(reservationId ? { reservation_id: reservationId } : {}),
   };
-  // `notification` racine = requis pour iOS Safari PWA (sinon la notif ne
-  // s'affiche pas en background). On évite `webpush.notification` (doublon iOS)
-  // ET `webpush.fcm_options.link` : quand le lien est présent, le handler
-  // notificationclick par défaut du SDK Firebase déclenche openWindow sur
-  // l'URL absolue en parallèle du nôtre → sur iOS PWA le clic finit sur une
-  // page externe ou "rien ne se passe". Notre handler lit `data.url` (relatif).
-  // Priorité de délivrance :
-  // - Android (FCM natif) : "priority": "high" fait sortir l'appareil du mode
-  //   Doze / App Standby pour livrer immédiatement.
-  // - iOS (APNs, via le pont FCM) : apns-priority: 10 = livraison immédiate.
-  //   Nécessite apns-push-type: alert dès qu'on envoie une alerte visible
-  //   (obligatoire depuis iOS 13, sinon APNs peut rejeter ou retarder).
-  // On force la priorité haute uniquement quand requireInteraction est vrai
-  // (courses / évènements qui doivent réveiller l'utilisateur immédiatement) ;
-  // sinon on reste sur les priorités par défaut de chaque plateforme.
+  // ⚠️ CORRECTIF MAJEUR : message DATA-ONLY, sans `notification` racine.
+  //
+  // Avant : on envoyait `notification: {title, body}` au niveau racine, en
+  // pariant sur l'affichage automatique du SDK Firebase côté navigateur.
+  // Problème : ce SDK n'intercepte le push et affiche automatiquement QUE
+  // s'il a déjà pu s'initialiser dans le service worker (firebase.messaging()
+  // exécuté). Or le cas normal d'une notif en arrière-plan, c'est que le SW
+  // était endormi et se réveille juste pour ce push — le SDK n'a pas encore
+  // fini son fetch de config à ce moment-là. Nos propres handlers
+  // (onBackgroundMessage + listener "push" brut dans firebase-messaging-sw.js)
+  // voyaient `notification.title` et abandonnaient, en pensant que le SDK
+  // s'en chargeait déjà → résultat : rien ne s'affiche, ni par le SDK (pas
+  // prêt), ni par notre code (qui s'est retiré).
+  //
+  // Avec un message data-only, c'est TOUJOURS notre propre code (showFrom()
+  // dans le SW) qui affiche la notification, que le SW soit "à froid"
+  // (listener "push" brut) ou "à chaud" (onBackgroundMessage) — avec la
+  // dédup claimOnce()/dedupeKey() déjà en place pour éviter un double
+  // affichage si jamais les deux chemins se déclenchent sur le même envoi.
+  //
   // ℹ️ NOTE (non bloquant) : tous les tokens obtenus ici viennent du SDK Web
   // Firebase (getToken() côté navigateur, y compris pour la PWA iOS installée
   // depuis Safari) — FCM les enregistre comme type "WEB", pas "ANDROID" ni
-  // "IOS". Les blocs `android` et `apns` ci-dessous sont donc ignorés par FCM
-  // pour ces tokens : seul `webpush` (headers Urgency/TTL + data) s'applique
-  // réellement, y compris sur iOS. On les laisse en place au cas où un token
-  // natif serait ajouté un jour, mais ils ne font rien actuellement.
+  // "IOS". Les blocs `android`/`apns` ci-dessous ne servent donc qu'à
+  // transmettre une priorité de livraison ; ils sont ignorés par FCM pour ces
+  // tokens web, mais on les garde au cas où un token natif serait ajouté un
+  // jour. Seul `webpush.headers` (Urgency/TTL) s'applique réellement.
   const body = {
     message: {
       token,
-      notification: {
-        title: payload.title,
-        body: payload.body,
-      },
       webpush: {
         headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
         data: extraData,
       },
-      // Android: "high" réveille l'appareil même en mode doze/deep sleep.
+      // Android natif (no-op pour nos tokens web actuels) : priorité seule.
       android: {
         priority: "HIGH",
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          clickAction: clickUrl,
-        },
         data: extraData,
       },
-      // iOS/APNs : livraison immédiate + fiabilité en arrière-plan.
+      // iOS/APNs natif (no-op pour nos tokens web actuels) : priorité seule,
+      // sans `alert` — on ne veut pas qu'un token natif futur déclenche un
+      // affichage OS automatique qui contournerait notre dédup.
       apns: {
         headers: {
           "apns-priority": "10",
-          "apns-push-type": "alert",
+          "apns-push-type": "background",
         },
         payload: {
-          aps: {
-            alert: {
-              title: payload.title,
-              body: payload.body,
-            },
-            sound: "default",
-            "content-available": 1,
-            badge: 1,
-            mutableContent: true,
-          },
+          aps: { "content-available": 1 },
           customData: extraData,
         },
       },
