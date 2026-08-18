@@ -208,7 +208,7 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
     const { data: r, error: fetchErr } = await supabaseAdmin
       .from("reservations")
       .select(
-        "id, nom, client_name, client_phone, telephone, client_email, email, depart, arrivee, destination, pickup_datetime, nb_passagers, passagers, bagages, service_type, suivi_id, lang",
+        "id, nom, client_name, client_phone, telephone, client_email, email, depart, arrivee, destination, pickup_datetime, nb_passagers, passagers, bagages, service_type, suivi_id, lang, client_account_id",
       )
       .eq("id", data.reservation_id)
       .maybeSingle();
@@ -221,12 +221,81 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
     const clientName = r.client_name || r.nom || "Client";
     const trajet = `${r.depart} → ${r.arrivee || r.destination || "—"}`;
 
-    // ── Push chauffeur : PLUS ENVOYÉE ICI ─────────────────────────────────
-    // Le trigger DB `trg_notify_reservation_http` appelle déjà
-    // /api/public/notify-reservation qui envoie la push chauffeur.
-    // L'envoyer ici en plus produisait un doublon ("Nouvelle course" +
-    // "Nouvelle résa") sur le téléphone du chauffeur.
-    const chauffeurResult = { sent: 0, removed: 0, skipped: "sent-by-db-trigger" as const };
+    // ── Push chauffeur + client — ENVOYÉS ICI (fallback applicatif) ──────────
+    // ⚠️ CORRECTIF : cette fonction (appelée directement par reserver.tsx à la
+    // création, donc SANS dépendre d'un trigger DB) ne faisait plus AUCUN
+    // envoi push — elle comptait entièrement sur `trg_notify_reservation_http`
+    // (trigger Postgres) qui appelle /api/public/notify-reservation. Si ce
+    // trigger ne se déclenche pas ou que le webhook échoue (HMAC, réseau...),
+    // rien ne part, sans la moindre erreur visible côté app — c'est très
+    // probablement ce qui se passe actuellement.
+    //
+    // On envoie donc réellement le push ici, avec EXACTEMENT le même tag
+    // d'idempotence que notify-reservation.ts (buildIdempotencyKey avec les
+    // mêmes event/entity/id/channel/discriminator). sendPushToAudience
+    // déduplique par tag (claimPushSendOnce) : si le trigger DB fonctionne
+    // ET que ce code s'exécute aussi, un seul des deux envoie réellement —
+    // aucun doublon. Si le trigger est cassé, ce chemin devient le filet de
+    // sécurité qui garantit l'envoi.
+    const { sendPushToAudience } = await import("@/lib/push.server");
+    const { buildIdempotencyKey } = await import("@/lib/idempotency");
+    const { getPushClientStrings, normalizePushLang } = await import("@/lib/push-i18n.server");
+
+    let chauffeurResult: { sent: number; removed: number; reason?: string } = { sent: 0, removed: 0 };
+    try {
+      chauffeurResult = await sendPushToAudience(
+        "chauffeur",
+        {
+          title: "🚕 Nouvelle résa",
+          body: `${clientName} — ${trajet}`,
+          url: "/driver",
+          tag: buildIdempotencyKey({
+            event: "reservation.created",
+            entity: "res",
+            id: r.id,
+            channel: "push",
+            discriminator: "chauffeur",
+          }),
+          requireInteraction: true,
+          data: { reservation_id: r.id, kind: "new_reservation" },
+        },
+        { driverId: null, dedupTtlMinutes: 24 * 60 },
+      );
+      console.log("[notifyNewReservation] push chauffeur:", JSON.stringify(chauffeurResult));
+    } catch (pushErr) {
+      console.error("[notifyNewReservation] push chauffeur failed", pushErr);
+    }
+
+    try {
+      const clientLang = normalizePushLang((r as any).lang);
+      const push = getPushClientStrings(clientLang);
+      const suiviUrl = `/suivi/${(r as any).suivi_id || r.id}`;
+      const clientPushResult = await sendPushToAudience(
+        "client",
+        {
+          title: push.pending_title,
+          body: push.pending_body(trajet),
+          url: suiviUrl,
+          tag: buildIdempotencyKey({
+            event: "reservation.created",
+            entity: "res",
+            id: r.id,
+            channel: "push",
+            discriminator: "client",
+          }),
+          requireInteraction: false,
+          data: { reservation_id: r.id, status: "pending" },
+        },
+        {
+          reservationId: r.id,
+          accountId: (r as any).client_account_id ?? undefined,
+          dedupTtlMinutes: 24 * 60,
+        },
+      );
+      console.log("[notifyNewReservation] push client:", JSON.stringify(clientPushResult));
+    } catch (pushErr) {
+      console.error("[notifyNewReservation] push client failed", pushErr);
+    }
 
     // ── Email à Patricia via le bridge Lovable (même que notify-reservation.ts) ─
     let emailSent = false;
