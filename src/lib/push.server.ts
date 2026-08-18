@@ -329,7 +329,7 @@ export async function sendPushToAudience(
     /** Fenêtre d'idempotence du tag (minutes). Défaut : 60. */
     dedupTtlMinutes?: number;
   } = {},
-): Promise<{ sent: number; removed: number }> {
+): Promise<{ sent: number; removed: number; reason?: string }> {
   const baseQuery = () =>
     supabaseAdmin
       .from("push_subscriptions")
@@ -355,10 +355,28 @@ export async function sendPushToAudience(
   }
 
   let { data, error } = await q;
-  if (error || !data || data.length === 0) return { sent: 0, removed: 0 };
+  if (error) {
+    console.error("[push] subscriptions query failed", { audience, opts, error });
+    return { sent: 0, removed: 0, reason: `query_error: ${error.message}` };
+  }
+  if (!data || data.length === 0) {
+    // ⚠️ CORRECTIF : avant, ce cas retournait {sent:0, removed:0} sans rien
+    // logger — indiscernable d'un envoi réussi côté appelant. Un test ciblé
+    // (ex. driverId="alain") qui ne trouve AUCUNE ligne dans push_subscriptions
+    // renvoyait donc un résultat qui ressemble à un succès. On logge et on
+    // renvoie une raison explicite pour que les outils de debug arrêtent
+    // d'afficher "aucun problème" dans ce cas.
+    console.warn("[push] no matching subscriptions", {
+      audience,
+      driverId: opts.driverId,
+      reservationId: opts.reservationId,
+      accountId: opts.accountId,
+    });
+    return { sent: 0, removed: 0, reason: "no_matching_subscriptions" };
+  }
 
   const claimed = await claimPushSendOnce(audience, payload.tag, opts.dedupTtlMinutes ?? 60);
-  if (!claimed) return { sent: 0, removed: 0 };
+  if (!claimed) return { sent: 0, removed: 0, reason: "deduped" };
 
   // Dédup device : même fcm_token + cas iOS où plusieurs anciens tokens restent
   // valides pour le même device après rotation Safari/PWA.
@@ -397,7 +415,7 @@ export async function sendPushToAudience(
     projectId = getServiceAccount().project_id;
   } catch (err) {
     console.error("[push] FCM auth failed", err);
-    return { sent: 0, removed: 0 };
+    return { sent: 0, removed: 0, reason: "fcm_auth_failed" };
   }
 
   let sent = 0;
