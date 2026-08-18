@@ -27,7 +27,9 @@ export async function sendDriverPush(
         tag: reservationId ? `res-${reservationId}-new` : "res-new",
         requireInteraction: true,
       },
-      { reservationId },
+      // Nouvelle course = toujours diffusion aux deux chauffeurs inscrits.
+      // assigned_driver ne doit jamais limiter les destinataires ici.
+      { reservationId, driverId: null },
     );
   } catch (err) {
     console.error("[push] driver notify failed", err);
