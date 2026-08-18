@@ -177,19 +177,11 @@ async function sendFcmToToken(
       },
       webpush: {
         headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          icon: payload.icon || "/favicon.png",
-          badge: "/favicon.png",
-          tag: payload.tag || "taxi-fcm",
-          requireInteraction: Boolean(payload.requireInteraction),
-        },
         data: extraData,
       },
       // Android: "high" réveille l'appareil même en mode doze/deep sleep.
       android: {
-        priority: payload.requireInteraction ? "high" : "normal",
+        priority: "HIGH",
         notification: {
           title: payload.title,
           body: payload.body,
@@ -200,7 +192,7 @@ async function sendFcmToToken(
       // iOS/APNs : livraison immédiate + fiabilité en arrière-plan.
       apns: {
         headers: {
-          "apns-priority": payload.requireInteraction ? "10" : "5",
+          "apns-priority": "10",
           "apns-push-type": "alert",
         },
         payload: {
