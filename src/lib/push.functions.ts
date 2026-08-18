@@ -42,8 +42,7 @@ export const subscribePush = createServerFn({ method: "POST" })
       if (!data.client_session_token) throw new Error("client_session_required");
       const { requireClientSession } = await import("@/lib/client-session.server");
       const identity = await requireClientSession(data.client_session_token);
-      if (identity.account_id !== data.client_account_id)
-        throw new Error("client_account_mismatch");
+      if (identity.account_id !== data.client_account_id) throw new Error("client_account_mismatch");
       verifiedAccountId = identity.account_id;
     }
     if (data.audience === "client" && data.reservation_id && !verifiedAccountId) {
@@ -179,9 +178,7 @@ export const notifyNewReview = createServerFn({ method: "POST" })
     const excerpt = (data.commentaire ?? "").trim().slice(0, 90);
     return sendPushToAudience("chauffeur", {
       title: `⭐ Nouvel avis ${stars}`,
-      body: excerpt
-        ? `${who} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »`
-        : `${who} vient de laisser un avis.`,
+      body: excerpt ? `${who} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »` : `${who} vient de laisser un avis.`,
       url: "/driver",
       tag: `new-review-${Date.now()}`,
     });
@@ -196,9 +193,7 @@ const APP_URL = "https://accessprestigetaxi.lovable.app";
 export const notifyNewReservation = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ reservation_id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const [{ getTaxiSupabaseAdmin, getTaxiSupabaseConfig }] = await Promise.all([
-      import("@/lib/taxi-supabase.server"),
-    ]);
+    const [{ getTaxiSupabaseAdmin, getTaxiSupabaseConfig }] = await Promise.all([import("@/lib/taxi-supabase.server")]);
 
     const supabaseAdmin = getTaxiSupabaseAdmin();
     console.log("[notifyNewReservation] start", data.reservation_id);
@@ -253,10 +248,7 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
         },
       };
 
-      console.log(
-        "[notifyNewReservation] sending email via bridge →",
-        `${APP_URL}/lovable/email/transactional/send`,
-      );
+      console.log("[notifyNewReservation] sending email via bridge →", `${APP_URL}/lovable/email/transactional/send`);
       const res = await fetch(`${APP_URL}/lovable/email/transactional/send`, {
         method: "POST",
         headers: {
@@ -315,11 +307,7 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
         clientEmailSent = clientRes.ok;
         if (!clientRes.ok) {
           const errBody = await clientRes.text().catch(() => "");
-          console.error(
-            "[notifyNewReservation] client email bridge failed",
-            clientRes.status,
-            errBody,
-          );
+          console.error("[notifyNewReservation] client email bridge failed", clientRes.status, errBody);
         } else {
           console.log("[notifyNewReservation] client email queued ok");
         }
@@ -418,11 +406,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
       .toLowerCase()
       .trim();
     const assignedName =
-      assignedKey === "patricia"
-        ? "Patricia"
-        : assignedKey === "alain"
-          ? "Alain"
-          : "Votre chauffeur";
+      assignedKey === "patricia" ? "Patricia" : assignedKey === "alain" ? "Alain" : "Votre chauffeur";
     const trajet = `${r.depart} → ${r.arrivee || r.destination || "—"}`;
     const phone = r.client_phone || r.telephone || "";
     const smsPhone = phone.replace(/[^\d]/g, "").replace(/^0/, "+33");
@@ -511,8 +495,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
       const clientEmail = (r as any).client_email || (r as any).email;
       if (clientEmail) {
         try {
-          const { sendClientTrackingEmail } =
-            await import("@/lib/reservation-notifications.server");
+          const { sendClientTrackingEmail } = await import("@/lib/reservation-notifications.server");
           const assigned = String((r as any).assigned_driver || "");
           await sendClientTrackingEmail({
             reservationId: r.id,
@@ -523,8 +506,7 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
             depart: r.depart ?? null,
             arrivee: (r as any).arrivee ?? (r as any).destination ?? null,
             pickupDatetime: (r as any).pickup_datetime ?? null,
-            driverName:
-              assigned === "patricia" ? "Patricia" : assigned === "alain" ? "Alain" : null,
+            driverName: assigned === "patricia" ? "Patricia" : assigned === "alain" ? "Alain" : null,
             etaMinutes: data.status === "en_route" ? (data.eta_minutes ?? null) : null,
             trackingId: (r as any).suivi_id ?? r.id,
           });
@@ -570,23 +552,19 @@ export const updateReservationRoute = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
-    const [
-      { getTaxiSupabaseAdmin },
-      { sendPushToAudience },
-      { calculerPrixMixte },
-      { buildPriceUpdatePush },
-    ] = await Promise.all([
-      import("@/lib/taxi-supabase.server"),
-      import("@/lib/push.server"),
-      import("@/lib/tarif"),
-      import("@/lib/push-messages"),
-    ]);
+    const [{ getTaxiSupabaseAdmin }, { sendPushToAudience }, { calculerPrixMixte }, { buildPriceUpdatePush }] =
+      await Promise.all([
+        import("@/lib/taxi-supabase.server"),
+        import("@/lib/push.server"),
+        import("@/lib/tarif"),
+        import("@/lib/push-messages"),
+      ]);
     const supabaseAdmin = getTaxiSupabaseAdmin();
 
     const { data: r, error: fetchErr } = await supabaseAdmin
       .from("reservations")
       .select(
-        "id, suivi_id, pickup_datetime, prix_estime, distance_km, nom, client_name, lang, status",
+        "id, suivi_id, pickup_datetime, prix_estime, distance_km, nom, client_name, lang, status, client_account_id",
       )
       .eq("id", data.reservation_id)
       .maybeSingle();
@@ -621,14 +599,40 @@ export const updateReservationRoute = createServerFn({ method: "POST" })
       .eq("id", r.id);
     if (updErr) throw new Error(`update_failed: ${updErr.message}`);
 
-    // ⚠️ Plus de push au CLIENT — la mise à jour du prix est visible en
-    // temps réel sur /reservation/$id (le client voit le nouveau montant + km).
+    // ⚠️ CORRECTIF : buildPriceUpdatePush() était importé et le message
+    // construit, mais jamais envoyé — le client ne voyait le nouveau prix
+    // que s'il avait déjà /reservation/$id ouvert. On envoie maintenant le
+    // push effectivement, avec dédup courte (5 min) pour éviter le spam si
+    // le chauffeur ajuste le trajet plusieurs fois de suite.
+    let pushResult = { sent: 0, removed: 0 };
+    try {
+      const clientName = (r as any).client_name || (r as any).nom || "Client";
+      const { title, body } = buildPriceUpdatePush((r as any).lang, clientName, newPrice, data.distance_km);
+      pushResult = await sendPushToAudience(
+        "client",
+        {
+          title,
+          body,
+          url: `/suivi/${(r as any).suivi_id || r.id}`,
+          tag: `res-${r.id}-price`,
+          data: { reservation_id: r.id, status: "price_update" },
+        },
+        {
+          reservationId: r.id,
+          accountId: (r as any).client_account_id ?? undefined,
+          dedupTtlMinutes: 5,
+        },
+      );
+    } catch (e) {
+      console.warn("[updateReservationRoute] price update push failed (non-fatal)", e);
+    }
+
     return {
       ok: true,
       prix_estime: newPrice,
       distance_km: data.distance_km,
       old_prix_estime: oldPrice,
-      push: { sent: 0, removed: 0 },
+      push: pushResult,
     };
   });
 
