@@ -163,10 +163,6 @@ const ready = fetch("/api/public/firebase-config")
       // pas depuis /driver ou une page client. Il ne peut donc pas deduire
       // l'audience depuis self.location.pathname sans rejeter les push chauffeur.
       
-      // Avec un payload notification, FCM affiche deja la notification en
-      // arriere-plan. La re-afficher ici provoquerait un doublon.
-      if (notif.title || notif.body) return;
-      
       // Toujours afficher, sauf si dédupliquée récemment
       if (!claimOnce(dedupKey)) {
         console.log("[FCM SW] Notif dédupliquée (rejet):", dedupKey);
