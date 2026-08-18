@@ -179,9 +179,9 @@ async function sendFcmToToken(
         headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
         data: extraData,
       },
-      // Android: requiert "HIGH" priority pour réveiller l'écran fermé (mode doze/deep sleep)
+      // Android: "high" réveille l'appareil même en mode doze/deep sleep.
       android: {
-        priority: "HIGH",
+        priority: payload.requireInteraction ? "high" : "normal",
         notification: {
           title: payload.title,
           body: payload.body,
@@ -189,11 +189,11 @@ async function sendFcmToToken(
         },
         data: extraData,
       },
-      // iOS/APNs : configuration supplémentaire pour fiabilité en arrière-plan
+      // iOS/APNs : livraison immédiate + fiabilité en arrière-plan.
       apns: {
         headers: {
-          "apns-priority": "10", // High priority pour notification immédiate
-          "apns-push-type": "alert", // Type alert (pas background)
+          "apns-priority": payload.requireInteraction ? "10" : "5",
+          "apns-push-type": "alert",
         },
         payload: {
           aps: {
@@ -202,13 +202,18 @@ async function sendFcmToToken(
               body: payload.body,
             },
             sound: "default",
-            "content-available": 1, // Important pour background
+            "content-available": 1,
             badge: 1,
             mutableContent: true,
           },
           customData: extraData,
         },
       },
+      webpush: {
+        headers: payload.requireInteraction ? { Urgency: "high", TTL: "86400" } : { TTL: "3600" },
+        data: extraData,
+      },
+
       data: extraData,
     },
   };
