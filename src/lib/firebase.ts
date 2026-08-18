@@ -98,7 +98,12 @@ export async function getFcmToken(
           r.waiting?.scriptURL.includes(SW_URL)),
     );
     await Promise.all(oldMessagingRegs.map((r) => r.unregister()));
-    let swReg = allRegs.find((r) => r.scope === new URL(FCM_SCOPE, window.location.origin).href);
+    const rootScope = new URL(FCM_SCOPE, window.location.origin).href;
+    const isFirebaseRegistration = (r: ServiceWorkerRegistration) =>
+      [r.active, r.installing, r.waiting].some((worker) => worker?.scriptURL.includes(SW_URL));
+    let swReg = allRegs.find((r) => r.scope === rootScope && isFirebaseRegistration(r));
+    const wrongRootReg = allRegs.find((r) => r.scope === rootScope && !isFirebaseRegistration(r));
+    if (wrongRootReg) await wrongRootReg.unregister();
     if (!swReg) {
       swReg = await navigator.serviceWorker.register(SW_URL, {
         scope: FCM_SCOPE,
