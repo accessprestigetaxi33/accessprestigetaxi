@@ -118,7 +118,8 @@ const TOOLS = [
           arrivee: { type: "string" },
           pickup_datetime: {
             type: "string",
-            description: "Datetime ISO 8601 SANS suffixe de fuseau, heure LOCALE de Paris, format 24h obligatoire.",
+            description:
+              "Datetime ISO 8601 SANS suffixe de fuseau, heure LOCALE de Paris, format 24h obligatoire.",
           },
           passagers: { type: "number" },
           bagages: { type: "number" },
@@ -150,7 +151,9 @@ async function computeQuote(
 
   const useGps =
     !!gpsOrigin &&
-    (!args.depart || args.depart === gpsOrigin.label || /position|gps|actuelle|ici|current/i.test(args.depart));
+    (!args.depart ||
+      args.depart === gpsOrigin.label ||
+      /position|gps|actuelle|ici|current/i.test(args.depart));
 
   const fromRes = useGps
     ? ({
@@ -233,10 +236,17 @@ function newSuiviId() {
   return `APT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 }
 
-async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmToken?: string | null) {
+async function confirmReservation(
+  args: any,
+  langCode: "fr" | "en",
+  clientFcmToken?: string | null,
+) {
   const normalizedEmail = typeof args.email === "string" ? args.email.trim().toLowerCase() : "";
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(normalizedEmail)) {
-    return { ok: false as const, error: "EMAIL_OBLIGATOIRE: demande au client son email valide avant de confirmer." };
+    return {
+      ok: false as const,
+      error: "EMAIL_OBLIGATOIRE: demande au client son email valide avant de confirmer.",
+    };
   }
 
   const slot = await checkSlot({ pickup_datetime: args.pickup_datetime });
@@ -268,7 +278,8 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   const distanceKm = (quote as any).distance_km ?? args.distance_km ?? null;
   // duree_s doit être un entier en base : args.duree_min vient du modèle et
   // n'est pas garanti entier, on arrondit pour éviter une valeur invalide.
-  const dureeS = (quote as any).duree_s ?? (args.duree_min ? Math.round(args.duree_min * 60) : null);
+  const dureeS =
+    (quote as any).duree_s ?? (args.duree_min ? Math.round(args.duree_min * 60) : null);
   const prix = (quote as any).prix_estime ?? args.prix_estime ?? null;
 
   const suiviId = newSuiviId();
@@ -277,7 +288,10 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   // clair au modèle plutôt qu'un crash si la date est mal formée.
   const parsedPickup = parseAsParisTime(args.pickup_datetime);
   if (Number.isNaN(parsedPickup.getTime())) {
-    return { ok: false as const, error: "DATE_INVALIDE: reformule la date/heure au format demandé et réessaie." };
+    return {
+      ok: false as const,
+      error: "DATE_INVALIDE: reformule la date/heure au format demandé et réessaie.",
+    };
   }
   const pickupIso = parsedPickup.toISOString();
 
@@ -298,7 +312,9 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
     pickup_datetime: pickupIso,
     date_heure: pickupIso,
     passagers: Number(args.passagers) > 0 ? Math.min(Math.round(Number(args.passagers)), 12) : 1,
-    bagages: Number.isFinite(Number(args.bagages)) ? Math.max(0, Math.min(Math.round(Number(args.bagages)), 20)) : 0,
+    bagages: Number.isFinite(Number(args.bagages))
+      ? Math.max(0, Math.min(Math.round(Number(args.bagages)), 20))
+      : 0,
     service_type: args.service_type ?? "standard",
     status: "pending",
     suivi_id: suiviId,
@@ -349,21 +365,15 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
   if (clientFcmToken && /^[A-Za-z0-9_\-:]{50,500}$/.test(clientFcmToken)) {
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      // onConflict sur (fcm_token, audience) — contrainte unique réelle de la
-      // table — plutôt que sur "endpoint" (toujours nouveau ici puisqu'il
-      // inclut l'id de réservation) : évite d'insérer une ligne en doublon
-      // pour un token déjà abonné, ce qui percutait l'ancien index unique
-      // global sur fcm_token (23505 "push_subscriptions_fcm_token_unique").
-      await supabaseAdmin.from("push_subscriptions").upsert(
-        {
-          audience: "client",
-          endpoint: `fcm://${clientFcmToken}-client-reservation-${inserted.id}`,
-          fcm_token: clientFcmToken,
-          reservation_id: inserted.id,
-          last_seen_at: new Date().toISOString(),
-        } as any,
-        { onConflict: "fcm_token,audience" },
-      );
+      const endpoint = `fcm://${clientFcmToken}-client-reservation-${inserted.id}`;
+      await supabaseAdmin.from("push_subscriptions").delete().eq("endpoint", endpoint);
+      await supabaseAdmin.from("push_subscriptions").insert({
+        audience: "client",
+        endpoint,
+        fcm_token: clientFcmToken,
+        reservation_id: inserted.id,
+        last_seen_at: new Date().toISOString(),
+      } as any);
     } catch (e) {
       console.warn("[chat] client push link failed", e);
     }
@@ -391,7 +401,16 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
         trackingLink,
       },
     });
-    await logReservationEvent(inserted.id, "created_from_chat", null, null, null, args.nom, depart, arrivee);
+    await logReservationEvent(
+      inserted.id,
+      "created_from_chat",
+      null,
+      null,
+      null,
+      args.nom,
+      depart,
+      arrivee,
+    );
     await sendDriverPush(
       "chauffeur",
       langCode === "en" ? "New booking" : "Nouvelle réservation",
@@ -403,17 +422,27 @@ async function confirmReservation(args: any, langCode: "fr" | "en", clientFcmTok
     console.warn("[chat] reservation notifications failed", e);
   }
 
-  return { ok: true as const, reservation_id: inserted.id, suivi_id: suiviId, tracking_link: trackingLink };
+  return {
+    ok: true as const,
+    reservation_id: inserted.id,
+    suivi_id: suiviId,
+    tracking_link: trackingLink,
+  };
 }
 
 export const aiChatReservation = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z
       .object({
-        messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(4000) })).max(60),
+        messages: z
+          .array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(4000) }))
+          .max(60),
         lang: z.string().default("français"),
         lang_code: z.enum(["fr", "en"]).default("fr"),
-        gps: z.object({ lat: z.number(), lng: z.number(), label: z.string().optional() }).nullable().optional(),
+        gps: z
+          .object({ lat: z.number(), lng: z.number(), label: z.string().optional() })
+          .nullable()
+          .optional(),
         departure: z
           .object({ label: z.string(), lat: z.number().optional(), lng: z.number().optional() })
           .nullable()
@@ -470,7 +499,8 @@ RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si 
       });
       if (!res.ok) {
         const txt = await res.text().catch(() => "");
-        if (res.status === 429) throw new Error("Trop de demandes simultanées, réessayez dans une minute.");
+        if (res.status === 429)
+          throw new Error("Trop de demandes simultanées, réessayez dans une minute.");
         if (res.status === 402) throw new Error("Service momentanément indisponible.");
         throw new Error(`AI ${res.status}: ${txt.slice(0, 200)}`);
       }
@@ -499,7 +529,11 @@ RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si 
         let result: any;
         if (fnName === "compute_quote") {
           const gpsOrigin = data.gps
-            ? { lat: data.gps.lat, lng: data.gps.lng, label: data.departure?.label ?? data.gps.label }
+            ? {
+                lat: data.gps.lat,
+                lng: data.gps.lng,
+                label: data.departure?.label ?? data.gps.label,
+              }
             : data.departure && data.departure.lat != null && data.departure.lng != null
               ? { lat: data.departure.lat, lng: data.departure.lng, label: data.departure.label }
               : null;
@@ -525,7 +559,12 @@ RÈGLE PRIORITAIRE : considère ce départ comme suffisamment précis, même si 
         } else {
           result = { error: "unknown_tool" };
         }
-        msgs.push({ role: "tool", tool_call_id: tc.id, name: fnName, content: JSON.stringify(result) });
+        msgs.push({
+          role: "tool",
+          tool_call_id: tc.id,
+          name: fnName,
+          content: JSON.stringify(result),
+        });
       }
     }
 
