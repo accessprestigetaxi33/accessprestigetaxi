@@ -132,8 +132,15 @@ function AdminPushPage() {
           onClick={async () => {
             setBusy(true);
             try {
-              const r = await testFn({ data: { token, driverId: null } });
-              toast.success(`Broadcast envoyé à ${r.sent} appareil(s).`);
+              const r: any = await testFn({ data: { token, driverId: null } });
+              if (r.sent > 0) {
+                toast.success(`Broadcast envoyé à ${r.sent} appareil(s).`);
+              } else {
+                // ⚠️ CORRECTIF : r.diagnostic / r.reason existaient déjà côté
+                // serveur mais n'étaient jamais affichés — "aucun problème"
+                // silencieux même quand 0 appareil est réellement joint.
+                toast.error(r.diagnostic || `Envoyé à 0 appareil (reason: ${r.reason ?? "inconnue"}).`);
+              }
               await load(token);
             } catch {
               toast.error("Envoi impossible.");
@@ -152,8 +159,12 @@ function AdminPushPage() {
             onClick={async () => {
               setBusy(true);
               try {
-                const r = await testFn({ data: { token, driverId: d } });
-                toast.success(`Test ${d} : ${r.sent} appareil(s).`);
+                const r: any = await testFn({ data: { token, driverId: d } });
+                if (r.sent > 0) {
+                  toast.success(`Test ${d} : ${r.sent} appareil(s).`);
+                } else {
+                  toast.error(r.diagnostic || `Test ${d} : 0 appareil (reason: ${r.reason ?? "inconnue"}).`);
+                }
                 await load(token);
               } catch {
                 toast.error("Envoi impossible.");
@@ -262,7 +273,10 @@ function Table({ rows, onDelete }: { rows: PushSubRow[]; onDelete: (id: string) 
                 {r.user_agent ?? "—"}
               </td>
               <td style={td}>
-                <button style={{ ...btn, background: "#b91c1c", padding: "4px 8px" }} onClick={() => void onDelete(r.id)}>
+                <button
+                  style={{ ...btn, background: "#b91c1c", padding: "4px 8px" }}
+                  onClick={() => void onDelete(r.id)}
+                >
                   Forcer réinscription
                 </button>
               </td>
