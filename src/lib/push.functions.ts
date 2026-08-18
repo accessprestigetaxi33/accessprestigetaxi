@@ -155,7 +155,14 @@ export const sendTestPush = createServerFn({ method: "POST" })
       title: "🔔 Test notification",
       body: `Notification test envoyée à l'audience « ${data.audience} ».`,
       url: data.audience === "client" ? "/" : "/driver",
-      tag: "test-push",
+      // ⚠️ CORRECTIF : "test-push" (sans suffixe horodaté) déclenchait la
+      // dédup globale (claimPushSendOnce) pendant 60 min après le premier
+      // test — chaque relance suivante renvoyait {sent:0, reason:"deduped"}
+      // AVANT même d'interroger push_subscriptions, donc rien dans
+      // push_send_log. Le suffixe -{timestamp 13 chiffres} fait bypasser
+      // cette dédup (voir claimPushSendOnce), comme sendChauffeurTestPush
+      // le fait déjà pour les tests admin.
+      tag: `test-push-${data.audience}-${Date.now()}`,
     });
   });
 
