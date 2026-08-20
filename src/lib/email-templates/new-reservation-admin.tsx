@@ -15,8 +15,15 @@ interface Props {
 
 function fmt(iso?: string): string {
   if (!iso) return "—";
+  const date = new Date(iso);
+  // ⚠️ CORRECTIF : new Date(iso) sur une chaîne invalide ne lève PAS
+  // d'exception — elle produit un objet Invalid Date silencieux, et
+  // .toLocaleString() dessus renvoie la chaîne "Invalid Date" au lieu de
+  // déclencher le catch ci-dessous (qui ne se déclenchait donc jamais).
+  // On vérifie explicitement getTime() avant de formater.
+  if (Number.isNaN(date.getTime())) return iso;
   try {
-    return new Date(iso).toLocaleString("fr-FR", {
+    return date.toLocaleString("fr-FR", {
       dateStyle: "full",
       timeStyle: "short",
       timeZone: "Europe/Paris",
@@ -76,7 +83,7 @@ export const template = {
   component: Email,
   subject: (d: Record<string, any>) => `Nouvelle réservation — ${d?.nom ?? "Client"}`,
   displayName: "Nouvelle réservation — chauffeurs",
-  to: "contact@accesprestigetaxi.fr",
+  to: "accessprestigetaxi@gmail.com",
   previewData: {
     nom: "Jean Dupont",
     phone: "06 12 34 56 78",
