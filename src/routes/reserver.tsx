@@ -41,14 +41,19 @@ const RESERVER_SOCIAL_EN = {
 };
 
 export const Route = createFileRoute("/reserver")({
-  validateSearch: (search: Record<string, unknown>): { lang?: "en" | "fr" } => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { lang?: "en" | "fr"; from?: string; to?: string } => ({
     lang:
       search["lang"] === "en"
         ? ("en" as const)
         : search["lang"] === "fr"
           ? ("fr" as const)
           : undefined,
+    from: typeof search["from"] === "string" ? (search["from"] as string).slice(0, 160) : undefined,
+    to: typeof search["to"] === "string" ? (search["to"] as string).slice(0, 160) : undefined,
   }),
+
   head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
     const isEn = ctx?.match?.search?.lang === "en";
     const title = isEn ? RESERVER_TITLE_EN : RESERVER_TITLE_FR;
