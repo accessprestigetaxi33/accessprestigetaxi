@@ -177,10 +177,10 @@ function useHeroSlideshow(count: number, durationMs: number) {
 
 const COPY = {
   fr: {
-    kicker: "20 ans d'expérience · Transport sanitaire avec fauteuil roulant · Charente-Maritime",
-    h1: "Taxi 100 % électrique en Charente-Maritime",
+    kicker: "Transport sanitaire avec fauteuil roulant · Transport de groupe · Toutes distances · Charente-Maritime",
+    h1: "Votre transport, notre exigence",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une BMW iX1 électrique 5 places, un Audi Q6 e-tron 5 places et un van Mercedes 8 places. Transport sanitaire avec fauteuil roulant et prestations toutes distances.",
+    lead: "Deux chauffeurs, une même exigence : taxi 100 % électrique en Charente-Maritime avec la BMW iX1 et l'Audi Q6 e-tron 5 places, van Mercedes classe V 8 places pour le transport de groupe, transport sanitaire conventionné avec fauteuil roulant et prestations toutes distances.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
@@ -189,60 +189,66 @@ const COPY = {
     driversLead:
       "Deux chauffeurs indépendants, une même exigence : ponctualité, discrétion et confort, en Charente-Maritime.",
     stats: [
-      { n: 2, suffix: "", l: "chauffeurs dédiés" },
-      { n: 100, suffix: " %", l: "électrique (BMW iX1)" },
-      { n: 8, suffix: " places", l: "van Mercedes" },
-      { n: 5, suffix: " places", l: "Audi Q6 e-tron électrique" },
+      { n: 2, suffix: "", l: "chauffeurs dédiés — Alain & Patricia", img: photoDriver.url },
+      { n: 100, suffix: " %", l: "électrique (BMW iX1)", img: photoBmwReal.url },
+      { n: 5, suffix: " places", l: "Audi Q6 e-tron électrique", img: photoAudiReal.url },
+      { n: 8, suffix: " places", l: "van Mercedes classe V", img: photoVanReal.url },
     ],
     servicesEyebrow: "Nos services",
-    servicesTitle: "Une prestation pensée pour chaque trajet",
+    servicesTitle: "Le transport haut de gamme sur mesure",
     services: [
-      { photo: photoMedical, t: "Transport conventionné", d: "Transport sanitaire possible avec fauteuil roulant." },
+      {
+        photo: photoMedical,
+        t: "Transport sanitaire conventionné",
+        d: "Transport assis professionnalisé et transport avec fauteuil roulant, prise en charge simplifiée.",
+      },
+      {
+        photo: photoAirport,
+        t: "Transferts toutes gares & tous aéroports",
+        d: "Suivi des vols et des trains, accueil pancarte et bagages pris en charge, toutes distances.",
+      },
+      {
+        photo: photoBusiness,
+        t: "Déplacements pro & privés, hôtels et campings",
+        d: "Navettes entreprises, hôtels, campings et résidences : ponctualité, discrétion, facture entreprise.",
+      },
+      {
+        photo: photoInterior.url,
+        t: "Mise à disposition avec chauffeur",
+        d: "Demi-journée, journée complète ou événementiel : votre chauffeur reste à vos côtés.",
+      },
+      {
+        photo: photoVanReal.url,
+        t: "Transport de groupe",
+        d: "Voyagez ensemble confortablement : groupe, famille, mariage, déplacement pro, grand volume de bagages, à bord du Mercedes classe V 8 places.",
+      },
+    ],
+    groupEyebrow: "Transport de groupe",
+    groupTitle: "Van Mercedes classe V 8 places pour vos groupes",
+    groupText:
+      "Voyagez ensemble confortablement : que vous soyez un groupe, une famille, un mariage ou un déplacement professionnel, le van Mercedes classe V d'Alain offre 8 places, un grand volume de bagages et un vrai confort.",
+    groupBullets: ["8 places", "Grand volume de bagages", "Un seul tarif, un seul véhicule", "Toutes distances"],
+    groupCta: "Réserver le van 8 places",
+    whyEyebrow: "Pourquoi nous choisir",
+    whyTitle: "Une prestation pensée pour chaque trajet, à la hauteur de vos attentes",
+    why: [
       {
         photo: photoInterior.url,
         t: "Confort intérieur",
-        d: "Habitacle soigné, silence électrique, eau et chargeurs à bord.",
-      },
-      { photo: photoAirport, t: "Toutes gares & tous aéroports", d: "Transferts, suivi des vols et des trains, accueil sur demande." },
-      {
-        photo: photoDriver.url,
-        t: "Chauffeurs agréés",
-        d: "Patricia et Alain, chauffeurs de taxi conventionnés en Charente-Maritime.",
-      },
-      { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
-      {
-        photo: photoBmwReal.url,
-        t: "Disponible sur réservation",
-        d: "Réservation immédiate ou planifiée.",
-      },
-    ],
-    seatsEyebrow: "Familles",
-    seatsTitle: "Sièges bébé et rehausseurs enfants, sur demande",
-    seatsText:
-      "Nous embarquons gratuitement un siège bébé (0-13 kg), un siège enfant ou un rehausseur : précisez-le simplement au moment de la réservation rapide, nous préparons le véhicule avant votre départ.",
-    seatsItems: ["Siège bébé (0-13 kg)", "Siège enfant (9-18 kg)", "Rehausseur (15-36 kg)"],
-    seatsCta: "Choisir mon siège à la réservation",
-    groupEyebrow: "Transport de groupe",
-    groupTitle: "Van Mercedes 8 places pour vos groupes",
-    groupText:
-      "Famille, équipe, mariage, sortie entre amis ou transfert à plusieurs : le van Mercedes d'Alain offre 8 places et un grand volume de bagages.",
-    groupBullets: ["8 places", "Un seul tarif, un seul véhicule", "Toutes distances"],
-    groupCta: "Réserver le van 8 places",
-    whyEyebrow: "Pourquoi nous",
-    whyTitle: "L'élégance électrique, sans compromis",
-    why: [
-      {
-        photo: photoBmwReal.url,
-        t: "Zéro émission",
-        d: "La BMW iX1 de Patricia roule 100 % à l'électrique, sans bruit ni vibration.",
+        d: "Des véhicules sélectionnés pour votre bien-être : habitacle soigné, silence électrique, eau et chargeurs à bord.",
       },
       {
         photo: photoDriver.url,
-        t: "Deux chauffeurs, un standard",
-        d: "Même exigence de confort, de discrétion et de ponctualité.",
+        t: "Fiabilité",
+        d: "Ponctualité, discrétion et disponibilité, sur chaque course.",
       },
-      { photo: photoPrice, t: "Prix annoncé, prix tenu", d: "Estimation transparente avant le départ." },
+      {
+        photo: photoBmwReal.url,
+        t: "Une prestation adaptée à chaque besoin",
+        d: "Sièges bébé et rehausseurs enfants sur demande, fauteuil roulant, groupes et longues distances.",
+      },
     ],
+
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
     bannerText:
       "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
