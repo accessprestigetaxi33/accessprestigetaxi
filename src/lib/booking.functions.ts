@@ -78,6 +78,8 @@ const BookSchema = QuoteSchema.extend({
   options: z.array(z.string().trim().max(60)).max(12).default([]),
   note: z.string().trim().max(1000).default(""),
   lang: z.enum(["fr", "en"]).default("fr"),
+  /** Clé d'idempotence générée par le client (anti double-clic). */
+  client_request_id: z.string().trim().min(8).max(80).nullable().optional(),
 });
 
 export type BookResponse =
