@@ -1,6 +1,6 @@
 /* Firebase Cloud Messaging — Service Worker (notifications en arrière-plan)
  * Projet : access-prestige-taxi (bi-chauffeur)
- * Config chargée depuis /api/public/firebase-config (apiKey hors dépôt).
+ * Config Web Firebase figée dans ce fichier (publique par design).
  */
 /* eslint-disable */
 
