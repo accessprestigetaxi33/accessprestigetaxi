@@ -29,6 +29,11 @@ const subSchema = z.object({
   client_session_token: z.string().min(32).max(128).optional(),
   driver_token: z.string().min(1).max(500).optional(),
   user_agent: z.string().max(500).optional().nullable(),
+  // Identifiant de device stable généré côté client (localStorage), à
+  // préférer au hash du user_agent : deux iPhones du même modèle ont un UA
+  // quasi identique, ce qui les fait collisionner sur hashUserAgent(). Optionnel
+  // pour rester compatible avec un client pas encore mis à jour (fallback ci-dessous).
+  device_id: z.string().min(8).max(100).optional().nullable(),
 });
 
 export const subscribePush = createServerFn({ method: "POST" })
@@ -61,9 +66,10 @@ export const subscribePush = createServerFn({ method: "POST" })
     const clientAccountId = data.audience === "client" ? verifiedAccountId : null;
     const reservationId = data.audience === "client" ? (data.reservation_id ?? null) : null;
 
-    // Endpoint stable par DEVICE (via hash du user_agent) + audience + cible.
-    // Important : un même client peut avoir plusieurs réservations actives ;
-    // l'ancien endpoint token+audience écrasait l'abonnement précédent.
+    // Endpoint stable par DEVICE + audience + cible (cible utilisée pour
+    // client uniquement, voir plus bas). Important : un même client peut
+    // avoir plusieurs réservations actives ; l'ancien endpoint token+audience
+    // écrasait l'abonnement précédent.
     //
     // ⚠️ CORRECTIF : l'endpoint ne doit JAMAIS inclure fcm_token. iOS régénère
     // le token régulièrement (rotation auto 50j dans getFcmToken, refresh sur
@@ -71,7 +77,7 @@ export const subscribePush = createServerFn({ method: "POST" })
     // rotation génère un endpoint différent, le delete-before-insert ne trouve
     // jamais l'ancienne ligne, et on accumule des lignes actives pour le même
     // device → notifications ×N côté iPhone. En gardant l'endpoint stable par
-    // device (hash UA), la rotation de token remplace bien l'ancienne ligne.
+    // device, la rotation de token remplace bien l'ancienne ligne.
     const driverId = data.audience === "chauffeur" ? verifiedDriverId : null;
     const targetKey = clientAccountId
       ? `account-${clientAccountId}`
@@ -80,8 +86,25 @@ export const subscribePush = createServerFn({ method: "POST" })
         : driverId
           ? `driver-${driverId}`
           : "generic";
-    const deviceKey = hashUserAgent(ua);
-    const endpoint = `${data.audience}-${targetKey}-${deviceKey}`;
+    // Identifiant device : on préfère le device_id stable envoyé par le
+    // client (uuid localStorage) au hash du user_agent, qui est trop faible
+    // pour distinguer deux iPhones du même modèle. Fallback sur le hash UA
+    // uniquement si le client n'envoie pas encore de device_id (compat).
+    const deviceKey = (data.device_id ?? "").trim() || hashUserAgent(ua);
+    // ⚠️ CORRECTIF : pour l'audience chauffeur, l'endpoint ne doit PAS inclure
+    // driver_id. Alain et Patricia peuvent se passer le même appareil ; si
+    // l'endpoint encode le driver_id, changer d'identité sur ce device crée
+    // une NOUVELLE ligne au lieu de remplacer l'ancienne (le delete-before-
+    // insert ne trouve jamais l'ancien endpoint car il diffère). Résultat :
+    // deux lignes actives pour le même device, et un envoi ciblé driver_id=
+    // "alain" peut encore atteindre ce device même si c'est Patricia qui
+    // l'utilise. En gardant l'endpoint device-only pour le chauffeur, changer
+    // d'identité sur le même device écrase toujours la ligne précédente — au
+    // plus une ligne active par device. driver_id reste écrit normalement
+    // dans insertPayload ci-dessous, donc le ciblage par chauffeur (côté
+    // envoi, push.server.ts) n'est pas affecté.
+    const endpoint =
+      data.audience === "chauffeur" ? `chauffeur-device-${deviceKey}` : `${data.audience}-${targetKey}-${deviceKey}`;
 
     const nowIso = new Date().toISOString();
 
