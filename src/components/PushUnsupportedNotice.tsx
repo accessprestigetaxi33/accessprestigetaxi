@@ -90,6 +90,7 @@ export function PushUnsupportedNotice({
   return (
     <div className={className} style={style}>
       🔕 {message}
+      {tech ? <div style={{ marginTop: 6, fontSize: 11, opacity: 0.7 }}>{tech}</div> : null}
     </div>
   );
 }
