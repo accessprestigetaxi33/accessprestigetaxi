@@ -1404,27 +1404,23 @@ function Index() {
         </div>
       </section>
 
-      {/* AVIS & RÉASSURANCE */}
-      <ClientTrust />
+      {/* AVIS — réassurance, avis clients et dépôt d'avis réunis en une seule section */}
+      <ClientTrust>
+        <div className="mx-auto max-w-2xl border-t border-border pt-10">
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
+          <h3 className="mt-3 text-center font-display text-2xl font-semibold text-foreground sm:text-3xl text-balance">
+            {c.reviewTitle}
+          </h3>
+          <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
+          <div className="mt-8 rounded-2xl border border-border bg-card p-6">
+            <ReviewForm />
+          </div>
+        </div>
+      </ClientTrust>
 
       {/* FAQ SEO */}
       <FaqSeo />
 
-      {/* AVIS */}
-      <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto max-w-2xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.reviewTitle}
-            </h2>
-            <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
-            <div className="mt-8 rounded-2xl border border-border bg-background p-6">
-              <ReviewForm />
-            </div>
-          </Reveal>
-        </div>
-      </section>
 
       {/* BLOG */}
       <section className="border-t border-border py-20">
