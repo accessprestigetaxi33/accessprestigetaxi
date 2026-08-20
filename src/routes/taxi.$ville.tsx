@@ -5,6 +5,7 @@ import { ArrowRight, Check, HelpCircle, MapPin, Phone } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { VILLES, getVille } from "@/data/villes";
 import { DRIVERS } from "@/data/drivers";
+import { LocalReviews } from "@/components/LocalReviews";
 
 const SITE = "https://www.accessprestigetaxi.fr";
 
@@ -210,6 +211,8 @@ function VillePage() {
           ))}
         </div>
       </section>
+
+      <LocalReviews villeName={ville.name} serviceId={`${url}#service`} />
 
       <section className="mt-12 border-t border-border pt-8">
         <h2 className="text-[11px] uppercase tracking-[0.3em] text-primary">{u.other}</h2>
