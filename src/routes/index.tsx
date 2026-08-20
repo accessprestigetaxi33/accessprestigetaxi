@@ -636,7 +636,16 @@ function Index() {
       />
 
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
-      <section className="relative isolate min-h-[40svh] overflow-hidden sm:min-h-[45vh] lg:min-h-[52vh]">
+      <section
+        className="relative isolate min-h-[40svh] overflow-hidden sm:min-h-[45vh] lg:min-h-[52vh]"
+        role="region"
+        aria-roledescription={lang === "en" ? "image carousel" : "diaporama d'images"}
+        aria-label={
+          lang === "en"
+            ? "Access Prestige Taxi fleet: BMW iX1 electric, Audi Q6 e-tron and Mercedes V-Class 8-seat van in Charente-Maritime"
+            : "Flotte Access Prestige Taxi : BMW iX1 électrique, Audi Q6 e-tron et van Mercedes V-Class 8 places en Charente-Maritime"
+        }
+      >
         {(() => {
           const slide = slides[slideIndex];
           const isBanner = Boolean(slide.contain);
@@ -702,7 +711,10 @@ function Index() {
             transition={{ duration: 0.5 }}
             className="w-full"
           >
-            <ul className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
+            <ul
+              aria-label={lang === "en" ? "Our main taxi services" : "Nos principales prestations de taxi"}
+              className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4"
+            >
               {(lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR).map((p) => (
                 <li
                   key={p.label}
@@ -715,7 +727,10 @@ function Index() {
                 </li>
               ))}
             </ul>
-            <ul className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+            <ul
+              aria-label={lang === "en" ? "Our commitments" : "Nos engagements"}
+              className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
+            >
               {(lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR).map((v) => (
                 <li
                   key={v.label}
@@ -757,7 +772,7 @@ function Index() {
               to="/reserver"
               className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
             >
-              {c.ctaBook} <ArrowRight className="h-4 w-4" />
+              {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             {DRIVERS.map((d) => (
               <a
@@ -766,7 +781,7 @@ function Index() {
                 aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
                 className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary active:scale-[0.98]"
               >
-                <Phone className="h-4 w-4 shrink-0 text-primary" />
+                <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                 <span className="flex flex-col items-start leading-tight">
                   <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                     {c.callPrefix} {d.name}
@@ -777,12 +792,19 @@ function Index() {
             ))}
           </motion.div>
 
-          <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
+          <dl
+            aria-label={
+              lang === "en"
+                ? "Access Prestige Taxi in figures: drivers and vehicles"
+                : "Access Prestige Taxi en chiffres : chauffeurs et véhicules"
+            }
+            className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4"
+          >
             {c.stats.map((s) => (
               <div key={s.l} className="overflow-hidden bg-card text-left">
                 <img
                   src={s.img}
-                  alt={s.l}
+                  alt={`Access Prestige Taxi — ${s.n}${s.suffix} ${s.l}`}
                   loading="lazy"
                   decoding="async"
                   width={640}
@@ -809,14 +831,18 @@ function Index() {
                 ? "Excellence on every journey — our electric taxi fleet in Charente-Maritime"
                 : "L'excellence à chaque trajet — notre flotte de taxis électriques en Charente-Maritime"}
             </h2>
-            <div className="flex justify-start gap-2 overflow-x-auto pb-2 sm:justify-center sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div
+              role="group"
+              aria-label={lang === "en" ? "Choose a vehicle to preview" : "Choisir un véhicule à afficher"}
+              className="flex justify-start gap-2 overflow-x-auto pb-2 sm:justify-center sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
               {slides.map((s, i) => (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => select(i)}
                   aria-pressed={i === slideIndex}
-                  aria-label={s.title}
+                  aria-label={`${lang === "en" ? "Show" : "Afficher"} : ${s.title}`}
                   className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
                     i === slideIndex
                       ? "border-primary shadow-[var(--shadow-gold)]"
@@ -825,7 +851,8 @@ function Index() {
                 >
                   <img
                     src={s.src}
-                    alt={s.alt}
+                    alt=""
+                    aria-hidden="true"
                     loading="lazy"
                     width={320}
                     height={180}
@@ -843,6 +870,9 @@ function Index() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
+                  role="group"
+                  aria-live="polite"
+                  aria-label={`${slides[slideIndex].title} — ${slides[slideIndex].label}`}
                   className="mt-5 rounded-2xl border border-border bg-card p-5 text-left sm:p-6"
                 >
                   <p className="text-[11px] uppercase tracking-[0.25em] text-primary">{slides[slideIndex].label}</p>
