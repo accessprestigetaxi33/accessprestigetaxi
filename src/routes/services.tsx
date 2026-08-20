@@ -1,23 +1,43 @@
-import { socialImageMeta } from "@/lib/og";
+import { socialImageMeta, ogLangFromSearch, ogPageUrl, absoluteUrl } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { ShieldCheck, Users, Route as RouteIcon, HelpCircle } from "lucide-react";
+import { ShieldCheck, Users, Route as RouteIcon, HelpCircle, FileText } from "lucide-react";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { BulletedList } from "@/components/BulletedList";
 import { SERVICE_CARDS_EN, SERVICE_CARDS_FR } from "@/data/services-cards";
 
-const SERVICES_TITLE = "Services taxi Charente-Maritime : Aéroport, Gare, CPAM";
-const SERVICES_DESC =
-  "Découvrez nos services de taxi en Charente-Maritime : transferts aéroport, gare, transport conventionné CPAM, mariages, business, longues distances.";
-const SERVICES_URL = "https://accessprestigetaxi.lovable.app/services";
+const SERVICES_URL = absoluteUrl("/services");
+
+const META = {
+  fr: {
+    title: "Nos prestations taxi en Charente-Maritime | Access Prestige Taxi",
+    desc:
+      "Transport sanitaire conventionné (fauteuil roulant), transferts toutes gares et tous aéroports, mise à disposition avec chauffeur, transport de groupe 8 places et trajets toutes distances, en véhicules électriques.",
+  },
+  en: {
+    title: "Our taxi services in Charente-Maritime | Access Prestige Taxi",
+    desc:
+      "Covered medical transport (wheelchair accessible), transfers to every station and airport, chauffeur hire, 8-seat group transport and all-distance journeys, with electric vehicles.",
+  },
+} as const;
+
+/** Prestation pré-sélectionnée dans le formulaire /devis pour chaque carte. */
+const PRESTATION_BY_CARD: Record<string, string> = {
+  sanitaire: "sanitaire",
+  transferts: "transfert",
+  pro: "mise-a-dispo",
+  "mise-a-disposition": "mise-a-dispo",
+  groupe: "groupe",
+  distances: "longue-distance",
+};
 
 const SERVICE_LIST = [
-  { name: "Transfert tous aéroports", description: "Transferts vers et depuis tous les aéroports." },
-  { name: "Transfert toutes gares", description: "Transferts vers et depuis toutes les gares." },
-  { name: "Transport conventionné CPAM", description: "Transport sanitaire conventionné, possible avec fauteuil roulant." },
-  { name: "Mariages et événements", description: "Mise à disposition pour mariages et événements." },
-  { name: "Trajets professionnels", description: "Déplacements business et mise à disposition avec chauffeur." },
-  { name: "Longues distances", description: "Trajets longue distance en France et en Europe sur réservation." },
+  { name: "Transport sanitaire conventionné", description: "Transport assis professionnalisé et transport avec fauteuil roulant, conventionné CPAM." },
+  { name: "Transferts toutes gares et tous aéroports", description: "Transferts vers et depuis toutes les gares et tous les aéroports, suivi des vols et des trains." },
+  { name: "Déplacements professionnels et privés", description: "Trajets business, hôtels et campings, discrétion et ponctualité." },
+  { name: "Mise à disposition avec chauffeur", description: "Demi-journée, journée complète ou événementiel." },
+  { name: "Transport de groupe", description: "Van Mercedes classe V jusqu'à 8 places, bagages volumineux acceptés." },
+  { name: "Trajets toutes distances", description: "Longue distance en France et en Europe, sur réservation." },
 ];
 
 const SERVICES_FAQ = [
@@ -36,70 +56,89 @@ const SERVICES_FAQ = [
 ];
 
 export const Route = createFileRoute("/services")({
-  head: ({ match }) => ({
-    meta: [
-      { title: SERVICES_TITLE },
-      { name: "description", content: SERVICES_DESC },
-      { property: "og:title", content: SERVICES_TITLE },
-      { property: "og:description", content: SERVICES_DESC },
-      { property: "og:url", content: SERVICES_URL },
-      { property: "og:type", content: "website" },
-      { property: "og:locale", content: "fr_FR" },
-      { property: "og:locale:alternate", content: "en_GB" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: SERVICES_TITLE },
-      { name: "twitter:description", content: SERVICES_DESC },
-      ...socialImageMeta(SERVICES_TITLE),
-    ],
-    links: seoLinks("/services", match.search),
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "FAQPage",
-              mainEntity: SERVICES_FAQ.map((f) => ({
-                "@type": "Question",
-                name: f.q,
-                acceptedAnswer: { "@type": "Answer", text: f.a },
-              })),
-            },
-            {
-              "@type": "ItemList",
-              itemListElement: SERVICE_LIST.map((svc, i) => ({
-                "@type": "ListItem",
-                position: i + 1,
-                item: {
-                  "@type": "Service",
-                  name: svc.name,
-                  description: svc.description,
-                  provider: { "@type": "TaxiService", name: "Access Prestige Taxi" },
-                  areaServed: "Charente-Maritime",
+  head: ({ match }) => {
+    const lang = ogLangFromSearch(match.search as { lang?: string } | undefined);
+    const m = META[lang];
+    const pageUrl = ogPageUrl("/services", lang);
+    return {
+      meta: [
+        { title: m.title },
+        { name: "description", content: m.desc },
+        { property: "og:title", content: m.title },
+        { property: "og:description", content: m.desc },
+        { property: "og:url", content: pageUrl },
+        { property: "og:type", content: "website" },
+        { property: "og:locale", content: lang === "en" ? "en_GB" : "fr_FR" },
+        { property: "og:locale:alternate", content: lang === "en" ? "fr_FR" : "en_GB" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: m.title },
+        { name: "twitter:description", content: m.desc },
+        ...socialImageMeta(m.title),
+      ],
+      links: seoLinks("/services", match.search),
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "FAQPage",
+                "@id": `${SERVICES_URL}#faq`,
+                mainEntity: SERVICES_FAQ.map((f) => ({
+                  "@type": "Question",
+                  name: f.q,
+                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                })),
+              },
+              {
+                "@type": "LocalBusiness",
+                additionalType: "https://schema.org/TaxiService",
+                "@id": "https://www.accessprestigetaxi.fr/#business",
+                name: "Access Prestige Taxi",
+                url: "https://www.accessprestigetaxi.fr",
+                email: "accessprestigetaxi@gmail.com",
+                areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+                hasOfferCatalog: {
+                  "@type": "OfferCatalog",
+                  name: "Prestations Access Prestige Taxi",
+                  itemListElement: SERVICE_LIST.map((svc) => ({
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: svc.name,
+                      description: svc.description,
+                      serviceType: svc.name,
+                      areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+                      provider: { "@id": "https://www.accessprestigetaxi.fr/#business" },
+                    },
+                  })),
                 },
-              })),
-            },
-            {
-              "@type": "BreadcrumbList",
-              itemListElement: [
-                { "@type": "ListItem", position: 1, name: "Accueil", item: "https://accessprestigetaxi.lovable.app/" },
-                { "@type": "ListItem", position: 2, name: "Services", item: "https://accessprestigetaxi.lovable.app/services" },
-              ],
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Accueil", item: "https://www.accessprestigetaxi.fr/" },
+                  { "@type": "ListItem", position: 2, name: "Services", item: SERVICES_URL },
+                ],
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: ServicesPage,
 });
 
 function ServicesPage() {
   const t = useT();
   const { lang } = useI18n();
+  const isEn = lang === "en";
   // Catalogue unique (ex-section "Nos services" de la page d'accueil + détails).
-  const services = lang === "en" ? SERVICE_CARDS_EN : SERVICE_CARDS_FR;
+  const services = isEn ? SERVICE_CARDS_EN : SERVICE_CARDS_FR;
+  const quoteLabel = isEn ? "Request a quote" : "Demander un devis";
+  const quoteForLabel = isEn ? "Request a quote for this service" : "Demander un devis pour cette prestation";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:py-14 md:py-16">
@@ -109,7 +148,24 @@ function ServicesPage() {
         <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:mt-4 sm:text-base">
           {t("services.intro")}
         </p>
+        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link
+            to="/devis"
+            search={{ prestation: undefined, lang: undefined }}
+            className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-7 font-semibold text-primary-foreground shadow-[var(--shadow-gold)] active:scale-95 sm:w-auto"
+          >
+            <FileText className="h-4 w-4" /> {quoteLabel}
+          </Link>
+          <Link
+            to="/reservation"
+            className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl border border-border px-7 font-semibold transition hover:border-primary/60 sm:w-auto"
+          >
+            {t("services.cta")}
+          </Link>
+        </div>
       </div>
+
+      <h2 className="sr-only">{isEn ? "Our services in detail" : "Nos prestations en détail"}</h2>
 
       <div className="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((s, i) => {
@@ -129,11 +185,19 @@ function ServicesPage() {
                 className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04] sm:h-48"
               />
               <div className="flex flex-1 flex-col p-5 sm:p-6">
-                <h2 id={headingId} className="font-display text-lg font-semibold sm:text-xl">
+                <h3 id={headingId} className="font-display text-lg font-semibold sm:text-xl">
                   {s.title}
-                </h2>
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
                 <BulletedList items={s.points} className="mt-4" ariaLabelledBy={headingId} />
+                <Link
+                  to="/devis"
+                  search={{ prestation: PRESTATION_BY_CARD[s.id] ?? "autre", lang: undefined }}
+                  aria-label={`${quoteForLabel} : ${s.title}`}
+                  className="mt-5 inline-flex min-h-[44px] items-center justify-center gap-2 self-start rounded-xl border border-primary/50 px-4 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
+                >
+                  <FileText className="h-4 w-4" /> {quoteLabel}
+                </Link>
               </div>
             </article>
           );
@@ -177,10 +241,17 @@ function ServicesPage() {
         </div>
       </section>
 
-      <div className="mt-12 text-center sm:mt-16">
+      <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:mt-16 sm:flex-row">
+        <Link
+          to="/devis"
+          search={{ prestation: undefined, lang: undefined }}
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 font-semibold text-primary-foreground shadow-[var(--shadow-gold)] active:scale-95 sm:w-auto"
+        >
+          <FileText className="h-4 w-4" /> {quoteLabel}
+        </Link>
         <Link
           to="/reservation"
-          className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-8 py-3.5 font-semibold text-primary-foreground shadow-[var(--shadow-gold)] active:scale-95 sm:w-auto sm:rounded-md sm:py-3"
+          className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl border border-border px-8 font-semibold transition hover:border-primary/60 sm:w-auto"
         >
           {t("services.cta")}
         </Link>
