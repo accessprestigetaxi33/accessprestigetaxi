@@ -5,7 +5,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { subscribePush, type PushAudience } from "@/lib/push.functions";
-import { getFcmToken } from "@/lib/firebase";
+import { getFcmToken, getLastFcmFailure, type FcmFailureReason } from "@/lib/firebase";
 import { getDriverToken } from "@/lib/driver-token";
 
 export type PushStatus = "idle" | "loading" | "granted" | "denied" | "unsupported";
@@ -46,9 +46,30 @@ interface UsePushOptions {
   driverId?: string | null;
 }
 
+/** Message lisible expliquant pourquoi l'obtention du token FCM a échoué. */
+function describeFcmFailure(reason?: FcmFailureReason, detail?: string): string {
+  switch (reason) {
+    case "permission-dismissed":
+      return "La demande d'autorisation a été fermée sans réponse. Touchez à nouveau le bouton puis choisissez « Autoriser ».";
+    case "permission-denied":
+      return "Les notifications sont bloquées pour ce site. Réglages iPhone › Notifications › Access Prestige Taxi (ou Réglages du site sur Android) pour les réautoriser.";
+    case "not-supported":
+      return "Le service de notifications n'est pas disponible sur ce navigateur.";
+    case "no-api":
+      return "Ce contexte ne fournit pas l'API de notifications (aperçu intégré ou navigateur d'application).";
+    case "sw-failed":
+      return `Le service worker de notification n'a pas pu démarrer${detail ? ` (${detail})` : ""}. Fermez complètement l'app installée puis rouvrez-la.`;
+    case "empty-token":
+      return "Aucun jeton de notification n'a été délivré par le serveur push. Réessayez dans quelques secondes.";
+    default:
+      return detail ? `Échec de l'activation : ${detail}` : "Échec de l'activation des notifications.";
+  }
+}
+
 export function usePushNotifications(opts: UsePushOptions = {}) {
   const { autoAudience, reservationId, clientAccountId, clientSessionToken, driverId } = opts;
   const [status, setStatus] = useState<PushStatus>("idle");
+  const [lastError, setLastError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   const subscribeFn = useServerFn(subscribePush);
@@ -229,9 +250,17 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       try {
         const fcm = await getFcmToken();
         if (!fcm) {
-          setStatus(Notification.permission === "denied" ? "denied" : "unsupported");
+          const failure = getLastFcmFailure();
+          setLastError(describeFcmFailure(failure?.reason, failure?.detail));
+          // « unsupported » uniquement quand l'API push est réellement absente.
+          // Toute autre panne (permission ignorée, SW KO, token vide) garde un
+          // statut réessayable au lieu de faire croire à un appareil incompatible.
+          if (Notification.permission === "denied" || failure?.reason === "permission-denied") setStatus("denied");
+          else if (failure?.reason === "not-supported" || failure?.reason === "no-api") setStatus("unsupported");
+          else setStatus("idle");
           return false;
         }
+        setLastError(null);
         await subscribeFn({
           data: {
             audience,
@@ -300,5 +329,5 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     [subscribeFn, reservationId, clientAccountId, clientSessionToken, driverId, rememberRegistration],
   );
 
-  return { status, subscription: token, subscribe, testNotification, refreshToken };
+  return { status, subscription: token, subscribe, testNotification, refreshToken, lastError };
 }
