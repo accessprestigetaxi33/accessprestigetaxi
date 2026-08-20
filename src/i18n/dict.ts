@@ -32,6 +32,7 @@ const fr: Dict = {
   "nav.tarifs": "Tarifs",
   "nav.about": "À propos",
   "nav.contact": "Contact",
+  "nav.quote": "Devis",
   "nav.book": "Réserver",
   "nav.book_long": "Réserver une course",
   "nav.account": "Mon espace",
