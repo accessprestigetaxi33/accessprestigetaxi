@@ -10,6 +10,20 @@ import { getDriverToken } from "@/lib/driver-token";
 
 export type PushStatus = "idle" | "loading" | "granted" | "denied" | "unsupported";
 
+/**
+ * Ne pas tester `"PushManager" in window` ici. Sur certains Chrome Android
+ * lancés en WebAPK/PWA, PushManager n'est exposé que par
+ * ServiceWorkerRegistration.pushManager. Firebase sait gérer ce cas et son
+ * propre `isSupported()` reste l'autorité au moment d'obtenir le token.
+ */
+function hasBrowserPushApis(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    "Notification" in window &&
+    "serviceWorker" in navigator
+  );
+}
+
 // Identifiant de device stable, généré une fois et conservé en localStorage.
 // Préféré au hash du user_agent côté serveur : deux iPhones du même modèle
 // ont un UA quasi identique, ce qui les fait collisionner. Un uuid généré et
@@ -122,12 +136,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
 
   // ── Détection support initial ──
   useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      !("Notification" in window) ||
-      !("serviceWorker" in navigator) ||
-      !("PushManager" in window)
-    ) {
+    if (!hasBrowserPushApis()) {
       setStatus("unsupported");
       return;
     }
@@ -139,13 +148,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   // ── Auto-subscribe au montage ──
   useEffect(() => {
     if (!autoAudience) return;
-    if (
-      typeof window === "undefined" ||
-      !("Notification" in window) ||
-      !("serviceWorker" in navigator) ||
-      !("PushManager" in window)
-    )
-      return;
+    if (!hasBrowserPushApis()) return;
 
     // Une autorisation accordée reste valable sans limite sur cet appareil.
     // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a

@@ -40,7 +40,7 @@ export function PushDebug() {
     // 1. Support API
     log("info", `Notification in window: ${"Notification" in window}`);
     log("info", `serviceWorker in navigator: ${"serviceWorker" in navigator}`);
-    log("info", `PushManager in window: ${"PushManager" in window}`);
+    log("info", `PushManager global: ${"PushManager" in window} (informatif uniquement)`);
     log("info", `Permission actuelle: ${"Notification" in window ? Notification.permission : "N/A"}`);
     log(
       "info",
@@ -48,7 +48,10 @@ export function PushDebug() {
     );
     log("info", `UserAgent: ${navigator.userAgent.slice(0, 120)}`);
 
-    if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+    // Certains Chrome Android en PWA n'exposent pas PushManager sur `window`,
+    // mais bien sur l'enregistrement du service worker. Firebase fonctionne
+    // dans ce cas : ne pas conclure à tort que l'appareil est incompatible.
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
       log("error", "❌ Push non supporté sur ce navigateur/OS");
       setRunning(false);
       return;
