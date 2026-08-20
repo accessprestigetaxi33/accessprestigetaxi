@@ -447,6 +447,96 @@ export type Database = {
         }
         Relationships: []
       }
+      devis: {
+        Row: {
+          aller_retour: boolean
+          arrivee: string
+          bagages: number
+          created_at: string
+          date_souhaitee: string | null
+          depart: string
+          distance_km: number | null
+          email: string
+          fauteuil_roulant: boolean
+          heure_souhaitee: string | null
+          id: string
+          langue: string
+          nom: string
+          passagers: number
+          precisions: string | null
+          prestation: string | null
+          prix_estime: number | null
+          prix_propose: number | null
+          reference: string
+          reponse: string | null
+          sieges_enfant: boolean
+          statut: string
+          telephone: string | null
+          transport_groupe: boolean
+          transport_sanitaire: boolean
+          updated_at: string
+          vehicule: string | null
+        }
+        Insert: {
+          aller_retour?: boolean
+          arrivee: string
+          bagages?: number
+          created_at?: string
+          date_souhaitee?: string | null
+          depart: string
+          distance_km?: number | null
+          email: string
+          fauteuil_roulant?: boolean
+          heure_souhaitee?: string | null
+          id?: string
+          langue?: string
+          nom: string
+          passagers?: number
+          precisions?: string | null
+          prestation?: string | null
+          prix_estime?: number | null
+          prix_propose?: number | null
+          reference: string
+          reponse?: string | null
+          sieges_enfant?: boolean
+          statut?: string
+          telephone?: string | null
+          transport_groupe?: boolean
+          transport_sanitaire?: boolean
+          updated_at?: string
+          vehicule?: string | null
+        }
+        Update: {
+          aller_retour?: boolean
+          arrivee?: string
+          bagages?: number
+          created_at?: string
+          date_souhaitee?: string | null
+          depart?: string
+          distance_km?: number | null
+          email?: string
+          fauteuil_roulant?: boolean
+          heure_souhaitee?: string | null
+          id?: string
+          langue?: string
+          nom?: string
+          passagers?: number
+          precisions?: string | null
+          prestation?: string | null
+          prix_estime?: number | null
+          prix_propose?: number | null
+          reference?: string
+          reponse?: string | null
+          sieges_enfant?: boolean
+          statut?: string
+          telephone?: string | null
+          transport_groupe?: boolean
+          transport_sanitaire?: boolean
+          updated_at?: string
+          vehicule?: string | null
+        }
+        Relationships: []
+      }
       direct_messages: {
         Row: {
           client_account_id: string

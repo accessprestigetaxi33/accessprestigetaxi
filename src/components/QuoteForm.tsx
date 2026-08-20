@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Loader2, Send, CheckCircle2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useI18n } from "@/i18n/I18nProvider";
+import { submitDevis } from "@/lib/devis.functions";
 
 const COPY = {
   fr: {
@@ -47,6 +50,8 @@ const COPY = {
     err: "L'envoi a échoué. Merci de réessayer ou de nous appeler.",
     yes: "Oui",
     subject: "Demande de devis",
+    refLabel: "Votre numéro de référence",
+    trackCta: "Suivre ma demande",
   },
   en: {
     title: "Your quote request",
@@ -92,58 +97,70 @@ const COPY = {
     err: "Sending failed. Please try again or call us.",
     yes: "Yes",
     subject: "Quote request",
+    refLabel: "Your reference number",
+    trackCta: "Track my request",
   },
 } as const;
 
-export function QuoteForm() {
+export type QuotePrefill = {
+  depart?: string;
+  arrivee?: string;
+  date?: string;
+  heure?: string;
+  allerRetour?: boolean;
+  passagers?: number;
+  vehicule?: string;
+  distanceKm?: number | null;
+  prix?: number | null;
+};
+
+export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRef?: React.Ref<HTMLFormElement> }) {
   const { lang } = useI18n();
   const isEn = lang === "en";
   const c = isEn ? COPY.en : COPY.fr;
+  const submit = useServerFn(submitDevis);
   const [state, setState] = useState<"idle" | "sending" | "ok" | "error">("idle");
   const [sanitaire, setSanitaire] = useState(false);
   const [groupe, setGroupe] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
     const g = (k: string) => String(fd.get(k) ?? "").trim();
-    const flag = (k: string) => (fd.get(k) ? c.yes : "—");
-
-    // Le devis réutilise le canal e-mail transactionnel du formulaire de contact :
-    // les champs structurés sont mis en forme dans un message lisible par les chauffeurs.
-    const lines = [
-      `${c.prestation}: ${g("prestation")}`,
-      `${c.depart.replace(" *", "")}: ${g("depart")}`,
-      `${c.arrivee.replace(" *", "")}: ${g("arrivee")}`,
-      `${c.date.replace(" *", "")}: ${g("date")} — ${g("heure")}`,
-      `${c.aller}: ${flag("aller_retour")}`,
-      `${c.passagers}: ${g("passagers")}`,
-      `${c.bagages}: ${g("bagages")}`,
-      `${c.vehicule}: ${g("vehicule")}`,
-      `${c.sanitaire}: ${flag("sanitaire")}`,
-      `${c.fauteuil}: ${flag("fauteuil")}`,
-      `${c.groupe}: ${flag("groupe")}`,
-      `${c.bagagesVol}: ${flag("bagages_volumineux")}`,
-      `${c.sieges}: ${flag("sieges")}`,
-      "",
-      g("precisions") || "—",
-    ];
+    const num = (k: string, d: number) => {
+      const v = Number(fd.get(k));
+      return Number.isFinite(v) && v >= 0 ? v : d;
+    };
 
     setState("sending");
     try {
-      const res = await fetch("/api/public/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const res = await submit({
+        data: {
           nom: g("nom"),
           email: g("email"),
           telephone: g("telephone") || null,
-          sujet: `${c.subject} — ${g("depart")} → ${g("arrivee")}`.slice(0, 120),
-          message: lines.join("\n"),
-        }),
+          depart: g("depart"),
+          arrivee: g("arrivee"),
+          date_souhaitee: g("date") || null,
+          heure_souhaitee: g("heure") || null,
+          aller_retour: !!fd.get("aller_retour"),
+          passagers: Math.min(8, Math.max(1, Math.round(num("passagers", 1)))),
+          bagages: Math.min(20, Math.round(num("bagages", 0))),
+          vehicule: g("vehicule") || null,
+          prestation: g("prestation") || null,
+          transport_sanitaire: !!fd.get("sanitaire"),
+          fauteuil_roulant: !!fd.get("fauteuil"),
+          transport_groupe: !!fd.get("groupe"),
+          sieges_enfant: !!fd.get("sieges"),
+          distance_km: prefill?.distanceKm ?? null,
+          prix_estime: prefill?.prix ?? null,
+          precisions: g("precisions") || null,
+          langue: isEn ? "en" : "fr",
+        },
       });
-      if (!res.ok) throw new Error("failed");
+      setReference(res.reference);
       setState("ok");
       form.reset();
       setSanitaire(false);
@@ -162,12 +179,26 @@ export function QuoteForm() {
       <div className="rounded-2xl border border-primary/40 bg-card p-8 text-center">
         <CheckCircle2 className="mx-auto h-9 w-9 text-primary" />
         <p className="mt-3 font-display text-lg font-semibold">{c.ok}</p>
+        {reference && (
+          <>
+            <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{c.refLabel}</p>
+            <p className="mt-1 font-display text-2xl font-semibold tracking-[0.12em] text-primary">{reference}</p>
+            <Link
+              to="/devis/suivi"
+              search={{ ref: reference }}
+              className="mt-5 inline-block text-sm font-semibold text-primary underline"
+            >
+              {c.trackCta} →
+            </Link>
+          </>
+        )}
       </div>
     );
   }
 
+
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+    <form ref={formRef} onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-5 sm:p-7">
       <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.title}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{c.sub}</p>
 
@@ -191,25 +222,25 @@ export function QuoteForm() {
           </select>
         </Field>
         <Field label={c.depart} className={labelCls}>
-          <input name="depart" required maxLength={160} className={inputCls} />
+          <input name="depart" required maxLength={160} defaultValue={prefill?.depart ?? ""} key={`dep-${prefill?.depart ?? ""}`} className={inputCls} />
         </Field>
         <Field label={c.arrivee} className={labelCls}>
-          <input name="arrivee" required maxLength={160} className={inputCls} />
+          <input name="arrivee" required maxLength={160} defaultValue={prefill?.arrivee ?? ""} key={`arr-${prefill?.arrivee ?? ""}`} className={inputCls} />
         </Field>
         <Field label={c.date} className={labelCls}>
-          <input name="date" type="date" required className={inputCls} />
+          <input name="date" type="date" required defaultValue={prefill?.date ?? ""} key={`d-${prefill?.date ?? ""}`} className={inputCls} />
         </Field>
         <Field label={c.heure} className={labelCls}>
-          <input name="heure" type="time" required className={inputCls} />
+          <input name="heure" type="time" required defaultValue={prefill?.heure ?? ""} key={`h-${prefill?.heure ?? ""}`} className={inputCls} />
         </Field>
         <Field label={c.passagers} className={labelCls}>
-          <input name="passagers" type="number" min={1} max={8} defaultValue={1} className={inputCls} />
+          <input name="passagers" type="number" min={1} max={8} defaultValue={prefill?.passagers ?? 1} key={`p-${prefill?.passagers ?? 1}`} className={inputCls} />
         </Field>
         <Field label={c.bagages} className={labelCls}>
           <input name="bagages" type="number" min={0} max={20} defaultValue={0} className={inputCls} />
         </Field>
         <Field label={c.vehicule} className={`${labelCls} sm:col-span-2`}>
-          <select name="vehicule" className={inputCls} defaultValue={c.vehicules[0].l}>
+          <select name="vehicule" className={inputCls} key={`v-${prefill?.vehicule ?? ""}`} defaultValue={prefill?.vehicule ?? c.vehicules[0].l}>
             {c.vehicules.map((v) => (
               <option key={v.v} value={v.l}>
                 {v.l}
@@ -234,7 +265,7 @@ export function QuoteForm() {
         <Check2 name="groupe" label={c.groupe} checked={groupe} onChange={setGroupe} />
         {groupe && <Check2 name="bagages_volumineux" label={c.bagagesVol} />}
         <Check2 name="sieges" label={c.sieges} />
-        <Check2 name="aller_retour" label={c.aller} />
+        <Check2 name="aller_retour" label={c.aller} key={`ar-${prefill?.allerRetour ? 1 : 0}`} defaultChecked={prefill?.allerRetour} />
       </fieldset>
 
       <label className="mt-4 block">
@@ -283,11 +314,13 @@ function Check2({
   name,
   label,
   checked,
+  defaultChecked,
   onChange,
 }: {
   name: string;
   label: string;
   checked?: boolean;
+  defaultChecked?: boolean;
   onChange?: (v: boolean) => void;
 }) {
   return (
@@ -296,6 +329,7 @@ function Check2({
         type="checkbox"
         name={name}
         checked={onChange ? checked : undefined}
+        defaultChecked={onChange ? undefined : defaultChecked}
         onChange={onChange ? (e) => onChange(e.target.checked) : undefined}
         className="h-4 w-4 accent-[hsl(var(--primary))]"
       />

@@ -4,7 +4,9 @@ import { seoLinks } from "@/lib/seo-hreflang";
 import { Accessibility, Clock3, Mail, Phone, Users, Zap } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
-import { QuoteForm } from "@/components/QuoteForm";
+import { useRef, useState } from "react";
+import { QuoteForm, type QuotePrefill } from "@/components/QuoteForm";
+import { QuoteEstimator } from "@/components/QuoteEstimator";
 import heroLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
 const heroLogo = heroLogoAsset.url;
@@ -77,6 +79,7 @@ const COPY = {
       { icon: Clock3, t: "Réponse rapide", d: "Un devis clair, sans engagement." },
     ],
     orCall: "Ou contactez-nous directement",
+    track: "Déjà une demande ? Suivre mon devis par numéro de référence",
     bookNow: "Besoin d'un trajet immédiat ? Réservez en ligne",
   },
   en: {
@@ -91,6 +94,7 @@ const COPY = {
       { icon: Clock3, t: "Fast reply", d: "A clear quote, no commitment." },
     ],
     orCall: "Or contact us directly",
+    track: "Already sent a request? Track your quote by reference number",
     bookNow: "Need a ride right now? Book online",
   },
 } as const;
@@ -98,6 +102,8 @@ const COPY = {
 function DevisPage() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
+  const [prefill, setPrefill] = useState<QuotePrefill | undefined>(undefined);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-12 sm:px-6 sm:py-16 lg:px-8">
@@ -125,8 +131,33 @@ function DevisPage() {
       </div>
 
       <div className="mt-10">
-        <QuoteForm />
+        <QuoteEstimator
+          onQuote={(p) => {
+            setPrefill({
+              depart: p.depart,
+              arrivee: p.arrivee,
+              date: p.date,
+              heure: p.heure,
+              allerRetour: p.allerRetour,
+              passagers: p.passagers,
+              vehicule: p.vehicule,
+              distanceKm: p.distanceKm,
+              prix: p.prix,
+            });
+            requestAnimationFrame(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+          }}
+        />
       </div>
+
+      <div className="mt-10">
+        <QuoteForm prefill={prefill} formRef={formRef} />
+      </div>
+
+      <p className="mt-6 text-center text-sm">
+        <Link to="/devis/suivi" search={{ ref: undefined }} className="font-semibold text-primary underline">
+          {c.track} →
+        </Link>
+      </p>
 
       <section className="mt-10 rounded-2xl border border-border bg-card/40 p-6 text-center">
         <h2 className="font-display text-lg font-semibold">{c.orCall}</h2>

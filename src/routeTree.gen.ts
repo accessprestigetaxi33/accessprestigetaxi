@@ -43,6 +43,7 @@ import { Route as ClientTrajetsRouteImport } from './routes/client.trajets'
 import { Route as CourseIdRouteImport } from './routes/course.$id'
 import { Route as DestinationsIndexRouteImport } from './routes/destinations.index'
 import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slug'
+import { Route as DevisSuiviRouteImport } from './routes/devis.suivi'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as ReservationIdRouteImport } from './routes/reservation.$id'
 import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
@@ -237,6 +238,11 @@ const DestinationsSlugRoute = DestinationsSlugRouteImport.update({
   path: '/destinations/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevisSuiviRoute = DevisSuiviRouteImport.update({
+  id: '/suivi',
+  path: '/suivi',
+  getParentRoute: () => DevisRoute,
+} as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
@@ -366,7 +372,7 @@ export interface FileRoutesByFullPath {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
-  '/devis': typeof DevisRoute
+  '/devis': typeof DevisRouteWithChildren
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -393,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
   '/destinations/$slug': typeof DestinationsSlugRoute
+  '/devis/suivi': typeof DevisSuiviRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
@@ -425,7 +432,7 @@ export interface FileRoutesByTo {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
-  '/devis': typeof DevisRoute
+  '/devis': typeof DevisRouteWithChildren
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -452,6 +459,7 @@ export interface FileRoutesByTo {
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
   '/destinations/$slug': typeof DestinationsSlugRoute
+  '/devis/suivi': typeof DevisSuiviRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
@@ -485,7 +493,7 @@ export interface FileRoutesById {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
-  '/devis': typeof DevisRoute
+  '/devis': typeof DevisRouteWithChildren
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -512,6 +520,7 @@ export interface FileRoutesById {
   '/client/trajets': typeof ClientTrajetsRoute
   '/course/$id': typeof CourseIdRoute
   '/destinations/$slug': typeof DestinationsSlugRoute
+  '/devis/suivi': typeof DevisSuiviRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
@@ -573,6 +582,7 @@ export interface FileRouteTypes {
     | '/client/trajets'
     | '/course/$id'
     | '/destinations/$slug'
+    | '/devis/suivi'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
@@ -632,6 +642,7 @@ export interface FileRouteTypes {
     | '/client/trajets'
     | '/course/$id'
     | '/destinations/$slug'
+    | '/devis/suivi'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
@@ -691,6 +702,7 @@ export interface FileRouteTypes {
     | '/client/trajets'
     | '/course/$id'
     | '/destinations/$slug'
+    | '/devis/suivi'
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
@@ -724,7 +736,7 @@ export interface RootRouteChildren {
   CarteRoute: typeof CarteRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
-  DevisRoute: typeof DevisRoute
+  DevisRoute: typeof DevisRouteWithChildren
   DiagnosticRoute: typeof DiagnosticRoute
   DriverRoute: typeof DriverRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -1016,6 +1028,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DestinationsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/devis/suivi': {
+      id: '/devis/suivi'
+      path: '/suivi'
+      fullPath: '/devis/suivi'
+      preLoaderRoute: typeof DevisSuiviRouteImport
+      parentRoute: typeof DevisRoute
+    }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
       path: '/email/unsubscribe'
@@ -1180,6 +1199,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DevisRouteChildren {
+  DevisSuiviRoute: typeof DevisSuiviRoute
+}
+
+const DevisRouteChildren: DevisRouteChildren = {
+  DevisSuiviRoute: DevisSuiviRoute,
+}
+
+const DevisRouteWithChildren = DevisRoute._addFileChildren(DevisRouteChildren)
+
 interface ReservationRouteChildren {
   ReservationIdRoute: typeof ReservationIdRoute
 }
@@ -1209,7 +1238,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarteRoute: CarteRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
-  DevisRoute: DevisRoute,
+  DevisRoute: DevisRouteWithChildren,
   DiagnosticRoute: DiagnosticRoute,
   DriverRoute: DriverRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
