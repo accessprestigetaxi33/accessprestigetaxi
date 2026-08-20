@@ -21,11 +21,18 @@ export const getActiveVisitorCount = createServerFn({ method: "POST" })
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Purge des sessions périmées (>90 s sans battement) : côté serveur uniquement,
+    // le navigateur n'a pas le droit de supprimer des lignes active_visitors.
+    if (data.scope === "site") {
+      const cutoff = new Date(Date.now() - 90_000).toISOString();
+      await supabaseAdmin.from("active_visitors").delete().lt("last_seen", cutoff);
+    }
     const { data: count } = await supabaseAdmin.rpc("get_active_visitor_count" as any, {
       p_scope: data.scope,
     });
     return { count: Number(count ?? 0) };
   });
+
 
 /**
  * Ouverture de session chauffeur sans mot de passe : Alain ou Patricia
