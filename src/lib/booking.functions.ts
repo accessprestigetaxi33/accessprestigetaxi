@@ -1,10 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const Coord = z
-  .object({ lat: z.number(), lng: z.number() })
-  .nullable()
-  .optional();
+const Coord = z.object({ lat: z.number(), lng: z.number() }).nullable().optional();
 
 const QuoteSchema = z.object({
   depart: z.string().trim().max(300).default(""),
@@ -112,8 +109,7 @@ export const bookRide = createServerFn({ method: "POST" })
 
     const suiviId = newSuiviId();
     const email = data.email || null;
-    const message =
-      [data.options.join(" · ") || null, data.note || null].filter(Boolean).join(" — ") || null;
+    const message = [data.options.join(" · ") || null, data.note || null].filter(Boolean).join(" — ") || null;
 
     const { data: inserted, error } = await supabaseAdmin
       .from("reservations")
@@ -194,6 +190,38 @@ export const bookRide = createServerFn({ method: "POST" })
       );
     } catch (e) {
       console.warn("[bookRide] driver push failed", e);
+    }
+
+    // ⚠️ AJOUT : email admin/chauffeurs — n'existait pas du tout avant, le
+    // template "new-reservation-admin" était enregistré mais jamais appelé
+    // à la création d'une résa. Jamais bloquant pour le client.
+    try {
+      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+      const { TEMPLATES } = await import("@/lib/email-templates/registry");
+      const adminTemplate = TEMPLATES["new-reservation-admin"];
+      if (adminTemplate?.to) {
+        await sendTemplateEmail("new-reservation-admin", adminTemplate.to, {
+          idempotencyKey: `admin-new-${inserted.id}`,
+          templateData: {
+            nom: data.nom,
+            phone: data.telephone,
+            email,
+            depart: q.depart.label,
+            arrivee: q.arrivee.label,
+            // Passé tel quel : le template valide et formate lui-même
+            // (voir correctif fmt() dans new-reservation-admin.tsx — il ne
+            // faut pas dupliquer la logique de parsing ici).
+            pickup_datetime: data.pickup_datetime,
+            passagers: data.passagers,
+            bagages: data.bagages,
+            admin_url: "https://accessprestigetaxi.fr/driver",
+          },
+        });
+      } else {
+        console.warn("[bookRide] admin email template sans destinataire (to) — envoi ignoré");
+      }
+    } catch (e) {
+      console.warn("[bookRide] admin email failed", e);
     }
 
     return {
