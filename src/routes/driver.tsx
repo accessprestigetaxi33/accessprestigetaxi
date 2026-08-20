@@ -507,15 +507,6 @@ function DriverPage() {
     };
   }, [token, tryToken]);
 
-  // ── Fix conflit manifest PWA ────────────────────────────────────────────
-  useEffect(() => {
-    const links = Array.from(document.querySelectorAll('link[rel="manifest"]')) as HTMLLinkElement[];
-    const keep = links.find((l) => l.href.includes("/api/manifest"));
-    links.forEach((l) => {
-      if (l !== keep) l.remove();
-    });
-  }, []);
-
   // Chargement initial très bref (vérif du token en cache) : seul cet état
   // bloque l'écran. Dès qu'on sait qu'il n'y a pas de session valide, on
   // n'affiche plus de mur de connexion — on entre directement dans l'appli ;
