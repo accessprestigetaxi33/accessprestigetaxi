@@ -148,58 +148,54 @@ export const bookRide = createServerFn({ method: "POST" })
       return { ok: false, error: "INSERT_FAILED" };
     }
 
-    // Notifications (jamais bloquantes pour le client).
-    try {
-      const { deliverClientConfirmation } = await import("@/lib/reservation-notifications.server");
-      const when = new Intl.DateTimeFormat(data.lang === "en" ? "en-GB" : "fr-FR", {
-        dateStyle: "full",
-        timeStyle: "short",
-        timeZone: "Europe/Paris",
-      }).format(new Date(data.pickup_datetime));
-      await deliverClientConfirmation({
-        reservationId: inserted.id,
-        email,
-        lang: data.lang,
-        payload: {
-          clientName: data.nom,
-          pickupDatetime: when,
-          depart: q.depart.label,
-          arrivee: q.arrivee.label,
-          priceEstimate: q.prix.total,
-          trackingId: suiviId,
-          trackingLink: `https://accessprestigetaxi.lovable.app/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
-        },
-      });
-    } catch (e) {
-      console.warn("[bookRide] client confirmation failed", e);
-    }
-
-    try {
-      const { sendPushToAudience } = await import("@/lib/push.server");
-      await sendPushToAudience(
-        "chauffeur",
-        {
-          title: "🚕 Nouvelle réservation",
-          body: `${q.depart.label} → ${q.arrivee.label}`,
-          url: "/driver",
-          tag: `new-res-${inserted.id}`,
-          requireInteraction: true,
-          data: { reservation_id: inserted.id, kind: "new" },
-        },
-        { dedupTtlMinutes: 24 * 60 },
-      );
-    } catch (e) {
-      console.warn("[bookRide] driver push failed", e);
-    }
-
-    // ⚠️ AJOUT : email admin/chauffeurs — n'existait pas du tout avant, le
-    // template "new-reservation-admin" était enregistré mais jamais appelé
-    // à la création d'une résa. Jamais bloquant pour le client.
-    try {
-      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-      const { TEMPLATES } = await import("@/lib/email-templates/registry");
-      const adminTemplate = TEMPLATES["new-reservation-admin"];
-      if (adminTemplate?.to) {
+    // Les trois canaux sont indépendants : les lancer en parallèle évite que
+    // l'utilisateur attende leur durée cumulée après avoir confirmé.
+    const notificationResults = await Promise.allSettled([
+      (async () => {
+        const { deliverClientConfirmation } = await import("@/lib/reservation-notifications.server");
+        const when = new Intl.DateTimeFormat(data.lang === "en" ? "en-GB" : "fr-FR", {
+          dateStyle: "full",
+          timeStyle: "short",
+          timeZone: "Europe/Paris",
+        }).format(new Date(data.pickup_datetime));
+        await deliverClientConfirmation({
+          reservationId: inserted.id,
+          email,
+          lang: data.lang,
+          payload: {
+            clientName: data.nom,
+            pickupDatetime: when,
+            depart: q.depart.label,
+            arrivee: q.arrivee.label,
+            priceEstimate: q.prix.total,
+            trackingId: suiviId,
+            trackingLink: `https://accessprestigetaxi.lovable.app/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
+          },
+        });
+      })(),
+      (async () => {
+        const { sendPushToAudience } = await import("@/lib/push.server");
+        await sendPushToAudience(
+          "chauffeur",
+          {
+            title: "🚕 Nouvelle réservation",
+            body: `${q.depart.label} → ${q.arrivee.label}`,
+            url: "/driver",
+            tag: `new-res-${inserted.id}`,
+            requireInteraction: true,
+            data: { reservation_id: inserted.id, kind: "new" },
+          },
+          { dedupTtlMinutes: 24 * 60 },
+        );
+      })(),
+      (async () => {
+        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+        const { TEMPLATES } = await import("@/lib/email-templates/registry");
+        const adminTemplate = TEMPLATES["new-reservation-admin"];
+        if (!adminTemplate?.to) {
+          console.warn("[bookRide] admin email template sans destinataire (to) — envoi ignoré");
+          return;
+        }
         await sendTemplateEmail("new-reservation-admin", adminTemplate.to, {
           idempotencyKey: `admin-new-${inserted.id}`,
           templateData: {
@@ -208,20 +204,16 @@ export const bookRide = createServerFn({ method: "POST" })
             email,
             depart: q.depart.label,
             arrivee: q.arrivee.label,
-            // Passé tel quel : le template valide et formate lui-même
-            // (voir correctif fmt() dans new-reservation-admin.tsx — il ne
-            // faut pas dupliquer la logique de parsing ici).
             pickup_datetime: data.pickup_datetime,
             passagers: data.passagers,
             bagages: data.bagages,
             admin_url: "https://accessprestigetaxi.fr/driver",
           },
         });
-      } else {
-        console.warn("[bookRide] admin email template sans destinataire (to) — envoi ignoré");
-      }
-    } catch (e) {
-      console.warn("[bookRide] admin email failed", e);
+      })(),
+    ]);
+    for (const result of notificationResults) {
+      if (result.status === "rejected") console.warn("[bookRide] notification failed", result.reason);
     }
 
     return {
