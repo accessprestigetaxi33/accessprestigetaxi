@@ -514,6 +514,10 @@ export function BookingStudio() {
       return;
     }
     setSubmitting(true);
+    // Optimistic UI : on affiche immédiatement l'écran de confirmation,
+    // la référence de suivi arrive dès que le serveur répond.
+    setSuccess({ suiviId: "", prix: quote.data?.prix ?? 0, pending: true });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     try {
       const optionLabels = options.map(
         (id) => OPTION_LIST.find((o) => o.id === id)?.label ?? id,
@@ -537,19 +541,21 @@ export function BookingStudio() {
         },
       });
       if (!res.ok) {
+        setSuccess(null);
         toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book, {
           position: "top-center",
         });
         return;
       }
       setSuccess({ suiviId: res.suivi_id, prix: res.prix });
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error("[booking] submit failed", err);
+      setSuccess(null);
       toast.error(L.err_book, { position: "top-center" });
     } finally {
       setSubmitting(false);
     }
+
   };
 
   /* ── écran de confirmation ── */
