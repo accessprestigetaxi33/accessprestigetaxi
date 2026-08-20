@@ -10,6 +10,30 @@ import { getDriverToken } from "@/lib/driver-token";
 
 export type PushStatus = "idle" | "loading" | "granted" | "denied" | "unsupported";
 
+// Identifiant de device stable, généré une fois et conservé en localStorage.
+// Préféré au hash du user_agent côté serveur : deux iPhones du même modèle
+// ont un UA quasi identique, ce qui les fait collisionner. Un uuid généré et
+// stocké localement identifie fiablement CE navigateur/device, y compris
+// quand plusieurs identités (Alain/Patricia) se relaient dessus.
+const DEVICE_ID_KEY = "apt_device_id:v1";
+function getOrCreateDeviceId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const existing = window.localStorage.getItem(DEVICE_ID_KEY);
+    if (existing) return existing;
+    const fresh =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `dev-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    window.localStorage.setItem(DEVICE_ID_KEY, fresh);
+    return fresh;
+  } catch {
+    // Stockage privé/indisponible : pas de persistance possible, on retombe
+    // sur le fallback hash-UA côté serveur (device_id absent).
+    return "";
+  }
+}
+
 interface UsePushOptions {
   /** Si fourni, souscrit automatiquement au montage avec cette audience. */
   autoAudience?: PushAudience;
@@ -147,6 +171,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             client_session_token: clientSessionToken,
             driver_token: autoAudience === "chauffeur" ? getDriverToken() : undefined,
             user_agent: navigator.userAgent.slice(0, 500),
+            device_id: getOrCreateDeviceId(),
           },
         });
         if (!cancelled) {
@@ -191,6 +216,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       resId?: string | null,
       accountId?: string | null,
       sessionToken?: string,
+      // ⚠️ Permet de forcer le driver_id explicitement au lieu de retomber sur
+      // celui capturé en closure via les options du hook (opts.driverId).
+      // Nécessaire quand identification + abonnement sont déclenchés dans le
+      // même clic : setDriverId() côté appelant est asynchrone, donc le
+      // driverId du hook peut encore valoir l'ancienne valeur (souvent null)
+      // au moment de cet appel. undefined = comportement inchangé (fallback
+      // sur driverId de closure) ; toute autre valeur (y compris null) prime.
+      driverIdOverride?: string | null,
     ): Promise<boolean> => {
       setStatus("loading");
       try {
@@ -205,10 +238,11 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             fcm_token: fcm,
             reservation_id: resId ?? reservationId ?? null,
             client_account_id: accountId ?? clientAccountId ?? null,
-            driver_id: driverId ?? null,
+            driver_id: (driverIdOverride !== undefined ? driverIdOverride : driverId) ?? null,
             client_session_token: sessionToken ?? clientSessionToken,
             driver_token: audience === "chauffeur" ? getDriverToken() : undefined,
             user_agent: navigator.userAgent.slice(0, 500),
+            device_id: getOrCreateDeviceId(),
           },
         });
         rememberRegistration(audience, fcm);
@@ -253,6 +287,7 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
             client_session_token: clientSessionToken,
             driver_token: audience === "chauffeur" ? getDriverToken() : undefined,
             user_agent: navigator.userAgent.slice(0, 500),
+            device_id: getOrCreateDeviceId(),
           },
         });
         rememberRegistration(audience, fcm);
