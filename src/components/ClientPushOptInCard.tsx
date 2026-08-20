@@ -68,7 +68,7 @@ export function ClientPushOptInCard({
 }: ClientPushOptInCardProps) {
   const { t, lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
-  const { status, subscribe } = usePushNotifications({ clientAccountId });
+  const { status, subscribe, lastError } = usePushNotifications({ clientAccountId });
   const [busy, setBusy] = useState(false);
   const [ios, setIos] = useState(false);
   const [standalone, setStandalone] = useState(true);
@@ -168,6 +168,7 @@ export function ClientPushOptInCard({
                   </>
                 )}
               </button>
+              {lastError && <div className="mt-2 text-[11px] text-red-300/90">{lastError}</div>}
             </>
           )}
         </div>

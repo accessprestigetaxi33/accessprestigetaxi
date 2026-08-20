@@ -59,7 +59,7 @@ function isStandalone(): boolean {
 export function NotificationOptInStep() {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
-  const { status, subscribe } = usePushNotifications();
+  const { status, subscribe, lastError } = usePushNotifications();
   const [busy, setBusy] = useState(false);
   const [ios, setIos] = useState(false);
   const [standalone, setStandalone] = useState(true);
@@ -132,6 +132,7 @@ export function NotificationOptInStep() {
             {busy ? c.working : c.cta}
           </button>
           {denied && <p className="mt-3 text-sm text-destructive">{c.denied}</p>}
+          {!denied && lastError && <p className="mt-3 text-sm text-destructive">{lastError}</p>}
         </>
       )}
 
