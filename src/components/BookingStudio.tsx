@@ -548,10 +548,13 @@ export function BookingStudio() {
           options: optionLabels,
           note: note.trim(),
           lang: isEn ? "en" : "fr",
+          client_request_id: requestIdRef.current,
         },
       });
       if (!res.ok) {
         setSuccess(null);
+        // Échec métier : on repart sur une nouvelle clé au prochain essai.
+        requestIdRef.current = "";
         toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book, {
           position: "top-center",
         });
@@ -561,8 +564,10 @@ export function BookingStudio() {
     } catch (err) {
       console.error("[booking] submit failed", err);
       setSuccess(null);
+      // Erreur réseau : on garde la clé pour que le renvoi ne crée pas de doublon.
       toast.error(L.err_book, { position: "top-center" });
     } finally {
+      inFlightRef.current = false;
       setSubmitting(false);
     }
 
