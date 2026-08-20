@@ -82,7 +82,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  head: ({ matches }) => {
+    // L'espace chauffeur déclare son propre manifest (/api/manifest?role=driver).
+    // iOS ne lit qu'UN seul <link rel="manifest"> : on n'émet donc pas celui du
+    // site public sur les routes /driver, sinon il gagne (il est rendu en premier).
+    const isDriver = (matches?.[matches.length - 1]?.pathname ?? "").startsWith("/driver");
+    return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
