@@ -179,7 +179,37 @@ function useHeroSlideshow(count: number, durationMs: number) {
 }
 
 
+// Cases du hero : reprennent les pictogrammes et mentions de la bannière photo.
+const HERO_PILLARS_FR = [
+  { icon: Stethoscope, label: "Transport conventionné" },
+  { icon: PlaneTakeoff, label: "Transferts gares & aéroports" },
+  { icon: BriefcaseBusiness, label: "Déplacements professionnels" },
+  { icon: Leaf, label: "100 % électrique" },
+] as const;
+
+const HERO_PILLARS_EN = [
+  { icon: Stethoscope, label: "Covered medical transport" },
+  { icon: PlaneTakeoff, label: "Station & airport transfers" },
+  { icon: BriefcaseBusiness, label: "Business travel" },
+  { icon: Leaf, label: "100% electric" },
+] as const;
+
+const HERO_VALUES_FR = [
+  { icon: Clock, label: "Ponctualité" },
+  { icon: Sofa, label: "Confort" },
+  { icon: EyeOff, label: "Discrétion" },
+  { icon: ShieldCheck, label: "Sécurité" },
+] as const;
+
+const HERO_VALUES_EN = [
+  { icon: Clock, label: "Punctuality" },
+  { icon: Sofa, label: "Comfort" },
+  { icon: EyeOff, label: "Discretion" },
+  { icon: ShieldCheck, label: "Safety" },
+] as const;
+
 const COPY = {
+
   fr: {
     kicker: "Transport sanitaire avec fauteuil roulant · Transport de groupe · Toutes distances · Charente-Maritime",
     h1: "Votre transport, notre exigence",
