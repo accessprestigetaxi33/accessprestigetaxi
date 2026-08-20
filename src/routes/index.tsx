@@ -669,15 +669,38 @@ function Index() {
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-card px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary"
+            className="w-full"
           >
-            <BatteryCharging className="hidden h-3.5 w-3.5 sm:inline-block" />
-            <span className="text-[10px] leading-relaxed sm:text-[11px]">{c.kicker}</span>
-          </motion.p>
+            <ul className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
+              {(lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR).map((p) => (
+                <li
+                  key={p.label}
+                  className="flex flex-col items-center gap-2 rounded-2xl border border-primary/25 bg-card px-3 py-4 text-center transition duration-300 hover:-translate-y-0.5 hover:border-primary/60"
+                >
+                  <p.icon className="h-5 w-5 text-primary" aria-hidden="true" />
+                  <span className="text-[11px] font-medium uppercase leading-snug tracking-[0.12em] text-foreground sm:text-xs">
+                    {p.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+              {(lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR).map((v) => (
+                <li
+                  key={v.label}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px]"
+                >
+                  <v.icon className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  {v.label}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
 
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
