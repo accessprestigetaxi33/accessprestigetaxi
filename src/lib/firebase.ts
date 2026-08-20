@@ -1,11 +1,15 @@
 // Firebase Cloud Messaging — client integration
 // Projet Firebase : access-prestige-taxi
-// Les credentials Web Firebase sont publics par design ; l'apiKey est servie
-// par /api/public/firebase-config (secret GOOGLE_API_KEY) pour rester hors dépôt.
+// Les credentials Web Firebase sont PUBLICS par design (comme sur Taxi City
+// Bordeaux, où le push fonctionne) : on les fige ici pour éviter toute
+// dépendance réseau/cache. ⚠️ Ne jamais remettre la clé Google Maps ici :
+// elle vient d'un autre projet GCP et provoque un 403 API_KEY_SERVICE_BLOCKED
+// sur firebaseinstallations → aucun token FCM possible.
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
 import { deleteToken, getMessaging, getToken, onMessage, isSupported, type Messaging } from "firebase/messaging";
 
 export const firebaseConfig: FirebaseOptions = {
+  apiKey: "AIzaSyAFZbm2eneX6wwScKtDv4w_h6bpoq6YvkY",
   authDomain: "access-prestige-taxi.firebaseapp.com",
   projectId: "access-prestige-taxi",
   storageBucket: "access-prestige-taxi.firebasestorage.app",
@@ -14,25 +18,10 @@ export const firebaseConfig: FirebaseOptions = {
   measurementId: "G-LFXHZHLHKE",
 };
 
-let configPromise: Promise<FirebaseOptions> | null = null;
-
-/** Récupère la config complète (avec apiKey) depuis le serveur, une seule fois. */
 async function loadFirebaseConfig(): Promise<FirebaseOptions> {
-  if (!configPromise) {
-    configPromise = fetch("/api/public/firebase-config")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`config ${r.status}`))))
-      .then((remote) => {
-        if (!remote?.apiKey) throw new Error("Clé Web Firebase manquante (FIREBASE_WEB_API_KEY)");
-        return { ...firebaseConfig, ...remote } as FirebaseOptions;
-      })
-      .catch((err) => {
-        console.error("[FCM] config fetch failed", err);
-        configPromise = null;
-        throw err;
-      });
-  }
-  return configPromise;
+  return firebaseConfig;
 }
+
 
 // Clé VAPID *Web Push* de Firebase (Console → Cloud Messaging → Web configuration)
 export const FCM_VAPID_KEY = "BBQRPJr-QmMck_pEZaFG40c9Xbkx_H-ainAbURLLURKRGKs5p9qQgRvA69FS7buRut0WuW5gCI0g1VtEFMss18Y";

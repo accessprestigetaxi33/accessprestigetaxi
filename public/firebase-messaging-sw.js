@@ -1,10 +1,10 @@
 /* Firebase Cloud Messaging — Service Worker (notifications en arrière-plan)
  * Projet : access-prestige-taxi (bi-chauffeur)
- * Config chargée depuis /api/public/firebase-config (apiKey hors dépôt).
+ * Config Web Firebase figée dans ce fichier (publique par design).
  */
 /* eslint-disable */
 
-const SW_VERSION = "apt-2026-09.push-click-open";
+const SW_VERSION = "apt-2026-10.fcm-key-fix";
 console.log("[FCM SW] boot version =", SW_VERSION);
 
 const DRIVER_URL = "/driver";
@@ -154,8 +154,18 @@ function showFrom(data, notif) {
   );
 }
 
-const ready = fetch("/api/public/firebase-config")
-  .then((r) => r.json())
+// Config Web Firebase figée (publique par design) — plus de fetch réseau,
+// donc plus de risque de servir une ancienne config mise en cache.
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAFZbm2eneX6wwScKtDv4w_h6bpoq6YvkY",
+  authDomain: "access-prestige-taxi.firebaseapp.com",
+  projectId: "access-prestige-taxi",
+  storageBucket: "access-prestige-taxi.firebasestorage.app",
+  messagingSenderId: "214617543164",
+  appId: "1:214617543164:web:8094538b9f17694aa5e279",
+};
+
+const ready = Promise.resolve(FIREBASE_CONFIG)
   .then((config) => {
     firebase.initializeApp(config);
     const messaging = firebase.messaging();
