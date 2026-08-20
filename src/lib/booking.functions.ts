@@ -78,6 +78,8 @@ const BookSchema = QuoteSchema.extend({
   options: z.array(z.string().trim().max(60)).max(12).default([]),
   note: z.string().trim().max(1000).default(""),
   lang: z.enum(["fr", "en"]).default("fr"),
+  /** Clé d'idempotence générée par le client (anti double-clic). */
+  client_request_id: z.string().trim().min(8).max(80).nullable().optional(),
 });
 
 export type BookResponse =
@@ -91,6 +93,30 @@ export const bookRide = createServerFn({ method: "POST" })
     const { computeQuote } = await import("@/lib/booking.server");
     const { newSuiviId } = await import("@/lib/suivi-id");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const reqId = data.client_request_id || null;
+
+    /** Renvoie la réservation déjà créée pour cette clé, si elle existe. */
+    const findExisting = async () => {
+      if (!reqId) return null;
+      const { data: row } = await supabaseAdmin
+        .from("reservations")
+        .select("id, suivi_id, prix_estime, distance_km")
+        .eq("client_request_id" as any, reqId)
+        .maybeSingle();
+      return (row as any) ?? null;
+    };
+
+    const already = await findExisting();
+    if (already) {
+      return {
+        ok: true,
+        reservation_id: already.id,
+        suivi_id: already.suivi_id,
+        prix: Number(already.prix_estime ?? 0),
+        distance_km: Number(already.distance_km ?? 0),
+      };
+    }
 
     let q;
     try {
@@ -139,11 +165,25 @@ export const bookRide = createServerFn({ method: "POST" })
         lang: data.lang,
         message,
         source: "form",
+        client_request_id: reqId,
       } as any)
       .select("id, suivi_id")
       .single();
 
     if (error || !inserted) {
+      // Course déjà enregistrée par un clic précédent (index unique) → on renvoie l'existante.
+      if ((error as any)?.code === "23505") {
+        const dup = await findExisting();
+        if (dup) {
+          return {
+            ok: true,
+            reservation_id: dup.id,
+            suivi_id: dup.suivi_id,
+            prix: Number(dup.prix_estime ?? 0),
+            distance_km: Number(dup.distance_km ?? 0),
+          };
+        }
+      }
       console.error("[bookRide] insert failed", error);
       return { ok: false, error: "INSERT_FAILED" };
     }

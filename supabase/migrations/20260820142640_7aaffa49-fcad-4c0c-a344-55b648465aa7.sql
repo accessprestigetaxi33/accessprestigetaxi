@@ -1,0 +1,2 @@
+ALTER TABLE public.reservations ADD COLUMN IF NOT EXISTS client_request_id text;
+CREATE UNIQUE INDEX IF NOT EXISTS reservations_client_request_id_key ON public.reservations (client_request_id) WHERE client_request_id IS NOT NULL;

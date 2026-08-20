@@ -399,6 +399,9 @@ export function BookingStudio() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<{ suiviId: string; prix: number; pending?: boolean } | null>(null);
   const [quote, setQuote] = useState<QuoteState>({ loading: false, error: null, data: null });
+  // Clé d'idempotence : identique pour tous les clics d'une même réservation.
+  const requestIdRef = useRef<string>("");
+  const inFlightRef = useRef(false);
 
   const minWhen = useMemo(() => parisLocalValue(addMinutes(new Date(), 15)), []);
 
@@ -493,7 +496,7 @@ export function BookingStudio() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
+    if (submitting || inFlightRef.current) return;
     if (missing.length > 0) {
       toast.error(`${L.missing} ${missing.join(", ")}`, { position: "top-center" });
       const el = missingIds[0] ? document.getElementById(missingIds[0]) : null;
@@ -512,6 +515,13 @@ export function BookingStudio() {
     if (new Date(`${when}:00`).getTime() < Date.now() - 60 * 60_000) {
       toast.error(L.err_past);
       return;
+    }
+    inFlightRef.current = true;
+    if (!requestIdRef.current) {
+      requestIdRef.current =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     }
     setSubmitting(true);
     // Optimistic UI : on affiche immédiatement l'écran de confirmation,
@@ -538,10 +548,13 @@ export function BookingStudio() {
           options: optionLabels,
           note: note.trim(),
           lang: isEn ? "en" : "fr",
+          client_request_id: requestIdRef.current,
         },
       });
       if (!res.ok) {
         setSuccess(null);
+        // Échec métier : on repart sur une nouvelle clé au prochain essai.
+        requestIdRef.current = "";
         toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book, {
           position: "top-center",
         });
@@ -551,8 +564,10 @@ export function BookingStudio() {
     } catch (err) {
       console.error("[booking] submit failed", err);
       setSuccess(null);
+      // Erreur réseau : on garde la clé pour que le renvoi ne crée pas de doublon.
       toast.error(L.err_book, { position: "top-center" });
     } finally {
+      inFlightRef.current = false;
       setSubmitting(false);
     }
 
