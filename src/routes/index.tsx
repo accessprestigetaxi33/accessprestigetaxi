@@ -9,7 +9,6 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Baby,
-  BatteryCharging,
   BriefcaseBusiness,
   Phone,
   PlaneTakeoff,
@@ -211,7 +210,6 @@ const HERO_VALUES_EN = [
 const COPY = {
 
   fr: {
-    kicker: "Transport sanitaire avec fauteuil roulant · Transport de groupe · Toutes distances · Charente-Maritime",
     h1: "Votre transport, notre exigence",
     tagline: SLOGAN_FR,
     lead: "Deux chauffeurs, une même exigence : taxi 100 % électrique en Charente-Maritime avec la BMW iX1 et l'Audi Q6 e-tron 5 places, van Mercedes classe V 8 places pour le transport de groupe, transport sanitaire conventionné avec fauteuil roulant et prestations toutes distances.",
@@ -328,7 +326,6 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "Medical transport with wheelchair · Group transport · All distances · Charente-Maritime",
     h1: "Your journey, our standard",
     tagline: SLOGAN_EN,
     lead: "Two drivers, one shared standard: a 100% electric taxi service in Charente-Maritime with the 5-seat BMW iX1 and Audi Q6 e-tron, an 8-seat Mercedes V-Class van for group transport, covered medical transport with wheelchair and all-distance services.",
