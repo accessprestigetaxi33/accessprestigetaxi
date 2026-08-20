@@ -59,6 +59,7 @@ import { Route as ApiPublicReviewsRouteImport } from './routes/api/public/review
 import { Route as ApiPublicStaticMapRouteImport } from './routes/api/public/static-map'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicContactVcfRouteImport } from './routes/api/public/contact.vcf'
+import { Route as ApiPublicHooksPushCleanupTickRouteImport } from './routes/api/public/hooks/push-cleanup-tick'
 import { Route as ApiPublicHooksRecomputeDurationsTickRouteImport } from './routes/api/public/hooks/recompute-durations-tick'
 import { Route as ApiPublicHooksRecurringRidesTickRouteImport } from './routes/api/public/hooks/recurring-rides-tick'
 import { Route as ApiPublicHooksRideRemindersTickRouteImport } from './routes/api/public/hooks/ride-reminders-tick'
@@ -316,6 +317,12 @@ const ApiPublicContactVcfRoute = ApiPublicContactVcfRouteImport.update({
   path: '/vcf',
   getParentRoute: () => ApiPublicContactRoute,
 } as any)
+const ApiPublicHooksPushCleanupTickRoute =
+  ApiPublicHooksPushCleanupTickRouteImport.update({
+    id: '/api/public/hooks/push-cleanup-tick',
+    path: '/api/public/hooks/push-cleanup-tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksRecomputeDurationsTickRoute =
   ApiPublicHooksRecomputeDurationsTickRouteImport.update({
     id: '/api/public/hooks/recompute-durations-tick',
@@ -392,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/api/public/static-map': typeof ApiPublicStaticMapRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
+  '/api/public/hooks/push-cleanup-tick': typeof ApiPublicHooksPushCleanupTickRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
   '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
@@ -448,6 +456,7 @@ export interface FileRoutesByTo {
   '/api/public/static-map': typeof ApiPublicStaticMapRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
+  '/api/public/hooks/push-cleanup-tick': typeof ApiPublicHooksPushCleanupTickRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
   '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
@@ -505,6 +514,7 @@ export interface FileRoutesById {
   '/api/public/static-map': typeof ApiPublicStaticMapRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/contact/vcf': typeof ApiPublicContactVcfRoute
+  '/api/public/hooks/push-cleanup-tick': typeof ApiPublicHooksPushCleanupTickRoute
   '/api/public/hooks/recompute-durations-tick': typeof ApiPublicHooksRecomputeDurationsTickRoute
   '/api/public/hooks/recurring-rides-tick': typeof ApiPublicHooksRecurringRidesTickRoute
   '/api/public/hooks/ride-reminders-tick': typeof ApiPublicHooksRideRemindersTickRoute
@@ -563,6 +573,7 @@ export interface FileRouteTypes {
     | '/api/public/static-map'
     | '/lovable/email/events'
     | '/api/public/contact/vcf'
+    | '/api/public/hooks/push-cleanup-tick'
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
     | '/api/public/hooks/ride-reminders-tick'
@@ -619,6 +630,7 @@ export interface FileRouteTypes {
     | '/api/public/static-map'
     | '/lovable/email/events'
     | '/api/public/contact/vcf'
+    | '/api/public/hooks/push-cleanup-tick'
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
     | '/api/public/hooks/ride-reminders-tick'
@@ -675,6 +687,7 @@ export interface FileRouteTypes {
     | '/api/public/static-map'
     | '/lovable/email/events'
     | '/api/public/contact/vcf'
+    | '/api/public/hooks/push-cleanup-tick'
     | '/api/public/hooks/recompute-durations-tick'
     | '/api/public/hooks/recurring-rides-tick'
     | '/api/public/hooks/ride-reminders-tick'
@@ -730,6 +743,7 @@ export interface RootRouteChildren {
   ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
   ApiPublicStaticMapRoute: typeof ApiPublicStaticMapRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
+  ApiPublicHooksPushCleanupTickRoute: typeof ApiPublicHooksPushCleanupTickRoute
   ApiPublicHooksRecomputeDurationsTickRoute: typeof ApiPublicHooksRecomputeDurationsTickRoute
   ApiPublicHooksRecurringRidesTickRoute: typeof ApiPublicHooksRecurringRidesTickRoute
   ApiPublicHooksRideRemindersTickRoute: typeof ApiPublicHooksRideRemindersTickRoute
@@ -1088,6 +1102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicContactVcfRouteImport
       parentRoute: typeof ApiPublicContactRoute
     }
+    '/api/public/hooks/push-cleanup-tick': {
+      id: '/api/public/hooks/push-cleanup-tick'
+      path: '/api/public/hooks/push-cleanup-tick'
+      fullPath: '/api/public/hooks/push-cleanup-tick'
+      preLoaderRoute: typeof ApiPublicHooksPushCleanupTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/recompute-durations-tick': {
       id: '/api/public/hooks/recompute-durations-tick'
       path: '/api/public/hooks/recompute-durations-tick'
@@ -1191,6 +1212,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicReviewsRoute: ApiPublicReviewsRoute,
   ApiPublicStaticMapRoute: ApiPublicStaticMapRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
+  ApiPublicHooksPushCleanupTickRoute: ApiPublicHooksPushCleanupTickRoute,
   ApiPublicHooksRecomputeDurationsTickRoute:
     ApiPublicHooksRecomputeDurationsTickRoute,
   ApiPublicHooksRecurringRidesTickRoute: ApiPublicHooksRecurringRidesTickRoute,

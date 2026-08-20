@@ -820,6 +820,7 @@ export type Database = {
           created_at: string
           driver_id: string | null
           endpoint: string
+          expires_at: string
           fcm_token: string | null
           id: string
           last_seen_at: string
@@ -835,6 +836,7 @@ export type Database = {
           created_at?: string
           driver_id?: string | null
           endpoint: string
+          expires_at?: string
           fcm_token?: string | null
           id?: string
           last_seen_at?: string
@@ -850,6 +852,7 @@ export type Database = {
           created_at?: string
           driver_id?: string | null
           endpoint?: string
+          expires_at?: string
           fcm_token?: string | null
           id?: string
           last_seen_at?: string

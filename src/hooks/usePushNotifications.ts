@@ -342,5 +342,43 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
     [subscribeFn, reservationId, clientAccountId, clientSessionToken, driverId, rememberRegistration],
   );
 
+  // ── Reconfirmation au retour sur l'app (visibilitychange) ──
+  // Objectif : maintenir l'abonnement serveur "vivant" pendant 50 jours.
+  // Si l'utilisateur revient sur l'app, on rafraîchit silencieusement le token
+  // et on met à jour expires_at, sans re-demander la permission. C'est limité
+  // à une fois toutes les 12h pour ne pas spammer le serveur.
+  useEffect(() => {
+    if (!autoAudience) return;
+    if (!hasBrowserPushApis()) return;
+    if (Notification.permission !== "granted") return;
+    if (autoAudience === "chauffeur" && getDriverToken().length < 8) return;
+
+    const VISIBILITY_REFRESH_KEY = `apt_push_visibility_refresh:${autoAudience}`;
+    const THROTTLE_MS = 12 * 60 * 60 * 1000; // 12h
+    function shouldRefresh(): boolean {
+      try {
+        const last = parseInt(window.localStorage.getItem(VISIBILITY_REFRESH_KEY) ?? "0", 10);
+        return Date.now() - last > THROTTLE_MS;
+      } catch {
+        return true;
+      }
+    }
+    function markRefreshed() {
+      try {
+        window.localStorage.setItem(VISIBILITY_REFRESH_KEY, String(Date.now()));
+      } catch {}
+    }
+
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      if (!shouldRefresh()) return;
+      markRefreshed();
+      refreshToken(autoAudience).catch((e) => console.warn("[push] visibility refresh failed", e));
+    };
+
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [autoAudience, refreshToken]);
+
   return { status, subscription: token, subscribe, testNotification, refreshToken, lastError };
 }
