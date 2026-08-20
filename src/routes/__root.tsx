@@ -107,7 +107,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Access Taxi" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-
     ],
     links: [
       {
@@ -115,7 +114,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
-      { rel: "manifest", href: "/api/manifest" },
+      { rel: "manifest", href: "/api/manifest", id: "app-manifest" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
     scripts: [
