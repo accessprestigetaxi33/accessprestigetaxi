@@ -132,6 +132,7 @@ export function NotificationOptInStep() {
             {busy ? c.working : c.cta}
           </button>
           {denied && <p className="mt-3 text-sm text-destructive">{c.denied}</p>}
+          {!denied && lastError && <p className="mt-3 text-sm text-destructive">{lastError}</p>}
         </>
       )}
 

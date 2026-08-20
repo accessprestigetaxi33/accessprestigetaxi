@@ -168,6 +168,7 @@ export function ClientPushOptInCard({
                   </>
                 )}
               </button>
+              {lastError && <div className="mt-2 text-[11px] text-red-300/90">{lastError}</div>}
             </>
           )}
         </div>
