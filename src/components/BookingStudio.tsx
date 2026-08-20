@@ -476,8 +476,8 @@ export function BookingStudio() {
   /* ── validation ── */
   const missing: string[] = [];
   const missingIds: string[] = [];
-  if (depart.trim().length < 3) { missing.push(L.m_from); missingIds.push("bs-depart"); }
-  if (arrivee.trim().length < 3) { missing.push(L.m_to); missingIds.push("bs-arrivee"); }
+  if (depart.trim().length < 3) { missing.push(L.m_from); missingIds.push(""); }
+  if (arrivee.trim().length < 3) { missing.push(L.m_to); missingIds.push(""); }
   if (!when) { missing.push(L.m_when); missingIds.push("when"); }
   if (nom.trim().length < 2) { missing.push(L.m_name); missingIds.push("nom"); }
   if (tel.replace(/\D/g, "").length < 9) { missing.push(L.m_phone); missingIds.push("tel"); }
@@ -488,7 +488,8 @@ export function BookingStudio() {
     if (submitting) return;
     if (missing.length > 0) {
       toast.error(`${L.missing} ${missing.join(", ")}`);
-      const el = document.getElementById(missingIds[0]);
+      const el = missingIds[0] ? document.getElementById(missingIds[0]) : null;
+      if (!el) window.scrollTo({ top: 0, behavior: "smooth" });
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
         try { (el as HTMLElement).focus({ preventScroll: true }); } catch { /* noop */ }
@@ -968,7 +969,7 @@ export function BookingStudio() {
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-4">
             {QuotePanel}
-            <Button type="submit" size="lg" disabled={!canSubmit} className="w-full">
+            <Button type="submit" size="lg" disabled={submitting} aria-disabled={!canSubmit} className="w-full">
               {submitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -997,7 +998,7 @@ export function BookingStudio() {
                 {quote.loading ? "…" : priceLabel ? `≈ ${priceLabel}` : "—"}
               </p>
             </div>
-            <Button type="submit" size="lg" disabled={!canSubmit} className="shrink-0">
+            <Button type="submit" size="lg" disabled={submitting} aria-disabled={!canSubmit} className="shrink-0">
               {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : L.submit}
             </Button>
           </div>
