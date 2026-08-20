@@ -586,7 +586,7 @@ function DriverApp({
   // fusionnent identification + activation en un seul clic (distinct de
   // pushBusy, utilisé une fois l'identité déjà connue).
   const [identifyPushBusy, setIdentifyPushBusy] = useState<"alain" | "patricia" | null>(null);
-  const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
+  const { status: pushStatus, subscribe: subscribePush, lastError: pushError } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
   });
@@ -766,6 +766,20 @@ function DriverApp({
               color: "#9a3412",
             }}
           />
+        )}
+
+        {pushStatus !== "unsupported" && pushError && (
+          <div
+            style={{
+              background: "#fef2f2",
+              borderBottom: "1px solid #fecaca",
+              padding: "10px 16px",
+              fontSize: 12.5,
+              color: "#b91c1c",
+            }}
+          >
+            ⚠️ {pushError}
+          </div>
         )}
 
         {/* Bandeau activation / reconfirmation notifications */}

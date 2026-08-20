@@ -59,7 +59,7 @@ function isStandalone(): boolean {
 export function NotificationOptInStep() {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
-  const { status, subscribe } = usePushNotifications();
+  const { status, subscribe, lastError } = usePushNotifications();
   const [busy, setBusy] = useState(false);
   const [ios, setIos] = useState(false);
   const [standalone, setStandalone] = useState(true);
