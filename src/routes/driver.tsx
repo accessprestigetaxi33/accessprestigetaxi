@@ -581,6 +581,10 @@ function DriverApp({
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [pushBusy, setPushBusy] = useState(false);
+  // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
+  // fusionnent identification + activation en un seul clic (distinct de
+  // pushBusy, utilisé une fois l'identité déjà connue).
+  const [identifyPushBusy, setIdentifyPushBusy] = useState<"alain" | "patricia" | null>(null);
   const { status: pushStatus, subscribe: subscribePush } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
@@ -772,7 +776,61 @@ function DriverApp({
                   ? "🔔 Notifications actives"
                   : "🔔 Recevez une alerte à chaque nouvelle course, sans garder l'app ouverte."}
             </span>
-            {pushStatus !== "denied" && (
+            {pushStatus !== "denied" && !(driverId === "alain" || driverId === "patricia") && (
+              // Pas encore identifié : un bouton par chauffeur, qui identifie
+              // ET active les notifications en un seul tap (au lieu de choisir
+              // "Alain"/"Patricia" dans le sélecteur du header puis cliquer
+              // "Activer" séparément dans ce bandeau).
+              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                {[
+                  { id: "alain" as const, name: "Alain" },
+                  { id: "patricia" as const, name: "Patricia" },
+                ].map((d) => (
+                  <button
+                    key={d.id}
+                    onClick={async () => {
+                      setIdentifyPushBusy(d.id);
+                      try {
+                        const identified = await onIdentify(d.id);
+                        if (!identified) {
+                          toast.error("Accès indisponible, réessayez.");
+                          return;
+                        }
+                        // driverIdOverride évite la valeur périmée du hook (setDriverId
+                        // ci-dessus est asynchrone, le driverId du hook ne sera à jour
+                        // qu'au prochain render).
+                        const ok = await subscribePush("chauffeur", null, null, undefined, d.id);
+                        if (ok) toast.success(`Notifications activées pour ${d.name}.`);
+                        else toast.error("Impossible d'activer les notifications sur cet appareil.");
+                      } catch {
+                        toast.error("Impossible d'activer les notifications sur cet appareil.");
+                      } finally {
+                        setIdentifyPushBusy(null);
+                      }
+                    }}
+                    disabled={identifyPushBusy !== null}
+                    style={{
+                      flexShrink: 0,
+                      background: "#0f172a",
+                      color: "#FDFBF7",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "6px 12px",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: identifyPushBusy ? "wait" : "pointer",
+                      opacity: identifyPushBusy !== null && identifyPushBusy !== d.id ? 0.5 : 1,
+                      minHeight: 32,
+                    }}
+                  >
+                    {identifyPushBusy === d.id ? "…" : `🔔 ${d.name}`}
+                  </button>
+                ))}
+              </div>
+            )}
+            {pushStatus !== "denied" && (driverId === "alain" || driverId === "patricia") && (
+              // Déjà identifié : comportement inchangé, un seul bouton pour
+              // activer/ré-activer sur cet appareil pour le chauffeur courant.
               <button
                 onClick={async () => {
                   setPushBusy(true);
