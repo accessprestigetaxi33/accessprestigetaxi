@@ -180,6 +180,9 @@ const T = {
     submit: "Confirm my booking",
     submitting: "Saving…",
     submitting_detail: "We are saving your ride and notifying the drivers…",
+    pending_ref: "Assigning your reference…",
+    pending_note: "Your drivers are being notified, finalising…",
+
     missing: "Missing:",
     m_from: "pickup",
     m_to: "destination",
