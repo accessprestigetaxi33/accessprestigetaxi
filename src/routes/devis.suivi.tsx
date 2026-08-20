@@ -166,6 +166,8 @@ function SuiviDevisPage() {
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{c.ref}</span>
           <input
+            name="reference"
+            autoComplete="off"
             value={reference}
             onChange={(e) => setReference(e.target.value.toUpperCase())}
             required
@@ -177,7 +179,9 @@ function SuiviDevisPage() {
         <label className="mt-3 block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{c.email}</span>
           <input
+            name="email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
