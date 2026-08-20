@@ -62,7 +62,7 @@ function Stars({ value, className = "" }: { value: number; className?: string })
   );
 }
 
-export function ClientTrust() {
+export function ClientTrust({ children }: { children?: React.ReactNode }) {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -174,6 +174,8 @@ export function ClientTrust() {
             {c.safety}
           </Link>
         </p>
+
+        {children ? <div className="mt-14">{children}</div> : null}
       </div>
     </section>
   );
