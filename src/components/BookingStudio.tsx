@@ -560,6 +560,7 @@ export function BookingStudio() {
 
   /* ── écran de confirmation ── */
   if (success) {
+    const pending = !!success.pending;
     const icsHref = buildIcs({
       when,
       depart,
@@ -570,9 +571,13 @@ export function BookingStudio() {
     return (
       <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
         <div className="rounded-3xl border border-primary/30 bg-card p-6 text-center shadow-lg sm:p-10">
-          <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
+          {pending ? (
+            <Loader2 className="mx-auto h-14 w-14 animate-spin text-primary" />
+          ) : (
+            <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
+          )}
           <h1 className="mt-4 font-display text-2xl font-bold sm:text-3xl">{L.ok_title}</h1>
-          <p className="mt-2 text-muted-foreground">{L.ok_sub}</p>
+          <p className="mt-2 text-muted-foreground">{pending ? L.pending_note : L.ok_sub}</p>
 
           <dl className="mt-6 space-y-2 rounded-2xl bg-secondary/60 p-4 text-left text-sm">
             <div className="flex justify-between gap-3">
@@ -595,16 +600,31 @@ export function BookingStudio() {
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{L.ok_ref}</dt>
-              <dd className="text-right font-mono font-semibold">{success.suiviId}</dd>
+              <dd className="text-right font-mono font-semibold">
+                {pending ? (
+                  <span className="inline-block animate-pulse rounded bg-muted px-2 py-0.5 text-xs font-normal text-muted-foreground">
+                    {L.pending_ref}
+                  </span>
+                ) : (
+                  success.suiviId
+                )}
+              </dd>
             </div>
           </dl>
 
           <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link to="/suivi/$id" params={{ id: success.suiviId }}>
+            {pending ? (
+              <Button size="lg" className="w-full sm:w-auto" disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 {L.ok_track}
-              </Link>
-            </Button>
+              </Button>
+            ) : (
+              <Button asChild size="lg" className="w-full sm:w-auto">
+                <Link to="/suivi/$id" params={{ id: success.suiviId }}>
+                  {L.ok_track}
+                </Link>
+              </Button>
+            )}
             <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
               <a href={icsHref} download="course-access-prestige-taxi.ics">
                 <CalendarClock className="mr-2 h-4 w-4" />
@@ -615,6 +635,7 @@ export function BookingStudio() {
               variant="ghost"
               size="lg"
               className="w-full sm:w-auto"
+              disabled={pending}
               onClick={() => {
                 const url = `${window.location.origin}/suivi/${success.suiviId}`;
                 if (navigator.share) void navigator.share({ title: "Access Prestige Taxi", url });
@@ -628,20 +649,23 @@ export function BookingStudio() {
               {L.ok_share}
             </Button>
           </div>
-          <button
-            type="button"
-            className="mt-6 text-sm text-muted-foreground underline underline-offset-4"
-            onClick={() => {
-              setSuccess(null);
-              setDepart("");
-              setArrivee("");
-              setNote("");
-              setOptions([]);
-              void navigate({ to: "/reserver" });
-            }}
-          >
-            {L.ok_new}
-          </button>
+          {!pending && (
+            <button
+              type="button"
+              className="mt-6 text-sm text-muted-foreground underline underline-offset-4"
+              onClick={() => {
+                setSuccess(null);
+                setDepart("");
+                setArrivee("");
+                setNote("");
+                setOptions([]);
+                void navigate({ to: "/reserver" });
+              }}
+            >
+              {L.ok_new}
+            </button>
+          )}
+
         </div>
       </main>
     );
