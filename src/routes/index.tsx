@@ -843,12 +843,15 @@ function Index() {
               role="group"
               aria-label={lang === "en" ? "Choose a vehicle to preview" : "Choisir un véhicule à afficher"}
               onKeyDown={(e) => {
+                const container = e.currentTarget;
                 const focusActive = () => {
                   window.setTimeout(() => {
-                    const el = e.currentTarget?.querySelector<HTMLButtonElement>("[data-slide-index][aria-pressed='true']");
-                    el?.focus();
+                    container
+                      .querySelector<HTMLButtonElement>("[data-slide-index][aria-pressed='true']")
+                      ?.focus();
                   }, 0);
                 };
+
                 if (e.key === "ArrowRight" || e.key === "ArrowDown") {
                   e.preventDefault();
                   next();
