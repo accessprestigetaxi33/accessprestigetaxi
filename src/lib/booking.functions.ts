@@ -148,9 +148,26 @@ export const bookRide = createServerFn({ method: "POST" })
       return { ok: false, error: "INSERT_FAILED" };
     }
 
-    // Les trois canaux sont indépendants : les lancer en parallèle évite que
-    // l'utilisateur attende leur durée cumulée après avoir confirmé.
-    const notificationResults = await Promise.allSettled([
+    // 1) Notifications push d'abord (priorité chauffeurs), 2) e-mails ensuite.
+    try {
+      const { sendPushToAudience } = await import("@/lib/push.server");
+      await sendPushToAudience(
+        "chauffeur",
+        {
+          title: "🚕 Nouvelle réservation",
+          body: `${q.depart.label} → ${q.arrivee.label}`,
+          url: "/driver",
+          tag: `new-res-${inserted.id}`,
+          requireInteraction: true,
+          data: { reservation_id: inserted.id, kind: "new" },
+        },
+        { dedupTtlMinutes: 24 * 60 },
+      );
+    } catch (err) {
+      console.warn("[bookRide] push failed", err);
+    }
+
+    const emailResults = await Promise.allSettled([
       (async () => {
         const { deliverClientConfirmation } = await import("@/lib/reservation-notifications.server");
         const when = new Intl.DateTimeFormat(data.lang === "en" ? "en-GB" : "fr-FR", {
@@ -172,21 +189,6 @@ export const bookRide = createServerFn({ method: "POST" })
             trackingLink: `https://accessprestigetaxi.lovable.app/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
           },
         });
-      })(),
-      (async () => {
-        const { sendPushToAudience } = await import("@/lib/push.server");
-        await sendPushToAudience(
-          "chauffeur",
-          {
-            title: "🚕 Nouvelle réservation",
-            body: `${q.depart.label} → ${q.arrivee.label}`,
-            url: "/driver",
-            tag: `new-res-${inserted.id}`,
-            requireInteraction: true,
-            data: { reservation_id: inserted.id, kind: "new" },
-          },
-          { dedupTtlMinutes: 24 * 60 },
-        );
       })(),
       (async () => {
         const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
@@ -212,9 +214,10 @@ export const bookRide = createServerFn({ method: "POST" })
         });
       })(),
     ]);
-    for (const result of notificationResults) {
-      if (result.status === "rejected") console.warn("[bookRide] notification failed", result.reason);
+    for (const result of emailResults) {
+      if (result.status === "rejected") console.warn("[bookRide] email failed", result.reason);
     }
+
 
     return {
       ok: true,
