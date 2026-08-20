@@ -97,6 +97,9 @@ const T = {
     submit: "Confirmer ma réservation",
     submitting: "Enregistrement…",
     submitting_detail: "Nous enregistrons votre course et prévenons les chauffeurs…",
+    pending_ref: "Attribution du numéro…",
+    pending_note: "Vos chauffeurs sont prévenus, finalisation en cours…",
+
     missing: "Il manque :",
     m_from: "le départ",
     m_to: "la destination",
