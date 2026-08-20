@@ -287,6 +287,47 @@ export function SiteFooter() {
       </div>
 
 
+      {/* SEO internal links — accessible from mobile, tablet & desktop menu */}
+      <div className="mx-auto mt-6 max-w-3xl px-4 text-center text-xs leading-relaxed text-[#6b6555]">
+        {lang === "en" ? (
+          <>
+            Access Prestige Taxi is available on{" "}
+            <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">mobile</Link>,{" "}
+            <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">tablet</Link>{" "}
+            and{" "}
+            <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">desktop</Link>.{" "}
+            Explore our{" "}
+            <Link to="/services" className="underline underline-offset-2 hover:text-[#2c2718]">taxi services</Link>,{" "}
+            <Link to="/reservation" className="underline underline-offset-2 hover:text-[#2c2718]">book a ride</Link>,{" "}
+            <Link to="/devis" className="underline underline-offset-2 hover:text-[#2c2718]">request a quote</Link>,{" "}
+            read our{" "}
+            <Link to="/blog" className="underline underline-offset-2 hover:text-[#2c2718]">Charente-Maritime guide</Link>,{" "}
+            check our{" "}
+            <Link to="/destinations" className="underline underline-offset-2 hover:text-[#2c2718]">destinations</Link>{" "}
+            or{" "}
+            <Link to="/contact" className="underline underline-offset-2 hover:text-[#2c2718]">contact us</Link>.
+          </>
+        ) : (
+          <>
+            Access Prestige Taxi est accessible depuis votre{" "}
+            <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">mobile</Link>, votre{" "}
+            <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">tablette</Link>{" "}
+            ou votre{" "}
+            <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">ordinateur</Link>.{" "}
+            Découvrez nos{" "}
+            <Link to="/services" className="underline underline-offset-2 hover:text-[#2c2718]">services de taxi</Link>,{" "}
+            <Link to="/reservation" className="underline underline-offset-2 hover:text-[#2c2718]">réservez votre course</Link>,{" "}
+            <Link to="/devis" className="underline underline-offset-2 hover:text-[#2c2718]">demandez un devis</Link>,{" "}
+            consultez notre{" "}
+            <Link to="/blog" className="underline underline-offset-2 hover:text-[#2c2718]">guide Charente-Maritime</Link>,{" "}
+            nos{" "}
+            <Link to="/destinations" className="underline underline-offset-2 hover:text-[#2c2718]">destinations</Link>{" "}
+            ou notre page{" "}
+            <Link to="/contact" className="underline underline-offset-2 hover:text-[#2c2718]">contact</Link>.
+          </>
+        )}
+      </div>
+
       {/* Bottom bar */}
       <div className="footer-bottom">
         <div>© {year} Access Prestige Taxi. {c.rights}</div>
@@ -309,6 +350,7 @@ export function SiteFooter() {
           </Link>
         </div>
       </div>
+
     </footer>
   );
 }
