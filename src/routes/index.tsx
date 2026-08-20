@@ -749,7 +749,38 @@ function Index() {
                 </li>
               ))}
             </ul>
+
+            {/* Texte SEO + liens internes (mêmes destinations que le menu) — utile sur mobile */}
+            <nav
+              aria-label={lang === "en" ? "Quick site links" : "Liens rapides du site"}
+              className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-muted-foreground"
+            >
+              {lang === "en" ? (
+                <p>
+                  Access Prestige Taxi, your 100% electric taxi in Charente-Maritime: discover our{" "}
+                  <Link to="/services" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">taxi services</Link>,{" "}
+                  <Link to="/reserver" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">book a ride online</Link>,{" "}
+                  <Link to="/devis" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">request a quote</Link>, read our{" "}
+                  <Link to="/blog" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">Charente-Maritime guide</Link>, browse our{" "}
+                  <Link to="/destinations" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">destinations</Link>, learn more{" "}
+                  <Link to="/a-propos" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">about Patricia &amp; Alain</Link> or{" "}
+                  <Link to="/contact" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">contact us</Link>.
+                </p>
+              ) : (
+                <p>
+                  Access Prestige Taxi, votre taxi 100 % électrique en Charente-Maritime : découvrez nos{" "}
+                  <Link to="/services" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">services de taxi</Link>,{" "}
+                  <Link to="/reserver" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">réservez votre course en ligne</Link>,{" "}
+                  <Link to="/devis" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">demandez un devis</Link>, consultez notre{" "}
+                  <Link to="/blog" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">guide Charente-Maritime</Link>, nos{" "}
+                  <Link to="/destinations" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">destinations</Link>, apprenez-en plus{" "}
+                  <Link to="/a-propos" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">sur Patricia &amp; Alain</Link> ou{" "}
+                  <Link to="/contact" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">contactez-nous</Link>.
+                </p>
+              )}
+            </nav>
           </motion.div>
+
 
 
           <motion.h1
