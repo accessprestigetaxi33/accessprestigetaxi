@@ -249,6 +249,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       // sur driverId de closure) ; toute autre valeur (y compris null) prime.
       driverIdOverride?: string | null,
     ): Promise<boolean> => {
+      // Le serveur exige un jeton chauffeur valide : sans lui la requête part
+      // et échoue en validation (driver_token trop court). On le signale
+      // clairement au lieu d'une erreur technique silencieuse.
+      if (audience === "chauffeur" && getDriverToken().length < 8) {
+        setLastError("Session chauffeur expirée : reconnectez-vous à l'espace chauffeur puis réactivez les notifications.");
+        setStatus("idle");
+        return false;
+      }
       setStatus("loading");
       try {
         const fcm = await getFcmToken();
