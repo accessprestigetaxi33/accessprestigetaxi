@@ -96,6 +96,7 @@ const T = {
     regime_mixte: "Tarif jour + nuit",
     submit: "Confirmer ma réservation",
     submitting: "Enregistrement…",
+    submitting_detail: "Nous enregistrons votre course et prévenons les chauffeurs…",
     missing: "Il manque :",
     m_from: "le départ",
     m_to: "la destination",
@@ -175,6 +176,7 @@ const T = {
     regime_mixte: "Day + night rate",
     submit: "Confirm my booking",
     submitting: "Saving…",
+    submitting_detail: "We are saving your ride and notifying the drivers…",
     missing: "Missing:",
     m_from: "pickup",
     m_to: "destination",
@@ -715,6 +717,19 @@ export function BookingStudio() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pb-40 pt-8 sm:px-6 sm:pb-16 sm:pt-12">
+      {submitting && (
+        <div
+          role="status"
+          aria-live="assertive"
+          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+1rem)] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-lg border border-primary/30 bg-card p-4 shadow-xl"
+        >
+          <Loader2 className="h-6 w-6 shrink-0 animate-spin text-primary" />
+          <div className="min-w-0">
+            <p className="font-semibold text-foreground">{L.submitting}</p>
+            <p className="text-sm leading-snug text-muted-foreground">{L.submitting_detail}</p>
+          </div>
+        </div>
+      )}
       <header className="mx-auto max-w-3xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{L.eyebrow}</p>
         <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
