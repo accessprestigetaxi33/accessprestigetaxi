@@ -9,7 +9,6 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Baby,
-  BatteryCharging,
   BriefcaseBusiness,
   Phone,
   PlaneTakeoff,
@@ -17,6 +16,10 @@ import {
   Stethoscope,
   Users,
   Bell,
+  Clock,
+  Leaf,
+  Sofa,
+  EyeOff,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -28,8 +31,8 @@ import { Reveal, Counter } from "@/components/motion-ui";
 import { imgAt, imgSrcSet } from "@/lib/img";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
-import heroCarsEn from "@/assets/apt-hero-en.webp.asset.json";
+import heroCars from "@/assets/apt-hero-clean-fr.webp";
+import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
@@ -72,7 +75,7 @@ const heroSlides = (lang: "fr" | "en") => {
   return [
     {
       id: "brand",
-      src: en ? heroCarsEn.url : heroCars.url,
+      src: en ? heroCarsEn : heroCars,
       alt: en
         ? "Access Prestige Taxi — BMW iX1 electric and Mercedes V-Class van, excellence on every journey, Charente-Maritime"
         : "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, l'excellence à chaque trajet, Charente-Maritime",
@@ -175,9 +178,38 @@ function useHeroSlideshow(count: number, durationMs: number) {
 }
 
 
+// Cases du hero : reprennent les pictogrammes et mentions de la bannière photo.
+const HERO_PILLARS_FR = [
+  { icon: Stethoscope, label: "Transport conventionné" },
+  { icon: PlaneTakeoff, label: "Transferts gares & aéroports" },
+  { icon: BriefcaseBusiness, label: "Déplacements professionnels" },
+  { icon: Leaf, label: "100 % électrique" },
+] as const;
+
+const HERO_PILLARS_EN = [
+  { icon: Stethoscope, label: "Covered medical transport" },
+  { icon: PlaneTakeoff, label: "Station & airport transfers" },
+  { icon: BriefcaseBusiness, label: "Business travel" },
+  { icon: Leaf, label: "100% electric" },
+] as const;
+
+const HERO_VALUES_FR = [
+  { icon: Clock, label: "Ponctualité" },
+  { icon: Sofa, label: "Confort" },
+  { icon: EyeOff, label: "Discrétion" },
+  { icon: ShieldCheck, label: "Sécurité" },
+] as const;
+
+const HERO_VALUES_EN = [
+  { icon: Clock, label: "Punctuality" },
+  { icon: Sofa, label: "Comfort" },
+  { icon: EyeOff, label: "Discretion" },
+  { icon: ShieldCheck, label: "Safety" },
+] as const;
+
 const COPY = {
+
   fr: {
-    kicker: "Transport sanitaire avec fauteuil roulant · Transport de groupe · Toutes distances · Charente-Maritime",
     h1: "Votre transport, notre exigence",
     tagline: SLOGAN_FR,
     lead: "Deux chauffeurs, une même exigence : taxi 100 % électrique en Charente-Maritime avec la BMW iX1 et l'Audi Q6 e-tron 5 places, van Mercedes classe V 8 places pour le transport de groupe, transport sanitaire conventionné avec fauteuil roulant et prestations toutes distances.",
@@ -294,7 +326,6 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "Medical transport with wheelchair · Group transport · All distances · Charente-Maritime",
     h1: "Your journey, our standard",
     tagline: SLOGAN_EN,
     lead: "Two drivers, one shared standard: a 100% electric taxi service in Charente-Maritime with the 5-seat BMW iX1 and Audi Q6 e-tron, an 8-seat Mercedes V-Class van for group transport, covered medical transport with wheelchair and all-distance services.",
@@ -491,7 +522,7 @@ export const Route = createFileRoute("/")({
           alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
           slogan: SLOGAN_FR,
           url: SITE_URL,
-          image: absoluteUrl(heroCars.url),
+          image: absoluteUrl(heroCars),
           logo: absoluteUrl("/favicon.png"),
           email: "accessprestigetaxi@gmail.com",
           currenciesAccepted: "EUR",
@@ -605,7 +636,7 @@ function Index() {
       />
 
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
-      <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
+      <section className="relative isolate min-h-[40svh] overflow-hidden sm:min-h-[45vh] lg:min-h-[52vh]">
         {(() => {
           const slide = slides[slideIndex];
           const isBanner = Boolean(slide.contain);
@@ -665,15 +696,38 @@ function Index() {
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-card px-4 py-1.5 text-[11px] uppercase tracking-[0.25em] text-primary"
+            className="w-full"
           >
-            <BatteryCharging className="hidden h-3.5 w-3.5 sm:inline-block" />
-            <span className="text-[10px] leading-relaxed sm:text-[11px]">{c.kicker}</span>
-          </motion.p>
+            <ul className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
+              {(lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR).map((p) => (
+                <li
+                  key={p.label}
+                  className="flex flex-col items-center gap-2 rounded-2xl border border-primary/25 bg-card px-3 py-4 text-center transition duration-300 hover:-translate-y-0.5 hover:border-primary/60"
+                >
+                  <p.icon className="h-5 w-5 text-primary" aria-hidden="true" />
+                  <span className="text-[11px] font-medium uppercase leading-snug tracking-[0.12em] text-foreground sm:text-xs">
+                    {p.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+              {(lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR).map((v) => (
+                <li
+                  key={v.label}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px]"
+                >
+                  <v.icon className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  {v.label}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
 
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
@@ -985,7 +1039,7 @@ function Index() {
           <Reveal>
             <div className="flex flex-col items-center text-center">
               <img
-                src={lang === "en" ? heroCarsEn.url : heroCars.url}
+                src={lang === "en" ? heroCarsEn : heroCars}
                 alt={
                   lang === "en"
                     ? "Access Prestige Taxi app icon"
