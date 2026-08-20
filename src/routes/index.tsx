@@ -194,35 +194,6 @@ const COPY = {
       { n: 5, suffix: " places", l: "Audi Q6 e-tron électrique", img: photoAudiReal.url },
       { n: 8, suffix: " places", l: "van Mercedes classe V", img: photoVanReal.url },
     ],
-    servicesEyebrow: "Nos services",
-    servicesTitle: "Le transport haut de gamme sur mesure",
-    services: [
-      {
-        photo: photoMedical,
-        t: "Transport sanitaire conventionné",
-        d: "Transport assis professionnalisé et transport avec fauteuil roulant, prise en charge simplifiée.",
-      },
-      {
-        photo: photoAirport,
-        t: "Transferts toutes gares & tous aéroports",
-        d: "Suivi des vols et des trains, accueil pancarte et bagages pris en charge, toutes distances.",
-      },
-      {
-        photo: photoBusiness,
-        t: "Déplacements pro & privés, hôtels et campings",
-        d: "Navettes entreprises, hôtels, campings et résidences : ponctualité, discrétion, facture entreprise.",
-      },
-      {
-        photo: photoInterior.url,
-        t: "Mise à disposition avec chauffeur",
-        d: "Demi-journée, journée complète ou événementiel : votre chauffeur reste à vos côtés.",
-      },
-      {
-        photo: photoVanReal.url,
-        t: "Transport de groupe",
-        d: "Voyagez ensemble confortablement : groupe, famille, mariage, déplacement pro, grand volume de bagages, à bord du Mercedes classe V 8 places.",
-      },
-    ],
     groupEyebrow: "Transport de groupe",
     groupTitle: "Van Mercedes classe V 8 places pour vos groupes",
     groupText:
@@ -339,35 +310,6 @@ const COPY = {
       { n: 100, suffix: "%", l: "electric (BMW iX1)", img: photoBmwReal.url },
       { n: 5, suffix: " seats", l: "Audi Q6 e-tron electric SUV", img: photoAudiReal.url },
       { n: 8, suffix: " seats", l: "Mercedes V-Class van", img: photoVanReal.url },
-    ],
-    servicesEyebrow: "Our services",
-    servicesTitle: "Bespoke premium transport",
-    services: [
-      {
-        photo: photoMedical,
-        t: "Covered medical transport",
-        d: "Professional seated transport and wheelchair transport, with simplified coverage.",
-      },
-      {
-        photo: photoAirport,
-        t: "All stations & airport transfers",
-        d: "Flight and train tracking, meet & greet, luggage handled — any distance.",
-      },
-      {
-        photo: photoBusiness,
-        t: "Business & private travel, hotels and campsites",
-        d: "Company shuttles, hotels, campsites and residences: punctual, discreet, company invoicing.",
-      },
-      {
-        photo: photoInterior.url,
-        t: "Chauffeur hire",
-        d: "Half a day, a full day or an event: your driver stays at your disposal.",
-      },
-      {
-        photo: photoVanReal.url,
-        t: "Group transport",
-        d: "Travel together in comfort: group, family, wedding or business trip with plenty of luggage, aboard the 8-seat Mercedes V-Class.",
-      },
     ],
     groupEyebrow: "Group transport",
     groupTitle: "8-seat Mercedes V-Class van for your groups",
@@ -873,44 +815,6 @@ function Index() {
 
         </div>
       </section>
-
-      {/* SERVICES */}
-      <section className="border-t border-border bg-background py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.servicesEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.servicesTitle}
-            </h2>
-          </Reveal>
-
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {c.services.map((s, i) => (
-              <Reveal key={s.t} delay={i * 0.05}>
-                <article className={`group h-full overflow-hidden ${CARD}`}>
-                  {"photo" in s && s.photo ? (
-                    <img
-                      src={s.photo}
-                      alt={s.t}
-                      loading="lazy"
-                      width={1280}
-                      height={853}
-                      className="h-40 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                    />
-                  ) : null}
-                  <div className="p-6">
-                    <h3 className="font-display text-lg font-semibold text-card-foreground">{s.t}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.d}</p>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-
 
       {/* TRANSPORT DE GROUPE — VAN 8 PLACES */}
       <section className="border-t border-border py-20">
