@@ -31,8 +31,6 @@
   Access-Control-Allow-Origin: *
 /manifest.webmanifest
   cache-control: no-cache
-/driver-manifest.json
-  cache-control: no-cache
 
 # SEO : réponses courtes mais revalidables.
 /sitemap.xml
