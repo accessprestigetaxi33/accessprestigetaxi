@@ -17,6 +17,10 @@ import {
   Stethoscope,
   Users,
   Bell,
+  Clock,
+  Leaf,
+  Sofa,
+  EyeOff,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -28,8 +32,8 @@ import { Reveal, Counter } from "@/components/motion-ui";
 import { imgAt, imgSrcSet } from "@/lib/img";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import { DESTINATIONS } from "@/data/destinations";
-import heroCars from "@/assets/apt-hero-fr.webp.asset.json";
-import heroCarsEn from "@/assets/apt-hero-en.webp.asset.json";
+import heroCars from "@/assets/apt-hero-clean-fr.webp";
+import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
 import photoInterior from "@/assets/apt-interior.jpg.asset.json";
 import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
@@ -72,7 +76,7 @@ const heroSlides = (lang: "fr" | "en") => {
   return [
     {
       id: "brand",
-      src: en ? heroCarsEn.url : heroCars.url,
+      src: en ? heroCarsEn : heroCars,
       alt: en
         ? "Access Prestige Taxi — BMW iX1 electric and Mercedes V-Class van, excellence on every journey, Charente-Maritime"
         : "Access Prestige Taxi — BMW iX1 électrique et van Mercedes V-Class, l'excellence à chaque trajet, Charente-Maritime",
@@ -491,7 +495,7 @@ export const Route = createFileRoute("/")({
           alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
           slogan: SLOGAN_FR,
           url: SITE_URL,
-          image: absoluteUrl(heroCars.url),
+          image: absoluteUrl(heroCars),
           logo: absoluteUrl("/favicon.png"),
           email: "accessprestigetaxi@gmail.com",
           currenciesAccepted: "EUR",
@@ -985,7 +989,7 @@ function Index() {
           <Reveal>
             <div className="flex flex-col items-center text-center">
               <img
-                src={lang === "en" ? heroCarsEn.url : heroCars.url}
+                src={lang === "en" ? heroCarsEn : heroCars}
                 alt={
                   lang === "en"
                     ? "Access Prestige Taxi app icon"
