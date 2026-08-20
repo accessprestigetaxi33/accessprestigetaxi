@@ -12,6 +12,7 @@ export type PushSubRow = {
   token_suffix: string | null;
   user_agent: string | null;
   last_seen_at: string | null;
+  expires_at: string | null;
   created_at: string | null;
   reservation_id: string | null;
   client_account_id: string | null;
@@ -30,7 +31,7 @@ export const listPushSubscriptions = createServerFn({ method: "POST" })
     let q = supabaseAdmin
       .from("push_subscriptions")
       .select(
-        "id, audience, driver_id, fcm_token, user_agent, last_seen_at, created_at, reservation_id, client_account_id",
+        "id, audience, driver_id, fcm_token, user_agent, last_seen_at, expires_at, created_at, reservation_id, client_account_id",
       )
       .order("last_seen_at", { ascending: false })
       .limit(100);
@@ -48,6 +49,7 @@ export const listPushSubscriptions = createServerFn({ method: "POST" })
       token_suffix: r.fcm_token ? String(r.fcm_token).slice(-12) : null,
       user_agent: r.user_agent ?? null,
       last_seen_at: r.last_seen_at ?? null,
+      expires_at: r.expires_at ?? null,
       created_at: r.created_at ?? null,
       reservation_id: r.reservation_id ?? null,
       client_account_id: r.client_account_id ?? null,
