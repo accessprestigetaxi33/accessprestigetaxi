@@ -6,7 +6,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DESTINATIONS, getDestination } from "@/data/destinations";
 import { DRIVERS } from "@/data/drivers";
 
-const SITE = "https://accessprestigetaxi.lovable.app";
+const SITE = "https://www.accessprestigetaxi.fr";
 
 export const Route = createFileRoute("/destinations/$slug")({
   loader: ({ params }) => {

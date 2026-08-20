@@ -5,7 +5,7 @@ import { BadgeCheck, FileText, MapPin, Phone, ShieldCheck, Sparkles, Clock } fro
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
-const SITE = "https://accessprestigetaxi.lovable.app";
+const SITE = "https://www.accessprestigetaxi.fr";
 const TITLE = "Sécurité & mentions légales — Access Prestige Taxi";
 const DESC =
   "Chauffeurs de taxi agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente-Maritime.";

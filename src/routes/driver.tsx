@@ -4141,13 +4141,10 @@ function VisitorCounter({
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const CUTOFF_MS = 90_000;
-
     const fetchCount = async () => {
-      if (scope === "site") {
-        const cutoff = new Date(Date.now() - CUTOFF_MS).toISOString();
-        await (supabase as any).from("active_visitors").delete().lt("last_seen", cutoff);
-      }
+      // Le nettoyage des visiteurs périmés se fait côté serveur (rôle service),
+      // le client anonyme n'a aucun droit d'écriture sur active_visitors.
+
       try {
         const res = await getActiveVisitorCount({ data: { token: getDriverToken(), scope } });
         setCount(res?.count ?? 0);

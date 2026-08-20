@@ -177,10 +177,10 @@ function useHeroSlideshow(count: number, durationMs: number) {
 
 const COPY = {
   fr: {
-    kicker: "20 ans d'expérience · Transport sanitaire avec fauteuil roulant · Charente-Maritime",
-    h1: "Taxi 100 % électrique en Charente-Maritime",
+    kicker: "Transport sanitaire avec fauteuil roulant · Transport de groupe · Toutes distances · Charente-Maritime",
+    h1: "Votre transport, notre exigence",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une BMW iX1 électrique 5 places, un Audi Q6 e-tron 5 places et un van Mercedes 8 places. Transport sanitaire avec fauteuil roulant et prestations toutes distances.",
+    lead: "Deux chauffeurs, une même exigence : taxi 100 % électrique en Charente-Maritime avec la BMW iX1 et l'Audi Q6 e-tron 5 places, van Mercedes classe V 8 places pour le transport de groupe, transport sanitaire conventionné avec fauteuil roulant et prestations toutes distances.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
@@ -189,60 +189,66 @@ const COPY = {
     driversLead:
       "Deux chauffeurs indépendants, une même exigence : ponctualité, discrétion et confort, en Charente-Maritime.",
     stats: [
-      { n: 2, suffix: "", l: "chauffeurs dédiés" },
-      { n: 100, suffix: " %", l: "électrique (BMW iX1)" },
-      { n: 8, suffix: " places", l: "van Mercedes" },
-      { n: 5, suffix: " places", l: "Audi Q6 e-tron électrique" },
+      { n: 2, suffix: "", l: "chauffeurs dédiés — Alain & Patricia", img: photoDriver.url },
+      { n: 100, suffix: " %", l: "électrique (BMW iX1)", img: photoBmwReal.url },
+      { n: 5, suffix: " places", l: "Audi Q6 e-tron électrique", img: photoAudiReal.url },
+      { n: 8, suffix: " places", l: "van Mercedes classe V", img: photoVanReal.url },
     ],
     servicesEyebrow: "Nos services",
-    servicesTitle: "Une prestation pensée pour chaque trajet",
+    servicesTitle: "Le transport haut de gamme sur mesure",
     services: [
-      { photo: photoMedical, t: "Transport conventionné", d: "Transport sanitaire possible avec fauteuil roulant." },
+      {
+        photo: photoMedical,
+        t: "Transport sanitaire conventionné",
+        d: "Transport assis professionnalisé et transport avec fauteuil roulant, prise en charge simplifiée.",
+      },
+      {
+        photo: photoAirport,
+        t: "Transferts toutes gares & tous aéroports",
+        d: "Suivi des vols et des trains, accueil pancarte et bagages pris en charge, toutes distances.",
+      },
+      {
+        photo: photoBusiness,
+        t: "Déplacements pro & privés, hôtels et campings",
+        d: "Navettes entreprises, hôtels, campings et résidences : ponctualité, discrétion, facture entreprise.",
+      },
+      {
+        photo: photoInterior.url,
+        t: "Mise à disposition avec chauffeur",
+        d: "Demi-journée, journée complète ou événementiel : votre chauffeur reste à vos côtés.",
+      },
+      {
+        photo: photoVanReal.url,
+        t: "Transport de groupe",
+        d: "Voyagez ensemble confortablement : groupe, famille, mariage, déplacement pro, grand volume de bagages, à bord du Mercedes classe V 8 places.",
+      },
+    ],
+    groupEyebrow: "Transport de groupe",
+    groupTitle: "Van Mercedes classe V 8 places pour vos groupes",
+    groupText:
+      "Voyagez ensemble confortablement : que vous soyez un groupe, une famille, un mariage ou un déplacement professionnel, le van Mercedes classe V d'Alain offre 8 places, un grand volume de bagages et un vrai confort.",
+    groupBullets: ["8 places", "Grand volume de bagages", "Un seul tarif, un seul véhicule", "Toutes distances"],
+    groupCta: "Réserver le van 8 places",
+    whyEyebrow: "Pourquoi nous choisir",
+    whyTitle: "Une prestation pensée pour chaque trajet, à la hauteur de vos attentes",
+    why: [
       {
         photo: photoInterior.url,
         t: "Confort intérieur",
-        d: "Habitacle soigné, silence électrique, eau et chargeurs à bord.",
-      },
-      { photo: photoAirport, t: "Toutes gares & tous aéroports", d: "Transferts, suivi des vols et des trains, accueil sur demande." },
-      {
-        photo: photoDriver.url,
-        t: "Chauffeurs agréés",
-        d: "Patricia et Alain, chauffeurs de taxi conventionnés en Charente-Maritime.",
-      },
-      { photo: photoBusiness, t: "Déplacements professionnels", d: "Ponctualité, discrétion, facture entreprise." },
-      {
-        photo: photoBmwReal.url,
-        t: "Disponible sur réservation",
-        d: "Réservation immédiate ou planifiée.",
-      },
-    ],
-    seatsEyebrow: "Familles",
-    seatsTitle: "Sièges bébé et rehausseurs enfants, sur demande",
-    seatsText:
-      "Nous embarquons gratuitement un siège bébé (0-13 kg), un siège enfant ou un rehausseur : précisez-le simplement au moment de la réservation rapide, nous préparons le véhicule avant votre départ.",
-    seatsItems: ["Siège bébé (0-13 kg)", "Siège enfant (9-18 kg)", "Rehausseur (15-36 kg)"],
-    seatsCta: "Choisir mon siège à la réservation",
-    groupEyebrow: "Transport de groupe",
-    groupTitle: "Van Mercedes 8 places pour vos groupes",
-    groupText:
-      "Famille, équipe, mariage, sortie entre amis ou transfert à plusieurs : le van Mercedes d'Alain offre 8 places et un grand volume de bagages.",
-    groupBullets: ["8 places", "Un seul tarif, un seul véhicule", "Toutes distances"],
-    groupCta: "Réserver le van 8 places",
-    whyEyebrow: "Pourquoi nous",
-    whyTitle: "L'élégance électrique, sans compromis",
-    why: [
-      {
-        photo: photoBmwReal.url,
-        t: "Zéro émission",
-        d: "La BMW iX1 de Patricia roule 100 % à l'électrique, sans bruit ni vibration.",
+        d: "Des véhicules sélectionnés pour votre bien-être : habitacle soigné, silence électrique, eau et chargeurs à bord.",
       },
       {
         photo: photoDriver.url,
-        t: "Deux chauffeurs, un standard",
-        d: "Même exigence de confort, de discrétion et de ponctualité.",
+        t: "Fiabilité",
+        d: "Ponctualité, discrétion et disponibilité, sur chaque course.",
       },
-      { photo: photoPrice, t: "Prix annoncé, prix tenu", d: "Estimation transparente avant le départ." },
+      {
+        photo: photoBmwReal.url,
+        t: "Une prestation adaptée à chaque besoin",
+        d: "Sièges bébé et rehausseurs enfants sur demande, fauteuil roulant, groupes et longues distances.",
+      },
     ],
+
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
     bannerText:
       "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
@@ -317,10 +323,10 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "20 years of experience · Medical transport with wheelchair · Charente-Maritime",
-    h1: "100% electric taxi in Charente-Maritime",
+    kicker: "Medical transport with wheelchair · Group transport · All distances · Charente-Maritime",
+    h1: "Your journey, our standard",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, a 5-seat electric BMW iX1, a 5-seat Audi Q6 e-tron and an 8-seat Mercedes van. Medical transport with wheelchair and all-distance services.",
+    lead: "Two drivers, one shared standard: a 100% electric taxi service in Charente-Maritime with the 5-seat BMW iX1 and Audi Q6 e-tron, an 8-seat Mercedes V-Class van for group transport, covered medical transport with wheelchair and all-distance services.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
@@ -329,59 +335,65 @@ const COPY = {
     driversLead:
       "Two independent drivers, one shared standard: punctuality, discretion and comfort across Charente-Maritime.",
     stats: [
-      { n: 2, suffix: "", l: "dedicated drivers" },
-      { n: 100, suffix: "%", l: "electric (BMW iX1)" },
-      { n: 8, suffix: " seats", l: "Mercedes van" },
-      { n: 5, suffix: " seats", l: "Audi Q6 e-tron electric SUV" },
+      { n: 2, suffix: "", l: "dedicated drivers — Alain & Patricia", img: photoDriver.url },
+      { n: 100, suffix: "%", l: "electric (BMW iX1)", img: photoBmwReal.url },
+      { n: 5, suffix: " seats", l: "Audi Q6 e-tron electric SUV", img: photoAudiReal.url },
+      { n: 8, suffix: " seats", l: "Mercedes V-Class van", img: photoVanReal.url },
     ],
     servicesEyebrow: "Our services",
-    servicesTitle: "A service designed for every journey",
+    servicesTitle: "Bespoke premium transport",
     services: [
-      { photo: photoMedical, t: "Medical transport", d: "Seated medical trips with simplified coverage." },
+      {
+        photo: photoMedical,
+        t: "Covered medical transport",
+        d: "Professional seated transport and wheelchair transport, with simplified coverage.",
+      },
+      {
+        photo: photoAirport,
+        t: "All stations & airport transfers",
+        d: "Flight and train tracking, meet & greet, luggage handled — any distance.",
+      },
+      {
+        photo: photoBusiness,
+        t: "Business & private travel, hotels and campsites",
+        d: "Company shuttles, hotels, campsites and residences: punctual, discreet, company invoicing.",
+      },
+      {
+        photo: photoInterior.url,
+        t: "Chauffeur hire",
+        d: "Half a day, a full day or an event: your driver stays at your disposal.",
+      },
+      {
+        photo: photoVanReal.url,
+        t: "Group transport",
+        d: "Travel together in comfort: group, family, wedding or business trip with plenty of luggage, aboard the 8-seat Mercedes V-Class.",
+      },
+    ],
+    groupEyebrow: "Group transport",
+    groupTitle: "8-seat Mercedes V-Class van for your groups",
+    groupText:
+      "Travel together in comfort: whether you are a group, a family, a wedding party or a business trip, Alain's Mercedes V-Class offers 8 seats, generous luggage space and genuine comfort.",
+    groupBullets: ["8 seats", "Generous luggage space", "One fare, one vehicle", "All distances"],
+    groupCta: "Book the 8-seat van",
+    whyEyebrow: "Why choose us",
+    whyTitle: "A service designed for every journey, matching your expectations",
+    why: [
       {
         photo: photoInterior.url,
         t: "Interior comfort",
-        d: "Immaculate cabin, electric silence, water and chargers on board.",
-      },
-      { photo: photoAirport, t: "Stations & airports", d: "Flight and train tracking, meet & greet." },
-      {
-        photo: photoDriver.url,
-        t: "Licensed drivers",
-        d: "Patricia and Alain, licensed taxi drivers in Charente-Maritime.",
-      },
-      { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
-      {
-        photo: photoBmwReal.url,
-        t: "Available on booking",
-        d: "Instant or scheduled booking.",
-      },
-    ],
-    seatsEyebrow: "Families",
-    seatsTitle: "Baby seats and child boosters, on request",
-    seatsText:
-      "We carry a baby seat (0-13 kg), a child seat or a booster free of charge: just pick the seat type in the quick booking form and we fit it before pickup.",
-    seatsItems: ["Baby seat (0-13 kg)", "Child seat (9-18 kg)", "Booster (15-36 kg)"],
-    seatsCta: "Pick my seat when booking",
-    groupEyebrow: "Group transport",
-    groupTitle: "Up to 7 people in the Mercedes van",
-    groupText:
-      "Family, team, wedding, night out or a group airport transfer: Alain's Mercedes van seats up to 7 passengers with their luggage — one ride, one fare.",
-    groupBullets: ["7 passengers + luggage", "One fare, one vehicle", "Hourly hire available"],
-    groupCta: "Book the 8-seat van",
-    whyEyebrow: "Why us",
-    whyTitle: "Electric elegance, no compromise",
-    why: [
-      {
-        photo: photoBmwReal.url,
-        t: "Zero emissions",
-        d: "Patricia's BMW iX1 is fully electric — no noise, no vibration.",
+        d: "Vehicles selected for your wellbeing: immaculate cabin, electric silence, water and chargers on board.",
       },
       {
         photo: photoDriver.url,
-        t: "Two drivers, one standard",
-        d: "The same demand for comfort, discretion and punctuality.",
+        t: "Reliability",
+        d: "Punctuality, discretion and availability on every ride.",
       },
-      { photo: photoPrice, t: "Quoted price, final price", d: "Transparent estimate before departure." },
+      {
+        photo: photoBmwReal.url,
+        t: "A service tailored to every need",
+        d: "Baby and booster seats on request, wheelchair access, groups and long distances.",
+      },
+
     ],
     bannerTitle: "Charente-Maritime, door to door",
     bannerText:
@@ -771,15 +783,27 @@ function Index() {
 
           <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
             {c.stats.map((s) => (
-              <div key={s.l} className="bg-card px-3 py-4 sm:px-4 sm:py-5">
-                <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
-                  <Counter value={s.n} suffix={s.suffix} />
-                </dt>
-                <dd className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-[11px]">
-                  {s.l}
-                </dd>
+              <div key={s.l} className="overflow-hidden bg-card text-left">
+                <img
+                  src={s.img}
+                  alt={s.l}
+                  loading="lazy"
+                  decoding="async"
+                  width={640}
+                  height={360}
+                  className="h-24 w-full object-cover sm:h-28 lg:h-32"
+                />
+                <div className="px-3 py-3 sm:px-4 sm:py-4">
+                  <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
+                    <Counter value={s.n} suffix={s.suffix} />
+                  </dt>
+                  <dd className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-[11px]">
+                    {s.l}
+                  </dd>
+                </div>
               </div>
             ))}
+
           </dl>
 
           {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
@@ -885,42 +909,8 @@ function Index() {
         </div>
       </section>
 
-      {/* SIÈGES BÉBÉ & ENFANTS */}
-      <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
-          <Reveal>
-            <img
-              src={photoInterior.url}
-              alt={c.seatsTitle}
-              loading="lazy"
-              width={1280}
-              height={853}
-              className="aspect-[4/3] w-full rounded-3xl border border-border object-cover"
-            />
-          </Reveal>
-          <Reveal delay={0.08}>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.seatsEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.seatsTitle}
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.seatsText}</p>
-            <ul className="mt-6 space-y-2">
-              {c.seatsItems.map((s) => (
-                <li key={s} className="flex items-center gap-3 text-sm text-foreground">
-                  <Baby className="h-4 w-4 shrink-0 text-primary" />
-                  {s}
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/reserver"
-              className="mt-7 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
-            >
-              {c.seatsCta} <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Reveal>
-        </div>
-      </section>
+
+
 
       {/* TRANSPORT DE GROUPE — VAN 8 PLACES */}
       <section className="border-t border-border py-20">
@@ -1414,27 +1404,23 @@ function Index() {
         </div>
       </section>
 
-      {/* AVIS & RÉASSURANCE */}
-      <ClientTrust />
+      {/* AVIS — réassurance, avis clients et dépôt d'avis réunis en une seule section */}
+      <ClientTrust>
+        <div className="mx-auto max-w-2xl border-t border-border pt-10">
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
+          <h3 className="mt-3 text-center font-display text-2xl font-semibold text-foreground sm:text-3xl text-balance">
+            {c.reviewTitle}
+          </h3>
+          <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
+          <div className="mt-8 rounded-2xl border border-border bg-card p-6">
+            <ReviewForm />
+          </div>
+        </div>
+      </ClientTrust>
 
       {/* FAQ SEO */}
       <FaqSeo />
 
-      {/* AVIS */}
-      <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto max-w-2xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.reviewTitle}
-            </h2>
-            <p className="mt-3 text-center text-sm text-muted-foreground">{c.reviewText}</p>
-            <div className="mt-8 rounded-2xl border border-border bg-background p-6">
-              <ReviewForm />
-            </div>
-          </Reveal>
-        </div>
-      </section>
 
       {/* BLOG */}
       <section className="border-t border-border py-20">

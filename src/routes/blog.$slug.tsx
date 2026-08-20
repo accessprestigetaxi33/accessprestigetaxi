@@ -87,11 +87,33 @@ export const Route = createFileRoute("/blog/$slug")({
               },
               {
                 "@type": "Article",
-                headline: e.name,
+                "@id": `${url}#article`,
+                mainEntityOfPage: { "@type": "WebPage", "@id": url },
+                headline: e.name.slice(0, 110),
+                description: e.fr.teaser,
                 image: e.photos,
-                author: { "@type": "Organization", name: "Access Prestige Taxi" },
-                publisher: { "@type": "Organization", name: "Access Prestige Taxi" },
+                inLanguage: "fr-FR",
+                // Dates éditoriales : contenu de guide publié puis relu par les chauffeurs.
+                datePublished: "2026-01-15",
+                dateModified: "2026-01-15",
+                author: {
+                  "@type": "Organization",
+                  name: "Access Prestige Taxi",
+                  url: SITE,
+                },
+                publisher: {
+                  "@type": "Organization",
+                  name: "Access Prestige Taxi",
+                  url: SITE,
+                  logo: {
+                    "@type": "ImageObject",
+                    url: `${SITE}/favicon.png`,
+                    width: 512,
+                    height: 512,
+                  },
+                },
               },
+
               {
                 "@type": "BreadcrumbList",
                 itemListElement: [

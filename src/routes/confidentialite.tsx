@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { useI18n } from "@/i18n/I18nProvider";
 
-const SITE = "https://accessprestigetaxi.lovable.app";
+const SITE = "https://www.accessprestigetaxi.fr";
 const URL = `${SITE}/confidentialite`;
 const TITLE_FR = "Politique de confidentialité — Access Prestige Taxi";
 const TITLE_EN = "Privacy Policy — Access Prestige Taxi";
