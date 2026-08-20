@@ -838,33 +838,85 @@ function Index() {
             <div
               role="group"
               aria-label={lang === "en" ? "Choose a vehicle to preview" : "Choisir un véhicule à afficher"}
-              className="flex justify-start gap-2 overflow-x-auto pb-2 sm:justify-center sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              onKeyDown={(e) => {
+                if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  next();
+                } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  prev();
+                } else if (e.key === "Home") {
+                  e.preventDefault();
+                  select(0);
+                } else if (e.key === "End") {
+                  e.preventDefault();
+                  select(slides.length - 1);
+                }
+              }}
+              className="flex flex-wrap items-center justify-center gap-2 pb-2 sm:gap-3"
             >
+              <button
+                type="button"
+                onClick={prev}
+                aria-label={lang === "en" ? "Previous vehicle" : "Véhicule précédent"}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+
               {slides.map((s, i) => (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => select(i)}
                   aria-pressed={i === slideIndex}
-                  aria-label={`${lang === "en" ? "Show" : "Afficher"} : ${s.title}`}
-                  className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
+                  tabIndex={i === slideIndex ? 0 : -1}
+                  ref={(el) => {
+                    if (i === slideIndex) slideButtonsRef.current = el;
+                  }}
+                  className={`min-h-11 shrink-0 rounded-xl border px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-xs ${
                     i === slideIndex
-                      ? "border-primary shadow-[var(--shadow-gold)]"
-                      : "border-border opacity-70 hover:opacity-100"
+                      ? "border-primary bg-primary/10 text-primary shadow-[var(--shadow-gold)]"
+                      : "border-border text-muted-foreground hover:border-primary/60 hover:text-foreground"
                   }`}
                 >
-                  <img
-                    src={s.src}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    width={320}
-                    height={180}
-                    className={s.contain ? "h-full w-full object-contain" : "h-full w-full object-cover"}
-                  />
+                  {s.label}
                 </button>
               ))}
+
+              <button
+                type="button"
+                onClick={next}
+                aria-label={lang === "en" ? "Next vehicle" : "Véhicule suivant"}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                type="button"
+                onClick={togglePause}
+                aria-label={
+                  paused
+                    ? lang === "en"
+                      ? "Resume automatic slideshow"
+                      : "Reprendre le défilement automatique"
+                    : lang === "en"
+                      ? "Pause automatic slideshow"
+                      : "Mettre en pause le défilement automatique"
+                }
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
+              </button>
             </div>
+
+            <p aria-live="polite" className="sr-only">
+              {lang === "en"
+                ? `Slide ${slideIndex + 1} of ${slides.length}: ${slides[slideIndex].title}`
+                : `Diapositive ${slideIndex + 1} sur ${slides.length} : ${slides[slideIndex].title}`}
+            </p>
+
 
             <AnimatePresence mode="wait">
               {slides[slideIndex].id !== "brand" && (
