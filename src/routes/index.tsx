@@ -55,7 +55,7 @@ const SLOGAN_EN = "Excellence on every journey";
 
 // Domaine canonique du site — sert à générer les URLs absolues pour
 // og:url / og:image / twitter:image, obligatoires selon la spec Open Graph.
-const SITE_URL = "https://accessprestigetaxi.fr";
+const SITE_URL = "https://www.accessprestigetaxi.fr";
 
 function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;

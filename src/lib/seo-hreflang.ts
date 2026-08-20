@@ -14,7 +14,7 @@
 // volontairement absents du canonical : ces variantes se replient donc sur la
 // page propre, sans duplication.
 
-export const SITE_URL = "https://accessprestigetaxi.fr";
+export const SITE_URL = "https://www.accessprestigetaxi.fr";
 
 /** Seul paramètre d'URL qui distingue une vraie variante de page. */
 export const LANG_PARAM = "lang";

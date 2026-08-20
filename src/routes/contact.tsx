@@ -12,7 +12,7 @@ const CONTACT_EMAIL = "accessprestigetaxi@gmail.com";
 const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
 const CONTACT_DESC =
   "Contactez Access Prestige Taxi : 06 03 44 48 63, accessprestigetaxi@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
-const CONTACT_URL = "https://accessprestigetaxi.fr/contact";
+const CONTACT_URL = "https://www.accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
   head: ({ match }) => ({

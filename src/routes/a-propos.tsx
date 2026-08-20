@@ -8,7 +8,7 @@ import { DRIVERS } from "@/data/drivers";
 const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
 const ABOUT_DESC =
   "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente-Maritime.";
-const ABOUT_URL = "https://accessprestigetaxi.fr/a-propos";
+const ABOUT_URL = "https://www.accessprestigetaxi.fr/a-propos";
 
 export const Route = createFileRoute("/a-propos")({
   head: ({ match }) => ({

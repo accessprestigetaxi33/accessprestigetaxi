@@ -42,4 +42,4 @@ Disallow: /reservation
 Disallow: /notifications
 Disallow: /qr-generator
 
-Sitemap: https://accessprestigetaxi.fr/sitemap.xml
+Sitemap: https://www.accessprestigetaxi.fr/sitemap.xml
