@@ -1,9 +1,10 @@
 import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Plane, Train, Briefcase, Accessibility, ShieldCheck, MapPin, Users, Route as RouteIcon, HelpCircle } from "lucide-react";
-import { useT } from "@/i18n/I18nProvider";
+import { ShieldCheck, Users, Route as RouteIcon, HelpCircle } from "lucide-react";
+import { useI18n, useT } from "@/i18n/I18nProvider";
 import { BulletedList } from "@/components/BulletedList";
+import { SERVICE_CARDS_EN, SERVICE_CARDS_FR } from "@/data/services-cards";
 
 const SERVICES_TITLE = "Services taxi Charente-Maritime : Aéroport, Gare, CPAM";
 const SERVICES_DESC =
@@ -96,44 +97,9 @@ export const Route = createFileRoute("/services")({
 
 function ServicesPage() {
   const t = useT();
-  const services = [
-    {
-      icon: Plane,
-      title: t("svcp.airport.title"),
-      desc: t("svcp.airport.desc"),
-      points: [t("svcp.airport.p1"), t("svcp.airport.p2"), t("svcp.airport.p3")],
-    },
-    {
-      icon: Train,
-      title: t("svcp.train.title"),
-      desc: t("svcp.train.desc"),
-      points: [t("svcp.train.p1"), t("svcp.train.p2"), t("svcp.train.p3")],
-    },
-    {
-      icon: Briefcase,
-      title: t("svcp.business.title"),
-      desc: t("svcp.business.desc"),
-      points: [t("svcp.business.p1"), t("svcp.business.p2"), t("svcp.business.p3")],
-    },
-    {
-      icon: Accessibility,
-      title: t("svcp.wedding.title"),
-      desc: t("svcp.wedding.desc"),
-      points: [t("svcp.wedding.p1"), t("svcp.wedding.p2"), t("svcp.wedding.p3")],
-    },
-    {
-      icon: ShieldCheck,
-      title: t("svcp.cpam.title"),
-      desc: t("svcp.cpam.desc"),
-      points: [t("svcp.cpam.p1"), t("svcp.cpam.p2"), t("svcp.cpam.p3")],
-    },
-    {
-      icon: MapPin,
-      title: t("svcp.long.title"),
-      desc: t("svcp.long.desc"),
-      points: [t("svcp.long.p1"), t("svcp.long.p2"), t("svcp.long.p3")],
-    },
-  ];
+  const { lang } = useI18n();
+  // Catalogue unique (ex-section "Nos services" de la page d'accueil + détails).
+  const services = lang === "en" ? SERVICE_CARDS_EN : SERVICE_CARDS_FR;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:py-14 md:py-16">
@@ -145,23 +111,30 @@ function ServicesPage() {
         </p>
       </div>
 
-      {/* 1-col on mobile, 2-col on md */}
-      <div className="mt-10 grid gap-5 sm:mt-14 md:grid-cols-2">
+      <div className="mt-10 grid gap-5 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((s, i) => {
-          const headingId = `svc-${i}-title`;
+          const headingId = `svc-${s.id}-title`;
           return (
             <article
-              key={s.title}
-              className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition hover:border-primary/50 sm:p-8"
+              key={s.id}
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/50"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-14 sm:w-14">
-                <s.icon className="h-6 w-6 sm:h-7 sm:w-7" />
+              <img
+                src={s.photo}
+                alt={s.title}
+                loading={i < 3 ? "eager" : "lazy"}
+                decoding="async"
+                width={1280}
+                height={853}
+                className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04] sm:h-48"
+              />
+              <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <h2 id={headingId} className="font-display text-lg font-semibold sm:text-xl">
+                  {s.title}
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+                <BulletedList items={s.points} className="mt-4" ariaLabelledBy={headingId} />
               </div>
-              <h2 id={headingId} className="mt-4 font-display text-lg font-semibold sm:mt-5 sm:text-2xl">
-                {s.title}
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground sm:text-base">{s.desc}</p>
-              <BulletedList items={s.points} className="mt-4" ariaLabelledBy={headingId} />
             </article>
           );
         })}
