@@ -1184,6 +1184,7 @@ const en: Dict = {
   "nav.tarifs": "Pricing",
   "nav.about": "About",
   "nav.contact": "Contact",
+  "nav.quote": "Quote",
   "nav.book": "Book",
   "nav.book_long": "Book a ride",
   "nav.account": "My account",
