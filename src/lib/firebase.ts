@@ -21,7 +21,10 @@ async function loadFirebaseConfig(): Promise<FirebaseOptions> {
   if (!configPromise) {
     configPromise = fetch("/api/public/firebase-config")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`config ${r.status}`))))
-      .then((remote) => ({ ...firebaseConfig, ...remote }) as FirebaseOptions)
+      .then((remote) => {
+        if (!remote?.apiKey) throw new Error("Clé Web Firebase manquante (FIREBASE_WEB_API_KEY)");
+        return { ...firebaseConfig, ...remote } as FirebaseOptions;
+      })
       .catch((err) => {
         console.error("[FCM] config fetch failed", err);
         configPromise = null;
