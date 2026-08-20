@@ -323,10 +323,10 @@ const COPY = {
     ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    kicker: "20 years of experience · Medical transport with wheelchair · Charente-Maritime",
-    h1: "100% electric taxi in Charente-Maritime",
+    kicker: "Medical transport with wheelchair · Group transport · All distances · Charente-Maritime",
+    h1: "Your journey, our standard",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, a 5-seat electric BMW iX1, a 5-seat Audi Q6 e-tron and an 8-seat Mercedes van. Medical transport with wheelchair and all-distance services.",
+    lead: "Two drivers, one shared standard: a 100% electric taxi service in Charente-Maritime with the 5-seat BMW iX1 and Audi Q6 e-tron, an 8-seat Mercedes V-Class van for group transport, covered medical transport with wheelchair and all-distance services.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
@@ -335,59 +335,65 @@ const COPY = {
     driversLead:
       "Two independent drivers, one shared standard: punctuality, discretion and comfort across Charente-Maritime.",
     stats: [
-      { n: 2, suffix: "", l: "dedicated drivers" },
-      { n: 100, suffix: "%", l: "electric (BMW iX1)" },
-      { n: 8, suffix: " seats", l: "Mercedes van" },
-      { n: 5, suffix: " seats", l: "Audi Q6 e-tron electric SUV" },
+      { n: 2, suffix: "", l: "dedicated drivers — Alain & Patricia", img: photoDriver.url },
+      { n: 100, suffix: "%", l: "electric (BMW iX1)", img: photoBmwReal.url },
+      { n: 5, suffix: " seats", l: "Audi Q6 e-tron electric SUV", img: photoAudiReal.url },
+      { n: 8, suffix: " seats", l: "Mercedes V-Class van", img: photoVanReal.url },
     ],
     servicesEyebrow: "Our services",
-    servicesTitle: "A service designed for every journey",
+    servicesTitle: "Bespoke premium transport",
     services: [
-      { photo: photoMedical, t: "Medical transport", d: "Seated medical trips with simplified coverage." },
+      {
+        photo: photoMedical,
+        t: "Covered medical transport",
+        d: "Professional seated transport and wheelchair transport, with simplified coverage.",
+      },
+      {
+        photo: photoAirport,
+        t: "All stations & airport transfers",
+        d: "Flight and train tracking, meet & greet, luggage handled — any distance.",
+      },
+      {
+        photo: photoBusiness,
+        t: "Business & private travel, hotels and campsites",
+        d: "Company shuttles, hotels, campsites and residences: punctual, discreet, company invoicing.",
+      },
+      {
+        photo: photoInterior.url,
+        t: "Chauffeur hire",
+        d: "Half a day, a full day or an event: your driver stays at your disposal.",
+      },
+      {
+        photo: photoVanReal.url,
+        t: "Group transport",
+        d: "Travel together in comfort: group, family, wedding or business trip with plenty of luggage, aboard the 8-seat Mercedes V-Class.",
+      },
+    ],
+    groupEyebrow: "Group transport",
+    groupTitle: "8-seat Mercedes V-Class van for your groups",
+    groupText:
+      "Travel together in comfort: whether you are a group, a family, a wedding party or a business trip, Alain's Mercedes V-Class offers 8 seats, generous luggage space and genuine comfort.",
+    groupBullets: ["8 seats", "Generous luggage space", "One fare, one vehicle", "All distances"],
+    groupCta: "Book the 8-seat van",
+    whyEyebrow: "Why choose us",
+    whyTitle: "A service designed for every journey, matching your expectations",
+    why: [
       {
         photo: photoInterior.url,
         t: "Interior comfort",
-        d: "Immaculate cabin, electric silence, water and chargers on board.",
-      },
-      { photo: photoAirport, t: "Stations & airports", d: "Flight and train tracking, meet & greet." },
-      {
-        photo: photoDriver.url,
-        t: "Licensed drivers",
-        d: "Patricia and Alain, licensed taxi drivers in Charente-Maritime.",
-      },
-      { photo: photoBusiness, t: "Business travel", d: "Punctual, discreet, company invoicing." },
-      {
-        photo: photoBmwReal.url,
-        t: "Available on booking",
-        d: "Instant or scheduled booking.",
-      },
-    ],
-    seatsEyebrow: "Families",
-    seatsTitle: "Baby seats and child boosters, on request",
-    seatsText:
-      "We carry a baby seat (0-13 kg), a child seat or a booster free of charge: just pick the seat type in the quick booking form and we fit it before pickup.",
-    seatsItems: ["Baby seat (0-13 kg)", "Child seat (9-18 kg)", "Booster (15-36 kg)"],
-    seatsCta: "Pick my seat when booking",
-    groupEyebrow: "Group transport",
-    groupTitle: "Up to 7 people in the Mercedes van",
-    groupText:
-      "Family, team, wedding, night out or a group airport transfer: Alain's Mercedes van seats up to 7 passengers with their luggage — one ride, one fare.",
-    groupBullets: ["7 passengers + luggage", "One fare, one vehicle", "Hourly hire available"],
-    groupCta: "Book the 8-seat van",
-    whyEyebrow: "Why us",
-    whyTitle: "Electric elegance, no compromise",
-    why: [
-      {
-        photo: photoBmwReal.url,
-        t: "Zero emissions",
-        d: "Patricia's BMW iX1 is fully electric — no noise, no vibration.",
+        d: "Vehicles selected for your wellbeing: immaculate cabin, electric silence, water and chargers on board.",
       },
       {
         photo: photoDriver.url,
-        t: "Two drivers, one standard",
-        d: "The same demand for comfort, discretion and punctuality.",
+        t: "Reliability",
+        d: "Punctuality, discretion and availability on every ride.",
       },
-      { photo: photoPrice, t: "Quoted price, final price", d: "Transparent estimate before departure." },
+      {
+        photo: photoBmwReal.url,
+        t: "A service tailored to every need",
+        d: "Baby and booster seats on request, wheelchair access, groups and long distances.",
+      },
+
     ],
     bannerTitle: "Charente-Maritime, door to door",
     bannerText:
