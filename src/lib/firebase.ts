@@ -41,6 +41,27 @@ const TOKEN_MAX_AGE_MS = 50 * 24 * 60 * 60 * 1000; // 50 jours
 // PWA on iOS/iPadOS and by the working Taxi City deployment.
 const FCM_SCOPE = "/";
 
+/**
+ * Raison du dernier échec de getFcmToken(). Permet à l'UI de dire POURQUOI
+ * l'activation a échoué au lieu d'afficher un « unsupported » trompeur
+ * (l'app peut être parfaitement installée en PWA et échouer pour une toute
+ * autre raison : permission ignorée, service worker KO, VAPID/token vide…).
+ */
+export type FcmFailureReason =
+  | "no-window"
+  | "no-api"
+  | "permission-denied"
+  | "permission-dismissed"
+  | "not-supported"
+  | "sw-failed"
+  | "empty-token"
+  | "error";
+
+let lastFcmFailure: { reason: FcmFailureReason; detail?: string } | null = null;
+export function getLastFcmFailure() {
+  return lastFcmFailure;
+}
+
 let app: FirebaseApp | null = null;
 let messaging: Messaging | null = null;
 
@@ -50,6 +71,7 @@ export async function initFirebase(): Promise<Messaging | null> {
     const supported = await isSupported();
     if (!supported) {
       console.warn("[FCM] Not supported in this browser");
+      lastFcmFailure = { reason: "not-supported" };
       return null;
     }
     if (!app) app = initializeApp(await loadFirebaseConfig());
@@ -57,13 +79,18 @@ export async function initFirebase(): Promise<Messaging | null> {
     return messaging;
   } catch (err) {
     console.error("[FCM] init failed", err);
+    lastFcmFailure = { reason: "error", detail: (err as Error)?.message };
     return null;
   }
 }
 
 export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Promise<string | null> {
   if (typeof window === "undefined") return null;
-  if (!("Notification" in window) || !("serviceWorker" in navigator)) return null;
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+    lastFcmFailure = { reason: "no-api" };
+    return null;
+  }
+  lastFcmFailure = null;
 
   // ⚠️ CORRECTIF : sur Safari iOS (surtout en PWA installée), l'activation
   // utilisateur (le clic) expire dès qu'un await réseau intervient avant
@@ -74,6 +101,7 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
   // continuité directe du clic, avant tout autre await.
   if (Notification.permission === "denied") {
     console.warn("[FCM] Permission déjà refusée");
+    lastFcmFailure = { reason: "permission-denied" };
     return null;
   }
   let perm: NotificationPermission = Notification.permission;
@@ -82,6 +110,7 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
   }
   if (perm !== "granted") {
     console.warn("[FCM] Permission refusée :", perm);
+    lastFcmFailure = { reason: perm === "denied" ? "permission-denied" : "permission-dismissed" };
     return null;
   }
 
@@ -195,11 +224,17 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
       window.localStorage.setItem("fcm_registration_scope", FCM_SCOPE);
     } else {
       console.warn("[FCM] Token vide — vérifier VAPID key et SW");
+      lastFcmFailure = { reason: "empty-token" };
     }
 
     return token || null;
   } catch (err) {
     console.error("[FCM] getFcmToken failed", err);
+    const message = (err as Error)?.message ?? "";
+    lastFcmFailure = {
+      reason: /service ?worker|registration|scope/i.test(message) ? "sw-failed" : "error",
+      detail: message,
+    };
     return null;
   }
 }
