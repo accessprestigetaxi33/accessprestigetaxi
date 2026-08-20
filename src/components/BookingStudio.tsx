@@ -475,16 +475,27 @@ export function BookingStudio() {
 
   /* ── validation ── */
   const missing: string[] = [];
-  if (depart.trim().length < 3) missing.push(L.m_from);
-  if (arrivee.trim().length < 3) missing.push(L.m_to);
-  if (!when) missing.push(L.m_when);
-  if (nom.trim().length < 2) missing.push(L.m_name);
-  if (tel.replace(/\D/g, "").length < 9) missing.push(L.m_phone);
+  const missingIds: string[] = [];
+  if (depart.trim().length < 3) { missing.push(L.m_from); missingIds.push("bs-depart"); }
+  if (arrivee.trim().length < 3) { missing.push(L.m_to); missingIds.push("bs-arrivee"); }
+  if (!when) { missing.push(L.m_when); missingIds.push("when"); }
+  if (nom.trim().length < 2) { missing.push(L.m_name); missingIds.push("nom"); }
+  if (tel.replace(/\D/g, "").length < 9) { missing.push(L.m_phone); missingIds.push("tel"); }
   const canSubmit = missing.length === 0 && !submitting;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (submitting) return;
+    if (missing.length > 0) {
+      toast.error(`${L.missing} ${missing.join(", ")}`);
+      const el = document.getElementById(missingIds[0]);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        try { (el as HTMLElement).focus({ preventScroll: true }); } catch { /* noop */ }
+      }
+      return;
+    }
+
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       toast.error(L.err_email);
       return;
