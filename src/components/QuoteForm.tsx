@@ -103,6 +103,7 @@ const COPY = {
 } as const;
 
 export type QuotePrefill = {
+  prestation?: string;
   depart?: string;
   arrivee?: string;
   date?: string;
@@ -123,6 +124,8 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
   const [sanitaire, setSanitaire] = useState(false);
   const [groupe, setGroupe] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
+  const presetPrestation =
+    c.prestations.find((p) => p.v === prefill?.prestation)?.l ?? c.prestations[0].l;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -213,7 +216,12 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
           <input name="telephone" type="tel" required maxLength={30} className={inputCls} />
         </Field>
         <Field label={c.prestation} className={labelCls}>
-          <select name="prestation" className={inputCls} defaultValue={c.prestations[0].v}>
+          <select
+            name="prestation"
+            className={inputCls}
+            key={`pr-${presetPrestation}`}
+            defaultValue={presetPrestation}
+          >
             {c.prestations.map((p) => (
               <option key={p.v} value={p.l}>
                 {p.l}

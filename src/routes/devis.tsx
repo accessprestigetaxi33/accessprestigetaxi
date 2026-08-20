@@ -18,6 +18,10 @@ const DESC =
 const EMAIL = "accessprestigetaxi@gmail.com";
 
 export const Route = createFileRoute("/devis")({
+  validateSearch: (search: Record<string, unknown>): { lang?: string; prestation?: string } => ({
+    lang: typeof search.lang === "string" ? search.lang : undefined,
+    prestation: typeof search.prestation === "string" ? search.prestation : undefined,
+  }),
   head: ({ match }) => ({
     meta: [
       { title: TITLE },
@@ -102,7 +106,10 @@ const COPY = {
 function DevisPage() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
-  const [prefill, setPrefill] = useState<QuotePrefill | undefined>(undefined);
+  const { prestation } = Route.useSearch();
+  const [prefill, setPrefill] = useState<QuotePrefill | undefined>(
+    prestation ? { prestation } : undefined,
+  );
   const formRef = useRef<HTMLFormElement | null>(null);
 
   return (
@@ -134,6 +141,7 @@ function DevisPage() {
         <QuoteEstimator
           onQuote={(p) => {
             setPrefill({
+              prestation,
               depart: p.depart,
               arrivee: p.arrivee,
               date: p.date,
