@@ -107,6 +107,7 @@ export const subscribePush = createServerFn({ method: "POST" })
       data.audience === "chauffeur" ? `chauffeur-device-${deviceKey}` : `${data.audience}-${targetKey}-${deviceKey}`;
 
     const nowIso = new Date().toISOString();
+    const expiresAtIso = new Date(Date.now() + 50 * 24 * 60 * 60 * 1000).toISOString();
 
     // Cleanup ancienne ligne pour ce device/cible + vieux doublons du même token.
     // La base taxi historique n'a pas toujours toutes les colonnes récentes
@@ -119,12 +120,14 @@ export const subscribePush = createServerFn({ method: "POST" })
     }
 
     // Insert — inclut client_account_id / reservation_id pour ciblage précis
+    // et expires_at pour la fenêtre de validité de 50 jours.
     const insertPayload: any = {
       audience: data.audience,
       endpoint,
       fcm_token: data.fcm_token,
       user_agent: ua,
       last_seen_at: nowIso,
+      expires_at: expiresAtIso,
       reservation_id: reservationId,
     };
     if (clientAccountId) insertPayload.client_account_id = clientAccountId;

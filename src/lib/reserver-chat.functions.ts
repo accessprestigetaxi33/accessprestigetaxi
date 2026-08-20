@@ -363,6 +363,8 @@ async function confirmReservation(
 
   // Lie le token push générique de /reserver à cette réservation précise.
   if (clientFcmToken && /^[A-Za-z0-9_\-:]{50,500}$/.test(clientFcmToken)) {
+    const nowIso = new Date().toISOString();
+    const expiresAtIso = new Date(Date.now() + 50 * 24 * 60 * 60 * 1000).toISOString();
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const endpoint = `fcm://${clientFcmToken}-client-reservation-${inserted.id}`;
@@ -372,7 +374,8 @@ async function confirmReservation(
         endpoint,
         fcm_token: clientFcmToken,
         reservation_id: inserted.id,
-        last_seen_at: new Date().toISOString(),
+        last_seen_at: nowIso,
+        expires_at: expiresAtIso,
       } as any);
     } catch (e) {
       console.warn("[chat] client push link failed", e);

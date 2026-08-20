@@ -248,6 +248,7 @@ type SubRow = {
   user_agent: string | null;
   last_seen_at: string | null;
   created_at: string | null;
+  expires_at: string | null;
   driver_id: string | null;
   reservation_id: string | null;
   client_account_id: string | null;
@@ -333,9 +334,10 @@ export async function sendPushToAudience(
   const baseQuery = () =>
     supabaseAdmin
       .from("push_subscriptions")
-      .select("id, fcm_token, user_agent, last_seen_at, created_at, driver_id, reservation_id, client_account_id")
+      .select("id, fcm_token, user_agent, last_seen_at, created_at, expires_at, driver_id, reservation_id, client_account_id")
       .eq("audience", audience)
-      .not("fcm_token", "is", null);
+      .not("fcm_token", "is", null)
+      .gt("expires_at", new Date().toISOString());
 
   let q = baseQuery();
   if (audience === "client" && opts.reservationId && opts.accountId) {
