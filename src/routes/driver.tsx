@@ -155,7 +155,7 @@ export const Route = createFileRoute("/driver")({
         { name: "apple-mobile-web-app-status-bar-style", content: "default" },
         { name: "apple-mobile-web-app-title", content: "APT Chauffeur" },
       ],
-      links: [{ rel: "manifest", href: "/api/manifest?role=driver" }],
+      links: [{ rel: "manifest", href: "/api/manifest?role=driver", id: "app-manifest" }],
     };
   },
 
