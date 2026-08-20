@@ -41,6 +41,10 @@ const MESSAGES: Record<PushUnsupportedReason, { fr: string; en: string }> = {
     fr: "Cette page est affichée dans un aperçu intégré : les navigateurs y interdisent les notifications. Ouvrez le site dans un vrai onglet (ou depuis l'icône installée) puis réessayez.",
     en: "This page runs inside an embedded preview, where browsers block notifications. Open the site in a real tab (or from the installed icon) and try again.",
   },
+  "iphone-not-installed": {
+    fr: "Sur iPhone, Safari n'autorise les notifications QUE dans l'app installée : ouvrez-la depuis son icône sur l'écran d'accueil (et non par un lien). Si l'icône manque : Safari → Partager → « Sur l'écran d'accueil ». (Sur iPad, Safari les autorise aussi dans un onglet, d'où la différence.)",
+    en: "On iPhone, Safari only allows notifications inside the installed app: open it from its Home Screen icon (not from a link). If the icon is missing: Safari → Share → “Add to Home Screen”. (On iPad, Safari also allows them in a tab, hence the difference.)",
+  },
   "ios-not-installed": {
     fr: "Sur iPhone/iPad, les notifications ne fonctionnent que si l'app est installée : Safari → Partager → « Sur l'écran d'accueil », puis rouvrez depuis l'icône.",
     en: "On iPhone/iPad, notifications only work once the app is installed: Safari → Share → “Add to Home Screen”, then reopen from the icon.",
