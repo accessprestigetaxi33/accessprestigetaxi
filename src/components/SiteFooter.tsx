@@ -11,6 +11,8 @@ const COPY = {
       { to: "/blog", label: "Guide Charente-Maritime" },
       { to: "/reservation", label: "Réserver" },
       { to: "/a-propos", label: "À propos" },
+      { to: "/devis", label: "Demander un devis" },
+      { to: "/devis", label: "Request a quote" },
       { to: "/contact", label: "Contact" },
     ],
     ridesTitle: "Nos courses",

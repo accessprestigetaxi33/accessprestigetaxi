@@ -14,6 +14,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as CarteRouteImport } from './routes/carte'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DevisRouteImport } from './routes/devis'
 import { Route as DiagnosticRouteImport } from './routes/diagnostic'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
@@ -45,6 +46,7 @@ import { Route as DestinationsSlugRouteImport } from './routes/destinations.$slu
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as ReservationIdRouteImport } from './routes/reservation.$id'
 import { Route as SuiviIdRouteImport } from './routes/suivi.$id'
+import { Route as TaxiVilleRouteImport } from './routes/taxi.$ville'
 import { Route as ApiAdminSendCourseEmailRouteImport } from './routes/api/admin/send-course-email'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicDriverLocationRouteImport } from './routes/api/public/driver-location'
@@ -88,6 +90,11 @@ const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevisRoute = DevisRouteImport.update({
+  id: '/devis',
+  path: '/devis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiagnosticRoute = DiagnosticRouteImport.update({
@@ -245,6 +252,11 @@ const SuiviIdRoute = SuiviIdRouteImport.update({
   path: '/suivi/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaxiVilleRoute = TaxiVilleRouteImport.update({
+  id: '/taxi/$ville',
+  path: '/taxi/$ville',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminSendCourseEmailRoute = ApiAdminSendCourseEmailRouteImport.update({
   id: '/api/admin/send-course-email',
   path: '/api/admin/send-course-email',
@@ -354,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/devis': typeof DevisRoute
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -383,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/taxi/$ville': typeof TaxiVilleRoute
   '/blog/': typeof BlogIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
@@ -411,6 +425,7 @@ export interface FileRoutesByTo {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/devis': typeof DevisRoute
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -440,6 +455,7 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/taxi/$ville': typeof TaxiVilleRoute
   '/blog': typeof BlogIndexRoute
   '/destinations': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
@@ -469,6 +485,7 @@ export interface FileRoutesById {
   '/carte': typeof CarteRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/contact': typeof ContactRoute
+  '/devis': typeof DevisRoute
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -498,6 +515,7 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/reservation/$id': typeof ReservationIdRoute
   '/suivi/$id': typeof SuiviIdRoute
+  '/taxi/$ville': typeof TaxiVilleRoute
   '/blog/': typeof BlogIndexRoute
   '/destinations/': typeof DestinationsIndexRoute
   '/api/admin/send-course-email': typeof ApiAdminSendCourseEmailRoute
@@ -528,6 +546,7 @@ export interface FileRouteTypes {
     | '/carte'
     | '/confidentialite'
     | '/contact'
+    | '/devis'
     | '/diagnostic'
     | '/driver'
     | '/mentions-legales'
@@ -557,6 +576,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/taxi/$ville'
     | '/blog/'
     | '/destinations/'
     | '/api/admin/send-course-email'
@@ -585,6 +605,7 @@ export interface FileRouteTypes {
     | '/carte'
     | '/confidentialite'
     | '/contact'
+    | '/devis'
     | '/diagnostic'
     | '/driver'
     | '/mentions-legales'
@@ -614,6 +635,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/taxi/$ville'
     | '/blog'
     | '/destinations'
     | '/api/admin/send-course-email'
@@ -642,6 +664,7 @@ export interface FileRouteTypes {
     | '/carte'
     | '/confidentialite'
     | '/contact'
+    | '/devis'
     | '/diagnostic'
     | '/driver'
     | '/mentions-legales'
@@ -671,6 +694,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/reservation/$id'
     | '/suivi/$id'
+    | '/taxi/$ville'
     | '/blog/'
     | '/destinations/'
     | '/api/admin/send-course-email'
@@ -700,6 +724,7 @@ export interface RootRouteChildren {
   CarteRoute: typeof CarteRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ContactRoute: typeof ContactRoute
+  DevisRoute: typeof DevisRoute
   DiagnosticRoute: typeof DiagnosticRoute
   DriverRoute: typeof DriverRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -728,6 +753,7 @@ export interface RootRouteChildren {
   DestinationsSlugRoute: typeof DestinationsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   SuiviIdRoute: typeof SuiviIdRoute
+  TaxiVilleRoute: typeof TaxiVilleRoute
   BlogIndexRoute: typeof BlogIndexRoute
   DestinationsIndexRoute: typeof DestinationsIndexRoute
   ApiAdminSendCourseEmailRoute: typeof ApiAdminSendCourseEmailRoute
@@ -785,6 +811,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/devis': {
+      id: '/devis'
+      path: '/devis'
+      fullPath: '/devis'
+      preLoaderRoute: typeof DevisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diagnostic': {
@@ -1004,6 +1037,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuiviIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/taxi/$ville': {
+      id: '/taxi/$ville'
+      path: '/taxi/$ville'
+      fullPath: '/taxi/$ville'
+      preLoaderRoute: typeof TaxiVilleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/send-course-email': {
       id: '/api/admin/send-course-email'
       path: '/api/admin/send-course-email'
@@ -1169,6 +1209,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarteRoute: CarteRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ContactRoute: ContactRoute,
+  DevisRoute: DevisRoute,
   DiagnosticRoute: DiagnosticRoute,
   DriverRoute: DriverRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
@@ -1197,6 +1238,7 @@ const rootRouteChildren: RootRouteChildren = {
   DestinationsSlugRoute: DestinationsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   SuiviIdRoute: SuiviIdRoute,
+  TaxiVilleRoute: TaxiVilleRoute,
   BlogIndexRoute: BlogIndexRoute,
   DestinationsIndexRoute: DestinationsIndexRoute,
   ApiAdminSendCourseEmailRoute: ApiAdminSendCourseEmailRoute,

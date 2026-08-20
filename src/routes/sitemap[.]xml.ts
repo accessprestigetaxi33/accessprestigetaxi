@@ -5,6 +5,7 @@ const BASE_URL = "https://www.accessprestigetaxi.fr";
 
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
 import { DESTINATIONS } from "@/data/destinations";
+import { VILLES } from "@/data/villes";
 
 interface SitemapEntry {
   path: string;
@@ -40,6 +41,13 @@ export const Route = createFileRoute("/sitemap.xml")({
             changefreq: "monthly" as const,
             priority: "0.8",
           })),
+          // Pages locales par ville (Charente-Maritime)
+          ...VILLES.map((v) => ({
+            path: `/taxi/${v.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.8",
+          })),
+          { path: "/devis", changefreq: "monthly", priority: "0.8" },
           { path: "/securite", changefreq: "yearly", priority: "0.5" },
           { path: "/a-propos", changefreq: "monthly", priority: "0.7" },
           { path: "/contact", changefreq: "monthly", priority: "0.7" },
