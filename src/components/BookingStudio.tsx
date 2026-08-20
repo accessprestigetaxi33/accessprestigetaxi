@@ -487,7 +487,7 @@ export function BookingStudio() {
     e.preventDefault();
     if (submitting) return;
     if (missing.length > 0) {
-      toast.error(`${L.missing} ${missing.join(", ")}`);
+      toast.error(`${L.missing} ${missing.join(", ")}`, { position: "top-center" });
       const el = missingIds[0] ? document.getElementById(missingIds[0]) : null;
       if (!el) window.scrollTo({ top: 0, behavior: "smooth" });
       if (el) {
@@ -529,13 +529,16 @@ export function BookingStudio() {
         },
       });
       if (!res.ok) {
-        toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book);
+        toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book, {
+          position: "top-center",
+        });
         return;
       }
       setSuccess({ suiviId: res.suivi_id, prix: res.prix });
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      toast.error(L.err_book);
+    } catch (err) {
+      console.error("[booking] submit failed", err);
+      toast.error(L.err_book, { position: "top-center" });
     } finally {
       setSubmitting(false);
     }
