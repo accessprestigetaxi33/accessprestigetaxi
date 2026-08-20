@@ -18,7 +18,7 @@ const DESC =
 const EMAIL = "accessprestigetaxi@gmail.com";
 
 export const Route = createFileRoute("/devis")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): { lang?: string; prestation?: string } => ({
     lang: typeof search.lang === "string" ? search.lang : undefined,
     prestation: typeof search.prestation === "string" ? search.prestation : undefined,
   }),
