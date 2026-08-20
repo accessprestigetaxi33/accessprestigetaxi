@@ -516,6 +516,13 @@ export function BookingStudio() {
       toast.error(L.err_past);
       return;
     }
+    inFlightRef.current = true;
+    if (!requestIdRef.current) {
+      requestIdRef.current =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    }
     setSubmitting(true);
     // Optimistic UI : on affiche immédiatement l'écran de confirmation,
     // la référence de suivi arrive dès que le serveur répond.
