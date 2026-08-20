@@ -768,7 +768,7 @@ function DriverApp({
           />
         )}
 
-        {pushStatus !== "unsupported" && pushError && (
+        {pushError && (
           <div
             style={{
               background: "#fef2f2",
