@@ -891,42 +891,8 @@ function Index() {
         </div>
       </section>
 
-      {/* SIÈGES BÉBÉ & ENFANTS */}
-      <section className="border-t border-border bg-card/40 py-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
-          <Reveal>
-            <img
-              src={photoInterior.url}
-              alt={c.seatsTitle}
-              loading="lazy"
-              width={1280}
-              height={853}
-              className="aspect-[4/3] w-full rounded-3xl border border-border object-cover"
-            />
-          </Reveal>
-          <Reveal delay={0.08}>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.seatsEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.seatsTitle}
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.seatsText}</p>
-            <ul className="mt-6 space-y-2">
-              {c.seatsItems.map((s) => (
-                <li key={s} className="flex items-center gap-3 text-sm text-foreground">
-                  <Baby className="h-4 w-4 shrink-0 text-primary" />
-                  {s}
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/reserver"
-              className="mt-7 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
-            >
-              {c.seatsCta} <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Reveal>
-        </div>
-      </section>
+
+
 
       {/* TRANSPORT DE GROUPE — VAN 8 PLACES */}
       <section className="border-t border-border py-20">
