@@ -82,7 +82,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  head: ({ matches }) => {
+    // L'espace chauffeur déclare son propre manifest (/api/manifest?role=driver).
+    // iOS ne lit qu'UN seul <link rel="manifest"> : on n'émet donc pas celui du
+    // site public sur les routes /driver, sinon il gagne (il est rendu en premier).
+    const isDriver = (matches?.[matches.length - 1]?.pathname ?? "").startsWith("/driver");
+    return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -114,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
-      { rel: "manifest", href: "/api/manifest", id: "app-manifest" },
+      ...(isDriver ? [] : [{ rel: "manifest", href: "/api/manifest", id: "app-manifest" }]),
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
     scripts: [
@@ -142,7 +147,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         }),
       },
     ],
-  }),
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
