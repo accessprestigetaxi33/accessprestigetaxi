@@ -165,11 +165,25 @@ export const bookRide = createServerFn({ method: "POST" })
         lang: data.lang,
         message,
         source: "form",
+        client_request_id: reqId,
       } as any)
       .select("id, suivi_id")
       .single();
 
     if (error || !inserted) {
+      // Course déjà enregistrée par un clic précédent (index unique) → on renvoie l'existante.
+      if ((error as any)?.code === "23505") {
+        const dup = await findExisting();
+        if (dup) {
+          return {
+            ok: true,
+            reservation_id: dup.id,
+            suivi_id: dup.suivi_id,
+            prix: Number(dup.prix_estime ?? 0),
+            distance_km: Number(dup.distance_km ?? 0),
+          };
+        }
+      }
       console.error("[bookRide] insert failed", error);
       return { ok: false, error: "INSERT_FAILED" };
     }
