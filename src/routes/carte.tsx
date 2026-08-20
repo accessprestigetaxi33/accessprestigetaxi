@@ -4,7 +4,7 @@ import { seoLinks } from "@/lib/seo-hreflang";
 import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.webp";
 
-const CARTE_URL = "https://accessprestigetaxi.fr/carte";
+const CARTE_URL = "https://www.accessprestigetaxi.fr/carte";
 const CARTE_TITLE = "Access Prestige Taxi — Contact rapide";
 const CARTE_DESC =
   "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Access Prestige Taxi en un clic.";

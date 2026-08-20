@@ -55,7 +55,7 @@ const SLOGAN_EN = "Excellence on every journey";
 
 // Domaine canonique du site — sert à générer les URLs absolues pour
 // og:url / og:image / twitter:image, obligatoires selon la spec Open Graph.
-const SITE_URL = "https://accessprestigetaxi.fr";
+const SITE_URL = "https://www.accessprestigetaxi.fr";
 
 function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
@@ -532,21 +532,35 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "TaxiService",
+          "@id": `${SITE_URL}/#taxiservice`,
           name: "Access Prestige Taxi",
+          alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
           slogan: SLOGAN_FR,
           url: SITE_URL,
           image: absoluteUrl(heroCars.url),
           logo: absoluteUrl("/favicon.png"),
+          email: "accessprestigetaxi@gmail.com",
+          currenciesAccepted: "EUR",
+          paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant (transport conventionné)",
           address: {
             "@type": "PostalAddress",
             addressRegion: "Charente-Maritime",
             addressCountry: "FR",
           },
-          areaServed: [{ "@type": "AdministrativeArea", name: "Charente-Maritime" }],
+          areaServed: [
+            { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+            { "@type": "City", name: "La Rochelle" },
+            { "@type": "City", name: "Rochefort" },
+            { "@type": "City", name: "Saintes" },
+            { "@type": "City", name: "Royan" },
+            { "@type": "City", name: "Saint-Jean-d'Angély" },
+          ],
+          knowsLanguage: ["fr", "en"],
           telephone: DRIVERS.map((d) => d.intl),
           availableLanguage: ["fr", "en"],
           openingHours: "Mo-Fr 08:00-20:00",
           priceRange: "€€",
+
           employee: DRIVERS.map((d) => ({
             "@type": "Person",
             name: d.name,
