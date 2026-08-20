@@ -754,6 +754,19 @@ function DriverApp({
           </span>
         </div>
 
+        {/* Push indisponible : on explique pourquoi au lieu de tout masquer */}
+        {pushStatus === "unsupported" && (
+          <PushUnsupportedNotice
+            style={{
+              background: "#fff7ed",
+              borderBottom: "1px solid #e6ddc9",
+              padding: "10px 16px",
+              fontSize: 12.5,
+              color: "#9a3412",
+            }}
+          />
+        )}
+
         {/* Bandeau activation / reconfirmation notifications */}
         {(pushStatus === "idle" || pushStatus === "denied" || pushStatus === "granted" || pushStatus === "loading") && (
           <div
