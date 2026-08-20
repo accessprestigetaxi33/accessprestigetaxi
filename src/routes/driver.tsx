@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
 import { geocodeAddress } from "@/lib/googleGeocode";
+import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
 // ⚠️ TEMPORAIRE — panneau de diagnostic bas d'écran (bouton ▶ Lancer), à
@@ -753,6 +754,19 @@ function DriverApp({
             {new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
           </span>
         </div>
+
+        {/* Push indisponible : on explique pourquoi au lieu de tout masquer */}
+        {pushStatus === "unsupported" && (
+          <PushUnsupportedNotice
+            style={{
+              background: "#fff7ed",
+              borderBottom: "1px solid #e6ddc9",
+              padding: "10px 16px",
+              fontSize: 12.5,
+              color: "#9a3412",
+            }}
+          />
+        )}
 
         {/* Bandeau activation / reconfirmation notifications */}
         {(pushStatus === "idle" || pushStatus === "denied" || pushStatus === "granted" || pushStatus === "loading") && (

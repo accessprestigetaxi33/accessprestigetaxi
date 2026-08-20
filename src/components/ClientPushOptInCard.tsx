@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useI18n } from "@/i18n/I18nProvider";
+import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 
 type ClientPushOptInCardProps = {
   clientAccountId?: string | null;
@@ -136,7 +137,7 @@ export function ClientPushOptInCard({
               </div>
             </div>
           ) : isUnsupported ? (
-            <div className="mt-2 text-xs text-white/40">{t("client.push.unsupported")}</div>
+            <PushUnsupportedNotice lang={lang === "en" ? "en" : "fr"} className="mt-2 text-xs text-white/50" />
           ) : isDenied ? (
             <div className="mt-2 text-xs text-red-300/80">{t("client.push.denied")}</div>
           ) : (

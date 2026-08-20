@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { unsubscribePush } from "@/lib/push.functions";
+import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export const Route = createFileRoute("/notifications")({
@@ -159,7 +160,7 @@ function NotificationsPage() {
                 </div>
               </div>
             ) : isUnsupported ? (
-              <p className="text-sm text-muted-foreground">{c.unsupported}</p>
+              <PushUnsupportedNotice lang={lang === "en" ? "en" : "fr"} className="text-sm text-muted-foreground" />
             ) : isDenied ? (
               <p className="text-sm text-red-500">{c.denied}</p>
             ) : (
