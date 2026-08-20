@@ -149,6 +149,8 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   useEffect(() => {
     if (!autoAudience) return;
     if (!hasBrowserPushApis()) return;
+    // Pas de jeton chauffeur => l'inscription serveur serait rejetée (validation).
+    if (autoAudience === "chauffeur" && getDriverToken().length < 8) return;
 
     // Une autorisation accordée reste valable sans limite sur cet appareil.
     // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a
