@@ -20,6 +20,10 @@ import {
   Leaf,
   Sofa,
   EyeOff,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -169,13 +173,17 @@ function useHeroSlideshow(count: number, durationMs: number) {
   }, [canAnimate, paused, count, durationMs]);
 
   const select = (i: number) => {
-    setIndex(i);
+    setIndex(((i % count) + count) % count);
     setPaused(true);
   };
 
+  const next = () => select(index + 1);
+  const prev = () => select(index - 1);
+  const togglePause = () => setPaused((p) => !p);
 
-  return { index, canAnimate, select, paused };
+  return { index, canAnimate, select, next, prev, paused, togglePause };
 }
+
 
 
 // Cases du hero : reprennent les pictogrammes et mentions de la bannière photo.
@@ -625,7 +633,7 @@ function Index() {
   const alain = DRIVERS.find((d) => d.name === "Alain");
 
   const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
-  const { index: slideIndex, canAnimate, select } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
+  const { index: slideIndex, canAnimate, select, next, prev, paused, togglePause } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
@@ -741,7 +749,38 @@ function Index() {
                 </li>
               ))}
             </ul>
+
+            {/* Texte SEO + liens internes (mêmes destinations que le menu) — utile sur mobile */}
+            <nav
+              aria-label={lang === "en" ? "Quick site links" : "Liens rapides du site"}
+              className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-muted-foreground"
+            >
+              {lang === "en" ? (
+                <p>
+                  Access Prestige Taxi, your 100% electric taxi in Charente-Maritime: discover our{" "}
+                  <Link to="/services" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">taxi services</Link>,{" "}
+                  <Link to="/reserver" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">book a ride online</Link>,{" "}
+                  <Link to="/devis" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">request a quote</Link>, read our{" "}
+                  <Link to="/blog" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">Charente-Maritime guide</Link>, browse our{" "}
+                  <Link to="/destinations" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">destinations</Link>, learn more{" "}
+                  <Link to="/a-propos" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">about Patricia &amp; Alain</Link> or{" "}
+                  <Link to="/contact" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">contact us</Link>.
+                </p>
+              ) : (
+                <p>
+                  Access Prestige Taxi, votre taxi 100 % électrique en Charente-Maritime : découvrez nos{" "}
+                  <Link to="/services" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">services de taxi</Link>,{" "}
+                  <Link to="/reserver" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">réservez votre course en ligne</Link>,{" "}
+                  <Link to="/devis" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">demandez un devis</Link>, consultez notre{" "}
+                  <Link to="/blog" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">guide Charente-Maritime</Link>, nos{" "}
+                  <Link to="/destinations" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">destinations</Link>, apprenez-en plus{" "}
+                  <Link to="/a-propos" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">sur Patricia &amp; Alain</Link> ou{" "}
+                  <Link to="/contact" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">contactez-nous</Link>.
+                </p>
+              )}
+            </nav>
           </motion.div>
+
 
 
           <motion.h1
@@ -834,33 +873,96 @@ function Index() {
             <div
               role="group"
               aria-label={lang === "en" ? "Choose a vehicle to preview" : "Choisir un véhicule à afficher"}
-              className="flex justify-start gap-2 overflow-x-auto pb-2 sm:justify-center sm:gap-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              onKeyDown={(e) => {
+                const container = e.currentTarget;
+                const focusActive = () => {
+                  window.setTimeout(() => {
+                    container
+                      .querySelector<HTMLButtonElement>("[data-slide-index][aria-pressed='true']")
+                      ?.focus();
+                  }, 0);
+                };
+
+                if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  next();
+                  focusActive();
+                } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  prev();
+                  focusActive();
+                } else if (e.key === "Home") {
+                  e.preventDefault();
+                  select(0);
+                  focusActive();
+                } else if (e.key === "End") {
+                  e.preventDefault();
+                  select(slides.length - 1);
+                  focusActive();
+                }
+              }}
+              className="flex flex-wrap items-center justify-center gap-2 pb-2 sm:gap-3"
             >
+              <button
+                type="button"
+                onClick={prev}
+                aria-label={lang === "en" ? "Previous vehicle" : "Véhicule précédent"}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+
               {slides.map((s, i) => (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => select(i)}
                   aria-pressed={i === slideIndex}
-                  aria-label={`${lang === "en" ? "Show" : "Afficher"} : ${s.title}`}
-                  className={`group relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border transition duration-300 sm:h-20 sm:w-32 ${
+                  tabIndex={i === slideIndex ? 0 : -1}
+                  data-slide-index={i}
+                  className={`min-h-11 shrink-0 rounded-xl border px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-xs ${
                     i === slideIndex
-                      ? "border-primary shadow-[var(--shadow-gold)]"
-                      : "border-border opacity-70 hover:opacity-100"
+                      ? "border-primary bg-primary/10 text-primary shadow-[var(--shadow-gold)]"
+                      : "border-border text-muted-foreground hover:border-primary/60 hover:text-foreground"
                   }`}
                 >
-                  <img
-                    src={s.src}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    width={320}
-                    height={180}
-                    className={s.contain ? "h-full w-full object-contain" : "h-full w-full object-cover"}
-                  />
+                  {s.label}
                 </button>
               ))}
+
+              <button
+                type="button"
+                onClick={next}
+                aria-label={lang === "en" ? "Next vehicle" : "Véhicule suivant"}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                type="button"
+                onClick={togglePause}
+                aria-label={
+                  paused
+                    ? lang === "en"
+                      ? "Resume automatic slideshow"
+                      : "Reprendre le défilement automatique"
+                    : lang === "en"
+                      ? "Pause automatic slideshow"
+                      : "Mettre en pause le défilement automatique"
+                }
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
+              </button>
             </div>
+
+            <p aria-live="polite" className="sr-only">
+              {lang === "en"
+                ? `Slide ${slideIndex + 1} of ${slides.length}: ${slides[slideIndex].title}`
+                : `Diapositive ${slideIndex + 1} sur ${slides.length} : ${slides[slideIndex].title}`}
+            </p>
+
 
             <AnimatePresence mode="wait">
               {slides[slideIndex].id !== "brand" && (
