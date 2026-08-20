@@ -399,6 +399,9 @@ export function BookingStudio() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<{ suiviId: string; prix: number; pending?: boolean } | null>(null);
   const [quote, setQuote] = useState<QuoteState>({ loading: false, error: null, data: null });
+  // Clé d'idempotence : identique pour tous les clics d'une même réservation.
+  const requestIdRef = useRef<string>("");
+  const inFlightRef = useRef(false);
 
   const minWhen = useMemo(() => parisLocalValue(addMinutes(new Date(), 15)), []);
 
