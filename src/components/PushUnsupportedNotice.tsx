@@ -6,7 +6,12 @@
 //  3. navigateur/webview sans Push API (Facebook, Instagram, etc.)
 import { useEffect, useState } from "react";
 
-export type PushUnsupportedReason = "iframe" | "ios-not-installed" | "in-app-browser" | "browser";
+export type PushUnsupportedReason =
+  | "iframe"
+  | "iphone-not-installed"
+  | "ios-not-installed"
+  | "in-app-browser"
+  | "browser";
 
 export function detectPushUnsupportedReason(): PushUnsupportedReason {
   if (typeof window === "undefined") return "browser";
@@ -16,13 +21,18 @@ export function detectPushUnsupportedReason(): PushUnsupportedReason {
     return "iframe";
   }
   const ua = navigator.userAgent;
-  const isIOS =
-    /iPhone|iPod/.test(ua) || /iPad/.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
+  const isIPhone = /iPhone|iPod/.test(ua);
+  const isIPad = /iPad/.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
   const standalone =
     window.matchMedia?.("(display-mode: standalone)").matches ||
     (window.navigator as unknown as { standalone?: boolean }).standalone === true;
-  if (isIOS && !standalone) return "ios-not-installed";
   if (/FBAN|FBAV|Instagram|Line\/|MicroMessenger/.test(ua)) return "in-app-browser";
+  // iPadOS autorise les notifications dans un onglet Safari ; iOS (iPhone) ne
+  // les expose QUE dans l'app ajoutée à l'écran d'accueil et ouverte depuis
+  // son icône. Un lien ouvert dans Safari rouvre un onglet classique : c'est
+  // la cause n°1 du « non supporté » alors que l'app est bien installée.
+  if (isIPhone && !standalone) return "iphone-not-installed";
+  if (isIPad && !standalone) return "ios-not-installed";
   return "browser";
 }
 
@@ -30,6 +40,10 @@ const MESSAGES: Record<PushUnsupportedReason, { fr: string; en: string }> = {
   iframe: {
     fr: "Cette page est affichée dans un aperçu intégré : les navigateurs y interdisent les notifications. Ouvrez le site dans un vrai onglet (ou depuis l'icône installée) puis réessayez.",
     en: "This page runs inside an embedded preview, where browsers block notifications. Open the site in a real tab (or from the installed icon) and try again.",
+  },
+  "iphone-not-installed": {
+    fr: "Sur iPhone, Safari n'autorise les notifications QUE dans l'app installée : ouvrez-la depuis son icône sur l'écran d'accueil (et non par un lien). Si l'icône manque : Safari → Partager → « Sur l'écran d'accueil ». (Sur iPad, Safari les autorise aussi dans un onglet, d'où la différence.)",
+    en: "On iPhone, Safari only allows notifications inside the installed app: open it from its Home Screen icon (not from a link). If the icon is missing: Safari → Share → “Add to Home Screen”. (On iPad, Safari also allows them in a tab, hence the difference.)",
   },
   "ios-not-installed": {
     fr: "Sur iPhone/iPad, les notifications ne fonctionnent que si l'app est installée : Safari → Partager → « Sur l'écran d'accueil », puis rouvrez depuis l'icône.",

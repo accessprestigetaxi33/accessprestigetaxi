@@ -149,6 +149,8 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
   useEffect(() => {
     if (!autoAudience) return;
     if (!hasBrowserPushApis()) return;
+    // Pas de jeton chauffeur => l'inscription serveur serait rejetée (validation).
+    if (autoAudience === "chauffeur" && getDriverToken().length < 8) return;
 
     // Une autorisation accordée reste valable sans limite sur cet appareil.
     // Le stockage est propre au navigateur/appareil : un nouvel appareil n'a
@@ -249,6 +251,14 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
       // sur driverId de closure) ; toute autre valeur (y compris null) prime.
       driverIdOverride?: string | null,
     ): Promise<boolean> => {
+      // Le serveur exige un jeton chauffeur valide : sans lui la requête part
+      // et échoue en validation (driver_token trop court). On le signale
+      // clairement au lieu d'une erreur technique silencieuse.
+      if (audience === "chauffeur" && getDriverToken().length < 8) {
+        setLastError("Session chauffeur expirée : reconnectez-vous à l'espace chauffeur puis réactivez les notifications.");
+        setStatus("idle");
+        return false;
+      }
       setStatus("loading");
       try {
         const fcm = await getFcmToken();
