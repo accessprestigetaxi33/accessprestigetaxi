@@ -768,7 +768,7 @@ function DriverApp({
           />
         )}
 
-        {pushStatus !== "unsupported" && pushError && (
+        {pushError && (
           <div
             style={{
               background: "#fef2f2",
@@ -782,8 +782,11 @@ function DriverApp({
           </div>
         )}
 
-        {/* Bandeau activation / reconfirmation notifications */}
-        {(pushStatus === "idle" || pushStatus === "denied" || pushStatus === "granted" || pushStatus === "loading") && (
+        {/* Bandeau activation / reconfirmation notifications.
+            Affiché même en statut "unsupported" : la détection peut se tromper
+            (PWA iOS/Android installée), et seul un vrai essai d'enregistrement
+            Firebase donne la cause exacte. */}
+        {true && (
           <div
             style={{
               display: "flex",

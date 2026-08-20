@@ -76,9 +76,21 @@ export function PushUnsupportedNotice({
   style?: React.CSSProperties;
 }) {
   const message = usePushUnsupportedMessage(lang);
+  const [tech, setTech] = useState<string>("");
+  // Ligne technique : permet de voir sur l'appareil réel ce qui manque
+  // (utile quand l'app est bien installée mais que le statut reste bloqué).
+  useEffect(() => {
+    const standalone =
+      window.matchMedia?.("(display-mode: standalone)").matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+    setTech(
+      `Notification:${"Notification" in window ? "ok" : "absent"} · SW:${"serviceWorker" in navigator ? "ok" : "absent"} · PushManager:${"PushManager" in window ? "ok" : "absent"} · installée:${standalone ? "oui" : "non"}`,
+    );
+  }, []);
   return (
     <div className={className} style={style}>
       🔕 {message}
+      {tech ? <div style={{ marginTop: 6, fontSize: 11, opacity: 0.7 }}>{tech}</div> : null}
     </div>
   );
 }
