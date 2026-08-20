@@ -20,6 +20,10 @@ import {
   Leaf,
   Sofa,
   EyeOff,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -629,7 +633,7 @@ function Index() {
   const alain = DRIVERS.find((d) => d.name === "Alain");
 
   const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
-  const { index: slideIndex, canAnimate, select } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
+  const { index: slideIndex, canAnimate, select, next, prev, paused, togglePause } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
@@ -839,18 +843,28 @@ function Index() {
               role="group"
               aria-label={lang === "en" ? "Choose a vehicle to preview" : "Choisir un véhicule à afficher"}
               onKeyDown={(e) => {
+                const focusActive = () => {
+                  window.setTimeout(() => {
+                    const el = e.currentTarget?.querySelector<HTMLButtonElement>("[data-slide-index][aria-pressed='true']");
+                    el?.focus();
+                  }, 0);
+                };
                 if (e.key === "ArrowRight" || e.key === "ArrowDown") {
                   e.preventDefault();
                   next();
+                  focusActive();
                 } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
                   e.preventDefault();
                   prev();
+                  focusActive();
                 } else if (e.key === "Home") {
                   e.preventDefault();
                   select(0);
+                  focusActive();
                 } else if (e.key === "End") {
                   e.preventDefault();
                   select(slides.length - 1);
+                  focusActive();
                 }
               }}
               className="flex flex-wrap items-center justify-center gap-2 pb-2 sm:gap-3"
@@ -871,9 +885,7 @@ function Index() {
                   onClick={() => select(i)}
                   aria-pressed={i === slideIndex}
                   tabIndex={i === slideIndex ? 0 : -1}
-                  ref={(el) => {
-                    if (i === slideIndex) slideButtonsRef.current = el;
-                  }}
+                  data-slide-index={i}
                   className={`min-h-11 shrink-0 rounded-xl border px-3.5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-xs ${
                     i === slideIndex
                       ? "border-primary bg-primary/10 text-primary shadow-[var(--shadow-gold)]"
