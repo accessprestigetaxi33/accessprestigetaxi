@@ -159,7 +159,7 @@ function NotificationsPage() {
                 </div>
               </div>
             ) : isUnsupported ? (
-              <p className="text-sm text-muted-foreground">{c.unsupported}</p>
+              <PushUnsupportedNotice lang={L === "en" ? "en" : "fr"} className="text-sm text-muted-foreground" />
             ) : isDenied ? (
               <p className="text-sm text-red-500">{c.denied}</p>
             ) : (
