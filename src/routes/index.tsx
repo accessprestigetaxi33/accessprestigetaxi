@@ -636,7 +636,7 @@ function Index() {
       />
 
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
-      <section className="relative isolate min-h-[55svh] overflow-hidden sm:min-h-[60vh] lg:min-h-[70vh]">
+      <section className="relative isolate min-h-[40svh] overflow-hidden sm:min-h-[45vh] lg:min-h-[52vh]">
         {(() => {
           const slide = slides[slideIndex];
           const isBanner = Boolean(slide.contain);
