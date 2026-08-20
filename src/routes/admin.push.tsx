@@ -259,6 +259,7 @@ function Table({ rows, onDelete }: { rows: PushSubRow[]; onDelete: (id: string) 
             <th style={td}>driver_id</th>
             <th style={td}>token</th>
             <th style={td}>dernier contact</th>
+            <th style={td}>expire le</th>
             <th style={td}>appareil</th>
             <th style={td}></th>
           </tr>
@@ -269,6 +270,7 @@ function Table({ rows, onDelete }: { rows: PushSubRow[]; onDelete: (id: string) 
               <td style={td}>{r.driver_id ?? "—"}</td>
               <td style={td}>…{r.token_suffix}</td>
               <td style={td}>{r.last_seen_at ? new Date(r.last_seen_at).toLocaleString("fr-FR") : "—"}</td>
+              <td style={td}>{r.expires_at ? new Date(r.expires_at).toLocaleString("fr-FR") : "—"}</td>
               <td style={{ ...td, maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis" }}>
                 {r.user_agent ?? "—"}
               </td>
