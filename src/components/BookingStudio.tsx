@@ -475,16 +475,28 @@ export function BookingStudio() {
 
   /* ── validation ── */
   const missing: string[] = [];
-  if (depart.trim().length < 3) missing.push(L.m_from);
-  if (arrivee.trim().length < 3) missing.push(L.m_to);
-  if (!when) missing.push(L.m_when);
-  if (nom.trim().length < 2) missing.push(L.m_name);
-  if (tel.replace(/\D/g, "").length < 9) missing.push(L.m_phone);
+  const missingIds: string[] = [];
+  if (depart.trim().length < 3) { missing.push(L.m_from); missingIds.push(""); }
+  if (arrivee.trim().length < 3) { missing.push(L.m_to); missingIds.push(""); }
+  if (!when) { missing.push(L.m_when); missingIds.push("when"); }
+  if (nom.trim().length < 2) { missing.push(L.m_name); missingIds.push("nom"); }
+  if (tel.replace(/\D/g, "").length < 9) { missing.push(L.m_phone); missingIds.push("tel"); }
   const canSubmit = missing.length === 0 && !submitting;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (submitting) return;
+    if (missing.length > 0) {
+      toast.error(`${L.missing} ${missing.join(", ")}`, { position: "top-center" });
+      const el = missingIds[0] ? document.getElementById(missingIds[0]) : null;
+      if (!el) window.scrollTo({ top: 0, behavior: "smooth" });
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        try { (el as HTMLElement).focus({ preventScroll: true }); } catch { /* noop */ }
+      }
+      return;
+    }
+
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       toast.error(L.err_email);
       return;
@@ -517,13 +529,16 @@ export function BookingStudio() {
         },
       });
       if (!res.ok) {
-        toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book);
+        toast.error(res.error === "ROUTE_FAILED" ? L.err_quote : L.err_book, {
+          position: "top-center",
+        });
         return;
       }
       setSuccess({ suiviId: res.suivi_id, prix: res.prix });
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      toast.error(L.err_book);
+    } catch (err) {
+      console.error("[booking] submit failed", err);
+      toast.error(L.err_book, { position: "top-center" });
     } finally {
       setSubmitting(false);
     }
@@ -957,7 +972,7 @@ export function BookingStudio() {
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-4">
             {QuotePanel}
-            <Button type="submit" size="lg" disabled={!canSubmit} className="w-full">
+            <Button type="submit" size="lg" disabled={submitting} aria-disabled={!canSubmit} className="w-full">
               {submitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -986,7 +1001,7 @@ export function BookingStudio() {
                 {quote.loading ? "…" : priceLabel ? `≈ ${priceLabel}` : "—"}
               </p>
             </div>
-            <Button type="submit" size="lg" disabled={!canSubmit} className="shrink-0">
+            <Button type="submit" size="lg" disabled={submitting} aria-disabled={!canSubmit} className="shrink-0">
               {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : L.submit}
             </Button>
           </div>
