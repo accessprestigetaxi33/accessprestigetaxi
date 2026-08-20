@@ -169,13 +169,17 @@ function useHeroSlideshow(count: number, durationMs: number) {
   }, [canAnimate, paused, count, durationMs]);
 
   const select = (i: number) => {
-    setIndex(i);
+    setIndex(((i % count) + count) % count);
     setPaused(true);
   };
 
+  const next = () => select(index + 1);
+  const prev = () => select(index - 1);
+  const togglePause = () => setPaused((p) => !p);
 
-  return { index, canAnimate, select, paused };
+  return { index, canAnimate, select, next, prev, paused, togglePause };
 }
+
 
 
 // Cases du hero : reprennent les pictogrammes et mentions de la bannière photo.
