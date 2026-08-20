@@ -496,7 +496,7 @@ export function BookingStudio() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
+    if (submitting || inFlightRef.current) return;
     if (missing.length > 0) {
       toast.error(`${L.missing} ${missing.join(", ")}`, { position: "top-center" });
       const el = missingIds[0] ? document.getElementById(missingIds[0]) : null;
