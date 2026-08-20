@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 
-const SW_VERSION = "apt-2026-09.push-click-open";
+const SW_VERSION = "apt-2026-10.fcm-key-fix";
 console.log("[FCM SW] boot version =", SW_VERSION);
 
 const DRIVER_URL = "/driver";
