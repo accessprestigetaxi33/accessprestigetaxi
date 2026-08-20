@@ -783,15 +783,27 @@ function Index() {
 
           <dl className="mt-14 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
             {c.stats.map((s) => (
-              <div key={s.l} className="bg-card px-3 py-4 sm:px-4 sm:py-5">
-                <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
-                  <Counter value={s.n} suffix={s.suffix} />
-                </dt>
-                <dd className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-[11px]">
-                  {s.l}
-                </dd>
+              <div key={s.l} className="overflow-hidden bg-card text-left">
+                <img
+                  src={s.img}
+                  alt={s.l}
+                  loading="lazy"
+                  decoding="async"
+                  width={640}
+                  height={360}
+                  className="h-24 w-full object-cover sm:h-28 lg:h-32"
+                />
+                <div className="px-3 py-3 sm:px-4 sm:py-4">
+                  <dt className="font-display text-xl font-semibold text-primary sm:text-2xl lg:text-3xl">
+                    <Counter value={s.n} suffix={s.suffix} />
+                  </dt>
+                  <dd className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground sm:text-[11px]">
+                    {s.l}
+                  </dd>
+                </div>
               </div>
             ))}
+
           </dl>
 
           {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
