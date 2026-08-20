@@ -397,7 +397,7 @@ export function BookingStudio() {
   const [note, setNote] = useState("");
   const [locating, setLocating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState<{ suiviId: string; prix: number } | null>(null);
+  const [success, setSuccess] = useState<{ suiviId: string; prix: number; pending?: boolean } | null>(null);
   const [quote, setQuote] = useState<QuoteState>({ loading: false, error: null, data: null });
 
   const minWhen = useMemo(() => parisLocalValue(addMinutes(new Date(), 15)), []);
