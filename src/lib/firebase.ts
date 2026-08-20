@@ -76,7 +76,7 @@ export async function getFcmToken(options: { forceRefresh?: boolean } = {}): Pro
     console.warn("[FCM] Permission déjà refusée");
     return null;
   }
-  let perm = Notification.permission;
+  let perm: NotificationPermission = Notification.permission;
   if (perm !== "granted") {
     perm = await Notification.requestPermission();
   }
