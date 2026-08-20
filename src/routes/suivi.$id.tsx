@@ -456,12 +456,19 @@ function AnonChat({
     const driverBadgeChannel = (supabase as any).channel("drv-chat-badge");
     driverBadgeChannelRef.current = driverBadgeChannel;
     driverBadgeChannel.subscribe();
+    // Filet de sécurité : `reservation_messages` reste fermé en lecture aux
+    // clients (RLS admin-only), donc postgres_changes peut ne rien livrer.
+    // On garde un poll léger via le server function qui valide la clé de suivi.
+    const poll = setInterval(() => {
+      if (!document.hidden) load();
+    }, 7000);
     // Re-sync au retour de l'onglet (filet de sécurité si la connexion realtime a été coupée)
     const onVisible = () => {
       if (!document.hidden) load();
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
+      clearInterval(poll);
       document.removeEventListener("visibilitychange", onVisible);
       supabase.removeChannel(ch);
       supabase.removeChannel(driverBadgeChannel);
