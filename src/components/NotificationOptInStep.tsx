@@ -3,6 +3,7 @@ import { Bell, BellRing, Check, Loader2, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useI18n } from "@/i18n/I18nProvider";
+import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 
 const COPY = {
   fr: {
@@ -118,7 +119,7 @@ export function NotificationOptInStep() {
           {c.granted}
         </p>
       ) : unsupported ? (
-        <p className="mt-5 text-sm text-muted-foreground">{c.unsupported}</p>
+        <PushUnsupportedNotice lang={lang === "en" ? "en" : "fr"} className="mt-5 text-sm text-muted-foreground" />
       ) : (
         <>
           <button
