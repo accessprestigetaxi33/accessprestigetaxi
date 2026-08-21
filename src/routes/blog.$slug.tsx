@@ -19,6 +19,7 @@ const COPY = {
     ctaTitle: "Trajet en taxi 100 % électrique",
     ctaText: "Nos deux chauffeurs vous conduisent partout depuis la Charente-Maritime, en BMW iX1 ou Audi Q6 e-tron 5 places, ou en van Mercedes 8 places.",
     book: "Réserver ma course",
+    bookHere: "Réserver un taxi vers",
     call: "Appeler un chauffeur",
     stars: "étoiles",
   },
@@ -32,8 +33,10 @@ const COPY = {
     ctaTitle: "Ride in a fully electric taxi",
     ctaText: "Our two drivers take you anywhere from Charente-Maritime in a 5-seat BMW iX1 or Audi Q6 e-tron, or an 8-seat Mercedes van.",
     book: "Book a ride",
+    bookHere: "Book a taxi to",
     call: "Call a driver",
     stars: "stars",
+
   },
 } as const;
 
