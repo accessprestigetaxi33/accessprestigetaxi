@@ -1266,8 +1266,8 @@ function Index() {
                     {lang === "en" ? "How to activate? " : "Comment activer ? "}
                   </span>
                   {lang === "en"
-                    ? "Install the app on your home screen (see below), then accept notifications when Safari or Chrome offers to."
-                    : "Installez l'appli sur votre écran d'accueil (voir ci-dessous), puis acceptez les notifications quand Safari ou Chrome le propose."}
+                    ? "Install the app on your home screen (see below), then open the Book a ride page and tap “Enable notifications”."
+                    : "Installez l'appli sur votre écran d'accueil (voir ci-dessous), puis rendez-vous sur la page Réserver et appuyez sur « Activer les notifications »."}
                 </p>
                 <p>
                   <span className="font-semibold text-card-foreground">{lang === "en" ? "Why? " : "Pourquoi ? "}</span>
@@ -1309,8 +1309,8 @@ function Index() {
                 <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
                   💡{" "}
                   {lang === "en"
-                    ? "Tip: enable notifications in iOS Settings (Settings → Access Prestige Taxi → Notifications)."
-                    : "Astuce : activez les notifications dans les paramètres iOS (Réglages → Access Prestige Taxi → Notifications)."}
+                    ? "Tip: then open the Book a ride page and tap “Enable notifications” to turn on tracking alerts."
+                    : "Astuce : rendez-vous ensuite sur la page Réserver et appuyez sur « Activer les notifications » pour recevoir les alertes de suivi."}
                 </p>
               </article>
             </Reveal>
@@ -1345,8 +1345,8 @@ function Index() {
                 <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
                   💡{" "}
                   {lang === "en"
-                    ? "Tip: accept notifications when Chrome asks, to receive tracking alerts."
-                    : "Astuce : acceptez les notifications quand Chrome le demande pour recevoir les alertes de suivi."}
+                    ? "Tip: then open the Book a ride page and tap “Enable notifications” to receive tracking alerts."
+                    : "Astuce : rendez-vous ensuite sur la page Réserver et appuyez sur « Activer les notifications » pour recevoir les alertes de suivi."}
                 </p>
               </article>
             </Reveal>
