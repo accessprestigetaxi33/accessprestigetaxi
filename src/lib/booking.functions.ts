@@ -1,6 +1,28 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+/**
+ * Borne la durée d'une opération annexe (push, e-mail, géocodage externe) pour
+ * qu'elle ne puisse jamais retarder indéfiniment la réponse HTTP — vécu en
+ * pratique quand un service tiers (FCM, SMTP…) reste en suspens sans jamais
+ * résoudre ni rejeter. `label` sert uniquement au diagnostic dans les logs.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`TIMEOUT:${label}`)), ms);
+    promise.then(
+      (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      (e) => {
+        clearTimeout(timer);
+        reject(e);
+      },
+    );
+  });
+}
+
 const Coord = z.object({ lat: z.number(), lng: z.number() }).nullable().optional();
 
 const QuoteSchema = z.object({
@@ -39,15 +61,19 @@ export const quoteRide = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<QuoteResponse> => {
     const { computeQuote } = await import("@/lib/booking.server");
     try {
-      const q = await computeQuote({
-        depart: data.depart,
-        departCoord: data.depart_coord ?? null,
-        arrivee: data.arrivee,
-        arriveeCoord: data.arrivee_coord ?? null,
-        pickupIso: data.pickup_datetime,
-        passagers: data.passagers,
-        bagages: data.bagages,
-      });
+      const q = await withTimeout(
+        computeQuote({
+          depart: data.depart,
+          departCoord: data.depart_coord ?? null,
+          arrivee: data.arrivee,
+          arriveeCoord: data.arrivee_coord ?? null,
+          pickupIso: data.pickup_datetime,
+          passagers: data.passagers,
+          bagages: data.bagages,
+        }),
+        15_000,
+        "quote",
+      );
       return {
         ok: true,
         depart: q.depart,
@@ -120,15 +146,19 @@ export const bookRide = createServerFn({ method: "POST" })
 
     let q;
     try {
-      q = await computeQuote({
-        depart: data.depart,
-        departCoord: data.depart_coord ?? null,
-        arrivee: data.arrivee,
-        arriveeCoord: data.arrivee_coord ?? null,
-        pickupIso: data.pickup_datetime,
-        passagers: data.passagers,
-        bagages: data.bagages,
-      });
+      q = await withTimeout(
+        computeQuote({
+          depart: data.depart,
+          departCoord: data.depart_coord ?? null,
+          arrivee: data.arrivee,
+          arriveeCoord: data.arrivee_coord ?? null,
+          pickupIso: data.pickup_datetime,
+          passagers: data.passagers,
+          bagages: data.bagages,
+        }),
+        12_000,
+        "quote",
+      );
     } catch (e: any) {
       return { ok: false, error: String(e?.message ?? "QUOTE_FAILED") };
     }
@@ -189,75 +219,89 @@ export const bookRide = createServerFn({ method: "POST" })
     }
 
     // 1) Notifications push d'abord (priorité chauffeurs), 2) e-mails ensuite.
+    // Bornées dans le temps : la réservation est déjà en base à ce stade,
+    // aucun de ces envois annexes ne doit pouvoir retarder indéfiniment la
+    // réponse renvoyée au client.
     try {
       const { sendPushToAudience } = await import("@/lib/push.server");
-      await sendPushToAudience(
-        "chauffeur",
-        {
-          title: "🚕 Nouvelle réservation",
-          body: `${q.depart.label} → ${q.arrivee.label}`,
-          url: "/driver",
-          tag: `new-res-${inserted.id}`,
-          requireInteraction: true,
-          data: { reservation_id: inserted.id, kind: "new" },
-        },
-        { dedupTtlMinutes: 24 * 60 },
+      await withTimeout(
+        sendPushToAudience(
+          "chauffeur",
+          {
+            title: "🚕 Nouvelle réservation",
+            body: `${q.depart.label} → ${q.arrivee.label}`,
+            url: "/driver",
+            tag: `new-res-${inserted.id}`,
+            requireInteraction: true,
+            data: { reservation_id: inserted.id, kind: "new" },
+          },
+          { dedupTtlMinutes: 24 * 60 },
+        ),
+        5_000,
+        "push",
       );
     } catch (err) {
       console.warn("[bookRide] push failed", err);
     }
 
     const emailResults = await Promise.allSettled([
-      (async () => {
-        const { deliverClientConfirmation } = await import("@/lib/reservation-notifications.server");
-        const when = new Intl.DateTimeFormat(data.lang === "en" ? "en-GB" : "fr-FR", {
-          dateStyle: "full",
-          timeStyle: "short",
-          timeZone: "Europe/Paris",
-        }).format(new Date(data.pickup_datetime));
-        await deliverClientConfirmation({
-          reservationId: inserted.id,
-          email,
-          lang: data.lang,
-          payload: {
-            clientName: data.nom,
-            pickupDatetime: when,
-            depart: q.depart.label,
-            arrivee: q.arrivee.label,
-            priceEstimate: q.prix.total,
-            trackingId: suiviId,
-            trackingLink: `https://accessprestigetaxi.lovable.app/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
-          },
-        });
-      })(),
-      (async () => {
-        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-        const { TEMPLATES } = await import("@/lib/email-templates/registry");
-        const adminTemplate = TEMPLATES["new-reservation-admin"];
-        if (!adminTemplate?.to) {
-          console.warn("[bookRide] admin email template sans destinataire (to) — envoi ignoré");
-          return;
-        }
-        await sendTemplateEmail("new-reservation-admin", adminTemplate.to, {
-          idempotencyKey: `admin-new-${inserted.id}`,
-          templateData: {
-            nom: data.nom,
-            phone: data.telephone,
+      withTimeout(
+        (async () => {
+          const { deliverClientConfirmation } = await import("@/lib/reservation-notifications.server");
+          const when = new Intl.DateTimeFormat(data.lang === "en" ? "en-GB" : "fr-FR", {
+            dateStyle: "full",
+            timeStyle: "short",
+            timeZone: "Europe/Paris",
+          }).format(new Date(data.pickup_datetime));
+          await deliverClientConfirmation({
+            reservationId: inserted.id,
             email,
-            depart: q.depart.label,
-            arrivee: q.arrivee.label,
-            pickup_datetime: data.pickup_datetime,
-            passagers: data.passagers,
-            bagages: data.bagages,
-            admin_url: "https://accessprestigetaxi.fr/driver",
-          },
-        });
-      })(),
+            lang: data.lang,
+            payload: {
+              clientName: data.nom,
+              pickupDatetime: when,
+              depart: q.depart.label,
+              arrivee: q.arrivee.label,
+              priceEstimate: q.prix.total,
+              trackingId: suiviId,
+              trackingLink: `https://accessprestigetaxi.lovable.app/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
+            },
+          });
+        })(),
+        8_000,
+        "client-email",
+      ),
+      withTimeout(
+        (async () => {
+          const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+          const { TEMPLATES } = await import("@/lib/email-templates/registry");
+          const adminTemplate = TEMPLATES["new-reservation-admin"];
+          if (!adminTemplate?.to) {
+            console.warn("[bookRide] admin email template sans destinataire (to) — envoi ignoré");
+            return;
+          }
+          await sendTemplateEmail("new-reservation-admin", adminTemplate.to, {
+            idempotencyKey: `admin-new-${inserted.id}`,
+            templateData: {
+              nom: data.nom,
+              phone: data.telephone,
+              email,
+              depart: q.depart.label,
+              arrivee: q.arrivee.label,
+              pickup_datetime: data.pickup_datetime,
+              passagers: data.passagers,
+              bagages: data.bagages,
+              admin_url: "https://accessprestigetaxi.fr/driver",
+            },
+          });
+        })(),
+        8_000,
+        "admin-email",
+      ),
     ]);
     for (const result of emailResults) {
       if (result.status === "rejected") console.warn("[bookRide] email failed", result.reason);
     }
-
 
     return {
       ok: true,
