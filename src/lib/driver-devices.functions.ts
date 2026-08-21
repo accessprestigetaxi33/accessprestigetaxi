@@ -3,6 +3,9 @@ import { z } from "zod";
 
 /**
  * Gestion des demandes de devis (table `devis`) depuis le panneau chauffeur.
+ * (Déplacé depuis driver-data.functions.ts — collision de nom corrigée :
+ * driver-data.functions.ts contient désormais driverUpdateReservation /
+ * driverListReservations / driverDeleteClient, comme importé par driver.tsx.)
  * Le navigateur du chauffeur n'est pas authentifié Supabase : toute lecture/
  * écriture sensible passe ici après validation du jeton chauffeur.
  */
