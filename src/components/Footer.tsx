@@ -13,7 +13,7 @@ export function Footer() {
 
   const navLinks = [
     { to: "/" as const, hash: undefined, label: t("nav.home") },
-    { to: "/reservation" as const, hash: undefined, label: t("nav.book_long") },
+    { to: "/reserver" as const, hash: undefined, label: t("nav.book_long") },
     { to: "/" as const, hash: "faq", label: t("footer.link.faq") },
   ];
 
