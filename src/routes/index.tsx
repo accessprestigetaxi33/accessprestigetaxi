@@ -54,8 +54,6 @@ import photoGare from "@/assets/apt-gare.webp";
 import photoStepVoice from "@/assets/apt-step-voice.webp";
 import photoStepConfirm from "@/assets/apt-step-confirm.webp";
 import photoStepTrack from "@/assets/apt-step-track.webp";
-import guideInstallIOS from "@/assets/apt-install-ios-guide.webp";
-import guideInstallAndroid from "@/assets/apt-install-android-guide.webp";
 
 const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 
@@ -1276,20 +1274,8 @@ function Index() {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             <Reveal>
-              <article className={`h-full overflow-hidden p-0 ${CARD}`}>
-                <img
-                  src={guideInstallIOS}
-                  alt={
-                    lang === "en"
-                      ? "Install guide: Safari, Share, Add to Home Screen"
-                      : "Guide d'installation iPhone : Safari, Partager, Ajouter à l'écran d'accueil"
-                  }
-                  loading="lazy"
-                  width={800}
-                  height={500}
-                  className="w-full object-cover"
-                />
-                <div className="p-6">
+              <article className={`h-full p-6 ${CARD}`}>
+                <div>
                   <h3 className="font-display text-lg font-semibold text-card-foreground">
                     {lang === "en" ? "iPhone & iPad (Safari)" : "iPhone et iPad (Safari)"}
                   </h3>
@@ -1323,20 +1309,8 @@ function Index() {
               </article>
             </Reveal>
             <Reveal delay={0.08}>
-              <article className={`h-full overflow-hidden p-0 ${CARD}`}>
-                <img
-                  src={guideInstallAndroid}
-                  alt={
-                    lang === "en"
-                      ? "Install guide: Chrome menu, Add to Home Screen"
-                      : "Guide d'installation Android : Chrome, menu ⋮, Ajouter à l'écran d'accueil"
-                  }
-                  loading="lazy"
-                  width={800}
-                  height={500}
-                  className="w-full object-cover"
-                />
-                <div className="p-6">
+              <article className={`h-full p-6 ${CARD}`}>
+                <div>
                   <h3 className="font-display text-lg font-semibold text-card-foreground">
                     {lang === "en" ? "Android (Chrome)" : "Android (Chrome)"}
                   </h3>
