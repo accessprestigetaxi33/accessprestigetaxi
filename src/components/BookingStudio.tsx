@@ -35,6 +35,8 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { quoteRide, bookRide } from "@/lib/booking.functions";
 import { locateUser } from "@/lib/geolocation";
 import { placesReverse } from "@/lib/places";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { Bell, BellRing } from "lucide-react";
 
 /* ────────────────────────────── i18n ────────────────────────────── */
 
@@ -115,6 +117,10 @@ const T = {
     ok_new: "Nouvelle réservation",
     ok_cal: "Ajouter au calendrier",
     ok_share: "Partager",
+    notif_cta: "Activer les notifications",
+    notif_on: "Notifications activées",
+    notif_denied: "Notifications bloquées — vérifiez les réglages de votre navigateur.",
+    notif_hint: "Soyez prévenu quand votre chauffeur est en route, arrivé, et à l'arrivée.",
     err_quote: "Impossible de calculer cet itinéraire. Vérifiez les adresses.",
     err_book: "Enregistrement impossible. Appelez-nous au 06 03 44 48 63.",
     err_timeout: "La demande met trop de temps à répondre. Réessayez, ou appelez-nous au 06 03 44 48 63.",
@@ -198,6 +204,10 @@ const T = {
     ok_new: "New booking",
     ok_cal: "Add to calendar",
     ok_share: "Share",
+    notif_cta: "Enable notifications",
+    notif_on: "Notifications enabled",
+    notif_denied: "Notifications blocked — check your browser settings.",
+    notif_hint: "Get notified when your driver is on the way, has arrived, and at drop-off.",
     err_quote: "We couldn't compute this route. Please check the addresses.",
     err_book: "Booking failed. Please call us on +33 6 03 44 48 63.",
     err_timeout: "The request is taking too long. Please try again, or call us on +33 6 03 44 48 63.",
@@ -414,6 +424,49 @@ const QUICK_DESTINATIONS = [
   "Zoo de La Palmyre",
 ];
 
+/**
+ * Bouton "Activer les notifications" placé juste sous "Confirmer ma
+ * réservation". Demande la permission et obtient le token FCM avant même
+ * l'envoi du formulaire : au moment où la réservation est créée, l'abonnement
+ * est rattaché à son reservation_id automatiquement (voir onSubmit), sans
+ * second clic pour le client.
+ */
+function NotifyOptInButton({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeof usePushNotifications> }) {
+  if (push.status === "unsupported") return null;
+
+  if (push.status === "granted") {
+    return (
+      <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+        <BellRing className="h-3.5 w-3.5 text-primary" />
+        {L.notif_on}
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-full"
+        disabled={push.status === "loading"}
+        onClick={() => void push.subscribe("client")}
+      >
+        {push.status === "loading" ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Bell className="mr-2 h-4 w-4" />
+        )}
+        {L.notif_cta}
+      </Button>
+      <p className="mt-1.5 text-center text-xs text-muted-foreground">
+        {push.status === "denied" ? L.notif_denied : L.notif_hint}
+      </p>
+    </div>
+  );
+}
+
 export function BookingStudio() {
   const { lang } = useI18n();
   const L = T[(lang === "en" ? "en" : "fr") as Lang];
@@ -443,7 +496,18 @@ export function BookingStudio() {
   const [note, setNote] = useState("");
   const [locating, setLocating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState<{ suiviId: string; prix: number; pending?: boolean } | null>(null);
+  const [success, setSuccess] = useState<{
+    suiviId: string;
+    prix: number;
+    reservationId?: string;
+    pending?: boolean;
+  } | null>(null);
+
+  // Bouton "Activer les notifications" sous le bouton Confirmer : on demande
+  // la permission et on obtient le token FCM tôt (avant même la validation du
+  // formulaire), pour qu'au moment où la réservation est créée on puisse
+  // rattacher l'abonnement à son reservation_id sans redemander de clic.
+  const push = usePushNotifications();
   const [quote, setQuote] = useState<QuoteState>({ loading: false, error: null, data: null });
   // Clé d'idempotence : identique pour tous les clics d'une même réservation.
   const requestIdRef = useRef<string>("");
@@ -633,7 +697,13 @@ export function BookingStudio() {
         });
         return;
       }
-      setSuccess({ suiviId: res.suivi_id, prix: res.prix });
+      setSuccess({ suiviId: res.suivi_id, prix: res.prix, reservationId: res.reservation_id });
+      // Si la permission a déjà été accordée via le bouton du formulaire, on
+      // rattache silencieusement l'abonnement à cette réservation — le client
+      // n'a rien de plus à faire, comme demandé.
+      if (push.status === "granted") {
+        void push.subscribe("client", res.reservation_id);
+      }
     } catch (err: any) {
       console.error("[booking] submit failed", err);
       setSuccess(null);
@@ -1094,6 +1164,9 @@ export function BookingStudio() {
 
           {/* panneau devis en flux mobile */}
           <div className="lg:hidden">{QuotePanel}</div>
+          <div className="lg:hidden">
+            <NotifyOptInButton L={L} push={push} />
+          </div>
         </div>
 
         {/* colonne devis desktop */}
@@ -1110,6 +1183,7 @@ export function BookingStudio() {
                 L.submit
               )}
             </Button>
+            <NotifyOptInButton L={L} push={push} />
             {missing.length > 0 && (
               <p className="text-center text-xs text-muted-foreground">
                 {L.missing} {missing.join(", ")}
