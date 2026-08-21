@@ -76,7 +76,7 @@ export function SiteHeader() {
             <span className="hidden xl:inline">{t("nav.account")}</span>
           </Link>
           <Link
-            to="/reservation"
+            to="/reserver"
             className="shrink-0 whitespace-nowrap rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground lg:px-4 shadow-[var(--shadow-gold)] transition hover:opacity-90"
           >
             {t("nav.book")}
@@ -146,7 +146,7 @@ export function SiteHeader() {
                 <UserCircle2 className="h-5 w-5 text-primary" /> {t("nav.account")}
               </Link>
               <Link
-                to="/reservation"
+                to="/reserver"
                 onClick={() => setOpen(false)}
                 className="rounded-xl bg-primary px-4 py-3 text-center text-base font-semibold text-primary-foreground"
               >

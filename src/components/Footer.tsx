@@ -13,7 +13,7 @@ export function Footer() {
 
   const navLinks = [
     { to: "/" as const, hash: undefined, label: t("nav.home") },
-    { to: "/reservation" as const, hash: undefined, label: t("nav.book_long") },
+    { to: "/reserver" as const, hash: undefined, label: t("nav.book_long") },
     { to: "/" as const, hash: "faq", label: t("footer.link.faq") },
   ];
 
@@ -123,7 +123,7 @@ export function Footer() {
               </li>
             </ul>
             <Link
-              to="/reservation"
+              to="/reserver"
               className="mt-5 inline-flex touch-manipulation items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] [-webkit-tap-highlight-color:transparent] active:scale-95"
             >
               {t("nav.book")}
