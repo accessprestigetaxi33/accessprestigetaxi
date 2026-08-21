@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
-import { NotificationOptInStep } from "@/components/NotificationOptInStep";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { FaqSeo } from "@/components/FaqSeo";
@@ -1248,106 +1247,136 @@ function Index() {
                 {lang === "en" ? "Web app" : "Application"}
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-                {lang === "en"
-                  ? "Install Access Prestige Taxi on your phone"
-                  : "Installez Access Prestige Taxi sur votre téléphone"}
+                {lang === "en" ? "Install Access Prestige Taxi on your phone" : "Installez l'appli mobile"}
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                 {lang === "en"
-                  ? "Add the site to your home screen and get a real app icon: book in one tap, follow your driver live, find your rides, receipts and invoices, and chat directly with Alain or Patricia."
-                  : "Ajoutez le site à votre écran d'accueil pour obtenir une vraie icône d'application : réservez en un geste, suivez votre chauffeur en direct, retrouvez vos courses, reçus et factures, et discutez directement avec Alain ou Patricia."}
+                  ? "Book your ride in an instant, even offline. Get real-time tracking notifications."
+                  : "Réservez votre taxi en un instant, même sans connexion. Recevez les notifications de suivi en temps réel."}
               </p>
+            </div>
+          </Reveal>
 
-              <div className="mx-auto mt-6 flex max-w-xl items-start gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 text-left">
-                <Bell className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                <p className="text-sm leading-relaxed text-foreground/90">
+          <Reveal delay={0.06}>
+            <div className="mx-auto mt-8 flex max-w-2xl items-start gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 text-left">
+              <Bell className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <div className="space-y-2 text-sm leading-relaxed text-foreground/90">
+                <p>
                   <span className="font-semibold text-card-foreground">
-                    {lang === "en" ? "Notifications: " : "Notifications : "}
+                    {lang === "en" ? "How to activate? " : "Comment activer ? "}
                   </span>
                   {lang === "en"
-                    ? "you're alerted the moment your ride is confirmed, when Alain or Patricia is on the way, when the driver has arrived, and when a new message or your receipt is available. Install the app below, then accept notifications when your phone asks."
-                    : "vous êtes prévenu dès que votre course est confirmée, quand Alain ou Patricia est en route, à l'arrivée du chauffeur, et lorsqu'un nouveau message ou votre reçu est disponible. Installez l'application ci-dessous, puis acceptez les notifications quand votre téléphone le propose."}
+                    ? "Install the app on your home screen (see below), then accept notifications when Safari or Chrome offers to."
+                    : "Installez l'appli sur votre écran d'accueil (voir ci-dessous), puis acceptez les notifications quand Safari ou Chrome le propose."}
+                </p>
+                <p>
+                  <span className="font-semibold text-card-foreground">{lang === "en" ? "Why? " : "Pourquoi ? "}</span>
+                  {lang === "en"
+                    ? "Without installing, your browser can't send background alerts. You won't get the “Driver on the way”, “Arrived” or “Ride completed” messages."
+                    : "Sans installation, votre navigateur ne peut pas envoyer d'alertes en arrière-plan. Vous ne recevrez pas les messages « Taxi en route », « Arrivé » ou « Course terminée »."}
                 </p>
               </div>
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
             <Reveal>
               <article className={`h-full p-6 ${CARD}`}>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-card-foreground">
-                    {lang === "en" ? "iPhone & iPad (Safari)" : "iPhone et iPad (Safari)"}
-                  </h3>
-                  <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                    <li>
-                      1.{" "}
-                      {lang === "en"
-                        ? "Open accessprestigetaxi.fr in Safari."
-                        : "Ouvrez accessprestigetaxi.fr dans Safari."}
-                    </li>
-                    <li>
-                      2.{" "}
-                      {lang === "en"
-                        ? "Tap the Share button at the bottom of the screen."
-                        : "Touchez le bouton Partager en bas de l'écran."}
-                    </li>
-                    <li>
-                      3.{" "}
-                      {lang === "en"
-                        ? "Choose “Add to Home Screen”, then Add."
-                        : "Choisissez « Sur l'écran d'accueil », puis Ajouter."}
-                    </li>
-                  </ol>
-                  <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                    💡{" "}
+                <h3 className="font-display text-lg font-semibold text-card-foreground">
+                  🍎 {lang === "en" ? "iPhone / iOS" : "iPhone / iOS"}
+                </h3>
+                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
                     {lang === "en"
-                      ? "Tip: enable notifications in iOS Settings (Settings → Access Prestige Taxi → Notifications) if you declined the first prompt."
-                      : "Astuce : activez les notifications dans les réglages iOS (Réglages → Access Prestige Taxi → Notifications) si vous avez refusé la première demande."}
-                  </p>
-                </div>
+                      ? "Open Safari and go to accessprestigetaxi.fr"
+                      : "Ouvrez Safari et allez sur accessprestigetaxi.fr"}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Tap the Share button (square with arrow)"
+                      : "Tapez le bouton Partager (carré avec flèche)"}
+                  </li>
+                  <li>3. {lang === "en" ? "Select “Add to Home Screen”" : "Sélectionnez « Sur l'écran d'accueil »"}</li>
+                  <li>
+                    4.{" "}
+                    {lang === "en"
+                      ? "Tap Add: the app appears on your home screen"
+                      : "Tapez Ajouter : l'appli apparaît sur votre écran d'accueil"}
+                  </li>
+                </ol>
+                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                  💡{" "}
+                  {lang === "en"
+                    ? "Tip: enable notifications in iOS Settings (Settings → Access Prestige Taxi → Notifications)."
+                    : "Astuce : activez les notifications dans les paramètres iOS (Réglages → Access Prestige Taxi → Notifications)."}
+                </p>
               </article>
             </Reveal>
             <Reveal delay={0.08}>
               <article className={`h-full p-6 ${CARD}`}>
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-card-foreground">
-                    {lang === "en" ? "Android (Chrome)" : "Android (Chrome)"}
-                  </h3>
-                  <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                    <li>
-                      1.{" "}
-                      {lang === "en"
-                        ? "Open accessprestigetaxi.fr in Chrome."
-                        : "Ouvrez accessprestigetaxi.fr dans Chrome."}
-                    </li>
-                    <li>
-                      2. {lang === "en" ? "Open the ⋮ menu at the top right." : "Ouvrez le menu ⋮ en haut à droite."}
-                    </li>
-                    <li>
-                      3.{" "}
-                      {lang === "en"
-                        ? "Choose “Install app” / “Add to Home screen”."
-                        : "Choisissez « Installer l'application » / « Ajouter à l'écran d'accueil »."}
-                    </li>
-                  </ol>
-                  <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                    💡{" "}
+                <h3 className="font-display text-lg font-semibold text-card-foreground">
+                  🤖 {lang === "en" ? "Android" : "Android"}
+                </h3>
+                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
                     {lang === "en"
-                      ? "Tip: accept notifications when Chrome asks, to receive tracking alerts."
-                      : "Astuce : acceptez les notifications quand Chrome le demande pour recevoir les alertes de suivi."}
-                  </p>
-                </div>
+                      ? "Open Chrome and go to accessprestigetaxi.fr"
+                      : "Ouvrez Chrome et allez sur accessprestigetaxi.fr"}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Tap the ⋮ menu at the top right"
+                      : "Tapez le menu ⋮ (trois points) en haut à droite"}
+                  </li>
+                  <li>
+                    3. {lang === "en" ? "Select “Add to Home Screen”" : "Sélectionnez « Ajouter à l'écran d'accueil »"}
+                  </li>
+                  <li>
+                    4.{" "}
+                    {lang === "en"
+                      ? "Tap Add: the icon appears on your home screen"
+                      : "Tapez Ajouter : l'icône apparaît sur votre écran d'accueil"}
+                  </li>
+                </ol>
+                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                  💡{" "}
+                  {lang === "en"
+                    ? "Tip: accept notifications when Chrome asks, to receive tracking alerts."
+                    : "Astuce : acceptez les notifications quand Chrome le demande pour recevoir les alertes de suivi."}
+                </p>
               </article>
             </Reveal>
           </div>
 
           <Reveal delay={0.1}>
-            <NotificationOptInStep />
+            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
+              ✨ {lang === "en" ? "Need help? Call Alain · " : "Besoin d'aide ? Appelez Alain · "}
+              <a href="tel:0603444863" className="font-semibold text-primary underline">
+                06 03 44 48 63
+              </a>{" "}
+              {lang === "en" ? "or Patricia · " : "ou Patricia · "}
+              <a href="tel:0650260015" className="font-semibold text-primary underline">
+                06 50 26 00 15
+              </a>
+              {lang === "en" ? ", or message us on " : ", ou écrivez-nous sur "}
+              <a
+                href="https://wa.me/33650260015"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-primary underline"
+              >
+                WhatsApp
+              </a>
+              .
+            </p>
           </Reveal>
 
           <Reveal delay={0.14}>
-            <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
               {lang === "en"
                 ? "Alain and Patricia use a separate private app for drivers."
                 : "Alain et Patricia disposent d'une application chauffeur privée séparée."}
