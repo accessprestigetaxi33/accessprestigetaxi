@@ -117,6 +117,7 @@ const T = {
     ok_share: "Partager",
     err_quote: "Impossible de calculer cet itinéraire. Vérifiez les adresses.",
     err_book: "Enregistrement impossible. Appelez-nous au 06 03 44 48 63.",
+    err_timeout: "La demande met trop de temps à répondre. Réessayez, ou appelez-nous au 06 03 44 48 63.",
     err_phone: "Numéro de téléphone invalide.",
     err_email: "Adresse e-mail invalide.",
     err_past: "Choisissez une heure au moins 20 minutes après maintenant.",
@@ -127,8 +128,7 @@ const T = {
   en: {
     eyebrow: "Live booking",
     title: "Your ride, booked in 60 seconds",
-    subtitle:
-      "Address, time, passengers: the fare updates live as you type. No waiting, no guesswork.",
+    subtitle: "Address, time, passengers: the fare updates live as you type. No waiting, no guesswork.",
     trip: "Your trip",
     from: "Pickup",
     to: "Destination",
@@ -200,6 +200,7 @@ const T = {
     ok_share: "Share",
     err_quote: "We couldn't compute this route. Please check the addresses.",
     err_book: "Booking failed. Please call us on +33 6 03 44 48 63.",
+    err_timeout: "The request is taking too long. Please try again, or call us on +33 6 03 44 48 63.",
     err_phone: "Invalid phone number.",
     err_email: "Invalid email address.",
     err_past: "Pick a time at least 20 minutes from now.",
@@ -235,6 +236,57 @@ function addMinutes(d: Date, min: number) {
   return new Date(d.getTime() + min * 60_000);
 }
 
+/**
+ * Décalage Europe/Paris (en minutes, +60 CET / +120 CEST) à un instant UTC
+ * donné. Calculé via Intl (pas de dépendance externe) donc fiable quel que
+ * soit le fuseau réglé sur l'appareil de l'utilisateur.
+ */
+function parisOffsetMinutesAt(utcMs: number): number {
+  const p = parisParts(new Date(utcMs));
+  const asIfUtc = Date.UTC(Number(p.y), Number(p.m) - 1, Number(p.d), Number(p.h), Number(p.mi));
+  return Math.round((asIfUtc - utcMs) / 60_000);
+}
+
+/**
+ * Convertit une valeur "YYYY-MM-DDTHH:mm" représentant une heure locale de
+ * Paris (celle produite par parisLocalValue / l'input datetime-local) en un
+ * Date correct, quel que soit le fuseau du navigateur.
+ *
+ * `new Date(`${when}:00`)` interprète la chaîne comme une heure LOCALE À
+ * L'APPAREIL — sur un iPhone dont le fuseau diffère d'Europe/Paris (client
+ * étranger, réglage automatique en voyage…), ça décale silencieusement
+ * l'heure retenue d'une à plusieurs heures, ce qui peut faire échouer à tort
+ * le contrôle "heure dans le passé" et bloquer la soumission.
+ */
+function parisStringToDate(value: string): Date {
+  const [datePart, timePart] = value.split("T");
+  const [y, m, d] = (datePart ?? "").split("-").map(Number);
+  const [h, mi] = (timePart ?? "00:00").split(":").map(Number);
+  if (!y || !m || !d || Number.isNaN(h) || Number.isNaN(mi)) return new Date(NaN);
+  const utcGuess = Date.UTC(y, m - 1, d, h, mi, 0);
+  const offsetMin = parisOffsetMinutesAt(utcGuess);
+  return new Date(utcGuess - offsetMin * 60_000);
+}
+
+/** Petit filet de sécurité : rejette après `ms` si `promise` ne tranche pas,
+ * pour ne jamais laisser le bouton de soumission bloqué indéfiniment (vécu
+ * sur iPhone/Safari quand la requête réseau reste en suspens). */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("TIMEOUT")), ms);
+    promise.then(
+      (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      (e) => {
+        clearTimeout(timer);
+        reject(e);
+      },
+    );
+  });
+}
+
 function tomorrow8(): string {
   const p = parisParts(addMinutes(new Date(), 24 * 60));
   return `${p.y}-${p.m}-${p.d}T08:00`;
@@ -242,7 +294,7 @@ function tomorrow8(): string {
 
 function formatWhen(value: string, lang: Lang) {
   if (!value) return "";
-  const d = new Date(`${value}:00`);
+  const d = parisStringToDate(value);
   if (isNaN(d.getTime())) return value;
   return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "fr-FR", {
     weekday: "short",
@@ -328,15 +380,7 @@ function Stepper({
   );
 }
 
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active?: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
+function Chip({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
@@ -358,9 +402,7 @@ function Chip({
 type QuoteState = {
   loading: boolean;
   error: string | null;
-  data:
-    | (Extract<Awaited<ReturnType<typeof quoteRide>>, { ok: true }> & { key: string })
-    | null;
+  data: (Extract<Awaited<ReturnType<typeof quoteRide>>, { ok: true }> & { key: string }) | null;
 };
 
 const QUICK_DESTINATIONS = [
@@ -431,15 +473,19 @@ export function BookingStudio() {
   const useMyPosition = useCallback(async () => {
     setLocating(true);
     try {
-      const res = await locateUser();
+      const res = await withTimeout(locateUser(), 15_000);
       if (!res.ok) {
         toast.error(isEn ? "Location unavailable." : "Position indisponible.");
         return;
       }
       const { lat, lng } = res.fix;
       setDepartCoord({ lat, lng });
-      const label = await placesReverse(lat, lng, lang).catch(() => null);
+      const label = await withTimeout(placesReverse(lat, lng, lang), 8_000).catch(() => null);
       setDepart(label || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    } catch {
+      // Timeout ou échec géoloc : on ne bloque jamais le bouton, l'utilisateur
+      // peut toujours saisir l'adresse de départ à la main.
+      toast.error(isEn ? "Location unavailable." : "Position indisponible.");
     } finally {
       setLocating(false);
     }
@@ -466,17 +512,20 @@ export function BookingStudio() {
     setQuote((q) => ({ ...q, loading: true, error: null }));
     const timer = setTimeout(async () => {
       try {
-        const res = await getQuote({
-          data: {
-            depart,
-            depart_coord: departCoord,
-            arrivee,
-            arrivee_coord: arriveeCoord,
-            pickup_datetime: `${when}:00`,
-            passagers: pax,
-            bagages: bags,
-          },
-        });
+        const res = await withTimeout(
+          getQuote({
+            data: {
+              depart,
+              depart_coord: departCoord,
+              arrivee,
+              arrivee_coord: arriveeCoord,
+              pickup_datetime: `${when}:00`,
+              passagers: pax,
+              bagages: bags,
+            },
+          }),
+          12_000,
+        );
         if (seq !== seqRef.current) return;
         if (res.ok) setQuote({ loading: false, error: null, data: { ...res, key } });
         else setQuote({ loading: false, error: L.err_quote, data: null });
@@ -491,11 +540,26 @@ export function BookingStudio() {
   /* ── validation ── */
   const missing: string[] = [];
   const missingIds: string[] = [];
-  if (depart.trim().length < 3) { missing.push(L.m_from); missingIds.push(""); }
-  if (arrivee.trim().length < 3) { missing.push(L.m_to); missingIds.push(""); }
-  if (!when) { missing.push(L.m_when); missingIds.push("when"); }
-  if (nom.trim().length < 2) { missing.push(L.m_name); missingIds.push("nom"); }
-  if (tel.replace(/\D/g, "").length < 9) { missing.push(L.m_phone); missingIds.push("tel"); }
+  if (depart.trim().length < 3) {
+    missing.push(L.m_from);
+    missingIds.push("");
+  }
+  if (arrivee.trim().length < 3) {
+    missing.push(L.m_to);
+    missingIds.push("");
+  }
+  if (!when) {
+    missing.push(L.m_when);
+    missingIds.push("when");
+  }
+  if (nom.trim().length < 2) {
+    missing.push(L.m_name);
+    missingIds.push("nom");
+  }
+  if (tel.replace(/\D/g, "").length < 9) {
+    missing.push(L.m_phone);
+    missingIds.push("tel");
+  }
   const canSubmit = missing.length === 0 && !submitting;
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -507,7 +571,11 @@ export function BookingStudio() {
       if (!el) window.scrollTo({ top: 0, behavior: "smooth" });
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
-        try { (el as HTMLElement).focus({ preventScroll: true }); } catch { /* noop */ }
+        try {
+          (el as HTMLElement).focus({ preventScroll: true });
+        } catch {
+          /* noop */
+        }
       }
       return;
     }
@@ -516,7 +584,7 @@ export function BookingStudio() {
       toast.error(L.err_email);
       return;
     }
-    if (new Date(`${when}:00`).getTime() < Date.now() - 60 * 60_000) {
+    if (parisStringToDate(when).getTime() < Date.now() - 60 * 60_000) {
       toast.error(L.err_past);
       return;
     }
@@ -533,28 +601,29 @@ export function BookingStudio() {
     setSuccess({ suiviId: "", prix: quote.data?.prix ?? 0, pending: true });
     window.scrollTo({ top: 0, behavior: "smooth" });
     try {
-      const optionLabels = options.map(
-        (id) => OPTION_LIST.find((o) => o.id === id)?.label ?? id,
+      const optionLabels = options.map((id) => OPTION_LIST.find((o) => o.id === id)?.label ?? id);
+      const res = await withTimeout(
+        book({
+          data: {
+            depart,
+            depart_coord: departCoord,
+            arrivee,
+            arrivee_coord: arriveeCoord,
+            pickup_datetime: `${when}:00`,
+            passagers: pax,
+            bagages: bags,
+            nom: nom.trim(),
+            telephone: tel.trim(),
+            email: email.trim() || null,
+            paiement,
+            options: optionLabels,
+            note: note.trim(),
+            lang: isEn ? "en" : "fr",
+            client_request_id: requestIdRef.current,
+          },
+        }),
+        30_000,
       );
-      const res = await book({
-        data: {
-          depart,
-          depart_coord: departCoord,
-          arrivee,
-          arrivee_coord: arriveeCoord,
-          pickup_datetime: `${when}:00`,
-          passagers: pax,
-          bagages: bags,
-          nom: nom.trim(),
-          telephone: tel.trim(),
-          email: email.trim() || null,
-          paiement,
-          options: optionLabels,
-          note: note.trim(),
-          lang: isEn ? "en" : "fr",
-          client_request_id: requestIdRef.current,
-        },
-      });
       if (!res.ok) {
         setSuccess(null);
         // Échec métier : on repart sur une nouvelle clé au prochain essai.
@@ -565,16 +634,24 @@ export function BookingStudio() {
         return;
       }
       setSuccess({ suiviId: res.suivi_id, prix: res.prix });
-    } catch (err) {
+    } catch (err: any) {
       console.error("[booking] submit failed", err);
       setSuccess(null);
-      // Erreur réseau : on garde la clé pour que le renvoi ne crée pas de doublon.
-      toast.error(L.err_book, { position: "top-center" });
+      if (err?.message === "TIMEOUT") {
+        // La requête est peut-être toujours en cours côté serveur : on garde
+        // la clé pour éviter un doublon si le client retente derrière.
+        toast.error(L.err_timeout, { position: "top-center" });
+      } else {
+        // Erreur réseau : on garde la clé pour que le renvoi ne crée pas de doublon.
+        toast.error(L.err_book, { position: "top-center" });
+      }
     } finally {
+      // Filet de sécurité : quoi qu'il arrive (succès, échec, timeout), le
+      // bouton de soumission est toujours réactivé — la page ne doit jamais
+      // rester figée sur l'écran "pending" indéfiniment.
       inFlightRef.current = false;
       setSubmitting(false);
     }
-
   };
 
   /* ── écran de confirmation ── */
@@ -613,9 +690,7 @@ export function BookingStudio() {
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{L.price}</dt>
-              <dd className="text-right font-semibold text-primary">
-                ≈ {success.prix.toFixed(2)} €
-              </dd>
+              <dd className="text-right font-semibold text-primary">≈ {success.prix.toFixed(2)} €</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{L.ok_ref}</dt>
@@ -684,7 +759,6 @@ export function BookingStudio() {
               {L.ok_new}
             </button>
           )}
-
         </div>
       </main>
     );
@@ -700,9 +774,7 @@ export function BookingStudio() {
         {L.quote}
       </h2>
 
-      {!q && !quote.loading && (
-        <p className="mt-3 text-sm text-muted-foreground">{quote.error ?? L.quote_wait}</p>
-      )}
+      {!q && !quote.loading && <p className="mt-3 text-sm text-muted-foreground">{quote.error ?? L.quote_wait}</p>}
       {quote.loading && (
         <p className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" /> {L.computing}
@@ -757,9 +829,7 @@ export function BookingStudio() {
           <div className="flex items-start gap-2 rounded-xl border border-border/70 bg-background/60 p-3 text-sm">
             <Car className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              <span className="block text-xs uppercase tracking-wide text-muted-foreground">
-                {L.vehicle}
-              </span>
+              <span className="block text-xs uppercase tracking-wide text-muted-foreground">{L.vehicle}</span>
               {q.vehicule === "van" ? L.van : L.berline}
             </span>
           </div>
@@ -787,12 +857,8 @@ export function BookingStudio() {
       )}
       <header className="mx-auto max-w-3xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{L.eyebrow}</p>
-        <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-          {L.title}
-        </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
-          {L.subtitle}
-        </p>
+        <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{L.title}</h1>
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">{L.subtitle}</p>
         <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
           {[L.trust1, L.trust2, L.trust3].map((t) => (
             <li key={t} className="flex items-center gap-1.5">
@@ -829,11 +895,7 @@ export function BookingStudio() {
                     className="shrink-0"
                     aria-label={L.mypos}
                   >
-                    {locating ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Crosshair className="h-4 w-4" />
-                    )}
+                    {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />}
                     <span className="ml-2 hidden sm:inline">{locating ? L.locating : L.mypos}</span>
                   </Button>
                 </div>
@@ -908,11 +970,7 @@ export function BookingStudio() {
                 }}
                 className="h-12 text-base"
               />
-              {when && (
-                <p className="mt-1.5 text-sm text-muted-foreground">
-                  {formatWhen(when, isEn ? "en" : "fr")}
-                </p>
-              )}
+              {when && <p className="mt-1.5 text-sm text-muted-foreground">{formatWhen(when, isEn ? "en" : "fr")}</p>}
             </div>
           </SectionCard>
 
@@ -944,9 +1002,7 @@ export function BookingStudio() {
                   key={o.id}
                   active={options.includes(o.id)}
                   onClick={() =>
-                    setOptions((prev) =>
-                      prev.includes(o.id) ? prev.filter((x) => x !== o.id) : [...prev, o.id],
-                    )
+                    setOptions((prev) => (prev.includes(o.id) ? prev.filter((x) => x !== o.id) : [...prev, o.id]))
                   }
                 >
                   {o.icon}
@@ -960,11 +1016,13 @@ export function BookingStudio() {
               {L.payment}
             </p>
             <div className="flex flex-wrap gap-2">
-              {([
-                ["cb", L.pay_cb],
-                ["especes", L.pay_cash],
-                ["facture", L.pay_inv],
-              ] as const).map(([id, label]) => (
+              {(
+                [
+                  ["cb", L.pay_cb],
+                  ["especes", L.pay_cash],
+                  ["facture", L.pay_inv],
+                ] as const
+              ).map(([id, label]) => (
                 <Chip key={id} active={paiement === id} onClick={() => setPaiement(id)}>
                   {label}
                 </Chip>
@@ -1084,10 +1142,9 @@ export function BookingStudio() {
 /* ────────────────────────────── .ics ────────────────────────────── */
 
 function buildIcs(args: { when: string; depart: string; arrivee: string; lang: Lang; ref: string }) {
-  const dt = new Date(`${args.when}:00`);
+  const dt = parisStringToDate(args.when);
   const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const title =
-    args.lang === "en" ? "Taxi — Access Prestige Taxi" : "Taxi — Access Prestige Taxi";
+  const title = args.lang === "en" ? "Taxi — Access Prestige Taxi" : "Taxi — Access Prestige Taxi";
   const body = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
