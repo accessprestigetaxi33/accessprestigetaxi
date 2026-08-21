@@ -157,7 +157,7 @@ function ServicesPage() {
             <FileText className="h-4 w-4" /> {quoteLabel}
           </Link>
           <Link
-            to="/reservation"
+            to="/reserver"
             className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl border border-border px-7 font-semibold transition hover:border-primary/60 sm:w-auto"
           >
             {t("services.cta")}
@@ -250,7 +250,7 @@ function ServicesPage() {
           <FileText className="h-4 w-4" /> {quoteLabel}
         </Link>
         <Link
-          to="/reservation"
+          to="/reserver"
           className="inline-flex min-h-[48px] w-full items-center justify-center rounded-xl border border-border px-8 font-semibold transition hover:border-primary/60 sm:w-auto"
         >
           {t("services.cta")}

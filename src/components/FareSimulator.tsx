@@ -348,7 +348,7 @@ export function FareSimulator() {
               <span>{PHONE_DISPLAY}</span>
             </a>
             <Link
-              to="/reservation"
+              to="/reserver"
               className="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] sm:flex-1"
             >
               {t("sim.cta_book")} <ArrowRight className="h-4 w-4 shrink-0" />

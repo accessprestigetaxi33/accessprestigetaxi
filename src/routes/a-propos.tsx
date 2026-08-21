@@ -83,7 +83,7 @@ function AboutPage() {
 
       <div className="mt-10 text-center sm:mt-14">
         <Link
-          to="/reservation"
+          to="/reserver"
           className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-8 py-3.5 font-semibold text-primary-foreground shadow-[var(--shadow-gold)] active:scale-95 sm:w-auto sm:rounded-md sm:py-3"
         >
           {t("about.cta")}

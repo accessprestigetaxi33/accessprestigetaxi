@@ -9,7 +9,7 @@ const COPY = {
       { to: "/", label: "Accueil" },
       { to: "/services", label: "Services" },
       { to: "/blog", label: "Guide Charente-Maritime" },
-      { to: "/reservation", label: "Réserver" },
+      { to: "/reserver", label: "Réserver" },
       { to: "/a-propos", label: "À propos" },
       { to: "/devis", label: "Demander un devis" },
       { to: "/contact", label: "Contact" },
@@ -37,7 +37,7 @@ const COPY = {
       { to: "/", label: "Home" },
       { to: "/services", label: "Services" },
       { to: "/blog", label: "Charente Guide" },
-      { to: "/reservation", label: "Book" },
+      { to: "/reserver", label: "Book" },
       { to: "/a-propos", label: "About" },
       { to: "/devis", label: "Request a quote" },
       { to: "/contact", label: "Contact" },
@@ -298,7 +298,7 @@ export function SiteFooter() {
             <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">desktop</Link>.{" "}
             Explore our{" "}
             <Link to="/services" className="underline underline-offset-2 hover:text-[#2c2718]">taxi services</Link>,{" "}
-            <Link to="/reservation" className="underline underline-offset-2 hover:text-[#2c2718]">book a ride</Link>,{" "}
+            <Link to="/reserver" className="underline underline-offset-2 hover:text-[#2c2718]">book a ride</Link>,{" "}
             <Link to="/devis" className="underline underline-offset-2 hover:text-[#2c2718]">request a quote</Link>,{" "}
             read our{" "}
             <Link to="/blog" className="underline underline-offset-2 hover:text-[#2c2718]">Charente-Maritime guide</Link>,{" "}
@@ -316,7 +316,7 @@ export function SiteFooter() {
             <Link to="/" className="underline underline-offset-2 hover:text-[#2c2718]">ordinateur</Link>.{" "}
             Découvrez nos{" "}
             <Link to="/services" className="underline underline-offset-2 hover:text-[#2c2718]">services de taxi</Link>,{" "}
-            <Link to="/reservation" className="underline underline-offset-2 hover:text-[#2c2718]">réservez votre course</Link>,{" "}
+            <Link to="/reserver" className="underline underline-offset-2 hover:text-[#2c2718]">réservez votre course</Link>,{" "}
             <Link to="/devis" className="underline underline-offset-2 hover:text-[#2c2718]">demandez un devis</Link>,{" "}
             consultez notre{" "}
             <Link to="/blog" className="underline underline-offset-2 hover:text-[#2c2718]">guide Charente-Maritime</Link>,{" "}
