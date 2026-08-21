@@ -507,7 +507,13 @@ export function BookingStudio() {
   // la permission et on obtient le token FCM tôt (avant même la validation du
   // formulaire), pour qu'au moment où la réservation est créée on puisse
   // rattacher l'abonnement à son reservation_id sans redemander de clic.
-  const push = usePushNotifications();
+  // autoAudience: "client" — si la permission navigateur est déjà accordée
+  // (site déjà autorisé auparavant, ex. via /driver), le hook finalise
+  // silencieusement la vraie inscription (jeton FCM + enregistrement serveur)
+  // au lieu de se contenter d'afficher "activé" sans rien avoir enregistré.
+  // Si la permission n'a jamais été demandée, ceci ne déclenche PAS la popup
+  // du navigateur — le bouton reste visible pour un clic explicite.
+  const push = usePushNotifications({ autoAudience: "client" });
   const [quote, setQuote] = useState<QuoteState>({ loading: false, error: null, data: null });
   // Clé d'idempotence : identique pour tous les clics d'une même réservation.
   const requestIdRef = useRef<string>("");
