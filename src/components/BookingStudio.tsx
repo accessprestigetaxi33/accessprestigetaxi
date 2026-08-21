@@ -381,9 +381,13 @@ export function BookingStudio() {
   const getQuote = useServerFn(quoteRide);
   const book = useServerFn(bookRide);
 
-  const [depart, setDepart] = useState("");
+  // Préremplissage depuis les pages blog : /reserver?from=...&to=...
+  const prefill = useSearch({ from: "/reserver" });
+
+  const [depart, setDepart] = useState(() => (prefill.from ?? "").slice(0, 160));
   const [departCoord, setDepartCoord] = useState<{ lat: number; lng: number } | null>(null);
-  const [arrivee, setArrivee] = useState("");
+  const [arrivee, setArrivee] = useState(() => (prefill.to ?? "").slice(0, 160));
+
   const [arriveeCoord, setArriveeCoord] = useState<{ lat: number; lng: number } | null>(null);
   const [when, setWhen] = useState(() => parisLocalValue(addMinutes(new Date(), 30)));
   const [quickWhen, setQuickWhen] = useState<"asap" | "1h" | "tomorrow" | null>("asap");
