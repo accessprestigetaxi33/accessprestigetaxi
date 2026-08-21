@@ -206,6 +206,17 @@ function BlogArticle() {
 
           <p className="mt-5 text-base leading-relaxed text-foreground/90 sm:text-lg">{txt.teaser}</p>
 
+          {/* RÉSERVATION PRÉREMPLIE — la destination du formulaire = ce lieu */}
+          <Link
+            to="/reserver"
+            search={{ to: `${entry.name}, ${entry.city}` }}
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90 sm:w-auto"
+            aria-label={`${c.bookHere} ${entry.name}`}
+          >
+            {c.bookHere} {entry.name} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+
+
           {/* EN BREF */}
           <dl className="mt-7 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
             {entry.facts.map((f, i) => (
@@ -257,7 +268,8 @@ function BlogArticle() {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.ctaText}</p>
             <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
               <Link
-                to="/reservation"
+                to="/reserver"
+                search={{ to: `${entry.name}, ${entry.city}` }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90"
               >
                 {c.book} <ArrowRight className="h-4 w-4" />
