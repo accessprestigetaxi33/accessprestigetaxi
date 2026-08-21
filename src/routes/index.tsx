@@ -54,6 +54,8 @@ import photoGare from "@/assets/apt-gare.webp";
 import photoStepVoice from "@/assets/apt-step-voice.webp";
 import photoStepConfirm from "@/assets/apt-step-confirm.webp";
 import photoStepTrack from "@/assets/apt-step-track.webp";
+import guideInstallIOS from "@/assets/apt-install-ios-guide.webp";
+import guideInstallAndroid from "@/assets/apt-install-android-guide.webp";
 
 const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 
@@ -184,8 +186,6 @@ function useHeroSlideshow(count: number, durationMs: number) {
   return { index, canAnimate, select, next, prev, paused, togglePause };
 }
 
-
-
 // Cases du hero : reprennent les pictogrammes et mentions de la bannière photo.
 const HERO_PILLARS_FR = [
   { icon: Stethoscope, label: "Transport conventionné" },
@@ -216,7 +216,6 @@ const HERO_VALUES_EN = [
 ] as const;
 
 const COPY = {
-
   fr: {
     h1: "Votre transport, notre exigence",
     tagline: SLOGAN_FR,
@@ -261,8 +260,7 @@ const COPY = {
     ],
 
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
-    bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
+    bannerText: "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
     destEyebrow: "Destinations",
     destTitle: "Là où l'on vous emmène",
     destLead: "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
@@ -374,11 +372,9 @@ const COPY = {
         t: "A service tailored to every need",
         d: "Baby and booster seats on request, wheelchair access, groups and long distances.",
       },
-
     ],
     bannerTitle: "Charente-Maritime, door to door",
-    bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there.",
+    bannerText: "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there.",
     destEyebrow: "Destinations",
     destTitle: "Where we take you",
     destLead: "A few routes our clients book every day — arriving smoothly is our job.",
@@ -475,157 +471,151 @@ export const Route = createFileRoute("/")({
   // ?lang=en / ?lang=fr : force la langue du visuel et des textes sociaux
   // pour les partages (la page reste servie sur la même URL).
   validateSearch: (search: Record<string, unknown>): { lang?: "en" | "fr" } => ({
-    lang:
-      search['lang'] === "en"
-        ? ("en" as const)
-        : search['lang'] === "fr"
-          ? ("fr" as const)
-          : undefined,
+    lang: search["lang"] === "en" ? ("en" as const) : search["lang"] === "fr" ? ("fr" as const) : undefined,
   }),
   head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
     const isEn = ctx?.match?.search?.lang === "en";
     const social = isEn ? HOME_SOCIAL_EN : HOME_SOCIAL_FR;
     return {
-    meta: [
-      {
-        title: isEn
-          ? "Electric taxi in Charente-Maritime | Access Prestige"
-          : "Taxi électrique Charente-Maritime | Access Prestige",
-      },
-      {
-        name: "description",
-        content: isEn
-          ? "Taxi in Charente-Maritime: 5-seat electric BMW iX1 and Audi Q6 e-tron, 8-seat van, wheelchair medical transport, all stations and airports."
-          : "Taxi en Charente-Maritime : BMW iX1 et Audi Q6 e-tron électriques 5 places, van 8 places, transport sanitaire avec fauteuil roulant, toutes gares et aéroports.",
-      },
-      { property: "og:site_name", content: "Access Prestige Taxi" },
-      { property: "og:title", content: social.title },
-      { property: "og:description", content: social.description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: social.url },
-      { property: "og:image", content: social.image },
-      { property: "og:image:secure_url", content: social.image },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: social.alt },
-      { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
-      { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: social.title },
-      { name: "twitter:description", content: social.description },
-      { name: "twitter:image", content: social.image },
-      { name: "twitter:image:alt", content: social.alt },
-    ],
+      meta: [
+        {
+          title: isEn
+            ? "Electric taxi in Charente-Maritime | Access Prestige"
+            : "Taxi électrique Charente-Maritime | Access Prestige",
+        },
+        {
+          name: "description",
+          content: isEn
+            ? "Taxi in Charente-Maritime: 5-seat electric BMW iX1 and Audi Q6 e-tron, 8-seat van, wheelchair medical transport, all stations and airports."
+            : "Taxi en Charente-Maritime : BMW iX1 et Audi Q6 e-tron électriques 5 places, van 8 places, transport sanitaire avec fauteuil roulant, toutes gares et aéroports.",
+        },
+        { property: "og:site_name", content: "Access Prestige Taxi" },
+        { property: "og:title", content: social.title },
+        { property: "og:description", content: social.description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: social.url },
+        { property: "og:image", content: social.image },
+        { property: "og:image:secure_url", content: social.image },
+        { property: "og:image:type", content: "image/png" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:image:alt", content: social.alt },
+        { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
+        { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: social.title },
+        { name: "twitter:description", content: social.description },
+        { name: "twitter:image", content: social.image },
+        { name: "twitter:image:alt", content: social.alt },
+      ],
 
-    links: seoLinks("/", ctx?.match?.search),
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "TaxiService",
-          "@id": `${SITE_URL}/#taxiservice`,
-          name: "Access Prestige Taxi",
-          alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
-          slogan: SLOGAN_FR,
-          url: SITE_URL,
-          image: absoluteUrl(heroCars),
-          logo: absoluteUrl("/favicon.png"),
-          email: "accessprestigetaxi@gmail.com",
-          currenciesAccepted: "EUR",
-          paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant (transport conventionné)",
-          address: {
-            "@type": "PostalAddress",
-            addressRegion: "Charente-Maritime",
-            addressCountry: "FR",
-          },
-          areaServed: [
-            { "@type": "AdministrativeArea", name: "Charente-Maritime" },
-            { "@type": "City", name: "La Rochelle" },
-            { "@type": "City", name: "Rochefort" },
-            { "@type": "City", name: "Saintes" },
-            { "@type": "City", name: "Royan" },
-            { "@type": "City", name: "Saint-Jean-d'Angély" },
-          ],
-          knowsLanguage: ["fr", "en"],
-          telephone: DRIVERS.map((d) => d.intl),
-          availableLanguage: ["fr", "en"],
-          openingHours: "Mo-Fr 08:00-20:00",
-          priceRange: "€€",
-
-          employee: DRIVERS.map((d) => ({
-            "@type": "Person",
-            name: d.name,
-            jobTitle: "Chauffeur de taxi",
-            telephone: d.intl,
-          })),
-          contactPoint: DRIVERS.map((d) => ({
-            "@type": "ContactPoint",
-            name: d.name,
-            telephone: d.intl,
-            contactType: "reservations",
-            areaServed: ["Charente-Maritime"],
+      links: seoLinks("/", ctx?.match?.search),
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TaxiService",
+            "@id": `${SITE_URL}/#taxiservice`,
+            name: "Access Prestige Taxi",
+            alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
+            slogan: SLOGAN_FR,
+            url: SITE_URL,
+            image: absoluteUrl(heroCars),
+            logo: absoluteUrl("/favicon.png"),
+            email: "accessprestigetaxi@gmail.com",
+            currenciesAccepted: "EUR",
+            paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant (transport conventionné)",
+            address: {
+              "@type": "PostalAddress",
+              addressRegion: "Charente-Maritime",
+              addressCountry: "FR",
+            },
+            areaServed: [
+              { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+              { "@type": "City", name: "La Rochelle" },
+              { "@type": "City", name: "Rochefort" },
+              { "@type": "City", name: "Saintes" },
+              { "@type": "City", name: "Royan" },
+              { "@type": "City", name: "Saint-Jean-d'Angély" },
+            ],
+            knowsLanguage: ["fr", "en"],
+            telephone: DRIVERS.map((d) => d.intl),
             availableLanguage: ["fr", "en"],
-          })),
-          // IMPORTANT : n'active aggregateRating que si ce sont de VRAIS avis. Google
-          // pénalise (et peut désindexer) les notes fictives ou gonflées en JSON-LD.
-          // Branche ratingValue/reviewCount sur tes données réelles issues de ReviewForm/
-          // ClientTrust dès que tu as un nombre d'avis significatif, par ex :
-          // aggregateRating: {
-          //   "@type": "AggregateRating",
-          //   ratingValue: realAverageRating,
-          //   reviewCount: realReviewCount,
-          // },
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          name: "L'excellence à chaque trajet — flotte Access Prestige Taxi",
-          alternateName: "Excellence on every journey — Access Prestige Taxi fleet",
-          itemListElement: [
-            {
-              "@type": "Car",
-              position: 1,
-              name: "BMW iX1 100 % électrique",
-              alternateName: "BMW iX1 100% electric",
-              image: absoluteUrl(photoBmwReal.url),
-              vehicleSeatingCapacity: 4,
-              fuelType: "Electric",
-              description:
-                "Taxi BMW iX1 100 % électrique conduit par Patricia : transferts aéroport, courses médicales et déplacements du quotidien en Charente-Maritime.",
-            },
-            {
-              "@type": "Car",
-              position: 2,
-              name: "Audi Q6 e-tron",
-              image: absoluteUrl(photoAudiReal.url),
-              vehicleSeatingCapacity: 4,
-              fuelType: "Electric",
-              description:
-                "SUV premium 100 % électrique pour déplacements professionnels et longues distances en Charente-Maritime.",
-            },
-            {
-              "@type": "Car",
-              position: 3,
-              name: "Van Mercedes V-Class 8 places",
-              alternateName: "Mercedes V-Class 8-seat van",
-              image: absoluteUrl(photoVanReal.url),
-              vehicleSeatingCapacity: 7,
-              description:
-                "Van Mercedes conduit par Alain : transport de groupe jusqu'à 7 passagers avec bagages, tarif unique.",
-            },
-          ],
-        }),
-      },
-    ],
+            openingHours: "Mo-Fr 08:00-20:00",
+            priceRange: "€€",
+
+            employee: DRIVERS.map((d) => ({
+              "@type": "Person",
+              name: d.name,
+              jobTitle: "Chauffeur de taxi",
+              telephone: d.intl,
+            })),
+            contactPoint: DRIVERS.map((d) => ({
+              "@type": "ContactPoint",
+              name: d.name,
+              telephone: d.intl,
+              contactType: "reservations",
+              areaServed: ["Charente-Maritime"],
+              availableLanguage: ["fr", "en"],
+            })),
+            // IMPORTANT : n'active aggregateRating que si ce sont de VRAIS avis. Google
+            // pénalise (et peut désindexer) les notes fictives ou gonflées en JSON-LD.
+            // Branche ratingValue/reviewCount sur tes données réelles issues de ReviewForm/
+            // ClientTrust dès que tu as un nombre d'avis significatif, par ex :
+            // aggregateRating: {
+            //   "@type": "AggregateRating",
+            //   ratingValue: realAverageRating,
+            //   reviewCount: realReviewCount,
+            // },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "L'excellence à chaque trajet — flotte Access Prestige Taxi",
+            alternateName: "Excellence on every journey — Access Prestige Taxi fleet",
+            itemListElement: [
+              {
+                "@type": "Car",
+                position: 1,
+                name: "BMW iX1 100 % électrique",
+                alternateName: "BMW iX1 100% electric",
+                image: absoluteUrl(photoBmwReal.url),
+                vehicleSeatingCapacity: 4,
+                fuelType: "Electric",
+                description:
+                  "Taxi BMW iX1 100 % électrique conduit par Patricia : transferts aéroport, courses médicales et déplacements du quotidien en Charente-Maritime.",
+              },
+              {
+                "@type": "Car",
+                position: 2,
+                name: "Audi Q6 e-tron",
+                image: absoluteUrl(photoAudiReal.url),
+                vehicleSeatingCapacity: 4,
+                fuelType: "Electric",
+                description:
+                  "SUV premium 100 % électrique pour déplacements professionnels et longues distances en Charente-Maritime.",
+              },
+              {
+                "@type": "Car",
+                position: 3,
+                name: "Van Mercedes V-Class 8 places",
+                alternateName: "Mercedes V-Class 8-seat van",
+                image: absoluteUrl(photoVanReal.url),
+                vehicleSeatingCapacity: 7,
+                description:
+                  "Van Mercedes conduit par Alain : transport de groupe jusqu'à 7 passagers avec bagages, tarif unique.",
+              },
+            ],
+          }),
+        },
+      ],
     };
   },
 });
-
 
 function Index() {
   const { lang } = useI18n();
@@ -633,15 +623,19 @@ function Index() {
   const alain = DRIVERS.find((d) => d.name === "Alain");
 
   const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
-  const { index: slideIndex, canAnimate, select, next, prev, paused, togglePause } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
+  const {
+    index: slideIndex,
+    canAnimate,
+    select,
+    next,
+    prev,
+    paused,
+    togglePause,
+  } = useHeroSlideshow(slides.length, HERO_SLIDE_DURATION_MS);
 
   return (
     <main>
-      <SocialMetaSync
-        lang={lang === "en" ? "en" : "fr"}
-        fr={HOME_SOCIAL_FR}
-        en={HOME_SOCIAL_EN}
-      />
+      <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
       {/* HERO — diaporama photo avec effet Ken Burns (zoom/pan lent), sans texte en surimpression */}
       <section
@@ -705,11 +699,6 @@ function Index() {
         })()}
       </section>
 
-
-
-
-
-
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
@@ -758,30 +747,112 @@ function Index() {
               {lang === "en" ? (
                 <p>
                   Access Prestige Taxi, your 100% electric taxi in Charente-Maritime: discover our{" "}
-                  <Link to="/services" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">taxi services</Link>,{" "}
-                  <Link to="/reserver" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">book a ride online</Link>,{" "}
-                  <Link to="/devis" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">request a quote</Link>, read our{" "}
-                  <Link to="/blog" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">Charente-Maritime guide</Link>, browse our{" "}
-                  <Link to="/destinations" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">destinations</Link>, learn more{" "}
-                  <Link to="/a-propos" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">about Patricia &amp; Alain</Link> or{" "}
-                  <Link to="/contact" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">contact us</Link>.
+                  <Link
+                    to="/services"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    taxi services
+                  </Link>
+                  ,{" "}
+                  <Link
+                    to="/reserver"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    book a ride online
+                  </Link>
+                  ,{" "}
+                  <Link
+                    to="/devis"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    request a quote
+                  </Link>
+                  , read our{" "}
+                  <Link
+                    to="/blog"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    Charente-Maritime guide
+                  </Link>
+                  , browse our{" "}
+                  <Link
+                    to="/destinations"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    destinations
+                  </Link>
+                  , learn more{" "}
+                  <Link
+                    to="/a-propos"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    about Patricia &amp; Alain
+                  </Link>{" "}
+                  or{" "}
+                  <Link
+                    to="/contact"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    contact us
+                  </Link>
+                  .
                 </p>
               ) : (
                 <p>
                   Access Prestige Taxi, votre taxi 100 % électrique en Charente-Maritime : découvrez nos{" "}
-                  <Link to="/services" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">services de taxi</Link>,{" "}
-                  <Link to="/reserver" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">réservez votre course en ligne</Link>,{" "}
-                  <Link to="/devis" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">demandez un devis</Link>, consultez notre{" "}
-                  <Link to="/blog" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">guide Charente-Maritime</Link>, nos{" "}
-                  <Link to="/destinations" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">destinations</Link>, apprenez-en plus{" "}
-                  <Link to="/a-propos" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">sur Patricia &amp; Alain</Link> ou{" "}
-                  <Link to="/contact" className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">contactez-nous</Link>.
+                  <Link
+                    to="/services"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    services de taxi
+                  </Link>
+                  ,{" "}
+                  <Link
+                    to="/reserver"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    réservez votre course en ligne
+                  </Link>
+                  ,{" "}
+                  <Link
+                    to="/devis"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    demandez un devis
+                  </Link>
+                  , consultez notre{" "}
+                  <Link
+                    to="/blog"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    guide Charente-Maritime
+                  </Link>
+                  , nos{" "}
+                  <Link
+                    to="/destinations"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    destinations
+                  </Link>
+                  , apprenez-en plus{" "}
+                  <Link
+                    to="/a-propos"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    sur Patricia &amp; Alain
+                  </Link>{" "}
+                  ou{" "}
+                  <Link
+                    to="/contact"
+                    className="underline underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                  >
+                    contactez-nous
+                  </Link>
+                  .
                 </p>
               )}
             </nav>
           </motion.div>
-
-
 
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
@@ -860,7 +931,6 @@ function Index() {
                 </div>
               </div>
             ))}
-
           </dl>
 
           {/* Sélecteur de véhicule : clic = slide affichée + récapitulatif animé */}
@@ -877,9 +947,7 @@ function Index() {
                 const container = e.currentTarget;
                 const focusActive = () => {
                   window.setTimeout(() => {
-                    container
-                      .querySelector<HTMLButtonElement>("[data-slide-index][aria-pressed='true']")
-                      ?.focus();
+                    container.querySelector<HTMLButtonElement>("[data-slide-index][aria-pressed='true']")?.focus();
                   }, 0);
                 };
 
@@ -953,7 +1021,11 @@ function Index() {
                 }
                 className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                {paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
+                {paused ? (
+                  <Play className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Pause className="h-4 w-4" aria-hidden="true" />
+                )}
               </button>
             </div>
 
@@ -962,7 +1034,6 @@ function Index() {
                 ? `Slide ${slideIndex + 1} of ${slides.length}: ${slides[slideIndex].title}`
                 : `Diapositive ${slideIndex + 1} sur ${slides.length} : ${slides[slideIndex].title}`}
             </p>
-
 
             <AnimatePresence mode="wait">
               {slides[slideIndex].id !== "brand" && (
@@ -998,7 +1069,6 @@ function Index() {
               )}
             </AnimatePresence>
           </div>
-
         </div>
       </section>
 
@@ -1093,31 +1163,31 @@ function Index() {
                     className="aspect-[16/10] w-full object-cover"
                   />
                   <div className="p-6 sm:p-7">
-                  <div className="flex items-center gap-4">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40 font-display text-lg font-semibold text-primary">
-                      {d.name.charAt(0)}
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="font-display text-xl font-semibold text-card-foreground">{d.name}</h3>
-                      <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                        {lang === "en" ? d.vehicle.en : d.vehicle.fr} · {d.seats}
-                        {lang === "en" ? " seats" : " places"}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/40 font-display text-lg font-semibold text-primary">
+                        {d.name.charAt(0)}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="font-display text-xl font-semibold text-card-foreground">{d.name}</h3>
+                        <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                          {lang === "en" ? d.vehicle.en : d.vehicle.fr} · {d.seats}
+                          {lang === "en" ? " seats" : " places"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-                    {lang === "en" ? d.bio.en : d.bio.fr}
-                  </p>
-                  <a
-                    href={`tel:${d.tel}`}
-                    aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                    className="mt-6 inline-flex min-h-[52px] touch-manipulation w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.02] hover:opacity-95 active:scale-[0.98]"
-                  >
-                    <Phone className="h-4 w-4 shrink-0" />
-                    <span className="tabular-nums">
-                      {c.callPrefix} {d.name} · {d.display}
-                    </span>
-                  </a>
+                    <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                      {lang === "en" ? d.bio.en : d.bio.fr}
+                    </p>
+                    <a
+                      href={`tel:${d.tel}`}
+                      aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
+                      className="mt-6 inline-flex min-h-[52px] touch-manipulation w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.02] hover:opacity-95 active:scale-[0.98]"
+                    >
+                      <Phone className="h-4 w-4 shrink-0" />
+                      <span className="tabular-nums">
+                        {c.callPrefix} {d.name} · {d.display}
+                      </span>
+                    </a>
                   </div>
                 </article>
               </Reveal>
@@ -1136,9 +1206,7 @@ function Index() {
                 className="aspect-[16/10] w-full shrink-0 rounded-2xl border border-border object-cover sm:w-64"
               />
               <div className="min-w-0">
-                <h3 className="font-display text-xl font-semibold text-card-foreground">
-                  Audi Q6 e-tron
-                </h3>
+                <h3 className="font-display text-xl font-semibold text-card-foreground">Audi Q6 e-tron</h3>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                   {lang === "en" ? "Fully electric · up to 4 seats" : "100 % électrique · jusqu'à 4 places"}
                 </p>
@@ -1172,11 +1240,7 @@ function Index() {
             <div className="flex flex-col items-center text-center">
               <img
                 src={lang === "en" ? heroCarsEn : heroCars}
-                alt={
-                  lang === "en"
-                    ? "Access Prestige Taxi app icon"
-                    : "Icône de l'application Access Prestige Taxi"
-                }
+                alt={lang === "en" ? "Access Prestige Taxi app icon" : "Icône de l'application Access Prestige Taxi"}
                 loading="lazy"
                 width={512}
                 height={512}
@@ -1195,112 +1259,118 @@ function Index() {
                   ? "Add the site to your home screen and get a real app icon: book in one tap, follow your driver live, find your rides, receipts and invoices, and chat directly with Alain or Patricia."
                   : "Ajoutez le site à votre écran d'accueil pour obtenir une vraie icône d'application : réservez en un geste, suivez votre chauffeur en direct, retrouvez vos courses, reçus et factures, et discutez directement avec Alain ou Patricia."}
               </p>
+
+              <div className="mx-auto mt-6 flex max-w-xl items-start gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 text-left">
+                <Bell className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <p className="text-sm leading-relaxed text-foreground/90">
+                  <span className="font-semibold text-card-foreground">
+                    {lang === "en" ? "Notifications: " : "Notifications : "}
+                  </span>
+                  {lang === "en"
+                    ? "you're alerted the moment your ride is confirmed, when Alain or Patricia is on the way, when the driver has arrived, and when a new message or your receipt is available. Install the app below, then accept notifications when your phone asks."
+                    : "vous êtes prévenu dès que votre course est confirmée, quand Alain ou Patricia est en route, à l'arrivée du chauffeur, et lorsqu'un nouveau message ou votre reçu est disponible. Installez l'application ci-dessous, puis acceptez les notifications quand votre téléphone le propose."}
+                </p>
+              </div>
             </div>
           </Reveal>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             <Reveal>
-              <article className={`h-full p-6 ${CARD}`}>
-                <h3 className="font-display text-lg font-semibold text-card-foreground">
-                  {lang === "en" ? "iPhone & iPad (Safari)" : "iPhone et iPad (Safari)"}
-                </h3>
-                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  <li>
-                    1.{" "}
+              <article className={`h-full overflow-hidden p-0 ${CARD}`}>
+                <img
+                  src={guideInstallIOS}
+                  alt={
+                    lang === "en"
+                      ? "Install guide: Safari, Share, Add to Home Screen"
+                      : "Guide d'installation iPhone : Safari, Partager, Ajouter à l'écran d'accueil"
+                  }
+                  loading="lazy"
+                  width={800}
+                  height={500}
+                  className="w-full object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="font-display text-lg font-semibold text-card-foreground">
+                    {lang === "en" ? "iPhone & iPad (Safari)" : "iPhone et iPad (Safari)"}
+                  </h3>
+                  <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                    <li>
+                      1.{" "}
+                      {lang === "en"
+                        ? "Open accessprestigetaxi.fr in Safari."
+                        : "Ouvrez accessprestigetaxi.fr dans Safari."}
+                    </li>
+                    <li>
+                      2.{" "}
+                      {lang === "en"
+                        ? "Tap the Share button at the bottom of the screen."
+                        : "Touchez le bouton Partager en bas de l'écran."}
+                    </li>
+                    <li>
+                      3.{" "}
+                      {lang === "en"
+                        ? "Choose “Add to Home Screen”, then Add."
+                        : "Choisissez « Sur l'écran d'accueil », puis Ajouter."}
+                    </li>
+                  </ol>
+                  <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                    💡{" "}
                     {lang === "en"
-                      ? "Open accessprestigetaxi.fr in Safari."
-                      : "Ouvrez accessprestigetaxi.fr dans Safari."}
-                  </li>
-                  <li>
-                    2.{" "}
-                    {lang === "en"
-                      ? "Tap the Share button at the bottom of the screen."
-                      : "Touchez le bouton Partager en bas de l'écran."}
-                  </li>
-                  <li>
-                    3.{" "}
-                    {lang === "en"
-                      ? "Choose “Add to Home Screen”, then Add."
-                      : "Choisissez « Sur l'écran d'accueil », puis Ajouter."}
-                  </li>
-                </ol>
+                      ? "Tip: enable notifications in iOS Settings (Settings → Access Prestige Taxi → Notifications) if you declined the first prompt."
+                      : "Astuce : activez les notifications dans les réglages iOS (Réglages → Access Prestige Taxi → Notifications) si vous avez refusé la première demande."}
+                  </p>
+                </div>
               </article>
             </Reveal>
             <Reveal delay={0.08}>
-              <article className={`h-full p-6 ${CARD}`}>
-                <h3 className="font-display text-lg font-semibold text-card-foreground">
-                  {lang === "en" ? "Android (Chrome)" : "Android (Chrome)"}
-                </h3>
-                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  <li>
-                    1.{" "}
+              <article className={`h-full overflow-hidden p-0 ${CARD}`}>
+                <img
+                  src={guideInstallAndroid}
+                  alt={
+                    lang === "en"
+                      ? "Install guide: Chrome menu, Add to Home Screen"
+                      : "Guide d'installation Android : Chrome, menu ⋮, Ajouter à l'écran d'accueil"
+                  }
+                  loading="lazy"
+                  width={800}
+                  height={500}
+                  className="w-full object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="font-display text-lg font-semibold text-card-foreground">
+                    {lang === "en" ? "Android (Chrome)" : "Android (Chrome)"}
+                  </h3>
+                  <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                    <li>
+                      1.{" "}
+                      {lang === "en"
+                        ? "Open accessprestigetaxi.fr in Chrome."
+                        : "Ouvrez accessprestigetaxi.fr dans Chrome."}
+                    </li>
+                    <li>
+                      2. {lang === "en" ? "Open the ⋮ menu at the top right." : "Ouvrez le menu ⋮ en haut à droite."}
+                    </li>
+                    <li>
+                      3.{" "}
+                      {lang === "en"
+                        ? "Choose “Install app” / “Add to Home screen”."
+                        : "Choisissez « Installer l'application » / « Ajouter à l'écran d'accueil »."}
+                    </li>
+                  </ol>
+                  <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                    💡{" "}
                     {lang === "en"
-                      ? "Open accessprestigetaxi.fr in Chrome."
-                      : "Ouvrez accessprestigetaxi.fr dans Chrome."}
-                  </li>
-                  <li>
-                    2.{" "}
-                    {lang === "en"
-                      ? "Open the ⋮ menu at the top right."
-                      : "Ouvrez le menu ⋮ en haut à droite."}
-                  </li>
-                  <li>
-                    3.{" "}
-                    {lang === "en"
-                      ? "Choose “Install app” / “Add to Home screen”."
-                      : "Choisissez « Installer l'application » / « Ajouter à l'écran d'accueil »."}
-                  </li>
-                </ol>
+                      ? "Tip: accept notifications when Chrome asks, to receive tracking alerts."
+                      : "Astuce : acceptez les notifications quand Chrome le demande pour recevoir les alertes de suivi."}
+                  </p>
+                </div>
               </article>
             </Reveal>
           </div>
 
           <Reveal delay={0.1}>
-            <article className="mt-6 rounded-2xl border border-destructive/50 bg-destructive/10 p-6">
-              <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-destructive">
-                <Bell className="h-5 w-5 shrink-0" />
-                {lang === "en"
-                  ? "Turn on notifications — and what they are for"
-                  : "Comment activer les notifications et à quoi servent-elles"}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-foreground/90">
-                {lang === "en"
-                  ? "Notifications tell you the moment your ride is confirmed, when Alain or Patricia is on the way, when the driver has arrived, and when a new message or your receipt is available."
-                  : "Les notifications vous préviennent dès que votre course est confirmée, quand Alain ou Patricia est en route, à l'arrivée du chauffeur, et lorsqu'un nouveau message ou votre reçu est disponible."}
-              </p>
-              <ol className="mt-4 space-y-2 text-sm leading-relaxed text-foreground/90">
-                <li>
-                  1.{" "}
-                  {lang === "en"
-                    ? "Install the app on your home screen (steps above) — required on iPhone and iPad."
-                    : "Installez l'application sur votre écran d'accueil (étapes ci-dessus) — obligatoire sur iPhone et iPad."}
-                </li>
-                <li>
-                  2.{" "}
-                  {lang === "en"
-                    ? "Open the app from its icon, then sign in to your client area."
-                    : "Ouvrez l'application depuis son icône, puis connectez-vous à votre espace client."}
-                </li>
-                <li>
-                  3.{" "}
-                  {lang === "en"
-                    ? "Tap “Allow” when your phone asks for notification permission."
-                    : "Touchez « Autoriser » quand votre téléphone demande l'autorisation de notification."}
-                </li>
-                <li>
-                  4.{" "}
-                  {lang === "en"
-                    ? "If you declined: Settings › Notifications › Access Prestige Taxi › Allow notifications."
-                    : "Si vous avez refusé : Réglages › Notifications › Access Prestige Taxi › Autoriser les notifications."}
-                </li>
-              </ol>
-            </article>
-          </Reveal>
-
-          <Reveal delay={0.12}>
             <NotificationOptInStep />
           </Reveal>
-
 
           <Reveal delay={0.14}>
             <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
@@ -1311,7 +1381,6 @@ function Index() {
           </Reveal>
         </div>
       </section>
-
 
       {/* DESTINATIONS */}
       <section className="border-t border-border bg-background py-20">
@@ -1510,7 +1579,6 @@ function Index() {
 
       {/* FAQ SEO */}
       <FaqSeo />
-
 
       {/* BLOG */}
       <section className="border-t border-border py-20">
