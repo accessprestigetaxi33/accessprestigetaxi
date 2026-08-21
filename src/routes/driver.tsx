@@ -27,6 +27,7 @@ import { listDriverCourses, setCourseDriver, driverDeleteReservation } from "@/l
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
+import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } from "@/lib/driver-devis.functions";
 import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/googleGeocode";
 
@@ -42,7 +43,7 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "gps";
+type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "devis" | "gps";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -425,6 +426,22 @@ const IconGps = () => (
   </svg>
 );
 
+const IconDevis = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="8" y1="13" x2="16" y2="13" />
+    <line x1="8" y1="17" x2="13" y2="17" />
+  </svg>
+);
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function Stars({ n }: { n: number }) {
   return (
@@ -581,12 +598,17 @@ function DriverApp({
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
+  const [pendingDevis, setPendingDevis] = useState(0);
   const [pushBusy, setPushBusy] = useState(false);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
   // fusionnent identification + activation en un seul clic (distinct de
   // pushBusy, utilisé une fois l'identité déjà connue).
   const [identifyPushBusy, setIdentifyPushBusy] = useState<"alain" | "patricia" | null>(null);
-  const { status: pushStatus, subscribe: subscribePush, lastError: pushError } = usePushNotifications({
+  const {
+    status: pushStatus,
+    subscribe: subscribePush,
+    lastError: pushError,
+  } = usePushNotifications({
     autoAudience: "chauffeur",
     driverId: driverId ?? null,
   });
@@ -902,54 +924,63 @@ function DriverApp({
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur"] as Tab[]).map((t) => (
-            <button
-              key={t}
-              className={`drv-tab${tab === t ? " active" : ""}`}
-              onClick={() => {
-                setTab(t);
-                gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
-                // Reset optimiste du badge chat à l'ouverture de l'onglet ;
-                // le prochain refresh Realtime/reconcile remettra la vraie valeur.
-                if (t === "courses") setUnreadChat(0);
-              }}
-            >
-              <div style={{ position: "relative", display: "inline-block" }}>
-                {t === "courses" && (
-                  <>
-                    <IconBell />
-                    {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
-                  </>
-                )}
-                {t === "planning" && <IconCalendar />}
-                {t === "avis" && (
-                  <>
-                    <IconStar />
-                    {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
-                  </>
-                )}
-                {t === "clients" && <IconUsers />}
-                {t === "stats" && <IconChart />}
-                {t === "historique" && <IconCalendar />}
-                {t === "simulateur" && <IconCalc />}
-                {t === "gps" && <IconGps />}
-              </div>
-              <span>
-                {
+          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "devis"] as Tab[]).map(
+            (t) => (
+              <button
+                key={t}
+                className={`drv-tab${tab === t ? " active" : ""}`}
+                onClick={() => {
+                  setTab(t);
+                  gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
+                  // Reset optimiste du badge chat à l'ouverture de l'onglet ;
+                  // le prochain refresh Realtime/reconcile remettra la vraie valeur.
+                  if (t === "courses") setUnreadChat(0);
+                }}
+              >
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  {t === "courses" && (
+                    <>
+                      <IconBell />
+                      {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
+                    </>
+                  )}
+                  {t === "planning" && <IconCalendar />}
+                  {t === "avis" && (
+                    <>
+                      <IconStar />
+                      {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
+                    </>
+                  )}
+                  {t === "clients" && <IconUsers />}
+                  {t === "stats" && <IconChart />}
+                  {t === "historique" && <IconCalendar />}
+                  {t === "simulateur" && <IconCalc />}
+                  {t === "devis" && (
+                    <>
+                      <IconDevis />
+                      {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
+                    </>
+                  )}
+                  {t === "gps" && <IconGps />}
+                </div>
+                <span>
                   {
-                    courses: "Course + chat client",
-                    planning: "Planning",
-                    avis: "Avis",
-                    clients: "Clients",
-                    stats: "Stats",
-                    historique: "Historique",
-                    simulateur: "Simu",
-                    gps: "GPS",
-                  }[t]
-                }
-              </span>
-            </button>
-          ))}
+                    {
+                      courses: "Course + chat client",
+                      planning: "Planning",
+                      avis: "Avis",
+                      clients: "Clients",
+                      stats: "Stats",
+                      historique: "Historique",
+                      simulateur: "Simu",
+                      devis: "Devis",
+                      gps: "GPS",
+                    }[t]
+                  }
+                </span>
+              </button>
+            ),
+          )}
         </div>
 
         <div className="drv-body">
@@ -972,6 +1003,7 @@ function DriverApp({
           {tab === "stats" && <StatsTab />}
           {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
+          {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
         </div>
       </div>
     </>
@@ -2383,6 +2415,44 @@ function CourseCard({
     }
   };
 
+  // ── Annuler la course (disponible à tout moment, même après acceptation) ──
+  const [cancelling, setCancelling] = useState(false);
+  const handleCancel = async () => {
+    if (!confirm("Annuler cette course ? Le client sera prévenu.")) return;
+    const actionKey = `${resa.id}:cancelled`;
+    if (!claimAction(actionKey)) return;
+    setCancelling(true);
+    try {
+      const cRes = await driverUpdateReservation({
+        data: {
+          token: getDriverToken(),
+          reservation_id: resa.id,
+          patch: { status: "cancelled" },
+          not_status: "cancelled",
+        },
+      });
+      if (!cRes.changed) {
+        toast("Action déjà prise en compte");
+        onRefresh();
+        return;
+      }
+      gaEvent("driver_course_status", { status: "cancelled", reservation_id: resa.id });
+      broadcastSuiviUpdate(resa.id, "cancelled");
+      try {
+        await notifyStatus({ data: { reservation_id: resa.id, status: "cancelled" as any } });
+      } catch (pushErr) {
+        console.warn("[driver] client cancelled push failed", pushErr);
+      }
+      toast("Course annulée");
+      onRefresh();
+    } catch (e: any) {
+      toast.error("Erreur : " + (e.message ?? e));
+    } finally {
+      setCancelling(false);
+      releaseAction(actionKey);
+    }
+  };
+
   // ── Supprimer la course ──
   const [deleting, setDeleting] = useState(false);
   const handleDeleteResa = async () => {
@@ -2529,6 +2599,18 @@ function CourseCard({
                     style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
                   >
                     {completing ? "…" : "✓ Terminée"}
+                  </button>
+                )}
+                {/* Annulation disponible à tout moment, même après acceptation —
+                    contrairement à "Refuser" (uniquement en attente), ce bouton
+                    reste accessible tant que la course n'est ni terminée ni déjà annulée. */}
+                {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                  <button
+                    onClick={handleCancel}
+                    disabled={cancelling}
+                    style={{ ...qb, background: "#FDFBF7", border: "2px solid #fecaca", color: "#b91c1c" }}
+                  >
+                    {cancelling ? "…" : "✖ Annuler la course"}
                   </button>
                 )}
               </div>
@@ -3480,6 +3562,240 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
           )}
         </>
       )}
+    </>
+  );
+}
+
+// ── Onglet Devis ─────────────────────────────────────────────────────────
+function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
+  const [items, setItems] = useState<Devis[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Record<string, { reponse: string; prix: string }>>({});
+
+  const load = useCallback(async () => {
+    try {
+      const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
+      setItems((res?.devis ?? []) as Devis[]);
+      onBadgeChange(res?.pending ?? 0);
+    } catch (e: any) {
+      toast.error("Impossible de charger les devis : " + (e.message ?? e));
+    } finally {
+      setLoading(false);
+    }
+  }, [onBadgeChange]);
+
+  useEffect(() => {
+    load();
+    const poll = setInterval(load, 8000);
+    const onVisible = () => {
+      if (!document.hidden) load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    return () => {
+      clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+    };
+  }, [load]);
+
+  const defaultDraft = (d: Devis) => ({
+    reponse: d.reponse ?? "",
+    prix: d.prix_propose != null ? String(d.prix_propose) : "",
+  });
+  const draftFor = (d: Devis) => drafts[d.id] ?? defaultDraft(d);
+  const setDraft = (d: Devis, patch: Partial<{ reponse: string; prix: string }>) => {
+    setDrafts((prev) => ({ ...prev, [d.id]: { ...(prev[d.id] ?? defaultDraft(d)), ...patch } }));
+  };
+
+  const changeStatut = async (id: string, statut: "traite" | "accepte" | "refuse") => {
+    setBusy(id);
+    try {
+      await driverUpdateDevis({ data: { token: getDriverToken(), devis_id: id, patch: { statut } } });
+      toast.success(
+        statut === "accepte" ? "Devis marqué accepté ✓" : statut === "refuse" ? "Devis refusé" : "Devis marqué traité",
+      );
+      load();
+    } catch (e: any) {
+      toast.error("Erreur : " + (e.message ?? e));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const sendReponse = async (d: Devis) => {
+    const draft = draftFor(d);
+    const prixTrim = draft.prix.trim();
+    const prix = prixTrim ? parseFloat(prixTrim.replace(",", ".")) : null;
+    if (prixTrim && (prix == null || isNaN(prix) || prix < 0)) {
+      toast.error("Prix proposé invalide");
+      return;
+    }
+    setBusy(d.id);
+    try {
+      await driverUpdateDevis({
+        data: {
+          token: getDriverToken(),
+          devis_id: d.id,
+          patch: { reponse: draft.reponse.trim(), prix_propose: prix, statut: "traite" },
+        },
+      });
+      toast.success("Réponse enregistrée ✓");
+      load();
+    } catch (e: any) {
+      toast.error("Erreur : " + (e.message ?? e));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const removeDevis = async (id: string) => {
+    if (!confirm("Supprimer définitivement ce devis ?")) return;
+    setBusy(id);
+    try {
+      await driverDeleteDevis({ data: { token: getDriverToken(), devis_id: id } });
+      toast.success("Devis supprimé");
+      load();
+    } catch (e: any) {
+      toast.error("Erreur : " + (e.message ?? e));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="drv-empty">
+        <div style={{ fontSize: 14 }}>Chargement…</div>
+      </div>
+    );
+
+  const statutLabel: Record<string, { label: string; cls: string }> = {
+    recu: { label: "Reçu", cls: "drv-badge-blue" },
+    traite: { label: "Traité", cls: "drv-badge-amber" },
+    accepte: { label: "Accepté", cls: "drv-badge-green" },
+    refuse: { label: "Refusé", cls: "drv-badge-gray" },
+  };
+
+  if (items.length === 0)
+    return (
+      <div className="drv-empty">
+        <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune demande de devis</div>
+      </div>
+    );
+
+  return (
+    <>
+      {items.map((d) => {
+        const st = statutLabel[d.statut] ?? { label: d.statut, cls: "drv-badge-gray" };
+        const isOpen = expandedId === d.id;
+        const draft = draftFor(d);
+        return (
+          <div key={d.id} className="drv-card">
+            <div className="drv-row" style={{ cursor: "pointer" }} onClick={() => setExpandedId(isOpen ? null : d.id)}>
+              <span className="drv-name">{d.nom}</span>
+              <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
+            </div>
+            <div className="drv-route">
+              <span>📍 {d.depart}</span>
+              <span>🏁 {d.arrivee}</span>
+            </div>
+            <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>
+              {d.date_souhaitee ? `${d.date_souhaitee} ` : ""}
+              {d.heure_souhaitee ?? ""}
+              {d.aller_retour ? " · aller-retour" : ""}
+              {" · "}
+              {d.passagers} pers.{d.bagages ? ` · ${d.bagages} bagage(s)` : ""}
+            </div>
+            {(d.transport_sanitaire || d.fauteuil_roulant || d.transport_groupe || d.sieges_enfant) && (
+              <div style={{ fontSize: 12, color: "#b45309", marginTop: 4 }}>
+                {[
+                  d.transport_sanitaire && "Transport sanitaire",
+                  d.fauteuil_roulant && "Fauteuil roulant",
+                  d.transport_groupe && "Groupe",
+                  d.sieges_enfant && "Siège enfant",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </div>
+            )}
+            {d.precisions && (
+              <p style={{ fontSize: 13, color: "#334155", margin: "8px 0 0", lineHeight: 1.5 }}>{d.precisions}</p>
+            )}
+            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 6 }}>
+              ✉️ {d.email}
+              {d.telephone ? ` · ☎ ${d.telephone}` : ""}
+            </div>
+
+            {isOpen && (
+              <>
+                <hr className="drv-divider" />
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#475569" }}>Prix proposé (€)</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={draft.prix}
+                  onChange={(e) => setDraft(d, { prix: e.target.value })}
+                  placeholder="Ex. 85"
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    marginBottom: 10,
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    border: "1px solid #e2e8f0",
+                    fontSize: 14,
+                  }}
+                />
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#475569" }}>Réponse au client</label>
+                <textarea
+                  value={draft.reponse}
+                  onChange={(e) => setDraft(d, { reponse: e.target.value })}
+                  rows={3}
+                  placeholder="Votre réponse…"
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    marginBottom: 10,
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    border: "1px solid #e2e8f0",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                    resize: "vertical",
+                  }}
+                />
+                <div className="drv-btns">
+                  <button className="drv-btn-danger" disabled={busy === d.id} onClick={() => removeDevis(d.id)}>
+                    {busy === d.id ? "…" : "Supprimer"}
+                  </button>
+                  <button className="drv-btn-primary" disabled={busy === d.id} onClick={() => sendReponse(d)}>
+                    {busy === d.id ? "…" : "Enregistrer la réponse"}
+                  </button>
+                </div>
+                <div className="drv-btns" style={{ marginTop: 8 }}>
+                  <button
+                    className="drv-btn-danger"
+                    disabled={busy === d.id}
+                    onClick={() => changeStatut(d.id, "refuse")}
+                  >
+                    ✖ Refuser
+                  </button>
+                  <button
+                    className="drv-btn-primary"
+                    disabled={busy === d.id}
+                    onClick={() => changeStatut(d.id, "accepte")}
+                  >
+                    ✓ Accepter
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        );
+      })}
     </>
   );
 }
