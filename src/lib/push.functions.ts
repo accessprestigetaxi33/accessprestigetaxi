@@ -50,9 +50,11 @@ export const subscribePush = createServerFn({ method: "POST" })
       if (identity.account_id !== data.client_account_id) throw new Error("client_account_mismatch");
       verifiedAccountId = identity.account_id;
     }
-    if (data.audience === "client" && data.reservation_id && !verifiedAccountId) {
-      throw new Error("client_session_required");
-    }
+    // Parcours invité : un reservation_id seul (sans compte client) est un
+    // cas normal et voulu — cf. commentaire dans push.server.ts ("un appareil
+    // client peut être inscrit... à une réservation pour un parcours invité").
+    // Aucune session requise dans ce cas : le reservation_id est un UUID non
+    // devinable, ce qui suffit comme identifiant de cible pour ce flux.
     if (data.audience === "chauffeur") {
       if (!data.driver_token) throw new Error("driver_token_required");
       const { assertDriverToken } = await import("@/lib/driver-auth.server");
