@@ -19,8 +19,10 @@ import {
   ChevronRight,
   Play,
   Pause,
+  FileText,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
+import { SERVICE_CARDS_FR, SERVICE_CARDS_EN } from "@/data/services-cards";
 import { DRIVERS } from "@/data/drivers";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
@@ -686,7 +688,15 @@ function Index() {
       </section>
 
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
-      <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
+      <section className="relative overflow-hidden border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
+        {/* Voile doré premium : la variable --gradient-gold existait déjà dans le thème
+            mais n'était utilisée nulle part sur la home — d'où le fait qu'aucun or ne
+            se voyait en arrière-plan. Ici en watermark très léger, purement décoratif. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] opacity-[0.10]"
+          style={{ backgroundImage: "var(--gradient-gold)", maskImage: "linear-gradient(180deg, black, transparent)" }}
+        />
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
           {/* Bloc critique above-the-fold : H1, texte d'accroche et CTA arrivent en premier,
               avant les pastilles/valeurs/paragraphe SEO — sur un écran 375px, le visiteur voit
@@ -1035,6 +1045,72 @@ function Index() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+        </div>
+      </section>
+
+      {/* NOS SERVICES — aperçu directement sur la home, catalogue complet réutilisé
+          depuis /services (SERVICE_CARDS_FR/EN) pour ne pas dupliquer le contenu et
+          rester cohérent si une prestation est ajoutée/modifiée. Évite d'obliger le
+          visiteur à passer par le menu pour voir ce qu'on propose. */}
+      <section className="relative overflow-hidden border-t border-border bg-background py-20">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-64 opacity-[0.08]"
+          style={{ backgroundImage: "var(--gradient-gold)", maskImage: "linear-gradient(0deg, black, transparent)" }}
+        />
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">
+              {lang === "en" ? "Our services" : "Nos prestations"}
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {lang === "en" ? "A service for every journey" : "Une prestation pour chaque trajet"}
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+              {lang === "en"
+                ? "Medical transport, station and airport transfers, chauffeur hire, group travel — all in electric vehicles."
+                : "Transport sanitaire, transferts gares et aéroports, mise à disposition, transport de groupe — le tout en véhicules électriques."}
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {(lang === "en" ? SERVICE_CARDS_EN : SERVICE_CARDS_FR).map((s, i) => (
+              <Reveal key={s.id} delay={i * 0.05}>
+                <Link to="/services" className={`group flex h-full flex-col overflow-hidden ${CARD}`}>
+                  <img
+                    src={s.photo}
+                    alt={s.title}
+                    loading="lazy"
+                    decoding="async"
+                    width={640}
+                    height={426}
+                    className="h-40 w-full object-cover transition duration-500 group-hover:scale-[1.04] sm:h-44"
+                  />
+                  <div className="flex flex-1 flex-col p-5">
+                    <h3 className="font-display text-base font-semibold text-card-foreground sm:text-lg">{s.title}</h3>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              to="/devis"
+              search={{ prestation: undefined, lang: undefined }}
+              className="inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98] sm:w-auto"
+            >
+              <FileText className="h-4 w-4" aria-hidden="true" />
+              {lang === "en" ? "Request a quote" : "Demander un devis"}
+            </Link>
+            <Link
+              to="/services"
+              className="inline-flex min-h-[48px] w-full touch-manipulation items-center justify-center rounded-xl border border-border px-7 font-semibold transition duration-300 hover:scale-[1.03] hover:border-primary/60 active:scale-[0.98] sm:w-auto"
+            >
+              {lang === "en" ? "See all services" : "Voir toutes nos prestations"}
+            </Link>
           </div>
         </div>
       </section>
