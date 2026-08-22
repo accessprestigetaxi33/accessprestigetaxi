@@ -12,13 +12,9 @@ import {
   BriefcaseBusiness,
   Phone,
   PlaneTakeoff,
-  ShieldCheck,
   Stethoscope,
   Bell,
-  Clock,
   Leaf,
-  Sofa,
-  EyeOff,
   ChevronLeft,
   ChevronRight,
   Play,
@@ -205,20 +201,6 @@ const HERO_PILLARS_EN = [
   { icon: PlaneTakeoff, label: "Station & airport transfers" },
   { icon: BriefcaseBusiness, label: "Business travel" },
   { icon: Leaf, label: "100% electric" },
-] as const;
-
-const HERO_VALUES_FR = [
-  { icon: Clock, label: "Ponctualité" },
-  { icon: Sofa, label: "Confort" },
-  { icon: EyeOff, label: "Discrétion" },
-  { icon: ShieldCheck, label: "Sécurité" },
-] as const;
-
-const HERO_VALUES_EN = [
-  { icon: Clock, label: "Punctuality" },
-  { icon: Sofa, label: "Comfort" },
-  { icon: EyeOff, label: "Discretion" },
-  { icon: ShieldCheck, label: "Safety" },
 ] as const;
 
 const COPY = {
@@ -748,37 +730,26 @@ function Index() {
             </div>
           </motion.div>
 
-          {/* Pastilles de services, valeurs et paragraphe SEO : contenu secondaire,
-              placé après le CTA principal et non animé (pas de motion.div) pour éviter
-              d'ajouter une cascade d'animations au chargement. */}
+          {/* Pastille de services + paragraphe SEO : contenu secondaire, placé après le
+              CTA principal et non animé (pas de motion.div) pour éviter d'ajouter une
+              cascade d'animations au chargement. La rangée "valeurs" (Ponctualité,
+              Confort, Discrétion, Sécurité) a été retirée : elle répétait ce qui est déjà
+              dit dans driversLead et la section "Pourquoi nous choisir" — un des points
+              que Rafael voulait décluttérer pour un rendu plus premium. */}
           <div className="mt-10 w-full">
             <ul
               aria-label={lang === "en" ? "Our main taxi services" : "Nos principales prestations de taxi"}
-              className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4"
+              className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3"
             >
-              {(lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR).map((p) => (
-                <li
-                  key={p.label}
-                  className="flex flex-col items-center gap-2 rounded-2xl border border-primary/25 bg-card px-3 py-4 text-center transition duration-300 hover:-translate-y-0.5 hover:border-primary/60"
-                >
-                  <p.icon className="h-5 w-5 text-primary" aria-hidden="true" />
-                  <span className="text-[11px] font-medium uppercase leading-snug tracking-[0.12em] text-foreground sm:text-xs">
+              {(lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR).map((p, i) => (
+                <li key={p.label} className="flex items-center gap-4">
+                  <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-foreground/80 sm:text-xs">
+                    <p.icon className="h-4 w-4 text-primary" aria-hidden="true" />
                     {p.label}
                   </span>
-                </li>
-              ))}
-            </ul>
-            <ul
-              aria-label={lang === "en" ? "Our commitments" : "Nos engagements"}
-              className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
-            >
-              {(lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR).map((v) => (
-                <li
-                  key={v.label}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:text-[11px]"
-                >
-                  <v.icon className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                  {v.label}
+                  {i < (lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR).length - 1 && (
+                    <span className="hidden h-3 w-px bg-border sm:block" aria-hidden="true" />
+                  )}
                 </li>
               ))}
             </ul>
@@ -1214,8 +1185,8 @@ function Index() {
       </section>
 
       {/* DESTINATIONS — regroupe aussi les trajets les plus demandés (gare/aéroport, médical, groupes) */}
-      <section className="border-t border-border bg-background py-20">
-        <div className="divider-gold mt-10" aria-hidden="true" />
+      <section className="bg-background py-20">
+        <div className="divider-gold" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.destEyebrow}</p>
@@ -1383,7 +1354,7 @@ function Index() {
             <Reveal delay={0.2}>
               <article className={`h-full p-6 ${CARD}`}>
                 <h3 className="font-display text-base font-semibold text-card-foreground">
-                  🍎 {lang === "en" ? "iPhone / iOS" : "iPhone / iOS"}
+                  {lang === "en" ? "iPhone / iOS" : "iPhone / iOS"}
                 </h3>
                 <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
                   <li>
@@ -1411,7 +1382,7 @@ function Index() {
             <Reveal delay={0.26}>
               <article className={`h-full p-6 ${CARD}`}>
                 <h3 className="font-display text-base font-semibold text-card-foreground">
-                  🤖 {lang === "en" ? "Android" : "Android"}
+                  {lang === "en" ? "Android" : "Android"}
                 </h3>
                 <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
                   <li>
@@ -1467,8 +1438,8 @@ function Index() {
       <FaqSeo />
 
       {/* BLOG */}
-      <section className="border-t border-border py-20">
-        <div className="divider-gold mt-10" aria-hidden="true" />
+      <section className="py-20">
+        <div className="divider-gold" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
