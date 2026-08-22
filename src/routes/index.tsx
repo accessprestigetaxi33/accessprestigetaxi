@@ -223,16 +223,16 @@ const HERO_VALUES_EN = [
 
 const COPY = {
   fr: {
-    h1: "Votre transport, notre exigence",
+    h1: "L'excellence, sans compromis",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, une même exigence : taxi 100 % électrique en Charente-Maritime avec la BMW iX1 et l'Audi Q6 e-tron 5 places, van Mercedes classe V 8 places pour le transport de groupe, transport sanitaire conventionné avec fauteuil roulant et prestations toutes distances.",
+    lead: "Deux chauffeurs, un seul niveau d'exigence : silence électrique de la BMW iX1 et de l'Audi Q6 e-tron, espace du van Mercedes classe V 8 places, transport sanitaire conventionné avec fauteuil roulant — toutes distances, en Charente-Maritime.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
     driversEyebrow: "Nos deux chauffeurs",
     driversTitle: "Patricia & Alain, à votre service",
     driversLead:
-      "Deux chauffeurs indépendants, une même exigence : ponctualité, discrétion et confort, en Charente-Maritime.",
+      "Deux chauffeurs indépendants, choisis pour leur sérieux : ponctualité, discrétion et un accueil qui fait la différence.",
     stats: [
       { n: 2, suffix: "", l: "chauffeurs dédiés — Alain & Patricia", img: photoDriver.url },
       { n: 100, suffix: " %", l: "électrique (BMW iX1)", img: photoBmwReal.url },
@@ -240,32 +240,32 @@ const COPY = {
       { n: 8, suffix: " places", l: "van Mercedes classe V", img: photoVanReal.url },
     ],
     groupEyebrow: "Transport de groupe",
-    groupTitle: "Van Mercedes classe V 8 places pour vos groupes",
+    groupTitle: "Le van Mercedes 8 places, taillé pour vos groupes",
     groupBullets: ["8 places", "Grand volume de bagages", "Un seul tarif, un seul véhicule", "Toutes distances"],
     groupCta: "Réserver le van 8 places",
     whyEyebrow: "Pourquoi nous choisir",
-    whyTitle: "Une prestation pensée pour chaque trajet, à la hauteur de vos attentes",
+    whyTitle: "Chaque trajet mérite le même soin",
     why: [
       {
         photo: photoInterior.url,
         t: "Confort intérieur",
-        d: "Des véhicules sélectionnés pour votre bien-être : habitacle soigné, silence électrique, eau et chargeurs à bord.",
+        d: "Habitacle soigné, silence électrique, eau et chargeurs à bord : le bien-être pensé jusque dans le détail.",
       },
       {
         photo: photoDriver.url,
         t: "Fiabilité",
-        d: "Ponctualité, discrétion et disponibilité, sur chaque course.",
+        d: "Ponctualité, discrétion, disponibilité : notre parole donnée à chaque course.",
       },
       {
         photo: photoBmwReal.url,
-        t: "Une prestation adaptée à chaque besoin",
+        t: "Sur mesure, quel que soit le besoin",
         d: "Sièges bébé et rehausseurs enfants sur demande, fauteuil roulant, groupes et longues distances.",
       },
     ],
 
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
     bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron : nous vous y conduisons, seul ou en groupe, avec le van Mercedes 8 places d'Alain pour vos déplacements à plusieurs.",
+      "De La Rochelle à Oléron, de Rochefort à l'Île de Ré : nous couvrons toute la Charente-Maritime, seul ou à plusieurs, avec le van Mercedes 8 places d'Alain pour vos groupes.",
     destEyebrow: "Destinations",
     destTitle: "Là où l'on vous emmène",
     destinations: [
@@ -276,8 +276,8 @@ const COPY = {
       { img: photoVanReal.url, from: "Groupe", to: "Van 8 places", meta: "Transferts à plusieurs" },
       { img: photoMedical, from: "Domicile", to: "Hôpital / clinique", meta: "Conventionné CPAM" },
     ],
-    bestEyebrow: "Les best-sellers",
-    bestTitle: "Nos courses les plus demandées",
+    bestEyebrow: "Les incontournables",
+    bestTitle: "Ce que nos clients réservent le plus",
     best: [
       {
         n: "01",
@@ -289,7 +289,7 @@ const COPY = {
         n: "02",
         img: photoMedical,
         t: "Trajets médicaux conventionnés",
-        d: "Dialyse, chimiothérapie, consultations : prise en charge simplifiée.",
+        d: "Dialyse, chimiothérapie, consultations : une prise en charge simple et sereine.",
       },
       {
         n: "03",
@@ -332,20 +332,20 @@ const COPY = {
     blogTitle: "Guide Charente-Maritime",
     blogText: "Restaurants, hôtels, randonnées et lieux à visiter — repérés par vos chauffeurs.",
     blogCta: "Voir tout le guide",
-    ctaTitle: "Prêt à réserver votre course ?",
-    ctaText: "Réservation en moins d'une minute, à la voix ou à l'écrit.",
+    ctaTitle: "Votre chauffeur vous attend",
+    ctaText: "Réservez en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    h1: "Your journey, our standard",
+    h1: "Excellence, without compromise",
     tagline: SLOGAN_EN,
-    lead: "Two drivers, one shared standard: a 100% electric taxi service in Charente-Maritime with the 5-seat BMW iX1 and Audi Q6 e-tron, an 8-seat Mercedes V-Class van for group transport, covered medical transport with wheelchair and all-distance services.",
+    lead: "Two drivers, one shared standard: electric silence in the BMW iX1 and Audi Q6 e-tron, space in the 8-seat Mercedes V-Class van, covered medical transport with wheelchair access — all distances, across Charente-Maritime.",
     ctaBook: "Book a ride",
     ctaCall: "Call",
     callPrefix: "Call",
     driversEyebrow: "Our two drivers",
     driversTitle: "Patricia & Alain, at your service",
     driversLead:
-      "Two independent drivers, one shared standard: punctuality, discretion and comfort across Charente-Maritime.",
+      "Two independent drivers, chosen for their care: punctuality, discretion and a welcome that makes the difference.",
     stats: [
       { n: 2, suffix: "", l: "dedicated drivers — Alain & Patricia", img: photoDriver.url },
       { n: 100, suffix: "%", l: "electric (BMW iX1)", img: photoBmwReal.url },
@@ -353,31 +353,31 @@ const COPY = {
       { n: 8, suffix: " seats", l: "Mercedes V-Class van", img: photoVanReal.url },
     ],
     groupEyebrow: "Group transport",
-    groupTitle: "8-seat Mercedes V-Class van for your groups",
+    groupTitle: "The 8-seat Mercedes van, built for your groups",
     groupBullets: ["8 seats", "Generous luggage space", "One fare, one vehicle", "All distances"],
     groupCta: "Book the 8-seat van",
     whyEyebrow: "Why choose us",
-    whyTitle: "A service designed for every journey, matching your expectations",
+    whyTitle: "Every journey deserves the same care",
     why: [
       {
         photo: photoInterior.url,
         t: "Interior comfort",
-        d: "Vehicles selected for your wellbeing: immaculate cabin, electric silence, water and chargers on board.",
+        d: "Immaculate cabin, electric silence, water and chargers on board: wellbeing considered down to the detail.",
       },
       {
         photo: photoDriver.url,
         t: "Reliability",
-        d: "Punctuality, discretion and availability on every ride.",
+        d: "Punctuality, discretion, availability: our word, kept on every ride.",
       },
       {
         photo: photoBmwReal.url,
-        t: "A service tailored to every need",
+        t: "Tailored to every need",
         d: "Baby and booster seats on request, wheelchair access, groups and long distances.",
       },
     ],
     bannerTitle: "Charente-Maritime, door to door",
     bannerText:
-      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron: we drive you there, solo or in a group, with Alain's 8-seat Mercedes van for larger parties.",
+      "From La Rochelle to Oléron, from Rochefort to Île de Ré: we cover all of Charente-Maritime, solo or in a group, with Alain's 8-seat Mercedes van.",
     destEyebrow: "Destinations",
     destTitle: "Where we take you",
     destinations: [
@@ -388,8 +388,8 @@ const COPY = {
       { img: photoVanReal.url, from: "Group", to: "8-seat van", meta: "Group transfers" },
       { img: photoMedical, from: "Home", to: "Hospital / clinic", meta: "Medical transport" },
     ],
-    bestEyebrow: "Best-sellers",
-    bestTitle: "Our most requested rides",
+    bestEyebrow: "Fan favourites",
+    bestTitle: "What our clients book the most",
     best: [
       {
         n: "01",
@@ -401,7 +401,7 @@ const COPY = {
         n: "02",
         img: photoMedical,
         t: "Covered medical trips",
-        d: "Dialysis, chemotherapy, appointments: simplified coverage.",
+        d: "Dialysis, chemotherapy, appointments: simple, unhurried care.",
       },
       {
         n: "03",
@@ -444,7 +444,7 @@ const COPY = {
     blogTitle: "Charente-Maritime guide",
     blogText: "Restaurants, hotels, hikes and places to visit — picked by your drivers.",
     blogCta: "See the full guide",
-    ctaTitle: "Ready to book your ride?",
+    ctaTitle: "Your driver is waiting",
     ctaText: "Book in under a minute, by voice or by typing.",
   },
 } as const;
@@ -1356,8 +1356,8 @@ function Index() {
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-foreground/80 sm:text-base">
                   {lang === "en"
-                    ? "Install the app for real-time tracking notifications, and create your account to find your ride history, invoices and saved addresses."
-                    : "Installez l'application pour recevoir les notifications de suivi en temps réel, et créez votre espace pour retrouver l'historique de vos courses, vos factures et vos adresses favorites."}
+                    ? "Install the app for real-time tracking, and find your ride history, invoices and saved addresses in your personal account."
+                    : "Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites."}
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
