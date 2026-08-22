@@ -170,6 +170,41 @@
   /* Liseré doré fin — fil visuel reliant les sections claires aux bandes
      noir/doré, pour que l'identité premium se sente sur toute la page
      et pas seulement dans les bandes sombres. */
+  /* Bouton "or" premium : dégradé métallique + reflet qui traverse au survol,
+     pour sortir du bouton web plat et se rapprocher d'une carte de fidélité
+     haut de gamme. Remplace bg-primary + shadow-[var(--shadow-gold)] sur les
+     CTA principaux. */
+  .btn-gold {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background-image: linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--gold) 92%, white) 0%,
+      var(--gold) 45%,
+      color-mix(in oklab, var(--gold) 80%, black) 100%
+    );
+    color: var(--gold-foreground);
+    box-shadow: var(--shadow-gold);
+  }
+  .btn-gold::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+    transform: translateX(-130%);
+    transition: transform 0.7s ease;
+    pointer-events: none;
+  }
+  .btn-gold:hover::before {
+    transform: translateX(130%);
+  }
+  .btn-gold > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .divider-gold {
     height: 2px;
     max-inline-size: 96px;
