@@ -14,7 +14,6 @@ import {
   PlaneTakeoff,
   ShieldCheck,
   Stethoscope,
-  Users,
   Bell,
   Clock,
   Leaf,
@@ -78,6 +77,12 @@ const heroSlides = (lang: "fr" | "en") => {
   return [
     {
       id: "brand",
+      // NB: heroCars/heroCarsEn sont importés directement en .webp (pas de
+      // fichier .asset.json associé), donc aucune variante redimensionnée
+      // n'existe pour cette bannière — contrairement aux autres slides ci-
+      // dessous. Pour un vrai fix responsive sur cette image (probable LCP
+      // mobile), il faut la faire passer par le même pipeline d'assets que
+      // apt-bmw-real.webp / apt-audi-real.webp / apt-van-real.webp.
       src: en ? heroCarsEn : heroCars,
       alt: en
         ? "Access Prestige Taxi — BMW iX1 electric and Mercedes V-Class van, excellence on every journey, Charente-Maritime"
@@ -94,7 +99,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "bmw",
-      src: photoBmwReal.url,
+      src: imgAt(photoBmwReal, 1376),
+      srcSet: imgSrcSet(photoBmwReal, [640, 960, 1376, 1920]),
       alt: en
         ? "BMW iX1 100% electric taxi driven by Patricia, Access Prestige Taxi in Charente-Maritime"
         : "Taxi BMW iX1 100 % électrique conduit par Patricia, Access Prestige Taxi en Charente-Maritime",
@@ -108,7 +114,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "audi",
-      src: photoAudiReal.url,
+      src: imgAt(photoAudiReal, 1376),
+      srcSet: imgSrcSet(photoAudiReal, [640, 960, 1376, 1920]),
       alt: en
         ? "Audi Q6 e-tron, 100% electric premium SUV for business transfers, Access Prestige Taxi"
         : "Audi Q6 e-tron, SUV premium 100 % électrique pour transferts affaires, Access Prestige Taxi",
@@ -122,7 +129,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "van",
-      src: photoVanReal.url,
+      src: imgAt(photoVanReal, 1376),
+      srcSet: imgSrcSet(photoVanReal, [640, 960, 1376, 1920]),
       alt: en
         ? "Mercedes V-Class 8-seat van driven by Alain for group transport, Access Prestige Taxi"
         : "Van Mercedes V-Class 8 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
@@ -136,7 +144,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "driver",
-      src: photoDriver.url,
+      src: imgAt(photoDriver, 1376),
+      srcSet: imgSrcSet(photoDriver, [640, 960, 1376, 1920]),
       alt: en
         ? "Access Prestige Taxi licensed driver at the wheel in Charente-Maritime"
         : "Chauffeur de taxi agréé Access Prestige Taxi au volant en Charente-Maritime",
@@ -661,6 +670,8 @@ function Index() {
                 >
                   <motion.img
                     src={slide.src}
+                    srcSet={"srcSet" in slide ? slide.srcSet : undefined}
+                    sizes="100vw"
                     alt={slide.alt}
                     fetchPriority={slideIndex === 0 ? "high" : undefined}
                     loading={slideIndex === 0 ? "eager" : "lazy"}
@@ -699,12 +710,52 @@ function Index() {
       {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
       <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
+          {/* Bloc critique above-the-fold : H1, texte d'accroche et CTA arrivent en premier,
+              avant les pastilles/valeurs/paragraphe SEO — sur un écran 375px, le visiteur voit
+              le titre et le bouton "Réserver" sans avoir à défiler. Une seule animation (pas de
+              cascade par élément) pour limiter le coût TTI/INP sur mobile milieu de gamme. */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="w-full"
           >
+            <h1 className="font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl text-balance">
+              {c.h1}
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">{c.lead}</p>
+
+            <div className="mt-8 flex w-full flex-col flex-wrap items-stretch justify-center gap-3 md:w-auto md:flex-row md:items-center md:mx-auto">
+              <Link
+                to="/reserver"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+              >
+                {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              {DRIVERS.map((d) => (
+                <a
+                  key={d.tel}
+                  href={`tel:${d.tel}`}
+                  aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
+                  className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary active:scale-[0.98]"
+                >
+                  <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  <span className="flex flex-col items-start leading-tight">
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                      {c.callPrefix} {d.name}
+                    </span>
+                    <span className="text-sm font-semibold tabular-nums text-foreground">{d.display}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Pastilles de services, valeurs et paragraphe SEO : contenu secondaire,
+              placé après le CTA principal et non animé (pas de motion.div) pour éviter
+              d'ajouter une cascade d'animations au chargement. */}
+          <div className="mt-10 w-full">
             <ul
               aria-label={lang === "en" ? "Our main taxi services" : "Nos principales prestations de taxi"}
               className="grid w-full grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4"
@@ -849,55 +900,7 @@ function Index() {
                 </p>
               )}
             </nav>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.08 }}
-            className="mt-6 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl text-balance"
-          >
-            {c.h1}
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.16 }}
-            className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
-          >
-            {c.lead}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.24 }}
-            className="mt-8 flex w-full flex-col flex-wrap items-stretch justify-center gap-3 md:w-auto md:flex-row md:items-center"
-          >
-            <Link
-              to="/reserver"
-              className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
-            >
-              {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            {DRIVERS.map((d) => (
-              <a
-                key={d.tel}
-                href={`tel:${d.tel}`}
-                aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary active:scale-[0.98]"
-              >
-                <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                <span className="flex flex-col items-start leading-tight">
-                  <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                    {c.callPrefix} {d.name}
-                  </span>
-                  <span className="text-sm font-semibold tabular-nums text-foreground">{d.display}</span>
-                </span>
-              </a>
-            ))}
-          </motion.div>
+          </div>
 
           <dl
             aria-label={
@@ -1070,44 +1073,7 @@ function Index() {
       </section>
 
       {/* TRANSPORT DE GROUPE — VAN 8 PLACES */}
-      <section className="border-t border-border py-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 sm:px-6 lg:px-8 lg:grid-cols-2">
-          <Reveal className="lg:order-2">
-            <img
-              src={photoVanReal.url}
-              alt={c.groupTitle}
-              loading="lazy"
-              width={1600}
-              height={900}
-              className="aspect-[16/10] w-full rounded-3xl border border-border object-cover"
-            />
-          </Reveal>
-          <Reveal delay={0.08} className="lg:order-1">
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.groupEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.groupTitle}
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.groupText}</p>
-            <ul className="mt-6 space-y-2">
-              {c.groupBullets.map((b) => (
-                <li key={b} className="flex items-center gap-3 text-sm text-foreground">
-                  <Users className="h-4 w-4 shrink-0 text-primary" />
-                  {b}
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/reserver"
-              search={{ passagers: 7 } as never}
-              className="mt-7 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
-            >
-              {c.groupCta} <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* BANNIÈRE PHOTO PLEINE LARGEUR */}
+      {/* BANDE PREMIUM — flotte de groupe + destinations, fond noir/doré, un seul message fort */}
       <section className="dark relative isolate overflow-hidden border-y border-border">
         <img
           src={photoBmwReal.url}
@@ -1117,19 +1083,30 @@ function Index() {
           height={900}
           className="absolute inset-0 -z-20 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,8,10,0.92),rgba(8,8,10,0.55))]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,8,10,0.92),rgba(8,8,10,0.6))]" />
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-24 sm:py-32">
           <Reveal>
-            <h2 className="max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.groupEyebrow}</p>
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.bannerTitle}
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/85 sm:text-base">{c.bannerText}</p>
-            <Link
-              to="/reserver"
-              className="mt-8 inline-flex min-h-[48px] touch-manipulation items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
-            >
-              {c.ctaBook} <ArrowRight className="h-4 w-4" />
-            </Link>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground/85 sm:text-base">{c.groupText}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                to="/reserver"
+                className="inline-flex min-h-[48px] touch-manipulation items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
+              >
+                {c.ctaBook} <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/reserver"
+                search={{ passagers: 7 } as never}
+                className="inline-flex min-h-[48px] touch-manipulation items-center gap-2 rounded-xl border border-primary/60 px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
+              >
+                {c.groupCta} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -1227,165 +1204,21 @@ function Index() {
               </div>
             </article>
           </Reveal>
-        </div>
-      </section>
 
-      {/* INSTALLER L'APPLI */}
-      <section id="application" className="border-t border-border bg-background py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="flex flex-col items-center text-center">
-              <img
-                src={lang === "en" ? heroCarsEn : heroCars}
-                alt={lang === "en" ? "Access Prestige Taxi app icon" : "Icône de l'application Access Prestige Taxi"}
-                loading="lazy"
-                width={512}
-                height={512}
-                className="h-24 w-24 rounded-3xl border border-primary/30 object-cover shadow-[var(--shadow-gold)]"
-              />
-              <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-primary">
-                {lang === "en" ? "Web app" : "Application"}
-              </p>
-              <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-                {lang === "en" ? "Install Access Prestige Taxi on your phone" : "Installez l'appli mobile"}
-              </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                {lang === "en"
-                  ? "Book your ride in an instant, even offline. Get real-time tracking notifications."
-                  : "Réservez votre taxi en un instant, même sans connexion. Recevez les notifications de suivi en temps réel."}
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.06}>
-            <div className="mx-auto mt-8 flex max-w-2xl items-start gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 text-left">
-              <Bell className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-              <div className="space-y-2 text-sm leading-relaxed text-foreground/90">
-                <p>
-                  <span className="font-semibold text-card-foreground">
-                    {lang === "en" ? "How to activate? " : "Comment activer ? "}
-                  </span>
-                  {lang === "en"
-                    ? "Install the app on your home screen (see below), then open the Book a ride page and tap “Enable notifications”."
-                    : "Installez l'appli sur votre écran d'accueil (voir ci-dessous), puis rendez-vous sur la page Réserver et appuyez sur « Activer les notifications »."}
-                </p>
-                <p>
-                  <span className="font-semibold text-card-foreground">{lang === "en" ? "Why? " : "Pourquoi ? "}</span>
-                  {lang === "en"
-                    ? "Without installing, your browser can't send background alerts. You won't get the “Driver on the way”, “Arrived” or “Ride completed” messages."
-                    : "Sans installation, votre navigateur ne peut pas envoyer d'alertes en arrière-plan. Vous ne recevrez pas les messages « Taxi en route », « Arrivé » ou « Course terminée »."}
-                </p>
-              </div>
-            </div>
-          </Reveal>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <Reveal>
-              <article className={`h-full p-6 ${CARD}`}>
-                <h3 className="font-display text-lg font-semibold text-card-foreground">
-                  🍎 {lang === "en" ? "iPhone / iOS" : "iPhone / iOS"}
-                </h3>
-                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  <li>
-                    1.{" "}
-                    {lang === "en"
-                      ? "Open Safari and go to accessprestigetaxi.fr"
-                      : "Ouvrez Safari et allez sur accessprestigetaxi.fr"}
-                  </li>
-                  <li>
-                    2.{" "}
-                    {lang === "en"
-                      ? "Tap the Share button (square with arrow)"
-                      : "Tapez le bouton Partager (carré avec flèche)"}
-                  </li>
-                  <li>3. {lang === "en" ? "Select “Add to Home Screen”" : "Sélectionnez « Sur l'écran d'accueil »"}</li>
-                  <li>
-                    4.{" "}
-                    {lang === "en"
-                      ? "Tap Add: the app appears on your home screen"
-                      : "Tapez Ajouter : l'appli apparaît sur votre écran d'accueil"}
-                  </li>
-                </ol>
-                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                  💡{" "}
-                  {lang === "en"
-                    ? "Tip: then open the Book a ride page and tap “Enable notifications” to turn on tracking alerts."
-                    : "Astuce : rendez-vous ensuite sur la page Réserver et appuyez sur « Activer les notifications » pour recevoir les alertes de suivi."}
-                </p>
-              </article>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <article className={`h-full p-6 ${CARD}`}>
-                <h3 className="font-display text-lg font-semibold text-card-foreground">
-                  🤖 {lang === "en" ? "Android" : "Android"}
-                </h3>
-                <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  <li>
-                    1.{" "}
-                    {lang === "en"
-                      ? "Open Chrome and go to accessprestigetaxi.fr"
-                      : "Ouvrez Chrome et allez sur accessprestigetaxi.fr"}
-                  </li>
-                  <li>
-                    2.{" "}
-                    {lang === "en"
-                      ? "Tap the ⋮ menu at the top right"
-                      : "Tapez le menu ⋮ (trois points) en haut à droite"}
-                  </li>
-                  <li>
-                    3. {lang === "en" ? "Select “Add to Home Screen”" : "Sélectionnez « Ajouter à l'écran d'accueil »"}
-                  </li>
-                  <li>
-                    4.{" "}
-                    {lang === "en"
-                      ? "Tap Add: the icon appears on your home screen"
-                      : "Tapez Ajouter : l'icône apparaît sur votre écran d'accueil"}
-                  </li>
-                </ol>
-                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-                  💡{" "}
-                  {lang === "en"
-                    ? "Tip: then open the Book a ride page and tap “Enable notifications” to receive tracking alerts."
-                    : "Astuce : rendez-vous ensuite sur la page Réserver et appuyez sur « Activer les notifications » pour recevoir les alertes de suivi."}
-                </p>
-              </article>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.1}>
-            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
-              ✨ {lang === "en" ? "Need help? Call Alain · " : "Besoin d'aide ? Appelez Alain · "}
-              <a href="tel:0603444863" className="font-semibold text-primary underline">
-                06 03 44 48 63
-              </a>{" "}
-              {lang === "en" ? "or Patricia · " : "ou Patricia · "}
-              <a href="tel:0650260015" className="font-semibold text-primary underline">
-                06 50 26 00 15
-              </a>
-              {lang === "en" ? ", or message us on " : ", ou écrivez-nous sur "}
-              <a
-                href="https://wa.me/33650260015"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-primary underline"
+          <Reveal delay={0.2}>
+            <div className="mt-10 flex justify-center">
+              <Link
+                to="/reserver"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
               >
-                WhatsApp
-              </a>
-              .
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.14}>
-            <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
-              {lang === "en"
-                ? "Alain and Patricia use a separate private app for drivers."
-                : "Alain et Patricia disposent d'une application chauffeur privée séparée."}
-            </p>
+                {c.ctaBook} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      {/* DESTINATIONS */}
+      {/* DESTINATIONS — regroupe aussi les trajets les plus demandés (gare/aéroport, médical, groupes) */}
       <section className="border-t border-border bg-background py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
@@ -1425,92 +1258,25 @@ function Index() {
             ))}
           </div>
 
-          <Link
-            to="/destinations"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline"
-          >
-            {lang === "en" ? "See all destinations" : "Voir toutes les destinations"}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
-      {/* BEST-SELLERS */}
-      <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.bestEyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.bestTitle}
-            </h2>
-          </Reveal>
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {c.best.map((b, i) => (
-              <Reveal key={b.n} delay={i * 0.06}>
-                <article className={`group relative h-full overflow-hidden ${CARD}`}>
-                  <img
-                    src={b.img}
-                    alt={b.t}
-                    loading="lazy"
-                    width={1024}
-                    height={768}
-                    className="h-40 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                  />
-                  <div className="p-6 pt-8">
-                    <span className="absolute right-4 top-[10.5rem] font-display text-5xl font-semibold text-primary/15">
-                      {b.n}
-                    </span>
-                    <h3 className="font-display text-lg font-semibold text-card-foreground">{b.t}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
-                    <Link
-                      to="/reserver"
-                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-                    >
-                      {c.ctaBook} <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Link
+              to="/destinations"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary underline"
+            >
+              {lang === "en" ? "See all destinations" : "Voir toutes les destinations"}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/reserver"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+            >
+              {c.ctaBook} <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* WHY */}
-      <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.whyEyebrow}</p>
-            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.whyTitle}
-            </h2>
-          </Reveal>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {c.why.map((w, i) => (
-              <Reveal key={w.t} delay={i * 0.06}>
-                <div className={`group h-full overflow-hidden ${CARD}`}>
-                  {"photo" in w && w.photo ? (
-                    <img
-                      src={w.photo}
-                      alt={w.t}
-                      loading="lazy"
-                      width={1600}
-                      height={900}
-                      className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                    />
-                  ) : null}
-                  <div className="p-6">
-                    <h3 className="font-display text-lg font-semibold text-foreground">{w.t}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{w.d}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* COMMENT ÇA MARCHE */}
+      {/* COMMENT ÇA MARCHE — étapes de réservation, suivi/appli et espace client réunis */}
       <section className="border-t border-border bg-card/40 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
@@ -1540,27 +1306,35 @@ function Index() {
               </Reveal>
             ))}
           </ol>
-        </div>
-      </section>
 
-      {/* ESPACE CLIENT */}
-      <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="grid items-center gap-8 rounded-3xl border border-primary/30 bg-card p-7 sm:p-10 lg:grid-cols-[minmax(0,1fr)_auto]">
+          {/* Suivi/appli + espace client : condensés en une bande unique plutôt qu'en deux
+              sections séparées, avec un lien vers la page Réserver pour l'activation détaillée */}
+          <Reveal delay={0.16}>
+            <div className="mt-10 grid gap-4 rounded-3xl border border-primary/30 bg-card p-7 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
               <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.clientEyebrow}</p>
-                <h2 className="mt-3 font-display text-2xl font-semibold text-foreground sm:text-3xl text-balance">
-                  {c.clientTitle}
-                </h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{c.clientText}</p>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-primary">
+                  {lang === "en" ? "Tracking & account" : "Suivi & espace client"}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  {lang === "en"
+                    ? "Install the app for real-time tracking notifications, and create your account to find your ride history, invoices and saved addresses."
+                    : "Installez l'application pour recevoir les notifications de suivi en temps réel, et créez votre espace pour retrouver l'historique de vos courses, vos factures et vos adresses favorites."}
+                </p>
               </div>
-              <Link
-                to="/client/login"
-                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
-              >
-                {c.clientCta} <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/reserver"
+                  className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+                >
+                  <Bell className="h-4 w-4" /> {lang === "en" ? "Enable notifications" : "Activer les notifications"}
+                </Link>
+                <Link
+                  to="/client/login"
+                  className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition duration-300 hover:scale-[1.03] hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
+                >
+                  {c.clientCta} <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
           </Reveal>
         </div>
@@ -1635,14 +1409,24 @@ function Index() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="border-t border-border py-20">
-        <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8 text-center">
+      {/* CTA FINAL — bande premium noir/doré, cohérente avec la bande flotte/destinations plus haut */}
+      <section className="dark relative isolate overflow-hidden border-t border-border">
+        <img
+          src={photoAudiReal.url}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          width={1600}
+          height={900}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,8,10,0.88)_0%,rgba(8,8,10,0.92)_100%)]" />
+        <div className="mx-auto max-w-3xl px-5 py-20 sm:px-6 sm:py-24 lg:px-8 text-center">
           <Reveal>
             <h2 className="font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.ctaTitle}
             </h2>
-            <p className="mt-3 text-muted-foreground">{c.ctaText}</p>
+            <p className="mt-3 text-foreground/80">{c.ctaText}</p>
             <Link
               to="/reserver"
               className="mt-8 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
