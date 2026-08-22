@@ -241,8 +241,6 @@ const COPY = {
     ],
     groupEyebrow: "Transport de groupe",
     groupTitle: "Van Mercedes classe V 8 places pour vos groupes",
-    groupText:
-      "Voyagez ensemble confortablement : que vous soyez un groupe, une famille, un mariage ou un déplacement professionnel, le van Mercedes classe V d'Alain offre 8 places, un grand volume de bagages et un vrai confort.",
     groupBullets: ["8 places", "Grand volume de bagages", "Un seul tarif, un seul véhicule", "Toutes distances"],
     groupCta: "Réserver le van 8 places",
     whyEyebrow: "Pourquoi nous choisir",
@@ -266,10 +264,10 @@ const COPY = {
     ],
 
     bannerTitle: "La Charente-Maritime, d'un point à l'autre",
-    bannerText: "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron — nous vous y conduisons.",
+    bannerText:
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré et Oléron : nous vous y conduisons, seul ou en groupe, avec le van Mercedes 8 places d'Alain pour vos déplacements à plusieurs.",
     destEyebrow: "Destinations",
     destTitle: "Là où l'on vous emmène",
-    destLead: "Quelques itinéraires que nos clients réservent au quotidien : l'arrivée en douceur, c'est notre métier.",
     destinations: [
       { img: photoAirport, from: "La Rochelle", to: "Aéroport de La Rochelle", meta: "≈ 15 min · vol suivi" },
       { img: photoGare, from: "Rochefort", to: "Gare TGV", meta: "≈ 20 min · accueil quai" },
@@ -356,8 +354,6 @@ const COPY = {
     ],
     groupEyebrow: "Group transport",
     groupTitle: "8-seat Mercedes V-Class van for your groups",
-    groupText:
-      "Travel together in comfort: whether you are a group, a family, a wedding party or a business trip, Alain's Mercedes V-Class offers 8 seats, generous luggage space and genuine comfort.",
     groupBullets: ["8 seats", "Generous luggage space", "One fare, one vehicle", "All distances"],
     groupCta: "Book the 8-seat van",
     whyEyebrow: "Why choose us",
@@ -380,10 +376,10 @@ const COPY = {
       },
     ],
     bannerTitle: "Charente-Maritime, door to door",
-    bannerText: "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron — we drive you there.",
+    bannerText:
+      "La Rochelle, Rochefort, Royan, Saintes, Île de Ré and Oléron: we drive you there, solo or in a group, with Alain's 8-seat Mercedes van for larger parties.",
     destEyebrow: "Destinations",
     destTitle: "Where we take you",
-    destLead: "A few routes our clients book every day — arriving smoothly is our job.",
     destinations: [
       { img: photoAirport, from: "La Rochelle", to: "La Rochelle airport", meta: "≈ 15 min · flight tracked" },
       { img: photoGare, from: "Rochefort", to: "TGV station", meta: "≈ 20 min · platform meet" },
@@ -790,7 +786,7 @@ function Index() {
             {/* Texte SEO + liens internes (mêmes destinations que le menu) — utile sur mobile */}
             <nav
               aria-label={lang === "en" ? "Quick site links" : "Liens rapides du site"}
-              className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-muted-foreground"
+              className="mx-auto mt-4 max-w-2xl border-t border-border/60 pt-3 text-xs leading-relaxed text-muted-foreground/80"
             >
               {lang === "en" ? (
                 <p>
@@ -1091,7 +1087,6 @@ function Index() {
               {c.bannerTitle}
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/85 sm:text-base">{c.bannerText}</p>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground/85 sm:text-base">{c.groupText}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/reserver"
@@ -1226,7 +1221,6 @@ function Index() {
             <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
               {c.destTitle}
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.destLead}</p>
           </Reveal>
 
           <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
