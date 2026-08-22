@@ -1276,6 +1276,50 @@ function Index() {
         </div>
       </section>
 
+      {/* POURQUOI NOUS CHOISIR */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.whyEyebrow}</p>
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+              {c.whyTitle}
+            </h2>
+          </Reveal>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {c.why.map((w, i) => (
+              <Reveal key={w.t} delay={i * 0.06}>
+                <div className={`group h-full overflow-hidden ${CARD}`}>
+                  {"photo" in w && w.photo ? (
+                    <img
+                      src={w.photo}
+                      alt={w.t}
+                      loading="lazy"
+                      width={1600}
+                      height={900}
+                      className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                    />
+                  ) : null}
+                  <div className="p-6">
+                    <h3 className="font-display text-lg font-semibold text-foreground">{w.t}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{w.d}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={0.2}>
+            <div className="mt-8 flex justify-center">
+              <Link
+                to="/reserver"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+              >
+                {c.ctaBook} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* COMMENT ÇA MARCHE — étapes de réservation, suivi/appli et espace client réunis */}
       <section className="border-t border-border bg-card/40 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
@@ -1336,6 +1380,76 @@ function Index() {
                 </Link>
               </div>
             </div>
+          </Reveal>
+
+          {/* Tuto d'installation, condensé : deux mini-cartes iOS/Android plutôt qu'un
+              grand bloc séparé — reste sous le même h2 "Comment ça marche" */}
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <Reveal delay={0.2}>
+              <article className={`h-full p-6 ${CARD}`}>
+                <h3 className="font-display text-base font-semibold text-card-foreground">
+                  🍎 {lang === "en" ? "iPhone / iOS" : "iPhone / iOS"}
+                </h3>
+                <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
+                    {lang === "en"
+                      ? "Open Safari and go to accessprestigetaxi.fr"
+                      : "Ouvrez Safari et allez sur accessprestigetaxi.fr"}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Tap the Share button (square with arrow)"
+                      : "Tapez le bouton Partager (carré avec flèche)"}
+                  </li>
+                  <li>3. {lang === "en" ? "Select “Add to Home Screen”" : "Sélectionnez « Sur l'écran d'accueil »"}</li>
+                  <li>
+                    4.{" "}
+                    {lang === "en"
+                      ? "Open the app, then tap “Enable notifications” on the Book a ride page"
+                      : "Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver"}
+                  </li>
+                </ol>
+              </article>
+            </Reveal>
+            <Reveal delay={0.26}>
+              <article className={`h-full p-6 ${CARD}`}>
+                <h3 className="font-display text-base font-semibold text-card-foreground">
+                  🤖 {lang === "en" ? "Android" : "Android"}
+                </h3>
+                <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  <li>
+                    1.{" "}
+                    {lang === "en"
+                      ? "Open Chrome and go to accessprestigetaxi.fr"
+                      : "Ouvrez Chrome et allez sur accessprestigetaxi.fr"}
+                  </li>
+                  <li>
+                    2.{" "}
+                    {lang === "en"
+                      ? "Tap the ⋮ menu at the top right"
+                      : "Tapez le menu ⋮ (trois points) en haut à droite"}
+                  </li>
+                  <li>
+                    3. {lang === "en" ? "Select “Add to Home Screen”" : "Sélectionnez « Ajouter à l'écran d'accueil »"}
+                  </li>
+                  <li>
+                    4.{" "}
+                    {lang === "en"
+                      ? "Open the app, then tap “Enable notifications” on the Book a ride page"
+                      : "Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver"}
+                  </li>
+                </ol>
+              </article>
+            </Reveal>
+          </div>
+          <Reveal delay={0.3}>
+            <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
+              {lang === "en"
+                ? 'Without installing, background alerts ("Driver on the way", "Arrived") can\'t be sent — that\'s what the app is for.'
+                : "Sans installation, les alertes en arrière-plan (« Taxi en route », « Arrivé ») ne peuvent pas être envoyées — c'est à ça que sert l'appli."}
+            </p>
           </Reveal>
         </div>
       </section>
