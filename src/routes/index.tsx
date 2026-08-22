@@ -1215,6 +1215,7 @@ function Index() {
 
       {/* DESTINATIONS — regroupe aussi les trajets les plus demandés (gare/aéroport, médical, groupes) */}
       <section className="border-t border-border bg-background py-20">
+        <div className="divider-gold mt-10" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.destEyebrow}</p>
@@ -1270,8 +1271,8 @@ function Index() {
         </div>
       </section>
 
-      {/* POURQUOI NOUS CHOISIR */}
-      <section className="border-t border-border py-20">
+      {/* POURQUOI NOUS CHOISIR — 3e bande noir/doré, pour répartir l'identité premium sur toute la page */}
+      <section className="dark border-t border-border bg-background py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.whyEyebrow}</p>
@@ -1348,12 +1349,12 @@ function Index() {
           {/* Suivi/appli + espace client : condensés en une bande unique plutôt qu'en deux
               sections séparées, avec un lien vers la page Réserver pour l'activation détaillée */}
           <Reveal delay={0.16}>
-            <div className="mt-10 grid gap-4 rounded-3xl border border-primary/30 bg-card p-7 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+            <div className="dark mt-10 grid gap-4 rounded-3xl border border-primary/40 bg-card p-7 shadow-[var(--shadow-gold)] sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
               <div className="min-w-0">
                 <p className="text-[11px] uppercase tracking-[0.3em] text-primary">
                   {lang === "en" ? "Tracking & account" : "Suivi & espace client"}
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                <p className="mt-2 text-sm leading-relaxed text-foreground/80 sm:text-base">
                   {lang === "en"
                     ? "Install the app for real-time tracking notifications, and create your account to find your ride history, invoices and saved addresses."
                     : "Installez l'application pour recevoir les notifications de suivi en temps réel, et créez votre espace pour retrouver l'historique de vos courses, vos factures et vos adresses favorites."}
@@ -1467,6 +1468,7 @@ function Index() {
 
       {/* BLOG */}
       <section className="border-t border-border py-20">
+        <div className="divider-gold mt-10" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
