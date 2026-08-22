@@ -99,8 +99,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "bmw",
-      src: imgAt(photoBmwReal, 1376),
-      srcSet: imgSrcSet(photoBmwReal, [640, 960, 1376, 1920]),
+      src: imgAt(photoBmwReal.url, 1376),
+      srcSet: imgSrcSet(photoBmwReal.url, [640, 960, 1376, 1920]),
       alt: en
         ? "BMW iX1 100% electric taxi driven by Patricia, Access Prestige Taxi in Charente-Maritime"
         : "Taxi BMW iX1 100 % électrique conduit par Patricia, Access Prestige Taxi en Charente-Maritime",
@@ -114,8 +114,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "audi",
-      src: imgAt(photoAudiReal, 1376),
-      srcSet: imgSrcSet(photoAudiReal, [640, 960, 1376, 1920]),
+      src: imgAt(photoAudiReal.url, 1376),
+      srcSet: imgSrcSet(photoAudiReal.url, [640, 960, 1376, 1920]),
       alt: en
         ? "Audi Q6 e-tron, 100% electric premium SUV for business transfers, Access Prestige Taxi"
         : "Audi Q6 e-tron, SUV premium 100 % électrique pour transferts affaires, Access Prestige Taxi",
@@ -129,8 +129,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "van",
-      src: imgAt(photoVanReal, 1376),
-      srcSet: imgSrcSet(photoVanReal, [640, 960, 1376, 1920]),
+      src: imgAt(photoVanReal.url, 1376),
+      srcSet: imgSrcSet(photoVanReal.url, [640, 960, 1376, 1920]),
       alt: en
         ? "Mercedes V-Class 8-seat van driven by Alain for group transport, Access Prestige Taxi"
         : "Van Mercedes V-Class 8 places conduit par Alain pour le transport de groupe, Access Prestige Taxi",
@@ -144,8 +144,8 @@ const heroSlides = (lang: "fr" | "en") => {
     },
     {
       id: "driver",
-      src: imgAt(photoDriver, 1376),
-      srcSet: imgSrcSet(photoDriver, [640, 960, 1376, 1920]),
+      src: imgAt(photoDriver.url, 1376),
+      srcSet: imgSrcSet(photoDriver.url, [640, 960, 1376, 1920]),
       alt: en
         ? "Access Prestige Taxi licensed driver at the wheel in Charente-Maritime"
         : "Chauffeur de taxi agréé Access Prestige Taxi au volant en Charente-Maritime",
