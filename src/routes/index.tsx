@@ -209,14 +209,14 @@ const COPY = {
   fr: {
     h1: "L'excellence, sans compromis",
     tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, un seul niveau d'exigence : silence électrique de la BMW iX1 et de l'Audi Q6 e-tron, espace du van Mercedes classe V 8 places, transport sanitaire conventionné avec fauteuil roulant — toutes distances, en Charente-Maritime.",
+    lead: "Deux chauffeurs, un seul niveau d'exigence : silence électrique de la BMW iX1 et de l'Audi Q6 e-tron, espace du van Mercedes classe V 8 places, transport santé conventionné — toutes distances, en Charente-Maritime.",
     ctaBook: "Réserver ma course",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
     driversEyebrow: "Nos deux chauffeurs",
     driversTitle: "Patricia & Alain, à votre service",
     driversLead:
-      "Deux chauffeurs indépendants, choisis pour leur sérieux : ponctualité, discrétion et un accueil qui fait la différence.",
+      "Nous ne travaillons qu'avec deux chauffeurs. Pas trente, pas une flotte anonyme : Patricia et Alain, que vous retrouverez course après course.",
     stats: [
       { n: 2, suffix: "", l: "chauffeurs dédiés — Alain & Patricia", img: photoDriver.url },
       { n: 100, suffix: " %", l: "électrique (BMW iX1)", img: photoBmwReal.url },
@@ -329,7 +329,7 @@ const COPY = {
     driversEyebrow: "Our two drivers",
     driversTitle: "Patricia & Alain, at your service",
     driversLead:
-      "Two independent drivers, chosen for their care: punctuality, discretion and a welcome that makes the difference.",
+      "We work with only two drivers. Not thirty, not an anonymous fleet: Patricia and Alain, who you'll find again ride after ride.",
     stats: [
       { n: 2, suffix: "", l: "dedicated drivers — Alain & Patricia", img: photoDriver.url },
       { n: 100, suffix: "%", l: "electric (BMW iX1)", img: photoBmwReal.url },
@@ -709,7 +709,7 @@ function Index() {
             <div className="mt-8 flex w-full flex-col flex-wrap items-stretch justify-center gap-3 md:w-auto md:flex-row md:items-center md:mx-auto">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
               >
                 {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
@@ -1132,7 +1132,7 @@ function Index() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[48px] touch-manipulation items-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
+                className="inline-flex min-h-[48px] touch-manipulation items-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
               >
                 {c.ctaBook} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -1151,6 +1151,7 @@ function Index() {
       {/* DRIVERS */}
       <section id="chauffeurs" className="border-t border-border bg-card/40 py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
+          <div className="divider-gold mb-10" aria-hidden="true" />
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.driversEyebrow}</p>
             <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
@@ -1246,7 +1247,7 @@ function Index() {
             <div className="mt-10 flex justify-center">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
               >
                 {c.ctaBook} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -1348,7 +1349,7 @@ function Index() {
             <div className="mt-8 flex justify-center">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
               >
                 {c.ctaBook} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -1405,7 +1406,7 @@ function Index() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to="/reserver"
-                  className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+                  className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-6 py-3.5 text-sm font-semibold transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
                 >
                   <Bell className="h-4 w-4" /> {lang === "en" ? "Enable notifications" : "Activer les notifications"}
                 </Link>
@@ -1581,7 +1582,7 @@ function Index() {
             <p className="mt-3 text-foreground/80">{c.ctaText}</p>
             <Link
               to="/reserver"
-              className="mt-8 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
+              className="mt-8 inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-8 py-4 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] active:scale-[0.98]"
             >
               {c.ctaBook} <ArrowRight className="h-4 w-4" />
             </Link>
