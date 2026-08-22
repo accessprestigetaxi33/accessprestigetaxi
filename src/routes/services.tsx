@@ -11,13 +11,11 @@ const SERVICES_URL = absoluteUrl("/services");
 const META = {
   fr: {
     title: "Nos prestations taxi en Charente-Maritime | Access Prestige Taxi",
-    desc:
-      "Transport sanitaire conventionné (fauteuil roulant), transferts toutes gares et tous aéroports, mise à disposition avec chauffeur, transport de groupe 8 places et trajets toutes distances, en véhicules électriques.",
+    desc: "Transport santé conventionné, transferts toutes gares et tous aéroports, mise à disposition avec chauffeur, transport de groupe 8 places et trajets toutes distances, en véhicules électriques.",
   },
   en: {
     title: "Our taxi services in Charente-Maritime | Access Prestige Taxi",
-    desc:
-      "Covered medical transport (wheelchair accessible), transfers to every station and airport, chauffeur hire, 8-seat group transport and all-distance journeys, with electric vehicles.",
+    desc: "Covered medical transport (wheelchair accessible), transfers to every station and airport, chauffeur hire, 8-seat group transport and all-distance journeys, with electric vehicles.",
   },
 } as const;
 
@@ -32,9 +30,18 @@ const PRESTATION_BY_CARD: Record<string, string> = {
 };
 
 const SERVICE_LIST = [
-  { name: "Transport sanitaire conventionné", description: "Transport assis professionnalisé et transport avec fauteuil roulant, conventionné CPAM." },
-  { name: "Transferts toutes gares et tous aéroports", description: "Transferts vers et depuis toutes les gares et tous les aéroports, suivi des vols et des trains." },
-  { name: "Déplacements professionnels et privés", description: "Trajets business, hôtels et campings, discrétion et ponctualité." },
+  {
+    name: "Transport santé conventionné",
+    description: "Transport assis professionnalisé et transport avec fauteuil roulant, conventionné CPAM.",
+  },
+  {
+    name: "Transferts toutes gares et tous aéroports",
+    description: "Transferts vers et depuis toutes les gares et tous les aéroports, suivi des vols et des trains.",
+  },
+  {
+    name: "Déplacements professionnels et privés",
+    description: "Trajets business, hôtels et campings, discrétion et ponctualité.",
+  },
   { name: "Mise à disposition avec chauffeur", description: "Demi-journée, journée complète ou événementiel." },
   { name: "Transport de groupe", description: "Van Mercedes classe V jusqu'à 8 places, bagages volumineux acceptés." },
   { name: "Trajets toutes distances", description: "Longue distance en France et en Europe, sur réservation." },
