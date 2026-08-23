@@ -9,6 +9,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { useT, useI18n } from "@/i18n/I18nProvider";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -39,7 +40,7 @@ function NotFoundComponent() {
           >
             Go home
           </Link>
-        </div>
+        </main>
       </div>
     </div>
   );
@@ -150,15 +151,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     };
   },
-  shellComponent: RootShell,
+  shellComponent: (props) => {
+    const { lang } = useI18n();
+    return <RootShell {...props} lang={lang} />;
+  },
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
+function RootShell({ children, lang }: { children: ReactNode; lang: string }) {
   return (
-    <html lang="fr">
+    <html lang={lang}>
       <head>
         <HeadContent />
       </head>
@@ -189,7 +193,7 @@ function RootComponent() {
           <div className="flex min-h-screen flex-col bg-background">
             <SiteHeader />
             <ServiceStrip />
-            <div className="flex-1 pb-[var(--mobile-action-bar-h,0px)]">
+            <main id="main-content" className="flex-1 pb-[var(--mobile-action-bar-h,0px)]" aria-label={t("aria.main")}>
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
               <Outlet />
             </div>

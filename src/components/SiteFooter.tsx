@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useI18n } from "@/i18n/I18nProvider";
+import { useI18n, useT } from "@/i18n/I18nProvider";
 
 const COPY = {
   fr: {
@@ -63,6 +63,7 @@ const COPY = {
 export function SiteFooter() {
   const { pathname } = useLocation();
   const { lang } = useI18n();
+  const t = useT();
   const c = COPY[lang === "en" ? "en" : "fr"];
 
   if (
@@ -79,7 +80,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer
+    <footer aria-label={t("aria.footer")}
       style={{
         background: "#EDE6D4",
         color: "#4a4538",

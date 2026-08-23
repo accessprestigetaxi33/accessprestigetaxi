@@ -22,20 +22,20 @@ export function SiteHeader() {
   ] as const;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+    <header aria-label={t("aria.header")} className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]">
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 lg:flex lg:justify-between lg:gap-5 xl:gap-6">
         <Link
           to="/"
           className="flex min-w-0 items-center leading-none lg:shrink-0"
           onClick={() => setOpen(false)}
-          aria-label="Access Prestige Taxi"
+          aria-label={t("aria.logo_home")}
         >
           <span className="truncate whitespace-nowrap lg:overflow-visible font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground sm:text-sm sm:tracking-[0.12em] lg:text-base lg:tracking-[0.2em]">
             Access <span className="text-primary">Prestige</span> Taxi
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-4 lg:flex xl:gap-6">
+        <nav aria-label={t("aria.nav_main")} className="hidden items-center gap-4 lg:flex xl:gap-6">
           {links.map((l) => (
             <Link
               key={l.to}
@@ -69,7 +69,7 @@ export function SiteHeader() {
           ))}
           <Link
             to="/client/login"
-            aria-label="Espace client"
+            aria-label={t("aria.client_space")}
             className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-sm font-semibold transition hover:border-primary lg:px-3"
           >
             <UserCircle2 className="h-4 w-4 shrink-0 text-primary" />
@@ -101,7 +101,7 @@ export function SiteHeader() {
           <LanguageSwitcher className="site-header-language shrink-0" />
           <button
             type="button"
-            aria-label="Menu"
+            aria-label={open ? t("aria.close_menu") : t("aria.open_menu")}
             onClick={() => setOpen((v) => !v)}
             className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-border"
           >
@@ -112,7 +112,7 @@ export function SiteHeader() {
 
       {open && (
         <div className="border-t border-border bg-background lg:hidden">
-          <nav className="flex flex-col px-4 py-2">
+          <nav aria-label={t("aria.nav_mobile")} className="flex flex-col px-4 py-2">
             {links.map((l) => (
               <Link
                 key={l.to}
