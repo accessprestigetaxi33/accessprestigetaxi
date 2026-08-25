@@ -174,6 +174,18 @@ function RootShell({ children, lang }: { children: ReactNode; lang: string }) {
   );
 }
 
+// Landmark <main> localisé : doit vivre SOUS I18nProvider pour que l'aria-label
+// suive la langue active (RootComponent rend le provider, il ne peut pas le lire).
+function LocalizedMain({ children }: { children: ReactNode }) {
+  const t = useT();
+  return (
+    <main id="main-content" className="flex-1 pb-[var(--mobile-action-bar-h,0px)]" aria-label={t("aria.main")}>
+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      {children}
+    </main>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -193,10 +205,9 @@ function RootComponent() {
           <div className="flex min-h-screen flex-col bg-background">
             <SiteHeader />
             <ServiceStrip />
-            <main id="main-content" className="flex-1 pb-[var(--mobile-action-bar-h,0px)]" aria-label={t("aria.main")}>
-              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <LocalizedMain>
               <Outlet />
-            </div>
+            </LocalizedMain>
             <SiteFooter />
             <WhatsAppFloat />
           </div>
