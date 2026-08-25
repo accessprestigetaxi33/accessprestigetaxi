@@ -246,6 +246,12 @@ function addMinutes(d: Date, min: number) {
   return new Date(d.getTime() + min * 60_000);
 }
 
+/** Délai minimum entre "maintenant" et l'heure de prise en charge choisie.
+ * Valeur unique utilisée à la fois pour le champ `min` affiché et pour la
+ * validation réelle au submit — avant, ces deux endroits (+ le message
+ * d'erreur) affichaient des chiffres différents (15 / 20 / 60 min). */
+const MIN_LEAD_MINUTES = 20;
+
 /**
  * Décalage Europe/Paris (en minutes, +60 CET / +120 CEST) à un instant UTC
  * donné. Calculé via Intl (pas de dépendance externe) donc fiable quel que
@@ -307,6 +313,7 @@ function formatWhen(value: string, lang: Lang) {
   const d = parisStringToDate(value);
   if (isNaN(d.getTime())) return value;
   return new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "fr-FR", {
+    timeZone: "Europe/Paris",
     weekday: "short",
     day: "numeric",
     month: "long",
@@ -371,7 +378,7 @@ function Stepper({
           aria-label={`${label} -1`}
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition active:scale-95 disabled:opacity-40"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -381,7 +388,7 @@ function Stepper({
           aria-label={`${label} +1`}
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition active:scale-95 disabled:opacity-40"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -396,7 +403,7 @@ function Chip({ active, onClick, children }: { active?: boolean; onClick: () => 
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition active:scale-[0.98] ${
+      className={`inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition active:scale-[0.98] [touch-action:manipulation] ${
         active
           ? "border-primary bg-primary text-primary-foreground shadow-sm"
           : "border-border bg-background/70 text-foreground hover:border-primary/60 hover:bg-primary/5"
@@ -521,7 +528,7 @@ export function BookingStudio() {
 
   // Recalculé à chaque rendu (pas de useMemo figé au montage) : un `min` périmé
   // combiné à `step` désynchronise la validation native et bloque le submit iOS.
-  const getMinWhen = () => parisLocalValue(addMinutes(new Date(), 15));
+  const getMinWhen = () => parisLocalValue(addMinutes(new Date(), MIN_LEAD_MINUTES));
 
   const OPTION_LIST = useMemo(
     () => [
@@ -656,7 +663,19 @@ export function BookingStudio() {
       toast.error(L.err_email);
       return;
     }
-    if (parisStringToDate(when).getTime() < Date.now() - 60 * 60_000) {
+    // Si un raccourci ("Dès que possible" / "Dans 1h" / "Demain 08:00") est
+    // encore actif, on recalcule l'heure à l'instant présent plutôt que
+    // d'utiliser la valeur figée au moment du clic sur le chip — sinon un
+    // client qui met plusieurs minutes à remplir le formulaire peut se
+    // retrouver avec une heure déjà dépassée, rejetée silencieusement plus
+    // bas sans qu'il comprenne pourquoi "Réserver" ne fait rien.
+    let effectiveWhen = when;
+    if (quickWhen === "asap") effectiveWhen = parisLocalValue(addMinutes(new Date(), 30));
+    else if (quickWhen === "1h") effectiveWhen = parisLocalValue(addMinutes(new Date(), 60));
+    else if (quickWhen === "tomorrow") effectiveWhen = tomorrow8();
+    if (effectiveWhen !== when) setWhen(effectiveWhen);
+
+    if (parisStringToDate(effectiveWhen).getTime() < Date.now() + MIN_LEAD_MINUTES * 60_000) {
       toast.error(L.err_past);
       return;
     }
@@ -681,7 +700,7 @@ export function BookingStudio() {
             depart_coord: departCoord,
             arrivee,
             arrivee_coord: arriveeCoord,
-            pickup_datetime: `${when}:00`,
+            pickup_datetime: `${effectiveWhen}:00`,
             passagers: pax,
             bagages: bags,
             nom: nom.trim(),
@@ -949,8 +968,16 @@ export function BookingStudio() {
 
       {/* noValidate : la validation native HTML5 (step/min) bloque silencieusement
           le submit sur iOS Safari sans aucun message. Toute la validation est déjà
-          faite dans onSubmit avec des toasts explicites. */}
-      <form noValidate onSubmit={onSubmit} className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+          faite dans onSubmit avec des toasts explicites.
+          onTouchStart (no-op) : iOS Safari n'applique les styles :active que si un
+          listener tactile existe quelque part dans l'arbre — sans ça, les boutons
+          (chips, steppers, swap…) restent visuellement inertes au tap. */}
+      <form
+        noValidate
+        onSubmit={onSubmit}
+        onTouchStart={() => {}}
+        className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]"
+      >
         <div className="space-y-5">
           {/* 1 — trajet */}
           <SectionCard step={1} icon={<MapPin className="h-5 w-5" />} title={L.trip}>
@@ -987,7 +1014,7 @@ export function BookingStudio() {
                   type="button"
                   onClick={swap}
                   aria-label={L.swap}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background transition hover:border-primary hover:text-primary active:scale-95"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background transition hover:border-primary hover:text-primary active:scale-95 [touch-action:manipulation]"
                 >
                   <ArrowDownUp className="h-4 w-4" />
                 </button>
@@ -1184,7 +1211,13 @@ export function BookingStudio() {
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-4">
             {QuotePanel}
-            <Button type="submit" size="lg" disabled={submitting} aria-disabled={!canSubmit} className="w-full">
+            <Button
+              type="submit"
+              size="lg"
+              disabled={submitting}
+              aria-disabled={!canSubmit}
+              className="w-full [touch-action:manipulation]"
+            >
               {submitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -1214,7 +1247,24 @@ export function BookingStudio() {
                 {quote.loading ? "…" : priceLabel ? `≈ ${priceLabel}` : "—"}
               </p>
             </div>
-            <Button type="submit" size="lg" disabled={submitting} aria-disabled={!canSubmit} className="shrink-0">
+            <Button
+              type="submit"
+              size="lg"
+              disabled={submitting}
+              aria-disabled={!canSubmit}
+              className="shrink-0 [touch-action:manipulation]"
+              onTouchStart={() => {
+                // iOS Safari : si un champ (tel/note/email…) a encore le focus,
+                // le premier tap sur ce bouton se contente de fermer le clavier
+                // (blur) et le clic ne se déclenche pas — la page paraît figée.
+                // On force le blur nous-mêmes juste avant, pour que le tap
+                // fonctionne dès le premier essai.
+                const active = document.activeElement as HTMLElement | null;
+                if (active && active !== document.body && typeof active.blur === "function") {
+                  active.blur();
+                }
+              }}
+            >
               {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : L.submit}
             </Button>
           </div>
