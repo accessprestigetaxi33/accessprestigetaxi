@@ -3,12 +3,12 @@ import { useI18n } from "@/i18n/I18nProvider";
 
 const COPY = {
   fr: [
-    { icon: HeartPulse, label: "Transport santé conventionné" },
+    { icon: HeartPulse, label: "Transport santé conventionné", hidden: true },
     { icon: RouteIcon, label: "Toutes distances, en électrique" },
     { icon: Award, label: "20 ans d'expérience" },
   ],
   en: [
-    { icon: HeartPulse, label: "Covered medical transport" },
+    { icon: HeartPulse, label: "Covered medical transport", hidden: true },
     { icon: RouteIcon, label: "Any distance, fully electric" },
     { icon: Award, label: "20 years of experience" },
   ],
@@ -17,7 +17,7 @@ const COPY = {
 /** Bandeau visible sur toutes les pages publiques du site. */
 export function ServiceStrip({ className = "" }: { className?: string }) {
   const { lang } = useI18n();
-  const items = lang === "en" ? COPY.en : COPY.fr;
+  const items = (lang === "en" ? COPY.en : COPY.fr).filter((item) => !("hidden" in item && item.hidden));
 
   return (
     <div className={`border-b border-foreground/10 ${className}`} style={{ backgroundImage: "var(--gradient-gold)" }}>
