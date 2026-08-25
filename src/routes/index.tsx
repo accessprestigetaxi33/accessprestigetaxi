@@ -10,14 +10,11 @@ import {
   ArrowRight,
   Award,
   Baby,
-  BadgeCheck,
   Bell,
   BriefcaseBusiness,
   Car,
   CheckCircle2,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Crown,
   Gem,
@@ -25,7 +22,6 @@ import {
   Phone,
   ShieldCheck,
   Smartphone,
-  Star,
   Stethoscope,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -132,36 +128,6 @@ const FLEET_VALUES_EN = [
   { icon: HeartHandshake, title: "Attention", text: "Personalised care and service on every ride." },
 ] as const;
 
-const REVIEWS_FR = [
-  {
-    name: "Jessica Roquejoffre",
-    text: "Patricia et Alain sont toujours très agréables et disponibles à l'heure. Cela fait plus de 6 ans que je suis cliente, je vous conseille vraiment.",
-  },
-  {
-    name: "I GO",
-    text: "3 jours en taxi : visite du Cap Ferret, de Bordeaux et des alentours. Service impeccable, une personne très professionnelle et agréable.",
-  },
-  {
-    name: "enrico boto",
-    text: "Patricia, disponible, ponctuelle et serviable. Voiture toujours propre et agréable, qui rend chaque déplacement plaisant.",
-  },
-] as const;
-
-const REVIEWS_EN = [
-  {
-    name: "Jessica Roquejoffre",
-    text: "Patricia and Alain are always lovely and on time. I've been a client for more than 6 years — I highly recommend them.",
-  },
-  {
-    name: "I GO",
-    text: "3 days by taxi: Cap Ferret, Bordeaux and the surrounding area. Impeccable service, a very professional and pleasant person.",
-  },
-  {
-    name: "enrico boto",
-    text: "Patricia is available, punctual and helpful. The car is always clean and pleasant, making every ride enjoyable.",
-  },
-] as const;
-
 const HERO_PILLARS_FR = [
   { icon: Crown, label: "Élégance" },
   { icon: Gem, label: "Discrétion" },
@@ -220,15 +186,6 @@ const COPY = {
           "Également disponible pour les mariages, événements et sorties en groupe en Charente-Maritime.",
         ],
       },
-    ],
-    reviewsEyebrow: "Avis clients",
-    reviewsTitle: "Ils nous font confiance",
-    reviewsVerified: "Avis vérifié",
-    reviewsLink: "Voir tous les avis",
-    reviewsDetails: [
-      "Des avis vérifiés laissés par nos clients après un transfert aéroport, un transport médical conventionné ou une mise à disposition.",
-      "Une note élevée saluant la ponctualité, le confort des véhicules électriques et la discrétion de nos chauffeurs Alain et Patricia.",
-      "Votre avis compte : partagez votre expérience pour aider d'autres voyageurs en Charente-Maritime.",
     ],
     howEyebrow: "Comment réserver ?",
     howTitle: "Réserver en toute simplicité",
@@ -339,15 +296,6 @@ const COPY = {
           "Also available for weddings, events and group outings across Charente-Maritime.",
         ],
       },
-    ],
-    reviewsEyebrow: "Client reviews",
-    reviewsTitle: "They trust us",
-    reviewsVerified: "Verified review",
-    reviewsLink: "See all reviews",
-    reviewsDetails: [
-      "Verified reviews from clients after an airport transfer, covered medical transport or a chauffeur service.",
-      "A high rating praising punctuality, the comfort of our electric vehicles and the discretion of drivers Alain and Patricia.",
-      "Your review matters: share your experience to help other travellers across Charente-Maritime.",
     ],
     howEyebrow: "How to book?",
     howTitle: "Booking made simple",
@@ -552,82 +500,12 @@ function LearnMoreToggle({ lang, details }: { lang: "fr" | "en"; details: readon
   );
 }
 
-function ReviewsCarousel({
-  reviews,
-  verifiedLabel,
-  reserveLabel,
-}: {
-  reviews: readonly { name: string; text: string }[];
-  verifiedLabel: string;
-  reserveLabel: string;
-}) {
-  const [trackRef, setTrackRef] = useState<HTMLDivElement | null>(null);
-
-  const scrollByCard = (dir: 1 | -1) => {
-    if (!trackRef) return;
-    const card = trackRef.querySelector("[data-review-card]") as HTMLElement | null;
-    const amount = (card?.offsetWidth ?? 300) + 16;
-    trackRef.scrollBy({ left: dir * amount, behavior: "smooth" });
-  };
-
-  return (
-    <div className="relative mt-10">
-      <div
-        ref={setTrackRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {reviews.map((r) => (
-          <article
-            key={r.name}
-            data-review-card
-            className={`w-[85%] shrink-0 snap-start p-6 text-left sm:w-[360px] ${CARD}`}
-          >
-            <div className="flex items-center gap-0.5" aria-hidden="true">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-              ))}
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-card-foreground">“{r.text}”</p>
-            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-              <BadgeCheck className="h-4 w-4 text-primary" aria-hidden="true" />
-              <span className="font-semibold text-card-foreground">{r.name}</span>
-              <span>·</span>
-              <span>{verifiedLabel}</span>
-            </div>
-            <ReserveButton label={reserveLabel} className="mt-4" />
-          </article>
-        ))}
-      </div>
-
-      <div className="mt-4 flex justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => scrollByCard(-1)}
-          aria-label="Précédent"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground transition hover:border-primary hover:text-primary"
-        >
-          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          onClick={() => scrollByCard(1)}
-          aria-label="Suivant"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground transition hover:border-primary hover:text-primary"
-        >
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
   const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
   const pillars = lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR;
-  const reviews = lang === "en" ? REVIEWS_EN : REVIEWS_FR;
 
   return (
     <main>
@@ -792,45 +670,25 @@ function Index() {
         </div>
       </section>
 
-      {/* 4. AVIS CLIENTS — présent sur le document */}
-      <section id="avis" className={`${NIGHT_SECTION} py-20`}>
-        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewsEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
-              {c.reviewsTitle}
-            </h2>
-          </Reveal>
-
-          <Reveal delay={0.08}>
-            <ReviewsCarousel reviews={reviews} verifiedLabel={c.reviewsVerified} reserveLabel={c.reserveCta} />
-          </Reveal>
-
-          <Reveal delay={0.12}>
-            <div className="mt-6 flex justify-center">
-              <Link
-                to="/avis"
-                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-              >
-                {c.reviewsLink} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-            <div className="mt-2 flex justify-center text-center">
-              <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.reviewsDetails} />
-            </div>
-          </Reveal>
-
-          <div className="mt-10">
-            <ClientTrust>
-              <div className="mx-auto max-w-2xl border-t border-border pt-10">
-                <div className="rounded-2xl border border-border bg-card p-6">
-                  <ReviewForm />
-                </div>
-              </div>
-            </ClientTrust>
+      {/* 4. AVIS CLIENTS — section unique : note moyenne, avis vérifiés, réassurance et formulaire */}
+      <div id="avis" className={NIGHT_SECTION}>
+        <ClientTrust>
+          <div className="flex justify-center">
+            <Link
+              to="/avis"
+              className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+            >
+              {lang === "en" ? "See all reviews" : "Voir tous les avis"}{" "}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
-        </div>
-      </section>
+          <div className="mx-auto mt-10 max-w-2xl border-t border-border pt-10">
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <ReviewForm />
+            </div>
+          </div>
+        </ClientTrust>
+      </div>
 
       {/* 5. COMMENT RÉSERVER — ajouté comme demandé */}
       <section className={`${NIGHT_SECTION} py-20`}>
