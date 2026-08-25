@@ -11,15 +11,20 @@ import {
   Baby,
   BriefcaseBusiness,
   Phone,
-  PlaneTakeoff,
   Stethoscope,
   Bell,
-  Leaf,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Play,
   Pause,
   FileText,
+  Crown,
+  Gem,
+  Award,
+  Clock,
+  ShieldCheck,
+  HeartHandshake,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { SERVICE_CARDS_FR, SERVICE_CARDS_EN } from "@/data/services-cards";
@@ -158,6 +163,75 @@ const heroSlides = (lang: "fr" | "en") => {
   ];
 };
 
+// Bloc "Nos engagements" demandé par Alain & Patricia : deux piliers d'offre
+// (médical conventionné / prestige-privé) avec un détail dépliable "En savoir plus".
+const ENGAGEMENTS_FR = [
+  {
+    icon: Stethoscope,
+    title: "Transport médical conventionné",
+    lead: "Un accompagnement humain, serein et professionnel.",
+    details: [
+      "Nous assurons votre trajet avec bienveillance et ponctualité, conventionné CPAM.",
+      "Tiers payant sur présentation de bon de transport.",
+      "Transport personnalisé pour vos consultations, hospitalisations, dialyses, chimiothérapies...",
+      "Accompagnement de la porte à porte, toutes distances.",
+    ],
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: "Prestige & Privé",
+    lead: "Vos déplacements méritent mieux qu'un simple trajet.",
+    details: [
+      "Transferts gares et aéroports, longues distances, déplacements professionnels, événements, mariages, tourisme et mise à disposition.",
+      "Accueil personnalisé : vol ou train suivi en temps réel, votre chauffeur ajuste l'heure de prise en charge, pancarte à votre nom.",
+      "Déplacements professionnels et privés : ponctualité et discrétion.",
+      "Mise à disposition avec chauffeur à partir d'une demi-journée.",
+      "Transport de groupe, toutes distances.",
+    ],
+  },
+] as const;
+
+const ENGAGEMENTS_EN = [
+  {
+    icon: Stethoscope,
+    title: "Covered medical transport",
+    lead: "Human, reassuring and professional support.",
+    details: [
+      "We handle your ride with care and punctuality, covered by CPAM.",
+      "Third-party payment on presentation of a transport voucher.",
+      "Personalised transport for consultations, hospital stays, dialysis, chemotherapy...",
+      "Door-to-door support, all distances.",
+    ],
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: "Prestige & Private",
+    lead: "Your journeys deserve more than a simple ride.",
+    details: [
+      "Station and airport transfers, long distances, business travel, events, weddings, tourism and chauffeur services.",
+      "Personalised welcome: flight or train tracked in real time, your driver adjusts pickup time, name board on arrival.",
+      "Business and private travel: punctuality and discretion.",
+      "Chauffeur service from half a day.",
+      "Group transport, all distances.",
+    ],
+  },
+] as const;
+
+// Bloc "Chaque détail compte" (section flotte) : 4 engagements courts avec pictogramme.
+const FLEET_VALUES_FR = [
+  { icon: Clock, title: "Ponctualité", text: "Nous sommes là quand vous comptez sur nous." },
+  { icon: Gem, title: "Discrétion", text: "Une présence professionnelle et respectueuse." },
+  { icon: ShieldCheck, title: "Confort", text: "Des voitures haut de gamme et parfaitement entretenues." },
+  { icon: HeartHandshake, title: "Attention", text: "Une écoute et un service personnalisé pour chaque trajet." },
+] as const;
+
+const FLEET_VALUES_EN = [
+  { icon: Clock, title: "Punctuality", text: "We're there when you count on us." },
+  { icon: Gem, title: "Discretion", text: "A professional and respectful presence." },
+  { icon: ShieldCheck, title: "Comfort", text: "Premium vehicles, perfectly maintained." },
+  { icon: HeartHandshake, title: "Attention", text: "Personalised care and service on every ride." },
+] as const;
+
 const HERO_SLIDE_DURATION_MS = 6000;
 
 /** Fait défiler les slides, sauf si l'utilisateur préfère un mouvement réduit ou a choisi un véhicule. */
@@ -190,27 +264,26 @@ function useHeroSlideshow(count: number, durationMs: number) {
   return { index, canAnimate, select, next, prev, paused, togglePause };
 }
 
-// Cases du hero : reprennent les pictogrammes et mentions de la bannière photo.
+// Cases du hero : Élégance / Discrétion / Exigence — demandé par Alain & Patricia
+// pour remplacer la rangée de services par les trois valeurs de la marque.
 const HERO_PILLARS_FR = [
-  { icon: Stethoscope, label: "Transport conventionné" },
-  { icon: PlaneTakeoff, label: "Transferts gares & aéroports" },
-  { icon: BriefcaseBusiness, label: "Déplacements professionnels" },
-  { icon: Leaf, label: "100 % électrique" },
+  { icon: Crown, label: "Élégance" },
+  { icon: Gem, label: "Discrétion" },
+  { icon: Award, label: "Exigence" },
 ] as const;
 
 const HERO_PILLARS_EN = [
-  { icon: Stethoscope, label: "Covered medical transport" },
-  { icon: PlaneTakeoff, label: "Station & airport transfers" },
-  { icon: BriefcaseBusiness, label: "Business travel" },
-  { icon: Leaf, label: "100% electric" },
+  { icon: Crown, label: "Elegance" },
+  { icon: Gem, label: "Discretion" },
+  { icon: Award, label: "Excellence" },
 ] as const;
 
 const COPY = {
   fr: {
-    h1: "L'excellence, sans compromis",
-    tagline: SLOGAN_FR,
-    lead: "Deux chauffeurs, un seul niveau d'exigence : silence électrique de la BMW iX1 et de l'Audi Q6 e-tron, espace du van Mercedes classe V 8 places, transport santé conventionné — toutes distances, en Charente-Maritime.",
-    ctaBook: "Réserver ma course",
+    h1: "L'élégance de votre trajet",
+    tagline: "Votre confort, notre priorité",
+    lead: "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails.",
+    ctaBook: "Réserver mon trajet",
     ctaCall: "Appeler",
     callPrefix: "Appeler",
     driversEyebrow: "Nos deux chauffeurs",
@@ -282,26 +355,26 @@ const COPY = {
         d: "Van Mercedes, bagages inclus, un seul véhicule pour tout le monde.",
       },
     ],
-    howEyebrow: "Comment ça marche",
-    howTitle: "Trois étapes, une minute",
+    howEyebrow: "Comment réserver ?",
+    howTitle: "Réserver en toute simplicité",
     how: [
       {
         s: "1",
         img: photoStepVoice,
-        t: "Vous décrivez le trajet",
-        d: "À la voix ou à l'écrit : départ, arrivée, date, heure et siège enfant.",
+        t: "Réservez en ligne ou par téléphone",
+        d: "En quelques clics sur le site, ou par un appel direct à votre chauffeur.",
       },
       {
         s: "2",
         img: photoStepConfirm,
-        t: "Nous confirmons",
-        d: "Prix annoncé et chauffeur assigné, confirmation par e-mail.",
+        t: "Recevez une confirmation",
+        d: "Prix annoncé et chauffeur assigné, confirmation immédiate.",
       },
       {
         s: "3",
         img: photoStepTrack,
-        t: "Vous suivez la course",
-        d: "Lien de suivi en temps réel, puis reçu détaillé à l'arrivée.",
+        t: "Votre chauffeur vous prend en charge",
+        d: "À l'heure convenue, où que vous soyez.",
       },
     ],
     clientEyebrow: "Espace client",
@@ -320,10 +393,10 @@ const COPY = {
     ctaText: "Réservez en moins d'une minute, à la voix ou à l'écrit.",
   },
   en: {
-    h1: "Excellence, without compromise",
-    tagline: SLOGAN_EN,
-    lead: "Two drivers, one shared standard: electric silence in the BMW iX1 and Audi Q6 e-tron, space in the 8-seat Mercedes V-Class van, covered medical transport with wheelchair access — all distances, across Charente-Maritime.",
-    ctaBook: "Book a ride",
+    h1: "The elegance of your journey",
+    tagline: "Your comfort, our priority",
+    lead: "Premium transport and covered medical transport across Charente-Maritime. Personalised care, premium vehicles and a service considered down to the smallest detail.",
+    ctaBook: "Book my ride",
     ctaCall: "Call",
     callPrefix: "Call",
     driversEyebrow: "Our two drivers",
@@ -394,26 +467,26 @@ const COPY = {
         d: "Mercedes van, luggage included, one vehicle for everyone.",
       },
     ],
-    howEyebrow: "How it works",
-    howTitle: "Three steps, one minute",
+    howEyebrow: "How to book?",
+    howTitle: "Booking made simple",
     how: [
       {
         s: "1",
         img: photoStepVoice,
-        t: "Describe your ride",
-        d: "By voice or typing: pickup, drop-off, date, time and child seat.",
+        t: "Book online or by phone",
+        d: "A few clicks on the site, or a direct call to your driver.",
       },
       {
         s: "2",
         img: photoStepConfirm,
-        t: "We confirm",
-        d: "Quoted price and assigned driver, confirmed by email.",
+        t: "Receive a confirmation",
+        d: "Quoted price and assigned driver, confirmed instantly.",
       },
       {
         s: "3",
         img: photoStepTrack,
-        t: "Track your ride",
-        d: "Live tracking link, then a detailed receipt on arrival.",
+        t: "Your driver picks you up",
+        d: "At the agreed time, wherever you are.",
       },
     ],
     clientEyebrow: "Client area",
@@ -607,6 +680,9 @@ function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
   const alain = DRIVERS.find((d) => d.name === "Alain");
+  const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
+  const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
+  const [openEngagement, setOpenEngagement] = useState<number | null>(null);
 
   const slides = useMemo(() => heroSlides(lang === "en" ? "en" : "fr"), [lang]);
   const {
@@ -703,6 +779,9 @@ function Index() {
             <h1 className="font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl text-balance">
               {c.h1}
             </h1>
+            <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
+              {c.tagline}
+            </p>
 
             <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">{c.lead}</p>
 
@@ -718,14 +797,14 @@ function Index() {
                   key={d.tel}
                   href={`tel:${d.tel}`}
                   aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                  className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground transition duration-300 hover:scale-[1.03] hover:border-primary active:scale-[0.98]"
+                  className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border-2 border-primary bg-[#0a0a0c] px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.03] hover:bg-black active:scale-[0.98]"
                 >
                   <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                   <span className="flex flex-col items-start leading-tight">
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-white/70">
                       {c.callPrefix} {d.name}
                     </span>
-                    <span className="text-sm font-semibold tabular-nums text-foreground">{d.display}</span>
+                    <span className="text-sm font-semibold tabular-nums text-white">{d.display}</span>
                   </span>
                 </a>
               ))}
@@ -1037,6 +1116,98 @@ function Index() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+
+          {/* NOTRE FLOTTE — "chaque détail compte" : 4 engagements courts + mention sièges enfants */}
+          <div className="mt-14 w-full border-t border-border pt-10">
+            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">
+              {lang === "en" ? "Our fleet" : "Notre flotte"}
+            </p>
+            <h3 className="mt-3 text-center font-display text-2xl font-semibold text-foreground sm:text-3xl text-balance">
+              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
+            </h3>
+            <p className="mt-2 text-center text-sm text-muted-foreground">
+              {lang === "en" ? "Every detail matters." : "Chaque détail compte."}
+            </p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {fleetValues.map((v) => (
+                <div key={v.title} className={`p-5 text-center ${CARD}`}>
+                  <v.icon className="mx-auto h-7 w-7 text-primary" aria-hidden="true" />
+                  <h4 className="mt-3 font-display text-base font-semibold text-card-foreground">{v.title}</h4>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{v.text}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mx-auto mt-6 flex max-w-md items-center justify-center gap-2 text-center text-xs text-muted-foreground">
+              <Baby className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              {lang === "en"
+                ? "Baby seats and booster seats available on request."
+                : "Sièges bébé et rehausseurs disponibles sur demande."}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* NOS ENGAGEMENTS — demandé par Alain & Patricia : les deux piliers de l'offre
+          (médical conventionné / prestige-privé), chacun avec un détail dépliable. */}
+      <section className="border-t border-border bg-background py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">
+              {lang === "en" ? "Our commitments" : "Nos engagements"}
+            </p>
+          </Reveal>
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            {engagements.map((e, i) => {
+              const isOpen = openEngagement === i;
+              return (
+                <Reveal key={e.title} delay={i * 0.08}>
+                  <div className={`h-full p-7 sm:p-8 ${CARD}`}>
+                    <e.icon className="h-9 w-9 text-primary" aria-hidden="true" />
+                    <h3 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
+                      {e.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
+                    <button
+                      type="button"
+                      onClick={() => setOpenEngagement(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      className="mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition duration-300 hover:bg-primary hover:text-primary-foreground"
+                    >
+                      {isOpen
+                        ? lang === "en"
+                          ? "Show less"
+                          : "Voir moins"
+                        : lang === "en"
+                          ? "Learn more"
+                          : "En savoir plus"}
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                        aria-hidden="true"
+                      />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.ul
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-sm leading-relaxed text-muted-foreground"
+                        >
+                          {e.details.map((d) => (
+                            <li key={d} className="flex gap-2">
+                              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                              {d}
+                            </li>
+                          ))}
+                        </motion.ul>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1389,6 +1560,17 @@ function Index() {
             ))}
           </ol>
 
+          <Reveal delay={0.24}>
+            <div className="mt-8 flex justify-center">
+              <Link
+                to="/reserver"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+              >
+                {c.ctaBook} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </Reveal>
+
           {/* Suivi/appli + espace client : condensés en une bande unique plutôt qu'en deux
               sections séparées, avec un lien vers la page Réserver pour l'activation détaillée */}
           <Reveal delay={0.16}>
@@ -1492,7 +1674,20 @@ function Index() {
         </div>
       </section>
 
-      {/* AVIS — réassurance, avis clients et dépôt d'avis réunis en une seule section */}
+      {/* AVIS — réassurance, avis clients et dépôt d'avis réunis en une seule section.
+          NOTE : Alain/Patricia veulent n'afficher que 2-3 avis + un lien "voir tous les
+          avis" — ça se règle dans ClientTrust.tsx (composant non fourni ici), pas dans
+          cette page. */}
+      <section className="border-t border-border bg-background pt-16">
+        <Reveal>
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">
+            {lang === "en" ? "Client reviews" : "Avis clients"}
+          </p>
+          <h2 className="mt-3 text-center font-display text-2xl font-semibold text-foreground sm:text-3xl text-balance">
+            {lang === "en" ? "They trust us" : "Ils nous font confiance"}
+          </h2>
+        </Reveal>
+      </section>
       <ClientTrust>
         <div className="mx-auto max-w-2xl border-t border-border pt-10">
           <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewEyebrow}</p>
