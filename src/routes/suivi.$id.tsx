@@ -40,7 +40,6 @@ import {
 } from "@/lib/chat.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { getTaxiSupabase } from "@/lib/taxi-supabase";
 
 export const Route = createFileRoute("/suivi/$id")({
   head: () => ({
@@ -1634,7 +1633,29 @@ function SuiviPage() {
           setError(t("suivi.not_found"));
         } else {
           const r = row as Reservation;
-          setReservation(r);
+          // Toasts statut/prix : repris ici (au lieu du payload postgres_changes,
+          // qui n'arrive jamais côté client public — voir note plus bas) en
+          // comparant à l'état précédent, quelle que soit la source du refresh
+          // (broadcast, polling, retour d'onglet, bouton "Rafraîchir").
+          setReservation((prev) => {
+            if (prev) {
+              if (prev.status !== r.status) {
+                if (r.status === "accepted") toast.success("✅ " + t("suivi.status.accepted") + " !");
+                else if (r.status === "en_route") toast.success("🚕 " + t("suivi.status.en_route") + " !");
+                else if (r.status === "arrived") toast.success("📍 " + t("suivi.status.arrived") + " !");
+                else if (r.status === "completed")
+                  toast.success("🏁 " + t("suivi.status.completed") + " — " + t("suivi.completed_title"));
+              }
+              if (
+                prev.prix_estime != null &&
+                r.prix_estime != null &&
+                Number(prev.prix_estime) !== Number(r.prix_estime)
+              ) {
+                toast.success(t("suivi.price_updated"));
+              }
+            }
+            return r;
+          });
           isCompletedRef.current = r.status === "completed";
           isCancelledRef.current = r.status === "cancelled";
           if (silent && !quiet) toast.success(t("suivi.status_refreshed"));
@@ -1649,7 +1670,7 @@ function SuiviPage() {
         setRefreshing(false);
       }
     },
-    [fetchReservation, id],
+    [fetchReservation, id, t],
   );
 
   useEffect(() => {
@@ -1691,35 +1712,102 @@ function SuiviPage() {
     };
   }, [reservation?.id, reservation?.duree_s, reservation?.status, recomputeDuration]);
 
-  // ── Fallback temps réel via Supabase Broadcast ──
-  // La table `reservations` n'expose aucune policy SELECT à `anon` (PII),
-  // donc les événements postgres_changes UPDATE ne sont jamais livrés au
-  // client public. Le driver déclenche un broadcast `suivi:<id>` après
-  // chaque changement (statut, itinéraire, prix, heure) — on l'écoute ici
-  // et on rafraîchit via la RPC SECURITY DEFINER qui contourne RLS.
+  // ── Temps réel via Supabase Broadcast, avec reconnexion + filet de sécurité ──
+  // La table `reservations` n'expose aucune policy SELECT à `anon` (PII), donc
+  // les événements postgres_changes UPDATE ne sont JAMAIS livrés au client
+  // public (RLS bloque anon en lecture) : ce canal-là ne peut pas marcher, on
+  // ne l'utilise plus (il servait avant à piloter le bandeau "hors ligne", ce
+  // qui le faisait s'afficher en permanence — surtout sur iPhone, où Safari
+  // coupe/zombifie les WebSocket en arrière-plan bien plus souvent que sur
+  // desktop, donc ce canal cassé passait en erreur beaucoup plus vite et
+  // beaucoup plus souvent → page qui semblait "bloquée").
+  //
+  // Le driver déclenche un broadcast `suivi:<id>` après chaque changement
+  // (statut, itinéraire, prix, heure) — on l'écoute ici et on rafraîchit via
+  // la RPC SECURITY DEFINER qui contourne RLS. On ajoute :
+  //  - une reconnexion automatique si le canal tombe en erreur/timeout,
+  //  - un resync (refetch + resubscribe) au retour d'onglet ET à la
+  //    restauration bfcache (pageshow), les deux cas où iOS a pu tuer la
+  //    connexion silencieusement,
+  //  - un polling léger (15s, onglet visible uniquement) en filet de sécurité
+  //    si le canal reste mort sans le signaler — même stratégie déjà utilisée
+  //    pour le chat plus haut dans ce fichier.
   useEffect(() => {
     if (!resolvedId) return;
-    const ch = (supabase as any)
-      .channel(`suivi:${resolvedId}`, { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "update" }, () => {
-        loadReservation(true, true);
-      })
-      .subscribe();
-    // Refresh au retour d'onglet (iOS suspend souvent la connexion realtime).
+    let destroyed = false;
+    let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+    let channel: any = null;
+
+    function subscribe() {
+      if (destroyed) return;
+      channel = (supabase as any)
+        .channel(`suivi:${resolvedId}`, { config: { broadcast: { self: false } } })
+        .on("broadcast", { event: "update" }, () => {
+          loadReservation(true, true);
+        })
+        .subscribe((status: string) => {
+          if (status === "SUBSCRIBED") {
+            setRealtimeOk(true);
+          } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+            setRealtimeOk(false);
+            if (!destroyed) {
+              retryTimeout = setTimeout(() => {
+                try {
+                  supabase.removeChannel(channel);
+                } catch {}
+                subscribe();
+              }, 5000);
+            }
+          }
+        });
+    }
+    subscribe();
+
+    // Throttle commun : pas plus d'un resync toutes les 3s (évite les rafales
+    // quand plusieurs événements arrivent d'un coup, ex. verrouillage/déverrouillage
+    // rapide de l'iPhone qui déclenche coup sur coup visibilitychange + pageshow).
+    const resync = () => {
+      if (Date.now() - lastUpdateRef.current < 3000) return;
+      loadReservation(true, true);
+      // On force aussi une reconnexion du canal : sur iOS, le WebSocket peut
+      // rester dans un état "zombie" (ni fermé ni fonctionnel) après une mise
+      // en arrière-plan prolongée, sans jamais déclencher CHANNEL_ERROR/CLOSED
+      // — un simple refetch de données ne suffit pas à réparer la connexion
+      // pour les prochains événements.
+      try {
+        supabase.removeChannel(channel);
+      } catch {}
+      subscribe();
+    };
     // On n'écoute PAS window.focus : sur mobile, ouvrir le clavier (input chat,
     // sélecteur) déclenche des blur/focus qui rappelaient loadReservation et
     // faisaient "clignoter" les statuts pendant la saisie d'un message.
-    // On ajoute aussi un throttle : pas plus d'un refresh toutes les 3s.
     const onVisible = () => {
       if (document.hidden) return;
-      if (Date.now() - lastUpdateRef.current < 3000) return;
-      loadReservation(true, true);
+      resync();
+    };
+    // pageshow avec persisted=true : la page a été restaurée depuis le bfcache
+    // de Safari (retour arrière) sans re-exécuter le JS au chargement — sans
+    // ça, une réservation ouverte puis mise en arrière-plan longtemps sur
+    // iPhone pouvait rester figée sur son dernier état connu.
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) resync();
     };
     document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("pageshow", onPageShow);
+
+    const poll = setInterval(() => {
+      if (!document.hidden) loadReservation(true, true);
+    }, 15000);
+
     return () => {
+      destroyed = true;
+      if (retryTimeout) clearTimeout(retryTimeout);
+      clearInterval(poll);
       document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("pageshow", onPageShow);
       try {
-        supabase.removeChannel(ch);
+        supabase.removeChannel(channel);
       } catch {}
     };
   }, [resolvedId, loadReservation]);
@@ -1742,10 +1830,14 @@ function SuiviPage() {
   }, [resolvedId]);
 
   // ── Realtime connection state ──
+  // realtimeOk/lastUpdateRef sont maintenant pilotés par le canal broadcast
+  // (voir plus haut) — le seul canal qui fonctionne réellement côté client
+  // public (le postgres_changes direct sur `reservations` est bloqué par RLS
+  // et a été retiré : c'est lui qui déclenchait le bandeau "hors ligne" en
+  // continu, surtout sur iPhone).
   const [realtimeOk, setRealtimeOk] = useState(true);
   const [staleMinutes, setStaleMinutes] = useState(0);
   const lastUpdateRef = useRef<number>(Date.now());
-  const channelRef = useRef<any>(null);
 
   const isCompletedRef = useRef(false);
   const isCancelledRef = useRef(false);
@@ -1763,95 +1855,6 @@ function SuiviPage() {
     }, 60000);
     return () => clearInterval(staleTimer);
   }, [loadReservation]);
-
-  // ── Real-time updates with auto-reconnect ──
-  // ⚠️ IMPORTANT : on utilise reservation?.id (le vrai id / clé primaire,
-  // résolu par le serveur via getReservationForFinPublic) et NON le param
-  // d'URL brut `id`. L'URL /suivi/$id peut contenir soit le vrai id, soit
-  // le suivi_id (lien public à expiration 30j) — c'est pour ça que le
-  // chargement initial passe par `{ key: id }` côté serveur, qui sait
-  // résoudre les deux. Le driver, lui, met à jour via `.eq("id", resa.id)`
-  // avec le vrai id. Si on filtre le Realtime sur le param URL brut alors
-  // que ce n'est pas le vrai id (cas suivi_id), le filtre Postgres
-  // `id=eq.<suivi_id>` ne matche jamais aucun UPDATE → aucune mise à jour
-  // temps réel ne remonte jamais, silencieusement.
-  useEffect(() => {
-    if (!resolvedId) return;
-
-    let destroyed = false;
-    let retryTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    function subscribe() {
-      if (destroyed) return;
-      const taxiSupabase = getTaxiSupabase();
-      const channel = taxiSupabase
-        .channel(`reservations:id=eq.${resolvedId}_${Date.now()}`)
-        .on(
-          "postgres_changes",
-          { event: "UPDATE", schema: "public", table: "reservations", filter: `id=eq.${resolvedId}` },
-          (payload: any) => {
-            try {
-              lastUpdateRef.current = Date.now();
-              setStaleMinutes(0);
-              const newRow = payload.new as Reservation;
-              if (!newRow) return;
-              const newStatus = newRow.status;
-              const newPrice = newRow.prix_estime;
-              setReservation((prev) => {
-                if (prev && prev.status !== newStatus) {
-                  if (newStatus === "accepted") toast.success("✅ " + t("suivi.status.accepted") + " !");
-                  else if (newStatus === "en_route") toast.success("🚕 " + t("suivi.status.en_route") + " !");
-                  else if (newStatus === "arrived") toast.success("📍 " + t("suivi.status.arrived") + " !");
-                  else if (newStatus === "completed")
-                    toast.success("🏁 " + t("suivi.status.completed") + " — " + t("suivi.completed_title"));
-                }
-                if (
-                  prev &&
-                  prev.prix_estime != null &&
-                  newPrice != null &&
-                  Number(prev.prix_estime) !== Number(newPrice)
-                ) {
-                  toast.success(t("suivi.price_updated"));
-                }
-                isCompletedRef.current = newRow.status === "completed";
-                isCancelledRef.current = newRow.status === "cancelled";
-                return newRow;
-              });
-            } catch (e) {
-              console.error("Real-time update error:", e);
-            }
-          },
-        )
-        .subscribe((status: string) => {
-          console.log("[suivi] Realtime status:", status);
-          if (status === "SUBSCRIBED") {
-            setRealtimeOk(true);
-          } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
-            setRealtimeOk(false);
-            // Reconnect after 5s
-            if (!destroyed) {
-              retryTimeout = setTimeout(() => {
-                try {
-                  taxiSupabase.removeChannel(channel);
-                } catch {}
-                subscribe();
-              }, 5000);
-            }
-          }
-        });
-      channelRef.current = channel;
-    }
-
-    subscribe();
-
-    return () => {
-      destroyed = true;
-      if (retryTimeout) clearTimeout(retryTimeout);
-      try {
-        getTaxiSupabase().removeChannel(channelRef.current);
-      } catch {}
-    };
-  }, [resolvedId]);
 
   if (loading) {
     return (
