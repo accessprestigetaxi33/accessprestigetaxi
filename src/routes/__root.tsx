@@ -40,7 +40,7 @@ function NotFoundComponent() {
           >
             Go home
           </Link>
-        </main>
+        </div>
       </div>
     </div>
   );
