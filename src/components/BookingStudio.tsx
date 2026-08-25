@@ -945,10 +945,9 @@ export function BookingStudio() {
         </ul>
       </header>
 
-      // noValidate : la validation native HTML5 (step/min) bloque silencieusement
-      // le submit sur iOS Safari sans aucun message. Toute la validation est déjà
-      // faite dans onSubmit avec des toasts explicites.
-      // eslint-disable-next-line react/jsx-no-comment-textnodes
+      {/* noValidate : la validation native HTML5 (step/min) bloque silencieusement
+          le submit sur iOS Safari sans aucun message. Toute la validation est déjà
+          faite dans onSubmit avec des toasts explicites. */}
       <form noValidate onSubmit={onSubmit} className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-5">
           {/* 1 — trajet */}
