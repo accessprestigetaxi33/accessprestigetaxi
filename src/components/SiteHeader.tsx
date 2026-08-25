@@ -14,7 +14,6 @@ export function SiteHeader() {
   if (location.pathname === "/driver") return null;
 
   const links = [
-    { to: "/services", label: t("nav.services") },
     { to: "/blog", label: t("nav.blog") },
     { to: "/a-propos", label: t("nav.about") },
     { to: "/devis", label: t("nav.quote") },
@@ -22,7 +21,10 @@ export function SiteHeader() {
   ] as const;
 
   return (
-    <header aria-label={t("aria.header")} className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+    <header
+      aria-label={t("aria.header")}
+      className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]"
+    >
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 lg:flex lg:justify-between lg:gap-5 xl:gap-6">
         <Link
           to="/"
@@ -117,7 +119,7 @@ export function SiteHeader() {
               <Link
                 key={l.to}
                 to={l.to}
-                  activeProps={{ className: "text-primary" }}
+                activeProps={{ className: "text-primary" }}
                 onClick={() => setOpen(false)}
                 className="border-b border-border/50 py-3.5 text-base font-medium text-foreground/85"
               >
