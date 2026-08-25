@@ -513,7 +513,7 @@ function Index() {
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
       <section className="relative isolate overflow-hidden border-b border-border bg-black">
-        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh]">
+        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -541,7 +541,7 @@ function Index() {
               </p>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{c.lead}</p>
 
-              <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+              <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link
                   to="/reserver"
                   className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
@@ -592,7 +592,7 @@ function Index() {
               {lang === "en" ? "Our commitments" : "Nos engagements"}
             </p>
           </Reveal>
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
             {engagements.map((e, i) => (
               <Reveal key={e.title} delay={i * 0.08}>
                 <div className={`h-full p-7 sm:p-8 ${CARD}`}>
@@ -623,7 +623,7 @@ function Index() {
             </p>
           </Reveal>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {c.vehicles.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.07}>
                 <article className={`overflow-hidden ${CARD}`}>
@@ -700,7 +700,7 @@ function Index() {
             </h2>
           </Reveal>
 
-          <ol className="mt-10 grid gap-6 md:grid-cols-3">
+          <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
                 <div className={`flex h-full flex-col p-6 ${CARD}`}>
