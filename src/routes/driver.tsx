@@ -2790,8 +2790,17 @@ function CourseCard({
                   <div
                     key={i}
                     className={`drv-route-opt${selectedRoute === i ? " selected" : ""}`}
+                    style={itinSaving ? { opacity: 0.5, pointerEvents: "none" } : undefined}
                     onClick={async () => {
+                      // Verrou anti-double-tap : sans ça, deux itinéraires tapés
+                      // rapidement (fréquent sur mobile, écran qui bouge) partaient
+                      // en parallèle et pouvaient se résoudre dans le désordre,
+                      // laissant en base un prix/distance différent de celui
+                      // affiché en local (selectedRoute). On réutilise le même
+                      // verrou que le bouton "Mettre à jour l'itinéraire".
+                      if (itinSaving) return;
                       setSelectedRoute(i);
+                      setItinSaving(true);
                       try {
                         window.localStorage.setItem(routeStorageKey, String(i));
                       } catch {}
@@ -2808,6 +2817,8 @@ function CourseCard({
                         onRefresh();
                       } catch (e: any) {
                         toast.error("Erreur mise à jour itinéraire : " + (e.message ?? e));
+                      } finally {
+                        setItinSaving(false);
                       }
                     }}
                   >
