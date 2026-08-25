@@ -807,14 +807,13 @@ function Index() {
           </Reveal>
 
           <Reveal delay={0.12}>
-            {/* TODO Rafifou : pointer ce bouton vers la page/lien qui liste tous les avis */}
             <div className="mt-6 flex justify-center">
-              <a
-                href="#avis"
+              <Link
+                to="/avis"
                 className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
               >
                 {c.reviewsLink} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </a>
+              </Link>
             </div>
             <div className="mt-2 flex justify-center text-center">
               <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.reviewsDetails} />
