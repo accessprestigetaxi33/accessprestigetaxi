@@ -788,7 +788,7 @@ function Index() {
             <div className="mt-8 flex w-full flex-col flex-wrap items-stretch justify-center gap-3 md:w-auto md:flex-row md:items-center md:mx-auto">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
+                className="inline-flex min-h-[48px] touch-manipulation items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-black transition duration-300 hover:scale-[1.03] hover:opacity-95 active:scale-[0.98]"
               >
                 {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
@@ -797,9 +797,10 @@ function Index() {
                   key={d.tel}
                   href={`tel:${d.tel}`}
                   aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                  className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border-2 border-primary bg-[#0a0a0c] px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.03] hover:bg-black active:scale-[0.98]"
+                  className="inline-flex min-h-[52px] touch-manipulation items-center justify-center gap-2.5 rounded-xl border-2 bg-black px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
+                  style={{ borderColor: "var(--gold)" }}
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  <Phone className="h-4 w-4 shrink-0" style={{ color: "var(--gold)" }} aria-hidden="true" />
                   <span className="flex flex-col items-start leading-tight">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-white/70">
                       {c.callPrefix} {d.name}
