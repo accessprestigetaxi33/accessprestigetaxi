@@ -8,10 +8,7 @@ import { BrandLoader } from "@/components/BrandLoader";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getClientSession, clearClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
-import {
-  listClientReservations,
-  type ClientReservation,
-} from "@/lib/client-reservations.functions";
+import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import logo from "@/assets/tcb-logo-badge.webp";
@@ -59,6 +56,7 @@ const COPY = {
     eyebrow: "Espace client",
     hello: (n: string) => `Bonjour ${n} 👋`,
     activeRide: "Course en cours",
+    nextRide: "Prochaine course",
     track: "Suivre en direct",
     details: "Détails",
     book: "Réserver une course",
@@ -68,12 +66,14 @@ const COPY = {
     chat: "Écrire à mon chauffeur",
     profile: "Mon profil",
     backSite: "← Site",
+    logout: "Déconnexion",
     you: "vous",
   },
   en: {
     eyebrow: "Client area",
     hello: (n: string) => `Hello ${n} 👋`,
     activeRide: "Ride in progress",
+    nextRide: "Next ride",
     track: "Track live",
     details: "Details",
     book: "Book a ride",
@@ -83,6 +83,7 @@ const COPY = {
     chat: "Message my driver",
     profile: "My profile",
     backSite: "← Website",
+    logout: "Log out",
     you: "there",
   },
 } as const;
@@ -101,16 +102,17 @@ function fmtDate(iso: string, lang: string = "fr") {
 
 const css = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
-  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; overscroll-behavior-y: contain;
+  html, body { margin: 0; padding: 0; height: 100%; min-height: 100dvh; overflow: hidden; overscroll-behavior-y: contain;
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   .cd-root { position: fixed; inset: 0; max-width: 640px; margin: 0 auto;
     display: flex; flex-direction: column;
-    background: linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%); }
+    height: -webkit-fill-available;
+    background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%); }
   .cd-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px; background: rgba(10,10,10,0.92);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .cd-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 16px 0; }
+  .cd-scroll { position: relative; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 16px 0; }
 `;
 
 export const Route = createFileRoute("/client/dashboard")({
@@ -122,7 +124,7 @@ export const Route = createFileRoute("/client/dashboard")({
         name: "viewport",
         content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
       },
-      { name: "theme-color", content: "#0f172a" },
+      { name: "theme-color", content: "#000000" },
     ],
   }),
   component: ClientDashboard,
@@ -161,32 +163,75 @@ function ClientDashboard() {
   // Lecture de `reservations` volontairement fermée côté RLS (aucune policy
   // SELECT pour anon / authenticated) : un abonnement postgres_changes ne
   // recevrait jamais de ligne. On écoute le broadcast `suivi:<id>` du chauffeur.
+  //
+  // On ne dépend plus de `rows` (référence qui change à chaque reload) mais
+  // de la liste d'ids sous forme de string stable, sinon les canaux étaient
+  // détruits/recréés en boucle. Sur iPhone, Safari coupe le WebSocket quand
+  // l'app passe en arrière-plan (changement d'onglet, verrouillage, etc.) ;
+  // sans réabonnement au retour au premier plan, la page restait figée avec
+  // des données périmées, ce qui donnait l'impression d'un blocage.
+  const rideIdsKey = useMemo(() => (rows ?? []).map((r) => r.id).join(","), [rows]);
+
   useEffect(() => {
-    if (!session || !rows || rows.length === 0) return;
+    if (!session || !rideIdsKey) return;
     const token = session.token;
-    const ids = rows.map((r) => r.id);
+    const ids = rideIdsKey.split(",");
+
     const reload = () => {
       listClientReservations({ data: { token } })
         .then(setRows)
         .catch(() => {});
     };
-    const channels = ids.map((id) => {
-      const ch = (supabase as any).channel(`suivi:${id}`, {
-        config: { broadcast: { self: false } },
+
+    const subscribe = () =>
+      ids.map((id) => {
+        const ch = (supabase as any).channel(`suivi:${id}`, {
+          config: { broadcast: { self: false } },
+        });
+        ch.on("broadcast", { event: "update" }, reload).subscribe();
+        return ch;
       });
-      ch.on("broadcast", { event: "update" }, reload).subscribe();
-      return ch;
-    });
+
+    let channels = subscribe();
+
+    // Au retour au premier plan (iPhone verrouillé / app en arrière-plan),
+    // on force un rechargement et on ré-ouvre les canaux au cas où le
+    // WebSocket ait été fermé silencieusement par iOS.
+    const handleVisibility = () => {
+      if (document.visibilityState !== "visible") return;
+      reload();
+      channels.forEach((ch) => supabase.removeChannel(ch));
+      channels = subscribe();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pageshow", handleVisibility);
+
     return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pageshow", handleVisibility);
       channels.forEach((ch) => supabase.removeChannel(ch));
     };
-  }, [session, rows]);
+  }, [session, rideIdsKey]);
 
   const greeting = useMemo(() => session?.name?.split(" ")[0] || c.you, [session]);
   const activeRide = rows?.find((r) => ACTIVE_STATUSES.has(r.status));
-  const nextRide = rows?.find((r) => ["pending", "accepted"].includes(r.status));
+  const nextRide = rows?.find((r) => ["pending", "accepted"].includes(r.status) && r.id !== activeRide?.id);
 
-  if (!ready || !session) return null;
+  const handleLogout = () => {
+    clearClientSession();
+    navigate({ to: "/client/login" });
+  };
+
+  if (!ready || !session) {
+    return (
+      <>
+        <style dangerouslySetInnerHTML={{ __html: css }} />
+        <div className="cd-root" style={{ alignItems: "center", justifyContent: "center" }}>
+          <BrandLoader />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -216,316 +261,390 @@ function ClientDashboard() {
             >
               {c.backSite}
             </a>
+            <button
+              type="button"
+              onClick={handleLogout}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                fontSize: 12,
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.4)",
+                background: "transparent",
+                textDecoration: "none",
+                padding: "6px 10px",
+                borderRadius: 8,
+                border: "1px solid rgba(255,255,255,0.1)",
+                cursor: "pointer",
+              }}
+            >
+              {c.logout}
+            </button>
           </div>
         </div>
 
         {/* Contenu scrollable */}
         <div className="cd-scroll">
-          {/* Halo décoratif */}
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              top: 60,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 300,
-              height: 300,
-              borderRadius: "50%",
-              pointerEvents: "none",
-              background: "radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)",
-              filter: "blur(40px)",
-            }}
-          />
-
-          {/* Salutation */}
-          <div style={{ position: "relative", marginBottom: 24 }}>
-            <p
-              style={{
-                color: "#E8C96D",
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                margin: "0 0 6px",
-              }}
-            >
-              {c.eyebrow}
-            </p>
-            <h1
-              style={{
-                color: "#fff",
-                fontSize: 24,
-                fontWeight: 800,
-                margin: "0 0 20px",
-                fontFamily: "'Syne', serif",
-              }}
-            >
-              {c.hello(greeting)}
-            </h1>
-
-            {/* Carte présentation */}
-            <div
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 16,
-                padding: "18px 16px",
-                marginBottom: 16,
-              }}
-            >
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.72)",
-                  fontSize: 14,
-                  lineHeight: 1.75,
-                  margin: "0 0 10px",
-                }}
-              >
-                {t("client.dashboard.welcome_intro")}{" "}
-                <strong style={{ color: "#E8C96D" }}>Access Prestige Taxi</strong>.{" "}
-                {t("client.dashboard.welcome_centralized")}
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }}>
-                {[
-                  {
-                    icon: "🚕",
-                    title: t("client.trajets.title"),
-                    desc: t("client.dashboard.feat.trips_desc"),
-                  },
-                  {
-                    icon: "📋",
-                    title: t("client.dashboard.feat.history_title"),
-                    desc: t("client.dashboard.feat.history_desc"),
-                  },
-                  {
-                    icon: "💬",
-                    title: t("client.dashboard.feat.chat_title"),
-                    desc: t("client.dashboard.feat.chat_desc"),
-                  },
-                  {
-                    icon: "👤",
-                    title: t("client.profil.title"),
-                    desc: t("client.dashboard.feat.profile_desc"),
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.title}
-                    style={{ display: "flex", alignItems: "flex-start", gap: 10 }}
-                  >
-                    <span style={{ fontSize: 16, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
-                    <div>
-                      <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>
-                        {item.title}
-                      </span>
-                      <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
-                        {" "}
-                        — {item.desc}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {loading && rows === null ? (
+            <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
+              <BrandLoader />
             </div>
-          </div>
-
-          <ClientPushOptInCard clientAccountId={session.id} clientSessionToken={session.token} />
-
-          {/* Course active */}
-          {activeRide && (
-            <div style={{ marginBottom: 20 }}>
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.45)",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  marginBottom: 10,
-                }}
-              >
-                {c.activeRide}
-              </p>
+          ) : (
+            <>
+              {/* Halo décoratif */}
               <div
+                aria-hidden
                 style={{
-                  background: "rgba(232,201,109,0.07)",
-                  border: "1px solid rgba(232,201,109,0.22)",
-                  borderRadius: 14,
-                  padding: "14px 16px",
+                  position: "absolute",
+                  top: 60,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 300,
+                  height: 300,
+                  borderRadius: "50%",
+                  pointerEvents: "none",
+                  background: "radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)",
+                  filter: "blur(40px)",
                 }}
-              >
-                <div
+              />
+
+              {/* Salutation */}
+              <div style={{ position: "relative", marginBottom: 24 }}>
+                <p
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: 8,
+                    color: "#E8C96D",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    margin: "0 0 6px",
                   }}
                 >
-                  <span
+                  {c.eyebrow}
+                </p>
+                <h1
+                  style={{
+                    color: "#fff",
+                    fontSize: 24,
+                    fontWeight: 800,
+                    margin: "0 0 20px",
+                    fontFamily: "'Syne', serif",
+                  }}
+                >
+                  {c.hello(greeting)}
+                </h1>
+
+                {/* Carte présentation */}
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    borderRadius: 16,
+                    padding: "18px 16px",
+                    marginBottom: 16,
+                  }}
+                >
+                  <p
                     style={{
+                      color: "rgba(255,255,255,0.72)",
+                      fontSize: 14,
+                      lineHeight: 1.75,
+                      margin: "0 0 10px",
+                    }}
+                  >
+                    {t("client.dashboard.welcome_intro")}{" "}
+                    <strong style={{ color: "#E8C96D" }}>Access Prestige Taxi</strong>.{" "}
+                    {t("client.dashboard.welcome_centralized")}
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }}>
+                    {[
+                      {
+                        icon: "🚕",
+                        title: t("client.trajets.title"),
+                        desc: t("client.dashboard.feat.trips_desc"),
+                      },
+                      {
+                        icon: "📋",
+                        title: t("client.dashboard.feat.history_title"),
+                        desc: t("client.dashboard.feat.history_desc"),
+                      },
+                      {
+                        icon: "💬",
+                        title: t("client.dashboard.feat.chat_title"),
+                        desc: t("client.dashboard.feat.chat_desc"),
+                      },
+                      {
+                        icon: "👤",
+                        title: t("client.profil.title"),
+                        desc: t("client.dashboard.feat.profile_desc"),
+                      },
+                    ].map((item) => (
+                      <div key={item.title} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                        <span style={{ fontSize: 16, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
+                        <div>
+                          <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{item.title}</span>
+                          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}> — {item.desc}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <ClientPushOptInCard clientAccountId={session.id} clientSessionToken={session.token} />
+
+              {/* Course active */}
+              {activeRide && (
+                <div style={{ marginBottom: 20 }}>
+                  <p
+                    style={{
+                      color: "rgba(255,255,255,0.45)",
                       fontSize: 11,
                       fontWeight: 700,
-                      padding: "2px 10px",
-                      borderRadius: 20,
-                      background: STATUS_META[activeRide.status]?.bg,
-                      color: STATUS_META[activeRide.status]?.fg,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      marginBottom: 10,
                     }}
                   >
-                    {STATUS_META[activeRide.status]?.label[lang === "en" ? "en" : "fr"] ||
-                      activeRide.status}
-                  </span>
-                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
-                    {fmtDate(activeRide.pickup_datetime, lang)}
-                  </span>
-                </div>
-                <div style={{ fontSize: 13, color: "#fff", marginBottom: 10, lineHeight: 1.4 }}>
-                  {activeRide.depart}
-                  <span style={{ color: "rgba(255,255,255,0.3)", margin: "0 6px" }}>→</span>
-                  {activeRide.arrivee || activeRide.destination}
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {activeRide.suivi_id && (
-                    <Link
-                      to="/suivi/$id"
-                      params={{ id: String(activeRide.suivi_id) }}
+                    {c.activeRide}
+                  </p>
+                  <div
+                    style={{
+                      background: "rgba(232,201,109,0.07)",
+                      border: "1px solid rgba(232,201,109,0.22)",
+                      borderRadius: 14,
+                      padding: "14px 16px",
+                    }}
+                  >
+                    <div
                       style={{
-                        display: "inline-flex",
+                        display: "flex",
                         alignItems: "center",
-                        gap: 5,
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: "#E8C96D",
-                        textDecoration: "none",
-                        padding: "6px 12px",
-                        borderRadius: 8,
-                        background: "rgba(232,201,109,0.12)",
-                        border: "1px solid rgba(232,201,109,0.25)",
+                        justifyContent: "space-between",
+                        marginBottom: 8,
                       }}
                     >
-                      <Eye style={{ width: 13, height: 13 }} /> {c.track}
-                    </Link>
-                  )}
-                  <Link
-                    to="/client/trajets"
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          padding: "2px 10px",
+                          borderRadius: 20,
+                          background: STATUS_META[activeRide.status]?.bg,
+                          color: STATUS_META[activeRide.status]?.fg,
+                        }}
+                      >
+                        {STATUS_META[activeRide.status]?.label[lang === "en" ? "en" : "fr"] || activeRide.status}
+                      </span>
+                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
+                        {fmtDate(activeRide.pickup_datetime, lang)}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 13, color: "#fff", marginBottom: 10, lineHeight: 1.4 }}>
+                      {activeRide.depart}
+                      <span style={{ color: "rgba(255,255,255,0.3)", margin: "0 6px" }}>→</span>
+                      {activeRide.arrivee || activeRide.destination}
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {activeRide.suivi_id && (
+                        <Link
+                          to="/suivi/$id"
+                          params={{ id: String(activeRide.suivi_id) }}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 5,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            color: "#E8C96D",
+                            textDecoration: "none",
+                            padding: "6px 12px",
+                            borderRadius: 8,
+                            background: "rgba(232,201,109,0.12)",
+                            border: "1px solid rgba(232,201,109,0.25)",
+                          }}
+                        >
+                          <Eye style={{ width: 13, height: 13 }} /> {c.track}
+                        </Link>
+                      )}
+                      <Link
+                        to="/client/trajets"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 5,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: "rgba(255,255,255,0.6)",
+                          textDecoration: "none",
+                          padding: "6px 12px",
+                          borderRadius: 8,
+                          border: "1px solid rgba(255,255,255,0.1)",
+                        }}
+                      >
+                        {c.details}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Prochaine course */}
+              {nextRide && (
+                <div style={{ marginBottom: 20 }}>
+                  <p
                     style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 5,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "rgba(255,255,255,0.6)",
-                      textDecoration: "none",
-                      padding: "6px 12px",
-                      borderRadius: 8,
-                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "rgba(255,255,255,0.45)",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      marginBottom: 10,
                     }}
                   >
-                    {c.details}
-                  </Link>
+                    {c.nextRide}
+                  </p>
+                  <div
+                    style={{
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 14,
+                      padding: "14px 16px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          padding: "2px 10px",
+                          borderRadius: 20,
+                          background: STATUS_META[nextRide.status]?.bg,
+                          color: STATUS_META[nextRide.status]?.fg,
+                        }}
+                      >
+                        {STATUS_META[nextRide.status]?.label[lang === "en" ? "en" : "fr"] || nextRide.status}
+                      </span>
+                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
+                        {fmtDate(nextRide.pickup_datetime, lang)}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: 13, color: "#fff", lineHeight: 1.4 }}>
+                      {nextRide.depart}
+                      <span style={{ color: "rgba(255,255,255,0.3)", margin: "0 6px" }}>→</span>
+                      {nextRide.arrivee || nextRide.destination}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {/* Actions rapides */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-            <Link
-              to="/reserver"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                padding: "14px",
-                borderRadius: 14,
-                background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)",
-                color: "#000",
-                fontWeight: 700,
-                fontSize: 14,
-                textDecoration: "none",
-              }}
-            >
-              <Plus style={{ width: 16, height: 16 }} /> {c.book}
-            </Link>
-            <a
-              href={`tel:${DRIVERS[0].tel}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                padding: "14px",
-                borderRadius: 14,
-                border: "1px solid rgba(255,255,255,0.1)",
-                background: "rgba(255,255,255,0.04)",
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: 14,
-                textDecoration: "none",
-              }}
-            >
-              <Phone style={{ width: 16, height: 16 }} />{" "}
-              {c.call(DRIVERS[0].name, DRIVERS[0].display)}
-            </a>
-          </div>
-
-          {/* Raccourcis onglets */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-            {[
-              {
-                to: "/client/trajets",
-                icon: <Car style={{ width: 16, height: 16 }} />,
-                label: c.trips,
-              },
-              {
-                to: "/client/historique",
-                icon: <History style={{ width: 16, height: 16 }} />,
-                label: c.history,
-              },
-              {
-                to: "/client/chat",
-                icon: <MessageCircle style={{ width: 16, height: 16 }} />,
-                label: c.chat,
-              },
-              {
-                to: "/client/profil",
-                icon: <User style={{ width: 16, height: 16 }} />,
-                label: c.profile,
-              },
-            ].map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "13px 14px",
-                  borderRadius: 12,
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  background: "rgba(255,255,255,0.03)",
-                  color: "#fff",
-                  textDecoration: "none",
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}
-              >
-                <div
+              {/* Actions rapides */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+                <Link
+                  to="/reserver"
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 10,
-                    color: "rgba(255,255,255,0.8)",
+                    justifyContent: "center",
+                    gap: 8,
+                    padding: "14px",
+                    borderRadius: 14,
+                    background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)",
+                    color: "#000",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    textDecoration: "none",
                   }}
                 >
-                  <span style={{ color: "#E8C96D" }}>{item.icon}</span>
-                  {item.label}
-                </div>
-                <ChevronRight style={{ width: 14, height: 14, color: "rgba(255,255,255,0.25)" }} />
-              </Link>
-            ))}
-          </div>
+                  <Plus style={{ width: 16, height: 16 }} /> {c.book}
+                </Link>
+                <a
+                  href={`tel:${DRIVERS[0].tel}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                    padding: "14px",
+                    borderRadius: 14,
+                    border: "1px solid rgba(232,201,109,0.35)",
+                    background: "rgba(232,201,109,0.08)",
+                    color: "#E8C96D",
+                    fontWeight: 700,
+                    fontSize: 14,
+                    textDecoration: "none",
+                  }}
+                >
+                  <Phone style={{ width: 16, height: 16 }} /> {c.call(DRIVERS[0].name, DRIVERS[0].display)}
+                </a>
+              </div>
+
+              {/* Raccourcis onglets */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+                {[
+                  {
+                    to: "/client/trajets",
+                    icon: <Car style={{ width: 16, height: 16 }} />,
+                    label: c.trips,
+                  },
+                  {
+                    to: "/client/historique",
+                    icon: <History style={{ width: 16, height: 16 }} />,
+                    label: c.history,
+                  },
+                  {
+                    to: "/client/chat",
+                    icon: <MessageCircle style={{ width: 16, height: 16 }} />,
+                    label: c.chat,
+                  },
+                  {
+                    to: "/client/profil",
+                    icon: <User style={{ width: 16, height: 16 }} />,
+                    label: c.profile,
+                  },
+                ].map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "13px 14px",
+                      borderRadius: 12,
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      background: "rgba(255,255,255,0.03)",
+                      color: "#fff",
+                      textDecoration: "none",
+                      fontSize: 13,
+                      fontWeight: 600,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        color: "rgba(255,255,255,0.8)",
+                      }}
+                    >
+                      <span style={{ color: "#E8C96D" }}>{item.icon}</span>
+                      {item.label}
+                    </div>
+                    <ChevronRight style={{ width: 14, height: 14, color: "rgba(255,255,255,0.25)" }} />
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Bottom nav */}
