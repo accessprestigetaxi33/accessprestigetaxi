@@ -763,8 +763,11 @@ function Index() {
         })()}
       </section>
 
-      {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo */}
-      <section className="border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
+      {/* HERO — contenu (titre, texte, CTA, stats), juste après la vidéo/photo.
+          Fond noir demandé par Alain & Patricia : on réutilise la classe "dark" déjà
+          utilisée ailleurs sur la page (ex. section "Pourquoi nous choisir"), qui bascule
+          bg-background/text-foreground sur les tokens sombres du thème. */}
+      <section className="dark border-t border-border bg-background pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="mx-auto flex max-w-5xl flex-col items-center px-5 sm:px-6 lg:px-8 text-center">
           {/* Bloc critique above-the-fold : H1, texte d'accroche et CTA arrivent en premier,
               avant les pastilles/valeurs/paragraphe SEO — sur un écran 375px, le visiteur voit
@@ -814,10 +817,9 @@ function Index() {
 
           {/* Pastille de services + paragraphe SEO : contenu secondaire, placé après le
               CTA principal et non animé (pas de motion.div) pour éviter d'ajouter une
-              cascade d'animations au chargement. La rangée "valeurs" (Ponctualité,
-              Confort, Discrétion, Sécurité) a été retirée : elle répétait ce qui est déjà
-              dit dans driversLead et la section "Pourquoi nous choisir" — un des points
-              que Rafael voulait décluttérer pour un rendu plus premium. */}
+              cascade d'animations au chargement. Rangée "valeurs" (Élégance, Discrétion,
+              Exigence) demandée par Alain & Patricia à la place de l'ancienne rangée de
+              services (Transport conventionné, Transferts...). */}
           <div className="mt-10 w-full">
             <ul
               aria-label={lang === "en" ? "Our main taxi services" : "Nos principales prestations de taxi"}
