@@ -4,11 +4,9 @@ import { seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
 import ogHomeFr from "@/assets/apt-og-home-fr.jpg.asset.json";
 import ogHomeEn from "@/assets/apt-og-home-en.jpg.asset.json";
-import { ArrowLeft, ArrowRight, BadgeCheck, Star } from "lucide-react";
+import { ArrowLeft, BadgeCheck, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { ReviewForm } from "@/components/ReviewForm";
-import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 
 // ── Styles partagés avec la home ────────────────────────────────────────────
@@ -102,6 +100,65 @@ function formatDate(iso: string, lang: "fr" | "en") {
   }
 }
 
+// ── Carrousel à flèches (tous les avis, optimisé mobile/desktop) ────────────
+function ReviewsCarousel({ reviews, isEn }: { reviews: PublicAvis[]; isEn: boolean }) {
+  const [trackRef, setTrackRef] = useState<HTMLDivElement | null>(null);
+
+  const scrollByCard = (dir: 1 | -1) => {
+    if (!trackRef) return;
+    const card = trackRef.querySelector("[data-review-card]") as HTMLElement | null;
+    const amount = (card?.offsetWidth ?? 300) + 16;
+    trackRef.scrollBy({ left: dir * amount, behavior: "smooth" });
+  };
+
+  return (
+    <div className="relative mt-10">
+      <div
+        ref={setTrackRef}
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {reviews.map((r) => (
+          <article
+            key={r.id}
+            data-review-card
+            className={`w-[85%] shrink-0 snap-start p-6 text-left sm:w-[360px] ${CARD}`}
+          >
+            <Stars n={r.note} />
+            {r.commentaire && <p className="mt-3 text-sm leading-relaxed text-card-foreground">“{r.commentaire}”</p>}
+            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+              <BadgeCheck className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <span className="truncate font-semibold text-card-foreground">
+                {r.author_name || (isEn ? "Anonymous" : "Anonyme")}
+              </span>
+              <span>·</span>
+              <span className="shrink-0">{formatDate(r.created_at, isEn ? "en" : "fr")}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-4 flex justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => scrollByCard(-1)}
+          aria-label={isEn ? "Previous" : "Précédent"}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition hover:border-primary hover:text-primary active:scale-95"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollByCard(1)}
+          aria-label={isEn ? "Next" : "Suivant"}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition hover:border-primary hover:text-primary active:scale-95"
+        >
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 function AvisPage() {
   const { lang } = useI18n();
@@ -142,7 +199,7 @@ function AvisPage() {
 
   return (
     <div className={NIGHT_SECTION}>
-      <div className="mx-auto max-w-5xl px-5 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary transition hover:text-primary/80"
@@ -155,7 +212,7 @@ function AvisPage() {
           <p className="mt-8 text-center text-[11px] uppercase tracking-[0.3em] text-primary">
             {isEn ? "Client reviews" : "Avis clients"}
           </p>
-          <h1 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
+          <h1 className="mt-3 text-center font-display text-2xl font-semibold text-foreground sm:text-4xl">
             {isEn ? "All our reviews" : "Tous nos avis"}
           </h1>
         </Reveal>
@@ -173,58 +230,17 @@ function AvisPage() {
                     ? `${avgNote.toFixed(1)} / 5 — ${reviews.length} verified review${reviews.length > 1 ? "s" : ""}`
                     : `${avgNote.toFixed(1)} / 5 — ${reviews.length} avis vérifié${reviews.length > 1 ? "s" : ""}`
                   : isEn
-                    ? "No reviews yet — be the first to share your experience."
-                    : "Pas encore d'avis — soyez le premier à partager votre expérience."}
+                    ? "No reviews yet."
+                    : "Pas encore d'avis."}
             </p>
           </div>
         </Reveal>
 
         {reviews.length > 0 && (
           <Reveal delay={0.12}>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {reviews.map((r) => (
-                <article key={r.id} className={`p-6 text-left ${CARD}`}>
-                  <Stars n={r.note} />
-                  {r.commentaire && (
-                    <p className="mt-3 text-sm leading-relaxed text-card-foreground">“{r.commentaire}”</p>
-                  )}
-                  <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                    <BadgeCheck className="h-4 w-4 text-primary" aria-hidden="true" />
-                    <span className="font-semibold text-card-foreground">
-                      {r.author_name || (isEn ? "Anonymous" : "Anonyme")}
-                    </span>
-                    <span>·</span>
-                    <span>{formatDate(r.created_at, isEn ? "en" : "fr")}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <ReviewsCarousel reviews={reviews} isEn={isEn} />
           </Reveal>
         )}
-
-        <Reveal delay={0.16}>
-          <div className="mt-12 flex justify-center">
-            <Link
-              to="/reserver"
-              className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-            >
-              {isEn ? "Book a ride" : "Réserver une course"} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </Reveal>
-
-        <div className="mt-16">
-          <ClientTrust>
-            <div className="mx-auto max-w-2xl border-t border-border pt-10">
-              <p className="text-center font-display text-xl font-semibold text-foreground">
-                {isEn ? "Share your experience" : "Partagez votre expérience"}
-              </p>
-              <div className="mt-6 rounded-2xl border border-border bg-card p-6">
-                <ReviewForm />
-              </div>
-            </div>
-          </ClientTrust>
-        </div>
       </div>
     </div>
   );
