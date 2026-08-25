@@ -145,23 +145,43 @@ const COPY = {
         subtitle: "100 % électrique · 5 places",
         img: photoBmwReal.url,
         alt: "BMW iX1 100 % électrique Access Prestige Taxi",
+        details: [
+          "SUV 100 % électrique, silencieux et sans émissions, idéal pour vos trajets en ville comme sur route.",
+          "5 places confortables, climatisation, sièges en cuir et espace bagages adapté aux valises.",
+          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels en Charente-Maritime.",
+        ],
       },
       {
         title: "Audi Q6 e-tron",
         subtitle: "100 % électrique · SUV premium",
         img: photoAudiReal.url,
         alt: "Audi Q6 e-tron Access Prestige Taxi",
+        details: [
+          "SUV premium 100 % électrique, autonomie élevée pour les longues distances et trajets inter-villes.",
+          "Habitacle spacieux et haut de gamme, pensé pour le confort sur les trajets professionnels et privés.",
+          "Idéal pour les mises à disposition avec chauffeur et les déplacements d'affaires exigeants.",
+        ],
       },
       {
         title: "Mercedes V-Class",
         subtitle: "8 places · transport de groupe",
         img: photoVanReal.url,
         alt: "Mercedes V-Class 8 places Access Prestige Taxi",
+        details: [
+          "Van premium 8 places, la solution idéale pour les groupes, familles et transferts d'équipe.",
+          "Large espace pour les bagages, adapté aux transferts aéroport et gare pour plusieurs passagers.",
+          "Également disponible pour les mariages, événements et sorties en groupe en Charente-Maritime.",
+        ],
       },
     ],
     reviewsEyebrow: "Avis clients",
     reviewsTitle: "Ils nous font confiance",
     reviewsLink: "Voir tous les avis",
+    reviewsDetails: [
+      "Des avis vérifiés laissés par nos clients après un transfert aéroport, un transport médical conventionné ou une mise à disposition.",
+      "Une note élevée saluant la ponctualité, le confort des véhicules électriques et la discrétion de nos chauffeurs Alain et Patricia.",
+      "Votre avis compte : partagez votre expérience pour aider d'autres voyageurs en Charente-Maritime.",
+    ],
     howEyebrow: "Comment réserver ?",
     howTitle: "Réserver en toute simplicité",
     how: [
@@ -170,23 +190,44 @@ const COPY = {
         img: photoStepVoice,
         t: "Réservez en ligne ou par téléphone",
         d: "En quelques clics sur le site, ou par un appel direct à votre chauffeur.",
+        details: [
+          "Formulaire de réservation en ligne disponible 24h/24, avec estimation du tarif avant validation.",
+          "Réservation par téléphone directement auprès d'Alain ou de Patricia, pour un contact humain et personnalisé.",
+          "Course immédiate ou planifiée à l'avance, y compris pour vos rendez-vous médicaux et transferts aéroport.",
+          "Aucune commission d'application : le prix annoncé est le prix payé.",
+        ],
       },
       {
         s: "2",
         img: photoStepConfirm,
         t: "Recevez une confirmation",
         d: "Prix annoncé et chauffeur assigné, confirmation immédiate.",
+        details: [
+          "Confirmation instantanée par SMS ou notification avec le nom et le numéro de votre chauffeur.",
+          "Tarif fixe communiqué avant le départ, sans mauvaise surprise à l'arrivée.",
+          "Possibilité de modifier ou d'annuler votre réservation directement depuis votre espace client.",
+        ],
       },
       {
         s: "3",
         img: photoStepTrack,
         t: "Votre chauffeur vous prend en charge",
         d: "À l'heure convenue, où que vous soyez.",
+        details: [
+          "Suivi en temps réel de l'arrivée de votre chauffeur sur la carte, comme pour un VTC.",
+          "Prise en charge à domicile, en gare, à l'aéroport ou à toute adresse en Charente-Maritime.",
+          "Véhicule haut de gamme, propre et parfaitement entretenu, pour un trajet confortable jusqu'à destination.",
+        ],
       },
     ],
     appEyebrow: "Suivi & espace client",
     appText:
       "Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites.",
+    appDetails: [
+      "Application installable directement depuis votre navigateur, sans passer par un store, en quelques secondes.",
+      "Notifications en temps réel : chauffeur en route, arrivée imminente, confirmation de course.",
+      "Espace client sécurisé : historique complet de vos trajets, téléchargement de vos factures et gestion de vos adresses favorites.",
+    ],
     notify: "Activer les notifications",
     client: "Accéder à l'espace client",
     ios: [
@@ -221,23 +262,43 @@ const COPY = {
         subtitle: "100% electric · 5 seats",
         img: photoBmwReal.url,
         alt: "BMW iX1 100% electric Access Prestige Taxi",
+        details: [
+          "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
+          "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
+          "Perfect for station transfers, airport runs and business appointments across Charente-Maritime.",
+        ],
       },
       {
         title: "Audi Q6 e-tron",
         subtitle: "100% electric · premium SUV",
         img: photoAudiReal.url,
         alt: "Audi Q6 e-tron Access Prestige Taxi",
+        details: [
+          "A premium, fully electric SUV with strong range for long-distance and inter-city journeys.",
+          "A spacious, upscale cabin designed for comfort on business and private trips.",
+          "Ideal for chauffeur services and demanding business travel.",
+        ],
       },
       {
         title: "Mercedes V-Class",
         subtitle: "8 seats · group transport",
         img: photoVanReal.url,
         alt: "Mercedes V-Class 8-seat Access Prestige Taxi",
+        details: [
+          "A premium 8-seat van, the ideal solution for groups, families and team transfers.",
+          "Generous luggage space, well suited to airport and station transfers for several passengers.",
+          "Also available for weddings, events and group outings across Charente-Maritime.",
+        ],
       },
     ],
     reviewsEyebrow: "Client reviews",
     reviewsTitle: "They trust us",
     reviewsLink: "See all reviews",
+    reviewsDetails: [
+      "Verified reviews from clients after an airport transfer, covered medical transport or a chauffeur service.",
+      "A high rating praising punctuality, the comfort of our electric vehicles and the discretion of drivers Alain and Patricia.",
+      "Your review matters: share your experience to help other travellers across Charente-Maritime.",
+    ],
     howEyebrow: "How to book?",
     howTitle: "Booking made simple",
     how: [
@@ -246,18 +307,44 @@ const COPY = {
         img: photoStepVoice,
         t: "Book online or by phone",
         d: "A few clicks on the site, or a direct call to your driver.",
+        details: [
+          "Online booking form available 24/7, with a fare estimate shown before you confirm.",
+          "Book by phone directly with Alain or Patricia for a personal, human contact.",
+          "Book an immediate ride or plan ahead, including for medical appointments and airport transfers.",
+          "No app commission: the quoted price is the price you pay.",
+        ],
       },
       {
         s: "2",
         img: photoStepConfirm,
         t: "Receive a confirmation",
         d: "Quoted price and assigned driver, confirmed instantly.",
+        details: [
+          "Instant confirmation by SMS or notification with your driver's name and phone number.",
+          "Fixed fare communicated before departure, with no surprise on arrival.",
+          "Change or cancel your booking anytime from your client account.",
+        ],
       },
-      { s: "3", img: photoStepTrack, t: "Your driver picks you up", d: "At the agreed time, wherever you are." },
+      {
+        s: "3",
+        img: photoStepTrack,
+        t: "Your driver picks you up",
+        d: "At the agreed time, wherever you are.",
+        details: [
+          "Real-time tracking of your driver's arrival on the map, just like a private-hire app.",
+          "Pickup at home, the station, the airport, or any address across Charente-Maritime.",
+          "A premium, clean and perfectly maintained vehicle for a comfortable ride to your destination.",
+        ],
+      },
     ],
     appEyebrow: "Tracking & account",
     appText:
       "Install the app for real-time tracking, and find your ride history, invoices and saved addresses in your personal account.",
+    appDetails: [
+      "Installable straight from your browser in a few seconds, with no app store needed.",
+      "Real-time notifications: driver on the way, arrival imminent, ride confirmed.",
+      "A secure client area: full ride history, downloadable invoices and saved favourite addresses.",
+    ],
     notify: "Enable notifications",
     client: "Go to the client area",
     ios: [
@@ -381,13 +468,46 @@ export const Route = createFileRoute("/")({
   },
 });
 
+function LearnMoreToggle({ lang, details }: { lang: "fr" | "en"; details: readonly string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen((o) => !o)}
+        aria-expanded={isOpen}
+        className="mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+      >
+        {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.ul
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-left text-sm leading-relaxed text-muted-foreground"
+          >
+            {details.map((d) => (
+              <li key={d} className="flex gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                {d}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
   const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
   const pillars = lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR;
-  const [openEngagement, setOpenEngagement] = useState<number | null>(null);
 
   return (
     <main>
@@ -475,55 +595,18 @@ function Index() {
             </p>
           </Reveal>
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            {engagements.map((e, i) => {
-              const isOpen = openEngagement === i;
-              return (
-                <Reveal key={e.title} delay={i * 0.08}>
-                  <div className={`h-full p-7 sm:p-8 ${CARD}`}>
-                    <e.icon className="h-9 w-9 text-primary" aria-hidden="true" />
-                    <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
-                      {e.title}
-                    </h2>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
-                    <button
-                      type="button"
-                      onClick={() => setOpenEngagement(isOpen ? null : i)}
-                      aria-expanded={isOpen}
-                      className="mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-                    >
-                      {isOpen
-                        ? lang === "en"
-                          ? "Show less"
-                          : "Voir moins"
-                        : lang === "en"
-                          ? "Learn more"
-                          : "En savoir plus"}
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.ul
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-sm leading-relaxed text-muted-foreground"
-                        >
-                          {e.details.map((d) => (
-                            <li key={d} className="flex gap-2">
-                              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
-                              {d}
-                            </li>
-                          ))}
-                        </motion.ul>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </Reveal>
-              );
-            })}
+            {engagements.map((e, i) => (
+              <Reveal key={e.title} delay={i * 0.08}>
+                <div className={`h-full p-7 sm:p-8 ${CARD}`}>
+                  <e.icon className="h-9 w-9 text-primary" aria-hidden="true" />
+                  <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
+                    {e.title}
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
+                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -556,6 +639,9 @@ function Index() {
                   <div className="p-5 text-center sm:p-6">
                     <h3 className="font-display text-xl font-semibold text-card-foreground">{v.title}</h3>
                     <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">{v.subtitle}</p>
+                    <div className="flex justify-center">
+                      <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} />
+                    </div>
                   </div>
                 </article>
               </Reveal>
@@ -595,6 +681,9 @@ function Index() {
               <a href="#avis" className="text-sm font-semibold text-primary underline underline-offset-4">
                 {c.reviewsLink}
               </a>
+            </div>
+            <div className="mt-2 flex justify-center text-center">
+              <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.reviewsDetails} />
             </div>
           </Reveal>
 
@@ -636,6 +725,7 @@ function Index() {
                     <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
                     <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
+                    <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
                   </div>
                 </div>
               </Reveal>
@@ -664,6 +754,9 @@ function Index() {
               <p className="mx-auto mt-3 max-w-3xl text-center text-sm leading-relaxed text-foreground/80 sm:text-base">
                 {c.appText}
               </p>
+              <div className="flex justify-center text-center">
+                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.appDetails} />
+              </div>
               <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
                 <Link
                   to="/reserver"
