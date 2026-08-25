@@ -51,7 +51,20 @@ function absoluteUrl(path: string) {
 }
 
 const CARD =
-  "rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
+  "dark rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
+
+const NIGHT_SECTION = "dark border-t border-white/10 bg-[#0a0f2c]";
+
+function ReserveButton({ label, className = "" }: { label: string; className?: string }) {
+  return (
+    <Link
+      to="/reserver"
+      className={`inline-flex min-h-[38px] items-center justify-center gap-1.5 rounded-lg btn-gold px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
+    >
+      {label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+    </Link>
+  );
+}
 
 const ENGAGEMENTS_FR = [
   {
@@ -167,6 +180,7 @@ const COPY = {
     tagline: "Votre confort, notre priorité",
     lead: "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails.",
     ctaBook: "Réserver mon trajet",
+    reserveCta: "Réserver",
     callPrefix: "Appeler",
     fleetEyebrow: "Notre flotte",
     fleetTitle: "Votre confort, notre priorité",
@@ -286,6 +300,7 @@ const COPY = {
     tagline: "Your comfort, our priority",
     lead: "Premium transport and covered medical transport across Charente-Maritime. Personalised care, premium vehicles and a service considered down to the smallest detail.",
     ctaBook: "Book my ride",
+    reserveCta: "Book",
     callPrefix: "Call",
     fleetEyebrow: "Our fleet",
     fleetTitle: "Your comfort, our priority",
@@ -540,9 +555,11 @@ function LearnMoreToggle({ lang, details }: { lang: "fr" | "en"; details: readon
 function ReviewsCarousel({
   reviews,
   verifiedLabel,
+  reserveLabel,
 }: {
   reviews: readonly { name: string; text: string }[];
   verifiedLabel: string;
+  reserveLabel: string;
 }) {
   const [trackRef, setTrackRef] = useState<HTMLDivElement | null>(null);
 
@@ -577,6 +594,7 @@ function ReviewsCarousel({
               <span>·</span>
               <span>{verifiedLabel}</span>
             </div>
+            <ReserveButton label={reserveLabel} className="mt-4" />
           </article>
         ))}
       </div>
@@ -689,7 +707,7 @@ function Index() {
       </section>
 
       {/* 2. NOS ENGAGEMENTS — présent sur le document */}
-      <section className="border-t border-border bg-background py-20">
+      <section className={`${NIGHT_SECTION} py-20`}>
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">
@@ -706,6 +724,7 @@ function Index() {
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
                   <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
+                  <ReserveButton label={c.reserveCta} className="mt-5" />
                 </div>
               </Reveal>
             ))}
@@ -714,7 +733,7 @@ function Index() {
       </section>
 
       {/* 3. NOTRE FLOTTE — présent sur le document */}
-      <section className="border-t border-border bg-background py-20">
+      <section className={`${NIGHT_SECTION} py-20`}>
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.fleetEyebrow}</p>
@@ -744,6 +763,7 @@ function Index() {
                     <div className="flex justify-center">
                       <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} />
                     </div>
+                    <ReserveButton label={c.reserveCta} className="mt-4" />
                   </div>
                 </article>
               </Reveal>
@@ -753,10 +773,11 @@ function Index() {
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {fleetValues.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.05}>
-                <div className={`p-5 text-center ${CARD}`}>
+                <div className={`flex h-full flex-col items-center p-5 text-center ${CARD}`}>
                   <v.icon className="mx-auto h-7 w-7 text-primary" aria-hidden="true" />
                   <h3 className="mt-3 font-display text-base font-semibold text-card-foreground">{v.title}</h3>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{v.text}</p>
+                  <ReserveButton label={c.reserveCta} className="mt-4" />
                 </div>
               </Reveal>
             ))}
@@ -772,7 +793,7 @@ function Index() {
       </section>
 
       {/* 4. AVIS CLIENTS — présent sur le document */}
-      <section id="avis" className="border-t border-border bg-background py-20">
+      <section id="avis" className={`${NIGHT_SECTION} py-20`}>
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewsEyebrow}</p>
@@ -782,7 +803,7 @@ function Index() {
           </Reveal>
 
           <Reveal delay={0.08}>
-            <ReviewsCarousel reviews={reviews} verifiedLabel={c.reviewsVerified} />
+            <ReviewsCarousel reviews={reviews} verifiedLabel={c.reviewsVerified} reserveLabel={c.reserveCta} />
           </Reveal>
 
           <Reveal delay={0.12}>
@@ -813,7 +834,7 @@ function Index() {
       </section>
 
       {/* 5. COMMENT RÉSERVER — ajouté comme demandé */}
-      <section className="border-t border-border bg-card/40 py-20">
+      <section className={`${NIGHT_SECTION} py-20`}>
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.howEyebrow}</p>
@@ -825,7 +846,7 @@ function Index() {
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
-                <div className={`h-full p-6 ${CARD}`}>
+                <div className={`flex h-full flex-col p-6 ${CARD}`}>
                   <div className="flex items-center justify-between">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                       <h.icon className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -835,6 +856,7 @@ function Index() {
                   <h3 className="mt-4 font-display text-lg font-semibold text-foreground">{h.t}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
                   <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
+                  <ReserveButton label={c.reserveCta} className="mt-4" />
                 </div>
               </Reveal>
             ))}
@@ -912,7 +934,7 @@ function Index() {
       </section>
 
       {/* 7. BLOG — conservé comme demandé */}
-      <section className="border-t border-border bg-background py-20">
+      <section className={`${NIGHT_SECTION} py-20`}>
         <div className="divider-gold" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
@@ -933,30 +955,31 @@ function Index() {
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.06}>
-                <Link
-                  to="/blog/$slug"
-                  params={{ slug: e.slug }}
-                  className={`group block h-full overflow-hidden ${CARD}`}
-                >
-                  <img
-                    src={imgAt(e.photo, 500)}
-                    srcSet={imgSrcSet(e.photo, [250, 330, 500])}
-                    sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 100vw"
-                    alt={`${e.name} — ${e.city}`}
-                    loading="lazy"
-                    decoding="async"
-                    width={500}
-                    height={352}
-                    className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                  />
-                  <div className="p-5">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
-                    <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                      {lang === "en" ? e.en : e.fr}
-                    </p>
+                <div className={`flex h-full flex-col overflow-hidden ${CARD}`}>
+                  <Link to="/blog/$slug" params={{ slug: e.slug }} className="group block">
+                    <img
+                      src={imgAt(e.photo, 500)}
+                      srcSet={imgSrcSet(e.photo, [250, 330, 500])}
+                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 100vw"
+                      alt={`${e.name} — ${e.city}`}
+                      loading="lazy"
+                      decoding="async"
+                      width={500}
+                      height={352}
+                      className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                    />
+                    <div className="p-5">
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
+                      <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                        {lang === "en" ? e.en : e.fr}
+                      </p>
+                    </div>
+                  </Link>
+                  <div className="mt-auto px-5 pb-5">
+                    <ReserveButton label={c.reserveCta} />
                   </div>
-                </Link>
+                </div>
               </Reveal>
             ))}
           </div>
