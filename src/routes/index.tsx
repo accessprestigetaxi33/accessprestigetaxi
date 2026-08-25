@@ -12,6 +12,8 @@ import {
   Baby,
   Bell,
   BriefcaseBusiness,
+  Car,
+  CheckCircle2,
   ChevronDown,
   Clock,
   Crown,
@@ -19,6 +21,7 @@ import {
   HeartHandshake,
   Phone,
   ShieldCheck,
+  Smartphone,
   Stethoscope,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -30,13 +33,9 @@ import { imgAt, imgSrcSet } from "@/lib/img";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/apt-hero-clean-fr.webp";
 import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
-import photoDriver from "@/assets/apt-driver.jpg.asset.json";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
-import photoStepVoice from "@/assets/apt-step-voice.webp";
-import photoStepConfirm from "@/assets/apt-step-confirm.webp";
-import photoStepTrack from "@/assets/apt-step-track.webp";
 
 const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 const SLOGAN_FR = "L'excellence à chaque trajet";
@@ -187,7 +186,7 @@ const COPY = {
     how: [
       {
         s: "1",
-        img: photoStepVoice,
+        icon: Smartphone,
         t: "Réservez en ligne ou par téléphone",
         d: "En quelques clics sur le site, ou par un appel direct à votre chauffeur.",
         details: [
@@ -199,7 +198,7 @@ const COPY = {
       },
       {
         s: "2",
-        img: photoStepConfirm,
+        icon: CheckCircle2,
         t: "Recevez une confirmation",
         d: "Prix annoncé et chauffeur assigné, confirmation immédiate.",
         details: [
@@ -210,7 +209,7 @@ const COPY = {
       },
       {
         s: "3",
-        img: photoStepTrack,
+        icon: Car,
         t: "Votre chauffeur vous prend en charge",
         d: "À l'heure convenue, où que vous soyez.",
         details: [
@@ -304,7 +303,7 @@ const COPY = {
     how: [
       {
         s: "1",
-        img: photoStepVoice,
+        icon: Smartphone,
         t: "Book online or by phone",
         d: "A few clicks on the site, or a direct call to your driver.",
         details: [
@@ -316,7 +315,7 @@ const COPY = {
       },
       {
         s: "2",
-        img: photoStepConfirm,
+        icon: CheckCircle2,
         t: "Receive a confirmation",
         d: "Quoted price and assigned driver, confirmed instantly.",
         details: [
@@ -327,7 +326,7 @@ const COPY = {
       },
       {
         s: "3",
-        img: photoStepTrack,
+        icon: Car,
         t: "Your driver picks you up",
         d: "At the agreed time, wherever you are.",
         details: [
@@ -712,21 +711,16 @@ function Index() {
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
-                <div className={`h-full overflow-hidden bg-background ${CARD}`}>
-                  <img
-                    src={h.img}
-                    alt={h.t}
-                    loading="lazy"
-                    width={1024}
-                    height={768}
-                    className="h-40 w-full object-cover"
-                  />
-                  <div className="p-6">
+                <div className={`h-full p-6 ${CARD}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <h.icon className="h-6 w-6 text-primary" aria-hidden="true" />
+                    </span>
                     <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
-                    <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
-                    <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
                   </div>
+                  <h3 className="mt-4 font-display text-lg font-semibold text-foreground">{h.t}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
+                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
                 </div>
               </Reveal>
             ))}
