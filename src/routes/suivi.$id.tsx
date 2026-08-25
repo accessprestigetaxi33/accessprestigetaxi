@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   Clock,
@@ -21,12 +21,8 @@ import {
   Share2,
   WifiOff,
   Car,
-  Bell,
-  BellRing,
-  BellOff,
 } from "lucide-react";
 import { useI18n, useT } from "@/i18n/I18nProvider";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { getReservationForFinPublic } from "@/lib/reservation.functions";
 import { logTrackingEvent, requestRecurringRide } from "@/lib/public-events.functions";
 import { recomputeReservationDuration } from "@/lib/reservation-recompute.functions";
@@ -333,10 +329,12 @@ function PremiumTimeline({ status }: { status: string }) {
 function ChatSection({
   suiviKey,
   reservationId,
+  driverName,
   t,
 }: {
   suiviKey: string;
   reservationId: string;
+  driverName: string;
   t: (k: string) => string;
 }) {
   const [unread, setUnread] = useState(0);
@@ -394,7 +392,7 @@ function ChatSection({
           </span>
         )}
       </div>
-      <AnonChat suiviKey={suiviKey} reservationId={reservationId} onUnreadChange={setUnread} />
+      <AnonChat suiviKey={suiviKey} reservationId={reservationId} driverName={driverName} onUnreadChange={setUnread} />
     </div>
   );
 }
@@ -402,10 +400,12 @@ function ChatSection({
 function AnonChat({
   suiviKey,
   reservationId,
+  driverName,
   onUnreadChange,
 }: {
   suiviKey: string;
   reservationId: string;
+  driverName: string;
   onUnreadChange?: (n: number) => void;
 }) {
   const t = useT();
@@ -589,7 +589,7 @@ function AnonChat({
                 {msg.content}
               </div>
               <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "3px", padding: "0 4px" }}>
-                {mine ? t("suivi.chat_you") || u.you : "Patricia"}
+                {mine ? t("suivi.chat_you") || u.you : driverName}
               </div>
             </div>
           );
@@ -674,10 +674,6 @@ function generateICS(reservation: any, t: (k: string) => string): string {
 }
 
 // ─── Facture ──────────────────────────────────────────────────────────────────────
-const PICKUP_FEE = 2.83;
-const RATE_DAY = 2.16;
-const RATE_NIGHT = 3.24;
-
 function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: string; t: (k: string) => string }) {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -1607,6 +1603,31 @@ function SuiviPage() {
     window.scrollTo(0, 0);
   }, []);
 
+  // ── Lien calendrier (.ics) ──
+  // Bug corrigé : generateICS() était appelée directement dans le JSX
+  // (href={generateICS(...)}), donc à CHAQUE rendu — soit un nouveau
+  // Blob + URL.createObjectURL() à chaque re-render (polling 15s, compteur
+  // "stale" toutes les 60s, chat...), sans jamais révoquer les précédentes.
+  // Fuite mémoire garantie sur une session longue. On mémoïse l'URL et on
+  // révoque l'ancienne à chaque changement / démontage.
+  const icsUrl = useMemo(
+    () => generateICS(reservation, t),
+    [
+      reservation?.pickup_datetime,
+      reservation?.duree_s,
+      reservation?.depart,
+      reservation?.destination,
+      reservation?.arrivee,
+      reservation?.id,
+      t,
+    ],
+  );
+  useEffect(() => {
+    return () => {
+      if (icsUrl && icsUrl !== "#") URL.revokeObjectURL(icsUrl);
+    };
+  }, [icsUrl]);
+
   // ── Historique des changements de prix (RPC SECURITY DEFINER, lien public) ──
   const [priceHistory, setPriceHistory] = useState<
     Array<{ id: string; old_price: number | null; new_price: number; motif: string | null; created_at: string }>
@@ -1626,18 +1647,6 @@ function SuiviPage() {
       cancelled = true;
     };
   }, [id, reservation?.prix_estime, reservation?.id]);
-
-  const [pushDismissed, setPushDismissed] = useState(false);
-  const { status: pushStatus, subscribe: pushSubscribe } = usePushNotifications();
-  const [pushActivatedHere, setPushActivatedHere] = useState(false);
-  useEffect(() => {
-    if (!reservation) return;
-    try {
-      setPushActivatedHere(localStorage.getItem(`push_client_${reservation.id}`) === "1");
-    } catch {
-      /* ignore */
-    }
-  }, [reservation?.id]);
 
   const fetchReservation = useServerFn(getReservationForFinPublic);
 
@@ -1861,9 +1870,18 @@ function SuiviPage() {
   const isCancelledRef = useRef(false);
 
   // Stale reminder: toutes les 5 min sans update on incrémente le compteur
+  // Bug corrigé : isCompletedRef/isCancelledRef n'étaient vérifiées qu'une
+  // seule fois, au montage de l'effet — donc toujours `false` puisque la
+  // réservation n'est pas encore chargée à ce moment-là. Résultat : le timer
+  // continuait de tourner (et de rafraîchir toutes les 8 min) même après la
+  // fin de la course. On vérifie maintenant l'état à chaque tick et on
+  // s'arrête dès que la course est terminée ou annulée.
   useEffect(() => {
-    if (isCompletedRef.current || isCancelledRef.current) return;
     const staleTimer = setInterval(() => {
+      if (isCompletedRef.current || isCancelledRef.current) {
+        clearInterval(staleTimer);
+        return;
+      }
       const elapsed = Math.floor((Date.now() - lastUpdateRef.current) / 60000);
       setStaleMinutes(elapsed);
       // Après 8 min sans update, rafraîchissement silencieux auto
@@ -2131,7 +2149,7 @@ function SuiviPage() {
                 </div>
                 {/* Lien calendrier */}
                 <a
-                  href={generateICS(reservation, t)}
+                  href={icsUrl}
                   download={`taxi-bordeaux-${reservation.id.slice(-6)}.ics`}
                   title={t("suivi.calendar_add_title")}
                   style={{
@@ -2602,7 +2620,9 @@ function SuiviPage() {
         )}
 
         {/* Chat */}
-        {!isCompleted && <ChatSection suiviKey={id} reservationId={reservation.id} t={t} />}
+        {!isCompleted && (
+          <ChatSection suiviKey={id} reservationId={reservation.id} driverName={assignedDriver.name} t={t} />
+        )}
 
         {/* Bloc Course terminée — Facture + Avis */}
         {isCompleted && (
