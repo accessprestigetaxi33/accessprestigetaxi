@@ -17,7 +17,6 @@ import { I18nProvider } from "@/i18n/I18nProvider";
 import { CanonicalSync } from "@/components/CanonicalSync";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ServiceStrip } from "@/components/ServiceStrip";
 import { Toaster } from "@/components/ui/sonner";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { PwaController } from "@/components/PwaController";
@@ -89,66 +88,66 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     // site public sur les routes /driver, sinon il gagne (il est rendu en premier).
     const isDriver = (matches?.[matches.length - 1]?.pathname ?? "").startsWith("/driver");
     return {
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Access Prestige Taxi | Taxi & transport conventionné (17)" },
-      {
-        name: "description",
-        content:
-          "Taxi en Charente-Maritime : BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, transport sanitaire et toutes distances.",
-      },
-      { name: "author", content: "Access Prestige Taxi" },
-      { name: "google-site-verification", content: "Frgz5GIuRTvkgvIxzuUiKebiXzrFSsALSRZTnGckmDA" },
-      { property: "og:site_name", content: "Access Prestige Taxi" },
-      { property: "og:title", content: "Access Prestige Taxi — Taxi électrique en Charente-Maritime" },
-      {
-        property: "og:description",
-        content: "L'excellence à chaque trajet — taxi 100 % électrique en Charente-Maritime.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#0B0B0D" },
-      { name: "application-name", content: "Access Prestige Taxi" },
-      { name: "mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "Access Taxi" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
-      ...(isDriver ? [] : [{ rel: "manifest", href: "/api/manifest", id: "app-manifest" }]),
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "Organization",
-              "@id": "https://www.accessprestigetaxi.fr/#organization",
-              name: "Access Prestige Taxi",
-              url: "https://www.accessprestigetaxi.fr",
-              slogan: "L'excellence à chaque trajet",
-              logo: "https://www.accessprestigetaxi.fr/favicon.png",
-            },
-            {
-              "@type": "WebSite",
-              "@id": "https://www.accessprestigetaxi.fr/#website",
-              name: "Access Prestige Taxi",
-              url: "https://www.accessprestigetaxi.fr",
-              publisher: { "@id": "https://www.accessprestigetaxi.fr/#organization" },
-            },
-          ],
-        }),
-      },
-    ],
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title: "Access Prestige Taxi | Taxi & transport conventionné (17)" },
+        {
+          name: "description",
+          content:
+            "Taxi en Charente-Maritime : BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, transport sanitaire et toutes distances.",
+        },
+        { name: "author", content: "Access Prestige Taxi" },
+        { name: "google-site-verification", content: "Frgz5GIuRTvkgvIxzuUiKebiXzrFSsALSRZTnGckmDA" },
+        { property: "og:site_name", content: "Access Prestige Taxi" },
+        { property: "og:title", content: "Access Prestige Taxi — Taxi électrique en Charente-Maritime" },
+        {
+          property: "og:description",
+          content: "L'excellence à chaque trajet — taxi 100 % électrique en Charente-Maritime.",
+        },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "theme-color", content: "#0B0B0D" },
+        { name: "application-name", content: "Access Prestige Taxi" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-title", content: "Access Taxi" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      ],
+      links: [
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+        { rel: "icon", href: "/favicon.png", type: "image/png" },
+        ...(isDriver ? [] : [{ rel: "manifest", href: "/api/manifest", id: "app-manifest" }]),
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://www.accessprestigetaxi.fr/#organization",
+                name: "Access Prestige Taxi",
+                url: "https://www.accessprestigetaxi.fr",
+                slogan: "L'excellence à chaque trajet",
+                logo: "https://www.accessprestigetaxi.fr/favicon.png",
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://www.accessprestigetaxi.fr/#website",
+                name: "Access Prestige Taxi",
+                url: "https://www.accessprestigetaxi.fr",
+                publisher: { "@id": "https://www.accessprestigetaxi.fr/#organization" },
+              },
+            ],
+          }),
+        },
+      ],
     };
   },
   shellComponent: (props) => {
@@ -204,7 +203,6 @@ function RootComponent() {
         ) : (
           <div className="flex min-h-screen flex-col bg-background">
             <SiteHeader />
-            <ServiceStrip />
             <LocalizedMain>
               <Outlet />
             </LocalizedMain>
