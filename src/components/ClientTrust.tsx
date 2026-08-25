@@ -19,13 +19,30 @@ const COPY = {
     title: "La confiance de nos clients",
     lead: "Ponctualité, sécurité et discrétion : ce que nos passagers retiennent de Patricia et Alain.",
     reviews: (n: number) => `${n} avis vérifié${n > 1 ? "s" : ""}`,
-    noReviews: "Soyez le premier à partager votre expérience — les avis publiés proviennent de courses réellement effectuées.",
+    noReviews:
+      "Soyez le premier à partager votre expérience — les avis publiés proviennent de courses réellement effectuées.",
     outOf: "sur 5",
     trust: [
-      { icon: BadgeCheck, t: "Chauffeurs agréés", d: "Carte professionnelle taxi, autorisation de stationnement en Charente-Maritime." },
-      { icon: ShieldCheck, t: "Assurance & sécurité", d: "Véhicules assurés tous risques, contrôlés et entretenus, sièges enfant sur demande." },
-      { icon: Clock, t: "Ponctualité suivie", d: "Suivi de course en temps réel et lien de suivi partagé avec vos proches." },
-      { icon: Sparkles, t: "Flotte premium", d: "BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, eau et chargeurs à bord." },
+      {
+        icon: BadgeCheck,
+        t: "Chauffeurs agréés",
+        d: "Carte professionnelle taxi, autorisation de stationnement en Charente-Maritime.",
+      },
+      {
+        icon: ShieldCheck,
+        t: "Assurance & sécurité",
+        d: "Véhicules assurés tous risques, contrôlés et entretenus, sièges enfant sur demande.",
+      },
+      {
+        icon: Clock,
+        t: "Ponctualité suivie",
+        d: "Suivi de course en temps réel et lien de suivi partagé avec vos proches.",
+      },
+      {
+        icon: Sparkles,
+        t: "Flotte premium",
+        d: "BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, eau et chargeurs à bord.",
+      },
     ],
     verified: "Avis vérifié",
     safety: "Sécurité, assurance & garanties",
@@ -40,9 +57,17 @@ const COPY = {
     outOf: "out of 5",
     trust: [
       { icon: BadgeCheck, t: "Licensed drivers", d: "Professional taxi licence and permits across Charente-Maritime." },
-      { icon: ShieldCheck, t: "Insurance & safety", d: "Fully insured, serviced vehicles; child seats available on request." },
+      {
+        icon: ShieldCheck,
+        t: "Insurance & safety",
+        d: "Fully insured, serviced vehicles; child seats available on request.",
+      },
       { icon: Clock, t: "Tracked punctuality", d: "Real-time ride tracking with a link you can share with family." },
-      { icon: Sparkles, t: "Premium fleet", d: "Electric 5-seat BMW iX1 and Audi Q6 e-tron, 8-seat Mercedes van, water and chargers on board." },
+      {
+        icon: Sparkles,
+        t: "Premium fleet",
+        d: "Electric 5-seat BMW iX1 and Audi Q6 e-tron, 8-seat Mercedes van, water and chargers on board.",
+      },
     ],
     verified: "Verified review",
     safety: "Safety, insurance & guarantees",
@@ -84,7 +109,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
     };
   }, []);
 
-  const withText = reviews.filter((r) => (r.commentaire ?? "").trim().length > 0).slice(0, 10);
+  const withText = reviews.filter((r) => (r.commentaire ?? "").trim().length > 0).slice(0, 3);
   const count = reviews.length;
   const average = count ? reviews.reduce((s, r) => s + (r.note || 0), 0) / count : 5;
 
@@ -115,9 +140,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
   return (
     <section className="border-t border-border py-20">
       <div className="mx-auto max-w-6xl px-5">
-        {jsonLd && (
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        )}
+        {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
         <div className="text-center">
           <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
           <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.title}</h2>
