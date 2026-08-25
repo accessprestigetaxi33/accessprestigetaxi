@@ -585,7 +585,7 @@ export function BookingStudio() {
       setQuote({ loading: false, error: null, data: null });
       return;
     }
-    const key = `${depart}|${arrivee}|${when}|${pax}|${bags}`;
+    const key = `${depart}|${departCoord?.lat ?? ""},${departCoord?.lng ?? ""}|${arrivee}|${arriveeCoord?.lat ?? ""},${arriveeCoord?.lng ?? ""}|${when}|${pax}|${bags}`;
     if (quote.data?.key === key) return;
     const seq = ++seqRef.current;
     setQuote((q) => ({ ...q, loading: true, error: null }));
@@ -661,6 +661,15 @@ export function BookingStudio() {
 
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       toast.error(L.err_email);
+      return;
+    }
+    // Bug : L.err_phone existait dans les deux dictionnaires de traduction
+    // mais n'était jamais utilisé — seule la longueur minimale (9 chiffres)
+    // était vérifiée dans `missing`, donc un numéro contenant des lettres ou
+    // anormalement long (ex. collé par erreur) était accepté tel quel.
+    const telDigits = tel.replace(/\D/g, "");
+    if (!/^[0-9+()\s.-]*$/.test(tel) || telDigits.length > 15) {
+      toast.error(L.err_phone);
       return;
     }
     // Si un raccourci ("Dès que possible" / "Dans 1h" / "Demain 08:00") est
@@ -816,12 +825,19 @@ export function BookingStudio() {
                 </Link>
               </Button>
             )}
-            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-              <a href={icsHref} download="course-access-prestige-taxi.ics">
+            {pending ? (
+              <Button variant="outline" size="lg" className="w-full sm:w-auto" disabled>
                 <CalendarClock className="mr-2 h-4 w-4" />
                 {L.ok_cal}
-              </a>
-            </Button>
+              </Button>
+            ) : (
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+                <a href={icsHref} download="course-access-prestige-taxi.ics">
+                  <CalendarClock className="mr-2 h-4 w-4" />
+                  {L.ok_cal}
+                </a>
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="lg"
@@ -850,6 +866,13 @@ export function BookingStudio() {
                 setArrivee("");
                 setNote("");
                 setOptions([]);
+                // Bug : la clé d'idempotence n'était jamais réinitialisée après
+                // un succès. En repartant sur une "Nouvelle réservation" sans
+                // ce reset, la 2e course était envoyée avec le MÊME
+                // client_request_id que la 1ère, réussie — le serveur pouvait
+                // alors la traiter comme un doublon de la précédente et ne
+                // rien créer (ou renvoyer la référence de la 1ère course).
+                requestIdRef.current = "";
                 void navigate({ to: "/reserver" });
               }}
             >
@@ -1279,7 +1302,7 @@ export function BookingStudio() {
 function buildIcs(args: { when: string; depart: string; arrivee: string; lang: Lang; ref: string }) {
   const dt = parisStringToDate(args.when);
   const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const title = args.lang === "en" ? "Taxi — Access Prestige Taxi" : "Taxi — Access Prestige Taxi";
+  const title = args.lang === "en" ? "Taxi ride — Access Prestige Taxi" : "Taxi — Access Prestige Taxi";
   const body = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
