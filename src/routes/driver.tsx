@@ -213,12 +213,21 @@ const css = `
     display: flex; border-bottom: 1px solid #e2e8f0; background: #FDFBF7;
     padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
     flex-shrink: 0;
+    /* Fix : avec 8 onglets + labels longs ("Course + chat client"), la
+       rangée peut dépasser la largeur de l'écran sur mobile étroit. Comme
+       html/body ont overflow:hidden (plus haut), sans scroll ICI le
+       débordement était juste coupé et invisible (ex. l'onglet "Devis"
+       disparaissait sans aucun moyen d'y accéder). On rend la barre
+       scrollable horizontalement, scrollbar masquée pour rester discrète. */
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
+  .drv-tabs::-webkit-scrollbar { display: none; }
   .drv-tab {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 12px 4px 10px; min-height: 48px; border: none; background: none; color: #94a3b8;
+    flex: 0 0 auto; min-width: 66px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 12px 8px 10px; min-height: 48px; border: none; background: none; color: #94a3b8;
     font-size: 10px; font-family: 'DM Sans', sans-serif; cursor: pointer; border-bottom: 2px solid transparent;
     transition: color 0.15s; -webkit-user-select: none; user-select: none;
+    white-space: nowrap;
   }
   .drv-tab:active { background: #f8fafc; }
   .drv-tab.active { color: #0f172a; border-bottom-color: #0f172a; }
@@ -731,6 +740,37 @@ function DriverApp({
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("focus", onVisible);
       supabase.removeChannel(ch);
+    };
+  }, []);
+
+  // Badge devis en attente — indépendant de l'onglet actif, sur le même
+  // principe que le badge avis ci-dessus. Avant ce correctif, pendingDevis
+  // n'était mis à jour que par DevisTab.load(), qui n'existe dans le DOM
+  // que quand l'onglet "Devis" est déjà ouvert : une nouvelle demande de
+  // devis arrivée pendant qu'on est sur un autre onglet ne faisait donc
+  // jamais apparaître le badge/l'icône tant qu'on n'avait pas cliqué dessus.
+  useEffect(() => {
+    let cancelled = false;
+    const loadDevisBadge = async () => {
+      try {
+        const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
+        if (!cancelled) setPendingDevis(res?.pending ?? 0);
+      } catch {
+        // Le badge se resynchronise au prochain passage/poll.
+      }
+    };
+    loadDevisBadge();
+    const poll = setInterval(loadDevisBadge, 15000);
+    const onVisible = () => {
+      if (!document.hidden) loadDevisBadge();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
     };
   }, []);
 
