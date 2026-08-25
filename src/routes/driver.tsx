@@ -43,7 +43,7 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "devis" | "gps";
+type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "devis" | "appareils";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -301,7 +301,7 @@ const css = `
     .drv-time { font-size: 18px; }
     .drv-stat-val { font-size: 20px; }
   }
-  .drv-chat-thread { border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10; }
+  .drv-chat-thread { border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
   .drv-chat-thread:active { background: #f8fafc; }
   .drv-chat-thread.unread { border-color: #3b82f6; background: #eff6ff; }
   .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
@@ -385,19 +385,6 @@ const IconUsers = () => (
   </svg>
 );
 
-const IconChat = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>
-);
-
 const IconCalc = () => (
   <svg
     viewBox="0 0 24 24"
@@ -421,7 +408,8 @@ const IconCalc = () => (
   </svg>
 );
 
-const IconGps = () => (
+// Icône onglet "Appareils" (notifications push par appareil).
+const IconDevice = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -430,8 +418,8 @@ const IconGps = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M12 22s7-7.58 7-13a7 7 0 0 0-14 0c0 5.42 7 13 7 13z" />
-    <circle cx="12" cy="9" r="2.5" />
+    <rect x="7" y="2" width="10" height="20" rx="2" />
+    <line x1="11" y1="18" x2="13" y2="18" />
   </svg>
 );
 
@@ -470,12 +458,6 @@ function formatHeure(iso: string) {
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-}
-
-function isToday(iso: string) {
-  const d = new Date(iso);
-  const n = new Date();
-  return d.getDate() === n.getDate() && d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
 }
 
 // ── Main component ─────────────────────────────────────────────────────────
@@ -964,63 +946,73 @@ function DriverApp({
 
         {/* Tabs */}
         <div className="drv-tabs">
-          {(["courses", "planning", "avis", "clients", "stats", "historique", "simulateur", "devis"] as Tab[]).map(
-            (t) => (
-              <button
-                key={t}
-                className={`drv-tab${tab === t ? " active" : ""}`}
-                onClick={() => {
-                  setTab(t);
-                  gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
-                  // Reset optimiste du badge chat à l'ouverture de l'onglet ;
-                  // le prochain refresh Realtime/reconcile remettra la vraie valeur.
-                  if (t === "courses") setUnreadChat(0);
-                }}
-              >
-                <div style={{ position: "relative", display: "inline-block" }}>
-                  {t === "courses" && (
-                    <>
-                      <IconBell />
-                      {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
-                    </>
-                  )}
-                  {t === "planning" && <IconCalendar />}
-                  {t === "avis" && (
-                    <>
-                      <IconStar />
-                      {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
-                    </>
-                  )}
-                  {t === "clients" && <IconUsers />}
-                  {t === "stats" && <IconChart />}
-                  {t === "historique" && <IconCalendar />}
-                  {t === "simulateur" && <IconCalc />}
-                  {t === "devis" && (
-                    <>
-                      <IconDevis />
-                      {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
-                    </>
-                  )}
-                  {t === "gps" && <IconGps />}
-                </div>
-                <span>
+          {(
+            [
+              "courses",
+              "planning",
+              "avis",
+              "clients",
+              "stats",
+              "historique",
+              "simulateur",
+              "devis",
+              "appareils",
+            ] as Tab[]
+          ).map((t) => (
+            <button
+              key={t}
+              className={`drv-tab${tab === t ? " active" : ""}`}
+              onClick={() => {
+                setTab(t);
+                gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
+                // Reset optimiste du badge chat à l'ouverture de l'onglet ;
+                // le prochain refresh Realtime/reconcile remettra la vraie valeur.
+                if (t === "courses") setUnreadChat(0);
+              }}
+            >
+              <div style={{ position: "relative", display: "inline-block" }}>
+                {t === "courses" && (
+                  <>
+                    <IconBell />
+                    {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
+                  </>
+                )}
+                {t === "planning" && <IconCalendar />}
+                {t === "avis" && (
+                  <>
+                    <IconStar />
+                    {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
+                  </>
+                )}
+                {t === "clients" && <IconUsers />}
+                {t === "stats" && <IconChart />}
+                {t === "historique" && <IconCalendar />}
+                {t === "simulateur" && <IconCalc />}
+                {t === "devis" && (
+                  <>
+                    <IconDevis />
+                    {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
+                  </>
+                )}
+                {t === "appareils" && <IconDevice />}
+              </div>
+              <span>
+                {
                   {
-                    {
-                      courses: "Course + chat client",
-                      planning: "Planning",
-                      avis: "Avis",
-                      clients: "Clients",
-                      stats: "Stats",
-                      historique: "Historique",
-                      simulateur: "Simu",
-                      devis: "Devis",
-                      gps: "GPS",
-                    }[t]
-                  }
-                </span>
-              </button>
-            ),
-          )}
+                    courses: "Course + chat client",
+                    planning: "Planning",
+                    avis: "Avis",
+                    clients: "Clients",
+                    stats: "Stats",
+                    historique: "Historique",
+                    simulateur: "Simu",
+                    devis: "Devis",
+                    appareils: "Appareils",
+                  }[t]
+                }
+              </span>
+            </button>
+          ))}
         </div>
 
         <div className="drv-body">
@@ -1044,6 +1036,7 @@ function DriverApp({
           {tab === "historique" && <HistoriqueTab driverId={driverId} />}
           {tab === "simulateur" && <SimulateurTab />}
           {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
+          {tab === "appareils" && <AppareilsTab />}
         </div>
       </div>
     </>
@@ -1673,11 +1666,19 @@ function CoursesTab({
 
   // Canal Realtime dédié aux réservations visibles — recréé quand la liste
   // change (visibleKey). Filtre `reservation_id=in.(...)` côté serveur.
+  // Nom de canal dérivé du contenu réel (hash de visibleKey) et non de sa
+  // seule longueur : deux listes différentes de même taille ne doivent pas
+  // partager le même nom de canal (risque de conflit lors du démontage /
+  // remontage rapide de deux listes de même taille).
   useEffect(() => {
     if (visibleIds.length === 0) return;
     const idFilter = `reservation_id=in.(${visibleIds.join(",")})`;
+    let hash = 0;
+    for (let i = 0; i < visibleKey.length; i++) {
+      hash = (hash * 31 + visibleKey.charCodeAt(i)) | 0;
+    }
     const ch = (supabase as any)
-      .channel(`drv-courses-${visibleIds.length}`)
+      .channel(`drv-courses-${visibleIds.length}-${hash}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "reservations", filter: `id=in.(${visibleIds.join(",")})` },
@@ -2972,7 +2973,7 @@ function CourseCard({
                     <div className="drv-route-meta">
                       <span>🛣 {r.distanceKm} km</span>
                       <span>⏱ {r.dureeMin} min</span>
-                      <span style={{ color: r.tarifLabel === "Tarif jour" ? "#15803d" : "#1d4ed8" }}>
+                      <span style={{ color: r.tarifLabel.includes("jour") ? "#15803d" : "#1d4ed8" }}>
                         {r.tarifLabel}
                       </span>
                     </div>
@@ -3423,11 +3424,6 @@ function PlanningTab() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
     const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "planning" } });
     setCourses((res?.rows ?? []) as Resa[]);
     setLoading(false);
@@ -3975,15 +3971,20 @@ function ClientsTab() {
       if (c.phone) idByPhone.set(normalize(c.phone), c.id);
     }
 
+    // Clé d'agrégation normalisée (comme idByPhone ci-dessus) : sans ça, un
+    // même client ayant réservé avec des formats différents ("0612345678",
+    // "+33612345678", avec espaces…) apparaissait comme plusieurs clients
+    // distincts, avec historique et total dépensé scindés entre les fiches.
     const rows: any[] = data ?? [];
     const byPhone = new Map<string, ClientAgg>();
     for (const r of rows) {
       const phone = r.client_phone;
       if (!phone) continue;
-      const existing = byPhone.get(phone);
+      const key = normalize(phone);
+      const existing = byPhone.get(key);
       const isCompleted = ["terminee", "completed"].includes(r.status);
       if (!existing) {
-        byPhone.set(phone, {
+        byPhone.set(key, {
           id: idByPhone.get(normalize(phone)),
           phone,
           email: r.client_email ?? r.email ?? null,
