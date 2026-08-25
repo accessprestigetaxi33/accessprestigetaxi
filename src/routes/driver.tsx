@@ -2601,10 +2601,10 @@ function CourseCard({
                     {completing ? "…" : "✓ Terminée"}
                   </button>
                 )}
-                {/* Annulation disponible à tout moment, même après acceptation —
-                    contrairement à "Refuser" (uniquement en attente), ce bouton
-                    reste accessible tant que la course n'est ni terminée ni déjà annulée. */}
-                {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                {/* Annulation disponible à TOUT moment (y compris en attente et
+                    après acceptation) tant que la course n'est ni terminée ni
+                    déjà annulée. Le client est prévenu en temps réel. */}
+                {(resa.status === "pending" || resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
                   <button
                     onClick={handleCancel}
                     disabled={cancelling}
