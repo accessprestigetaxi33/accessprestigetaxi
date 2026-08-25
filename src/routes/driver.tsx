@@ -1532,6 +1532,7 @@ function CoursesTab({
     async (id: string, driver: "patricia" | "alain") => {
       try {
         await setCourseDriverFn({ data: { token: getDriverToken(), reservation_id: id, driver } });
+        broadcastSuiviUpdate(id, "driver");
         gaEvent("driver_course_assigned", { driver, reservation_id: id });
         toast.success(`Course transférée à ${driver === "patricia" ? "Patricia" : "Alain"}`);
         load();
@@ -2460,6 +2461,7 @@ function CourseCard({
     setDeleting(true);
     try {
       await driverDeleteReservation({ data: { token: getDriverToken(), reservation_id: resa.id } });
+      broadcastSuiviUpdate(resa.id, "deleted");
       toast.success("Course supprimée");
       onRefresh();
     } catch (e: any) {
@@ -2604,7 +2606,10 @@ function CourseCard({
                 {/* Annulation disponible à TOUT moment (y compris en attente et
                     après acceptation) tant que la course n'est ni terminée ni
                     déjà annulée. Le client est prévenu en temps réel. */}
-                {(resa.status === "pending" || resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                {(resa.status === "pending" ||
+                  resa.status === "accepted" ||
+                  resa.status === "en_route" ||
+                  resa.status === "arrived") && (
                   <button
                     onClick={handleCancel}
                     disabled={cancelling}
@@ -2798,6 +2803,7 @@ function CourseCard({
                             patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
                           },
                         });
+                        broadcastSuiviUpdate(resa.id, "route");
                         toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
                         onRefresh();
                       } catch (e: any) {
