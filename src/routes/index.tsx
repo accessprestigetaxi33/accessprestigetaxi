@@ -1,3 +1,229 @@
+
+
+Document numérisé 126 (1)(1).pdf
+PDF
+
+index (6)(1).tsx
+TypeScript
+voila les 2 fichier 1 explicatif l'autre c'est la homepage 
+
+Parfait, j’ai bien reçu les 2 fichiers :
+
+le PDF explicatif 
+
+
+le fichier index.tsx, qui correspond à ta homepage. 
+
+
+Je vois déjà que la homepage est assez complète : hero avec diaporama, BMW iX1, Audi Q6 e-tron, Mercedes V-Class, chauffeurs, réservations, transport médical, SEO, etc. 
+
+
+Je peux maintenant comparer le document explicatif avec ton index.tsx, point par point, pour te dire :
+
+ce qui est déjà correctement présent ;
+
+ce qui manque ;
+
+ce qui est mal placé ou à améliorer ;
+
+ce qui risque de poser problème sur mobile/SEO ;
+
+et surtout quoi modifier exactement dans index.tsx sans casser le reste.
+
+Le PDF étant un document numérisé dont le texte n'est pas exploitable automatiquement, je vais devoir m'appuyer sur son contenu visuel pour faire la comparaison. 
+
+
+
+non c'est pas ce que je veux sur la hoempage on en doit garder que les sections qui sont prèsentes sur le document numèriser et en + Comment réserver ?
+
+Réserver en toute simplicité
+Réservez en ligne ou par téléphone
+
+1
+
+Réservez en ligne ou par téléphone
+En quelques clics sur le site, ou par un appel direct à votre chauffeur.
+
+Recevez une confirmation
+
+2
+
+Recevez une confirmation
+Prix annoncé et chauffeur assigné, confirmation immédiate.
+
+Votre chauffeur vous prend en charge
+
+3
+
+Votre chauffeur vous prend en charge
+À l'heure convenue, où que vous soyez.
+
+Réserver mon trajetsvg
+
+Suivi & espace client
+
+Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites.
+
+svgActiver les notificationsAccéder à l'espace clientsvg
+
+iPhone / iOS
+1. Ouvrez Safari et allez sur accessprestigetaxi.fr
+2. Tapez le bouton Partager (carré avec flèche)
+3. Sélectionnez « Sur l'écran d'accueil »
+4. Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver
+Android
+1. Ouvrez Chrome et allez sur accessprestigetaxi.fr
+2. Tapez le menu ⋮ (trois points) en haut à droite
+3. Sélectionnez « Ajouter à l'écran d'accueil »
+4. Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver + la sections blog . à toi de jouer corrige le fichier
+non c'est pas ce que je veux sur la hoempage on en doit garder que les sections qui sont prèsentes sur le document numèriser et en + Comment réserver ?
+
+Réserver en toute simplicité
+Réservez en ligne ou par téléphone
+
+1
+
+Réservez en ligne ou par téléphone
+En quelques clics sur le site, ou par un appel direct à votre chauffeur.
+
+Recevez une confirmation
+
+2
+
+Recevez une confirmation
+Prix annoncé et chauffeur assigné, confirmation immédiate.
+
+Votre chauffeur vous prend en charge
+
+3
+
+Votre chauffeur vous prend en charge
+À l'heure convenue, où que vous soyez.
+
+Réserver mon trajetsvg
+
+Suivi & espace client
+
+Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites.
+
+svgActiver les notificationsAccéder à l'espace clientsvg
+
+iPhone / iOS
+1. Ouvrez Safari et allez sur accessprestigetaxi.fr
+2. Tapez le bouton Partager (carré avec flèche)
+3. Sélectionnez « Sur l'écran d'accueil »
+4. Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver
+Android
+1. Ouvrez Chrome et allez sur accessprestigetaxi.fr
+2. Tapez le menu ⋮ (trois points) en haut à droite
+3. Sélectionnez « Ajouter à l'écran d'accueil »
+4. Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver + la sections blog . à toi de jouer corrige le fichier
+
+Oui, là j’ai bien compris ce que tu veux.
+
+J’ai repris le document numérisé comme référence : il contient essentiellement Hero, Nos engagements, Notre flotte, Avis clients, puis Comment réserver ?. 
+
+
+J’ai donc supprimé de la homepage les grosses sections qui n’étaient pas dans ton document : destinations, pourquoi nous choisir, prestations détaillées, bandeau groupe, section chauffeurs séparée, FAQ, CTA final, etc.
+
+J’ai conservé/ajouté uniquement :
+
+Hero — L’élégance de votre trajet
+
+Nos engagements
+
+Transport médical conventionné
+
+Prestige & Privé
+
+Notre flotte
+
+BMW iX1
+
+Audi Q6 e-tron
+
+Mercedes V-Class
+
+Ponctualité / Discrétion / Confort / Attention
+
+Avis clients
+
+Comment réserver ?
+
+Réservez en ligne ou par téléphone
+
+Recevez une confirmation
+
+Votre chauffeur vous prend en charge
+
+Suivi & espace client
+
+Notifications
+
+Espace client
+
+Instructions iPhone/iOS
+
+Instructions Android
+
+Blog
+
+La partie « Comment réserver ? » correspond bien aux trois étapes et aux images déjà présentes dans ton fichier. 
+
+
+La partie suivi/espace client reprend également le contenu que tu m'as donné. Dans l'ancien fichier, elle était déjà mélangée à « Comment ça marche », donc je l'ai séparée pour obtenir une homepage beaucoup plus propre. 
+
+
+J’ai aussi vérifié la syntaxe TSX du nouveau fichier : pas d'erreur de syntaxe détectée.
+
+Fichier corrigé
+
+Tu peux donc remplacer ton index.tsx par celui-ci dans Lovable/VS Code.
+
+Important : je n'ai pas touché aux autres pages du site. La modification concerne uniquement la structure de la homepage.
+
+
+
+2 eme phase j'ai mis la photo du hero qui change toutes les 3 secondes la on garde la premiere photo en statique les autres on bazarde avec le systeme 
+
+Oui 👍 phase 2 validée.
+
+J’ai vérifié le fichier : le système de diaporama du Hero a été supprimé.
+
+Hero maintenant
+✅ 1 seule photo
+
+✅ photo affichée en statique
+
+❌ plus de changement toutes les 3 secondes
+
+❌ plus de slides
+
+❌ plus de slideIndex
+
+❌ plus de setInterval
+
+❌ plus de flèches / boutons de diaporama
+
+❌ les autres photos du Hero sont supprimées du système
+
+✅ l'image reste optimisée avec loading="eager" et fetchPriority="high"
+
+Je conserve simplement la variante anglaise de la même première image pour ne pas casser le fonctionnement français/anglais du site.
+
+Fichier phase 2
+
+Tu peux remplacer le index.tsx actuel par celui-ci.
+
+On peut passer à la phase 3 ensuite, en gardant exactement cette logique : on ne rajoute rien qui n'est pas prévu dans le document, sauf les éléments que tu me demandes explicitement d'ajouter.
+
+
+
+Bibliothèque
+/
+index_phase2_hero_statique.tsx
+
+
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
@@ -137,27 +363,11 @@ const COPY = {
     callPrefix: "Appeler",
     fleetEyebrow: "Notre flotte",
     fleetTitle: "Votre confort, notre priorité",
-    fleetText:
-      "La collection Access Prestige Taxi : des véhicules haut de gamme, parfaitement entretenus, pensés pour chaque besoin.",
+    fleetText: "La collection Access Prestige Taxi : des véhicules haut de gamme, parfaitement entretenus, pensés pour chaque besoin.",
     vehicles: [
-      {
-        title: "BMW iX1",
-        subtitle: "100 % électrique · 5 places",
-        img: photoBmwReal.url,
-        alt: "BMW iX1 100 % électrique Access Prestige Taxi",
-      },
-      {
-        title: "Audi Q6 e-tron",
-        subtitle: "100 % électrique · SUV premium",
-        img: photoAudiReal.url,
-        alt: "Audi Q6 e-tron Access Prestige Taxi",
-      },
-      {
-        title: "Mercedes V-Class",
-        subtitle: "8 places · transport de groupe",
-        img: photoVanReal.url,
-        alt: "Mercedes V-Class 8 places Access Prestige Taxi",
-      },
+      { title: "BMW iX1", subtitle: "100 % électrique · 5 places", img: photoBmwReal.url, alt: "BMW iX1 100 % électrique Access Prestige Taxi" },
+      { title: "Audi Q6 e-tron", subtitle: "100 % électrique · SUV premium", img: photoAudiReal.url, alt: "Audi Q6 e-tron Access Prestige Taxi" },
+      { title: "Mercedes V-Class", subtitle: "8 places · transport de groupe", img: photoVanReal.url, alt: "Mercedes V-Class 8 places Access Prestige Taxi" },
     ],
     reviewsEyebrow: "Avis clients",
     reviewsTitle: "Ils nous font confiance",
@@ -165,28 +375,12 @@ const COPY = {
     howEyebrow: "Comment réserver ?",
     howTitle: "Réserver en toute simplicité",
     how: [
-      {
-        s: "1",
-        img: photoStepVoice,
-        t: "Réservez en ligne ou par téléphone",
-        d: "En quelques clics sur le site, ou par un appel direct à votre chauffeur.",
-      },
-      {
-        s: "2",
-        img: photoStepConfirm,
-        t: "Recevez une confirmation",
-        d: "Prix annoncé et chauffeur assigné, confirmation immédiate.",
-      },
-      {
-        s: "3",
-        img: photoStepTrack,
-        t: "Votre chauffeur vous prend en charge",
-        d: "À l'heure convenue, où que vous soyez.",
-      },
+      { s: "1", img: photoStepVoice, t: "Réservez en ligne ou par téléphone", d: "En quelques clics sur le site, ou par un appel direct à votre chauffeur." },
+      { s: "2", img: photoStepConfirm, t: "Recevez une confirmation", d: "Prix annoncé et chauffeur assigné, confirmation immédiate." },
+      { s: "3", img: photoStepTrack, t: "Votre chauffeur vous prend en charge", d: "À l'heure convenue, où que vous soyez." },
     ],
     appEyebrow: "Suivi & espace client",
-    appText:
-      "Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites.",
+    appText: "Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites.",
     notify: "Activer les notifications",
     client: "Accéder à l'espace client",
     ios: [
@@ -216,24 +410,9 @@ const COPY = {
     fleetTitle: "Your comfort, our priority",
     fleetText: "The Access Prestige Taxi collection: premium, perfectly maintained vehicles designed for every need.",
     vehicles: [
-      {
-        title: "BMW iX1",
-        subtitle: "100% electric · 5 seats",
-        img: photoBmwReal.url,
-        alt: "BMW iX1 100% electric Access Prestige Taxi",
-      },
-      {
-        title: "Audi Q6 e-tron",
-        subtitle: "100% electric · premium SUV",
-        img: photoAudiReal.url,
-        alt: "Audi Q6 e-tron Access Prestige Taxi",
-      },
-      {
-        title: "Mercedes V-Class",
-        subtitle: "8 seats · group transport",
-        img: photoVanReal.url,
-        alt: "Mercedes V-Class 8-seat Access Prestige Taxi",
-      },
+      { title: "BMW iX1", subtitle: "100% electric · 5 seats", img: photoBmwReal.url, alt: "BMW iX1 100% electric Access Prestige Taxi" },
+      { title: "Audi Q6 e-tron", subtitle: "100% electric · premium SUV", img: photoAudiReal.url, alt: "Audi Q6 e-tron Access Prestige Taxi" },
+      { title: "Mercedes V-Class", subtitle: "8 seats · group transport", img: photoVanReal.url, alt: "Mercedes V-Class 8-seat Access Prestige Taxi" },
     ],
     reviewsEyebrow: "Client reviews",
     reviewsTitle: "They trust us",
@@ -241,23 +420,12 @@ const COPY = {
     howEyebrow: "How to book?",
     howTitle: "Booking made simple",
     how: [
-      {
-        s: "1",
-        img: photoStepVoice,
-        t: "Book online or by phone",
-        d: "A few clicks on the site, or a direct call to your driver.",
-      },
-      {
-        s: "2",
-        img: photoStepConfirm,
-        t: "Receive a confirmation",
-        d: "Quoted price and assigned driver, confirmed instantly.",
-      },
+      { s: "1", img: photoStepVoice, t: "Book online or by phone", d: "A few clicks on the site, or a direct call to your driver." },
+      { s: "2", img: photoStepConfirm, t: "Receive a confirmation", d: "Quoted price and assigned driver, confirmed instantly." },
       { s: "3", img: photoStepTrack, t: "Your driver picks you up", d: "At the agreed time, wherever you are." },
     ],
     appEyebrow: "Tracking & account",
-    appText:
-      "Install the app for real-time tracking, and find your ride history, invoices and saved addresses in your personal account.",
+    appText: "Install the app for real-time tracking, and find your ride history, invoices and saved addresses in your personal account.",
     notify: "Enable notifications",
     client: "Go to the client area",
     ios: [
@@ -281,8 +449,7 @@ const COPY = {
 
 const HOME_SOCIAL_FR = {
   title: "Access Prestige Taxi — L'excellence à chaque trajet",
-  description:
-    "L'excellence à chaque trajet : réservation en ligne ou par téléphone, BMW iX1 et Audi Q6 e-tron électriques, van Mercedes 8 places en Charente-Maritime.",
+  description: "L'excellence à chaque trajet : réservation en ligne ou par téléphone, BMW iX1 et Audi Q6 e-tron électriques, van Mercedes 8 places en Charente-Maritime.",
   image: ogImageUrl(ogHomeFr.url),
   alt: "Access Prestige Taxi — taxi 100 % électrique en Charente-Maritime",
   url: ogPageUrl("/", "fr"),
@@ -290,8 +457,7 @@ const HOME_SOCIAL_FR = {
 
 const HOME_SOCIAL_EN = {
   title: "Access Prestige Taxi — Excellence on every journey",
-  description:
-    "Book online or by phone: electric BMW iX1 and Audi Q6 e-tron, plus an 8-seat Mercedes van across Charente-Maritime.",
+  description: "Book online or by phone: electric BMW iX1 and Audi Q6 e-tron, plus an 8-seat Mercedes van across Charente-Maritime.",
   image: ogImageUrl(ogHomeEn.url),
   alt: "Access Prestige Taxi — electric taxi in Charente-Maritime",
   url: ogPageUrl("/", "en"),
@@ -307,11 +473,7 @@ export const Route = createFileRoute("/")({
     const social = isEn ? HOME_SOCIAL_EN : HOME_SOCIAL_FR;
     return {
       meta: [
-        {
-          title: isEn
-            ? "Electric taxi in Charente-Maritime | Access Prestige"
-            : "Taxi électrique Charente-Maritime | Access Prestige",
-        },
+        { title: isEn ? "Electric taxi in Charente-Maritime | Access Prestige" : "Taxi électrique Charente-Maritime | Access Prestige" },
         {
           name: "description",
           content: isEn
@@ -368,12 +530,7 @@ export const Route = createFileRoute("/")({
             availableLanguage: ["fr", "en"],
             openingHours: "Mo-Fr 08:00-20:00",
             priceRange: "€€",
-            employee: DRIVERS.map((d) => ({
-              "@type": "Person",
-              name: d.name,
-              jobTitle: "Chauffeur de taxi",
-              telephone: d.intl,
-            })),
+            employee: DRIVERS.map((d) => ({ "@type": "Person", name: d.name, jobTitle: "Chauffeur de taxi", telephone: d.intl })),
           }),
         },
       ],
@@ -398,11 +555,7 @@ function Index() {
         <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
-            alt={
-              lang === "en"
-                ? "Access Prestige Taxi — premium vehicles in Charente-Maritime"
-                : "Access Prestige Taxi — véhicules premium en Charente-Maritime"
-            }
+            alt={lang === "en" ? "Access Prestige Taxi — premium vehicles in Charente-Maritime" : "Access Prestige Taxi — véhicules premium en Charente-Maritime"}
             fetchPriority="high"
             loading="eager"
             width={1376}
@@ -418,9 +571,7 @@ function Index() {
               <h1 className="font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl text-balance">
                 {c.h1}
               </h1>
-              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
-                {c.tagline}
-              </p>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">{c.tagline}</p>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{c.lead}</p>
 
               <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
@@ -439,9 +590,7 @@ function Index() {
                   >
                     <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
                     <span className="flex flex-col items-start leading-tight">
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/60">
-                        {c.callPrefix} {d.name}
-                      </span>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/60">{c.callPrefix} {d.name}</span>
                       <span className="text-sm tabular-nums">{d.display}</span>
                     </span>
                   </a>
@@ -455,9 +604,7 @@ function Index() {
                       <p.icon className="h-4 w-4 text-primary" aria-hidden="true" />
                       {p.label}
                     </span>
-                    {i < pillars.length - 1 && (
-                      <span className="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true" />
-                    )}
+                    {i < pillars.length - 1 && <span className="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true" />}
                   </li>
                 ))}
               </ul>
@@ -470,9 +617,7 @@ function Index() {
       <section className="border-t border-border bg-background py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">
-              {lang === "en" ? "Our commitments" : "Nos engagements"}
-            </p>
+            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{lang === "en" ? "Our commitments" : "Nos engagements"}</p>
           </Reveal>
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
             {engagements.map((e, i) => {
@@ -481,9 +626,7 @@ function Index() {
                 <Reveal key={e.title} delay={i * 0.08}>
                   <div className={`h-full p-7 sm:p-8 ${CARD}`}>
                     <e.icon className="h-9 w-9 text-primary" aria-hidden="true" />
-                    <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
-                      {e.title}
-                    </h2>
+                    <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">{e.title}</h2>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
                     <button
                       type="button"
@@ -491,17 +634,8 @@ function Index() {
                       aria-expanded={isOpen}
                       className="mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
                     >
-                      {isOpen
-                        ? lang === "en"
-                          ? "Show less"
-                          : "Voir moins"
-                        : lang === "en"
-                          ? "Learn more"
-                          : "En savoir plus"}
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                        aria-hidden="true"
-                      />
+                      {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
+                      <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
                     </button>
                     <AnimatePresence initial={false}>
                       {isOpen && (
@@ -533,26 +667,15 @@ function Index() {
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.fleetEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.fleetTitle}
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
-              {c.fleetText}
-            </p>
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">{c.fleetTitle}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">{c.fleetText}</p>
           </Reveal>
 
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {c.vehicles.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.07}>
                 <article className={`overflow-hidden ${CARD}`}>
-                  <img
-                    src={v.img}
-                    alt={v.alt}
-                    loading="lazy"
-                    width={1600}
-                    height={900}
-                    className="aspect-[16/10] w-full object-cover"
-                  />
+                  <img src={v.img} alt={v.alt} loading="lazy" width={1600} height={900} className="aspect-[16/10] w-full object-cover" />
                   <div className="p-5 text-center sm:p-6">
                     <h3 className="font-display text-xl font-semibold text-card-foreground">{v.title}</h3>
                     <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">{v.subtitle}</p>
@@ -576,9 +699,7 @@ function Index() {
 
           <p className="mx-auto mt-6 flex max-w-md items-center justify-center gap-2 text-center text-xs text-muted-foreground">
             <Baby className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-            {lang === "en"
-              ? "Baby seats and booster seats available on request."
-              : "Sièges bébé et rehausseurs disponibles sur demande."}
+            {lang === "en" ? "Baby seats and booster seats available on request." : "Sièges bébé et rehausseurs disponibles sur demande."}
           </p>
         </div>
       </section>
@@ -588,13 +709,9 @@ function Index() {
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.reviewsEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">
-              {c.reviewsTitle}
-            </h2>
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.reviewsTitle}</h2>
             <div className="mt-5 flex justify-center">
-              <a href="#avis" className="text-sm font-semibold text-primary underline underline-offset-4">
-                {c.reviewsLink}
-              </a>
+              <a href="#avis" className="text-sm font-semibold text-primary underline underline-offset-4">{c.reviewsLink}</a>
             </div>
           </Reveal>
 
@@ -615,23 +732,14 @@ function Index() {
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.howEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.howTitle}
-            </h2>
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">{c.howTitle}</h2>
           </Reveal>
 
           <ol className="mt-10 grid gap-6 md:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
                 <div className={`h-full overflow-hidden bg-background ${CARD}`}>
-                  <img
-                    src={h.img}
-                    alt={h.t}
-                    loading="lazy"
-                    width={1024}
-                    height={768}
-                    className="h-40 w-full object-cover"
-                  />
+                  <img src={h.img} alt={h.t} loading="lazy" width={1024} height={768} className="h-40 w-full object-cover" />
                   <div className="p-6">
                     <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
                     <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{h.t}</h3>
@@ -661,20 +769,12 @@ function Index() {
           <Reveal>
             <div className="dark rounded-3xl border border-primary/40 bg-card p-7 shadow-[var(--shadow-gold)] sm:p-8">
               <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.appEyebrow}</p>
-              <p className="mx-auto mt-3 max-w-3xl text-center text-sm leading-relaxed text-foreground/80 sm:text-base">
-                {c.appText}
-              </p>
+              <p className="mx-auto mt-3 max-w-3xl text-center text-sm leading-relaxed text-foreground/80 sm:text-base">{c.appText}</p>
               <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link
-                  to="/reserver"
-                  className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-6 py-3.5 text-sm font-semibold text-black transition hover:scale-[1.02]"
-                >
+                <Link to="/reserver" className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-6 py-3.5 text-sm font-semibold text-black transition hover:scale-[1.02]">
                   <Bell className="h-4 w-4" aria-hidden="true" /> {c.notify}
                 </Link>
-                <Link
-                  to="/client/login"
-                  className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
-                >
+                <Link to="/client/login" className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground">
                   {c.client} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
@@ -686,11 +786,7 @@ function Index() {
               <article className={`h-full p-6 ${CARD}`}>
                 <h3 className="font-display text-base font-semibold text-card-foreground">iPhone / iOS</h3>
                 <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
-                  {c.ios.map((step, i) => (
-                    <li key={step}>
-                      {i + 1}. {step}
-                    </li>
-                  ))}
+                  {c.ios.map((step, i) => <li key={step}>{i + 1}. {step}</li>)}
                 </ol>
               </article>
             </Reveal>
@@ -698,11 +794,7 @@ function Index() {
               <article className={`h-full p-6 ${CARD}`}>
                 <h3 className="font-display text-base font-semibold text-card-foreground">Android</h3>
                 <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
-                  {c.android.map((step, i) => (
-                    <li key={step}>
-                      {i + 1}. {step}
-                    </li>
-                  ))}
+                  {c.android.map((step, i) => <li key={step}>{i + 1}. {step}</li>)}
                 </ol>
               </article>
             </Reveal>
@@ -718,25 +810,17 @@ function Index() {
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
               <div className="min-w-0">
                 <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.blogEyebrow}</p>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-                  {c.blogTitle}
-                </h2>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">{c.blogTitle}</h2>
                 <p className="mt-3 text-sm text-muted-foreground">{c.blogText}</p>
               </div>
-              <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">
-                {c.blogCta} →
-              </Link>
+              <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">{c.blogCta} →</Link>
             </div>
           </Reveal>
 
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.06}>
-                <Link
-                  to="/blog/$slug"
-                  params={{ slug: e.slug }}
-                  className={`group block h-full overflow-hidden ${CARD}`}
-                >
+                <Link to="/blog/$slug" params={{ slug: e.slug }} className={`group block h-full overflow-hidden ${CARD}`}>
                   <img
                     src={imgAt(e.photo, 500)}
                     srcSet={imgSrcSet(e.photo, [250, 330, 500])}
@@ -751,9 +835,7 @@ function Index() {
                   <div className="p-5">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
                     <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                      {lang === "en" ? e.en : e.fr}
-                    </p>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{lang === "en" ? e.en : e.fr}</p>
                   </div>
                 </Link>
               </Reveal>
