@@ -416,6 +416,12 @@ function AnonChat({
   const [sending, setSending] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
   const driverBadgeChannelRef = useRef<any>(null);
+  // Le tout premier chargement des messages ne doit jamais déclencher de scroll :
+  // sinon endRef.scrollIntoView() fait défiler toute la page (pas seulement la
+  // fenêtre de chat interne) jusqu'au bloc chat, plus bas dans la page — la page
+  // semble "démarrer en bas". On ne scrolle qu'à partir du 2e changement (un
+  // vrai nouveau message reçu/envoyé après le chargement initial).
+  const isFirstLoadRef = useRef(true);
   const listFn = useServerFn(listSuiviMessages);
   const sendFn = useServerFn(sendSuiviClientMessage);
   const markReadFn = useServerFn(markReservationMessagesRead);
@@ -476,7 +482,11 @@ function AnonChat({
   }, [reservationId, load]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isFirstLoadRef.current) {
+      isFirstLoadRef.current = false;
+      return;
+    }
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages]);
 
   // Compteur non lus : COUNT SQL exact (source de vérité identique à celle du
@@ -1589,6 +1599,14 @@ function SuiviPage() {
     DRIVERS.find((d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase()) ?? DRIVERS[0];
   const josePhone = assignedDriver?.tel ?? JOSE_PHONE;
 
+  // Filet de sécurité : force la page à démarrer tout en haut au montage.
+  // Le vrai bug (scroll auto vers le chat) est corrigé dans AnonChat, mais on
+  // garde ça au cas où le navigateur/routeur restaure une position de scroll
+  // précédente (retour arrière, bfcache…).
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // ── Historique des changements de prix (RPC SECURITY DEFINER, lien public) ──
   const [priceHistory, setPriceHistory] = useState<
     Array<{ id: string; old_price: number | null; new_price: number; motif: string | null; created_at: string }>
@@ -1974,8 +1992,15 @@ function SuiviPage() {
           boxSizing: "border-box",
         }}
       >
-        {/* Bouton retour vers site */}
-        <div style={{ marginBottom: "12px" }}>
+        {/* Bouton retour vers site — sticky : toujours visible, même en scrollant */}
+        <div
+          style={{
+            position: "sticky",
+            top: "calc(env(safe-area-inset-top, 0px) + 4px)",
+            zIndex: 50,
+            marginBottom: "12px",
+          }}
+        >
           <a
             href="https://accessprestigetaxi.lovable.app"
             style={{
@@ -1983,13 +2008,15 @@ function SuiviPage() {
               alignItems: "center",
               gap: "6px",
               padding: "8px 14px",
-              background: "rgba(255,255,255,0.08)",
+              background: "rgba(15,23,42,0.85)",
+              backdropFilter: "blur(8px)",
               border: "1px solid rgba(255,255,255,0.15)",
               borderRadius: "10px",
-              color: "#94a3b8",
+              color: "#e2e8f0",
               fontSize: "13px",
               fontWeight: 600,
               textDecoration: "none",
+              boxShadow: "0 4px 12px rgba(15,23,42,0.25)",
             }}
           >
             ← Access Prestige Taxi
