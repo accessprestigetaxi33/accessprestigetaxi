@@ -602,11 +602,16 @@ function Index() {
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
                   <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
-                  <ReserveButton label={c.reserveCta} className="mt-5" />
                 </div>
               </Reveal>
             ))}
           </div>
+
+          <Reveal delay={0.16}>
+            <div className="mt-8 flex justify-center">
+              <ReserveButton label={c.reserveCta} />
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -641,7 +646,6 @@ function Index() {
                     <div className="flex justify-center">
                       <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} />
                     </div>
-                    <ReserveButton label={c.reserveCta} className="mt-4" />
                   </div>
                 </article>
               </Reveal>
@@ -655,7 +659,6 @@ function Index() {
                   <v.icon className="mx-auto h-7 w-7 text-primary" aria-hidden="true" />
                   <h3 className="mt-3 font-display text-base font-semibold text-card-foreground">{v.title}</h3>
                   <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{v.text}</p>
-                  <ReserveButton label={c.reserveCta} className="mt-4" />
                 </div>
               </Reveal>
             ))}
@@ -667,13 +670,19 @@ function Index() {
               ? "Baby seats and booster seats available on request."
               : "Sièges bébé et rehausseurs disponibles sur demande."}
           </p>
+
+          <Reveal delay={0.1}>
+            <div className="mt-8 flex justify-center">
+              <ReserveButton label={c.reserveCta} />
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* 4. AVIS CLIENTS — section unique : note moyenne, avis vérifiés, réassurance et formulaire */}
       <div id="avis" className={NIGHT_SECTION}>
         <ClientTrust>
-          <div className="flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/avis"
               className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
@@ -681,6 +690,7 @@ function Index() {
               {lang === "en" ? "See all reviews" : "Voir tous les avis"}{" "}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
+            <ReserveButton label={c.reserveCta} />
           </div>
           <div className="mx-auto mt-10 max-w-2xl border-t border-border pt-10">
             <div className="rounded-2xl border border-border bg-card p-6">
@@ -713,7 +723,6 @@ function Index() {
                   <h3 className="mt-4 font-display text-lg font-semibold text-foreground">{h.t}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
                   <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
-                  <ReserveButton label={c.reserveCta} className="mt-4" />
                 </div>
               </Reveal>
             ))}
