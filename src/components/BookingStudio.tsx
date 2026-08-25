@@ -6,6 +6,8 @@ import {
   ArrowDownUp,
   BadgeCheck,
   Baby,
+  Bell,
+  BellRing,
   Briefcase,
   CalendarClock,
   Car,
@@ -36,7 +38,6 @@ import { quoteRide, bookRide } from "@/lib/booking.functions";
 import { locateUser } from "@/lib/geolocation";
 import { placesReverse } from "@/lib/places";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { Bell, BellRing } from "lucide-react";
 
 /* ────────────────────────────── i18n ────────────────────────────── */
 
