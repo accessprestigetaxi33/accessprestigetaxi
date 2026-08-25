@@ -2256,6 +2256,38 @@ function CourseCard({
     }
   };
 
+  // ── Prix réel compteur — saisi au moment de terminer la course ──
+  // Distinct du "prix personnalisé" ci-dessous (qui sert à notifier le
+  // client par SMS/WhatsApp/Email en cours de route) : ici on corrige juste
+  // le prix final affiché sur reservations.prix_estime, qui alimente déjà
+  // l'affichage suivi.tsx ET la facture (InvoiceBlock lit reservation.prix_estime).
+  // Le broadcastSuiviUpdate déclenche le refetch temps réel côté client.
+  const [finalPrixOpen, setFinalPrixOpen] = useState(false);
+  const [finalPrix, setFinalPrix] = useState("");
+  const [finalPrixSaving, setFinalPrixSaving] = useState(false);
+  const handleSetFinalPrix = async () => {
+    const val = parseFloat((finalPrix || "").trim().replace(",", "."));
+    if (!finalPrix || isNaN(val) || val <= 0) {
+      toast.error("Prix invalide", { description: "Entrez le montant affiché au compteur (ex : 18.50)" });
+      return;
+    }
+    setFinalPrixSaving(true);
+    try {
+      await driverUpdateReservation({
+        data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val } },
+      });
+      broadcastSuiviUpdate(resa.id, "price");
+      toast.success(`💶 Prix compteur enregistré — ${val.toFixed(2)} €`);
+      setFinalPrixOpen(false);
+      setFinalPrix("");
+      onRefresh();
+    } catch (e: any) {
+      toast.error("Erreur : " + (e.message ?? e));
+    } finally {
+      setFinalPrixSaving(false);
+    }
+  };
+
   // ── Prix custom — SMS / WhatsApp / Email ──
   const [customPrix, setCustomPrix] = useState("");
   const [customPrixOpen, setCustomPrixOpen] = useState(false);
@@ -2636,6 +2668,15 @@ function CourseCard({
                 )}
                 {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
                   <button
+                    onClick={() => setFinalPrixOpen((v) => !v)}
+                    disabled={completing}
+                    style={{ ...qb, background: "#fffbeb", border: "2px solid #d97706", color: "#92400e" }}
+                  >
+                    💶 Prix compteur
+                  </button>
+                )}
+                {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                  <button
                     onClick={handleComplete}
                     disabled={completing}
                     style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
@@ -2661,6 +2702,66 @@ function CourseCard({
               </div>
             );
           })()}
+
+        {finalPrixOpen && (
+          <div
+            style={{
+              marginTop: 10,
+              marginBottom: 4,
+              padding: 12,
+              background: "#fffbeb",
+              border: "1px solid #fde68a",
+              borderRadius: 12,
+            }}
+          >
+            <label style={{ fontSize: 12, fontWeight: 700, color: "#92400e", display: "block", marginBottom: 6 }}>
+              💶 Prix réel affiché au compteur
+            </label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                type="text"
+                inputMode="decimal"
+                autoFocus
+                placeholder="Ex : 24,50"
+                value={finalPrix}
+                onChange={(e) => setFinalPrix(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSetFinalPrix();
+                }}
+                style={{
+                  flex: 1,
+                  padding: "10px 12px",
+                  borderRadius: 10,
+                  border: "1px solid #fde68a",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: "#0f172a",
+                  outline: "none",
+                }}
+              />
+              <button
+                onClick={handleSetFinalPrix}
+                disabled={finalPrixSaving}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 10,
+                  border: "none",
+                  background: "#d97706",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  cursor: finalPrixSaving ? "not-allowed" : "pointer",
+                  opacity: finalPrixSaving ? 0.6 : 1,
+                }}
+              >
+                {finalPrixSaving ? "…" : "Valider"}
+              </button>
+            </div>
+            <div style={{ fontSize: 11, color: "#92400e", marginTop: 6 }}>
+              Met à jour le prix affiché au client sur sa page de suivi et sur la facture, en temps réel.
+            </div>
+          </div>
+        )}
 
         {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
         {resa.message && resa.message.trim().length > 0 && (
