@@ -519,7 +519,9 @@ export function BookingStudio() {
   const requestIdRef = useRef<string>("");
   const inFlightRef = useRef(false);
 
-  const minWhen = useMemo(() => parisLocalValue(addMinutes(new Date(), 15)), []);
+  // Recalculé à chaque rendu (pas de useMemo figé au montage) : un `min` périmé
+  // combiné à `step` désynchronise la validation native et bloque le submit iOS.
+  const getMinWhen = () => parisLocalValue(addMinutes(new Date(), 15));
 
   const OPTION_LIST = useMemo(
     () => [
@@ -1041,8 +1043,8 @@ export function BookingStudio() {
                 id="when"
                 type="datetime-local"
                 value={when}
-                min={minWhen}
-                step={300}
+                min={getMinWhen()}
+                step={60}
                 onChange={(e) => {
                   setWhen(e.target.value);
                   setQuickWhen(null);
