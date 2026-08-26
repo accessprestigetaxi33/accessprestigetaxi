@@ -107,19 +107,19 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
         {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
         <div className="text-center">
           <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl">{c.title}</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.lead}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold text-white sm:text-4xl">{c.title}</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">{c.lead}</p>
         </div>
 
         <div className="mx-auto mt-8 flex max-w-md flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-black px-6 py-5">
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-4xl font-semibold text-foreground">
+            <span className="font-display text-4xl font-semibold text-white">
               {average.toFixed(1).replace(".", lang === "en" ? "." : ",")}
             </span>
-            <span className="text-sm text-muted-foreground">{c.outOf}</span>
+            <span className="text-sm text-white/70">{c.outOf}</span>
           </div>
           <Stars value={average} />
-          <p className="text-xs text-muted-foreground">{count ? c.reviews(count) : c.noReviews}</p>
+          <p className="text-xs text-white/70">{count ? c.reviews(count) : c.noReviews}</p>
         </div>
 
         {withText.length > 0 && (
