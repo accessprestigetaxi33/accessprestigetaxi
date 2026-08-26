@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Mail, Lock, Eye, EyeOff, User, Phone } from "lucide-react";
 import { BrandLoader } from "@/components/BrandLoader";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ClientAuthHeader } from "@/components/ClientAuthHeader";
 import { clientLogin, clientRegister } from "@/lib/client-auth.functions";
 import { setClientSession, getClientSession } from "@/lib/client-session";
 import { useI18n, useT } from "@/i18n/I18nProvider";
@@ -116,32 +117,8 @@ function ClientLoginPage() {
         }}
       />
       <div className="cl-root" dir={dir}>
-        {/* Header — identique au dashboard client */}
-        <div className="cl-header">
-          <a href="/" style={{ display: "flex", alignItems: "center" }}>
-            <img src={logo} alt="Access Prestige Taxi" style={{ height: 36, borderRadius: 6 }} />
-          </a>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <LanguageSwitcher />
-            <a
-              href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-                fontSize: 12,
-                fontWeight: 600,
-                color: "rgba(255,255,255,0.4)",
-                textDecoration: "none",
-                padding: "6px 10px",
-                borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              {c.backSite}
-            </a>
-          </div>
-        </div>
+        {/* Header — composant partagé */}
+        <ClientAuthHeader />
 
         {/* Contenu scrollable */}
         <div className="cl-scroll">
