@@ -196,6 +196,10 @@ function RootComponent() {
   // ce qui donne visuellement l'effet d'une popup au lieu d'une vraie page.
   const standalone =
     pathname.startsWith("/driver") || pathname.startsWith("/reserver") || pathname.startsWith("/client");
+  // Firebase (SDK + Service Worker FCM) et le contrôleur PWA ne servent qu'aux
+  // notifications push de l'espace chauffeur / client. Les monter sur le site
+  // public (homepage, pages contenu) ralentit le premier chargement pour rien.
+  const needsPush = pathname.startsWith("/driver") || pathname.startsWith("/client");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -215,8 +219,12 @@ function RootComponent() {
           </div>
         )}
         <Toaster />
-        <FirebaseInitializer />
-        <PwaController />
+        {needsPush && (
+          <>
+            <FirebaseInitializer />
+            <PwaController />
+          </>
+        )}
         <AnalyticsTracker />
       </I18nProvider>
     </QueryClientProvider>
