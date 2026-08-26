@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
@@ -19,6 +19,7 @@ import {
   Crown,
   Gem,
   HeartHandshake,
+  MapPin,
   Phone,
   ShieldCheck,
   Smartphone,
@@ -47,7 +48,7 @@ function absoluteUrl(path: string) {
 }
 
 const CARD =
-  "dark rounded-3xl border border-primary/60 bg-[#07101f] shadow-[0_18px_50px_-24px_rgba(0,0,0,0.9)] transition duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_22px_55px_-22px_color-mix(in_oklab,var(--gold)_48%,transparent)]";
+  "dark rounded-2xl border border-border bg-black transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
 
 const NIGHT_SECTION = "dark border-t border-white/10 bg-[#0a0f2c]";
 
@@ -55,7 +56,7 @@ function ReserveButton({ label, className = "" }: { label: string; className?: s
   return (
     <Link
       to="/reserver"
-      className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full btn-gold px-6 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-black shadow-[0_10px_30px_-12px_rgba(0,0,0,0.9)] transition hover:scale-[1.02] ${className}`}
+      className={`inline-flex min-h-[38px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
     >
       {label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
     </Link>
@@ -484,8 +485,8 @@ function LearnMoreToggle({
         aria-expanded={isOpen}
         className={
           variant === "solid"
-            ? "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-black transition hover:scale-[1.02]"
-            : "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-black transition hover:scale-[1.02]"
+            ? "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+            : "mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
         }
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
@@ -513,6 +514,48 @@ function LearnMoreToggle({
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function ReferencePhotoCard({
+  image,
+  alt,
+  icon: Icon,
+  title,
+  lead,
+  children,
+  className = "",
+}: {
+  image: string;
+  alt: string;
+  icon: typeof Stethoscope;
+  title: string;
+  lead?: string;
+  children?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <article
+      className={`group relative overflow-hidden rounded-[26px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-[#e0b866] ${className}`}
+    >
+      <div className="relative h-44 overflow-hidden sm:h-48">
+        <img
+          src={image}
+          alt={alt}
+          loading="lazy"
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,10,20,0.05)_25%,rgba(4,10,20,0.35)_65%,rgba(4,10,20,0.96)_100%)]" />
+        <div className="absolute bottom-[-1px] left-6 flex h-14 w-14 translate-y-1/2 items-center justify-center rounded-2xl border border-[#e0b866]/80 bg-[#07111f] shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+          <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
+        </div>
+      </div>
+      <div className="px-6 pb-6 pt-10 sm:px-7 sm:pb-7">
+        <h3 className="font-display text-xl font-semibold text-[#f6f0e5] sm:text-2xl">{title}</h3>
+        {lead && <p className="mt-2 text-sm leading-relaxed text-white/70 sm:text-base">{lead}</p>}
+        {children}
+      </div>
+    </article>
   );
 }
 
@@ -600,39 +643,34 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. NOS ENGAGEMENTS — présent sur le document */}
-      <section className={`${NIGHT_SECTION} py-20`}>
+      {/* 2. NOS ENGAGEMENTS — style de la maquette fournie */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">
+            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-[#e0b866]">
               {lang === "en" ? "Our commitments" : "Nos engagements"}
             </p>
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl">
+              {lang === "en" ? "A service designed around you" : "Un service pensé autour de vous"}
+            </h2>
           </Reveal>
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="mt-10 grid gap-7 md:grid-cols-2">
             {engagements.map((e, i) => (
               <Reveal key={e.title} delay={i * 0.08}>
-                <div className={`relative h-full overflow-hidden p-7 sm:p-9 ${CARD}`}>
-                  <div
-                    className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-3xl"
-                    aria-hidden="true"
-                  />
-                  <div className="relative">
-                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/50 bg-black/20">
-                      <e.icon className="h-8 w-8 text-primary" aria-hidden="true" />
-                    </div>
-                    <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
-                      {e.title}
-                    </h2>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
-                    <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
-                  </div>
-                </div>
+                <ReferencePhotoCard
+                  image={i === 0 ? photoBmwReal.url : photoAudiReal.url}
+                  alt={i === 0 ? "Véhicule premium pour transport médical" : "Véhicule premium pour transport privé"}
+                  icon={e.icon}
+                  title={e.title}
+                  lead={e.lead}
+                >
+                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
+                </ReferencePhotoCard>
               </Reveal>
             ))}
           </div>
-
           <Reveal delay={0.16}>
-            <div className="mt-8 flex justify-center">
+            <div className="mt-9 flex justify-center">
               <ReserveButton label={c.reserveCta} />
             </div>
           </Reveal>
@@ -685,14 +723,16 @@ function Index() {
             ))}
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
             {fleetValues.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.05}>
-                <div className={`flex h-full flex-col items-center p-5 text-center ${CARD}`}>
-                  <v.icon className="mx-auto h-7 w-7 text-primary" aria-hidden="true" />
-                  <h3 className="mt-3 font-display text-base font-semibold text-card-foreground">{v.title}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{v.text}</p>
-                </div>
+                <ReferencePhotoCard
+                  image={[photoBmwReal.url, photoAudiReal.url, photoVanReal.url, photoBmwReal.url][i]}
+                  alt={`${v.title} — Access Prestige Taxi`}
+                  icon={v.icon}
+                  title={v.title}
+                  lead={v.text}
+                />
               </Reveal>
             ))}
           </div>
@@ -712,60 +752,80 @@ function Index() {
         </div>
       </section>
 
-      {/* 4. AVIS CLIENTS — section unique : note moyenne, avis vérifiés, réassurance et formulaire */}
-      <div id="avis" className={NIGHT_SECTION}>
-        <ClientTrust>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/avis"
-              className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-            >
-              {lang === "en" ? "See all reviews" : "Voir tous les avis"}{" "}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <ReserveButton label={c.reserveCta} />
-          </div>
-          <div className="mx-auto mt-10 max-w-2xl border-t border-border pt-10">
-            <div className="rounded-2xl border border-border bg-black p-6">
-              <ReviewForm />
-            </div>
-          </div>
-        </ClientTrust>
+      {/* 4. AVIS CLIENTS — carte photo dans le style de la référence */}
+      <div id="avis" className="border-t border-[#c99b4a]/30 bg-[#07111f]">
+        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-6 lg:px-8">
+          <ReferencePhotoCard
+            image={photoBmwReal.url}
+            alt="Service client Access Prestige Taxi"
+            icon={HeartHandshake}
+            title={lang === "en" ? "Clients who trust us" : "Des clients qui nous font confiance"}
+            lead={
+              lang === "en"
+                ? "A premium, human service from booking to arrival."
+                : "Un service premium et humain, de la réservation à l'arrivée."
+            }
+          >
+            <ClientTrust>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to="/avis"
+                  className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+                >
+                  {lang === "en" ? "See all reviews" : "Voir tous les avis"}{" "}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <ReserveButton label={c.reserveCta} />
+              </div>
+              <div className="mx-auto mt-10 max-w-2xl border-t border-border pt-10">
+                <div className="rounded-2xl border border-border bg-black p-6">
+                  <ReviewForm />
+                </div>
+              </div>
+            </ClientTrust>
+          </ReferencePhotoCard>
+        </div>
       </div>
 
-      {/* 5. COMMENT RÉSERVER — ajouté comme demandé */}
-      <section className={`${NIGHT_SECTION} py-20`}>
+      {/* 5. COMMENT RÉSERVER — style photo + encadré doré */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.howEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-[#e0b866]">{c.howEyebrow}</p>
+            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl text-balance">
               {c.howTitle}
             </h2>
           </Reveal>
-
-          <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ol className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
-                <div className={`flex h-full flex-col p-6 ${CARD}`}>
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                      <h.icon className="h-6 w-6 text-primary" aria-hidden="true" />
-                    </span>
-                    <span className="font-display text-4xl font-semibold text-primary/30">{h.s}</span>
+                <ReferencePhotoCard
+                  image={[photoBmwReal.url, photoAudiReal.url, photoVanReal.url][i]}
+                  alt={
+                    [
+                      "Réservation avec véhicule premium",
+                      "Confirmation de réservation",
+                      "Prise en charge par chauffeur",
+                    ][i]
+                  }
+                  icon={h.icon}
+                  title={h.t}
+                  lead={h.d}
+                >
+                  <div className="mt-4 flex items-center gap-3 text-[#e0b866]">
+                    <span className="font-display text-4xl font-semibold leading-none text-[#e0b866]/45">{h.s}</span>
+                    <span className="h-px flex-1 bg-[#c99b4a]/35" />
                   </div>
-                  <h3 className="mt-4 font-display text-lg font-semibold text-foreground">{h.t}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{h.d}</p>
                   <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
-                </div>
+                </ReferencePhotoCard>
               </Reveal>
             ))}
           </ol>
-
           <Reveal delay={0.2}>
-            <div className="mt-8 flex justify-center">
+            <div className="mt-9 flex justify-center">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+                className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full bg-[#e0b866] px-8 py-4 text-sm font-semibold uppercase tracking-wider text-[#07111f] shadow-[0_10px_30px_rgba(224,184,102,0.2)] transition hover:scale-[1.02]"
               >
                 {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
@@ -774,68 +834,93 @@ function Index() {
         </div>
       </section>
 
-      {/* 6. SUIVI & ESPACE CLIENT — ajouté comme demandé */}
-      <section className="border-t border-border bg-background py-20">
+      {/* 6. SUIVI & ESPACE CLIENT — même traitement visuel */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#050b15] py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="dark rounded-3xl border border-primary/40 bg-black p-7 shadow-[var(--shadow-gold)] sm:p-8">
-              <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.appEyebrow}</p>
-              <p className="mx-auto mt-3 max-w-3xl text-center text-sm leading-relaxed text-foreground/80 sm:text-base">
-                {c.appText}
-              </p>
-              <div className="flex justify-center text-center">
-                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.appDetails} />
-              </div>
-              <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link
-                  to="/reserver"
-                  className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-6 py-3.5 text-sm font-semibold text-black transition hover:scale-[1.02]"
-                >
-                  <Bell className="h-4 w-4" aria-hidden="true" /> {c.notify}
-                </Link>
-                <Link
-                  to="/client/login"
-                  className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl border border-primary px-6 py-3.5 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
-                >
-                  {c.client} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
+            <div className="relative overflow-hidden rounded-[28px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_20px_60px_rgba(0,0,0,0.38)]">
+              <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+                <div className="relative min-h-[260px] overflow-hidden">
+                  <img
+                    src={photoVanReal.url}
+                    alt="Espace client et suivi des trajets"
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.05),rgba(7,17,31,0.9))] lg:bg-[linear-gradient(90deg,rgba(7,17,31,0.05),rgba(7,17,31,0.95))]" />
+                  <div className="absolute left-6 top-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866]/80 bg-[#07111f]/90">
+                    <Bell className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
+                  </div>
+                </div>
+                <div className="p-7 sm:p-9">
+                  <p className="text-[11px] uppercase tracking-[0.3em] text-[#e0b866]">{c.appEyebrow}</p>
+                  <h2 className="mt-3 font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+                    {lang === "en"
+                      ? "Your journey, followed from start to finish"
+                      : "Votre trajet suivi du début à la fin"}
+                  </h2>
+                  <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">{c.appText}</p>
+                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.appDetails} />
+                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                    <Link
+                      to="/reserver"
+                      className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full bg-[#e0b866] px-6 py-3.5 text-sm font-semibold text-[#07111f] transition hover:scale-[1.02]"
+                    >
+                      <Bell className="h-4 w-4" aria-hidden="true" /> {c.notify}
+                    </Link>
+                    <Link
+                      to="/client/login"
+                      className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full border border-[#c99b4a] px-6 py-3.5 text-sm font-semibold text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
+                    >
+                      {c.client} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </Reveal>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-7 grid gap-7 sm:grid-cols-2">
             <Reveal delay={0.08}>
-              <article className={`h-full p-6 ${CARD}`}>
-                <h3 className="font-display text-base font-semibold text-card-foreground">iPhone / iOS</h3>
-                <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+              <ReferencePhotoCard
+                image={photoBmwReal.url}
+                alt="Installation sur iPhone"
+                icon={Smartphone}
+                title="iPhone / iOS"
+              >
+                <ol className="mt-4 space-y-2 text-sm leading-relaxed text-white/70">
                   {c.ios.map((step, i) => (
                     <li key={step}>
-                      {i + 1}. {step}
+                      <span className="text-[#e0b866]">{i + 1}.</span> {step}
                     </li>
                   ))}
                 </ol>
-              </article>
+              </ReferencePhotoCard>
             </Reveal>
             <Reveal delay={0.14}>
-              <article className={`h-full p-6 ${CARD}`}>
-                <h3 className="font-display text-base font-semibold text-card-foreground">Android</h3>
-                <ol className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+              <ReferencePhotoCard
+                image={photoAudiReal.url}
+                alt="Installation sur Android"
+                icon={Smartphone}
+                title="Android"
+              >
+                <ol className="mt-4 space-y-2 text-sm leading-relaxed text-white/70">
                   {c.android.map((step, i) => (
                     <li key={step}>
-                      {i + 1}. {step}
+                      <span className="text-[#e0b866]">{i + 1}.</span> {step}
                     </li>
                   ))}
                 </ol>
-              </article>
+              </ReferencePhotoCard>
             </Reveal>
           </div>
         </div>
       </section>
 
       {/* 7. BLOG — conservé comme demandé */}
-      <section className={`${NIGHT_SECTION} py-20`}>
-        <div className="divider-gold" aria-hidden="true" />
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <div className="mb-8 h-px w-full bg-[#c99b4a]/40" aria-hidden="true" />
           <Reveal>
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
               <div className="min-w-0">
@@ -854,7 +939,7 @@ function Index() {
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.06}>
-                <div className={`flex h-full flex-col overflow-hidden ${CARD}`}>
+                <div className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-[#c99b4a]/70 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.35)]">
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="group block">
                     <img
                       src={imgAt(e.photo, 500)}
@@ -865,9 +950,12 @@ function Index() {
                       decoding="async"
                       width={500}
                       height={352}
-                      className="h-44 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                      className="h-52 w-full object-cover transition duration-700 group-hover:scale-[1.04]"
                     />
-                    <div className="p-5">
+                    <div className="relative -mt-7 ml-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866]/80 bg-[#07111f] shadow-lg">
+                      <MapPin className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
+                    </div>
+                    <div className="p-5 pt-4">
                       <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
                       <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
                       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
