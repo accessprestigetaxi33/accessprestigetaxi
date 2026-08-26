@@ -1121,7 +1121,7 @@ function Index() {
               >
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Link
-                    to="/espace-client"
+                    to="/client/login"
                     className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
                   >
                     {lang === "en" ? "Access my client area" : "Accéder à l'espace client"}{" "}
