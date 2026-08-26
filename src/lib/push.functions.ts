@@ -524,9 +524,9 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
     // dedupTtlMinutes : les tags de statut sont uniques par course, un rejeu
     // du même changement de statut dans les 24 h est donc ignoré.
     const { buildIdempotencyKey, reservationStatusEvent } = await import("@/lib/idempotency");
-    const pushKey = (stage: "accepted" | "en_route" | "arrived" | "completed") =>
+    const pushKey = (stage: "accepted" | "en_route" | "arrived" | "completed" | "cancelled") =>
       buildIdempotencyKey({
-        event: reservationStatusEvent(stage),
+        event: stage === "cancelled" ? "reservation.cancelled" : reservationStatusEvent(stage),
         entity: "res",
         id: r.id,
         channel: "push",
@@ -590,6 +590,41 @@ export const notifyReservationStatus = createServerFn({ method: "POST" })
         },
         target,
       );
+    } else if (data.status === "cancelled") {
+      clientResult = await sendPushToAudience(
+        "client",
+        {
+          title: "❌ Course annulée",
+          body: `Votre réservation ${trajet} a été annulée. Vous pouvez refaire une demande si besoin.`,
+          url,
+          tag: pushKey("cancelled"),
+          requireInteraction: true,
+          data: { reservation_id: r.id, status: "cancelled" },
+        },
+        target,
+      );
+    }
+
+    // ── E-mail d'annulation : le chauffeur promet au client d'être prévenu ──
+    if (data.status === "cancelled") {
+      const clientEmail = (r as any).client_email || (r as any).email;
+      if (clientEmail) {
+        try {
+          const { sendClientCancellationEmail } = await import("@/lib/reservation-notifications.server");
+          await sendClientCancellationEmail({
+            reservationId: r.id,
+            email: clientEmail,
+            lang: (r as any).lang ?? "fr",
+            clientName,
+            pickupDatetime: (r as any).pickup_datetime ?? null,
+            depart: r.depart ?? null,
+            arrivee: (r as any).arrivee ?? (r as any).destination ?? null,
+            reason: "Annulation par le chauffeur",
+          });
+        } catch (e) {
+          console.warn("[notifyReservationStatus] cancellation email failed", e);
+        }
+      }
     }
 
     // ── E-mail de suivi (FR/EN) : confirmée / en route / arrivé / terminée ──
