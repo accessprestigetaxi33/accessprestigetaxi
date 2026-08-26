@@ -163,17 +163,15 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
             {withText.map((r) => (
               <figure key={r.id} className="flex h-full flex-col rounded-2xl border border-border bg-black p-6">
                 <Quote className="h-5 w-5 text-primary" aria-hidden="true" />
-                <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-foreground/90">
-                  “{r.commentaire}”
-                </blockquote>
+                <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-white">“{r.commentaire}”</blockquote>
                 <figcaption className="mt-4 border-t border-border pt-4">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="truncate text-sm font-semibold text-foreground">
+                    <span className="truncate text-sm font-semibold text-white">
                       {r.author_name?.trim() || "Client"}
                     </span>
                     <Stars value={r.note} />
                   </div>
-                  <span className="mt-1 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <span className="mt-1 inline-flex items-center gap-1 text-[11px] text-white">
                     <BadgeCheck className="h-3.5 w-3.5 text-primary" /> {c.verified}
                   </span>
                 </figcaption>
