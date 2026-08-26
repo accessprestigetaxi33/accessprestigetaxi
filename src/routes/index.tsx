@@ -47,7 +47,7 @@ function absoluteUrl(path: string) {
 }
 
 const CARD =
-  "dark rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
+  "dark rounded-2xl border border-border bg-black transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
 
 const NIGHT_SECTION = "dark border-t border-white/10 bg-[#0a0f2c]";
 
@@ -718,7 +718,7 @@ function Index() {
             <ReserveButton label={c.reserveCta} />
           </div>
           <div className="mx-auto mt-10 max-w-2xl border-t border-border pt-10">
-            <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="rounded-2xl border border-border bg-black p-6">
               <ReviewForm />
             </div>
           </div>
@@ -770,7 +770,7 @@ function Index() {
       <section className="border-t border-border bg-background py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="dark rounded-3xl border border-primary/40 bg-card p-7 shadow-[var(--shadow-gold)] sm:p-8">
+            <div className="dark rounded-3xl border border-primary/40 bg-black p-7 shadow-[var(--shadow-gold)] sm:p-8">
               <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.appEyebrow}</p>
               <p className="mx-auto mt-3 max-w-3xl text-center text-sm leading-relaxed text-foreground/80 sm:text-base">
                 {c.appText}
