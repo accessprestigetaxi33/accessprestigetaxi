@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
 import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
 import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
@@ -776,8 +776,8 @@ function DriverApp({
             />
           </h1>
 
-          <a
-            href="/"
+          <Link
+            to="/"
             style={{
               display: "flex",
               alignItems: "center",
@@ -793,7 +793,7 @@ function DriverApp({
             }}
           >
             ↩ Retour au site
-          </a>
+          </Link>
           <span style={{ fontSize: 12, color: "#94a3b8" }}>
             {new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
           </span>
