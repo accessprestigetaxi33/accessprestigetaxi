@@ -28,15 +28,28 @@ import { DRIVERS } from "@/data/drivers";
 import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
-import { imgAt, imgSrcSet } from "@/lib/img";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/apt-hero-clean-fr.webp";
 import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
-import referenceMedical from "@/assets/reference-medical.webp";
-import referencePrestige from "@/assets/reference-prestige.webp";
+import medicalService from "@/assets/medical-service.webp";
+import prestigeService from "@/assets/prestige-service.webp";
+import reviewPhone from "@/assets/review-phone.webp";
+import stepPhone from "@/assets/step-phone.webp";
+import stepCalendar from "@/assets/step-calendar.webp";
+import stepDriver from "@/assets/step-driver.webp";
+import stepCar from "@/assets/step-car.webp";
+import trackingPhone from "@/assets/tracking-phone.webp";
+import appPhones from "@/assets/app-phones.webp";
+import valuePunctuality from "@/assets/value-punctuality.webp";
+import valueSecurity from "@/assets/value-security.webp";
+import valueDiscretion from "@/assets/value-discretion.webp";
+import valueComfort from "@/assets/value-comfort.webp";
+import guideNice from "@/assets/guide-nice.webp";
+import guideMonaco from "@/assets/guide-monaco.webp";
+import guideCannes from "@/assets/guide-cannes.webp";
 
 const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 const SLOGAN_FR = "L'excellence à chaque trajet";
@@ -640,6 +653,8 @@ function CompactPhotoCard({
   );
 }
 
+const GUIDE_IMAGES = [guideNice, guideMonaco, guideCannes];
+
 function Index() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
@@ -736,7 +751,7 @@ function Index() {
           <div className="mt-6 grid gap-5 md:grid-cols-2 md:gap-6">
             <Reveal>
               <SplitPhotoCard
-                image={referenceMedical}
+                image={medicalService}
                 alt="Transport médical conventionné"
                 icon={Stethoscope}
                 title={engagements[0].title}
@@ -747,7 +762,7 @@ function Index() {
             </Reveal>
             <Reveal delay={0.08}>
               <SplitPhotoCard
-                image={referencePrestige}
+                image={prestigeService}
                 alt="Prestige et transport privé"
                 icon={BriefcaseBusiness}
                 title={engagements[1].title}
@@ -794,7 +809,7 @@ function Index() {
             {fleetValues.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.04}>
                 <CompactPhotoCard
-                  image={[photoBmwReal.url, photoAudiReal.url, photoVanReal.url, referencePrestige][i]}
+                  image={[valuePunctuality, valueSecurity, valueDiscretion, valueComfort][i]}
                   alt={`${v.title} — Access Prestige Taxi`}
                   icon={v.icon}
                   title={v.title}
@@ -817,7 +832,7 @@ function Index() {
           </Reveal>
           <div className="mt-6">
             <SplitPhotoCard
-              image={photoVanReal.url}
+              image={reviewPhone}
               alt="Avis clients Access Prestige Taxi"
               icon={Award}
               title={lang === "en" ? "Your satisfaction is our priority" : "Votre satisfaction est notre priorité"}
@@ -858,9 +873,9 @@ function Index() {
           </Reveal>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { step: c.how[0], image: photoBmwReal.url },
-              { step: c.how[1], image: photoAudiReal.url },
-              { step: c.how[2], image: photoVanReal.url },
+              { step: c.how[0], image: stepPhone },
+              { step: c.how[1], image: stepCalendar },
+              { step: c.how[2], image: stepDriver },
               {
                 step: {
                   s: "4",
@@ -872,7 +887,7 @@ function Index() {
                       : "Installez-vous, on s’occupe de tout.",
                   details: [],
                 },
-                image: referenceMedical,
+                image: stepCar,
               },
             ].map(({ step, image }, i) => (
               <Reveal as="div" key={step.s} delay={i * 0.05}>
@@ -920,7 +935,7 @@ function Index() {
           </Reveal>
           <div className="mt-6 grid gap-5 lg:grid-cols-2">
             <SplitPhotoCard
-              image={photoAudiReal.url}
+              image={trackingPhone}
               alt="Suivi du trajet"
               icon={Smartphone}
               title={lang === "en" ? "Track your journey" : "Suivez votre trajet"}
@@ -935,7 +950,7 @@ function Index() {
               </div>
             </SplitPhotoCard>
             <SplitPhotoCard
-              image={photoVanReal.url}
+              image={appPhones}
               alt="Application mobile Access Prestige Taxi"
               icon={Smartphone}
               title={lang === "en" ? "Mobile application" : "Application mobile"}
@@ -975,9 +990,7 @@ function Index() {
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={imgAt(e.photo, 700)}
-                        srcSet={imgSrcSet(e.photo, [330, 500, 700])}
-                        sizes="(min-width: 1024px) 33vw, 100vw"
+                        src={GUIDE_IMAGES[i % GUIDE_IMAGES.length]}
                         alt={`${e.name} — ${e.city}`}
                         loading="lazy"
                         decoding="async"
