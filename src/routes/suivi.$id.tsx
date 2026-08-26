@@ -2023,7 +2023,7 @@ function SuiviPage() {
           }}
         >
           <a
-            href="https://accessprestigetaxi.lovable.app"
+            href="/"
             style={{
               display: "inline-flex",
               alignItems: "center",
