@@ -787,7 +787,7 @@ function Index() {
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
       <section className="relative isolate overflow-hidden border-b border-border bg-black">
-        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
+        <div className="relative aspect-[1376/768] h-auto min-h-0 max-h-none sm:aspect-auto sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -799,12 +799,12 @@ function Index() {
             loading="eager"
             width={1376}
             height={768}
-            className="h-full w-full object-contain object-center scale-[1.24] sm:scale-100"
+            className="h-full w-full object-cover object-center scale-100"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
         </div>
 
-        <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
+        <div className="relative bg-black px-5 pb-14 pt-5 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
               <h1 className="font-display text-3xl font-semibold uppercase leading-tight text-white sm:text-4xl md:text-5xl text-balance">
