@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { BadgeCheck, Quote, ShieldCheck, Star, Sparkles, Clock } from "lucide-react";
+import { BadgeCheck, Quote, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -22,28 +22,6 @@ const COPY = {
     noReviews:
       "Soyez le premier à partager votre expérience — les avis publiés proviennent de courses réellement effectuées.",
     outOf: "sur 5",
-    trust: [
-      {
-        icon: BadgeCheck,
-        t: "Chauffeurs agréés",
-        d: "Carte professionnelle taxi, autorisation de stationnement en Charente-Maritime.",
-      },
-      {
-        icon: ShieldCheck,
-        t: "Assurance & sécurité",
-        d: "Véhicules assurés tous risques, contrôlés et entretenus, sièges enfant sur demande.",
-      },
-      {
-        icon: Clock,
-        t: "Ponctualité suivie",
-        d: "Suivi de course en temps réel et lien de suivi partagé avec vos proches.",
-      },
-      {
-        icon: Sparkles,
-        t: "Flotte premium",
-        d: "BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, eau et chargeurs à bord.",
-      },
-    ],
     verified: "Avis vérifié",
     safety: "Sécurité, assurance & garanties",
     moderation: "Chaque avis est relu par Patricia et Alain avant publication.",
@@ -55,20 +33,6 @@ const COPY = {
     reviews: (n: number) => `${n} verified review${n > 1 ? "s" : ""}`,
     noReviews: "Be the first to share your experience — published reviews come from real completed rides.",
     outOf: "out of 5",
-    trust: [
-      { icon: BadgeCheck, t: "Licensed drivers", d: "Professional taxi licence and permits across Charente-Maritime." },
-      {
-        icon: ShieldCheck,
-        t: "Insurance & safety",
-        d: "Fully insured, serviced vehicles; child seats available on request.",
-      },
-      { icon: Clock, t: "Tracked punctuality", d: "Real-time ride tracking with a link you can share with family." },
-      {
-        icon: Sparkles,
-        t: "Premium fleet",
-        d: "Electric 5-seat BMW iX1 and Audi Q6 e-tron, 8-seat Mercedes van, water and chargers on board.",
-      },
-    ],
     verified: "Verified review",
     safety: "Safety, insurance & guarantees",
     moderation: "Every review is checked by Patricia and Alain before publication.",
@@ -179,16 +143,6 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
             ))}
           </div>
         )}
-
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {c.trust.map((t) => (
-            <div key={t.t} className="rounded-2xl border border-border bg-black/60 p-5">
-              <t.icon className="h-5 w-5 text-primary" aria-hidden="true" />
-              <h3 className="mt-3 text-sm font-semibold text-foreground">{t.t}</h3>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t.d}</p>
-            </div>
-          ))}
-        </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           {c.moderation}{" "}
