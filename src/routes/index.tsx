@@ -47,7 +47,7 @@ function absoluteUrl(path: string) {
 }
 
 const CARD =
-  "dark rounded-2xl border border-border bg-black transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
+  "dark rounded-3xl border border-primary/60 bg-[#07101f] shadow-[0_18px_50px_-24px_rgba(0,0,0,0.9)] transition duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_22px_55px_-22px_color-mix(in_oklab,var(--gold)_48%,transparent)]";
 
 const NIGHT_SECTION = "dark border-t border-white/10 bg-[#0a0f2c]";
 
@@ -55,7 +55,7 @@ function ReserveButton({ label, className = "" }: { label: string; className?: s
   return (
     <Link
       to="/reserver"
-      className={`inline-flex min-h-[38px] items-center justify-center gap-1.5 rounded-lg btn-gold px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
+      className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full btn-gold px-6 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-black shadow-[0_10px_30px_-12px_rgba(0,0,0,0.9)] transition hover:scale-[1.02] ${className}`}
     >
       {label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
     </Link>
@@ -484,8 +484,8 @@ function LearnMoreToggle({
         aria-expanded={isOpen}
         className={
           variant === "solid"
-            ? "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-            : "mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+            ? "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-black transition hover:scale-[1.02]"
+            : "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-black transition hover:scale-[1.02]"
         }
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
@@ -611,13 +611,21 @@ function Index() {
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {engagements.map((e, i) => (
               <Reveal key={e.title} delay={i * 0.08}>
-                <div className={`h-full p-7 sm:p-8 ${CARD}`}>
-                  <e.icon className="h-9 w-9 text-primary" aria-hidden="true" />
-                  <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
-                    {e.title}
-                  </h2>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
-                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
+                <div className={`relative h-full overflow-hidden p-7 sm:p-9 ${CARD}`}>
+                  <div
+                    className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-3xl"
+                    aria-hidden="true"
+                  />
+                  <div className="relative">
+                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/50 bg-black/20">
+                      <e.icon className="h-8 w-8 text-primary" aria-hidden="true" />
+                    </div>
+                    <h2 className="mt-4 font-display text-xl font-semibold text-card-foreground sm:text-2xl">
+                      {e.title}
+                    </h2>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">{e.lead}</p>
+                    <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
+                  </div>
                 </div>
               </Reveal>
             ))}
