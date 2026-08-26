@@ -9,8 +9,6 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Award,
-  Baby,
-  Bell,
   BriefcaseBusiness,
   Car,
   CheckCircle2,
@@ -37,6 +35,8 @@ import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
+import referenceMedical from "@/assets/reference-medical.webp";
+import referencePrestige from "@/assets/reference-prestige.webp";
 
 const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 const SLOGAN_FR = "L'excellence à chaque trajet";
@@ -46,11 +46,6 @@ const SITE_URL = "https://www.accessprestigetaxi.fr";
 function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
-
-const CARD =
-  "dark rounded-2xl border border-border bg-black transition duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_-18px_color-mix(in_oklab,var(--gold)_55%,transparent)]";
-
-const NIGHT_SECTION = "dark border-t border-white/10 bg-[#0a0f2c]";
 
 function ReserveButton({ label, className = "" }: { label: string; className?: string }) {
   return (
@@ -517,14 +512,14 @@ function LearnMoreToggle({
   );
 }
 
-function ReferencePhotoCard({
+function SplitPhotoCard({
   image,
   alt,
   icon: Icon,
   title,
   lead,
   children,
-  className = "",
+  reverse = false,
 }: {
   image: string;
   alt: string;
@@ -532,12 +527,97 @@ function ReferencePhotoCard({
   title: string;
   lead?: string;
   children?: ReactNode;
-  className?: string;
+  reverse?: boolean;
 }) {
   return (
-    <article
-      className={`group relative min-h-[315px] overflow-hidden rounded-[24px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)] transition duration-300 hover:-translate-y-1 hover:border-[#e0b866] sm:min-h-[340px] ${className}`}
-    >
+    <article className="group relative overflow-hidden rounded-[24px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
+      <div
+        className={`grid min-h-[330px] md:min-h-[360px] ${reverse ? "md:grid-cols-[0.95fr_1.05fr]" : "md:grid-cols-[1.05fr_0.95fr]"}`}
+      >
+        <div className={`relative flex flex-col justify-center p-6 sm:p-8 ${reverse ? "md:order-2" : "md:order-1"}`}>
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+            <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
+          </div>
+          <h3 className="font-display text-2xl font-semibold leading-tight text-[#f6f0e5] sm:text-[28px]">{title}</h3>
+          <div className="mt-5 h-px w-12 bg-[#e0b866]" aria-hidden="true" />
+          {lead && <p className="mt-5 max-w-md text-sm leading-relaxed text-white/70 sm:text-base">{lead}</p>}
+          {children}
+        </div>
+        <div className={`relative min-h-[270px] overflow-hidden md:min-h-0 ${reverse ? "md:order-1" : "md:order-2"}`}>
+          <img
+            src={image}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]"
+          />
+          <div
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.35),rgba(7,17,31,0.02)_55%,rgba(7,17,31,0.08))]"
+            aria-hidden="true"
+          />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function PhotoTopCard({
+  image,
+  alt,
+  icon: Icon,
+  title,
+  subtitle,
+  children,
+}: {
+  image: string;
+  alt: string;
+  icon: typeof Stethoscope;
+  title: string;
+  subtitle?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+      <div className="relative h-48 overflow-hidden sm:h-56">
+        <img
+          src={image}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
+        />
+        <div
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
+          aria-hidden="true"
+        />
+        <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f]/90 backdrop-blur-sm">
+          <Icon className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
+        </div>
+      </div>
+      <div className="p-5 sm:p-6">
+        <h3 className="font-display text-xl font-semibold text-[#f6f0e5]">{title}</h3>
+        {subtitle && <p className="mt-1 text-xs uppercase tracking-[0.14em] text-white/55">{subtitle}</p>}
+        {children}
+      </div>
+    </article>
+  );
+}
+
+function CompactPhotoCard({
+  image,
+  alt,
+  icon: Icon,
+  title,
+  text,
+}: {
+  image: string;
+  alt: string;
+  icon: typeof Stethoscope;
+  title: string;
+  text: string;
+}) {
+  return (
+    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
       <img
         src={image}
         alt={alt}
@@ -546,23 +626,15 @@ function ReferencePhotoCard({
         className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
       />
       <div
-        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.98)_0%,rgba(3,10,20,0.9)_34%,rgba(3,10,20,0.5)_62%,rgba(3,10,20,0.08)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.96),rgba(3,10,20,0.68)_52%,rgba(3,10,20,0.2))]"
         aria-hidden="true"
       />
-      <div
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.18)_0%,rgba(3,10,20,0.05)_45%,rgba(3,10,20,0.68)_100%)]"
-        aria-hidden="true"
-      />
-      <div className="relative flex h-full flex-col items-start p-6 sm:p-7">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#e0b866]/90 bg-[#07111f]/90 shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-sm">
-          <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
+      <div className="relative h-full p-4 sm:p-5">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
+          <Icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
         </div>
-        <div className="mt-auto max-w-[78%] sm:max-w-[72%]">
-          <h3 className="font-display text-xl font-semibold leading-tight text-[#f6f0e5] sm:text-2xl">{title}</h3>
-          <div className="mt-4 h-px w-12 bg-[#e0b866]" aria-hidden="true" />
-          {lead && <p className="mt-4 text-sm leading-relaxed text-white/75 sm:text-base">{lead}</p>}
-          {children}
-        </div>
+        <h3 className="mt-5 font-display text-lg font-semibold text-[#f6f0e5]">{title}</h3>
+        <p className="mt-1.5 max-w-[80%] text-xs leading-relaxed text-white/65">{text}</p>
       </div>
     </article>
   );
@@ -652,344 +724,287 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. NOS ENGAGEMENTS — style de la maquette fournie */}
-      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-20">
+      {/* 2. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-[#e0b866]">
-              {lang === "en" ? "Our commitments" : "Nos engagements"}
-            </p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl">
-              {lang === "en" ? "A service designed around you" : "Un service pensé autour de vous"}
+            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+              <span className="text-white">Nos </span>
+              <span className="text-[#e0b866]">engagements</span>
             </h2>
           </Reveal>
-          <div className="mt-10 grid gap-7 md:grid-cols-2">
-            {engagements.map((e, i) => (
-              <Reveal key={e.title} delay={i * 0.08}>
-                <ReferencePhotoCard
-                  image={i === 0 ? photoBmwReal.url : photoAudiReal.url}
-                  alt={i === 0 ? "Véhicule premium pour transport médical" : "Véhicule premium pour transport privé"}
-                  icon={e.icon}
-                  title={e.title}
-                  lead={e.lead}
-                >
-                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={e.details} />
-                </ReferencePhotoCard>
-              </Reveal>
-            ))}
+          <div className="mt-6 grid gap-5 md:grid-cols-2 md:gap-6">
+            <Reveal>
+              <SplitPhotoCard
+                image={referenceMedical}
+                alt="Transport médical conventionné"
+                icon={Stethoscope}
+                title={engagements[0].title}
+                lead={engagements[0].lead}
+              >
+                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[0].details} variant="solid" />
+              </SplitPhotoCard>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <SplitPhotoCard
+                image={referencePrestige}
+                alt="Prestige et transport privé"
+                icon={BriefcaseBusiness}
+                title={engagements[1].title}
+                lead={engagements[1].lead}
+                reverse
+              >
+                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[1].details} variant="solid" />
+              </SplitPhotoCard>
+            </Reveal>
           </div>
-          <Reveal delay={0.16}>
-            <div className="mt-9 flex justify-center">
-              <ReserveButton label={c.reserveCta} />
-            </div>
-          </Reveal>
         </div>
       </section>
 
-      {/* 3. NOTRE FLOTTE — présent sur le document */}
-      <section className={`${NIGHT_SECTION} py-20`}>
+      {/* 3. NOTRE FLOTTE */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-primary">{c.fleetEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              {c.fleetTitle}
+            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+              <span className="text-white">Notre </span>
+              <span className="text-[#e0b866]">flotte</span>
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground sm:text-base">
-              {c.fleetText}
-            </p>
           </Reveal>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {c.vehicles.map((v, i) => (
-              <Reveal key={v.title} delay={i * 0.07}>
-                <article className="dark relative overflow-hidden rounded-2xl border border-border">
+              <Reveal key={v.title} delay={i * 0.06}>
+                <PhotoTopCard
+                  image={v.img}
+                  alt={v.alt}
+                  icon={[Car, Car, Crown][i]}
+                  title={v.title}
+                  subtitle={v.subtitle}
+                >
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <span className="text-xs leading-relaxed text-white/70">
+                      {i === 0 ? "1 à 3 passagers" : i === 1 ? "4 à 7 passagers" : "1 à 3 passagers"}
+                    </span>
+                    <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} variant="solid" />
+                  </div>
+                </PhotoTopCard>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {fleetValues.map((v, i) => (
+              <Reveal key={v.title} delay={i * 0.04}>
+                <CompactPhotoCard
+                  image={[referencePrestige, photoBmwReal.url, photoAudiReal.url, photoVanReal.url][i]}
+                  alt={`${v.title} — Access Prestige Taxi`}
+                  icon={v.icon}
+                  title={v.title}
+                  text={v.text}
+                />
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-6 flex justify-center">
+            <ReserveButton label={c.reserveCta} />
+          </div>
+        </div>
+      </section>
+
+      {/* 4. AVIS CLIENTS */}
+      <section id="avis" className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+              <span className="text-white">Avis de nos </span>
+              <span className="text-[#e0b866]">clients</span>
+            </h2>
+          </Reveal>
+          <div className="mt-6">
+            <SplitPhotoCard
+              image={photoAudiReal.url}
+              alt="Avis clients Access Prestige Taxi"
+              icon={Award}
+              title={lang === "en" ? "Your satisfaction is our priority" : "Votre satisfaction est notre priorité"}
+              lead={
+                lang === "en"
+                  ? "Clients trust us for a premium, human service."
+                  : "Des clients nous font déjà confiance pour un service premium et humain."
+              }
+            >
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  to="/avis"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
+                >
+                  {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </Link>
+                <ReserveButton label={c.reserveCta} />
+              </div>
+            </SplitPhotoCard>
+          </div>
+          <div className="mt-6 rounded-[22px] border border-[#c99b4a]/60 bg-black p-5 sm:p-7">
+            <ClientTrust>
+              <ReviewForm />
+            </ClientTrust>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+              <span className="text-white">Comment </span>
+              <span className="text-[#e0b866]">réserver ?</span>
+            </h2>
+          </Reveal>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { step: c.how[0], image: photoBmwReal.url },
+              { step: c.how[1], image: photoAudiReal.url },
+              { step: c.how[2], image: photoVanReal.url },
+              {
+                step: {
+                  s: "4",
+                  icon: CheckCircle2,
+                  t: lang === "en" ? "Enjoy a smooth journey" : "Profitez d’un trajet serein",
+                  d:
+                    lang === "en"
+                      ? "Sit back while we take care of everything."
+                      : "Installez-vous, on s’occupe de tout.",
+                  details: [],
+                },
+                image: referencePrestige,
+              },
+            ].map(({ step, image }, i) => (
+              <Reveal as="div" key={step.s} delay={i * 0.05}>
+                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#c99b4a]/75 bg-[#07111f]">
                   <img
-                    src={v.img}
-                    alt={v.alt}
+                    src={image}
+                    alt={step.t}
                     loading="lazy"
-                    width={1600}
-                    height={900}
-                    className="aspect-[4/5] w-full object-cover sm:aspect-[3/4]"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
                   />
                   <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.05) 75%)",
-                    }}
+                    className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"
                     aria-hidden="true"
                   />
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 text-center sm:p-7">
-                    <h3 className="font-display text-xl font-semibold text-white sm:text-2xl">{v.title}</h3>
-                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/70">{v.subtitle}</p>
-                    <div className="mx-auto mt-3 h-px w-10 bg-primary" aria-hidden="true" />
-                    <div className="flex justify-center">
-                      <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} variant="solid" />
+                  <div className="relative flex h-full flex-col p-5">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e0b866] text-sm font-semibold text-[#e0b866]">
+                      {step.s}
+                    </span>
+                    <div className="mt-auto">
+                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
+                        <step.icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
+                      </div>
+                      <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{step.t}</h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-white/65">{step.d}</p>
+                      {step.details.length > 0 && (
+                        <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={step.details} variant="solid" />
+                      )}
                     </div>
                   </div>
                 </article>
               </Reveal>
             ))}
           </div>
-
-          <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
-            {fleetValues.map((v, i) => (
-              <Reveal key={v.title} delay={i * 0.05}>
-                <ReferencePhotoCard
-                  image={
-                    [
-                      photoBmwReal.url,
-                      photoAudiReal.url,
-                      photoVanReal.url,
-                      BLOG_PICKS[0] ? imgAt(BLOG_PICKS[0].photo, 700) : photoBmwReal.url,
-                    ][i]
-                  }
-                  alt={`${v.title} — Access Prestige Taxi`}
-                  icon={v.icon}
-                  title={v.title}
-                  lead={v.text}
-                />
-              </Reveal>
-            ))}
-          </div>
-
-          <p className="mx-auto mt-6 flex max-w-md items-center justify-center gap-2 text-center text-xs text-muted-foreground">
-            <Baby className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-            {lang === "en"
-              ? "Baby seats and booster seats available on request."
-              : "Sièges bébé et rehausseurs disponibles sur demande."}
-          </p>
-
-          <Reveal delay={0.1}>
-            <div className="mt-8 flex justify-center">
-              <ReserveButton label={c.reserveCta} />
-            </div>
-          </Reveal>
         </div>
       </section>
 
-      {/* 4. AVIS CLIENTS — carte photo dans le style de la référence */}
-      <div id="avis" className="border-t border-[#c99b4a]/30 bg-[#07111f]">
-        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-6 lg:px-8">
-          <ReferencePhotoCard
-            image={photoVanReal.url}
-            alt="Service client Access Prestige Taxi"
-            icon={HeartHandshake}
-            title={lang === "en" ? "Clients who trust us" : "Des clients qui nous font confiance"}
-            lead={
-              lang === "en"
-                ? "A premium, human service from booking to arrival."
-                : "Un service premium et humain, de la réservation à l'arrivée."
-            }
-          >
-            <ClientTrust>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  to="/avis"
-                  className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border-2 border-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
-                >
-                  {lang === "en" ? "See all reviews" : "Voir tous les avis"}{" "}
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <ReserveButton label={c.reserveCta} />
-              </div>
-              <div className="mx-auto mt-10 max-w-2xl border-t border-border pt-10">
-                <div className="rounded-2xl border border-border bg-black p-6">
-                  <ReviewForm />
-                </div>
-              </div>
-            </ClientTrust>
-          </ReferencePhotoCard>
-        </div>
-      </div>
-
-      {/* 5. COMMENT RÉSERVER — style photo + encadré doré */}
-      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
+      {/* 6. SUIVI & ESPACE CLIENT */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-center text-[11px] uppercase tracking-[0.3em] text-[#e0b866]">{c.howEyebrow}</p>
-            <h2 className="mt-3 text-center font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl text-balance">
-              {c.howTitle}
+            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+              <span className="text-white">Suivi & </span>
+              <span className="text-[#e0b866]">espace client</span>
             </h2>
           </Reveal>
-          <ol className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {c.how.map((h, i) => (
-              <Reveal as="li" key={h.s} delay={i * 0.08}>
-                <ReferencePhotoCard
-                  image={
-                    [
-                      photoBmwReal.url,
-                      photoAudiReal.url,
-                      photoVanReal.url,
-                      BLOG_PICKS[0] ? imgAt(BLOG_PICKS[0].photo, 700) : photoBmwReal.url,
-                    ][i]
-                  }
-                  alt={
-                    [
-                      "Réservation avec véhicule premium",
-                      "Confirmation de réservation",
-                      "Prise en charge par chauffeur",
-                    ][i]
-                  }
-                  icon={h.icon}
-                  title={h.t}
-                  lead={h.d}
-                >
-                  <div className="mt-4 flex items-center gap-3 text-[#e0b866]">
-                    <span className="font-display text-4xl font-semibold leading-none text-[#e0b866]/45">{h.s}</span>
-                    <span className="h-px flex-1 bg-[#c99b4a]/35" />
-                  </div>
-                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={h.details} />
-                </ReferencePhotoCard>
-              </Reveal>
-            ))}
-          </ol>
-          <Reveal delay={0.2}>
-            <div className="mt-9 flex justify-center">
-              <Link
-                to="/reserver"
-                className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full bg-[#e0b866] px-8 py-4 text-sm font-semibold uppercase tracking-wider text-[#07111f] shadow-[0_10px_30px_rgba(224,184,102,0.2)] transition hover:scale-[1.02]"
-              >
-                {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 6. SUIVI & ESPACE CLIENT — même traitement visuel */}
-      <section className="border-t border-[#c99b4a]/30 bg-[#050b15] py-20">
-        <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="relative overflow-hidden rounded-[28px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_20px_60px_rgba(0,0,0,0.38)]">
-              <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="relative min-h-[260px] overflow-hidden">
-                  <img
-                    src={photoVanReal.url}
-                    alt="Espace client et suivi des trajets"
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.05),rgba(7,17,31,0.9))] lg:bg-[linear-gradient(90deg,rgba(7,17,31,0.05),rgba(7,17,31,0.95))]" />
-                  <div className="absolute left-6 top-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866]/80 bg-[#07111f]/90">
-                    <Bell className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
-                  </div>
-                </div>
-                <div className="p-7 sm:p-9">
-                  <p className="text-[11px] uppercase tracking-[0.3em] text-[#e0b866]">{c.appEyebrow}</p>
-                  <h2 className="mt-3 font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-                    {lang === "en"
-                      ? "Your journey, followed from start to finish"
-                      : "Votre trajet suivi du début à la fin"}
-                  </h2>
-                  <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">{c.appText}</p>
-                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={c.appDetails} />
-                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                    <Link
-                      to="/reserver"
-                      className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full bg-[#e0b866] px-6 py-3.5 text-sm font-semibold text-[#07111f] transition hover:scale-[1.02]"
-                    >
-                      <Bell className="h-4 w-4" aria-hidden="true" /> {c.notify}
-                    </Link>
-                    <Link
-                      to="/client/login"
-                      className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full border border-[#c99b4a] px-6 py-3.5 text-sm font-semibold text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
-                    >
-                      {c.client} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </Link>
-                  </div>
-                </div>
+          <div className="mt-6 grid gap-5 lg:grid-cols-2">
+            <SplitPhotoCard
+              image={photoBmwReal.url}
+              alt="Suivi du trajet"
+              icon={Smartphone}
+              title={lang === "en" ? "Track your journey" : "Suivez votre trajet"}
+              lead={
+                lang === "en"
+                  ? "Real-time notifications and driver tracking."
+                  : "Recevez des notifications et suivez votre chauffeur en temps réel."
+              }
+            >
+              <div className="mt-5">
+                <ReserveButton label={lang === "en" ? "Learn more" : "En savoir plus"} />
               </div>
-            </div>
-          </Reveal>
-
-          <div className="mt-7 grid gap-7 sm:grid-cols-2">
-            <Reveal delay={0.08}>
-              <ReferencePhotoCard
-                image={photoBmwReal.url}
-                alt="Installation sur iPhone"
-                icon={Smartphone}
-                title="iPhone / iOS"
-              >
-                <ol className="mt-4 space-y-2 text-sm leading-relaxed text-white/70">
-                  {c.ios.map((step, i) => (
-                    <li key={step}>
-                      <span className="text-[#e0b866]">{i + 1}.</span> {step}
-                    </li>
-                  ))}
-                </ol>
-              </ReferencePhotoCard>
-            </Reveal>
-            <Reveal delay={0.14}>
-              <ReferencePhotoCard
-                image={photoAudiReal.url}
-                alt="Installation sur Android"
-                icon={Smartphone}
-                title="Android"
-              >
-                <ol className="mt-4 space-y-2 text-sm leading-relaxed text-white/70">
-                  {c.android.map((step, i) => (
-                    <li key={step}>
-                      <span className="text-[#e0b866]">{i + 1}.</span> {step}
-                    </li>
-                  ))}
-                </ol>
-              </ReferencePhotoCard>
-            </Reveal>
+            </SplitPhotoCard>
+            <SplitPhotoCard
+              image={photoAudiReal.url}
+              alt="Application mobile Access Prestige Taxi"
+              icon={Smartphone}
+              title={lang === "en" ? "Mobile application" : "Application mobile"}
+              lead={
+                lang === "en"
+                  ? "Install the application on iOS or Android."
+                  : "Téléchargez notre application iOS ou Android."
+              }
+              reverse
+            >
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link
+                  to="/reserver"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#07111f]"
+                >
+                  {lang === "en" ? "Download" : "Télécharger"} <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </SplitPhotoCard>
           </div>
         </div>
       </section>
 
-      {/* 7. BLOG — conservé comme demandé */}
-      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-20">
+      {/* 7. GUIDE & ACTUALITÉS */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <div className="mb-8 h-px w-full bg-[#c99b4a]/40" aria-hidden="true" />
           <Reveal>
-            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-              <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.blogEyebrow}</p>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-                  {c.blogTitle}
-                </h2>
-                <p className="mt-3 text-sm text-muted-foreground">{c.blogText}</p>
-              </div>
-              <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">
-                {c.blogCta} →
-              </Link>
-            </div>
+            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+              <span className="text-white">Guide & </span>
+              <span className="text-[#e0b866]">actualités</span>
+            </h2>
           </Reveal>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
-              <Reveal key={e.slug} delay={i * 0.06}>
-                <div className="group flex h-full flex-col overflow-hidden rounded-[26px] border border-[#c99b4a]/70 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.35)]">
-                  <Link to="/blog/$slug" params={{ slug: e.slug }} className="group block">
-                    <img
-                      src={imgAt(e.photo, 500)}
-                      srcSet={imgSrcSet(e.photo, [250, 330, 500])}
-                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 100vw"
-                      alt={`${e.name} — ${e.city}`}
-                      loading="lazy"
-                      decoding="async"
-                      width={500}
-                      height={352}
-                      className="h-52 w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-                    />
-                    <div className="relative -mt-7 ml-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866]/80 bg-[#07111f] shadow-lg">
-                      <MapPin className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
+              <Reveal key={e.slug} delay={i * 0.05}>
+                <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+                  <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={imgAt(e.photo, 700)}
+                        srcSet={imgSrcSet(e.photo, [330, 500, 700])}
+                        sizes="(min-width: 1024px) 33vw, 100vw"
+                        alt={`${e.name} — ${e.city}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                      />
+                      <div
+                        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.76))]"
+                        aria-hidden="true"
+                      />
+                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
+                        <MapPin className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
+                      </div>
                     </div>
-                    <div className="p-5 pt-4">
-                      <p className="text-[11px] uppercase tracking-[0.2em] text-primary">{e.city}</p>
-                      <h3 className="mt-2 font-display text-lg font-semibold text-card-foreground">{e.name}</h3>
-                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                    <div className="p-5">
+                      <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{e.name}</h3>
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/65">
                         {lang === "en" ? e.en : e.fr}
                       </p>
+                      <span className="mt-4 inline-flex rounded-full bg-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#07111f]">
+                        {lang === "en" ? "Read article" : "Lire l’article"}
+                      </span>
                     </div>
                   </Link>
-                  <div className="mt-auto px-5 pb-5">
-                    <ReserveButton label={c.reserveCta} />
-                  </div>
-                </div>
+                </article>
               </Reveal>
             ))}
           </div>
