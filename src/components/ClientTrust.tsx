@@ -147,7 +147,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.lead}</p>
         </div>
 
-        <div className="mx-auto mt-8 flex max-w-md flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-card px-6 py-5">
+        <div className="mx-auto mt-8 flex max-w-md flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-black px-6 py-5">
           <div className="flex items-baseline gap-2">
             <span className="font-display text-4xl font-semibold text-foreground">
               {average.toFixed(1).replace(".", lang === "en" ? "." : ",")}
@@ -161,7 +161,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
         {withText.length > 0 && (
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {withText.map((r) => (
-              <figure key={r.id} className="flex h-full flex-col rounded-2xl border border-border bg-card p-6">
+              <figure key={r.id} className="flex h-full flex-col rounded-2xl border border-border bg-black p-6">
                 <Quote className="h-5 w-5 text-primary" aria-hidden="true" />
                 <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-foreground/90">
                   “{r.commentaire}”
@@ -184,7 +184,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {c.trust.map((t) => (
-            <div key={t.t} className="rounded-2xl border border-border bg-card/60 p-5">
+            <div key={t.t} className="rounded-2xl border border-border bg-black/60 p-5">
               <t.icon className="h-5 w-5 text-primary" aria-hidden="true" />
               <h3 className="mt-3 text-sm font-semibold text-foreground">{t.t}</h3>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{t.d}</p>
