@@ -787,7 +787,7 @@ function Index() {
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
       <section className="relative isolate overflow-hidden border-b border-border bg-black">
-        <div className="relative aspect-[1376/768] h-auto min-h-0 max-h-none sm:aspect-auto sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
+        <div className="relative h-[58svh] min-h-[430px] max-h-[680px] sm:h-[52vh] md:h-[56vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -799,7 +799,7 @@ function Index() {
             loading="eager"
             width={1376}
             height={768}
-            className="h-full w-full object-cover object-center scale-100"
+            className="h-full w-full object-cover object-center scale-[1.08] sm:scale-100"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
         </div>
