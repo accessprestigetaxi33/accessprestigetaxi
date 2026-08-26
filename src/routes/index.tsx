@@ -794,7 +794,7 @@ function Index() {
             {fleetValues.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.04}>
                 <CompactPhotoCard
-                  image={[referencePrestige, photoBmwReal.url, photoAudiReal.url, photoVanReal.url][i]}
+                  image={[photoBmwReal.url, photoAudiReal.url, photoVanReal.url, referencePrestige][i]}
                   alt={`${v.title} — Access Prestige Taxi`}
                   icon={v.icon}
                   title={v.title}
@@ -802,9 +802,6 @@ function Index() {
                 />
               </Reveal>
             ))}
-          </div>
-          <div className="mt-6 flex justify-center">
-            <ReserveButton label={c.reserveCta} />
           </div>
         </div>
       </section>
@@ -820,7 +817,7 @@ function Index() {
           </Reveal>
           <div className="mt-6">
             <SplitPhotoCard
-              image={photoAudiReal.url}
+              image={photoVanReal.url}
               alt="Avis clients Access Prestige Taxi"
               icon={Award}
               title={lang === "en" ? "Your satisfaction is our priority" : "Votre satisfaction est notre priorité"}
@@ -875,7 +872,7 @@ function Index() {
                       : "Installez-vous, on s’occupe de tout.",
                   details: [],
                 },
-                image: referencePrestige,
+                image: referenceMedical,
               },
             ].map(({ step, image }, i) => (
               <Reveal as="div" key={step.s} delay={i * 0.05}>
@@ -923,7 +920,7 @@ function Index() {
           </Reveal>
           <div className="mt-6 grid gap-5 lg:grid-cols-2">
             <SplitPhotoCard
-              image={photoBmwReal.url}
+              image={photoAudiReal.url}
               alt="Suivi du trajet"
               icon={Smartphone}
               title={lang === "en" ? "Track your journey" : "Suivez votre trajet"}
@@ -938,7 +935,7 @@ function Index() {
               </div>
             </SplitPhotoCard>
             <SplitPhotoCard
-              image={photoAudiReal.url}
+              image={photoVanReal.url}
               alt="Application mobile Access Prestige Taxi"
               icon={Smartphone}
               title={lang === "en" ? "Mobile application" : "Application mobile"}
