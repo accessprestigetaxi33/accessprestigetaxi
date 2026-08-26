@@ -786,7 +786,7 @@ function Index() {
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
-      <section className="relative isolate overflow-hidden border-b border-border bg-black">
+      <section className="relative isolate left-1/2 w-screen -translate-x-1/2 overflow-hidden border-b border-border bg-black max-md:rounded-none">
         <div className="relative aspect-[16/9] w-full sm:aspect-auto sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
@@ -799,7 +799,7 @@ function Index() {
             loading="eager"
             width={1376}
             height={768}
-            className="h-full w-full object-cover object-center"
+            className="h-full w-full object-cover object-center max-md:scale-[1.035]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
         </div>
