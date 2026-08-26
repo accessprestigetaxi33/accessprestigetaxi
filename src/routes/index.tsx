@@ -782,7 +782,7 @@ function Index() {
   const pillars = lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR;
 
   return (
-    <main>
+    <main className="relative left-1/2 w-screen -translate-x-1/2 overflow-x-hidden">
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
