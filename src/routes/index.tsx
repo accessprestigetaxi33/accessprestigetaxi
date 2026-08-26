@@ -688,7 +688,7 @@ function Index() {
         <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-              <h1 className="font-display text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl text-balance">
+              <h1 className="font-display text-3xl font-semibold uppercase leading-tight text-white sm:text-4xl md:text-5xl text-balance">
                 {c.h1}
               </h1>
               <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
