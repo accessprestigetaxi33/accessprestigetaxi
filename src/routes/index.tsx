@@ -466,7 +466,15 @@ export const Route = createFileRoute("/")({
   },
 });
 
-function LearnMoreToggle({ lang, details }: { lang: "fr" | "en"; details: readonly string[] }) {
+function LearnMoreToggle({
+  lang,
+  details,
+  variant = "outline",
+}: {
+  lang: "fr" | "en";
+  details: readonly string[];
+  variant?: "outline" | "solid";
+}) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -474,7 +482,11 @@ function LearnMoreToggle({ lang, details }: { lang: "fr" | "en"; details: readon
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         aria-expanded={isOpen}
-        className="mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+        className={
+          variant === "solid"
+            ? "mt-5 inline-flex items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+            : "mt-5 inline-flex items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+        }
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -485,7 +497,11 @@ function LearnMoreToggle({ lang, details }: { lang: "fr" | "en"; details: readon
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-left text-sm leading-relaxed text-muted-foreground"
+            className={
+              variant === "solid"
+                ? "mt-5 space-y-2 overflow-hidden border-t border-white/20 pt-5 text-left text-sm leading-relaxed text-white/80"
+                : "mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-left text-sm leading-relaxed text-muted-foreground"
+            }
           >
             {details.map((d) => (
               <li key={d} className="flex gap-2">
@@ -631,20 +647,29 @@ function Index() {
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {c.vehicles.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.07}>
-                <article className={`overflow-hidden ${CARD}`}>
+                <article className="dark relative overflow-hidden rounded-2xl border border-border">
                   <img
                     src={v.img}
                     alt={v.alt}
                     loading="lazy"
                     width={1600}
                     height={900}
-                    className="aspect-[16/10] w-full object-cover"
+                    className="aspect-[4/5] w-full object-cover sm:aspect-[3/4]"
                   />
-                  <div className="p-5 text-center sm:p-6">
-                    <h3 className="font-display text-xl font-semibold text-card-foreground">{v.title}</h3>
-                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">{v.subtitle}</p>
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.05) 75%)",
+                    }}
+                    aria-hidden="true"
+                  />
+                  <div className="absolute inset-0 flex flex-col justify-end p-6 text-center sm:p-7">
+                    <h3 className="font-display text-xl font-semibold text-white sm:text-2xl">{v.title}</h3>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/70">{v.subtitle}</p>
+                    <div className="mx-auto mt-3 h-px w-10 bg-primary" aria-hidden="true" />
                     <div className="flex justify-center">
-                      <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} />
+                      <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} variant="solid" />
                     </div>
                   </div>
                 </article>
