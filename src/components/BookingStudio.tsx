@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   ArrowDownUp,
+  ArrowLeft,
   BadgeCheck,
   Baby,
   Bell,
@@ -45,6 +46,7 @@ type Lang = "fr" | "en";
 
 const T = {
   fr: {
+    back: "Retour au site",
     eyebrow: "Réservation en direct",
     title: "Votre course, réservée en 60 secondes",
     subtitle:
@@ -133,6 +135,7 @@ const T = {
     trust3: "Confirmation immédiate + suivi en temps réel",
   },
   en: {
+    back: "Back to site",
     eyebrow: "Live booking",
     title: "Your ride, booked in 60 seconds",
     subtitle: "Address, time, passengers: the fare updates live as you type. No waiting, no guesswork.",
@@ -976,7 +979,17 @@ export function BookingStudio() {
           </div>
         </div>
       )}
-      <header className="mx-auto max-w-3xl text-center">
+      <div className="mx-auto max-w-3xl">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-primary"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {L.back}
+        </Link>
+      </div>
+
+      <header className="mx-auto mt-4 max-w-3xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{L.eyebrow}</p>
         <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{L.title}</h1>
         <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">{L.subtitle}</p>
