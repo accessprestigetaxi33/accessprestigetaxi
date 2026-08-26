@@ -33,7 +33,13 @@ const COPY = {
     driver: "Quel chauffeur ?",
     driverAny: "Je ne sais plus / les deux",
     service: "Type de prestation",
-    services: ["Course simple", "Toutes gares / tous aéroports", "Transport sanitaire / fauteuil roulant", "Groupe / van 8 places", "Toutes distances"],
+    services: [
+      "Course simple",
+      "Toutes gares / tous aéroports",
+      "Transport sanitaire / fauteuil roulant",
+      "Groupe / van 8 places",
+      "Toutes distances",
+    ],
     recommend: "Recommanderiez-vous Access Prestige Taxi ?",
     yes: "Oui",
     no: "Non",
@@ -43,7 +49,8 @@ const COPY = {
     errFields: "Merci d'indiquer votre nom, une note globale et un commentaire.",
     errSubmit: "Envoi impossible pour le moment, réessayez.",
     success: "Merci ! Votre avis a bien été envoyé et sera publié après relecture.",
-    queued: "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
+    queued:
+      "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
     optional: "facultatif",
     outOf: "sur 5",
     syncQueued: "avis en attente d'envoi sur cet appareil",
@@ -63,7 +70,13 @@ const COPY = {
     driver: "Which driver?",
     driverAny: "Not sure / both",
     service: "Type of service",
-    services: ["Standard ride", "All stations / airports", "Medical / wheelchair transport", "Group / 8-seat van", "All distances"],
+    services: [
+      "Standard ride",
+      "All stations / airports",
+      "Medical / wheelchair transport",
+      "Group / 8-seat van",
+      "All distances",
+    ],
     recommend: "Would you recommend Access Prestige Taxi?",
     yes: "Yes",
     no: "No",
@@ -73,7 +86,8 @@ const COPY = {
     errFields: "Please provide your name, an overall rating and a comment.",
     errSubmit: "Could not send right now, please try again.",
     success: "Thank you! Your review was sent and will be published after review.",
-    queued: "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
+    queued:
+      "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
     optional: "optional",
     outOf: "out of 5",
     syncQueued: "review(s) waiting to be sent from this device",
@@ -83,7 +97,6 @@ const COPY = {
     syncRetry: "Retry now",
     syncProgress: "sent",
   },
-
 } as const;
 
 function Stars({
@@ -160,7 +173,10 @@ function ReviewSyncStatus({ c }: { c: (typeof COPY)["fr"] | (typeof COPY)["en"] 
       </p>
       {(phase === "sending" || phase === "sent") && (
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
-          <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       )}
       {(phase === "queued" || phase === "error") && (
@@ -185,7 +201,6 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
   const isEn = lang === "en";
-
 
   const [name, setName] = useState("");
   const [text, setText] = useState("");
@@ -265,17 +280,16 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   }
 
   const field =
-    "rounded-xl border border-border bg-background px-4 py-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+    "w-full min-w-0 rounded-xl border border-border bg-background px-4 py-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto mt-12 max-w-2xl rounded-2xl border border-border bg-background p-6 md:p-8"
+      className="mx-auto mt-12 w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-background p-6 md:p-8"
     >
       <h3 className="font-display text-2xl font-semibold">{c.title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{c.intro}</p>
       <ReviewSyncStatus c={c} />
-
 
       <fieldset className="mt-6">
         <legend className="text-sm font-semibold text-foreground">{c.global}</legend>
@@ -316,8 +330,8 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         )}
       </fieldset>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
-        <label className="grid gap-1.5 text-sm">
+      <div className="mt-6 grid min-w-0 gap-3 sm:grid-cols-2">
+        <label className="grid min-w-0 gap-1.5 text-sm">
           <span className="font-semibold text-foreground">{c.driver}</span>
           <select value={driver} onChange={(e) => setDriver(e.target.value)} className={field}>
             <option value="">{c.driverAny}</option>
@@ -325,7 +339,7 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
             <option value="Patricia">Patricia</option>
           </select>
         </label>
-        <label className="grid gap-1.5 text-sm">
+        <label className="grid min-w-0 gap-1.5 text-sm">
           <span className="font-semibold text-foreground">{c.service}</span>
           <select value={service} onChange={(e) => setService(e.target.value)} className={field}>
             <option value="">—</option>
@@ -360,7 +374,7 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         </div>
       </fieldset>
 
-      <div className="mt-6 grid gap-3">
+      <div className="mt-6 grid min-w-0 gap-3">
         <input
           type="text"
           value={name}
@@ -383,11 +397,7 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         />
       </div>
 
-      <Button
-        type="submit"
-        disabled={loading}
-        className="mt-5 h-auto rounded-xl px-6 py-3 shadow-[var(--shadow-gold)]"
-      >
+      <Button type="submit" disabled={loading} className="mt-5 h-auto rounded-xl px-6 py-3 shadow-[var(--shadow-gold)]">
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         {c.submit}
       </Button>
