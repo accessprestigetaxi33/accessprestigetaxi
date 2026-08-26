@@ -797,7 +797,7 @@ function Index() {
                 >
                   <div className="mt-4 flex items-center justify-between gap-3">
                     <span className="text-xs leading-relaxed text-white/70">
-                      {i === 0 ? "1 à 3 passagers" : i === 1 ? "4 à 7 passagers" : "1 à 3 passagers"}
+                      {i === 0 ? "1 à 3 passagers" : i === 1 ? "1 à 3 passagers" : "4 à 7 passagers"}
                     </span>
                     <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} variant="solid" />
                   </div>
