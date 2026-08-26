@@ -564,10 +564,10 @@ function SplitPhotoCard({
             alt={alt}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]"
+            className="h-full w-full object-cover object-center brightness-[1.08] contrast-[1.04] saturate-[1.08] transition duration-700 group-hover:scale-[1.025]"
           />
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.35),rgba(7,17,31,0.02)_55%,rgba(7,17,31,0.08))]"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.16),rgba(7,17,31,0)_55%,rgba(7,17,31,0.06))]"
             aria-hidden="true"
           />
         </div>
@@ -716,10 +716,10 @@ function PhotoTopCard({
           alt={alt}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
+          className="h-full w-full object-cover object-center brightness-[1.08] contrast-[1.04] saturate-[1.08] transition duration-700 group-hover:scale-[1.035]"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.04),rgba(3,10,20,0.34))]"
           aria-hidden="true"
         />
         <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f]/90 backdrop-blur-sm">
@@ -755,10 +755,10 @@ function CompactPhotoCard({
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
+        className="absolute inset-0 h-full w-full object-cover object-center brightness-[1.1] contrast-[1.04] saturate-[1.1] transition duration-700 group-hover:scale-[1.035]"
       />
       <div
-        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.96),rgba(3,10,20,0.68)_52%,rgba(3,10,20,0.2))]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.68),rgba(3,10,20,0.34)_52%,rgba(3,10,20,0.08))]"
         aria-hidden="true"
       />
       <div className="relative h-full p-4 sm:p-5">
@@ -787,7 +787,7 @@ function Index() {
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
       <section className="relative isolate overflow-hidden border-b border-border bg-black">
-        <div className="relative h-[58svh] min-h-[430px] max-h-[680px] sm:h-[52vh] md:h-[56vh] lg:h-[60vh] lg:max-h-[720px]">
+        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -799,12 +799,12 @@ function Index() {
             loading="eager"
             width={1376}
             height={768}
-            className="h-full w-full object-cover object-center scale-[1.08] sm:scale-100"
+            className="h-full w-full object-contain object-center"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
         </div>
 
-        <div className="relative bg-black px-5 pb-14 pt-5 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
+        <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
               <h1 className="font-display text-3xl font-semibold uppercase leading-tight text-white sm:text-4xl md:text-5xl text-balance">
@@ -1017,10 +1017,10 @@ function Index() {
                     src={image}
                     alt={step.t}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+                    className="absolute inset-0 h-full w-full object-cover object-center brightness-[1.1] contrast-[1.04] saturate-[1.1] transition duration-700 group-hover:scale-[1.03]"
                   />
                   <div
-                    className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"
+                    className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.62),rgba(3,10,20,0.30)_50%,rgba(3,10,20,0.06))]"
                     aria-hidden="true"
                   />
                   <div className="relative flex h-full flex-col p-5">
@@ -1167,16 +1167,16 @@ function Index() {
               <Reveal key={e.slug} delay={i * 0.05}>
                 <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-52 overflow-hidden sm:h-56">
                       <img
                         src={GUIDE_IMAGES[i % GUIDE_IMAGES.length]}
                         alt={`${e.name} — ${e.city}`}
                         loading="lazy"
                         decoding="async"
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                        className="h-full w-full origin-top object-cover object-top brightness-[1.1] contrast-[1.04] saturate-[1.1] scale-[1.28] transition duration-700 group-hover:scale-[1.34]"
                       />
                       <div
-                        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.76))]"
+                        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.02),rgba(3,10,20,0.30))]"
                         aria-hidden="true"
                       />
                       <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
