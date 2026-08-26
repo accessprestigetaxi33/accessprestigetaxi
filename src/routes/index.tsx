@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowRight,
   Award,
+  Bell,
   BriefcaseBusiness,
   Car,
   CheckCircle2,
@@ -22,6 +23,7 @@ import {
   ShieldCheck,
   Smartphone,
   Stethoscope,
+  User,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
@@ -574,6 +576,123 @@ function SplitPhotoCard({
   );
 }
 
+function NotificationOptIn({ lang }: { lang: "fr" | "en" }) {
+  const [status, setStatus] = useState<"idle" | "granted" | "denied" | "unsupported">("idle");
+
+  const handleClick = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setStatus("unsupported");
+      return;
+    }
+    try {
+      const permission = await Notification.requestPermission();
+      setStatus(permission === "granted" ? "granted" : "denied");
+    } catch {
+      setStatus("unsupported");
+    }
+  };
+
+  const labels = {
+    idle: lang === "en" ? "Enable notifications" : "Activer les notifications",
+    granted: lang === "en" ? "Notifications enabled" : "Notifications activées",
+    denied: lang === "en" ? "Notifications blocked" : "Notifications bloquées",
+    unsupported: lang === "en" ? "Not supported on this device" : "Non disponible sur cet appareil",
+  } as const;
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={status === "granted" || status === "unsupported"}
+      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
+    >
+      <Bell className="h-3.5 w-3.5" aria-hidden="true" />
+      {labels[status]}
+    </button>
+  );
+}
+
+function InstallAppToggle({ lang }: { lang: "fr" | "en" }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const android =
+    lang === "en"
+      ? [
+          "Open the site in Chrome.",
+          "Tap the menu (⋮) in the top right corner.",
+          'Select "Add to Home screen" or "Install app".',
+          "Confirm — the icon appears on your home screen.",
+        ]
+      : [
+          "Ouvrez le site dans Chrome.",
+          "Appuyez sur le menu (⋮) en haut à droite.",
+          "Sélectionnez « Ajouter à l'écran d'accueil » ou « Installer l'application ».",
+          "Confirmez — l'icône apparaît sur votre écran d'accueil.",
+        ];
+
+  const iphone =
+    lang === "en"
+      ? [
+          "Open the site in Safari.",
+          "Tap the Share icon (square with an arrow).",
+          'Select "Add to Home Screen".',
+          'Tap "Add" — the icon appears on your home screen.',
+        ]
+      : [
+          "Ouvrez le site dans Safari.",
+          "Appuyez sur l'icône de partage (carré avec une flèche).",
+          "Sélectionnez « Sur l'écran d'accueil ».",
+          "Appuyez sur « Ajouter » — l'icône apparaît sur votre écran d'accueil.",
+        ];
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen((o) => !o)}
+        aria-expanded={isOpen}
+        className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+      >
+        {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-5 grid gap-5 overflow-hidden border-t border-white/20 pt-5 text-left sm:grid-cols-2"
+          >
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#e0b866]">Android</p>
+              <ol className="mt-2 space-y-2 text-sm leading-relaxed text-white/80">
+                {android.map((s) => (
+                  <li key={s} className="flex gap-2">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                    {s}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#e0b866]">iPhone</p>
+              <ol className="mt-2 space-y-2 text-sm leading-relaxed text-white/80">
+                {iphone.map((s) => (
+                  <li key={s} className="flex gap-2">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                    {s}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 function PhotoTopCard({
   image,
   alt,
@@ -939,39 +1058,97 @@ function Index() {
             <SplitPhotoCard
               image={trackingPhone}
               alt="Suivi du trajet"
-              icon={Smartphone}
-              title={lang === "en" ? "Track your journey" : "Suivez votre trajet"}
+              icon={Bell}
+              title={lang === "en" ? "Trip notifications" : "Suivez votre trajet par notifications"}
               lead={
                 lang === "en"
-                  ? "Real-time notifications and driver tracking."
-                  : "Recevez des notifications et suivez votre chauffeur en temps réel."
+                  ? "No live map — instead you receive a notification at each key step: booking confirmed, driver on the way, driver arrived."
+                  : "Pas de carte en temps réel, mais une notification à chaque étape clé de votre trajet : réservation confirmée, chauffeur en route, chauffeur arrivé."
               }
             >
-              <div className="mt-5">
-                <ReserveButton label={lang === "en" ? "Learn more" : "En savoir plus"} />
+              <div className="mt-5 flex flex-wrap gap-3">
+                <NotificationOptIn lang={lang === "en" ? "en" : "fr"} />
               </div>
+              <LearnMoreToggle
+                lang={lang === "en" ? "en" : "fr"}
+                variant="solid"
+                details={
+                  lang === "en"
+                    ? [
+                        "Confirmation notification as soon as your booking is registered.",
+                        "Alert when your driver sets off towards your pickup point.",
+                        "Notification when your driver arrives on site.",
+                        "Automatic reminder ahead of your appointment time.",
+                      ]
+                    : [
+                        "Notification de confirmation dès l'enregistrement de votre réservation.",
+                        "Alerte lorsque votre chauffeur se met en route vers le point de prise en charge.",
+                        "Notification à l'arrivée de votre chauffeur sur place.",
+                        "Rappel automatique avant l'heure de votre rendez-vous.",
+                      ]
+                }
+              />
             </SplitPhotoCard>
             <SplitPhotoCard
               image={appPhones}
               alt="Application mobile Access Prestige Taxi"
               icon={Smartphone}
-              title={lang === "en" ? "Mobile application" : "Application mobile"}
+              title={
+                lang === "en"
+                  ? "Web app, installable on your phone"
+                  : "Application web, installable sur votre téléphone"
+              }
               lead={
                 lang === "en"
-                  ? "Install the application on iOS or Android."
-                  : "Téléchargez notre application iOS ou Android."
+                  ? "Access Prestige Taxi is a web app: add it to your home screen in a few taps, no App Store or Play Store needed."
+                  : "Access Prestige Taxi est une application web : ajoutez-la à votre écran d'accueil en quelques gestes, sans passer par l'App Store ou le Play Store."
               }
               reverse
             >
-              <div className="mt-5 flex flex-wrap gap-3">
-                <Link
-                  to="/reserver"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#07111f]"
-                >
-                  {lang === "en" ? "Download" : "Télécharger"} <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
+              <InstallAppToggle lang={lang === "en" ? "en" : "fr"} />
             </SplitPhotoCard>
+            <div className="lg:col-span-2">
+              <SplitPhotoCard
+                image={reviewPhone}
+                alt={lang === "en" ? "Client account" : "Espace client"}
+                icon={User}
+                title={lang === "en" ? "Your client area" : "Votre espace client"}
+                lead={
+                  lang === "en"
+                    ? "Ride history, invoices and saved addresses, all in one secure personal space."
+                    : "Historique de vos courses, factures et adresses favorites, réunis dans un espace personnel sécurisé."
+                }
+              >
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    to="/espace-client"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+                  >
+                    {lang === "en" ? "Access my client area" : "Accéder à l'espace client"}{" "}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </Link>
+                </div>
+                <LearnMoreToggle
+                  lang={lang === "en" ? "en" : "fr"}
+                  variant="solid"
+                  details={
+                    lang === "en"
+                      ? [
+                          "Full history of your past rides.",
+                          "Download your invoices at any time.",
+                          "Manage and save your favourite addresses.",
+                          "Modify or cancel a booking in one click.",
+                        ]
+                      : [
+                          "Historique complet de vos trajets passés.",
+                          "Téléchargement de vos factures à tout moment.",
+                          "Gestion et enregistrement de vos adresses favorites.",
+                          "Modification ou annulation d'une réservation en un clic.",
+                        ]
+                  }
+                />
+              </SplitPhotoCard>
+            </div>
           </div>
         </div>
       </section>
