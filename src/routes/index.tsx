@@ -799,7 +799,7 @@ function Index() {
             loading="eager"
             width={1376}
             height={768}
-            className="h-full w-full object-cover object-center"
+            className="h-full w-full object-contain object-center scale-[1.24] sm:scale-100"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
         </div>
