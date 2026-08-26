@@ -646,7 +646,10 @@ function AnonChat({
 
 // ─── Calendrier ICS ──────────────────────────────────────────────────────────────
 function generateICS(reservation: any, t: (k: string) => string): string {
-  if (!reservation.pickup_datetime) return "#";
+  // reservation est null au premier rendu (SSR + avant chargement) : sans ce
+  // garde-fou la page /suivi/:id plantait immédiatement (erreur "This page
+  // didn't load"), notamment en arrivant depuis une notification client.
+  if (!reservation?.pickup_datetime) return "#";
   const start = new Date(reservation.pickup_datetime);
   // Utilise duree_s si disponible, sinon 1h par défaut
   const durationMs = reservation.duree_s ? durationSecondsToMs(reservation.duree_s) : 60 * 60 * 1000;
