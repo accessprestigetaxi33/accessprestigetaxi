@@ -856,7 +856,7 @@ function Index() {
           </div>
           <div className="mt-6 rounded-[22px] border border-[#c99b4a]/60 bg-black p-5 sm:p-7">
             <ClientTrust>
-              <div className="text-white [&_p]:!text-white [&_blockquote]:!text-white [&_label]:!text-white [&_h3]:!text-white [&_h4]:!text-white [&_li]:!text-white [&_input]:!text-white [&_textarea]:!text-white [&_select]:!text-white [&_option]:text-black">
+              <div className="text-black [&_p]:!text-black [&_blockquote]:!text-black [&_label]:!text-black [&_h3]:!text-black [&_h4]:!text-black [&_li]:!text-black [&_input]:!text-black [&_textarea]:!text-black [&_select]:!text-black [&_option]:text-black">
                 <ReviewForm />
               </div>
             </ClientTrust>
