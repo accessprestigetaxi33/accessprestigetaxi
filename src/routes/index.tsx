@@ -536,24 +536,33 @@ function ReferencePhotoCard({
 }) {
   return (
     <article
-      className={`group relative overflow-hidden rounded-[26px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-[#e0b866] ${className}`}
+      className={`group relative min-h-[315px] overflow-hidden rounded-[24px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)] transition duration-300 hover:-translate-y-1 hover:border-[#e0b866] sm:min-h-[340px] ${className}`}
     >
-      <div className="relative h-44 overflow-hidden sm:h-48">
-        <img
-          src={image}
-          alt={alt}
-          loading="lazy"
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,10,20,0.05)_25%,rgba(4,10,20,0.35)_65%,rgba(4,10,20,0.96)_100%)]" />
-        <div className="absolute bottom-[-1px] left-6 flex h-14 w-14 translate-y-1/2 items-center justify-center rounded-2xl border border-[#e0b866]/80 bg-[#07111f] shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
+      <img
+        src={image}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
+      />
+      <div
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.98)_0%,rgba(3,10,20,0.9)_34%,rgba(3,10,20,0.5)_62%,rgba(3,10,20,0.08)_100%)]"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.18)_0%,rgba(3,10,20,0.05)_45%,rgba(3,10,20,0.68)_100%)]"
+        aria-hidden="true"
+      />
+      <div className="relative flex h-full flex-col items-start p-6 sm:p-7">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#e0b866]/90 bg-[#07111f]/90 shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-sm">
           <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
         </div>
-      </div>
-      <div className="px-6 pb-6 pt-10 sm:px-7 sm:pb-7">
-        <h3 className="font-display text-xl font-semibold text-[#f6f0e5] sm:text-2xl">{title}</h3>
-        {lead && <p className="mt-2 text-sm leading-relaxed text-white/70 sm:text-base">{lead}</p>}
-        {children}
+        <div className="mt-auto max-w-[78%] sm:max-w-[72%]">
+          <h3 className="font-display text-xl font-semibold leading-tight text-[#f6f0e5] sm:text-2xl">{title}</h3>
+          <div className="mt-4 h-px w-12 bg-[#e0b866]" aria-hidden="true" />
+          {lead && <p className="mt-4 text-sm leading-relaxed text-white/75 sm:text-base">{lead}</p>}
+          {children}
+        </div>
       </div>
     </article>
   );
@@ -727,7 +736,14 @@ function Index() {
             {fleetValues.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.05}>
                 <ReferencePhotoCard
-                  image={[photoBmwReal.url, photoAudiReal.url, photoVanReal.url, photoBmwReal.url][i]}
+                  image={
+                    [
+                      photoBmwReal.url,
+                      photoAudiReal.url,
+                      photoVanReal.url,
+                      BLOG_PICKS[0] ? imgAt(BLOG_PICKS[0].photo, 700) : photoBmwReal.url,
+                    ][i]
+                  }
                   alt={`${v.title} — Access Prestige Taxi`}
                   icon={v.icon}
                   title={v.title}
@@ -756,7 +772,7 @@ function Index() {
       <div id="avis" className="border-t border-[#c99b4a]/30 bg-[#07111f]">
         <div className="mx-auto max-w-6xl px-5 py-20 sm:px-6 lg:px-8">
           <ReferencePhotoCard
-            image={photoBmwReal.url}
+            image={photoVanReal.url}
             alt="Service client Access Prestige Taxi"
             icon={HeartHandshake}
             title={lang === "en" ? "Clients who trust us" : "Des clients qui nous font confiance"}
@@ -800,7 +816,14 @@ function Index() {
             {c.how.map((h, i) => (
               <Reveal as="li" key={h.s} delay={i * 0.08}>
                 <ReferencePhotoCard
-                  image={[photoBmwReal.url, photoAudiReal.url, photoVanReal.url][i]}
+                  image={
+                    [
+                      photoBmwReal.url,
+                      photoAudiReal.url,
+                      photoVanReal.url,
+                      BLOG_PICKS[0] ? imgAt(BLOG_PICKS[0].photo, 700) : photoBmwReal.url,
+                    ][i]
+                  }
                   alt={
                     [
                       "Réservation avec véhicule premium",
