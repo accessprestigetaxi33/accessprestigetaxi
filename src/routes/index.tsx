@@ -31,8 +31,8 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-prestige-sunset.webp";
-import heroCarsEn from "@/assets/hero-prestige-sunset.webp";
+import heroCars from "@/assets/apt-hero-clean-fr.webp";
+import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
@@ -139,22 +139,13 @@ const FLEET_VALUES_EN = [
   { icon: HeartHandshake, title: "Attention", text: "Personalised care and service on every ride." },
 ] as const;
 
-const HERO_PILLARS_FR = [
-  { icon: Crown, label: "Élégance" },
-  { icon: Gem, label: "Discrétion" },
-  { icon: Award, label: "Exigence" },
-] as const;
-
-const HERO_PILLARS_EN = [
-  { icon: Crown, label: "Elegance" },
-  { icon: Gem, label: "Discretion" },
-  { icon: Award, label: "Excellence" },
-] as const;
+const HERO_VALUES_FR = ["Élégance", "Discrétion", "Exigence"] as const;
+const HERO_VALUES_EN = ["Elegance", "Discretion", "Excellence"] as const;
 
 const COPY = {
   fr: {
-    h1: "L'élégance de votre trajet",
-    tagline: "Votre confort, notre priorité",
+    h1: "Votre confort, notre priorité",
+    tagline: "",
     lead: "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails.",
     ctaBook: "Réserver mon trajet",
     reserveCta: "Réserver",
@@ -264,8 +255,8 @@ const COPY = {
     blogCta: "Voir tout le guide",
   },
   en: {
-    h1: "The elegance of your journey",
-    tagline: "Your comfort, our priority",
+    h1: "Your comfort, our priority",
+    tagline: "",
     lead: "Premium transport and covered medical transport across Charente-Maritime. Personalised care, premium vehicles and a service considered down to the smallest detail.",
     ctaBook: "Book my ride",
     reserveCta: "Book",
@@ -567,7 +558,7 @@ function SplitPhotoCard({
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]"
           />
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.18),rgba(7,17,31,0.01)_55%,rgba(7,17,31,0.04))]"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.35),rgba(7,17,31,0.02)_55%,rgba(7,17,31,0.08))]"
             aria-hidden="true"
           />
         </div>
@@ -719,7 +710,7 @@ function PhotoTopCard({
           className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.04),rgba(3,10,20,0.62))]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
           aria-hidden="true"
         />
         <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#07111f]/90 backdrop-blur-sm">
@@ -779,7 +770,7 @@ function Index() {
   const c = lang === "en" ? COPY.en : COPY.fr;
   const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
-  const pillars = lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR;
+  const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
 
   return (
     <main>
@@ -787,7 +778,7 @@ function Index() {
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
       <section className="relative isolate overflow-hidden bg-black">
-        <div className="relative h-[62vh] min-h-[520px] w-full overflow-hidden sm:h-[64vh] sm:min-h-[560px] md:h-[66vh] lg:h-[70vh] lg:max-h-[860px]">
+        <div className="relative aspect-[1376/555] w-full sm:aspect-auto sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -797,9 +788,9 @@ function Index() {
             }
             fetchPriority="high"
             loading="eager"
-            width={1536}
-            height={500}
-            className="h-full w-full object-cover object-center [object-position:center_bottom] [transform:scale(1.01)] [transform-origin:center_bottom] [filter:saturate(1.05)_contrast(1.04)_brightness(1.06)]"
+            width={1376}
+            height={555}
+            className="h-full w-full object-cover object-center sm:object-contain [filter:saturate(1.06)_contrast(1.06)_brightness(1.05)]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_60%,rgba(0,0,0,0.85)_100%)]" />
         </div>
@@ -810,9 +801,11 @@ function Index() {
               <h1 className="font-display text-3xl font-semibold uppercase leading-tight text-white sm:text-4xl md:text-5xl text-balance">
                 {c.h1}
               </h1>
-              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
-                {c.tagline}
-              </p>
+              {c.tagline && (
+                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
+                  {c.tagline}
+                </p>
+              )}
               <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{c.lead}</p>
 
               <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -840,14 +833,11 @@ function Index() {
                 ))}
               </div>
 
-              <ul className="mt-9 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-                {pillars.map((p, i) => (
-                  <li key={p.label} className="flex items-center gap-6">
-                    <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-white/85">
-                      <p.icon className="h-4 w-4 text-primary" aria-hidden="true" />
-                      {p.label}
-                    </span>
-                    {i < pillars.length - 1 && (
+              <ul className="mt-9 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+                {heroValues.map((value, i) => (
+                  <li key={value} className="flex items-center gap-8">
+                    <span className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{value}</span>
+                    {i < heroValues.length - 1 && (
                       <span className="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true" />
                     )}
                   </li>
@@ -1017,10 +1007,10 @@ function Index() {
                     src={image}
                     alt={step.t}
                     loading="lazy"
-                    className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.12] contrast-[1.04] saturate-[1.06]" : ""}`}
+                    className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.08] contrast-[1.06] saturate-[1.05]" : ""}`}
                   />
                   <div
-                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.60),rgba(3,10,20,0.24)_50%,rgba(3,10,20,0.06))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.82),rgba(3,10,20,0.52)_50%,rgba(3,10,20,0.10))]"}`}
+                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.78),rgba(3,10,20,0.38)_50%,rgba(3,10,20,0.10))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"}`}
                     aria-hidden="true"
                   />
                   <div className="relative flex h-full flex-col p-5">
