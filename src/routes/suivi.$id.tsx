@@ -47,7 +47,7 @@ export const Route = createFileRoute("/suivi/$id")({
         content:
           "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
       },
-      { name: "theme-color", content: "#0f172a" },
+      { name: "theme-color", content: "#f6f0e5" },
     ],
   }),
   component: SuiviPage,
@@ -91,6 +91,9 @@ const PREMIUM_CSS = `
   button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   input, textarea { -webkit-tap-highlight-color: transparent; }
   .suivi-root { overscroll-behavior-y: contain; }
+  .suivi-root h1, .suivi-root h2, .suivi-root h3 { font-family: "Playfair Display", serif; }
+  .suivi-root * { border-style: none !important; }
+  .suivi-root input, .suivi-root textarea { background: rgba(255,255,255,0.06); color: #f6f0e5; }
   
   @keyframes gradient-flow {
     0%, 100% { background-position: 0% 50%; }
@@ -125,10 +128,11 @@ const PREMIUM_CSS = `
   }
   
   .suivi-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+    background: linear-gradient(135deg, #0d1a2b 0%, #07111f 100%);
+    border: none;
+    border-radius: 22px;
+    color: #f6f0e5;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.38);
     /* Fix #8 — préfixe webkit pour iOS < 15 */
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
@@ -136,17 +140,18 @@ const PREMIUM_CSS = `
   }
   
   .suivi-card:hover {
-    box-shadow: 0 8px 40px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.45);
     transform: translateY(-2px);
   }
   
   .suivi-glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(13, 26, 43, 0.75);
     /* Fix #8 — préfixe webkit pour iOS < 15 */
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(148, 163, 184, 0.15);
-    border-radius: 12px;
+    border: none;
+    border-radius: 14px;
+    color: #f6f0e5;
   }
 `;
 
@@ -186,43 +191,43 @@ const STATUS_CONFIG: Record<
 > = {
   pending: {
     label: "suivi.status.pending",
-    color: "#92400e",
-    bgGradient: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+    color: "#f0c069",
+    bgGradient: "linear-gradient(135deg, #241d0e 0%, #2f2513 100%)",
     borderColor: "rgba(217, 119, 6, 0.2)",
     icon: "⏳",
   },
   accepted: {
     label: "suivi.status.accepted",
-    color: "#15803d",
-    bgGradient: "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",
+    color: "#5fd08a",
+    bgGradient: "linear-gradient(135deg, #0e2318 0%, #123122 100%)",
     borderColor: "rgba(34, 197, 94, 0.2)",
     icon: "✨",
   },
   en_route: {
     label: "suivi.status.en_route",
-    color: "#1d4ed8",
-    bgGradient: "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",
+    color: "#e0b866",
+    bgGradient: "linear-gradient(135deg, #101f33 0%, #16283f 100%)",
     borderColor: "rgba(29, 78, 216, 0.2)",
     icon: "🚕",
   },
   arrived: {
     label: "suivi.status.arrived",
-    color: "#7c3aed",
-    bgGradient: "linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)",
+    color: "#c4b5fd",
+    bgGradient: "linear-gradient(135deg, #1a1730 0%, #221d3d 100%)",
     borderColor: "rgba(124, 58, 237, 0.2)",
     icon: "📍",
   },
   completed: {
     label: "suivi.status.completed",
-    color: "#475569",
-    bgGradient: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
+    color: "#cfd6df",
+    bgGradient: "linear-gradient(135deg, #0c1929 0%, #f6f0e5 100%)",
     borderColor: "rgba(71, 85, 105, 0.2)",
     icon: "✓",
   },
   cancelled: {
     label: "suivi.status.cancelled",
-    color: "#991b1b",
-    bgGradient: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
+    color: "#f19a9a",
+    bgGradient: "linear-gradient(135deg, #2a1212 0%, #3a1a1a 100%)",
     borderColor: "rgba(185, 28, 28, 0.2)",
     icon: "✕",
   },
@@ -273,7 +278,7 @@ function PremiumTimeline({ status }: { status: string }) {
                   width: "30px",
                   height: "30px",
                   borderRadius: "50%",
-                  background: isDone ? config.bgGradient : "#e2e8f0",
+                  background: isDone ? config.bgGradient : "#f6f0e5",
                   border: `2px solid ${isDone ? config.borderColor : "transparent"}`,
                   display: "flex",
                   alignItems: "center",
@@ -291,7 +296,7 @@ function PremiumTimeline({ status }: { status: string }) {
                 style={{
                   fontSize: "10.5px",
                   fontWeight: isActive ? 700 : 500,
-                  color: isDone ? config.color : "#94a3b8",
+                  color: isDone ? config.color : "#9fb0c2",
                   textAlign: "center",
                   lineHeight: 1.25,
                   width: "100%",
@@ -311,7 +316,7 @@ function PremiumTimeline({ status }: { status: string }) {
                 <div
                   style={{
                     height: "2px",
-                    background: isDone ? `linear-gradient(90deg, ${config.color}40, ${config.color}70)` : "#e2e8f0",
+                    background: isDone ? `linear-gradient(90deg, ${config.color}40, ${config.color}70)` : "#f6f0e5",
                     borderRadius: "1px",
                     transition: "all 0.4s ease",
                   }}
@@ -347,7 +352,7 @@ function ChatSection({
         style={{
           fontSize: "13px",
           fontWeight: 700,
-          color: "#0f172a",
+          color: "#f6f0e5",
           marginBottom: "12px",
           display: "flex",
           gap: "8px",
@@ -383,7 +388,7 @@ function ChatSection({
             style={{
               marginLeft: "auto",
               fontSize: 10,
-              color: "#64748b",
+              color: "#9fb0c2",
               fontWeight: 600,
               letterSpacing: "0.02em",
             }}
@@ -564,7 +569,7 @@ function AnonChat({
         }}
       >
         {messages.length === 0 && (
-          <div style={{ textAlign: "center", color: "#94a3b8", fontSize: "12px", padding: "20px 0" }}>
+          <div style={{ textAlign: "center", color: "#9fb0c2", fontSize: "12px", padding: "20px 0" }}>
             {t("suivi.chat_empty")}
           </div>
         )}
@@ -578,8 +583,8 @@ function AnonChat({
             >
               <div
                 style={{
-                  background: mine ? "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)" : "#f1f5f9",
-                  color: mine ? "#fff" : "#0f172a",
+                  background: mine ? "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)" : "#0c1929",
+                  color: mine ? "#fff" : "#f6f0e5",
                   padding: "8px 12px",
                   borderRadius: "10px",
                   fontSize: "13px",
@@ -588,7 +593,7 @@ function AnonChat({
               >
                 {msg.content}
               </div>
-              <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "3px", padding: "0 4px" }}>
+              <div style={{ fontSize: "10px", color: "#9fb0c2", marginTop: "3px", padding: "0 4px" }}>
                 {mine ? t("suivi.chat_you") || u.you : driverName}
               </div>
             </div>
@@ -608,12 +613,12 @@ function AnonChat({
             flex: 1,
             padding: "12px 12px",
             borderRadius: "8px",
-            border: "1px solid #e2e8f0",
+            border: "1px solid #f6f0e5",
             fontSize: "16px",
             fontFamily: "inherit",
             transition: "all 0.3s",
-            color: "#0f172a",
-            background: "#ffffff",
+            color: "#f6f0e5",
+            background: "#0d1a2b",
             minHeight: "44px",
             boxSizing: "border-box",
           }}
@@ -625,7 +630,7 @@ function AnonChat({
             padding: "10px 16px",
             minWidth: "44px",
             minHeight: "44px",
-            background: sending || !text.trim() ? "#cbd5e1" : "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+            background: sending || !text.trim() ? "#cbb894" : "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
             border: "none",
             borderRadius: "8px",
@@ -751,22 +756,22 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
 <title>${labelDocTitle}</title>
 <style>
   @media print { body { margin: 0; } .no-print { display: none; } }
-  body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a1a1a; max-width: 700px; margin: 40px auto; padding: 0 24px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1d4ed8; padding-bottom: 20px; margin-bottom: 28px; }
-  .brand { font-size: 22px; font-weight: 900; color: #1d4ed8; letter-spacing: -0.5px; }
-  .brand small { display: block; font-size: 12px; font-weight: 400; color: #64748b; margin-top: 2px; }
-  .meta { text-align: right; font-size: 12px; color: #64748b; }
-  .meta strong { display: block; font-size: 16px; color: #1a1a1a; font-weight: 700; }
-  h2 { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px; }
-  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #f6f0e5; max-width: 700px; margin: 40px auto; padding: 0 24px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #e0b866; padding-bottom: 20px; margin-bottom: 28px; }
+  .brand { font-size: 22px; font-weight: 900; color: #e0b866; letter-spacing: -0.5px; }
+  .brand small { display: block; font-size: 12px; font-weight: 400; color: #9fb0c2; margin-top: 2px; }
+  .meta { text-align: right; font-size: 12px; color: #9fb0c2; }
+  .meta strong { display: block; font-size: 16px; color: #f6f0e5; font-weight: 700; }
+  h2 { font-size: 13px; font-weight: 700; color: #9fb0c2; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px; }
+  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #0c1929; font-size: 14px; }
   .row:last-child { border: none; }
-  .row .label { color: #475569; }
+  .row .label { color: #cfd6df; }
   .row .value { font-weight: 600; }
-  .total-box { margin-top: 24px; background: #f8fafc; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
-  .total-box .label { font-size: 14px; color: #475569; }
-  .total-box .amount { font-size: 26px; font-weight: 900; color: #1d4ed8; }
-  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; text-align: center; }
-  .btn { display: inline-block; margin: 20px 8px 0; padding: 10px 24px; background: #1d4ed8; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .total-box { margin-top: 24px; background: #09141f; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .total-box .label { font-size: 14px; color: #cfd6df; }
+  .total-box .amount { font-size: 26px; font-weight: 900; color: #e0b866; }
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #f6f0e5; font-size: 11px; color: #9fb0c2; text-align: center; }
+  .btn { display: inline-block; margin: 20px 8px 0; padding: 10px 24px; background: #e0b866; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 </style></head><body>
 <div class="header">
   <div class="brand">🚕 Access Prestige Taxi<small>accessprestigetaxi.lovable.app · 06 50 26 00 15</small></div>
@@ -781,7 +786,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
 <div class="total-box"><span class="label">${labelTotal}</span><span class="amount">${prix}</span></div>
 <div class="no-print" style="text-align:center">
   <button class="btn" onclick="window.print()">${labelPrint}</button>
-  <button class="btn" onclick="window.close()" style="background:#64748b">${labelClose}</button>
+  <button class="btn" onclick="window.close()" style="background:#9fb0c2">${labelClose}</button>
 </div>
 <div class="footer">${labelFooterLegal}<br/>${labelFooterThanks}</div>
 </body></html>`;
@@ -796,7 +801,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
         style={{
           fontSize: "12px",
           fontWeight: 700,
-          color: "#1d4ed8",
+          color: "#e0b866",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
           marginBottom: "14px",
@@ -816,11 +821,11 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             justifyContent: "space-between",
             fontSize: "13px",
             paddingBottom: "8px",
-            borderBottom: "1px solid #f1f5f9",
+            borderBottom: "1px solid #0c1929",
           }}
         >
-          <span style={{ color: "#64748b" }}>{t("suivi.depart_label")} 🟢</span>
-          <span style={{ fontWeight: 600, color: "#0f172a", maxWidth: "60%", textAlign: "right" }}>
+          <span style={{ color: "#9fb0c2" }}>{t("suivi.depart_label")} 🟢</span>
+          <span style={{ fontWeight: 600, color: "#f6f0e5", maxWidth: "60%", textAlign: "right" }}>
             {reservation.depart}
           </span>
         </div>
@@ -830,11 +835,11 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             justifyContent: "space-between",
             fontSize: "13px",
             paddingBottom: "8px",
-            borderBottom: "1px solid #f1f5f9",
+            borderBottom: "1px solid #0c1929",
           }}
         >
-          <span style={{ color: "#64748b" }}>{t("suivi.arrivee_label")} 🔴</span>
-          <span style={{ fontWeight: 600, color: "#0f172a", maxWidth: "60%", textAlign: "right" }}>
+          <span style={{ color: "#9fb0c2" }}>{t("suivi.arrivee_label")} 🔴</span>
+          <span style={{ fontWeight: 600, color: "#f6f0e5", maxWidth: "60%", textAlign: "right" }}>
             {reservation.destination ?? reservation.arrivee ?? "—"}
           </span>
         </div>
@@ -845,11 +850,11 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
               justifyContent: "space-between",
               fontSize: "13px",
               paddingBottom: "8px",
-              borderBottom: "1px solid #f1f5f9",
+              borderBottom: "1px solid #0c1929",
             }}
           >
-            <span style={{ color: "#64748b" }}>{t("suivi.distance")}</span>
-            <span style={{ fontWeight: 600, color: "#0f172a" }}>{Number(reservation.distance_km).toFixed(1)} km</span>
+            <span style={{ color: "#9fb0c2" }}>{t("suivi.distance")}</span>
+            <span style={{ fontWeight: 600, color: "#f6f0e5" }}>{Number(reservation.distance_km).toFixed(1)} km</span>
           </div>
         )}
         {reservation.mode_paiement && (
@@ -859,17 +864,17 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
               justifyContent: "space-between",
               fontSize: "13px",
               paddingBottom: "8px",
-              borderBottom: "1px solid #f1f5f9",
+              borderBottom: "1px solid #0c1929",
             }}
           >
-            <span style={{ color: "#64748b" }}>{t("suivi.paiement")}</span>
-            <span style={{ fontWeight: 600, color: "#0f172a" }}>{reservation.mode_paiement}</span>
+            <span style={{ color: "#9fb0c2" }}>{t("suivi.paiement")}</span>
+            <span style={{ fontWeight: 600, color: "#f6f0e5" }}>{reservation.mode_paiement}</span>
           </div>
         )}
         {reservation.prix_estime != null && (
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-            <span style={{ fontSize: "13px", color: "#64748b" }}>{t("fin.price_label")}</span>
-            <span style={{ fontSize: "22px", fontWeight: 900, color: "#1d4ed8" }}>
+            <span style={{ fontSize: "13px", color: "#9fb0c2" }}>{t("fin.price_label")}</span>
+            <span style={{ fontSize: "22px", fontWeight: 900, color: "#e0b866" }}>
               {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(reservation.prix_estime)}
             </span>
           </div>
@@ -877,7 +882,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
         <div
           style={{
             fontSize: "11px",
-            color: "#94a3b8",
+            color: "#9fb0c2",
             textAlign: "right",
             marginTop: "2px",
           }}
@@ -897,7 +902,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             gap: "6px",
             padding: "12px 10px",
             background: "rgba(255,255,255,0.08)",
-            color: "#94a3b8",
+            color: "#9fb0c2",
             border: "1px solid rgba(148,163,184,0.2)",
             borderRadius: "10px",
             fontSize: "13px",
@@ -915,7 +920,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             justifyContent: "center",
             gap: "6px",
             padding: "12px 10px",
-            background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+            background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
             border: "none",
             borderRadius: "10px",
@@ -938,10 +943,10 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             gap: "6px",
             padding: "12px 10px",
             background: emailSent
-              ? "linear-gradient(135deg, #16a34a 0%, #15803d 100%)"
+              ? "linear-gradient(135deg, #5fd08a 0%, #5fd08a 100%)"
               : emailSending
-                ? "#cbd5e1"
-                : "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+                ? "#cbb894"
+                : "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
             border: "none",
             borderRadius: "10px",
@@ -1051,9 +1056,9 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
           boxSizing: "border-box",
         }}
       >
-        <div style={{ width: 40, height: 4, background: "#e2e8f0", borderRadius: 2, margin: "0 auto 20px" }} />
-        <div style={{ fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>{t("suivi.rec_title")}</div>
-        <div style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>
+        <div style={{ width: 40, height: 4, background: "#f6f0e5", borderRadius: 2, margin: "0 auto 20px" }} />
+        <div style={{ fontSize: 16, fontWeight: 800, color: "#f6f0e5", marginBottom: 4 }}>{t("suivi.rec_title")}</div>
+        <div style={{ fontSize: 13, color: "#9fb0c2", marginBottom: 20 }}>
           {reservation.depart} → {reservation.destination ?? reservation.arrivee ?? "—"}
         </div>
 
@@ -1063,7 +1068,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: "#64748b",
+              color: "#9fb0c2",
               textTransform: "uppercase" as const,
               letterSpacing: "0.05em",
               marginBottom: 8,
@@ -1083,9 +1088,9 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
                   fontSize: 11,
                   fontWeight: 700,
                   border: "2px solid",
-                  borderColor: freq === f ? "#1d4ed8" : "#e2e8f0",
-                  background: freq === f ? "#eff6ff" : "#fff",
-                  color: freq === f ? "#1d4ed8" : "#64748b",
+                  borderColor: freq === f ? "#e0b866" : "#f6f0e5",
+                  background: freq === f ? "#12212f" : "#fff",
+                  color: freq === f ? "#e0b866" : "#9fb0c2",
                   cursor: "pointer",
                 }}
               >
@@ -1101,7 +1106,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: "#64748b",
+              color: "#9fb0c2",
               textTransform: "uppercase" as const,
               letterSpacing: "0.05em",
               marginBottom: 8,
@@ -1120,9 +1125,9 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
                   fontSize: 12,
                   fontWeight: 700,
                   border: "2px solid",
-                  borderColor: dayOfWeek === i ? "#1d4ed8" : "#e2e8f0",
-                  background: dayOfWeek === i ? "#eff6ff" : "#fff",
-                  color: dayOfWeek === i ? "#1d4ed8" : "#64748b",
+                  borderColor: dayOfWeek === i ? "#e0b866" : "#f6f0e5",
+                  background: dayOfWeek === i ? "#12212f" : "#fff",
+                  color: dayOfWeek === i ? "#e0b866" : "#9fb0c2",
                   cursor: "pointer",
                 }}
               >
@@ -1138,7 +1143,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: "#64748b",
+              color: "#9fb0c2",
               textTransform: "uppercase" as const,
               letterSpacing: "0.05em",
               marginBottom: 8,
@@ -1154,9 +1159,9 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
               width: "100%",
               padding: "12px 14px",
               borderRadius: 10,
-              border: "1.5px solid #e2e8f0",
+              border: "1.5px solid #f6f0e5",
               fontSize: 16,
-              color: "#0f172a",
+              color: "#f6f0e5",
               fontFamily: "inherit",
               boxSizing: "border-box" as const,
             }}
@@ -1170,8 +1175,8 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
             width: "100%",
             padding: "15px 16px",
             background: saved
-              ? "linear-gradient(135deg, #16a34a 0%, #15803d 100%)"
-              : "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+              ? "linear-gradient(135deg, #5fd08a 0%, #5fd08a 100%)"
+              : "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
             border: "none",
             borderRadius: 12,
@@ -1261,10 +1266,10 @@ function ReviewBlock({
     return (
       <div className="suivi-premium suivi-card" style={{ marginBottom: "16px", padding: "20px", textAlign: "center" }}>
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>⭐</div>
-        <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a", marginBottom: "4px" }}>
+        <div style={{ fontSize: "14px", fontWeight: 700, color: "#f6f0e5", marginBottom: "4px" }}>
           {t("suivi.review_sent")}
         </div>
-        <div style={{ fontSize: "13px", color: "#64748b" }}>{t("suivi.review_sent_sub")}</div>
+        <div style={{ fontSize: "13px", color: "#9fb0c2" }}>{t("suivi.review_sent_sub")}</div>
       </div>
     );
   }
@@ -1312,7 +1317,7 @@ function ReviewBlock({
             <Star
               size={32}
               fill={(hover || rating) >= star ? "#f59e0b" : "none"}
-              stroke={(hover || rating) >= star ? "#f59e0b" : "#cbd5e1"}
+              stroke={(hover || rating) >= star ? "#f59e0b" : "#cbb894"}
               strokeWidth={1.5}
             />
           </button>
@@ -1339,14 +1344,14 @@ function ReviewBlock({
           width: "100%",
           padding: "10px 12px",
           borderRadius: "10px",
-          border: "1px solid #e2e8f0",
+          border: "1px solid #f6f0e5",
           fontSize: "16px",
           fontFamily: "inherit",
           resize: "vertical",
           marginBottom: "12px",
           boxSizing: "border-box",
-          background: "#f8fafc",
-          color: "#0f172a",
+          background: "#09141f",
+          color: "#f6f0e5",
         }}
       />
 
@@ -1356,8 +1361,8 @@ function ReviewBlock({
         style={{
           width: "100%",
           padding: "12px 16px",
-          background: rating === 0 || submitting ? "#e2e8f0" : "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-          color: rating === 0 || submitting ? "#94a3b8" : "#fff",
+          background: rating === 0 || submitting ? "#f6f0e5" : "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+          color: rating === 0 || submitting ? "#9fb0c2" : "#fff",
           border: "none",
           borderRadius: "10px",
           fontSize: "13px",
@@ -1433,7 +1438,7 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
       <button
         onClick={() => setOpen(true)}
         style={{
-          background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+          background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
           border: "none",
           borderRadius: "8px",
           padding: "8px 12px",
@@ -1486,19 +1491,19 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
           boxSizing: "border-box",
         }}
       >
-        <div style={{ width: 40, height: 4, background: "#e2e8f0", borderRadius: 2, margin: "0 auto 18px" }} />
-        <div style={{ fontSize: 15, fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>{t("suivi.share_title")}</div>
+        <div style={{ width: 40, height: 4, background: "#f6f0e5", borderRadius: 2, margin: "0 auto 18px" }} />
+        <div style={{ fontSize: 15, fontWeight: 800, color: "#f6f0e5", marginBottom: 4 }}>{t("suivi.share_title")}</div>
         {/* Aperçu du message */}
         <div
           style={{
-            background: "#f8fafc",
+            background: "#09141f",
             borderRadius: 10,
             padding: "12px 14px",
             marginBottom: 16,
             fontSize: 13,
-            color: "#334155",
+            color: "#e9e2d5",
             lineHeight: 1.6,
-            border: "1px solid #e2e8f0",
+            border: "1px solid #f6f0e5",
             whiteSpace: "pre-line",
           }}
         >
@@ -1516,7 +1521,7 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
               alignItems: "center",
               gap: 10,
               padding: "13px 16px",
-              background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+              background: "linear-gradient(135deg, #5fd08a 0%, #5fd08a 100%)",
               color: "#fff",
               borderRadius: 12,
               textDecoration: "none",
@@ -1539,7 +1544,7 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
               alignItems: "center",
               gap: 10,
               padding: "13px 16px",
-              background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+              background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
               color: "#fff",
               borderRadius: 12,
               textDecoration: "none",
@@ -1561,8 +1566,8 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
               gap: 10,
               padding: "13px 16px",
               background: "rgba(248,250,252,1)",
-              color: "#334155",
-              border: "1px solid #e2e8f0",
+              color: "#e9e2d5",
+              border: "1px solid #f6f0e5",
               borderRadius: 12,
               fontWeight: 700,
               fontSize: 14,
@@ -1903,11 +1908,11 @@ function SuiviPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
+          background: "linear-gradient(180deg, #07111f 0%, #03080d 100%)",
         }}
       >
         <style>{PREMIUM_CSS}</style>
-        <Loader2 size={40} style={{ color: "#1d4ed8", animation: "spin 1s linear infinite" }} />
+        <Loader2 size={40} style={{ color: "#e0b866", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
@@ -1920,20 +1925,20 @@ function SuiviPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
+          background: "linear-gradient(180deg, #07111f 0%, #03080d 100%)",
           padding: "20px",
         }}
       >
         <style>{PREMIUM_CSS}</style>
         <div className="suivi-card" style={{ maxWidth: "400px", padding: "40px 24px", textAlign: "center" }}>
-          <AlertTriangle size={48} style={{ color: "#991b1b", marginBottom: "16px" }} />
-          <h1 style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", marginBottom: "8px" }}>
+          <AlertTriangle size={48} style={{ color: "#f19a9a", marginBottom: "16px" }} />
+          <h1 style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5", marginBottom: "8px" }}>
             {error || t("suivi.not_found")}
           </h1>
           <Link
             to="/"
             style={{
-              color: "#1d4ed8",
+              color: "#e0b866",
               textDecoration: "none",
               fontSize: "14px",
               marginTop: "20px",
@@ -1956,17 +1961,17 @@ function SuiviPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
+          background: "linear-gradient(180deg, #07111f 0%, #03080d 100%)",
           padding: "20px",
         }}
       >
         <style>{PREMIUM_CSS}</style>
         <div className="suivi-card" style={{ maxWidth: "400px", padding: "40px 24px", textAlign: "center" }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔏</div>
-          <h1 style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", marginBottom: "8px" }}>
+          <h1 style={{ fontSize: "16px", fontWeight: 800, color: "#f6f0e5", marginBottom: "8px" }}>
             {t("suivi.expired_title")}
           </h1>
-          <p style={{ fontSize: "13px", color: "#64748b", marginBottom: "24px", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "24px", lineHeight: 1.6 }}>
             {t("suivi.expired_desc").replace("{days}", String(SUIVI_EXPIRY_DAYS))}
           </p>
           <a
@@ -1976,7 +1981,7 @@ function SuiviPage() {
               alignItems: "center",
               gap: "8px",
               padding: "12px 24px",
-              background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+              background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
               color: "#fff",
               borderRadius: "10px",
               textDecoration: "none",
@@ -2002,12 +2007,13 @@ function SuiviPage() {
       <div
         className="suivi-root"
         style={{
-          background: "linear-gradient(135deg, #EDE6D4 0%, #E5DCC8 100%)",
+          background: "linear-gradient(180deg, #07111f 0%, #03080d 100%)",
           minHeight: "100dvh",
           padding: "16px",
           paddingTop: "calc(16px + env(safe-area-inset-top, 0px))",
           paddingBottom: "calc(32px + env(safe-area-inset-bottom, 0px))",
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          color: "#f6f0e5",
           maxWidth: "100vw",
           overflowX: "hidden",
           boxSizing: "border-box",
@@ -2029,11 +2035,11 @@ function SuiviPage() {
               alignItems: "center",
               gap: "6px",
               padding: "8px 14px",
-              background: "rgba(15,23,42,0.85)",
+              background: "rgba(7,17,31,0.9)",
               backdropFilter: "blur(8px)",
               border: "1px solid rgba(255,255,255,0.15)",
               borderRadius: "10px",
-              color: "#e2e8f0",
+              color: "#e0b866",
               fontSize: "13px",
               fontWeight: 600,
               textDecoration: "none",
@@ -2105,7 +2111,7 @@ function SuiviPage() {
         <div className="suivi-premium" style={{ marginBottom: "24px" }}>
           <div
             style={{
-              background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%)",
+              background: "linear-gradient(135deg, rgba(13,26,43,0.96) 0%, rgba(7,17,31,0.92) 100%)",
               backdropFilter: "blur(20px)",
               borderRadius: "16px",
               border: "1px solid rgba(148, 163, 184, 0.2)",
@@ -2117,7 +2123,7 @@ function SuiviPage() {
             {reservation.pickup_datetime && !isCompleted && (
               <div
                 style={{
-                  background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+                  background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
                   borderRadius: "10px",
                   padding: "10px 14px",
                   marginBottom: "14px",
@@ -2185,10 +2191,10 @@ function SuiviPage() {
               }}
             >
               <div>
-                <h1 style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1.2 }}>
+                <h1 style={{ fontSize: "16px", fontWeight: 800, color: "#f6f0e5", margin: 0, lineHeight: 1.2 }}>
                   {config.icon} {t(config.label)}
                 </h1>
-                <p style={{ fontSize: "12px", color: "#94a3b8", margin: "4px 0 0 0" }}>
+                <p style={{ fontSize: "12px", color: "#9fb0c2", margin: "4px 0 0 0" }}>
                   {t("suivi.booking_ref")}
                   {reservation.id.slice(-8).toUpperCase()}
                 </p>
@@ -2201,14 +2207,14 @@ function SuiviPage() {
                       alignItems: "center",
                       gap: "6px",
                       padding: "5px 10px",
-                      background: "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",
+                      background: "linear-gradient(135deg, #0e2318 0%, #123122 100%)",
                       borderRadius: "20px",
                       border: "1px solid rgba(34,197,94,0.2)",
                       width: "fit-content",
                     }}
                   >
-                    <Car size={12} style={{ color: "#15803d" }} />
-                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#15803d" }}>
+                    <Car size={12} style={{ color: "#5fd08a" }} />
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#5fd08a" }}>
                       {reservation.driver_name} {t("suivi.driver_label")}
                     </span>
                   </div>
@@ -2232,7 +2238,7 @@ function SuiviPage() {
                     gap: "4px",
                     fontSize: "11px",
                     fontWeight: 600,
-                    color: "#64748b",
+                    color: "#9fb0c2",
                   }}
                 >
                   <Share2 size={13} />
@@ -2247,7 +2253,7 @@ function SuiviPage() {
                 className="vehicle-photo-block"
                 style={{
                   marginTop: "12px",
-                  background: "linear-gradient(135deg, #E5DCC8 0%, #EDE6D4 100%)",
+                  background: "linear-gradient(135deg, #03080d 0%, #07111f 100%)",
                   borderRadius: "12px",
                   border: "1px solid rgba(255,255,255,0.08)",
                   overflow: "hidden",
@@ -2291,7 +2297,7 @@ function SuiviPage() {
                       left: 0,
                       right: 0,
                       height: "60px",
-                      background: "linear-gradient(to top, #EDE6D4, transparent)",
+                      background: "linear-gradient(to top, #07111f, transparent)",
                     }}
                   />
                   {/* Badge Taxi flottant */}
@@ -2348,7 +2354,7 @@ function SuiviPage() {
                       style={{
                         fontSize: "13px",
                         fontWeight: 900,
-                        color: "#1a1a1a",
+                        color: "#f6f0e5",
                         letterSpacing: "1px",
                         lineHeight: 1.2,
                       }}
@@ -2371,13 +2377,13 @@ function SuiviPage() {
           style={{ marginBottom: "16px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}
         >
           <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-            <MapPin size={20} style={{ color: "#1d4ed8", flexShrink: 0, marginTop: "2px" }} />
+            <MapPin size={20} style={{ color: "#e0b866", flexShrink: 0, marginTop: "2px" }} />
             <div>
               <div
                 style={{
                   fontSize: "11px",
                   fontWeight: 600,
-                  color: "#94a3b8",
+                  color: "#9fb0c2",
                   textTransform: "uppercase",
                   letterSpacing: "0.5px",
                   display: "flex",
@@ -2387,7 +2393,7 @@ function SuiviPage() {
               >
                 <span>🟢</span> {t("suivi.depart_label")}
               </div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a", marginTop: "2px" }}>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f6f0e5", marginTop: "2px" }}>
                 {reservation.depart}
               </div>
             </div>
@@ -2395,17 +2401,17 @@ function SuiviPage() {
           <div
             style={{
               height: "1px",
-              background: "linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%)",
+              background: "linear-gradient(90deg, transparent 0%, #f6f0e5 50%, transparent 100%)",
             }}
           />
           <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-            <MapPin size={20} style={{ color: "#7c3aed", flexShrink: 0, marginTop: "2px" }} />
+            <MapPin size={20} style={{ color: "#c4b5fd", flexShrink: 0, marginTop: "2px" }} />
             <div>
               <div
                 style={{
                   fontSize: "11px",
                   fontWeight: 600,
-                  color: "#94a3b8",
+                  color: "#9fb0c2",
                   textTransform: "uppercase",
                   letterSpacing: "0.5px",
                   display: "flex",
@@ -2415,7 +2421,7 @@ function SuiviPage() {
               >
                 <span>🔴</span> {t("suivi.arrivee_label")}
               </div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#0f172a", marginTop: "2px" }}>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f6f0e5", marginTop: "2px" }}>
                 {reservation.destination || reservation.arrivee || u.tbd}
               </div>
             </div>
@@ -2426,21 +2432,21 @@ function SuiviPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
           {reservation.nb_passagers != null && (
             <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <Users size={18} style={{ color: "#1d4ed8", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#94a3b8", marginBottom: "4px" }}>{t("suivi.passagers")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{reservation.nb_passagers}</div>
+              <Users size={18} style={{ color: "#e0b866", margin: "0 auto 6px", display: "block" }} />
+              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.passagers")}</div>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>{reservation.nb_passagers}</div>
             </div>
           )}
           <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
             <Package size={18} style={{ color: "#f59e0b", margin: "0 auto 6px", display: "block" }} />
-            <div style={{ fontSize: "13px", color: "#94a3b8", marginBottom: "4px" }}>{t("suivi.bagages")}</div>
-            <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{reservation.nb_bagages ?? 0}</div>
+            <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.bagages")}</div>
+            <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>{reservation.nb_bagages ?? 0}</div>
           </div>
           {reservation.distance_km != null && (
             <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
               <Gauge size={18} style={{ color: "#8b5cf6", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#94a3b8", marginBottom: "4px" }}>{t("suivi.distance")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>
+              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.distance")}</div>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>
                 {reservation.distance_km.toFixed(1)} km
               </div>
             </div>
@@ -2448,9 +2454,9 @@ function SuiviPage() {
           {/* Fix #11 — durée estimée si duree_s disponible */}
           {reservation.duree_s != null && (
             <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <Clock size={18} style={{ color: "#0ea5e9", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#94a3b8", marginBottom: "4px" }}>{t("suivi.duration_label")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>
+              <Clock size={18} style={{ color: "#e0b866", margin: "0 auto 6px", display: "block" }} />
+              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.duration_label")}</div>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>
                 {durationSecondsToMinutes(reservation.duree_s)} {t("suivi.minutes_short")}
               </div>
             </div>
@@ -2462,12 +2468,12 @@ function SuiviPage() {
                 style={{
                   padding: "14px",
                   textAlign: "center",
-                  background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+                  background: "linear-gradient(135deg, #241d0e 0%, #2f2513 100%)",
                 }}
               >
-                <CreditCard size={18} style={{ color: "#92400e", margin: "0 auto 6px", display: "block" }} />
-                <div style={{ fontSize: "13px", color: "#92400e", marginBottom: "4px" }}>{t("suivi.tarif_estime")}</div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#92400e" }}>
+                <CreditCard size={18} style={{ color: "#f0c069", margin: "0 auto 6px", display: "block" }} />
+                <div style={{ fontSize: "13px", color: "#f0c069", marginBottom: "4px" }}>{t("suivi.tarif_estime")}</div>
+                <div style={{ fontSize: "13px", fontWeight: 700, color: "#f0c069" }}>
                   {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
                     reservation.prix_estime,
                   )}
@@ -2476,9 +2482,9 @@ function SuiviPage() {
             )}
           {reservation.mode_paiement && (
             <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <CreditCard size={18} style={{ color: "#0ea5e9", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#94a3b8", marginBottom: "4px" }}>{t("suivi.paiement")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{reservation.mode_paiement}</div>
+              <CreditCard size={18} style={{ color: "#e0b866", margin: "0 auto 6px", display: "block" }} />
+              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.paiement")}</div>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>{reservation.mode_paiement}</div>
             </div>
           )}
         </div>
@@ -2509,7 +2515,7 @@ function SuiviPage() {
                     fontWeight: 700,
                     letterSpacing: "0.05em",
                     textTransform: "uppercase",
-                    color: "#92400e",
+                    color: "#f0c069",
                     marginBottom: 10,
                   }}
                 >
@@ -2520,8 +2526,8 @@ function SuiviPage() {
                     <div
                       key={h.id}
                       style={{
-                        border: "1px solid #fde68a",
-                        background: "#fffbeb",
+                        border: "1px solid #2f2513",
+                        background: "#1c1710",
                         borderRadius: 10,
                         padding: "10px 12px",
                       }}
@@ -2533,13 +2539,13 @@ function SuiviPage() {
                           timeZone: "Europe/Paris",
                         })}
                       </div>
-                      <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 600 }}>
+                      <div style={{ fontSize: 13, color: "#f6f0e5", fontWeight: 600 }}>
                         {h.old_price != null && (
-                          <span style={{ color: "#94a3b8", textDecoration: "line-through", marginRight: 8 }}>
+                          <span style={{ color: "#9fb0c2", textDecoration: "line-through", marginRight: 8 }}>
                             {money(Number(h.old_price))}
                           </span>
                         )}
-                        <span style={{ color: "#92400e", fontWeight: 800 }}>{money(Number(h.new_price))}</span>
+                        <span style={{ color: "#f0c069", fontWeight: 800 }}>{money(Number(h.new_price))}</span>
                       </div>
                       {h.motif && (
                         <div style={{ fontSize: 12, color: "#78350f", marginTop: 4, whiteSpace: "pre-wrap" }}>
@@ -2560,7 +2566,7 @@ function SuiviPage() {
               style={{
                 fontSize: "12px",
                 fontWeight: 700,
-                color: "#1d4ed8",
+                color: "#e0b866",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px",
                 marginBottom: "12px",
@@ -2576,7 +2582,7 @@ function SuiviPage() {
                   alignItems: "center",
                   gap: "10px",
                   padding: "11px 14px",
-                  background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+                  background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
                   color: "#fff",
                   borderRadius: "10px",
                   textDecoration: "none",
@@ -2603,7 +2609,7 @@ function SuiviPage() {
                   alignItems: "center",
                   gap: "10px",
                   padding: "11px 14px",
-                  background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+                  background: "linear-gradient(135deg, #5fd08a 0%, #5fd08a 100%)",
                   color: "#fff",
                   borderRadius: "10px",
                   textDecoration: "none",
@@ -2647,7 +2653,7 @@ function SuiviPage() {
                   justifyContent: "center",
                   gap: "8px",
                   padding: "13px 16px",
-                  background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)",
+                  background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
                   color: "#fff",
                   borderRadius: "10px",
                   textDecoration: "none",
@@ -2667,7 +2673,7 @@ function SuiviPage() {
                   justifyContent: "center",
                   gap: "8px",
                   padding: "13px 16px",
-                  background: "linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)",
+                  background: "linear-gradient(135deg, #c4b5fd 0%, #6d28d9 100%)",
                   color: "#fff",
                   border: "none",
                   borderRadius: "10px",
@@ -2687,7 +2693,7 @@ function SuiviPage() {
                   justifyContent: "center",
                   padding: "11px 16px",
                   background: "rgba(255,255,255,0.08)",
-                  color: "#94a3b8",
+                  color: "#9fb0c2",
                   borderRadius: "10px",
                   textDecoration: "none",
                   fontWeight: 600,
@@ -2713,7 +2719,7 @@ function SuiviPage() {
                 width: "100%",
                 padding: "13px 16px",
                 background: refreshing ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.08)",
-                color: refreshing ? "#64748b" : "#94a3b8",
+                color: refreshing ? "#9fb0c2" : "#9fb0c2",
                 border: "1px solid rgba(148,163,184,0.15)",
                 borderRadius: "12px",
                 fontWeight: 600,
@@ -2744,7 +2750,7 @@ function SuiviPage() {
               to="/"
               style={{
                 fontSize: "12px",
-                color: "#94a3b8",
+                color: "#9fb0c2",
                 textDecoration: "none",
                 transition: "color 0.3s",
               }}

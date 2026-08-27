@@ -23,7 +23,7 @@ export function SiteHeader() {
   return (
     <header
       aria-label={t("aria.header")}
-      className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]"
+      className="sticky top-0 z-40 bg-background/90 backdrop-blur-md pt-[env(safe-area-inset-top)]"
     >
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:h-20 sm:px-4 lg:flex lg:justify-between lg:gap-5 xl:gap-6">
         <Link
@@ -58,7 +58,7 @@ export function SiteHeader() {
               key={d.tel}
               href={`tel:${d.tel}`}
               aria-label={`Appeler ${d.name} au ${d.display}`}
-              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2 py-2 text-xs font-semibold transition hover:border-primary 2xl:inline-flex 2xl:px-3"
+              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-2 py-2 text-xs font-semibold transition hover:text-primary 2xl:inline-flex 2xl:px-3"
             >
               <Phone className="h-4 w-4 shrink-0 text-primary" />
               <span className="flex flex-col items-start leading-tight">
@@ -72,7 +72,7 @@ export function SiteHeader() {
           <Link
             to="/client/login"
             aria-label={t("aria.client_space")}
-            className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-border px-2.5 py-2 text-sm font-semibold transition hover:border-primary lg:px-3"
+            className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-2 text-sm font-semibold transition hover:text-primary lg:px-3"
           >
             <UserCircle2 className="h-4 w-4 shrink-0 text-primary" />
             <span className="hidden xl:inline">{t("nav.account")}</span>
@@ -113,7 +113,7 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-border bg-background lg:hidden">
+        <div className="bg-background lg:hidden">
           <nav aria-label={t("aria.nav_mobile")} className="flex flex-col px-4 py-2">
             {links.map((l) => (
               <Link
@@ -121,7 +121,7 @@ export function SiteHeader() {
                 to={l.to}
                 activeProps={{ className: "text-primary" }}
                 onClick={() => setOpen(false)}
-                className="border-b border-border/50 py-3.5 text-base font-medium text-foreground/85"
+                className="py-3.5 text-base font-medium text-foreground/85"
               >
                 {l.label}
               </Link>
@@ -132,7 +132,7 @@ export function SiteHeader() {
                   key={d.tel}
                   href={`tel:${d.tel}`}
                   aria-label={`Appeler ${d.name} au ${d.display}`}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-base font-semibold"
+                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl px-3 py-3 text-base font-semibold"
                 >
                   <Phone className="h-5 w-5 shrink-0 text-primary" />
                   <span className="tabular-nums">
@@ -143,7 +143,7 @@ export function SiteHeader() {
               <Link
                 to="/client/login"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-3 py-3 text-base font-semibold"
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-base font-semibold"
               >
                 <UserCircle2 className="h-5 w-5 text-primary" /> {t("nav.account")}
               </Link>
