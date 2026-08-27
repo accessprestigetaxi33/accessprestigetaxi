@@ -31,8 +31,8 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/apt-hero-clean-fr.webp";
-import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
+import heroCars from "@/assets/hero-prestige-sunset.webp";
+import heroCarsEn from "@/assets/hero-prestige-sunset.webp";
 import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
 import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
@@ -787,7 +787,7 @@ function Index() {
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
       <section className="relative isolate overflow-hidden bg-black">
-        <div className="relative h-[72vh] min-h-[620px] w-full overflow-hidden sm:h-[62vh] sm:min-h-[560px] md:h-[64vh] lg:h-[68vh] lg:max-h-[820px]">
+        <div className="relative h-[62vh] min-h-[520px] w-full overflow-hidden sm:h-[64vh] sm:min-h-[560px] md:h-[66vh] lg:h-[70vh] lg:max-h-[860px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -797,9 +797,9 @@ function Index() {
             }
             fetchPriority="high"
             loading="eager"
-            width={1376}
-            height={555}
-            className="h-full w-full object-cover object-center [transform:scale(1.04)] [transform-origin:center_center] [filter:saturate(1.06)_contrast(1.06)_brightness(1.05)]"
+            width={1536}
+            height={500}
+            className="h-full w-full object-cover object-center [object-position:center_bottom] [transform:scale(1.01)] [transform-origin:center_bottom] [filter:saturate(1.05)_contrast(1.04)_brightness(1.06)]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_60%,rgba(0,0,0,0.85)_100%)]" />
         </div>
