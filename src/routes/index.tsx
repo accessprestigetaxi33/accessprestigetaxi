@@ -811,7 +811,52 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
+      {/* 2. VOTRE CONFORT — texte de présentation à la place des pictogrammes */}
+      <section className="bg-[#07111f] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+        <div className="mx-auto max-w-5xl text-center">
+          <Reveal>
+            <h2 className="font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl lg:text-5xl">
+              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
+            </h2>
+            <p className="mx-auto mt-5 max-w-4xl text-base leading-relaxed text-white/75 sm:text-lg">
+              {lang === "en"
+                ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/reserver"
+                className="inline-flex min-h-[46px] items-center justify-center rounded-full btn-gold px-6 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+              >
+                {lang === "en" ? "Book online" : "Réserver"}
+              </Link>
+              <a
+                href="tel:0603444863"
+                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#e0b866]/70 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
+              >
+                {lang === "en" ? "Call Alain · 06 03 44 48 63" : "Appeler Alain · 06 03 44 48 63"}
+              </a>
+              <a
+                href="tel:0650260015"
+                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#e0b866]/70 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
+              >
+                {lang === "en" ? "Call Patricia · 06 50 26 00 15" : "Appeler Patricia · 06 50 26 00 15"}
+              </a>
+            </div>
+
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
+              {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
+                (value) => (
+                  <span key={value}>✓ {value}</span>
+                ),
+              )}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 3. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
       <section id="services" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
@@ -848,7 +893,7 @@ function Index() {
         </div>
       </section>
 
-      {/* 3. NOTRE FLOTTE */}
+      {/* 4. NOTRE FLOTTE */}
       <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
@@ -893,7 +938,7 @@ function Index() {
         </div>
       </section>
 
-      {/* 4. AVIS CLIENTS */}
+      {/* 5. AVIS CLIENTS */}
       <section id="avis" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
@@ -936,7 +981,7 @@ function Index() {
         </div>
       </section>
 
-      {/* 5. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
+      {/* 6. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
       <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
