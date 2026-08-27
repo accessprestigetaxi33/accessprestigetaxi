@@ -496,7 +496,7 @@ function LearnMoreToggle({
         className={
           variant === "solid"
             ? "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-            : "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+            : "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
         }
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
@@ -510,8 +510,8 @@ function LearnMoreToggle({
             exit={{ opacity: 0, height: 0 }}
             className={
               variant === "solid"
-                ? "mt-5 space-y-2 overflow-hidden pt-5 text-left text-sm leading-relaxed text-white/80"
-                : "mt-5 space-y-2 overflow-hidden pt-5 text-left text-sm leading-relaxed text-muted-foreground"
+                ? "mt-5 space-y-2 overflow-hidden border-t border-white/20 pt-5 text-left text-sm leading-relaxed text-white/80"
+                : "mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-left text-sm leading-relaxed text-muted-foreground"
             }
           >
             {details.map((d) => (
@@ -545,12 +545,12 @@ function SplitPhotoCard({
   reverse?: boolean;
 }) {
   return (
-    <article className="group relative overflow-hidden rounded-[24px] bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
+    <article className="group relative overflow-hidden rounded-[24px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
       <div
         className={`grid min-h-[330px] md:min-h-[360px] ${reverse ? "md:grid-cols-[0.95fr_1.05fr]" : "md:grid-cols-[1.05fr_0.95fr]"}`}
       >
         <div className={`relative flex flex-col justify-center p-6 sm:p-8 ${reverse ? "md:order-2" : "md:order-1"}`}>
-          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
             <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
           </div>
           <h3 className="font-display text-2xl font-semibold leading-tight text-[#f6f0e5] sm:text-[28px]">{title}</h3>
@@ -662,7 +662,7 @@ function InstallAppToggle({ lang }: { lang: "fr" | "en" }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-5 grid gap-5 overflow-hidden pt-5 text-left sm:grid-cols-2"
+            className="mt-5 grid gap-5 overflow-hidden border-t border-white/20 pt-5 text-left sm:grid-cols-2"
           >
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-[#e0b866]">Android</p>
@@ -709,7 +709,7 @@ function PhotoTopCard({
   children?: ReactNode;
 }) {
   return (
-    <article className="group overflow-hidden rounded-[22px] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+    <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
       <div className="relative h-48 overflow-hidden sm:h-56">
         <img
           src={image}
@@ -722,7 +722,7 @@ function PhotoTopCard({
           className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
           aria-hidden="true"
         />
-        <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#07111f]/90 backdrop-blur-sm">
+        <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f]/90 backdrop-blur-sm">
           <Icon className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
         </div>
       </div>
@@ -749,7 +749,7 @@ function CompactPhotoCard({
   text: string;
 }) {
   return (
-    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
+    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
       <img
         src={image}
         alt={alt}
@@ -762,7 +762,7 @@ function CompactPhotoCard({
         aria-hidden="true"
       />
       <div className="relative h-full p-4 sm:p-5">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
           <Icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
         </div>
         <h3 className="mt-5 font-display text-lg font-semibold text-[#f6f0e5]">{title}</h3>
@@ -786,8 +786,8 @@ function Index() {
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
-      <section className="relative isolate overflow-hidden bg-black">
-        <div className="relative aspect-[1376/555] w-full sm:aspect-auto sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
+      <section className="relative isolate overflow-hidden border-b border-border bg-black">
+        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -798,10 +798,10 @@ function Index() {
             fetchPriority="high"
             loading="eager"
             width={1376}
-            height={555}
-            className="h-full w-full object-cover object-center sm:object-contain [filter:saturate(1.06)_contrast(1.06)_brightness(1.05)]"
+            height={768}
+            className="h-full w-full object-contain object-center"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_60%,rgba(0,0,0,0.85)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
         </div>
 
         <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
@@ -827,7 +827,7 @@ function Index() {
                     key={d.tel}
                     href={`tel:${d.tel}`}
                     aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                    className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
+                    className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl border-2 border-primary bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
                   >
                     <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
                     <span className="flex flex-col items-start leading-tight">
@@ -859,7 +859,7 @@ function Index() {
       </section>
 
       {/* 2. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -896,7 +896,7 @@ function Index() {
       </section>
 
       {/* 3. NOTRE FLOTTE */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -941,7 +941,7 @@ function Index() {
       </section>
 
       {/* 4. AVIS CLIENTS */}
-      <section id="avis" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section id="avis" className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -964,7 +964,7 @@ function Index() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
                   to="/avis"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
                 >
                   {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -973,7 +973,7 @@ function Index() {
               </div>
             </SplitPhotoCard>
           </div>
-          <div className="mt-6 rounded-[22px] bg-black p-5 sm:p-7">
+          <div className="mt-6 rounded-[22px] border border-[#c99b4a]/60 bg-black p-5 sm:p-7">
             <ClientTrust>
               <div className="text-black [&_p]:!text-black [&_blockquote]:!text-black [&_label]:!text-black [&_h3]:!text-black [&_h4]:!text-black [&_li]:!text-black [&_input]:!text-black [&_textarea]:!text-black [&_select]:!text-black [&_option]:text-black">
                 <ReviewForm />
@@ -984,7 +984,7 @@ function Index() {
       </section>
 
       {/* 5. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1012,7 +1012,7 @@ function Index() {
               },
             ].map(({ step, image }, i) => (
               <Reveal as="div" key={step.s} delay={i * 0.05}>
-                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] bg-[#07111f]">
+                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#c99b4a]/75 bg-[#07111f]">
                   <img
                     src={image}
                     alt={step.t}
@@ -1024,11 +1024,11 @@ function Index() {
                     aria-hidden="true"
                   />
                   <div className="relative flex h-full flex-col p-5">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#e0b866]">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e0b866] text-sm font-semibold text-[#e0b866]">
                       {step.s}
                     </span>
                     <div className="mt-auto">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
+                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
                         <step.icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
                       </div>
                       <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{step.t}</h3>
@@ -1046,7 +1046,7 @@ function Index() {
       </section>
 
       {/* 6. SUIVI & ESPACE CLIENT */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1154,7 +1154,7 @@ function Index() {
       </section>
 
       {/* 7. GUIDE & ACTUALITÉS */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1165,7 +1165,7 @@ function Index() {
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.05}>
-                <article className="group overflow-hidden rounded-[22px] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+                <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative h-48 overflow-hidden">
                       <img
@@ -1179,7 +1179,7 @@ function Index() {
                         className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.76))]"
                         aria-hidden="true"
                       />
-                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
+                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
                         <MapPin className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
                       </div>
                     </div>
