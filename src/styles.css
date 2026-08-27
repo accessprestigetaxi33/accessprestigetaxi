@@ -96,7 +96,15 @@
 
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: transparent;
+  }
+
+  /* Aucune bordure visible sur le site — on garde uniquement un léger
+     contour sur les champs de formulaire pour rester utilisable. */
+  input,
+  select,
+  textarea {
+    border-color: color-mix(in oklab, var(--color-border) 70%, transparent);
   }
   body {
     background-color: var(--color-background);
@@ -528,12 +536,6 @@ body {
   svg {
     max-width: 100%;
     height: auto;
-  }
-  /* Padding latéral mini sur les conteneurs principaux */
-  main,
-  [data-page-container] {
-    padding-left: 12px;
-    padding-right: 12px;
   }
 }
 
