@@ -86,72 +86,83 @@ const VEHICLE_PLATE = "HF-450-JG";
 
 const PREMIUM_CSS = `
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; overflow-x: hidden; overscroll-behavior-y: contain; }
-  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-  input, textarea { -webkit-tap-highlight-color: transparent; }
-  .suivi-root { overscroll-behavior-y: contain; }
-  .suivi-root h1, .suivi-root h2, .suivi-root h3 { font-family: "Playfair Display", serif; }
-  .suivi-root * { border-style: none !important; }
-  .suivi-root input, .suivi-root textarea { background: rgba(255,255,255,0.06); color: #f6f0e5; }
-  
-  @keyframes gradient-flow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  
-  @keyframes float-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(29, 78, 216, 0.4), inset 0 1px 0 rgba(255,255,255,0.1); }
-    50% { box-shadow: 0 0 30px rgba(29, 78, 216, 0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
-  }
-  
-  @keyframes slide-in-right {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  
-  .suivi-premium {
-    animation: float-up 0.5s ease-out both;
-  }
-  
-  .suivi-pulse-active {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  
-  .suivi-slide {
-    animation: slide-in-right 0.4s ease-out both;
-  }
-  
-  .suivi-card {
-    background: linear-gradient(135deg, #0d1a2b 0%, #07111f 100%);
-    border: none;
-    border-radius: 22px;
-    color: #f6f0e5;
-    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.38);
-    /* Fix #8 — préfixe webkit pour iOS < 15 */
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  .suivi-card:hover {
-    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.45);
-    transform: translateY(-2px);
-  }
-  
-  .suivi-glass {
-    background: rgba(13, 26, 43, 0.75);
-    /* Fix #8 — préfixe webkit pour iOS < 15 */
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    border: none;
-    border-radius: 14px;
-    color: #f6f0e5;
+  html, body { margin:0; padding:0; min-height:100%; background:#03070d; }
+  body { font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#f6f0e5; }
+  button,a,input,textarea { -webkit-tap-highlight-color:transparent; }
+  .suivi-root { min-height:100dvh; background:radial-gradient(circle at 50% 0%, rgba(201,155,74,.08), transparent 34%), #03070d; padding:0 20px 30px; }
+  .suivi-shell { max-width:1280px; margin:0 auto; }
+  .suivi-topbar { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid rgba(201,155,74,.75); background:#050a10; }
+  .suivi-brand { display:flex; align-items:center; gap:10px; color:#e0b866; font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:.12em; text-transform:uppercase; }
+  .suivi-brand-mark { width:42px; height:42px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; font-size:19px; }
+  .suivi-top-phone { font-size:12px; color:#f6f0e5; }
+  .suivi-top-actions { display:flex; align-items:center; gap:9px; }
+  .suivi-outline { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:8px 12px; border:1px solid #c99b4a; border-radius:8px; background:transparent; color:#e0b866; text-decoration:none; font-size:11px; font-weight:800; cursor:pointer; }
+  .suivi-titlebar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 14px; }
+  .suivi-titlebar h1 { margin:0; text-align:center; flex:1; font-family:'Playfair Display',Georgia,serif; font-size:24px; letter-spacing:.02em; color:#f6f0e5; }
+  .suivi-titlebar p { margin:3px 0 0; text-align:center; font-size:11px; color:rgba(246,240,229,.62); }
+  .suivi-main-grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(300px,.7fr); gap:14px; align-items:start; }
+  .suivi-card { background:linear-gradient(180deg,#07131e,#040a10); border:1px solid #c99b4a; border-radius:10px; color:#f6f0e5; box-shadow:0 12px 35px rgba(0,0,0,.25); }
+  .suivi-card-flat { padding:14px; }
+  .suivi-section-title { color:#e0b866; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 10px; }
+  .suivi-timeline { padding:15px 14px; margin-bottom:14px; }
+  .suivi-timeline-track { display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative; }
+  .suivi-timeline-track::before { content:""; position:absolute; left:10%; right:10%; top:17px; height:2px; background:rgba(246,240,229,.22); }
+  .suivi-step { position:relative; z-index:1; text-align:center; min-width:0; }
+  .suivi-step-dot { width:34px; height:34px; margin:0 auto 6px; border-radius:50%; border:1px solid #c99b4a; background:#07111b; color:#e0b866; display:grid; place-items:center; font-size:14px; font-weight:900; }
+  .suivi-step.done .suivi-step-dot, .suivi-step.active .suivi-step-dot { background:#e0b866; color:#050a10; }
+  .suivi-step-label { font-size:10px; line-height:1.25; color:rgba(246,240,229,.65); }
+  .suivi-step.active .suivi-step-label { color:#e0b866; font-weight:800; }
+  .suivi-details-grid { display:grid; grid-template-columns:minmax(0,1fr) 190px; gap:10px; }
+  .suivi-route { padding:14px; }
+  .suivi-route-row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid rgba(224,184,102,.16); }
+  .suivi-route-row:last-child { border-bottom:0; }
+  .suivi-route-icon { color:#e0b866; flex:0 0 auto; }
+  .suivi-route-label { font-size:10px; color:rgba(246,240,229,.55); text-transform:uppercase; letter-spacing:.05em; }
+  .suivi-route-value { font-size:12px; color:#fff; font-weight:700; margin-top:2px; }
+  .suivi-vehicle-mini { overflow:hidden; padding:0; }
+  .suivi-vehicle-mini img { width:100%; height:112px; display:block; object-fit:cover; object-position:center; }
+  .suivi-vehicle-info { padding:10px; }
+  .suivi-vehicle-info strong { display:block; font-size:12px; }
+  .suivi-vehicle-info span { display:block; font-size:10px; color:rgba(246,240,229,.58); margin-top:3px; }
+  .suivi-contact-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+  .suivi-gold-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border:1px solid #c99b4a; border-radius:7px; background:#e0b866; color:#080b0d; text-decoration:none; font-size:10px; font-weight:900; }
+  .suivi-dark-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border:1px solid #c99b4a; border-radius:7px; background:#050a10; color:#e0b866; text-decoration:none; font-size:10px; font-weight:900; }
+  .suivi-side-stack { display:flex; flex-direction:column; gap:10px; }
+  .suivi-notifications { padding:14px; }
+  .suivi-notif { display:grid; grid-template-columns:14px 42px 1fr; gap:8px; padding:8px 0; border-bottom:1px solid rgba(224,184,102,.14); }
+  .suivi-notif:last-child { border-bottom:0; }
+  .suivi-notif-line { width:2px; height:100%; background:#c99b4a; margin:0 auto; }
+  .suivi-notif-time { font-size:10px; color:#e0b866; font-weight:800; }
+  .suivi-notif-title { font-size:11px; color:#fff; font-weight:800; }
+  .suivi-notif-text { font-size:10px; line-height:1.45; color:rgba(246,240,229,.58); margin-top:2px; }
+  .suivi-help { padding:14px; }
+  .suivi-help p { margin:0 0 10px; font-size:10px; color:rgba(246,240,229,.62); }
+  .suivi-chat-card { margin-top:14px; }
+  .suivi-completed { margin-top:14px; padding:14px; }
+  .suivi-completed-head { text-align:center; padding-bottom:10px; border-bottom:1px solid rgba(224,184,102,.18); margin-bottom:10px; }
+  .suivi-completed-head strong { color:#8ee39f; font-family:'Playfair Display',Georgia,serif; font-size:18px; }
+  .suivi-completed-head div { font-size:10px; color:rgba(246,240,229,.58); margin-top:3px; }
+  .suivi-completed-grid { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:8px; }
+  .suivi-summary-box { border:1px solid rgba(201,155,74,.65); border-radius:8px; padding:10px; background:#050a10; }
+  .suivi-summary-box h3 { margin:0 0 7px; color:#e0b866; font-size:10px; text-transform:uppercase; letter-spacing:.05em; }
+  .suivi-summary-row { display:flex; justify-content:space-between; gap:8px; font-size:9.5px; padding:3px 0; color:rgba(246,240,229,.68); }
+  .suivi-summary-row strong { color:#fff; text-align:right; }
+  .suivi-bottom-help { margin-top:10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  @media (max-width: 900px) {
+    .suivi-root { padding:0 10px 24px; }
+    .suivi-topbar { min-height:62px; }
+    .suivi-brand span, .suivi-top-phone { display:none; }
+    .suivi-titlebar { padding:14px 0 10px; }
+    .suivi-titlebar h1 { font-size:19px; }
+    .suivi-titlebar p { font-size:10px; }
+    .suivi-main-grid { grid-template-columns:1fr; }
+    .suivi-details-grid { grid-template-columns:1fr; }
+    .suivi-vehicle-mini img { height:155px; }
+    .suivi-timeline-track { grid-template-columns:repeat(5, minmax(58px,1fr)); overflow-x:auto; padding-bottom:3px; }
+    .suivi-timeline-track::before { left:9%; right:9%; }
+    .suivi-step-label { font-size:9px; }
+    .suivi-completed-grid { grid-template-columns:1fr; }
+    .suivi-bottom-help { grid-template-columns:1fr; }
   }
 `;
 
@@ -2001,765 +2012,350 @@ function SuiviPage() {
   const isCancelled = reservation.status === "cancelled";
   const config = STATUS_CONFIG[reservation.status] || STATUS_CONFIG.pending;
 
+  const steps = [
+    { key: "accepted", label: locale === "en" ? "Booking confirmed" : "Réservation confirmée", icon: "✓" },
+    { key: "accepted_driver", label: locale === "en" ? "Driver accepted" : "Chauffeur accepté", icon: "✓" },
+    { key: "en_route", label: locale === "en" ? "Driver on the way" : "Chauffeur en route", icon: "🚕" },
+    { key: "arrived", label: locale === "en" ? "Driver arrived" : "Chauffeur arrivé", icon: "🚕" },
+    { key: "completed", label: locale === "en" ? "Ride completed" : "Course terminée", icon: "✓" },
+  ];
+  const progressIndex = isCompleted
+    ? 4
+    : reservation.status === "arrived"
+      ? 3
+      : reservation.status === "en_route"
+        ? 2
+        : ["accepted", "pending"].includes(reservation.status)
+          ? 1
+          : 0;
+  const notificationItems = [
+    reservation.status === "en_route" || reservation.status === "arrived" || isCompleted
+      ? {
+          title: t("suivi.status.en_route"),
+          text: reservation.driver_name
+            ? `${t("suivi.your_driver")} ${reservation.driver_name}.`
+            : t("suivi.status.en_route"),
+          time: reservation.pickup_datetime
+            ? new Date(reservation.pickup_datetime).toLocaleTimeString(locale, {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "Europe/Paris",
+              })
+            : "—",
+        }
+      : null,
+    ["accepted", "en_route", "arrived", "completed"].includes(reservation.status)
+      ? {
+          title: t("suivi.status.accepted"),
+          text: reservation.driver_name
+            ? `${reservation.driver_name} ${t("suivi.driver_label")}.`
+            : t("suivi.status.accepted"),
+          time: "✓",
+        }
+      : null,
+    {
+      title:
+        t("suivi.status.pending") === "suivi.status.pending"
+          ? locale === "en"
+            ? "Booking confirmed"
+            : "Réservation confirmée"
+          : t("suivi.status.pending"),
+      text: locale === "en" ? "Your reservation has been registered." : "Votre réservation a bien été enregistrée.",
+      time: "✓",
+    },
+  ].filter(Boolean) as Array<{ title: string; text: string; time: string }>;
+
   return (
     <>
       <style>{PREMIUM_CSS}</style>
-      <div
-        className="suivi-root"
-        style={{
-          background: "linear-gradient(180deg, #07111f 0%, #03080d 100%)",
-          minHeight: "100dvh",
-          padding: "16px",
-          paddingTop: "calc(16px + env(safe-area-inset-top, 0px))",
-          paddingBottom: "calc(32px + env(safe-area-inset-bottom, 0px))",
-          fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          color: "#f6f0e5",
-          maxWidth: "100vw",
-          overflowX: "hidden",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* Bouton retour vers site — sticky : toujours visible, même en scrollant */}
-        <div
-          style={{
-            position: "sticky",
-            top: "calc(env(safe-area-inset-top, 0px) + 4px)",
-            zIndex: 50,
-            marginBottom: "12px",
-          }}
-        >
-          <a
-            href="/"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "8px 14px",
-              background: "rgba(7,17,31,0.9)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              borderRadius: "10px",
-              color: "#e0b866",
-              fontSize: "13px",
-              fontWeight: 600,
-              textDecoration: "none",
-              boxShadow: "0 4px 12px rgba(15,23,42,0.25)",
-            }}
-          >
-            ← Access Prestige Taxi
-          </a>
-        </div>
-
-        {/* Bandeau reconnexion */}
-        {!realtimeOk && (
-          <div
-            style={{
-              marginBottom: "12px",
-              padding: "10px 14px",
-              background: "rgba(239,68,68,0.15)",
-              border: "1px solid rgba(239,68,68,0.3)",
-              borderRadius: "10px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <WifiOff size={14} style={{ color: "#fca5a5", flexShrink: 0 }} />
-            <span style={{ fontSize: "12px", color: "#fca5a5", fontWeight: 600 }}>{t("suivi.offline_banner")}</span>
-          </div>
-        )}
-
-        {/* Bandeau page inactive */}
-        {staleMinutes >= 5 && !isCompleted && !isCancelled && (
-          <div
-            style={{
-              marginBottom: "12px",
-              padding: "10px 14px",
-              background: "rgba(245,158,11,0.15)",
-              border: "1px solid rgba(245,158,11,0.3)",
-              borderRadius: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "8px",
-            }}
-          >
-            <span style={{ fontSize: "12px", color: "#fbbf24", fontWeight: 600 }}>
-              {t("suivi.stale_warning")} {staleMinutes} min — {t("suivi.status_up_to_date")}
-            </span>
-            <button
-              onClick={() => loadReservation(true)}
-              style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#f59e0b",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                textDecoration: "underline",
-                padding: 0,
-              }}
-            >
-              {t("suivi.stale_refresh")}
-            </button>
-          </div>
-        )}
-
-        {/* Push banners removed — push activation handled elsewhere */}
-
-        {/* Header Premium */}
-        <div className="suivi-premium" style={{ marginBottom: "24px" }}>
-          <div
-            style={{
-              background: "linear-gradient(135deg, rgba(13,26,43,0.96) 0%, rgba(7,17,31,0.92) 100%)",
-              backdropFilter: "blur(20px)",
-              borderRadius: "16px",
-              border: "1px solid rgba(148, 163, 184, 0.2)",
-              padding: "20px",
-              boxShadow: "0 8px 32px rgba(15, 23, 42, 0.1)",
-            }}
-          >
-            {/* Heure de prise en charge — très visible */}
-            {reservation.pickup_datetime && !isCompleted && (
-              <div
-                style={{
-                  background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
-                  borderRadius: "10px",
-                  padding: "10px 14px",
-                  marginBottom: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                }}
-              >
-                <Clock size={18} style={{ color: "#fff", flexShrink: 0 }} />
-                <div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: 600,
-                      color: "rgba(255,255,255,0.7)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                    }}
-                  >
-                    {t("suivi.pickup_label")}
-                  </div>
-                  <div style={{ fontSize: "16px", fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>
-                    {new Date(reservation.pickup_datetime).toLocaleString(locale, {
-                      weekday: "short",
-                      day: "numeric",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      timeZone: "Europe/Paris",
-                    })}
-                  </div>
-                </div>
-                {/* Lien calendrier */}
-                <a
-                  href={icsUrl}
-                  download={`taxi-bordeaux-${reservation.id.slice(-6)}.ics`}
-                  title={t("suivi.calendar_add_title")}
-                  style={{
-                    marginLeft: "auto",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px",
-                    padding: "6px 10px",
-                    background: "rgba(255,255,255,0.15)",
-                    borderRadius: "8px",
-                    color: "#fff",
-                    textDecoration: "none",
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    flexShrink: 0,
-                  }}
-                >
-                  <CalendarPlus size={13} />
-                  {t("suivi.add_to_cal")}
-                </a>
-              </div>
-            )}
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "space-between",
-                marginBottom: "16px",
-              }}
-            >
-              <div>
-                <h1 style={{ fontSize: "16px", fontWeight: 800, color: "#f6f0e5", margin: 0, lineHeight: 1.2 }}>
-                  {config.icon} {t(config.label)}
-                </h1>
-                <p style={{ fontSize: "12px", color: "#9fb0c2", margin: "4px 0 0 0" }}>
-                  {t("suivi.booking_ref")}
-                  {reservation.id.slice(-8).toUpperCase()}
-                </p>
-                {/* Nom du chauffeur quand acceptée */}
-                {["accepted", "en_route", "arrived"].includes(reservation.status) && reservation.driver_name && (
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "5px 10px",
-                      background: "linear-gradient(135deg, #0e2318 0%, #123122 100%)",
-                      borderRadius: "20px",
-                      border: "1px solid rgba(34,197,94,0.2)",
-                      width: "fit-content",
-                    }}
-                  >
-                    <Car size={12} style={{ color: "#5fd08a" }} />
-                    <span style={{ fontSize: "12px", fontWeight: 700, color: "#5fd08a" }}>
-                      {reservation.driver_name} {t("suivi.driver_label")}
-                    </span>
-                  </div>
-                )}
-              </div>
-              {/* Bouton partager — enrichi pendant la course */}
-              {["en_route", "arrived", "accepted"].includes(reservation.status) ? (
-                <ShareTrajetButton reservation={reservation} />
-              ) : typeof navigator !== "undefined" && navigator.share ? (
+      <div className="suivi-root">
+        <div className="suivi-shell">
+          <header className="suivi-topbar">
+            <a href="/" className="suivi-brand">
+              <span className="suivi-brand-mark">AP</span>
+              <span>Access Prestige — Taxi</span>
+            </a>
+            <div className="suivi-top-actions">
+              <span className="suivi-top-phone">☎ 06 03 44 48 63</span>
+              {typeof navigator !== "undefined" && navigator.share ? (
                 <button
+                  className="suivi-outline"
                   onClick={() => navigator.share({ title: "Suivi de ma course", url: window.location.href })}
-                  style={{
-                    background: "rgba(148,163,184,0.1)",
-                    border: "1px solid rgba(148,163,184,0.2)",
-                    borderRadius: "8px",
-                    padding: "8px 10px",
-                    minHeight: "36px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9fb0c2",
-                  }}
                 >
                   <Share2 size={13} />
-                  {t("suivi.share")}
+                  {locale === "en" ? "Share ride" : "Partager le trajet"}
                 </button>
               ) : null}
             </div>
+          </header>
 
-            {/* Véhicule — affiché dès accepted */}
-            {["accepted", "en_route", "arrived", "completed"].includes(reservation.status) && (
-              <div
-                className="vehicle-photo-block"
-                style={{
-                  marginTop: "12px",
-                  background: "linear-gradient(135deg, #03080d 0%, #07111f 100%)",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  overflow: "hidden",
-                }}
-              >
-                {/* Photo du véhicule */}
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    height: "clamp(140px, 42vw, 190px)",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src="/vehicle-jose.jpg"
-                    alt={t("suivi.car_alt")}
-                    onError={(e) => {
-                      // Masque le bloc image si le fichier n'existe pas
-                      const parent = (e.target as HTMLImageElement).closest(
-                        ".vehicle-photo-block",
-                      ) as HTMLElement | null;
-                      if (parent) parent.style.display = "none";
-                    }}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      // "contain" au lieu de "cover" : la hauteur du cadre était fixe (140px)
-                      // alors que la largeur rétrécit sur mobile → "cover" recadrait les
-                      // côtés de la voiture. "contain" garde le véhicule entier visible.
-                      objectFit: "contain",
-                      objectPosition: "center center",
-                      display: "block",
-                    }}
-                  />
-                  {/* Overlay gradient bas */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: "60px",
-                      background: "linear-gradient(to top, #07111f, transparent)",
-                    }}
-                  />
-                  {/* Badge Taxi flottant */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      background: "rgba(0,0,0,0.6)",
-                      backdropFilter: "blur(8px)",
-                      borderRadius: "20px",
-                      padding: "4px 10px",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#fff",
-                      border: "1px solid rgba(255,255,255,0.15)",
-                    }}
-                  >
-                    🚕 {t("suivi.your_taxi")}
-                  </div>
-                </div>
-
-                {/* Infos sous la photo */}
-                <div
-                  style={{
-                    padding: "12px 14px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "14px", fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>
-                      {VEHICLE_MODEL}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "2px" }}>
-                      {VEHICLE_COLOR}
-                    </div>
-                  </div>
-                  {/* Plaque d'immatriculation */}
-                  <div
-                    style={{
-                      padding: "5px 10px",
-                      background: "#fff",
-                      borderRadius: "6px",
-                      border: "2px solid #003189",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: 900,
-                        color: "#f6f0e5",
-                        letterSpacing: "1px",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {VEHICLE_PLATE}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Timeline */}
-            <PremiumTimeline status={reservation.status} />
-          </div>
-        </div>
-
-        {/* Routes Card */}
-        <div
-          className="suivi-premium suivi-card"
-          style={{ marginBottom: "16px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}
-        >
-          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-            <MapPin size={20} style={{ color: "#e0b866", flexShrink: 0, marginTop: "2px" }} />
+          <div className="suivi-titlebar">
+            <a className="suivi-outline" href="/">
+              ← {locale === "en" ? "Back" : "Retour"}
+            </a>
             <div>
-              <div
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "#9fb0c2",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                }}
-              >
-                <span>🟢</span> {t("suivi.depart_label")}
-              </div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f6f0e5", marginTop: "2px" }}>
-                {reservation.depart}
-              </div>
+              <h1>{locale === "en" ? "TRACK YOUR RIDE" : "SUIVI DE VOTRE COURSE"}</h1>
+              <p>
+                {locale === "en"
+                  ? "We keep you informed at every key step of your journey."
+                  : "Nous vous tenons informé à chaque étape de votre trajet."}
+              </p>
             </div>
+            <div style={{ minWidth: 78 }} />
           </div>
-          <div
-            style={{
-              height: "1px",
-              background: "linear-gradient(90deg, transparent 0%, #f6f0e5 50%, transparent 100%)",
-            }}
-          />
-          <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-            <MapPin size={20} style={{ color: "#c4b5fd", flexShrink: 0, marginTop: "2px" }} />
-            <div>
-              <div
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "#9fb0c2",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                }}
-              >
-                <span>🔴</span> {t("suivi.arrivee_label")}
-              </div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f6f0e5", marginTop: "2px" }}>
-                {reservation.destination || reservation.arrivee || u.tbd}
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Details Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
-          {reservation.nb_passagers != null && (
-            <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <Users size={18} style={{ color: "#e0b866", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.passagers")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>{reservation.nb_passagers}</div>
+          {!isCompleted && !isCancelled && !realtimeOk && (
+            <div className="suivi-card suivi-card-flat" style={{ marginBottom: 10, color: "#f0a0a0", fontSize: 11 }}>
+              <WifiOff size={14} style={{ verticalAlign: "-2px", marginRight: 6 }} />
+              {t("suivi.offline_banner")}
             </div>
           )}
-          <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-            <Package size={18} style={{ color: "#f59e0b", margin: "0 auto 6px", display: "block" }} />
-            <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.bagages")}</div>
-            <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>{reservation.nb_bagages ?? 0}</div>
-          </div>
-          {reservation.distance_km != null && (
-            <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <Gauge size={18} style={{ color: "#8b5cf6", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.distance")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>
-                {reservation.distance_km.toFixed(1)} km
-              </div>
-            </div>
-          )}
-          {/* Fix #11 — durée estimée si duree_s disponible */}
-          {reservation.duree_s != null && (
-            <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <Clock size={18} style={{ color: "#e0b866", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.duration_label")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>
-                {durationSecondsToMinutes(reservation.duree_s)} {t("suivi.minutes_short")}
-              </div>
-            </div>
-          )}
-          {reservation.prix_estime != null &&
-            ["accepted", "en_route", "arrived", "completed"].includes(reservation.status) && (
-              <div
-                className="suivi-premium suivi-card"
-                style={{
-                  padding: "14px",
-                  textAlign: "center",
-                  background: "linear-gradient(135deg, #241d0e 0%, #2f2513 100%)",
-                }}
-              >
-                <CreditCard size={18} style={{ color: "#f0c069", margin: "0 auto 6px", display: "block" }} />
-                <div style={{ fontSize: "13px", color: "#f0c069", marginBottom: "4px" }}>{t("suivi.tarif_estime")}</div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#f0c069" }}>
-                  {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
-                    reservation.prix_estime,
-                  )}
-                </div>
-              </div>
-            )}
-          {reservation.mode_paiement && (
-            <div className="suivi-premium suivi-card" style={{ padding: "14px", textAlign: "center" }}>
-              <CreditCard size={18} style={{ color: "#e0b866", margin: "0 auto 6px", display: "block" }} />
-              <div style={{ fontSize: "13px", color: "#9fb0c2", marginBottom: "4px" }}>{t("suivi.paiement")}</div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5" }}>{reservation.mode_paiement}</div>
-            </div>
-          )}
-        </div>
 
-        {/* Historique des changements de prix */}
-        {priceHistory.length > 0 &&
-          (() => {
-            const L: Record<string, { title: string; from: string; to: string; motif: string }> = {
-              fr: { title: "Historique des prix", from: "Ancien prix", to: "Nouveau prix", motif: "Motif" },
-              en: { title: "Price history", from: "Previous price", to: "New price", motif: "Reason" },
-              es: { title: "Historial de precios", from: "Precio anterior", to: "Nuevo precio", motif: "Motivo" },
-              it: { title: "Storico prezzi", from: "Prezzo precedente", to: "Nuovo prezzo", motif: "Motivo" },
-              pt: { title: "Histórico de preços", from: "Preço anterior", to: "Novo preço", motif: "Motivo" },
-              de: { title: "Preisverlauf", from: "Vorheriger Preis", to: "Neuer Preis", motif: "Grund" },
-              ar: { title: "سجل الأسعار", from: "السعر السابق", to: "السعر الجديد", motif: "السبب" },
-            };
-            const s = L[String(locale).slice(0, 2)] ?? L.en;
-            const money = (v: number) =>
-              new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(v);
-            return (
-              <div className="suivi-premium suivi-card" style={{ marginBottom: "16px", padding: "16px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    letterSpacing: "0.05em",
-                    textTransform: "uppercase",
-                    color: "#f0c069",
-                    marginBottom: 10,
-                  }}
-                >
-                  <CreditCard size={16} /> {s.title}
+          <div className="suivi-main-grid">
+            <main>
+              <section className="suivi-card suivi-timeline">
+                <div className="suivi-timeline-track">
+                  {steps.map((step, i) => {
+                    const done = i < progressIndex || (isCompleted && i === progressIndex);
+                    const active = i === progressIndex;
+                    return (
+                      <div key={step.key} className={`suivi-step ${done ? "done" : ""} ${active ? "active" : ""}`}>
+                        <div className="suivi-step-dot">{done && !active ? "✓" : step.icon}</div>
+                        <div className="suivi-step-label">{step.label}</div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {priceHistory.map((h) => (
-                    <div
-                      key={h.id}
-                      style={{
-                        border: "1px solid #2f2513",
-                        background: "#1c1710",
-                        borderRadius: 10,
-                        padding: "10px 12px",
-                      }}
-                    >
-                      <div style={{ fontSize: 11, color: "#a16207", marginBottom: 4 }}>
-                        {new Date(h.created_at).toLocaleString(locale, {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                          timeZone: "Europe/Paris",
-                        })}
+              </section>
+
+              <section className="suivi-details-grid">
+                <div className="suivi-card suivi-route">
+                  <h2 className="suivi-section-title">
+                    {locale === "en" ? "Your trip details" : "Détails de votre trajet"}
+                  </h2>
+                  <div className="suivi-route-row">
+                    <MapPin size={17} className="suivi-route-icon" />
+                    <div>
+                      <div className="suivi-route-label">{t("suivi.depart_label")}</div>
+                      <div className="suivi-route-value">{reservation.depart}</div>
+                    </div>
+                  </div>
+                  <div className="suivi-route-row">
+                    <MapPin size={17} className="suivi-route-icon" />
+                    <div>
+                      <div className="suivi-route-label">{t("suivi.arrivee_label")}</div>
+                      <div className="suivi-route-value">{reservation.destination ?? reservation.arrivee ?? u.tbd}</div>
+                    </div>
+                  </div>
+                  <div className="suivi-route-row">
+                    <CalendarPlus size={17} className="suivi-route-icon" />
+                    <div>
+                      <div className="suivi-route-label">{t("suivi.pickup_label")}</div>
+                      <div className="suivi-route-value">
+                        {reservation.pickup_datetime
+                          ? new Date(reservation.pickup_datetime).toLocaleString(locale, {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              timeZone: "Europe/Paris",
+                            })
+                          : "—"}
                       </div>
-                      <div style={{ fontSize: 13, color: "#f6f0e5", fontWeight: 600 }}>
-                        {h.old_price != null && (
-                          <span style={{ color: "#9fb0c2", textDecoration: "line-through", marginRight: 8 }}>
-                            {money(Number(h.old_price))}
-                          </span>
-                        )}
-                        <span style={{ color: "#f0c069", fontWeight: 800 }}>{money(Number(h.new_price))}</span>
-                      </div>
-                      {h.motif && (
-                        <div style={{ fontSize: 12, color: "#78350f", marginTop: 4, whiteSpace: "pre-wrap" }}>
-                          {s.motif} : {h.motif}
+                    </div>
+                  </div>
+                  <div className="suivi-route-row">
+                    <Users size={17} className="suivi-route-icon" />
+                    <div>
+                      <div className="suivi-route-label">{t("suivi.passagers")}</div>
+                      <div className="suivi-route-value">{reservation.nb_passagers ?? "—"}</div>
+                    </div>
+                  </div>
+                  {reservation.prix_estime != null && (
+                    <div className="suivi-route-row">
+                      <CreditCard size={17} className="suivi-route-icon" />
+                      <div>
+                        <div className="suivi-route-label">
+                          {isCompleted ? t("fin.price_label") : t("suivi.tarif_estime")}
                         </div>
-                      )}
+                        <div className="suivi-route-value" style={{ color: "#e0b866", fontSize: 16 }}>
+                          {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
+                            Number(reservation.prix_estime),
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  ))}
+                  )}
+                  <div className="suivi-contact-row">
+                    {!isCompleted && (
+                      <a className="suivi-gold-btn" href={`tel:${josePhone}`}>
+                        <Phone size={14} />
+                        {t("suivi.call_jose").replace(/Patricia/g, assignedDriver.name)}
+                      </a>
+                    )}
+                    {!isCompleted && (
+                      <a
+                        className="suivi-dark-btn"
+                        href={`https://wa.me/${josePhone.replace(/^0/, "33")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <MessageCircle size={14} />
+                        WhatsApp
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })()}
 
-        {/* Contact Jose */}
-        {!isCompleted && (
-          <div className="suivi-premium suivi-card" style={{ marginBottom: "16px", padding: "16px" }}>
-            <div
-              style={{
-                fontSize: "12px",
-                fontWeight: 700,
-                color: "#e0b866",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-                marginBottom: "12px",
-              }}
-            >
-              📞 {t("suivi.contact_title")}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <a
-                href={`tel:${josePhone}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "11px 14px",
-                  background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
-                  color: "#fff",
-                  borderRadius: "10px",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: "13px",
-                  border: "none",
-                  transition: "all 0.3s",
-                  cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(29, 78, 216, 0.3)",
-                }}
-              >
-                <Phone size={16} />
-                <span style={{ flex: 1 }}>{`${t("suivi.call_jose").replace(/Patricia/g, assignedDriver.name)}`}</span>
-                <span style={{ fontSize: "12px", opacity: 0.8, fontWeight: 400 }}>
-                  {josePhone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
-                </span>
-              </a>
-              <a
-                href={`https://wa.me/${josePhone.replace(/^0/, "33")}?text=${encodeURIComponent(`Bonjour ${assignedDriver.name}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "11px 14px",
-                  background: "linear-gradient(135deg, #5fd08a 0%, #5fd08a 100%)",
-                  color: "#fff",
-                  borderRadius: "10px",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: "13px",
-                  border: "none",
-                  transition: "all 0.3s",
-                  cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(22, 163, 74, 0.3)",
-                }}
-              >
-                <MessageCircle size={16} />
-                {t("suivi.whatsapp_jose").replace(/Patricia/g, assignedDriver.name)}
-              </a>
-            </div>
-          </div>
-        )}
+                {reservation.status &&
+                  ["accepted", "en_route", "arrived", "completed"].includes(reservation.status) && (
+                    <div className="suivi-card suivi-vehicle-mini">
+                      <img
+                        src="/vehicle-jose.jpg"
+                        alt={t("suivi.car_alt")}
+                        onError={(e) => {
+                          (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                        }}
+                      />
+                      <div className="suivi-vehicle-info">
+                        <strong>{VEHICLE_MODEL}</strong>
+                        <span>
+                          {VEHICLE_COLOR} · {VEHICLE_PLATE}
+                        </span>
+                        <span>{reservation.driver_name || assignedDriver.name}</span>
+                      </div>
+                    </div>
+                  )}
+              </section>
 
-        {/* Chat */}
-        {!isCompleted && (
-          <ChatSection suiviKey={id} reservationId={reservation.id} driverName={assignedDriver.name} t={t} />
-        )}
-
-        {/* Bloc Course terminée — Facture + Avis */}
-        {isCompleted && (
-          <>
-            <InvoiceBlock reservation={reservation} locale={locale} t={t} />
-            <ReviewBlock
-              reservationId={reservation.id}
-              authorName={reservation.client_name ?? reservation.nom ?? "Client"}
-              t={t}
-            />
-            {/* Actions post-course */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
-              {/* 🔁 Rebooker le même trajet */}
-              <a
-                href={`/reserver?depart=${encodeURIComponent(reservation.depart ?? "")}&destination=${encodeURIComponent(reservation.destination ?? reservation.arrivee ?? "")}&passagers=${reservation.nb_passagers ?? 1}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  padding: "13px 16px",
-                  background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
-                  color: "#fff",
-                  borderRadius: "10px",
-                  textDecoration: "none",
-                  fontWeight: 700,
-                  fontSize: "14px",
-                  boxShadow: "0 4px 12px rgba(29, 78, 216, 0.3)",
-                }}
-              >
-                🔁 {t("suivi.rebook_same").replace("🔁 ", "")}
-              </a>
-              {/* 🗓️ Trajet récurrent */}
-              <button
-                onClick={() => setShowRecurring(true)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  padding: "13px 16px",
-                  background: "linear-gradient(135deg, #c4b5fd 0%, #6d28d9 100%)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "10px",
-                  fontWeight: 700,
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(124, 58, 237, 0.3)",
-                }}
-              >
-                <CalendarPlus size={16} /> {t("suivi.rebook_weekly")}
-              </button>
-              <Link
-                to="/"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "11px 16px",
-                  background: "rgba(255,255,255,0.08)",
-                  color: "#9fb0c2",
-                  borderRadius: "10px",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: "13px",
-                  border: "1px solid rgba(148,163,184,0.15)",
-                }}
-              >
-                {t("suivi.back_home")}
-              </Link>
-            </div>
-            {/* Modal récurrent */}
-            {showRecurring && <RecurringModal reservation={reservation} onClose={() => setShowRecurring(false)} />}
-          </>
-        )}
-
-        {/* Bouton Rafraîchir — masqué si course terminée ou annulée */}
-        {!isCompleted && !isCancelled && (
-          <div style={{ marginBottom: "16px" }}>
-            <button
-              onClick={() => loadReservation(true)}
-              disabled={refreshing}
-              style={{
-                width: "100%",
-                padding: "13px 16px",
-                background: refreshing ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.08)",
-                color: refreshing ? "#9fb0c2" : "#9fb0c2",
-                border: "1px solid rgba(148,163,184,0.15)",
-                borderRadius: "12px",
-                fontWeight: 600,
-                fontSize: "13px",
-                cursor: refreshing ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                transition: "all 0.3s",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              {refreshing ? (
-                <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
-              ) : (
-                <span style={{ fontSize: "16px" }}>🔄</span>
+              {!isCompleted && !isCancelled && (
+                <div className="suivi-chat-card">
+                  <ChatSection suiviKey={id} reservationId={reservation.id} driverName={assignedDriver.name} t={t} />
+                </div>
               )}
-              {refreshing ? t("suivi.refreshing") : t("suivi.refresh")}
-            </button>
-          </div>
-        )}
 
-        {/* Footer — masqué si completed ou cancelled (boutons dans le bloc terminée) */}
-        {!isCompleted && !isCancelled && (
-          <div style={{ textAlign: "center" }}>
-            <Link
-              to="/"
-              style={{
-                fontSize: "12px",
-                color: "#9fb0c2",
-                textDecoration: "none",
-                transition: "color 0.3s",
-              }}
-            >
-              {t("suivi.back_home_arrow")}
-            </Link>
+              {isCompleted && (
+                <section className="suivi-card suivi-completed">
+                  <div className="suivi-completed-head">
+                    <strong>✓ {locale === "en" ? "RIDE COMPLETED" : "COURSE TERMINÉE"}</strong>
+                    <div>
+                      {locale === "en"
+                        ? "Thank you for travelling with Access Prestige Taxi."
+                        : "Merci d'avoir voyagé avec Access Prestige Taxi."}
+                    </div>
+                  </div>
+                  <div className="suivi-completed-grid">
+                    <div className="suivi-summary-box">
+                      <h3>{locale === "en" ? "Ride summary" : "Récapitulatif de la course"}</h3>
+                      <div className="suivi-summary-row">
+                        <span>{t("suivi.depart_label")}</span>
+                        <strong>{reservation.depart}</strong>
+                      </div>
+                      <div className="suivi-summary-row">
+                        <span>{t("suivi.arrivee_label")}</span>
+                        <strong>{reservation.destination ?? reservation.arrivee ?? "—"}</strong>
+                      </div>
+                      <div className="suivi-summary-row">
+                        <span>{t("suivi.distance")}</span>
+                        <strong>
+                          {reservation.distance_km != null ? `${Number(reservation.distance_km).toFixed(1)} km` : "—"}
+                        </strong>
+                      </div>
+                      <div className="suivi-summary-row">
+                        <span>{t("suivi.passagers")}</span>
+                        <strong>{reservation.nb_passagers ?? "—"}</strong>
+                      </div>
+                    </div>
+                    <div className="suivi-summary-box">
+                      <h3>{locale === "en" ? "Invoice" : "Facture"}</h3>
+                      <div className="suivi-summary-row">
+                        <span>{t("fin.price_label")}</span>
+                        <strong style={{ color: "#e0b866", fontSize: 14 }}>
+                          {reservation.prix_estime != null
+                            ? new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
+                                Number(reservation.prix_estime),
+                              )
+                            : "—"}
+                        </strong>
+                      </div>
+                      <div style={{ marginTop: 9 }}>
+                        <InvoiceBlock reservation={reservation} locale={locale} t={t} />
+                      </div>
+                    </div>
+                    <div className="suivi-summary-box">
+                      <h3>{locale === "en" ? "Your review" : "Votre avis"}</h3>
+                      <p style={{ fontSize: 10, color: "rgba(246,240,229,.62)", lineHeight: 1.5 }}>
+                        {locale === "en"
+                          ? "Your feedback helps us keep delivering a premium service."
+                          : "Votre avis nous aide à maintenir un service premium."}
+                      </p>
+                      <ReviewBlock
+                        reservationId={reservation.id}
+                        authorName={reservation.client_name ?? reservation.nom ?? "Client"}
+                        t={t}
+                      />
+                    </div>
+                  </div>
+                </section>
+              )}
+            </main>
+
+            <aside className="suivi-side-stack">
+              <section className="suivi-card suivi-notifications">
+                <h2 className="suivi-section-title">{locale === "en" ? "Notifications" : "Notifications"}</h2>
+                {notificationItems.map((n, i) => (
+                  <div className="suivi-notif" key={`${n.title}-${i}`}>
+                    <div className="suivi-notif-line" />
+                    <div className="suivi-notif-time">{n.time}</div>
+                    <div>
+                      <div className="suivi-notif-title">{n.title}</div>
+                      <div className="suivi-notif-text">{n.text}</div>
+                    </div>
+                  </div>
+                ))}
+                {!isCompleted && (
+                  <Link to="/client/dashboard" className="suivi-dark-btn" style={{ marginTop: 8 }}>
+                    {locale === "en" ? "View client area" : "Voir mon espace client"} →
+                  </Link>
+                )}
+              </section>
+              <section className="suivi-card suivi-help">
+                <h2 className="suivi-section-title">{locale === "en" ? "Need help?" : "Besoin d'aide ?"}</h2>
+                <p>
+                  {locale === "en" ? "Our team is available 7 days a week." : "Notre équipe est à votre écoute 7j/7."}
+                </p>
+                {!isCompleted && (
+                  <>
+                    <a className="suivi-gold-btn" href="tel:0603444863">
+                      <Phone size={14} />
+                      APPELER ACCESS PRESTIGE · 06 03 44 48 63
+                    </a>
+                    <Link className="suivi-dark-btn" to="/client/chat" style={{ marginTop: 8 }}>
+                      <MessageCircle size={14} />
+                      {locale === "en" ? "Live chat" : "Chat en direct"}
+                    </Link>
+                  </>
+                )}
+              </section>
+            </aside>
           </div>
-        )}
+
+          {!isCompleted && !isCancelled && (
+            <div style={{ marginTop: 12 }}>
+              <button
+                onClick={() => loadReservation(true)}
+                disabled={refreshing}
+                className="suivi-dark-btn"
+                style={{ width: "100%" }}
+              >
+                {refreshing ? "…" : "↻"} {refreshing ? t("suivi.refreshing") : t("suivi.refresh")}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+      {showRecurring && <RecurringModal reservation={reservation} onClose={() => setShowRecurring(false)} />}
     </>
   );
 }
