@@ -552,3 +552,16 @@ a.btn {
 [data-scroll] {
   -webkit-overflow-scrolling: touch;
 }
+
+/* ===========================
+   AUCUNE BORDURE SUR LE SITE (demande client)
+   Seuls les champs de formulaire gardent un contour pour rester utilisables.
+   =========================== */
+*:not(input):not(textarea):not(select) {
+  border-style: none !important;
+}
+input,
+textarea,
+select {
+  border-style: solid !important;
+}
