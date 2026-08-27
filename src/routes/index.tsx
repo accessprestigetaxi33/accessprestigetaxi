@@ -774,7 +774,18 @@ function Index() {
   const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
 
   return (
-    <main>
+    <main className="homepage-gold-borders">
+      <style>{`
+        .homepage-gold-borders article {
+          border: 2px solid #e0b866 !important;
+        }
+        .homepage-gold-borders button,
+        .homepage-gold-borders a.btn-gold,
+        .homepage-gold-borders a[href^="tel:"],
+        .homepage-gold-borders a[href="/avis"] {
+          border: 2px solid #e0b866 !important;
+        }
+      `}</style>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
       {/* 1. HERO — nouvelle image Q6 / BMW iX1 / V-Class avec logos visibles */}
