@@ -1,6 +1,21 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Phone, Eye, Car, MessageCircle, History, User, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Phone,
+  Eye,
+  Car,
+  MessageCircle,
+  History,
+  User,
+  ChevronRight,
+  CalendarDays,
+  FileText,
+  MapPin,
+  Headphones,
+  LogOut,
+  Home,
+} from "lucide-react";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
 import { ClientPushOptInCard } from "@/components/ClientPushOptInCard";
 
@@ -13,6 +28,7 @@ import { useI18n, useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import logo from "@/assets/tcb-logo-badge.webp";
 import { supabase } from "@/integrations/supabase/client";
+import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
 
 const ACTIVE_STATUSES = new Set(["nouvelle", "pending", "accepted", "en_route", "arrived"]);
 
@@ -101,18 +117,72 @@ function fmtDate(iso: string, lang: string = "fr") {
 }
 
 const css = `
-  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
-  html, body { margin: 0; padding: 0; height: 100%; min-height: 100dvh; overflow: hidden; overscroll-behavior-y: contain;
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  .cd-root { position: fixed; inset: 0; max-width: 640px; margin: 0 auto;
-    display: flex; flex-direction: column;
-    height: -webkit-fill-available;
-    background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%); }
-  .cd-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 16px; background: rgba(10,10,10,0.92);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .cd-scroll { position: relative; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 16px 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #03070d; }
+  body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #f6f0e5; }
+  a, button { -webkit-tap-highlight-color: transparent; }
+  .cd-root { min-height: 100dvh; display: grid; grid-template-rows: 72px 1fr; background: radial-gradient(circle at 55% 0%, rgba(201,168,76,.08), transparent 34%), #03070d; }
+  .cd-header { display:flex; align-items:center; justify-content:space-between; padding: 0 28px; border-bottom:1px solid rgba(224,184,102,.65); background:#050a10; }
+  .cd-brand { display:flex; align-items:center; gap:12px; min-width:0; }
+  .cd-brand img { width:150px; height:auto; max-height:58px; object-fit:contain; }
+  .cd-header-actions { display:flex; align-items:center; gap:12px; }
+  .cd-phone { color:#f6f0e5; font-size:13px; white-space:nowrap; }
+  .cd-outline-btn { display:inline-flex; align-items:center; gap:7px; min-height:38px; padding:8px 13px; border:1px solid #c99b4a; border-radius:8px; color:#f0c069; background:transparent; font-size:12px; font-weight:700; text-decoration:none; cursor:pointer; }
+  .cd-layout { min-height:0; display:grid; grid-template-columns: 168px minmax(0,1fr); }
+  .cd-sidebar { border-right:1px solid rgba(224,184,102,.55); background:linear-gradient(180deg,#07111b 0%,#03070d 100%); padding:22px 14px; display:flex; flex-direction:column; gap:8px; }
+  .cd-side-link { display:flex; align-items:center; gap:10px; min-height:44px; padding:9px 11px; border:1px solid transparent; border-radius:8px; color:rgba(246,240,229,.82); text-decoration:none; font-size:12px; font-weight:600; }
+  .cd-side-link:hover, .cd-side-link.active { border-color:#c99b4a; color:#f0c069; background:rgba(201,155,74,.06); }
+  .cd-main { min-width:0; overflow:auto; padding:28px; }
+  .cd-main-inner { max-width:1180px; margin:0 auto; }
+  .cd-hero { position:relative; min-height:235px; overflow:hidden; border:1px solid #c99b4a; border-radius:12px; background:#07111b; }
+  .cd-hero::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(3,8,14,.98) 0%,rgba(3,8,14,.88) 36%,rgba(3,8,14,.18) 74%,rgba(3,8,14,.35) 100%); pointer-events:none; }
+  .cd-hero img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 58%; opacity:.82; }
+  .cd-hero-content { position:relative; z-index:1; max-width:620px; padding:34px 28px; }
+  .cd-eyebrow { color:#e0b866; font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; margin:0 0 8px; }
+  .cd-title { font-family:'Playfair Display',Georgia,serif; font-size:25px; margin:0 0 10px; color:#fff; }
+  .cd-lead { color:rgba(246,240,229,.76); font-size:12px; line-height:1.7; max-width:450px; margin:0 0 18px; }
+  .cd-gold-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:40px; padding:9px 16px; border:1px solid #c99b4a; border-radius:8px; background:#e0b866; color:#090b0d; text-decoration:none; font-size:12px; font-weight:800; }
+  .cd-grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-top:10px; }
+  .cd-tile { min-height:102px; border:1px solid #c99b4a; border-radius:9px; background:linear-gradient(180deg,#08131e,#050a10); padding:13px; color:#fff; text-decoration:none; }
+  .cd-tile-icon { color:#e0b866; margin-bottom:8px; }
+  .cd-tile-title { font-size:12px; font-weight:800; margin-bottom:5px; }
+  .cd-tile-text { font-size:10.5px; line-height:1.45; color:rgba(246,240,229,.62); }
+  .cd-section { margin-top:22px; }
+  .cd-section-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
+  .cd-section-title { font-family:'Playfair Display',Georgia,serif; font-size:17px; margin:0; color:#f6f0e5; }
+  .cd-view { color:#e0b866; font-size:11px; text-decoration:none; }
+  .cd-ride { display:grid; grid-template-columns:92px minmax(0,1.35fr) minmax(120px,.8fr) minmax(100px,.65fr) 22px; gap:14px; align-items:center; padding:14px 12px; border:1px solid #c99b4a; border-radius:9px; background:#06101a; margin-bottom:8px; }
+  .cd-date { border-right:1px solid rgba(224,184,102,.25); padding-right:12px; }
+  .cd-date strong { display:block; font-size:12px; color:#fff; }
+  .cd-date span { display:block; font-size:10px; color:#e0b866; margin-top:3px; }
+  .cd-route { font-size:11px; line-height:1.9; }
+  .cd-route div:first-child::before, .cd-route div:last-child::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; border:1px solid #e0b866; margin-right:7px; vertical-align:1px; }
+  .cd-meta { font-size:10px; color:rgba(246,240,229,.62); line-height:1.5; }
+  .cd-meta strong { display:block; color:#fff; font-size:11px; }
+  .cd-status { font-size:10px; border:1px solid rgba(74,222,128,.55); color:#6ee7a0; border-radius:999px; padding:5px 8px; text-align:center; white-space:nowrap; }
+  .cd-price { font-size:12px; color:#f0c069; font-weight:800; }
+  .cd-help { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; border:1px solid #c99b4a; border-radius:9px; padding:12px; background:#06101a; }
+  .cd-help-intro { display:flex; align-items:center; gap:10px; }
+  .cd-help-intro strong { display:block; font-size:11px; }
+  .cd-help-intro span { display:block; font-size:10px; color:rgba(246,240,229,.58); margin-top:2px; }
+  .cd-help-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:42px; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; text-decoration:none; font-size:11px; font-weight:800; background:#050a10; }
+  .cd-empty { padding:22px; border:1px dashed rgba(201,155,74,.5); border-radius:9px; color:rgba(246,240,229,.55); font-size:11px; text-align:center; }
+  @media (max-width: 900px) {
+    .cd-root { grid-template-rows:64px 1fr; }
+    .cd-header { padding:0 14px; }
+    .cd-brand img { width:125px; }
+    .cd-phone { display:none; }
+    .cd-layout { grid-template-columns:1fr; }
+    .cd-sidebar { display:none; }
+    .cd-main { padding:14px 12px 88px; }
+    .cd-hero { min-height:290px; }
+    .cd-hero-content { padding:28px 20px; max-width:72%; }
+    .cd-grid4 { grid-template-columns:repeat(2,1fr); }
+    .cd-ride { grid-template-columns:70px 1fr; gap:10px; }
+    .cd-date { grid-row:span 2; }
+    .cd-meta, .cd-status, .cd-price { grid-column:2; }
+    .cd-help { grid-template-columns:1fr; }
+  }
 `;
 
 export const Route = createFileRoute("/client/dashboard")({
@@ -233,421 +303,262 @@ function ClientDashboard() {
     );
   }
 
+  const upcoming = (rows ?? []).filter((r) => ACTIVE_STATUSES.has(r.status)).slice(0, 3);
+  const recent = (rows ?? []).filter((r) => !ACTIVE_STATUSES.has(r.status)).slice(0, 3);
+  const fmtShort = (iso: string) => {
+    try {
+      return new Date(iso).toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "Europe/Paris",
+      });
+    } catch {
+      return iso;
+    }
+  };
+  const fmtTime = (iso: string) => {
+    try {
+      return new Date(iso).toLocaleTimeString(lang === "en" ? "en-GB" : "fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Europe/Paris",
+      });
+    } catch {
+      return "—";
+    }
+  };
+  const renderRide = (ride: ClientReservation, past = false) => {
+    const x = ride as any;
+    const status = STATUS_META[ride.status];
+    const price = x.prix_estime ?? x.prix_final ?? x.total_ttc;
+    return (
+      <div className="cd-ride" key={ride.id}>
+        <div className="cd-date">
+          <strong>{fmtShort(ride.pickup_datetime).split(" ")[0]}</strong>
+          <span>{fmtTime(ride.pickup_datetime)}</span>
+        </div>
+        <div className="cd-route">
+          <div>{ride.depart}</div>
+          <div>{ride.arrivee || ride.destination || "—"}</div>
+        </div>
+        <div className="cd-meta">
+          <strong>{x.driver_name || (lang === "en" ? "Driver" : "Chauffeur")}</strong>
+          {x.vehicle_model || x.vehicule || "Véhicule premium"}
+        </div>
+        <div>
+          {past ? (
+            <>
+              <div
+                className="cd-status"
+                style={{ borderColor: status?.fg || "#c99b4a", color: status?.fg || "#e0b866" }}
+              >
+                {status?.label[lang === "en" ? "en" : "fr"] || ride.status}
+              </div>
+              {price != null && (
+                <div className="cd-price" style={{ marginTop: 5 }}>
+                  {new Intl.NumberFormat(lang === "en" ? "en-GB" : "fr-FR", {
+                    style: "currency",
+                    currency: "EUR",
+                  }).format(Number(price))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {status && (
+                <div className="cd-status" style={{ borderColor: status.fg, color: status.fg }}>
+                  {status.label[lang === "en" ? "en" : "fr"]}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        {ride.suivi_id ? (
+          <Link
+            to="/suivi/$id"
+            params={{ id: String(ride.suivi_id) }}
+            style={{ color: "#e0b866", textDecoration: "none" }}
+          >
+            <ChevronRight size={17} />
+          </Link>
+        ) : (
+          <span />
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="cd-root">
-        {/* Header */}
-        <div className="cd-header">
-          <a href="/" style={{ display: "flex", alignItems: "center" }}>
-            <img src={logo} alt="Access Prestige Taxi" style={{ height: 36, borderRadius: 6 }} />
-          </a>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <LanguageSwitcher />
-            <a
-              href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-                fontSize: 12,
-                fontWeight: 600,
-                color: "rgba(255,255,255,0.4)",
-                textDecoration: "none",
-                padding: "6px 10px",
-                borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              {c.backSite}
+        <header className="cd-header">
+          <div className="cd-brand">
+            <a href="/">
+              <img src={logo} alt="Access Prestige Taxi" />
             </a>
-            <button
-              type="button"
-              onClick={handleLogout}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-                fontSize: 12,
-                fontWeight: 600,
-                color: "rgba(255,255,255,0.4)",
-                background: "transparent",
-                textDecoration: "none",
-                padding: "6px 10px",
-                borderRadius: 8,
-                border: "1px solid rgba(255,255,255,0.1)",
-                cursor: "pointer",
-              }}
-            >
+          </div>
+          <div className="cd-header-actions">
+            <span className="cd-phone">☎ 06 03 44 48 63</span>
+            <LanguageSwitcher />
+            <button className="cd-outline-btn" type="button" onClick={handleLogout}>
+              <LogOut size={14} />
               {c.logout}
             </button>
           </div>
-        </div>
-
-        {/* Contenu scrollable */}
-        <div className="cd-scroll">
-          {loading && rows === null ? (
-            <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
-              <BrandLoader />
-            </div>
-          ) : (
-            <>
-              {/* Halo décoratif */}
-              <div
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  top: 60,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: 300,
-                  height: 300,
-                  borderRadius: "50%",
-                  pointerEvents: "none",
-                  background: "radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%)",
-                  filter: "blur(40px)",
-                }}
-              />
-
-              {/* Salutation */}
-              <div style={{ position: "relative", marginBottom: 24 }}>
-                <p
-                  style={{
-                    color: "#E8C96D",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                    margin: "0 0 6px",
-                  }}
-                >
-                  {c.eyebrow}
-                </p>
-                <h1
-                  style={{
-                    color: "#fff",
-                    fontSize: 24,
-                    fontWeight: 800,
-                    margin: "0 0 20px",
-                    fontFamily: "'Syne', serif",
-                  }}
-                >
-                  {c.hello(greeting)}
-                </h1>
-
-                {/* Carte présentation */}
-                <div
-                  style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                    borderRadius: 16,
-                    padding: "18px 16px",
-                    marginBottom: 16,
-                  }}
-                >
-                  <p
-                    style={{
-                      color: "rgba(255,255,255,0.72)",
-                      fontSize: 14,
-                      lineHeight: 1.75,
-                      margin: "0 0 10px",
-                    }}
-                  >
-                    {t("client.dashboard.welcome_intro")}{" "}
-                    <strong style={{ color: "#E8C96D" }}>Access Prestige Taxi</strong>.{" "}
+        </header>
+        <div className="cd-layout">
+          <aside className="cd-sidebar">
+            <Link className="cd-side-link active" to="/client/dashboard">
+              <Home size={16} />
+              {lang === "en" ? "Dashboard" : "Tableau de bord"}
+            </Link>
+            <Link className="cd-side-link" to="/client/trajets">
+              <CalendarDays size={16} />
+              {lang === "en" ? "My bookings" : "Mes réservations"}
+            </Link>
+            <Link className="cd-side-link" to="/client/historique">
+              <FileText size={16} />
+              {lang === "en" ? "My invoices" : "Mes factures"}
+            </Link>
+            <Link className="cd-side-link" to="/client/trajets">
+              <MapPin size={16} />
+              {lang === "en" ? "My addresses" : "Mes adresses"}
+            </Link>
+            <Link className="cd-side-link" to="/client/profil">
+              <User size={16} />
+              {c.profile}
+            </Link>
+            <Link className="cd-side-link" to="/client/chat">
+              <Headphones size={16} />
+              {lang === "en" ? "Help & Contact" : "Aide & Contact"}
+            </Link>
+          </aside>
+          <main className="cd-main">
+            <div className="cd-main-inner">
+              <section className="cd-hero">
+                <img src={photoVanReal.url} alt="Mercedes van Access Prestige Taxi" />
+                <div className="cd-hero-content">
+                  <p className="cd-eyebrow">{c.eyebrow}</p>
+                  <h1 className="cd-title">{c.hello(greeting)}</h1>
+                  <p className="cd-lead">
+                    {t("client.dashboard.welcome_intro")} <strong>Access Prestige Taxi</strong>.{" "}
                     {t("client.dashboard.welcome_centralized")}
                   </p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14 }}>
-                    {[
-                      {
-                        icon: "🚕",
-                        title: t("client.trajets.title"),
-                        desc: t("client.dashboard.feat.trips_desc"),
-                      },
-                      {
-                        icon: "📋",
-                        title: t("client.dashboard.feat.history_title"),
-                        desc: t("client.dashboard.feat.history_desc"),
-                      },
-                      {
-                        icon: "💬",
-                        title: t("client.dashboard.feat.chat_title"),
-                        desc: t("client.dashboard.feat.chat_desc"),
-                      },
-                      {
-                        icon: "👤",
-                        title: t("client.profil.title"),
-                        desc: t("client.dashboard.feat.profile_desc"),
-                      },
-                    ].map((item) => (
-                      <div key={item.title} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                        <span style={{ fontSize: 16, lineHeight: 1, marginTop: 1 }}>{item.icon}</span>
-                        <div>
-                          <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{item.title}</span>
-                          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}> — {item.desc}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <ClientPushOptInCard clientAccountId={session.id} clientSessionToken={session.token} />
-
-              {/* Course active */}
-              {activeRide && (
-                <div style={{ marginBottom: 20 }}>
-                  <p
-                    style={{
-                      color: "rgba(255,255,255,0.45)",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      marginBottom: 10,
-                    }}
-                  >
-                    {c.activeRide}
-                  </p>
-                  <div
-                    style={{
-                      background: "rgba(232,201,109,0.07)",
-                      border: "1px solid rgba(232,201,109,0.22)",
-                      borderRadius: 14,
-                      padding: "14px 16px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        marginBottom: 8,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 700,
-                          padding: "2px 10px",
-                          borderRadius: 20,
-                          background: STATUS_META[activeRide.status]?.bg,
-                          color: STATUS_META[activeRide.status]?.fg,
-                        }}
-                      >
-                        {STATUS_META[activeRide.status]?.label[lang === "en" ? "en" : "fr"] || activeRide.status}
-                      </span>
-                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
-                        {fmtDate(activeRide.pickup_datetime, lang)}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 13, color: "#fff", marginBottom: 10, lineHeight: 1.4 }}>
-                      {activeRide.depart}
-                      <span style={{ color: "rgba(255,255,255,0.3)", margin: "0 6px" }}>→</span>
-                      {activeRide.arrivee || activeRide.destination}
-                    </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      {activeRide.suivi_id && (
-                        <Link
-                          to="/suivi/$id"
-                          params={{ id: String(activeRide.suivi_id) }}
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 5,
-                            fontSize: 12,
-                            fontWeight: 700,
-                            color: "#E8C96D",
-                            textDecoration: "none",
-                            padding: "6px 12px",
-                            borderRadius: 8,
-                            background: "rgba(232,201,109,0.12)",
-                            border: "1px solid rgba(232,201,109,0.25)",
-                          }}
-                        >
-                          <Eye style={{ width: 13, height: 13 }} /> {c.track}
-                        </Link>
-                      )}
-                      <Link
-                        to="/client/trajets"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 5,
-                          fontSize: 12,
-                          fontWeight: 600,
-                          color: "rgba(255,255,255,0.6)",
-                          textDecoration: "none",
-                          padding: "6px 12px",
-                          borderRadius: 8,
-                          border: "1px solid rgba(255,255,255,0.1)",
-                        }}
-                      >
-                        {c.details}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Prochaine course */}
-              {nextRide && (
-                <div style={{ marginBottom: 20 }}>
-                  <p
-                    style={{
-                      color: "rgba(255,255,255,0.45)",
-                      fontSize: 11,
-                      fontWeight: 700,
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
-                      marginBottom: 10,
-                    }}
-                  >
-                    {c.nextRide}
-                  </p>
-                  <div
-                    style={{
-                      background: "rgba(255,255,255,0.03)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: 14,
-                      padding: "14px 16px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        marginBottom: 8,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 700,
-                          padding: "2px 10px",
-                          borderRadius: 20,
-                          background: STATUS_META[nextRide.status]?.bg,
-                          color: STATUS_META[nextRide.status]?.fg,
-                        }}
-                      >
-                        {STATUS_META[nextRide.status]?.label[lang === "en" ? "en" : "fr"] || nextRide.status}
-                      </span>
-                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
-                        {fmtDate(nextRide.pickup_datetime, lang)}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 13, color: "#fff", lineHeight: 1.4 }}>
-                      {nextRide.depart}
-                      <span style={{ color: "rgba(255,255,255,0.3)", margin: "0 6px" }}>→</span>
-                      {nextRide.arrivee || nextRide.destination}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Actions rapides */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                <Link
-                  to="/reserver"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    padding: "14px",
-                    borderRadius: 14,
-                    background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)",
-                    color: "#000",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    textDecoration: "none",
-                  }}
-                >
-                  <Plus style={{ width: 16, height: 16 }} /> {c.book}
-                </Link>
-                <a
-                  href={`tel:${DRIVERS[0].tel}`}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    padding: "14px",
-                    borderRadius: 14,
-                    border: "1px solid rgba(232,201,109,0.35)",
-                    background: "rgba(232,201,109,0.08)",
-                    color: "#E8C96D",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    textDecoration: "none",
-                  }}
-                >
-                  <Phone style={{ width: 16, height: 16 }} /> {c.call(DRIVERS[0].name, DRIVERS[0].display)}
-                </a>
-              </div>
-
-              {/* Raccourcis onglets */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-                {[
-                  {
-                    to: "/client/trajets",
-                    icon: <Car style={{ width: 16, height: 16 }} />,
-                    label: c.trips,
-                  },
-                  {
-                    to: "/client/historique",
-                    icon: <History style={{ width: 16, height: 16 }} />,
-                    label: c.history,
-                  },
-                  {
-                    to: "/client/chat",
-                    icon: <MessageCircle style={{ width: 16, height: 16 }} />,
-                    label: c.chat,
-                  },
-                  {
-                    to: "/client/profil",
-                    icon: <User style={{ width: 16, height: 16 }} />,
-                    label: c.profile,
-                  },
-                ].map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "13px 14px",
-                      borderRadius: 12,
-                      border: "1px solid rgba(255,255,255,0.07)",
-                      background: "rgba(255,255,255,0.03)",
-                      color: "#fff",
-                      textDecoration: "none",
-                      fontSize: 13,
-                      fontWeight: 600,
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        color: "rgba(255,255,255,0.8)",
-                      }}
-                    >
-                      <span style={{ color: "#E8C96D" }}>{item.icon}</span>
-                      {item.label}
-                    </div>
-                    <ChevronRight style={{ width: 14, height: 14, color: "rgba(255,255,255,0.25)" }} />
+                  <Link className="cd-gold-btn" to="/reserver">
+                    <Plus size={17} />
+                    {c.book}
                   </Link>
-                ))}
+                </div>
+              </section>
+              <div className="cd-grid4">
+                <Link className="cd-tile" to="/client/trajets">
+                  <div className="cd-tile-icon">
+                    <CalendarDays size={20} />
+                  </div>
+                  <div className="cd-tile-title">{lang === "en" ? "My bookings" : "Mes réservations"}</div>
+                  <div className="cd-tile-text">
+                    {lang === "en"
+                      ? "View and manage your upcoming rides."
+                      : "Consultez et gérez vos prochaines courses."}
+                  </div>
+                </Link>
+                <Link className="cd-tile" to="/client/historique">
+                  <div className="cd-tile-icon">
+                    <FileText size={20} />
+                  </div>
+                  <div className="cd-tile-title">{lang === "en" ? "My invoices" : "Mes factures"}</div>
+                  <div className="cd-tile-text">
+                    {lang === "en"
+                      ? "Find your trip receipts and documents."
+                      : "Retrouvez vos factures et justificatifs."}
+                  </div>
+                </Link>
+                <Link className="cd-tile" to="/client/trajets">
+                  <div className="cd-tile-icon">
+                    <MapPin size={20} />
+                  </div>
+                  <div className="cd-tile-title">{lang === "en" ? "My addresses" : "Mes adresses"}</div>
+                  <div className="cd-tile-text">
+                    {lang === "en"
+                      ? "Manage your pickup and favourite addresses."
+                      : "Gérez vos adresses de prise en charge."}
+                  </div>
+                </Link>
+                <Link className="cd-tile" to="/client/profil">
+                  <div className="cd-tile-icon">
+                    <User size={20} />
+                  </div>
+                  <div className="cd-tile-title">{c.profile}</div>
+                  <div className="cd-tile-text">
+                    {lang === "en"
+                      ? "Your personal information and preferences."
+                      : "Vos informations personnelles et préférences."}
+                  </div>
+                </Link>
               </div>
-            </>
-          )}
-        </div>
 
-        {/* Bottom nav */}
+              <section className="cd-section">
+                <div className="cd-section-head">
+                  <h2 className="cd-section-title">{lang === "en" ? "My upcoming rides" : "Mes prochaines courses"}</h2>
+                  <Link className="cd-view" to="/client/trajets">
+                    {lang === "en" ? "View all" : "Voir toutes"} ›
+                  </Link>
+                </div>
+                {upcoming.length ? (
+                  upcoming.map((r) => renderRide(r))
+                ) : (
+                  <div className="cd-empty">
+                    {lang === "en" ? "No upcoming ride." : "Aucune prochaine course pour le moment."}
+                  </div>
+                )}
+              </section>
+
+              <section className="cd-section">
+                <div className="cd-section-head">
+                  <h2 className="cd-section-title">{lang === "en" ? "Recent history" : "Historique récent"}</h2>
+                  <Link className="cd-view" to="/client/historique">
+                    {lang === "en" ? "View history" : "Voir tout l'historique"} ›
+                  </Link>
+                </div>
+                {recent.length ? (
+                  recent.map((r) => renderRide(r, true))
+                ) : (
+                  <div className="cd-empty">
+                    {lang === "en"
+                      ? "Your completed rides will appear here."
+                      : "Vos courses terminées apparaîtront ici."}
+                  </div>
+                )}
+              </section>
+
+              <section className="cd-section cd-help">
+                <div className="cd-help-intro">
+                  <Headphones size={25} color="#e0b866" />
+                  <div>
+                    <strong>{lang === "en" ? "Need help?" : "Besoin d'aide ?"}</strong>
+                    <span>
+                      {lang === "en" ? "Our team is available 7/7." : "Notre équipe est à votre écoute 7j/7."}
+                    </span>
+                  </div>
+                </div>
+                <a className="cd-help-btn" href={`tel:${DRIVERS[0].tel}`}>
+                  <Phone size={16} />
+                  {lang === "en" ? `Call ${DRIVERS[0].name}` : `Appeler ${DRIVERS[0].name}`}
+                  <span>{DRIVERS[0].display}</span>
+                </a>
+                <a className="cd-help-btn" href={`tel:${DRIVERS[1]?.tel || DRIVERS[0].tel}`}>
+                  <Phone size={16} />
+                  {lang === "en"
+                    ? `Call ${DRIVERS[1]?.name || "Patricia"}`
+                    : `Appeler ${DRIVERS[1]?.name || "Patricia"}`}
+                  <span>{DRIVERS[1]?.display || "06 50 26 00 15"}</span>
+                </a>
+              </section>
+            </div>
+          </main>
+        </div>
         <ClientBottomNav />
       </div>
     </>
