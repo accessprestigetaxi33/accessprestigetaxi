@@ -33,9 +33,9 @@ import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/apt-hero-clean-fr.webp";
 import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
-import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
-import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
-import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
+import photoQ6Real from "@/assets/apt-q6-real.png";
+import photoBmwReal from "@/assets/apt-bmw-real.png";
+import photoVanReal from "@/assets/apt-van-real.png";
 import medicalService from "@/assets/medical-service.webp";
 import prestigeService from "@/assets/prestige-service.webp";
 import reviewPhone from "@/assets/review-phone.webp";
@@ -156,20 +156,9 @@ const COPY = {
       "La collection Access Prestige Taxi : des véhicules haut de gamme, parfaitement entretenus, pensés pour chaque besoin.",
     vehicles: [
       {
-        title: "BMW iX1",
-        subtitle: "100 % électrique · 5 places",
-        img: photoBmwReal.url,
-        alt: "BMW iX1 100 % électrique Access Prestige Taxi",
-        details: [
-          "SUV 100 % électrique, silencieux et sans émissions, idéal pour vos trajets en ville comme sur route.",
-          "5 places confortables, climatisation, sièges en cuir et espace bagages adapté aux valises.",
-          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels en Charente-Maritime.",
-        ],
-      },
-      {
         title: "Audi Q6 e-tron",
         subtitle: "100 % électrique · SUV premium",
-        img: photoAudiReal.url,
+        img: photoQ6Real,
         alt: "Audi Q6 e-tron Access Prestige Taxi",
         details: [
           "SUV premium 100 % électrique, autonomie élevée pour les longues distances et trajets inter-villes.",
@@ -178,9 +167,20 @@ const COPY = {
         ],
       },
       {
+        title: "BMW iX1",
+        subtitle: "100 % électrique · 5 places",
+        img: photoBmwReal,
+        alt: "BMW iX1 100 % électrique Access Prestige Taxi",
+        details: [
+          "SUV 100 % électrique, silencieux et sans émissions, idéal pour vos trajets en ville comme sur route.",
+          "5 places confortables, climatisation, sièges en cuir et espace bagages adapté aux valises.",
+          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels en Charente-Maritime.",
+        ],
+      },
+      {
         title: "Mercedes V-Class",
         subtitle: "8 places · transport de groupe",
-        img: photoVanReal.url,
+        img: photoVanReal,
         alt: "Mercedes V-Class 8 places Access Prestige Taxi",
         details: [
           "Van premium 8 places, la solution idéale pour les groupes, familles et transferts d'équipe.",
@@ -266,9 +266,20 @@ const COPY = {
     fleetText: "The Access Prestige Taxi collection: premium, perfectly maintained vehicles designed for every need.",
     vehicles: [
       {
+        title: "Audi Q6 e-tron",
+        subtitle: "100% electric · premium SUV",
+        img: photoQ6Real,
+        alt: "Audi Q6 e-tron Access Prestige Taxi",
+        details: [
+          "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
+          "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
+          "Perfect for station transfers, airport runs and business appointments across Charente-Maritime.",
+        ],
+      },
+      {
         title: "BMW iX1",
         subtitle: "100% electric · 5 seats",
-        img: photoBmwReal.url,
+        img: photoBmwReal,
         alt: "BMW iX1 100% electric Access Prestige Taxi",
         details: [
           "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
@@ -277,20 +288,9 @@ const COPY = {
         ],
       },
       {
-        title: "Audi Q6 e-tron",
-        subtitle: "100% electric · premium SUV",
-        img: photoAudiReal.url,
-        alt: "Audi Q6 e-tron Access Prestige Taxi",
-        details: [
-          "A premium, fully electric SUV with strong range for long-distance and inter-city journeys.",
-          "A spacious, upscale cabin designed for comfort on business and private trips.",
-          "Ideal for chauffeur services and demanding business travel.",
-        ],
-      },
-      {
         title: "Mercedes V-Class",
         subtitle: "8 seats · group transport",
-        img: photoVanReal.url,
+        img: photoVanReal,
         alt: "Mercedes V-Class 8-seat Access Prestige Taxi",
         details: [
           "A premium 8-seat van, the ideal solution for groups, families and team transfers.",
