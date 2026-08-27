@@ -67,7 +67,7 @@ function ReserveButton({ label, className = "" }: { label: string; className?: s
   return (
     <Link
       to="/reserver"
-      className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
     >
       {label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
     </Link>
@@ -487,7 +487,7 @@ function LearnMoreToggle({
         aria-expanded={isOpen}
         className={
           variant === "solid"
-            ? "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+            ? "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold border border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
             : "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
         }
       >
@@ -537,7 +537,7 @@ function SplitPhotoCard({
   reverse?: boolean;
 }) {
   return (
-    <article className="group relative overflow-hidden rounded-[24px] bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
+    <article className="group relative overflow-hidden rounded-[24px] border border-[#e0b866] bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
       <div
         className={`grid min-h-[330px] md:min-h-[360px] ${reverse ? "md:grid-cols-[0.95fr_1.05fr]" : "md:grid-cols-[1.05fr_0.95fr]"}`}
       >
@@ -596,7 +596,7 @@ function NotificationOptIn({ lang }: { lang: "fr" | "en" }) {
       type="button"
       onClick={handleClick}
       disabled={status === "granted" || status === "unsupported"}
-      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
+      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
     >
       <Bell className="h-3.5 w-3.5" aria-hidden="true" />
       {labels[status]}
@@ -643,7 +643,7 @@ function InstallAppToggle({ lang }: { lang: "fr" | "en" }) {
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         aria-expanded={isOpen}
-        className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+        className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold border border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -701,7 +701,7 @@ function PhotoTopCard({
   children?: ReactNode;
 }) {
   return (
-    <article className="group overflow-hidden rounded-[22px] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+    <article className="group overflow-hidden rounded-[22px] border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
       <div className="relative h-48 overflow-hidden sm:h-56">
         <img
           src={image}
@@ -741,7 +741,7 @@ function CompactPhotoCard({
   text: string;
 }) {
   return (
-    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
+    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] border border-[#e0b866] bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
       <img
         src={image}
         alt={alt}
@@ -827,7 +827,7 @@ function Index() {
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/reserver"
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full btn-gold px-6 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+                className="inline-flex min-h-[46px] items-center justify-center rounded-full btn-gold border border-[#e0b866] px-6 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
               >
                 {lang === "en" ? "Book online" : "Réserver"}
               </Link>
@@ -1010,7 +1010,7 @@ function Index() {
               },
             ].map(({ step, image }, i) => (
               <Reveal as="div" key={step.s} delay={i * 0.05}>
-                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] bg-[#07111f]">
+                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#e0b866] bg-[#07111f]">
                   <img
                     src={image}
                     alt={step.t}
@@ -1120,7 +1120,7 @@ function Index() {
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Link
                     to="/client/login"
-                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
                   >
                     {lang === "en" ? "Access my client area" : "Accéder à l'espace client"}{" "}
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1163,7 +1163,7 @@ function Index() {
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.05}>
-                <article className="group overflow-hidden rounded-[22px] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+                <article className="group overflow-hidden rounded-[22px] border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative h-48 overflow-hidden">
                       <img
