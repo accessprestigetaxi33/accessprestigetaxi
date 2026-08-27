@@ -31,8 +31,8 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/apt-hero-clean-fr.webp";
-import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
+import heroCars from "@/assets/hero-prestige-sunset.webp";
+import heroCarsEn from "@/assets/hero-prestige-sunset.webp";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -788,8 +788,8 @@ function Index() {
             }
             fetchPriority="high"
             loading="eager"
-            width={1376}
-            height={555}
+            width={1536}
+            height={500}
             className="h-full w-full object-cover object-center sm:object-contain [filter:saturate(1.06)_contrast(1.06)_brightness(1.05)]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_60%,rgba(0,0,0,0.85)_100%)]" />
