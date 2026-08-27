@@ -567,7 +567,7 @@ function SplitPhotoCard({
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]"
           />
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.35),rgba(7,17,31,0.02)_55%,rgba(7,17,31,0.08))]"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,17,31,0.18),rgba(7,17,31,0.01)_55%,rgba(7,17,31,0.04))]"
             aria-hidden="true"
           />
         </div>
@@ -719,7 +719,7 @@ function PhotoTopCard({
           className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.04),rgba(3,10,20,0.62))]"
           aria-hidden="true"
         />
         <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#07111f]/90 backdrop-blur-sm">
@@ -1017,10 +1017,10 @@ function Index() {
                     src={image}
                     alt={step.t}
                     loading="lazy"
-                    className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.08] contrast-[1.06] saturate-[1.05]" : ""}`}
+                    className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.12] contrast-[1.04] saturate-[1.06]" : ""}`}
                   />
                   <div
-                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.78),rgba(3,10,20,0.38)_50%,rgba(3,10,20,0.10))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"}`}
+                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.60),rgba(3,10,20,0.24)_50%,rgba(3,10,20,0.06))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.82),rgba(3,10,20,0.52)_50%,rgba(3,10,20,0.10))]"}`}
                     aria-hidden="true"
                   />
                   <div className="relative flex h-full flex-col p-5">
