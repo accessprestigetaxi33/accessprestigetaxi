@@ -2111,7 +2111,7 @@ function SuiviPage() {
         <div className="suivi-premium" style={{ marginBottom: "24px" }}>
           <div
             style={{
-              background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%)",
+              background: "linear-gradient(135deg, rgba(13,26,43,0.96) 0%, rgba(7,17,31,0.92) 100%)",
               backdropFilter: "blur(20px)",
               borderRadius: "16px",
               border: "1px solid rgba(148, 163, 184, 0.2)",
