@@ -31,8 +31,9 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-prestige-sunset.webp";
-import heroCarsEn from "@/assets/hero-prestige-sunset.webp";
+import heroCars from "@/assets/hero_crop2.png";
+import heroCarsEn from "@/assets/hero_crop2.png";
+import heroCarsMobile from "@/assets/hero_mobile2.png";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -707,10 +708,10 @@ function PhotoTopCard({
           alt={alt}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
+          className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.035]"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.02),rgba(3,10,20,0.18)_58%,rgba(3,10,20,0.48))]"
           aria-hidden="true"
         />
         <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#07111f]/90 backdrop-blur-sm">
@@ -776,80 +777,42 @@ function Index() {
     <main>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
-      {/* 1. HERO — placé sous le header pour que toute la photo reste visible */}
+      {/* 1. HERO — nouvelle image Q6 / BMW iX1 / V-Class avec logos visibles */}
       <section className="relative isolate overflow-hidden bg-black pt-[76px] sm:pt-[84px] lg:pt-[92px]">
         <div className="relative w-full">
-          <img
-            src={lang === "en" ? heroCarsEn : heroCars}
-            alt={
-              lang === "en"
-                ? "Access Prestige Taxi — premium vehicles in Charente-Maritime"
-                : "Access Prestige Taxi — véhicules premium en Charente-Maritime"
-            }
-            fetchPriority="high"
-            loading="eager"
-            width={1536}
-            height={500}
-            className="block h-auto w-full object-contain object-center [filter:saturate(1.06)_contrast(1.06)_brightness(1.05)]"
+          <picture>
+            <source media="(max-width: 767px)" srcSet={heroCarsMobile} />
+            <img
+              src={heroCars}
+              alt={
+                lang === "en"
+                  ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
+                  : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
+              }
+              fetchPriority="high"
+              loading="eager"
+              width={1536}
+              height={600}
+              className="block h-auto w-full object-contain object-center"
+            />
+          </picture>
+
+          {/* Zones cliquables transparentes au-dessus des boutons intégrés à l'image */}
+          <Link
+            to="/reserver"
+            aria-label={c.ctaBook}
+            className="absolute left-[35%] top-[34%] h-[8%] w-[30%] rounded-full"
           />
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.10)_60%,rgba(0,0,0,0.55)_100%)]" />
-        </div>
-
-        <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-              <h1 className="font-display text-3xl font-semibold uppercase leading-tight text-white sm:text-4xl md:text-5xl text-balance">
-                {c.h1}
-              </h1>
-              {c.tagline && (
-                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
-                  {c.tagline}
-                </p>
-              )}
-              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{c.lead}</p>
-
-              <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <Link
-                  to="/reserver"
-                  className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-                >
-                  {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                {DRIVERS.map((d) => (
-                  <a
-                    key={d.tel}
-                    href={`tel:${d.tel}`}
-                    aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
-                    className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
-                  >
-                    <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
-                    <span className="flex flex-col items-start leading-tight">
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/60">
-                        {c.callPrefix} {d.name}
-                      </span>
-                      <span className="text-sm tabular-nums">{d.display}</span>
-                    </span>
-                  </a>
-                ))}
-              </div>
-
-              <ul className="mt-9 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-                {heroValues.map((value, i) => (
-                  <li key={value} className="flex items-center gap-8">
-                    <span className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{value}</span>
-                    {i < heroValues.length - 1 && (
-                      <span className="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true" />
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+          <a
+            href="#services"
+            aria-label="Découvrir nos services"
+            className="absolute left-[35%] top-[44%] h-[7%] w-[30%]"
+          />
         </div>
       </section>
 
       {/* 2. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section id="services" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
