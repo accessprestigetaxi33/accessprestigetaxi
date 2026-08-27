@@ -87,7 +87,7 @@ export function SiteFooter() {
         /* Reduced top padding on mobile */
         padding: "40px 16px 24px",
         fontFamily: "'DM Sans',sans-serif",
-        borderTop: "1px solid rgba(0,0,0,0.06)",
+        
       }}
     >
       <style>{`
@@ -129,7 +129,7 @@ export function SiteFooter() {
           max-width: 1200px;
           margin: 32px auto 0;
           padding-top: 20px;
-          border-top: 1px solid rgba(0,0,0,0.06);
+          
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -231,7 +231,7 @@ export function SiteFooter() {
               href="mailto:accessprestigetaxi@gmail.com"
               aria-label="Email"
               className="footer-social-btn"
-              style={{ border: "1px solid rgba(0,0,0,0.08)" }}
+              
             >
               ✉️
             </a>
