@@ -786,8 +786,8 @@ function Index() {
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
       {/* 1. HERO — uniquement le contenu prévu sur le document */}
-      <section className="relative isolate overflow-hidden border-b border-border bg-black">
-        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
+      <section className="relative isolate overflow-hidden bg-black">
+        <div className="relative aspect-[1376/555] w-full sm:aspect-auto sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
           <img
             src={lang === "en" ? heroCarsEn : heroCars}
             alt={
@@ -798,10 +798,10 @@ function Index() {
             fetchPriority="high"
             loading="eager"
             width={1376}
-            height={768}
-            className="h-full w-full object-contain object-center"
+            height={555}
+            className="h-full w-full object-cover object-center sm:object-contain"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.12)_60%,rgba(0,0,0,0.85)_100%)]" />
         </div>
 
         <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
