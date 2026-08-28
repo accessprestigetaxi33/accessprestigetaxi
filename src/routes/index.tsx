@@ -773,6 +773,7 @@ function Index() {
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
   const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
   const [heroMenuOpen, setHeroMenuOpen] = useState(false);
+  const [reserveMenuOpen, setReserveMenuOpen] = useState(false);
 
   return (
     <main className="homepage-gold-borders">
@@ -873,25 +874,52 @@ function Index() {
                 : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
             </p>
 
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/reserver"
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full btn-gold border border-[#e0b866] px-6 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+            <div className="relative mt-7 flex flex-col items-center">
+              <button
+                type="button"
+                onClick={() => setReserveMenuOpen((open) => !open)}
+                aria-expanded={reserveMenuOpen}
+                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full btn-gold border border-[#e0b866] px-7 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
               >
-                {lang === "en" ? "Book online" : "Réserver"}
-              </Link>
-              <a
-                href="tel:0603444863"
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#e0b866]/70 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
-              >
-                {lang === "en" ? "Call Alain · 06 03 44 48 63" : "Appeler Alain · 06 03 44 48 63"}
-              </a>
-              <a
-                href="tel:0650260015"
-                className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-[#e0b866]/70 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
-              >
-                {lang === "en" ? "Call Patricia · 06 50 26 00 15" : "Appeler Patricia · 06 50 26 00 15"}
-              </a>
+                {lang === "en" ? "Book" : "Réserver"}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${reserveMenuOpen ? "rotate-180" : ""}`}
+                  aria-hidden="true"
+                />
+              </button>
+
+              <AnimatePresence initial={false}>
+                {reserveMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -8, height: 0 }}
+                    className="mt-3 w-full max-w-sm overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] p-2 shadow-[0_16px_45px_rgba(0,0,0,0.45)]"
+                  >
+                    <Link
+                      to="/reserver"
+                      onClick={() => setReserveMenuOpen(false)}
+                      className="flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                    >
+                      {lang === "en" ? "1. Book online" : "1. Réserver en ligne"}
+                    </Link>
+                    <a
+                      href="tel:0603444863"
+                      onClick={() => setReserveMenuOpen(false)}
+                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                    >
+                      {lang === "en" ? "2. Call Alain" : "2. Appeler Alain"}
+                    </a>
+                    <a
+                      href="tel:0650260015"
+                      onClick={() => setReserveMenuOpen(false)}
+                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                    >
+                      {lang === "en" ? "3. Call Patricia" : "3. Appeler Patricia"}
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
