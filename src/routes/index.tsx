@@ -31,8 +31,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/apt-hero-clean-fr.webp";
-import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
+import heroCars from "@/assets/hero_clean.png";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -772,7 +771,6 @@ function Index() {
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
   const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
   const [heroMenuOpen, setHeroMenuOpen] = useState(false);
-  const [reserveMenuOpen, setReserveMenuOpen] = useState(false);
 
   return (
     <main className="homepage-gold-borders">
@@ -789,66 +787,79 @@ function Index() {
       `}</style>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
-      {/* 1. HERO — nouvelle image Q6 / BMW iX1 / V-Class avec logos visibles */}
-      <section className="relative isolate overflow-hidden bg-black pt-[76px] sm:pt-[84px] lg:pt-[92px]">
-        <div className="relative w-full">
+      {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
+      <section className="relative isolate overflow-hidden bg-black">
+        <div className="relative w-full aspect-[1145/570] min-h-[500px] sm:min-h-0">
           <img
-            src={lang === "en" ? heroCarsEn : heroCars}
-            alt={
-              lang === "en"
-                ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
-                : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
-            }
+            src={heroCars}
+            alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
             fetchPriority="high"
             loading="eager"
-            width={1536}
-            height={600}
-            className="block h-auto w-full object-cover object-center"
+            width={1145}
+            height={570}
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
 
-          {/* Bouton RÉSERVER — seul CTA interactif du hero */}
-          <div className="absolute left-[35%] top-[34%] flex h-[8%] w-[30%] items-center justify-center">
+          {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
+          <div className="absolute inset-x-0 top-[17%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
+            <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
+              {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
+            </h1>
+            <p className="mt-3 max-w-3xl text-sm text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-base md:text-lg">
+              {lang === "en"
+                ? "Private transfers · Covered medical transport · Chauffeur service"
+                : "Transferts privés · Transport médical conventionné · Mise à disposition"}
+            </p>
+          </div>
+
+          {/* Un seul bouton RÉSERVER dans le hero */}
+          <div className="absolute left-1/2 top-[35%] z-20 w-[min(270px,52vw)] -translate-x-1/2">
             <button
               type="button"
               onClick={() => setHeroMenuOpen((open) => !open)}
               aria-expanded={heroMenuOpen}
-              className="btn-gold h-full w-full rounded-full border border-[#e0b866] text-[11px] font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] sm:text-sm"
+              className="btn-gold flex min-h-[48px] w-full items-center justify-center gap-3 rounded-xl border-2 border-[#e0b866] px-6 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
             >
-              {c.reserveCta}
-            </button>
-          </div>
-          {heroMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40 bg-black/60"
-                onClick={() => setHeroMenuOpen(false)}
+              {lang === "en" ? "BOOK" : "RÉSERVER"}
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
                 aria-hidden="true"
               />
-              <div className="fixed left-1/2 top-1/2 z-50 w-64 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.45)]">
-                <Link
-                  to="/reserver"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+            </button>
+
+            <AnimatePresence initial={false}>
+              {heroMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="mt-1 overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm"
                 >
-                  {c.reserveCta}
-                </Link>
-                <a
-                  href="tel:0603444863"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.callPrefix} Alain
-                </a>
-                <a
-                  href="tel:0650260015"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.callPrefix} Patricia
-                </a>
-              </div>
-            </>
-          )}
+                  <Link
+                    to="/reserver"
+                    onClick={() => setHeroMenuOpen(false)}
+                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                  >
+                    {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
+                  </Link>
+                  <a
+                    href="tel:0603444863"
+                    onClick={() => setHeroMenuOpen(false)}
+                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                  >
+                    APPELER ALAIN – 06 03 44 48 63
+                  </a>
+                  <a
+                    href="tel:0650260015"
+                    onClick={() => setHeroMenuOpen(false)}
+                    className="flex min-h-[50px] items-center justify-center px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                  >
+                    APPELER PATRICIA – 06 50 26 00 15
+                  </a>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </section>
 
@@ -864,54 +875,6 @@ function Index() {
                 ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
                 : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
             </p>
-
-            <div className="relative mt-7 flex flex-col items-center">
-              <button
-                type="button"
-                onClick={() => setReserveMenuOpen((open) => !open)}
-                aria-expanded={reserveMenuOpen}
-                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full btn-gold border border-[#e0b866] px-7 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-              >
-                {lang === "en" ? "Book" : "Réserver"}
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${reserveMenuOpen ? "rotate-180" : ""}`}
-                  aria-hidden="true"
-                />
-              </button>
-
-              <AnimatePresence initial={false}>
-                {reserveMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, height: 0 }}
-                    animate={{ opacity: 1, y: 0, height: "auto" }}
-                    exit={{ opacity: 0, y: -8, height: 0 }}
-                    className="mt-3 w-full max-w-sm overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] p-2 shadow-[0_16px_45px_rgba(0,0,0,0.45)]"
-                  >
-                    <Link
-                      to="/reserver"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "1. Book online" : "1. Réserver en ligne"}
-                    </Link>
-                    <a
-                      href="tel:0603444863"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "2. Call Alain" : "2. Appeler Alain"}
-                    </a>
-                    <a
-                      href="tel:0650260015"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "3. Call Patricia" : "3. Appeler Patricia"}
-                    </a>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
 
             <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
               {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
