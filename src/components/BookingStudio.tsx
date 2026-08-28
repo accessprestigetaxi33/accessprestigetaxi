@@ -60,6 +60,7 @@ const T = {
     locating: "Localisation…",
     swap: "Inverser départ et destination",
     when: "Quand ?",
+    now: "Maintenant",
     asap: "Dès que possible",
     in1h: "Dans 1 h",
     tomorrow: "Demain 08:00",
@@ -148,6 +149,7 @@ const T = {
     locating: "Locating…",
     swap: "Swap pickup and destination",
     when: "When?",
+    now: "Right now",
     asap: "As soon as possible",
     in1h: "In 1 hour",
     tomorrow: "Tomorrow 08:00",
@@ -495,8 +497,8 @@ export function BookingStudio() {
   const [arrivee, setArrivee] = useState(() => (prefill.to ?? "").slice(0, 160));
 
   const [arriveeCoord, setArriveeCoord] = useState<{ lat: number; lng: number } | null>(null);
-  const [when, setWhen] = useState(() => parisLocalValue(addMinutes(new Date(), 30)));
-  const [quickWhen, setQuickWhen] = useState<"asap" | "1h" | "tomorrow" | null>("asap");
+  const [when, setWhen] = useState(() => parisLocalValue(addMinutes(new Date(), MIN_LEAD_MINUTES + 1)));
+  const [quickWhen, setQuickWhen] = useState<"now" | "asap" | "1h" | "tomorrow" | null>("asap");
   const [pax, setPax] = useState(1);
   const [bags, setBags] = useState(1);
   const [options, setOptions] = useState<string[]>([]);
@@ -546,9 +548,10 @@ export function BookingStudio() {
     [L],
   );
 
-  const setQuick = (kind: "asap" | "1h" | "tomorrow") => {
+  const setQuick = (kind: "now" | "asap" | "1h" | "tomorrow") => {
     setQuickWhen(kind);
-    if (kind === "asap") setWhen(parisLocalValue(addMinutes(new Date(), 30)));
+    if (kind === "now") setWhen(parisLocalValue(new Date()));
+    else if (kind === "asap") setWhen(parisLocalValue(addMinutes(new Date(), MIN_LEAD_MINUTES + 1)));
     else if (kind === "1h") setWhen(parisLocalValue(addMinutes(new Date(), 60)));
     else setWhen(tomorrow8());
   };
@@ -683,12 +686,13 @@ export function BookingStudio() {
     // retrouver avec une heure déjà dépassée, rejetée silencieusement plus
     // bas sans qu'il comprenne pourquoi "Réserver" ne fait rien.
     let effectiveWhen = when;
-    if (quickWhen === "asap") effectiveWhen = parisLocalValue(addMinutes(new Date(), 30));
+    if (quickWhen === "now") effectiveWhen = parisLocalValue(new Date());
+    else if (quickWhen === "asap") effectiveWhen = parisLocalValue(addMinutes(new Date(), MIN_LEAD_MINUTES + 1));
     else if (quickWhen === "1h") effectiveWhen = parisLocalValue(addMinutes(new Date(), 60));
     else if (quickWhen === "tomorrow") effectiveWhen = tomorrow8();
     if (effectiveWhen !== when) setWhen(effectiveWhen);
 
-    if (parisStringToDate(effectiveWhen).getTime() < Date.now() + MIN_LEAD_MINUTES * 60_000) {
+    if (quickWhen !== "now" && parisStringToDate(effectiveWhen).getTime() < Date.now() + MIN_LEAD_MINUTES * 60_000) {
       toast.error(L.err_past);
       return;
     }
@@ -1089,6 +1093,9 @@ export function BookingStudio() {
           {/* 2 — quand */}
           <SectionCard step={2} icon={<CalendarClock className="h-5 w-5" />} title={L.when}>
             <div className="flex flex-wrap gap-2">
+              <Chip active={quickWhen === "now"} onClick={() => setQuick("now")}>
+                {L.now}
+              </Chip>
               <Chip active={quickWhen === "asap"} onClick={() => setQuick("asap")}>
                 {L.asap}
               </Chip>
