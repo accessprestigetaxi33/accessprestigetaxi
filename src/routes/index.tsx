@@ -1039,7 +1039,99 @@ function Index() {
         </div>
       </section>
 
-      {/* 4. BANDEAU FINAL — 4 valeurs de la maquette */}
+      {/* 4. NOTRE FLOTTE — section visible sur la homepage */}
+      <section id="flotte" className="bg-[#05090d] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <div className="mb-5 flex items-center gap-4">
+              <div className="h-px flex-1 bg-[#e0b866]/60" />
+              <div className="text-center">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e0b866]">{c.fleetEyebrow}</p>
+                <h2 className="mt-1 font-display text-2xl font-semibold uppercase tracking-[0.08em] text-white sm:text-3xl">
+                  {c.fleetTitle}
+                </h2>
+              </div>
+              <div className="h-px flex-1 bg-[#e0b866]/60" />
+            </div>
+          </Reveal>
+
+          <p className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-white/70 sm:text-base">
+            {c.fleetText}
+          </p>
+
+          <div className="mt-7 grid gap-4 md:grid-cols-3">
+            {c.vehicles.map((vehicle, i) => (
+              <Reveal key={vehicle.title} delay={i * 0.06} as="div">
+                <article className="group h-full overflow-hidden rounded-[18px] border-2 border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+                  <div className="relative h-52 overflow-hidden sm:h-60">
+                    <img
+                      src={vehicle.img}
+                      alt={vehicle.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.035]"
+                    />
+                    <div
+                      className="absolute inset-0 bg-gradient-to-t from-[#07111f] via-transparent to-black/10"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-display text-xl font-semibold text-white">{vehicle.title}</h3>
+                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#e0b866]">{vehicle.subtitle}</p>
+                    <ul className="mt-4 space-y-2 text-sm leading-relaxed text-white/75">
+                      {vehicle.details.map((detail) => (
+                        <li key={detail} className="flex gap-2">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#e0b866]" aria-hidden="true" />
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. AVIS — directement visible après la flotte */}
+      <section id="avis" className="bg-[#07111f] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <div className="mb-5 flex items-center gap-4">
+              <div className="h-px flex-1 bg-[#e0b866]/60" />
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-[0.08em] text-white sm:text-3xl">
+                <span className="text-white">{lang === "en" ? "Customer " : "Avis de nos "}</span>
+                <span className="text-[#e0b866]">{lang === "en" ? "reviews" : "clients"}</span>
+              </h2>
+              <div className="h-px flex-1 bg-[#e0b866]/60" />
+            </div>
+          </Reveal>
+
+          <SplitPhotoCard
+            image={reviewPhone}
+            alt="Avis clients Access Prestige Taxi"
+            icon={Award}
+            title={lang === "en" ? "Your satisfaction is our priority" : "Votre satisfaction est notre priorité"}
+            lead={
+              lang === "en"
+                ? "Discover the experiences shared by our clients and see why they trust Access Prestige Taxi."
+                : "Découvrez les expériences de nos clients et pourquoi ils font confiance à Access Prestige Taxi."
+            }
+          >
+            <Link
+              to="/avis"
+              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
+            >
+              {lang === "en" ? "See all reviews" : "Voir tous les avis"}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </SplitPhotoCard>
+        </div>
+      </section>
+
+      {/* 6. BANDEAU FINAL — 4 valeurs de la maquette */}
       <section className="bg-[#05090d] px-4 pb-8 pt-2 sm:px-6 sm:pb-12 lg:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-4 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
           {[
@@ -1056,39 +1148,6 @@ function Index() {
               <span className="text-[10px] font-semibold uppercase leading-tight text-white sm:text-xs">{label}</span>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Les sections complémentaires restent accessibles plus bas : elles ne modifient pas le hero. */}
-      <section id="avis" className="bg-[#07111f] px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Avis de nos </span>
-              <span className="text-[#e0b866]">clients</span>
-            </h2>
-          </Reveal>
-          <div className="mt-5">
-            <SplitPhotoCard
-              image={reviewPhone}
-              alt="Avis clients Access Prestige Taxi"
-              icon={Award}
-              title={lang === "en" ? "Your satisfaction is our priority" : "Votre satisfaction est notre priorité"}
-              lead={
-                lang === "en"
-                  ? "Clients trust us for a premium, human service."
-                  : "Des clients nous font déjà confiance pour un service premium et humain."
-              }
-            >
-              <Link
-                to="/avis"
-                className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
-              >
-                {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </Link>
-            </SplitPhotoCard>
-          </div>
         </div>
       </section>
 
