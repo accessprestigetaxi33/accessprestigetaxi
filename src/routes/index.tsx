@@ -31,9 +31,8 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero_crop2.png";
-import heroCarsEn from "@/assets/hero_crop2.png";
-import heroCarsMobile from "@/assets/hero_mobile2.png";
+import heroCars from "@/assets/apt-hero-clean-fr.webp";
+import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -793,24 +792,21 @@ function Index() {
       {/* 1. HERO — nouvelle image Q6 / BMW iX1 / V-Class avec logos visibles */}
       <section className="relative isolate overflow-hidden bg-black pt-[76px] sm:pt-[84px] lg:pt-[92px]">
         <div className="relative w-full">
-          <picture>
-            <source media="(max-width: 767px)" srcSet={heroCarsMobile} />
-            <img
-              src={heroCars}
-              alt={
-                lang === "en"
-                  ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
-                  : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
-              }
-              fetchPriority="high"
-              loading="eager"
-              width={1536}
-              height={600}
-              className="block h-auto w-full object-contain object-center"
-            />
-          </picture>
+          <img
+            src={lang === "en" ? heroCarsEn : heroCars}
+            alt={
+              lang === "en"
+                ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
+                : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
+            }
+            fetchPriority="high"
+            loading="eager"
+            width={1536}
+            height={600}
+            className="block h-auto w-full object-cover object-center"
+          />
 
-          {/* Bouton opaque "Réserver" qui recouvre le bouton dessiné dans la photo */}
+          {/* Bouton RÉSERVER — seul CTA interactif du hero */}
           <div className="absolute left-[35%] top-[34%] flex h-[8%] w-[30%] items-center justify-center">
             <button
               type="button"
@@ -853,11 +849,6 @@ function Index() {
               </div>
             </>
           )}
-          <a
-            href="#services"
-            aria-label="Découvrir nos services"
-            className="absolute left-[35%] top-[44%] h-[7%] w-[30%]"
-          />
         </div>
       </section>
 
