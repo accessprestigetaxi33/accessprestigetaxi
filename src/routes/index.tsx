@@ -863,122 +863,212 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. VOTRE CONFORT — texte de présentation à la place des pictogrammes */}
-      <section className="bg-[#07111f] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <div className="mx-auto max-w-5xl text-center">
-          <Reveal>
-            <h2 className="font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl lg:text-5xl">
-              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
-            </h2>
-            <p className="mx-auto mt-5 max-w-4xl text-base leading-relaxed text-white/75 sm:text-lg">
-              {lang === "en"
-                ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
-            </p>
-
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
-              {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
+      {/* 2. VOTRE CONFORT — bandeau de référence */}
+      <section className="bg-[#05090d] px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
+        <div className="mx-auto max-w-6xl rounded-[18px] border-2 border-[#e0b866] bg-[#07111f] px-5 py-6 sm:px-8 sm:py-7">
+          <div className="grid items-center gap-6 lg:grid-cols-[auto_1.25fr_1fr]">
+            <div className="mx-auto flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-2 border-[#e0b866] sm:h-28 sm:w-28">
+              <HeartHandshake className="h-12 w-12 text-[#e0b866] sm:h-14 sm:w-14" aria-hidden="true" />
+            </div>
+            <div className="text-center lg:text-left">
+              <h2 className="font-display text-2xl font-semibold uppercase text-[#e0b866] sm:text-3xl">
+                {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
+                {lang === "en"
+                  ? "Premium transport and covered medical transport in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                  : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3 border-t border-[#e0b866]/40 pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+              {(lang === "en" ? ["ELEGANCE", "DISCRETION", "EXCELLENCE"] : ["ÉLÉGANCE", "DISCRÉTION", "EXIGENCE"]).map(
                 (value) => (
-                  <span key={value}>✓ {value}</span>
+                  <div
+                    key={value}
+                    className="flex flex-col items-center gap-2 border-r border-[#e0b866]/35 px-2 last:border-r-0 lg:flex-row lg:justify-center lg:border-r"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                      ✓
+                    </span>
+                    <span className="text-center text-[10px] font-semibold uppercase text-white sm:text-xs">
+                      {value}
+                    </span>
+                  </div>
                 ),
               )}
             </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 3. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
-      <section id="services" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Nos </span>
-              <span className="text-[#e0b866]">engagements</span>
-            </h2>
-          </Reveal>
-          <div className="mt-6 grid gap-5 md:grid-cols-2 md:gap-6">
-            <Reveal>
-              <SplitPhotoCard
-                image={medicalService}
-                alt="Transport médical conventionné"
-                icon={Stethoscope}
-                title={engagements[0].title}
-                lead={engagements[0].lead}
-              >
-                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[0].details} variant="solid" />
-              </SplitPhotoCard>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <SplitPhotoCard
-                image={prestigeService}
-                alt="Prestige et transport privé"
-                icon={BriefcaseBusiness}
-                title={engagements[1].title}
-                lead={engagements[1].lead}
-                reverse
-              >
-                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[1].details} variant="solid" />
-              </SplitPhotoCard>
-            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* 4. NOTRE FLOTTE */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+      {/* 3. NOS ENGAGEMENTS — 4 cartes de la maquette */}
+      <section id="services" className="bg-[#05090d] px-4 pb-8 pt-4 sm:px-6 sm:pb-10 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Notre </span>
-              <span className="text-[#e0b866]">flotte</span>
-            </h2>
+            <div className="mb-5 flex items-center gap-4">
+              <div className="h-px flex-1 bg-[#e0b866]/60" />
+              <h2 className="font-display text-xl font-semibold uppercase tracking-[0.16em] text-[#e0b866] sm:text-2xl">
+                {lang === "en" ? "Our commitments" : "Nos engagements"}
+              </h2>
+              <div className="h-px flex-1 bg-[#e0b866]/60" />
+            </div>
           </Reveal>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {c.vehicles.map((v, i) => (
-              <Reveal key={v.title} delay={i * 0.06}>
-                <PhotoTopCard
-                  image={v.img}
-                  alt={v.alt}
-                  icon={[Car, Car, Crown][i]}
-                  title={v.title}
-                  subtitle={v.subtitle}
-                >
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <span className="text-xs leading-relaxed text-white/70">
-                      {i === 0 ? "1 à 3 passagers" : i === 1 ? "1 à 3 passagers" : "4 à 7 passagers"}
-                    </span>
-                    <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={v.details} variant="solid" />
-                  </div>
-                </PhotoTopCard>
-              </Reveal>
+
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {[
+              {
+                image: medicalService,
+                icon: Stethoscope,
+                title: lang === "en" ? "Covered medical transport" : "Transport médical conventionné",
+                text:
+                  lang === "en"
+                    ? "Medicalised, punctual and caring support. CPAM covered."
+                    : "Prise en charge médicalisée, ponctuelle et bienveillante. Conventionné CPAM.",
+              },
+              {
+                image: prestigeService,
+                icon: User,
+                title: lang === "en" ? "Prestige & Private" : "Prestige & Privé",
+                text:
+                  lang === "en"
+                    ? "Station and airport transfers, long distances, events, tourism and chauffeur service."
+                    : "Transferts gares, aéroports, longues distances, événements, mariages, tourisme… Mise à disposition avec chauffeur.",
+              },
+              {
+                image: trackingPhone,
+                icon: Bell,
+                title: lang === "en" ? "Tracking & client area" : "Suivi & espace client",
+                text:
+                  lang === "en"
+                    ? "Follow your booking in real time. Notifications at every key step."
+                    : "Suivez votre réservation en temps réel. Notifications à chaque étape du trajet.",
+              },
+              {
+                image: appPhones,
+                icon: Smartphone,
+                title: lang === "en" ? "Web application" : "Application web",
+                text:
+                  lang === "en"
+                    ? "Install our web application on your phone. No App Store or Play Store required."
+                    : "Installez notre application web sur votre téléphone. Aucune installation depuis le store.",
+              },
+            ].map((card, i) => {
+              const Icon = card.icon;
+              return (
+                <Reveal key={card.title} delay={i * 0.05} as="div">
+                  <article className="group relative h-full min-h-[340px] overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
+                    <div className="relative h-40 overflow-hidden sm:h-44">
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover object-center brightness-[1.08] contrast-[1.04] saturate-[1.05] transition duration-700 group-hover:scale-[1.03]"
+                      />
+                      <div
+                        className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-[#07111f]"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div className="relative flex h-[calc(100%-10rem)] flex-col p-4 sm:h-[calc(100%-11rem)] sm:p-5">
+                      <div className="-mt-10 mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#e0b866] bg-[#07111f]">
+                        <Icon className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
+                      </div>
+                      <h3 className="font-display text-base font-semibold uppercase leading-tight text-white sm:text-lg">
+                        {card.title}
+                      </h3>
+                      <p className="mt-3 text-sm leading-relaxed text-white/80">{card.text}</p>
+                      <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
+                        {i === 2 && (
+                          <Link
+                            to="/client/login"
+                            className="inline-flex min-h-[40px] items-center gap-2 rounded-lg border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-black transition hover:brightness-110"
+                          >
+                            {lang === "en" ? "Client area" : "Espace client"}{" "}
+                            <User className="h-4 w-4" aria-hidden="true" />
+                          </Link>
+                        )}
+                        <Link
+                          to={i === 0 ? "/#services" : i === 1 ? "/#services" : i === 2 ? "/client/login" : "/reserver"}
+                          className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[#e0b866] hover:text-white"
+                        >
+                          {lang === "en" ? "Learn more" : "En savoir plus"}{" "}
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          {/* Raccourcis de la maquette mobile */}
+          <div className="mt-4 grid grid-cols-1 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f] sm:grid-cols-2">
+            {[
+              {
+                icon: Stethoscope,
+                label: lang === "en" ? "COVERED MEDICAL TRANSPORT" : "TRANSPORT MÉDICAL CONVENTIONNÉ",
+                to: "/#services",
+              },
+              { icon: User, label: lang === "en" ? "PRESTIGE & PRIVATE" : "PRESTIGE & PRIVÉ", to: "/#services" },
+              {
+                icon: Bell,
+                label: lang === "en" ? "TRACKING & CLIENT AREA" : "SUIVI & ESPACE CLIENT",
+                to: "/client/login",
+                client: true,
+              },
+              { icon: Smartphone, label: lang === "en" ? "WEB APPLICATION" : "APPLICATION WEB", to: "/reserver" },
+            ].map(({ icon: Icon, label, to, client }) => (
+              <Link
+                key={label}
+                to={to}
+                className="flex min-h-[54px] items-center gap-3 border-b border-r border-[#e0b866]/60 px-4 text-xs font-medium uppercase text-white transition hover:bg-[#e0b866]/10 sm:last:border-b-0"
+              >
+                <Icon className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                <span className="flex-1">{label}</span>
+                {client && (
+                  <span className="rounded-md border-2 border-[#e0b866] bg-[#e0b866] px-3 py-1 text-[10px] font-semibold text-black">
+                    {lang === "en" ? "CLIENT AREA" : "ESPACE CLIENT"}
+                  </span>
+                )}
+                <ArrowRight className="h-4 w-4 text-[#e0b866]" aria-hidden="true" />
+              </Link>
             ))}
           </div>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {fleetValues.map((v, i) => (
-              <Reveal key={v.title} delay={i * 0.04}>
-                <CompactPhotoCard
-                  image={[valuePunctuality, valueSecurity, valueDiscretion, valueComfort][i]}
-                  alt={`${v.title} — Access Prestige Taxi`}
-                  icon={v.icon}
-                  title={v.title}
-                  text={v.text}
-                />
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* 5. AVIS CLIENTS */}
-      <section id="avis" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+      {/* 4. BANDEAU FINAL — 4 valeurs de la maquette */}
+      <section className="bg-[#05090d] px-4 pb-8 pt-2 sm:px-6 sm:pb-12 lg:px-8">
+        <div className="mx-auto grid max-w-6xl grid-cols-4 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
+          {[
+            { icon: Crown, label: lang === "en" ? "HIGH-END SERVICE" : "SERVICE HAUT DE GAMME" },
+            { icon: ShieldCheck, label: lang === "en" ? "SAFETY & COMFORT" : "SÉCURITÉ & CONFORT" },
+            { icon: User, label: lang === "en" ? "ABSOLUTE DISCRETION" : "DISCRÉTION ABSOLUE" },
+            { icon: Clock, label: lang === "en" ? "GUARANTEED PUNCTUALITY" : "PONCTUALITÉ GARANTIE" },
+          ].map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              className="flex min-h-[92px] items-center justify-center gap-3 border-b border-r border-[#e0b866]/50 px-3 py-4 text-center last:border-r-0 sm:min-h-[105px] sm:border-b-0"
+            >
+              <Icon className="h-8 w-8 shrink-0 text-[#e0b866]" aria-hidden="true" />
+              <span className="text-[10px] font-semibold uppercase leading-tight text-white sm:text-xs">{label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Les sections complémentaires restent accessibles plus bas : elles ne modifient pas le hero. */}
+      <section id="avis" className="bg-[#07111f] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
               <span className="text-white">Avis de nos </span>
               <span className="text-[#e0b866]">clients</span>
             </h2>
           </Reveal>
-          <div className="mt-6">
+          <div className="mt-5">
             <SplitPhotoCard
               image={reviewPhone}
               alt="Avis clients Access Prestige Taxi"
@@ -990,240 +1080,50 @@ function Index() {
                   : "Des clients nous font déjà confiance pour un service premium et humain."
               }
             >
-              <div className="mt-5 flex flex-wrap gap-3">
-                <Link
-                  to="/avis"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
-                >
-                  {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                </Link>
-                <ReserveButton label={c.reserveCta} />
-              </div>
-            </SplitPhotoCard>
-          </div>
-          <div className="mt-6 rounded-[22px] bg-black p-5 sm:p-7">
-            <ClientTrust>
-              <div className="text-black [&_p]:!text-black [&_blockquote]:!text-black [&_label]:!text-black [&_h3]:!text-black [&_h4]:!text-black [&_li]:!text-black [&_input]:!text-black [&_textarea]:!text-black [&_select]:!text-black [&_option]:text-black">
-                <ReviewForm />
-              </div>
-            </ClientTrust>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Comment </span>
-              <span className="text-[#e0b866]">réserver ?</span>
-            </h2>
-          </Reveal>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { step: c.how[0], image: stepPhone },
-              { step: c.how[1], image: stepCalendar },
-              { step: c.how[2], image: stepDriver },
-              {
-                step: {
-                  s: "4",
-                  icon: CheckCircle2,
-                  t: lang === "en" ? "Enjoy a smooth journey" : "Profitez d’un trajet serein",
-                  d:
-                    lang === "en"
-                      ? "Sit back while we take care of everything."
-                      : "Installez-vous, on s’occupe de tout.",
-                  details: [],
-                },
-                image: stepCar,
-              },
-            ].map(({ step, image }, i) => (
-              <Reveal as="div" key={step.s} delay={i * 0.05}>
-                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#e0b866] bg-[#07111f]">
-                  <img
-                    src={image}
-                    alt={step.t}
-                    loading="lazy"
-                    className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.08] contrast-[1.06] saturate-[1.05]" : ""}`}
-                  />
-                  <div
-                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.78),rgba(3,10,20,0.38)_50%,rgba(3,10,20,0.10))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"}`}
-                    aria-hidden="true"
-                  />
-                  <div className="relative flex h-full flex-col p-5">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#e0b866]">
-                      {step.s}
-                    </span>
-                    <div className="mt-auto">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
-                        <step.icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
-                      </div>
-                      <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{step.t}</h3>
-                      <p className="mt-1.5 text-xs leading-relaxed text-white/65">{step.d}</p>
-                      {step.details.length > 0 && (
-                        <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={step.details} variant="solid" />
-                      )}
-                    </div>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. SUIVI & ESPACE CLIENT */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Suivi & </span>
-              <span className="text-[#e0b866]">espace client</span>
-            </h2>
-          </Reveal>
-          <div className="mt-6 grid gap-5 lg:grid-cols-2">
-            <SplitPhotoCard
-              image={trackingPhone}
-              alt="Suivi du trajet"
-              icon={Bell}
-              title={lang === "en" ? "Trip notifications" : "Suivez votre trajet par notifications"}
-              lead={
-                lang === "en"
-                  ? "No live map — instead you receive a notification at each key step: booking confirmed, driver on the way, driver arrived."
-                  : "Pas de carte en temps réel, mais une notification à chaque étape clé de votre trajet : réservation confirmée, chauffeur en route, chauffeur arrivé."
-              }
-            >
-              <div className="mt-5 flex flex-wrap gap-3">
-                <NotificationOptIn lang={lang === "en" ? "en" : "fr"} />
-              </div>
-              <LearnMoreToggle
-                lang={lang === "en" ? "en" : "fr"}
-                variant="solid"
-                details={
-                  lang === "en"
-                    ? [
-                        "Confirmation notification as soon as your booking is registered.",
-                        "Alert when your driver sets off towards your pickup point.",
-                        "Notification when your driver arrives on site.",
-                        "Automatic reminder ahead of your appointment time.",
-                      ]
-                    : [
-                        "Notification de confirmation dès l'enregistrement de votre réservation.",
-                        "Alerte lorsque votre chauffeur se met en route vers le point de prise en charge.",
-                        "Notification à l'arrivée de votre chauffeur sur place.",
-                        "Rappel automatique avant l'heure de votre rendez-vous.",
-                      ]
-                }
-              />
-            </SplitPhotoCard>
-            <SplitPhotoCard
-              image={appPhones}
-              alt="Application mobile Access Prestige Taxi"
-              icon={Smartphone}
-              title={
-                lang === "en"
-                  ? "Web app, installable on your phone"
-                  : "Application web, installable sur votre téléphone"
-              }
-              lead={
-                lang === "en"
-                  ? "Access Prestige Taxi is a web app: add it to your home screen in a few taps, no App Store or Play Store needed."
-                  : "Access Prestige Taxi est une application web : ajoutez-la à votre écran d'accueil en quelques gestes, sans passer par l'App Store ou le Play Store."
-              }
-              reverse
-            >
-              <InstallAppToggle lang={lang === "en" ? "en" : "fr"} />
-            </SplitPhotoCard>
-            <div className="lg:col-span-2">
-              <SplitPhotoCard
-                image={reviewPhone}
-                alt={lang === "en" ? "Client account" : "Espace client"}
-                icon={User}
-                title={lang === "en" ? "Your client area" : "Votre espace client"}
-                lead={
-                  lang === "en"
-                    ? "Ride history, invoices and saved addresses, all in one secure personal space."
-                    : "Historique de vos courses, factures et adresses favorites, réunis dans un espace personnel sécurisé."
-                }
+              <Link
+                to="/avis"
+                className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
               >
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <Link
-                    to="/client/login"
-                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-                  >
-                    {lang === "en" ? "Access my client area" : "Accéder à l'espace client"}{" "}
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </Link>
-                </div>
-                <LearnMoreToggle
-                  lang={lang === "en" ? "en" : "fr"}
-                  variant="solid"
-                  details={
-                    lang === "en"
-                      ? [
-                          "Full history of your past rides.",
-                          "Download your invoices at any time.",
-                          "Manage and save your favourite addresses.",
-                          "Modify or cancel a booking in one click.",
-                        ]
-                      : [
-                          "Historique complet de vos trajets passés.",
-                          "Téléchargement de vos factures à tout moment.",
-                          "Gestion et enregistrement de vos adresses favorites.",
-                          "Modification ou annulation d'une réservation en un clic.",
-                        ]
-                  }
-                />
-              </SplitPhotoCard>
-            </div>
+                {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
+            </SplitPhotoCard>
           </div>
         </div>
       </section>
 
-      {/* 7. GUIDE & ACTUALITÉS */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+      <section className="bg-[#07111f] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
               <span className="text-white">Guide & </span>
               <span className="text-[#e0b866]">actualités</span>
             </h2>
           </Reveal>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
-              <Reveal key={e.slug} delay={i * 0.05}>
-                <article className="group overflow-hidden rounded-[22px] border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
-                  <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={GUIDE_IMAGES[i % GUIDE_IMAGES.length]}
-                        alt={`${e.name} — ${e.city}`}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-                      />
-                      <div
-                        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.76))]"
-                        aria-hidden="true"
-                      />
-                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
-                        <MapPin className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{e.name}</h3>
-                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/65">
-                        {lang === "en" ? e.en : e.fr}
-                      </p>
-                      <span className="mt-4 inline-flex rounded-full bg-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#07111f]">
-                        {lang === "en" ? "Read article" : "Lire l’article"}
-                      </span>
-                    </div>
-                  </Link>
-                </article>
-              </Reveal>
+              <article
+                key={e.slug}
+                className="group overflow-hidden rounded-[18px] border-2 border-[#e0b866] bg-[#07111f]"
+              >
+                <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={GUIDE_IMAGES[i % GUIDE_IMAGES.length]}
+                      alt={`${e.name} — ${e.city}`}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-display text-lg font-semibold text-white">{e.name}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/70">{lang === "en" ? e.en : e.fr}</p>
+                    <span className="mt-4 inline-flex rounded-full border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-xs font-semibold uppercase text-black">
+                      {lang === "en" ? "Read article" : "Lire l’article"}
+                    </span>
+                  </div>
+                </Link>
+              </article>
             ))}
           </div>
         </div>
