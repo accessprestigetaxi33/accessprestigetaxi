@@ -13,7 +13,6 @@ import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
 // ⚠️ TEMPORAIRE — panneau de diagnostic bas d'écran (bouton ▶ Lancer), à
 // retirer une fois le problème notifications résolu. Distinct de
 // PushDiagnosticsCard ci-dessus, qui est un composant permanent différent.
-import { PushDebug } from "@/components/PushDebug";
 import { useServerFn } from "@tanstack/react-start";
 import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
@@ -151,7 +150,7 @@ export const Route = createFileRoute("/driver")({
         { name: "twitter:image", content: social.image },
         { name: "twitter:image:alt", content: social.alt },
         { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
-        { name: "theme-color", content: "#FDFBF7" },
+        { name: "theme-color", content: "#03070d" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
         { name: "mobile-web-app-capable", content: "yes" },
         { name: "apple-mobile-web-app-status-bar-style", content: "default" },
@@ -313,44 +312,57 @@ const css = `
   @keyframes drv-pulse { 0%, 100% { opacity:1; box-shadow: 0 0 0 3px rgba(34,197,94,0.3); } 50% { opacity:0.6; box-shadow: 0 0 0 6px rgba(34,197,94,0.1); } }
   .drv-visitor-dot-active { animation: drv-pulse 2s ease-in-out infinite; }
 
-  /* ── Access Prestige final mobile-first visual layer ───────────────────── */
-  html, body { background:#03070d !important; color:#f6f0e5 !important; }
-  .drv-root { max-width:520px; background:#03070d; color:#f6f0e5; box-shadow:none; }
-  .drv-header { background:#050a10 !important; color:#f6f0e5 !important; border-bottom:1px solid rgba(201,155,74,.65); }
-  .drv-header h1 { color:#f6f0e5 !important; font-family:Georgia,'Times New Roman',serif; font-weight:700; }
-  .drv-tabs { background:#050a10 !important; border-bottom:1px solid rgba(201,155,74,.35); }
-  .drv-tab { color:rgba(246,240,229,.55) !important; background:transparent !important; min-width:70px; padding:10px 7px 9px; }
+  /* ── Access Prestige mobile visual system ───────────────────────────── */
+  .drv-root { background:#03070d !important; color:#f6f0e5 !important; border-left:1px solid rgba(201,155,74,.35); border-right:1px solid rgba(201,155,74,.35); }
+  .drv-header { background:#050a10 !important; border-bottom:1px solid #c99b4a; min-height:74px; padding:calc(env(safe-area-inset-top, 0px) + 12px) 14px 10px !important; }
+  .drv-brand-mark { width:42px; height:42px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; color:#e0b866; font-family:Georgia,serif; font-weight:800; letter-spacing:.08em; flex:0 0 42px; }
+  .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
+  .drv-header-title strong { color:#f6f0e5; font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; }
+  .drv-header-menu { width:38px; height:38px; display:grid; place-items:center; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; text-decoration:none; font-size:20px; flex:0 0 38px; }
+  .drv-overview { padding:14px 14px 4px; background:#03070d; }
+  .drv-overview-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size:9px; letter-spacing:.12em; font-weight:800; }
+  .drv-overview-head h2 { margin:0; color:#f6f0e5; font-family:Georgia,serif; font-size:19px; }
+  .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size:9px; font-weight:800; }
+  .drv-live-pill i { width:6px; height:6px; border-radius:50%; background:#5fd08a; display:block; }
+  .drv-stat-grid { grid-template-columns:repeat(2,1fr) !important; gap:8px !important; margin-bottom:10px !important; }
+  .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border:1px solid rgba(201,155,74,.45); border-radius:9px !important; padding:11px !important; }
+  .drv-stat-lbl { color:rgba(246,240,229,.55) !important; font-size:8px !important; }
+  .drv-stat-val { color:#e0b866 !important; font-size:21px !important; }
+  .drv-stat-sub { color:rgba(246,240,229,.55) !important; font-size:9px !important; }
+  .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(201,155,74,.45); border-radius:9px; overflow:hidden; margin-bottom:10px; background:#050a10; }
+  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.2); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
+  .drv-overview-actions button:last-child { border-right:0; }
+  .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
+  .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
+  .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
   .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
-  .drv-tab:active { background:rgba(224,184,102,.08) !important; }
-  .drv-body { padding:12px 10px max(22px, env(safe-area-inset-bottom, 22px)); background:#03070d; }
-  .drv-section { color:rgba(246,240,229,.55) !important; }
-  .drv-card { background:linear-gradient(180deg,#07131e,#040a10) !important; color:#f6f0e5 !important; border-color:rgba(201,155,74,.55) !important; border-radius:12px; box-shadow:0 10px 28px rgba(0,0,0,.24); }
-  .drv-card.pending { border-color:#e0b866 !important; }
-  .drv-card.accepted { border-color:#5fd08a !important; }
-  .drv-card.refused { border-color:#b94b4b !important; }
-  .drv-time, .drv-name, .drv-route span, .drv-stat-val { color:#f6f0e5 !important; }
-  .drv-sub, .drv-meta, .drv-stat-lbl, .drv-stat-sub { color:rgba(246,240,229,.58) !important; }
-  .drv-stat { background:#050a10 !important; border:1px solid rgba(201,155,74,.28); }
-  .drv-btn-primary { background:#e0b866 !important; color:#050a10 !important; border:1px solid #c99b4a !important; }
+  .drv-tab:active { background:#0a1118 !important; }
+  .drv-body { background:#03070d !important; padding:12px 12px calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
+  .drv-card, .drv-route-opt, .drv-chat-thread, .drv-planning-card { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; color:#f6f0e5 !important; }
+  .drv-time, .drv-name, .drv-route-label, .drv-planning-card, .drv-route span, .drv-section { color:#f6f0e5 !important; }
+  .drv-sub, .drv-meta, .drv-route-meta, .drv-planning-time { color:rgba(246,240,229,.55) !important; }
+  .drv-btn-primary { background:#e0b866 !important; color:#050a10 !important; }
   .drv-btn-secondary { background:#050a10 !important; color:#e0b866 !important; border:1px solid #c99b4a !important; }
-  .drv-btn-danger { background:#210f12 !important; color:#ffb0b0 !important; border:1px solid #7d3030 !important; }
-  .drv-route-opt { background:#050a10 !important; border-color:rgba(201,155,74,.35) !important; }
-  .drv-route-opt.selected { background:#0c1821 !important; border-color:#e0b866 !important; }
-  .drv-chat-thread { background:#050a10 !important; border-color:rgba(201,155,74,.35) !important; }
-  .drv-chat-thread.unread { background:#0c1821 !important; border-color:#e0b866 !important; }
-  .drv-chat-avatar { background:#e0b866 !important; color:#050a10 !important; }
+  .drv-btn-danger { background:#1b0c0c !important; color:#f0a0a0 !important; border-color:#8b3a3a !important; }
+  .drv-badge-blue { background:#17243a !important; color:#9fc2ff !important; }
+  .drv-badge-green { background:#10271b !important; color:#8ee39f !important; }
+  .drv-badge-gray { background:#111820 !important; color:#c8c0b2 !important; }
   .drv-chat-bubble.me { background:#e0b866 !important; color:#050a10 !important; }
-  .drv-chat-bubble.them { background:#111a23 !important; color:#f6f0e5 !important; }
-  .drv-badge { background:#e0b866 !important; color:#050a10 !important; }
-  .drv-badge-blue { background:#101d2a !important; color:#b9d8ff !important; }
-  .drv-badge-green { background:#0d2117 !important; color:#8ee39f !important; }
-  .drv-badge-amber { background:#251c0d !important; color:#e0b866 !important; }
-  .drv-badge-red { background:#281012 !important; color:#ffb0b0 !important; }
-  .drv-badge-gray { background:#111820 !important; color:#c8d0da !important; }
-  .drv-empty { color:rgba(246,240,229,.55) !important; }
-  @media (max-width:380px) { .drv-body { padding-left:8px; padding-right:8px; } .drv-tab { min-width:66px; font-size:9px; } }
-  @media (min-width:700px) { html,body { background:#03070d !important; } .drv-root { max-width:760px; box-shadow:0 0 0 1px rgba(201,155,74,.18),0 20px 60px rgba(0,0,0,.35); } }
-
+  .drv-chat-bubble.them { background:#101820 !important; color:#f6f0e5 !important; }
+  .drv-chat-thread.unread { background:#101d28 !important; border-color:#c99b4a !important; }
+  .drv-team-map { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; }
+  /* Recolor legacy inline light surfaces without touching their behaviour. */
+  [style*="#FDFBF7"], [style*="#f8fafc"], [style*="#f1f5f9"] { background-color:#050a10 !important; }
+  [style*="#0f172a"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
+  [style*="#e2e8f0"] { border-color:rgba(201,155,74,.35) !important; }
+  [style*="#64748b"], [style*="#94a3b8"] { color:rgba(246,240,229,.55) !important; }
+  @media (max-width:600px) {
+    .drv-root { max-width:100%; border:0; }
+    .drv-overview-actions button { min-height:58px; }
+    .drv-team-map { margin:8px 0 10px !important; }
+  }
 `;
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -619,6 +631,7 @@ function DriverApp({
 }) {
   const listCoursesFn = useServerFn(listDriverCourses);
   const [tab, setTab] = useState<Tab>("courses");
+  const [dashboardCourses, setDashboardCourses] = useState<Resa[]>([]);
 
   // Suivi GPS en continu, indépendant de l'onglet affiché (démarre seul dès
   // l'identification, comme avant) — seul l'affichage vit désormais dans
@@ -692,7 +705,9 @@ function DriverApp({
       try {
         const res: any = await listCoursesFn({ data: { token: getDriverToken() } });
         if (cancelled) return;
-        const mine = (res?.courses ?? []).filter(
+        const list = (res?.courses ?? []) as Resa[];
+        setDashboardCourses(list);
+        const mine = list.filter(
           (c: any) => c.status === "pending" && (!driverId || driverId === "admin" || c.assigned_driver === driverId),
         );
         setNewCount(mine.length);
@@ -797,45 +812,41 @@ function DriverApp({
 
   // (Badge global d'unread chat retiré : le compteur par course est géré
   // localement par CoursesTab via getUnreadCountsForReservations.)
+  const dashboardTodayKey = new Date().toLocaleDateString("fr-FR");
+  const dashboardToday = dashboardCourses.filter((r) => {
+    const d = new Date(r.pickup_datetime || r.date_heure);
+    return (
+      !Number.isNaN(d.getTime()) && d.toLocaleDateString("fr-FR") === dashboardTodayKey && r.status !== "cancelled"
+    );
+  });
+  const dashboardInProgress = dashboardCourses.filter((r) => ["en_route", "arrived"].includes(r.status));
+  const dashboardUpcoming = dashboardCourses.filter((r) => {
+    const d = new Date(r.pickup_datetime || r.date_heure);
+    return !Number.isNaN(d.getTime()) && d.getTime() > Date.now() && !["completed", "cancelled"].includes(r.status);
+  });
+  const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.prix_estime) || 0), 0);
 
   return (
     <>
       <style>{css}</style>
-      <PushDebug />
       <div className="drv-root">
         <div className="drv-header">
-          <span style={{ fontSize: 26 }}>🚕</span>
-          <h1 style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Espace chauffeur</span>
-            <DriverIdentitySwitcher
-              driverId={driverId}
-              onIdentify={onIdentify}
-              busy={identifyBusy}
-              error={identifyError}
-            />
-          </h1>
-
-          <Link
-            to="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              color: "var(--border)",
-              fontSize: 11,
-              textDecoration: "none",
-              border: "1px solid #334155",
-              borderRadius: 8,
-              padding: "8px 10px",
-              flexShrink: 0,
-              minHeight: 30,
-            }}
-          >
-            ↩ Retour au site
+          <div className="drv-brand-mark" aria-label="Access Prestige Taxi">
+            AP
+          </div>
+          <div className="drv-header-title">
+            <strong>Bonjour {driverLabel || "Alain & Patricia"}</strong>
+            <span>Espace chauffeur privé</span>
+          </div>
+          <DriverIdentitySwitcher
+            driverId={driverId}
+            onIdentify={onIdentify}
+            busy={identifyBusy}
+            error={identifyError}
+          />
+          <Link className="drv-header-menu" to="/" aria-label="Retour au site">
+            ☰
           </Link>
-          <span style={{ fontSize: 12, color: "#94a3b8" }}>
-            {new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })}
-          </span>
         </div>
 
         {/* Push indisponible : on explique pourquoi au lieu de tout masquer */}
@@ -982,6 +993,60 @@ function DriverApp({
         <div style={{ padding: "0 16px" }}>
           <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
         </div>
+
+        {tab === "courses" && (
+          <section className="drv-overview" aria-label="Résumé chauffeur">
+            <div className="drv-overview-head">
+              <div>
+                <p>TABLEAU DE BORD</p>
+                <h2>Alain & Patricia</h2>
+              </div>
+              <span className="drv-live-pill">
+                <i /> ACTIF
+              </span>
+            </div>
+            <div className="drv-stat-grid">
+              <div className="drv-stat">
+                <span className="drv-stat-lbl">AUJOURD'HUI</span>
+                <strong className="drv-stat-val">{dashboardToday.length}</strong>
+                <span className="drv-stat-sub">Courses</span>
+              </div>
+              <div className="drv-stat">
+                <span className="drv-stat-lbl">EN COURS</span>
+                <strong className="drv-stat-val">{dashboardInProgress.length}</strong>
+                <span className="drv-stat-sub">Courses</span>
+              </div>
+              <div className="drv-stat">
+                <span className="drv-stat-lbl">À VENIR</span>
+                <strong className="drv-stat-val">{dashboardUpcoming.length}</strong>
+                <span className="drv-stat-sub">Courses</span>
+              </div>
+              <div className="drv-stat">
+                <span className="drv-stat-lbl">CA ESTIMÉ</span>
+                <strong className="drv-stat-val">{dashboardRevenue.toFixed(0)} €</strong>
+                <span className="drv-stat-sub">Aujourd'hui</span>
+              </div>
+            </div>
+            <div className="drv-overview-actions">
+              <button type="button" onClick={() => setTab("planning")}>
+                <IconCalendar />
+                <span>Planning</span>
+              </button>
+              <button type="button" onClick={() => setTab("clients")}>
+                <IconUsers />
+                <span>Clients</span>
+              </button>
+              <button type="button" onClick={() => setTab("stats")}>
+                <IconChart />
+                <span>Stats</span>
+              </button>
+              <button type="button" onClick={() => setTab("devis")}>
+                <IconDevis />
+                <span>Devis</span>
+              </button>
+            </div>
+          </section>
+        )}
 
         {/* Tabs */}
         <div className="drv-tabs">
@@ -1401,6 +1466,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
 
   return (
     <div
+      className="drv-team-map"
       style={{
         margin: "10px 16px 0",
         border: "1px solid #e2e8f0",
