@@ -33,7 +33,6 @@ import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero_crop2.png";
 import heroCarsEn from "@/assets/hero_crop2.png";
-import heroCarsMobile from "@/assets/hero_mobile2.png";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -855,22 +854,20 @@ function Index() {
       {/* HERO — référence maquette desktop/mobile */}
       <section className="relative isolate overflow-hidden bg-black">
         <div className="relative min-h-[650px] sm:min-h-[720px] lg:min-h-[780px]">
-          <picture>
-            <source media="(max-width: 767px)" srcSet={heroCarsMobile} />
-            <img
-              src={heroCars}
-              alt={
-                lang === "en"
-                  ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
-                  : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
-              }
-              fetchPriority="high"
-              loading="eager"
-              width={1536}
-              height={600}
-              className="absolute inset-0 h-full w-full object-cover object-center"
-            />
-          </picture>
+          {/* Une seule image hero : aucun ancien visuel n'est superposé. */}
+          <img
+            src={heroCars}
+            alt={
+              lang === "en"
+                ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
+                : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
+            }
+            fetchPriority="high"
+            loading="eager"
+            width={1536}
+            height={600}
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.08)_40%,rgba(3,9,16,0.78)_88%,#050b12_100%)]" />
 
           <div className="relative z-10 mx-auto flex min-h-[650px] max-w-5xl flex-col items-center px-5 pb-24 pt-28 text-center sm:min-h-[720px] sm:pt-32 lg:min-h-[780px] lg:pt-36">
@@ -954,14 +951,6 @@ function Index() {
                   )}
                 </AnimatePresence>
               </div>
-
-              <a
-                href="#services"
-                className="mt-20 inline-flex flex-col items-center gap-2 text-sm font-medium text-white transition hover:text-[#e0b866]"
-              >
-                <span>{lang === "en" ? "Discover our services" : "Découvrir nos services"}</span>
-                <ChevronDown className="h-5 w-5 animate-bounce" aria-hidden="true" />
-              </a>
             </Reveal>
           </div>
         </div>
