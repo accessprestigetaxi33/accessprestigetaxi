@@ -32,7 +32,6 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero_crop2.png";
-import heroCarsEn from "@/assets/hero_crop2.png";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -871,85 +870,92 @@ function Index() {
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.08)_40%,rgba(3,9,16,0.78)_88%,#050b12_100%)]" />
 
           <div className="relative z-10 mx-auto flex min-h-[650px] max-w-5xl flex-col items-center px-5 pb-24 pt-28 text-center sm:min-h-[720px] sm:pt-32 lg:min-h-[780px] lg:pt-36">
+            {/* Masque uniquement les anciens textes/CTA intégrés dans l'ancien visuel hero. */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-[105px] h-[205px] w-[min(92vw,900px)] -translate-x-1/2 rounded-[28px] bg-[#050b12]/65 blur-[0.2px]"
+              aria-hidden="true"
+            />
             <Reveal>
-              <h1 className="font-display text-4xl font-semibold uppercase leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                {lang === "en" ? "Excellence on every journey" : "L’élégance de votre trajet"}
-              </h1>
-              <p className="mt-5 text-sm font-medium text-white/90 sm:text-base md:text-lg">
-                {lang === "en"
-                  ? "Private transfers · Covered medical transport · Chauffeur service"
-                  : "Transferts privés · Transport médical conventionné · Mise à disposition"}
-              </p>
+              <div className="relative z-10">
+                <h1 className="font-display text-4xl font-semibold uppercase leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                  {lang === "en" ? "Excellence on every journey" : "L’élégance de votre trajet"}
+                </h1>
+                <p className="mt-5 text-sm font-medium text-white/90 sm:text-base md:text-lg">
+                  {lang === "en"
+                    ? "Private transfers · Covered medical transport · Chauffeur service"
+                    : "Transferts privés · Transport médical conventionné · Mise à disposition"}
+                </p>
 
-              <div className="relative mt-7 flex flex-col items-center">
-                <button
-                  type="button"
-                  onClick={() => setHeroMenuOpen((open) => !open)}
-                  aria-expanded={heroMenuOpen}
-                  className="btn-gold inline-flex min-h-[52px] min-w-[230px] items-center justify-center gap-3 rounded-xl px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-black shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02]"
-                >
-                  <span>{lang === "en" ? "Book" : "Réserver"}</span>
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
-                    aria-hidden="true"
-                  />
-                </button>
+                <div className="relative mt-7 flex flex-col items-center">
+                  <button
+                    type="button"
+                    onClick={() => setHeroMenuOpen((open) => !open)}
+                    aria-expanded={heroMenuOpen}
+                    className="btn-gold inline-flex min-h-[52px] min-w-[230px] items-center justify-center gap-3 rounded-xl px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-black shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02]"
+                  >
+                    <span>{lang === "en" ? "Book" : "Réserver"}</span>
+                    <ChevronDown
+                      className={`h-5 w-5 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
+                      aria-hidden="true"
+                    />
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {heroMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -8, height: 0 }}
-                      animate={{ opacity: 1, y: 8, height: "auto" }}
-                      exit={{ opacity: 0, y: -8, height: 0 }}
-                      className="w-[min(92vw,360px)] overflow-hidden rounded-2xl border border-[#e0b866] bg-[#050b12]/95 text-left shadow-[0_20px_55px_rgba(0,0,0,0.55)] backdrop-blur-md"
-                    >
-                      <Link
-                        to="/reserver"
-                        onClick={() => setHeroMenuOpen(false)}
-                        className="flex items-center gap-4 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                  <AnimatePresence initial={false}>
+                    {heroMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, height: 0 }}
+                        animate={{ opacity: 1, y: 8, height: "auto" }}
+                        exit={{ opacity: 0, y: -8, height: 0 }}
+                        className="w-[min(92vw,360px)] overflow-hidden rounded-2xl border border-[#e0b866] bg-[#050b12]/95 text-left shadow-[0_20px_55px_rgba(0,0,0,0.55)] backdrop-blur-md"
                       >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
-                          <Smartphone className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1">
-                          {lang === "en" ? "Book" : "Réserver"}
-                          <span className="mt-0.5 block text-[11px] font-normal normal-case tracking-normal opacity-75">
-                            {lang === "en"
-                              ? "Book your ride in a few clicks"
-                              : "Réservez votre trajet en quelques clics"}
+                        <Link
+                          to="/reserver"
+                          onClick={() => setHeroMenuOpen(false)}
+                          className="flex items-center gap-4 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                        >
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                            <Smartphone className="h-4 w-4" />
                           </span>
-                        </span>
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                      <a
-                        href="tel:0603444863"
-                        onClick={() => setHeroMenuOpen(false)}
-                        className="flex items-center gap-4 border-t border-[#e0b866]/30 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                      >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
-                          <Phone className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1">
-                          {lang === "en" ? "Call Alain" : "Appeler Alain"}
-                          <span className="mt-0.5 block text-sm font-normal tracking-normal">06 03 44 48 63</span>
-                        </span>
-                      </a>
-                      <a
-                        href="tel:0650260015"
-                        onClick={() => setHeroMenuOpen(false)}
-                        className="flex items-center gap-4 border-t border-[#e0b866]/30 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                      >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
-                          <Phone className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1">
-                          {lang === "en" ? "Call Patricia" : "Appeler Patricia"}
-                          <span className="mt-0.5 block text-sm font-normal tracking-normal">06 50 26 00 15</span>
-                        </span>
-                      </a>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                          <span className="flex-1">
+                            {lang === "en" ? "Book" : "Réserver"}
+                            <span className="mt-0.5 block text-[11px] font-normal normal-case tracking-normal opacity-75">
+                              {lang === "en"
+                                ? "Book your ride in a few clicks"
+                                : "Réservez votre trajet en quelques clics"}
+                            </span>
+                          </span>
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                        <a
+                          href="tel:0603444863"
+                          onClick={() => setHeroMenuOpen(false)}
+                          className="flex items-center gap-4 border-t border-[#e0b866]/30 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                        >
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                            <Phone className="h-4 w-4" />
+                          </span>
+                          <span className="flex-1">
+                            {lang === "en" ? "Call Alain" : "Appeler Alain"}
+                            <span className="mt-0.5 block text-sm font-normal tracking-normal">06 03 44 48 63</span>
+                          </span>
+                        </a>
+                        <a
+                          href="tel:0650260015"
+                          onClick={() => setHeroMenuOpen(false)}
+                          className="flex items-center gap-4 border-t border-[#e0b866]/30 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                        >
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                            <Phone className="h-4 w-4" />
+                          </span>
+                          <span className="flex-1">
+                            {lang === "en" ? "Call Patricia" : "Appeler Patricia"}
+                            <span className="mt-0.5 block text-sm font-normal tracking-normal">06 50 26 00 15</span>
+                          </span>
+                        </a>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </Reveal>
           </div>
