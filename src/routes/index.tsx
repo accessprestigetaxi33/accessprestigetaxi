@@ -818,35 +818,39 @@ function Index() {
               aria-expanded={heroMenuOpen}
               className="h-full w-full rounded-full"
             />
-            {heroMenuOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setHeroMenuOpen(false)} aria-hidden="true" />
-                <div className="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.45)]">
-                  <Link
-                    to="/reserver"
-                    onClick={() => setHeroMenuOpen(false)}
-                    className="block px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                  >
-                    {c.reserveCta}
-                  </Link>
-                  <a
-                    href="tel:0603444863"
-                    onClick={() => setHeroMenuOpen(false)}
-                    className="block border-t border-[#e0b866]/40 px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                  >
-                    {c.callPrefix} Alain
-                  </a>
-                  <a
-                    href="tel:0650260015"
-                    onClick={() => setHeroMenuOpen(false)}
-                    className="block border-t border-[#e0b866]/40 px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                  >
-                    {c.callPrefix} Patricia
-                  </a>
-                </div>
-              </>
-            )}
           </div>
+          {heroMenuOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-40 bg-black/60"
+                onClick={() => setHeroMenuOpen(false)}
+                aria-hidden="true"
+              />
+              <div className="fixed left-1/2 top-1/2 z-50 w-64 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.45)]">
+                <Link
+                  to="/reserver"
+                  onClick={() => setHeroMenuOpen(false)}
+                  className="block px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                >
+                  {c.reserveCta}
+                </Link>
+                <a
+                  href="tel:0603444863"
+                  onClick={() => setHeroMenuOpen(false)}
+                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                >
+                  {c.callPrefix} Alain
+                </a>
+                <a
+                  href="tel:0650260015"
+                  onClick={() => setHeroMenuOpen(false)}
+                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                >
+                  {c.callPrefix} Patricia
+                </a>
+              </div>
+            </>
+          )}
           <a
             href="#services"
             aria-label="Découvrir nos services"
