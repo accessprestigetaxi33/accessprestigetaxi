@@ -982,6 +982,26 @@ function Index() {
                         {card.title}
                       </h3>
                       <p className="mt-3 text-sm leading-relaxed text-white/80">{card.text}</p>
+
+                      {i === 2 && (
+                        <div className="mt-4 flex flex-col gap-2">
+                          <Link
+                            to="/espace-client"
+                            className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-lg border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-110"
+                          >
+                            {lang === "en" ? "Client area" : "Espace client"}
+                            <User className="h-4 w-4" aria-hidden="true" />
+                          </Link>
+                          <NotificationOptIn lang={lang === "en" ? "en" : "fr"} />
+                        </div>
+                      )}
+
+                      {i === 3 && (
+                        <div className="mt-1">
+                          <InstallAppToggle lang={lang === "en" ? "en" : "fr"} />
+                        </div>
+                      )}
+
                       <div className="mt-auto pt-2">
                         <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={card.details} variant="solid" />
                       </div>
