@@ -31,12 +31,11 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero_crop2.png";
-import heroCarsEn from "@/assets/hero_crop2.png";
-import heroCarsMobile from "@/assets/hero_mobile2.png";
-import photoQ6Real from "@/assets/apt-q6-real.png";
-import photoBmwReal from "@/assets/apt-bmw-real.png";
-import photoVanReal from "@/assets/apt-van-real.png";
+import heroCars from "@/assets/apt-hero-clean-fr.webp";
+import heroCarsEn from "@/assets/apt-hero-clean-en.webp";
+import photoBmwReal from "@/assets/apt-bmw-real.webp.asset.json";
+import photoAudiReal from "@/assets/apt-audi-real.webp.asset.json";
+import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
 import medicalService from "@/assets/medical-service.webp";
 import prestigeService from "@/assets/prestige-service.webp";
 import reviewPhone from "@/assets/review-phone.webp";
@@ -67,7 +66,7 @@ function ReserveButton({ label, className = "" }: { label: string; className?: s
   return (
     <Link
       to="/reserver"
-      className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
     >
       {label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
     </Link>
@@ -140,13 +139,22 @@ const FLEET_VALUES_EN = [
   { icon: HeartHandshake, title: "Attention", text: "Personalised care and service on every ride." },
 ] as const;
 
-const HERO_VALUES_FR = ["Élégance", "Discrétion", "Exigence"] as const;
-const HERO_VALUES_EN = ["Elegance", "Discretion", "Excellence"] as const;
+const HERO_PILLARS_FR = [
+  { icon: Crown, label: "Élégance" },
+  { icon: Gem, label: "Discrétion" },
+  { icon: Award, label: "Exigence" },
+] as const;
+
+const HERO_PILLARS_EN = [
+  { icon: Crown, label: "Elegance" },
+  { icon: Gem, label: "Discretion" },
+  { icon: Award, label: "Excellence" },
+] as const;
 
 const COPY = {
   fr: {
-    h1: "Votre confort, notre priorité",
-    tagline: "",
+    h1: "L'élégance de votre trajet",
+    tagline: "Votre confort, notre priorité",
     lead: "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails.",
     ctaBook: "Réserver mon trajet",
     reserveCta: "Réserver",
@@ -157,20 +165,9 @@ const COPY = {
       "La collection Access Prestige Taxi : des véhicules haut de gamme, parfaitement entretenus, pensés pour chaque besoin.",
     vehicles: [
       {
-        title: "Audi Q6 e-tron",
-        subtitle: "100 % électrique · SUV premium",
-        img: photoQ6Real,
-        alt: "Audi Q6 e-tron Access Prestige Taxi",
-        details: [
-          "SUV premium 100 % électrique, autonomie élevée pour les longues distances et trajets inter-villes.",
-          "Habitacle spacieux et haut de gamme, pensé pour le confort sur les trajets professionnels et privés.",
-          "Idéal pour les mises à disposition avec chauffeur et les déplacements d'affaires exigeants.",
-        ],
-      },
-      {
         title: "BMW iX1",
         subtitle: "100 % électrique · 5 places",
-        img: photoBmwReal,
+        img: photoBmwReal.url,
         alt: "BMW iX1 100 % électrique Access Prestige Taxi",
         details: [
           "SUV 100 % électrique, silencieux et sans émissions, idéal pour vos trajets en ville comme sur route.",
@@ -179,9 +176,20 @@ const COPY = {
         ],
       },
       {
+        title: "Audi Q6 e-tron",
+        subtitle: "100 % électrique · SUV premium",
+        img: photoAudiReal.url,
+        alt: "Audi Q6 e-tron Access Prestige Taxi",
+        details: [
+          "SUV premium 100 % électrique, autonomie élevée pour les longues distances et trajets inter-villes.",
+          "Habitacle spacieux et haut de gamme, pensé pour le confort sur les trajets professionnels et privés.",
+          "Idéal pour les mises à disposition avec chauffeur et les déplacements d'affaires exigeants.",
+        ],
+      },
+      {
         title: "Mercedes V-Class",
         subtitle: "8 places · transport de groupe",
-        img: photoVanReal,
+        img: photoVanReal.url,
         alt: "Mercedes V-Class 8 places Access Prestige Taxi",
         details: [
           "Van premium 8 places, la solution idéale pour les groupes, familles et transferts d'équipe.",
@@ -256,8 +264,8 @@ const COPY = {
     blogCta: "Voir tout le guide",
   },
   en: {
-    h1: "Your comfort, our priority",
-    tagline: "",
+    h1: "The elegance of your journey",
+    tagline: "Your comfort, our priority",
     lead: "Premium transport and covered medical transport across Charente-Maritime. Personalised care, premium vehicles and a service considered down to the smallest detail.",
     ctaBook: "Book my ride",
     reserveCta: "Book",
@@ -267,20 +275,9 @@ const COPY = {
     fleetText: "The Access Prestige Taxi collection: premium, perfectly maintained vehicles designed for every need.",
     vehicles: [
       {
-        title: "Audi Q6 e-tron",
-        subtitle: "100% electric · premium SUV",
-        img: photoQ6Real,
-        alt: "Audi Q6 e-tron Access Prestige Taxi",
-        details: [
-          "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
-          "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
-          "Perfect for station transfers, airport runs and business appointments across Charente-Maritime.",
-        ],
-      },
-      {
         title: "BMW iX1",
         subtitle: "100% electric · 5 seats",
-        img: photoBmwReal,
+        img: photoBmwReal.url,
         alt: "BMW iX1 100% electric Access Prestige Taxi",
         details: [
           "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
@@ -289,9 +286,20 @@ const COPY = {
         ],
       },
       {
+        title: "Audi Q6 e-tron",
+        subtitle: "100% electric · premium SUV",
+        img: photoAudiReal.url,
+        alt: "Audi Q6 e-tron Access Prestige Taxi",
+        details: [
+          "A premium, fully electric SUV with strong range for long-distance and inter-city journeys.",
+          "A spacious, upscale cabin designed for comfort on business and private trips.",
+          "Ideal for chauffeur services and demanding business travel.",
+        ],
+      },
+      {
         title: "Mercedes V-Class",
         subtitle: "8 seats · group transport",
-        img: photoVanReal,
+        img: photoVanReal.url,
         alt: "Mercedes V-Class 8-seat Access Prestige Taxi",
         details: [
           "A premium 8-seat van, the ideal solution for groups, families and team transfers.",
@@ -487,8 +495,8 @@ function LearnMoreToggle({
         aria-expanded={isOpen}
         className={
           variant === "solid"
-            ? "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold border border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-            : "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
+            ? "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+            : "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl border-2 border-primary px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
         }
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
@@ -502,8 +510,8 @@ function LearnMoreToggle({
             exit={{ opacity: 0, height: 0 }}
             className={
               variant === "solid"
-                ? "mt-5 space-y-2 overflow-hidden pt-5 text-left text-sm leading-relaxed text-white/80"
-                : "mt-5 space-y-2 overflow-hidden pt-5 text-left text-sm leading-relaxed text-muted-foreground"
+                ? "mt-5 space-y-2 overflow-hidden border-t border-white/20 pt-5 text-left text-sm leading-relaxed text-white/80"
+                : "mt-5 space-y-2 overflow-hidden border-t border-border pt-5 text-left text-sm leading-relaxed text-muted-foreground"
             }
           >
             {details.map((d) => (
@@ -537,12 +545,12 @@ function SplitPhotoCard({
   reverse?: boolean;
 }) {
   return (
-    <article className="group relative overflow-hidden rounded-[24px] border border-[#e0b866] bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
+    <article className="group relative overflow-hidden rounded-[24px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
       <div
         className={`grid min-h-[330px] md:min-h-[360px] ${reverse ? "md:grid-cols-[0.95fr_1.05fr]" : "md:grid-cols-[1.05fr_0.95fr]"}`}
       >
         <div className={`relative flex flex-col justify-center p-6 sm:p-8 ${reverse ? "md:order-2" : "md:order-1"}`}>
-          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
             <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
           </div>
           <h3 className="font-display text-2xl font-semibold leading-tight text-[#f6f0e5] sm:text-[28px]">{title}</h3>
@@ -596,7 +604,7 @@ function NotificationOptIn({ lang }: { lang: "fr" | "en" }) {
       type="button"
       onClick={handleClick}
       disabled={status === "granted" || status === "unsupported"}
-      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
+      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
     >
       <Bell className="h-3.5 w-3.5" aria-hidden="true" />
       {labels[status]}
@@ -643,7 +651,7 @@ function InstallAppToggle({ lang }: { lang: "fr" | "en" }) {
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         aria-expanded={isOpen}
-        className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold border border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+        className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full btn-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
       >
         {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
@@ -654,7 +662,7 @@ function InstallAppToggle({ lang }: { lang: "fr" | "en" }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-5 grid gap-5 overflow-hidden pt-5 text-left sm:grid-cols-2"
+            className="mt-5 grid gap-5 overflow-hidden border-t border-white/20 pt-5 text-left sm:grid-cols-2"
           >
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-[#e0b866]">Android</p>
@@ -701,20 +709,20 @@ function PhotoTopCard({
   children?: ReactNode;
 }) {
   return (
-    <article className="group overflow-hidden rounded-[22px] border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+    <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/80 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
       <div className="relative h-48 overflow-hidden sm:h-56">
         <img
           src={image}
           alt={alt}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.035]"
+          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
         />
         <div
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.02),rgba(3,10,20,0.18)_58%,rgba(3,10,20,0.48))]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.82))]"
           aria-hidden="true"
         />
-        <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#07111f]/90 backdrop-blur-sm">
+        <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#e0b866] bg-[#07111f]/90 backdrop-blur-sm">
           <Icon className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
         </div>
       </div>
@@ -741,7 +749,7 @@ function CompactPhotoCard({
   text: string;
 }) {
   return (
-    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] border border-[#e0b866] bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
+    <article className="group relative min-h-[190px] overflow-hidden rounded-[20px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_14px_40px_rgba(0,0,0,0.3)]">
       <img
         src={image}
         alt={alt}
@@ -754,7 +762,7 @@ function CompactPhotoCard({
         aria-hidden="true"
       />
       <div className="relative h-full p-4 sm:p-5">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
           <Icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
         </div>
         <h3 className="mt-5 font-display text-lg font-semibold text-[#f6f0e5]">{title}</h3>
@@ -771,170 +779,95 @@ function Index() {
   const c = lang === "en" ? COPY.en : COPY.fr;
   const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
-  const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
-  const [heroMenuOpen, setHeroMenuOpen] = useState(false);
-  const [reserveMenuOpen, setReserveMenuOpen] = useState(false);
+  const pillars = lang === "en" ? HERO_PILLARS_EN : HERO_PILLARS_FR;
 
   return (
-    <main className="homepage-gold-borders">
-      <style>{`
-        .homepage-gold-borders article {
-          border: 2px solid #e0b866 !important;
-        }
-        .homepage-gold-borders button,
-        .homepage-gold-borders a.btn-gold,
-        .homepage-gold-borders a[href^="tel:"],
-        .homepage-gold-borders a[href="/avis"] {
-          border: 2px solid #e0b866 !important;
-        }
-      `}</style>
+    <main>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
-      {/* 1. HERO — nouvelle image Q6 / BMW iX1 / V-Class avec logos visibles */}
-      <section className="relative isolate overflow-hidden bg-black pt-[76px] sm:pt-[84px] lg:pt-[92px]">
-        <div className="relative w-full">
-          <picture>
-            <source media="(max-width: 767px)" srcSet={heroCarsMobile} />
-            <img
-              src={heroCars}
-              alt={
-                lang === "en"
-                  ? "Access Prestige Taxi — Audi Q6, BMW iX1 and Mercedes V-Class with Access Prestige logos"
-                  : "Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
-              }
-              fetchPriority="high"
-              loading="eager"
-              width={1536}
-              height={600}
-              className="block h-auto w-full object-contain object-center"
-            />
-          </picture>
+      {/* 1. HERO — uniquement le contenu prévu sur le document */}
+      <section className="relative isolate overflow-hidden border-b border-border bg-black">
+        <div className="relative h-[42svh] min-h-[300px] max-h-[620px] sm:h-[48vh] md:h-[54vh] lg:h-[60vh] lg:max-h-[720px]">
+          <img
+            src={lang === "en" ? heroCarsEn : heroCars}
+            alt={
+              lang === "en"
+                ? "Access Prestige Taxi — premium vehicles in Charente-Maritime"
+                : "Access Prestige Taxi — véhicules premium en Charente-Maritime"
+            }
+            fetchPriority="high"
+            loading="eager"
+            width={1376}
+            height={768}
+            className="h-full w-full object-contain object-center"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.18)_55%,rgba(0,0,0,0.9)_100%)]" />
+        </div>
 
-          {/* Bouton opaque "Réserver" qui recouvre le bouton dessiné dans la photo */}
-          <div className="absolute left-[35%] top-[34%] flex h-[8%] w-[30%] items-center justify-center">
-            <button
-              type="button"
-              onClick={() => setHeroMenuOpen((open) => !open)}
-              aria-expanded={heroMenuOpen}
-              className="btn-gold h-full w-full rounded-full border border-[#e0b866] text-[11px] font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] sm:text-sm"
-            >
-              {c.reserveCta}
-            </button>
-          </div>
-          {heroMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40 bg-black/60"
-                onClick={() => setHeroMenuOpen(false)}
-                aria-hidden="true"
-              />
-              <div className="fixed left-1/2 top-1/2 z-50 w-64 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.45)]">
+        <div className="relative bg-black px-5 pb-14 pt-8 sm:px-6 sm:pb-18 sm:pt-10 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+              <h1 className="font-display text-3xl font-semibold uppercase leading-tight text-white sm:text-4xl md:text-5xl text-balance">
+                {c.h1}
+              </h1>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary sm:text-base">
+                {c.tagline}
+              </p>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{c.lead}</p>
+
+              <div className="relative z-20 mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link
                   to="/reserver"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                  className="relative z-20 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl btn-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
                 >
-                  {c.reserveCta}
+                  {c.ctaBook} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-                <a
-                  href="tel:0603444863"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.callPrefix} Alain
-                </a>
-                <a
-                  href="tel:0650260015"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.callPrefix} Patricia
-                </a>
-              </div>
-            </>
-          )}
-          <a
-            href="#services"
-            aria-label="Découvrir nos services"
-            className="absolute left-[35%] top-[44%] h-[7%] w-[30%]"
-          />
-        </div>
-      </section>
-
-      {/* 2. VOTRE CONFORT — texte de présentation à la place des pictogrammes */}
-      <section className="bg-[#07111f] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <div className="mx-auto max-w-5xl text-center">
-          <Reveal>
-            <h2 className="font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl lg:text-5xl">
-              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
-            </h2>
-            <p className="mx-auto mt-5 max-w-4xl text-base leading-relaxed text-white/75 sm:text-lg">
-              {lang === "en"
-                ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
-            </p>
-
-            <div className="relative mt-7 flex flex-col items-center">
-              <button
-                type="button"
-                onClick={() => setReserveMenuOpen((open) => !open)}
-                aria-expanded={reserveMenuOpen}
-                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full btn-gold border border-[#e0b866] px-7 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-              >
-                {lang === "en" ? "Book" : "Réserver"}
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${reserveMenuOpen ? "rotate-180" : ""}`}
-                  aria-hidden="true"
-                />
-              </button>
-
-              <AnimatePresence initial={false}>
-                {reserveMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, height: 0 }}
-                    animate={{ opacity: 1, y: 0, height: "auto" }}
-                    exit={{ opacity: 0, y: -8, height: 0 }}
-                    className="mt-3 w-full max-w-sm overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] p-2 shadow-[0_16px_45px_rgba(0,0,0,0.45)]"
+                {DRIVERS.map((d) => (
+                  <a
+                    key={d.tel}
+                    href={`tel:${d.tel}`}
+                    aria-label={`${c.callPrefix} ${d.name} — ${d.display}`}
+                    className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-xl border-2 border-primary bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
                   >
-                    <Link
-                      to="/reserver"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "1. Book online" : "1. Réserver en ligne"}
-                    </Link>
-                    <a
-                      href="tel:0603444863"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "2. Call Alain" : "2. Appeler Alain"}
-                    </a>
-                    <a
-                      href="tel:0650260015"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "3. Call Patricia" : "3. Appeler Patricia"}
-                    </a>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                    <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
+                    <span className="flex flex-col items-start leading-tight">
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/60">
+                        {c.callPrefix} {d.name}
+                      </span>
+                      <span className="text-sm tabular-nums">{d.display}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
 
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
-              {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
-                (value) => (
-                  <span key={value}>✓ {value}</span>
-                ),
-              )}
-            </div>
-          </Reveal>
+              <a
+                href="#services"
+                className="relative z-20 mt-5 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border-2 border-primary bg-black/70 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm transition hover:bg-primary hover:text-black focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-black"
+              >
+                {lang === "en" ? "Discover our services" : "Découvrir nos services"}
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </a>
+
+              <ul className="mt-7 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+                {pillars.map((p, i) => (
+                  <li key={p.label} className="flex items-center gap-6">
+                    <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-white/85">
+                      <p.icon className="h-4 w-4 text-primary" aria-hidden="true" />
+                      {p.label}
+                    </span>
+                    {i < pillars.length - 1 && (
+                      <span className="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true" />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* 3. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
-      <section id="services" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* 2. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
+      <section id="services" className="scroll-mt-24 border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -970,8 +903,8 @@ function Index() {
         </div>
       </section>
 
-      {/* 4. NOTRE FLOTTE */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* 3. NOTRE FLOTTE */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1015,8 +948,8 @@ function Index() {
         </div>
       </section>
 
-      {/* 5. AVIS CLIENTS */}
-      <section id="avis" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* 4. AVIS CLIENTS */}
+      <section id="avis" className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1039,7 +972,7 @@ function Index() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
                   to="/avis"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
                 >
                   {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1048,7 +981,7 @@ function Index() {
               </div>
             </SplitPhotoCard>
           </div>
-          <div className="mt-6 rounded-[22px] bg-black p-5 sm:p-7">
+          <div className="mt-6 rounded-[22px] border border-[#c99b4a]/60 bg-black p-5 sm:p-7">
             <ClientTrust>
               <div className="text-black [&_p]:!text-black [&_blockquote]:!text-black [&_label]:!text-black [&_h3]:!text-black [&_h4]:!text-black [&_li]:!text-black [&_input]:!text-black [&_textarea]:!text-black [&_select]:!text-black [&_option]:text-black">
                 <ReviewForm />
@@ -1058,8 +991,8 @@ function Index() {
         </div>
       </section>
 
-      {/* 6. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* 5. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1087,23 +1020,23 @@ function Index() {
               },
             ].map(({ step, image }, i) => (
               <Reveal as="div" key={step.s} delay={i * 0.05}>
-                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#e0b866] bg-[#07111f]">
+                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#c99b4a]/75 bg-[#07111f]">
                   <img
                     src={image}
                     alt={step.t}
                     loading="lazy"
-                    className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.08] contrast-[1.06] saturate-[1.05]" : ""}`}
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
                   />
                   <div
-                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.78),rgba(3,10,20,0.38)_50%,rgba(3,10,20,0.10))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"}`}
+                    className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"
                     aria-hidden="true"
                   />
                   <div className="relative flex h-full flex-col p-5">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#e0b866]">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e0b866] text-sm font-semibold text-[#e0b866]">
                       {step.s}
                     </span>
                     <div className="mt-auto">
-                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
+                      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
                         <step.icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
                       </div>
                       <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{step.t}</h3>
@@ -1121,7 +1054,7 @@ function Index() {
       </section>
 
       {/* 6. SUIVI & ESPACE CLIENT */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1197,7 +1130,7 @@ function Index() {
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Link
                     to="/client/login"
-                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
                   >
                     {lang === "en" ? "Access my client area" : "Accéder à l'espace client"}{" "}
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1229,7 +1162,7 @@ function Index() {
       </section>
 
       {/* 7. GUIDE & ACTUALITÉS */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      <section className="border-t border-[#c99b4a]/30 bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
@@ -1240,7 +1173,7 @@ function Index() {
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.05}>
-                <article className="group overflow-hidden rounded-[22px] border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+                <article className="group overflow-hidden rounded-[22px] border border-[#c99b4a]/75 bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative h-48 overflow-hidden">
                       <img
@@ -1254,7 +1187,7 @@ function Index() {
                         className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.76))]"
                         aria-hidden="true"
                       />
-                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
+                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#e0b866] bg-[#07111f]/90">
                         <MapPin className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
                       </div>
                     </div>
