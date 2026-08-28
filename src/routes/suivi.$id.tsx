@@ -155,6 +155,37 @@ const PREMIUM_CSS = `
     .suivi-completed-grid { grid-template-columns:1fr; }
     .suivi-bottom-help { grid-template-columns:1fr; }
   }
+
+  /* ── Mobile-first final theme ─────────────────────────────────────────── */
+  .suivi-root { padding: 0 10px max(18px, env(safe-area-inset-bottom, 18px)); }
+  .suivi-shell { max-width: 520px; }
+  .suivi-topbar { min-height: 62px; padding: 8px 2px; }
+  .suivi-brand { gap: 8px; font-size: 12px; }
+  .suivi-brand-mark { width: 38px; height: 38px; font-size: 16px; }
+  .suivi-titlebar { padding: 14px 0 10px; }
+  .suivi-titlebar h1 { font-size: 20px; }
+  .suivi-titlebar p { font-size: 10px; line-height: 1.4; }
+  .suivi-outline { min-height: 42px; padding: 9px 11px; border-color:#c99b4a; }
+  .suivi-main-grid { display:block; }
+  .suivi-card { border-radius: 12px; }
+  .suivi-timeline { padding: 14px 9px; overflow:hidden; }
+  .suivi-timeline-track { grid-template-columns: repeat(5, minmax(66px, 1fr)); overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+  .suivi-timeline-track::-webkit-scrollbar { display:none; }
+  .suivi-step-dot { width:32px; height:32px; }
+  .suivi-step-label { font-size:9px; }
+  .suivi-details-grid { display:block; }
+  .suivi-route { padding:14px; margin-bottom:10px; }
+  .suivi-route-row { min-height:48px; align-items:flex-start; }
+  .suivi-route-value { font-size:12px; line-height:1.35; }
+  .suivi-contact-row { grid-template-columns:1fr; }
+  .suivi-gold-btn, .suivi-dark-btn { min-height:46px; font-size:11px; }
+  .suivi-chat-card { margin-top:10px; }
+  .suivi-side-stack { gap:10px; }
+  .suivi-bottom-help { grid-template-columns:1fr; }
+  @media (min-width: 901px) {
+    .suivi-root { padding:0 20px 30px; }
+    .suivi-shell { max-width:1280px; }
+  }
 `;
 
 // ─── Types ─────────────────────────────────────────────────────────────────────────
