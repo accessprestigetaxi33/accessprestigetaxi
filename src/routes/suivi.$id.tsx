@@ -20,7 +20,6 @@ import {
   CalendarPlus,
   Share2,
   WifiOff,
-  Car,
 } from "lucide-react";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { getReservationForFinPublic } from "@/lib/reservation.functions";
@@ -109,7 +108,13 @@ const PREMIUM_CSS = `
   .suivi-step.done .suivi-step-dot, .suivi-step.active .suivi-step-dot { background:#e0b866; color:#050a10; }
   .suivi-step-label { font-size:10px; line-height:1.25; color:rgba(246,240,229,.65); }
   .suivi-step.active .suivi-step-label { color:#e0b866; font-weight:800; }
-  .suivi-details-grid { display:grid; grid-template-columns:minmax(0,1fr) 190px; gap:10px; }
+  .suivi-details-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+  .suivi-driver-card { padding:14px; }
+  .suivi-driver-row { display:flex; align-items:center; gap:12px; }
+  .suivi-driver-symbol { width:46px; height:46px; flex:0 0 46px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; color:#e0b866; background:#050a10; }
+  .suivi-driver-name { font-size:15px; font-weight:800; color:#fff; }
+  .suivi-driver-role { margin-top:2px; font-size:10px; color:rgba(246,240,229,.58); }
+
   .suivi-route { padding:14px; }
   .suivi-route-row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid rgba(224,184,102,.16); }
   .suivi-route-row:last-child { border-bottom:0; }
@@ -155,36 +160,19 @@ const PREMIUM_CSS = `
     .suivi-completed-grid { grid-template-columns:1fr; }
     .suivi-bottom-help { grid-template-columns:1fr; }
   }
-
-  /* ── Mobile-first final theme ─────────────────────────────────────────── */
-  .suivi-root { padding: 0 10px max(18px, env(safe-area-inset-bottom, 18px)); }
-  .suivi-shell { max-width: 520px; }
-  .suivi-topbar { min-height: 62px; padding: 8px 2px; }
-  .suivi-brand { gap: 8px; font-size: 12px; }
-  .suivi-brand-mark { width: 38px; height: 38px; font-size: 16px; }
-  .suivi-titlebar { padding: 14px 0 10px; }
-  .suivi-titlebar h1 { font-size: 20px; }
-  .suivi-titlebar p { font-size: 10px; line-height: 1.4; }
-  .suivi-outline { min-height: 42px; padding: 9px 11px; border-color:#c99b4a; }
-  .suivi-main-grid { display:block; }
-  .suivi-card { border-radius: 12px; }
-  .suivi-timeline { padding: 14px 9px; overflow:hidden; }
-  .suivi-timeline-track { grid-template-columns: repeat(5, minmax(66px, 1fr)); overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
-  .suivi-timeline-track::-webkit-scrollbar { display:none; }
-  .suivi-step-dot { width:32px; height:32px; }
-  .suivi-step-label { font-size:9px; }
-  .suivi-details-grid { display:block; }
-  .suivi-route { padding:14px; margin-bottom:10px; }
-  .suivi-route-row { min-height:48px; align-items:flex-start; }
-  .suivi-route-value { font-size:12px; line-height:1.35; }
-  .suivi-contact-row { grid-template-columns:1fr; }
-  .suivi-gold-btn, .suivi-dark-btn { min-height:46px; font-size:11px; }
-  .suivi-chat-card { margin-top:10px; }
-  .suivi-side-stack { gap:10px; }
-  .suivi-bottom-help { grid-template-columns:1fr; }
-  @media (min-width: 901px) {
-    .suivi-root { padding:0 20px 30px; }
-    .suivi-shell { max-width:1280px; }
+  @media (max-width: 600px) {
+    .suivi-root { padding: 0 10px calc(18px + env(safe-area-inset-bottom, 0px)); }
+    .suivi-shell { width: 100%; }
+    .suivi-topbar { padding: 0 2px; }
+    .suivi-titlebar { display: block; }
+    .suivi-titlebar > .suivi-outline { width: 100%; margin-bottom: 10px; }
+    .suivi-titlebar h1 { font-size: 18px; text-align: left; }
+    .suivi-titlebar p { text-align: left; }
+    .suivi-timeline { overflow-x: auto; }
+    .suivi-timeline-track { min-width: 520px; }
+    .suivi-route-value { font-size: 13px; }
+    .suivi-contact-row { grid-template-columns: 1fr; }
+    .suivi-driver-row { align-items: flex-start; }
   }
 `;
 
@@ -2150,6 +2138,44 @@ function SuiviPage() {
                 </div>
               </section>
 
+              {!isCancelled && (
+                <section className="suivi-card suivi-driver-card" style={{ marginBottom: 10 }}>
+                  <h2 className="suivi-section-title">{locale === "en" ? "Your driver" : "Votre chauffeur"}</h2>
+                  <div className="suivi-driver-row">
+                    <div className="suivi-driver-symbol" aria-hidden="true">
+                      <span style={{ fontSize: 20 }}>✦</span>
+                    </div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div className="suivi-driver-name">{reservation.driver_name || assignedDriver.name}</div>
+                      <div className="suivi-driver-role">
+                        {locale === "en" ? "Partner driver" : "Chauffeur partenaire"}
+                      </div>
+                    </div>
+                    {!isCompleted && (
+                      <a
+                        className="suivi-outline"
+                        href={`tel:${josePhone}`}
+                        aria-label={locale === "en" ? "Call driver" : "Appeler le chauffeur"}
+                      >
+                        <Phone size={14} />
+                      </a>
+                    )}
+                  </div>
+                  {!isCompleted && (
+                    <div className="suivi-contact-row">
+                      <a className="suivi-gold-btn" href={`tel:${josePhone}`}>
+                        <Phone size={14} />
+                        {locale === "en" ? "Call driver" : "Appeler le chauffeur"}
+                      </a>
+                      <a className="suivi-dark-btn" href="#suivi-chat">
+                        <MessageCircle size={14} />
+                        {locale === "en" ? "Message" : "Message"}
+                      </a>
+                    </div>
+                  )}
+                </section>
+              )}
+
               <section className="suivi-details-grid">
                 <div className="suivi-card suivi-route">
                   <h2 className="suivi-section-title">
@@ -2211,12 +2237,6 @@ function SuiviPage() {
                   )}
                   <div className="suivi-contact-row">
                     {!isCompleted && (
-                      <a className="suivi-gold-btn" href={`tel:${josePhone}`}>
-                        <Phone size={14} />
-                        {t("suivi.call_jose").replace(/Patricia/g, assignedDriver.name)}
-                      </a>
-                    )}
-                    {!isCompleted && (
                       <a
                         className="suivi-dark-btn"
                         href={`https://wa.me/${josePhone.replace(/^0/, "33")}`}
@@ -2232,7 +2252,7 @@ function SuiviPage() {
               </section>
 
               {!isCompleted && !isCancelled && (
-                <div className="suivi-chat-card">
+                <div id="suivi-chat" className="suivi-chat-card">
                   <ChatSection suiviKey={id} reservationId={reservation.id} driverName={assignedDriver.name} t={t} />
                 </div>
               )}
