@@ -31,7 +31,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero_clean.png";
+import heroCars from "@/assets/hero-clean-no-text-q6-bmw-van.webp";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -789,7 +789,7 @@ function Index() {
 
       {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
       <section className="relative isolate overflow-hidden bg-black">
-        <div className="relative w-full aspect-[1145/570] min-h-[500px] sm:min-h-0">
+        <div className="relative w-full aspect-[10/12] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
           <img
             src={heroCars}
             alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
@@ -797,11 +797,11 @@ function Index() {
             loading="eager"
             width={1145}
             height={570}
-            className="absolute inset-0 h-full w-full object-cover object-center"
+            className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-contain"
           />
 
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
-          <div className="absolute inset-x-0 top-[17%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
+          <div className="absolute inset-x-0 top-[10%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
             <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
               {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
@@ -813,7 +813,7 @@ function Index() {
           </div>
 
           {/* Un seul bouton RÉSERVER dans le hero */}
-          <div className="absolute left-1/2 top-[35%] z-20 w-[min(270px,52vw)] -translate-x-1/2">
+          <div className="absolute left-1/2 top-[42%] z-20 w-[min(300px,78vw)] -translate-x-1/2 sm:top-[35%]">
             <button
               type="button"
               onClick={() => setHeroMenuOpen((open) => !open)}
