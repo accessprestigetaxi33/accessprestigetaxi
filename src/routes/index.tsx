@@ -469,10 +469,12 @@ function LearnMoreToggle({
   lang,
   details,
   variant = "outline",
+  labelOverride,
 }: {
   lang: "fr" | "en";
   details: readonly string[];
   variant?: "outline" | "solid";
+  labelOverride?: { fr: string; en: string };
 }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -487,7 +489,15 @@ function LearnMoreToggle({
             : "mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-primary transition hover:bg-primary hover:text-primary-foreground"
         }
       >
-        {isOpen ? (lang === "en" ? "Show less" : "Voir moins") : lang === "en" ? "Learn more" : "En savoir plus"}
+        {isOpen
+          ? lang === "en"
+            ? "Show less"
+            : "Voir moins"
+          : labelOverride
+            ? labelOverride[lang]
+            : lang === "en"
+              ? "Learn more"
+              : "En savoir plus"}
         <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       <AnimatePresence initial={false}>
@@ -1023,7 +1033,12 @@ function Index() {
                       )}
 
                       <div className="mt-auto pt-2">
-                        <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={card.details} variant="solid" />
+                        <LearnMoreToggle
+                          lang={lang === "en" ? "en" : "fr"}
+                          details={card.details}
+                          variant="solid"
+                          labelOverride={{ fr: "Installation app", en: "App installation" }}
+                        />
                       </div>
                     </div>
                   </article>
