@@ -80,9 +80,6 @@ function isSuiviExpired(reservation: any): boolean {
   const expiryMs = refMs + SUIVI_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
   return Date.now() > expiryMs;
 }
-const VEHICLE_MODEL = "Mercedes-Benz";
-const VEHICLE_COLOR = "Noir";
-const VEHICLE_PLATE = "HF-450-JG";
 
 const PREMIUM_CSS = `
   * { box-sizing: border-box; }
@@ -119,11 +116,6 @@ const PREMIUM_CSS = `
   .suivi-route-icon { color:#e0b866; flex:0 0 auto; }
   .suivi-route-label { font-size:10px; color:rgba(246,240,229,.55); text-transform:uppercase; letter-spacing:.05em; }
   .suivi-route-value { font-size:12px; color:#fff; font-weight:700; margin-top:2px; }
-  .suivi-vehicle-mini { overflow:hidden; padding:0; }
-  .suivi-vehicle-mini img { width:100%; height:112px; display:block; object-fit:cover; object-position:center; }
-  .suivi-vehicle-info { padding:10px; }
-  .suivi-vehicle-info strong { display:block; font-size:12px; }
-  .suivi-vehicle-info span { display:block; font-size:10px; color:rgba(246,240,229,.58); margin-top:3px; }
   .suivi-contact-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
   .suivi-gold-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border:1px solid #c99b4a; border-radius:7px; background:#e0b866; color:#080b0d; text-decoration:none; font-size:10px; font-weight:900; }
   .suivi-dark-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border:1px solid #c99b4a; border-radius:7px; background:#050a10; color:#e0b866; text-decoration:none; font-size:10px; font-weight:900; }
@@ -157,7 +149,6 @@ const PREMIUM_CSS = `
     .suivi-titlebar p { font-size:10px; }
     .suivi-main-grid { grid-template-columns:1fr; }
     .suivi-details-grid { grid-template-columns:1fr; }
-    .suivi-vehicle-mini img { height:155px; }
     .suivi-timeline-track { grid-template-columns:repeat(5, minmax(58px,1fr)); overflow-x:auto; padding-bottom:3px; }
     .suivi-timeline-track::before { left:9%; right:9%; }
     .suivi-step-label { font-size:9px; }
@@ -2207,26 +2198,6 @@ function SuiviPage() {
                     )}
                   </div>
                 </div>
-
-                {reservation.status &&
-                  ["accepted", "en_route", "arrived", "completed"].includes(reservation.status) && (
-                    <div className="suivi-card suivi-vehicle-mini">
-                      <img
-                        src="/vehicle-jose.jpg"
-                        alt={t("suivi.car_alt")}
-                        onError={(e) => {
-                          (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-                        }}
-                      />
-                      <div className="suivi-vehicle-info">
-                        <strong>{VEHICLE_MODEL}</strong>
-                        <span>
-                          {VEHICLE_COLOR} · {VEHICLE_PLATE}
-                        </span>
-                        <span>{reservation.driver_name || assignedDriver.name}</span>
-                      </div>
-                    </div>
-                  )}
               </section>
 
               {!isCompleted && !isCancelled && (
