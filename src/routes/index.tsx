@@ -1002,40 +1002,6 @@ function Index() {
               );
             })}
           </div>
-
-          {/* Raccourcis de la maquette mobile */}
-          <div className="mt-4 grid grid-cols-1 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f] sm:grid-cols-2">
-            {[
-              {
-                icon: Stethoscope,
-                label: lang === "en" ? "COVERED MEDICAL TRANSPORT" : "TRANSPORT MÉDICAL CONVENTIONNÉ",
-                to: "/#services",
-              },
-              { icon: User, label: lang === "en" ? "PRESTIGE & PRIVATE" : "PRESTIGE & PRIVÉ", to: "/#services" },
-              {
-                icon: Bell,
-                label: lang === "en" ? "TRACKING & CLIENT AREA" : "SUIVI & ESPACE CLIENT",
-                to: "/client/login",
-                client: true,
-              },
-              { icon: Smartphone, label: lang === "en" ? "WEB APPLICATION" : "APPLICATION WEB", to: "/reserver" },
-            ].map(({ icon: Icon, label, to, client }) => (
-              <Link
-                key={label}
-                to={to}
-                className="flex min-h-[54px] items-center gap-3 border-b border-r border-[#e0b866]/60 px-4 text-xs font-medium uppercase text-white transition hover:bg-[#e0b866]/10 sm:last:border-b-0"
-              >
-                <Icon className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                <span className="flex-1">{label}</span>
-                {client && (
-                  <span className="rounded-md border-2 border-[#e0b866] bg-[#e0b866] px-3 py-1 text-[10px] font-semibold text-black">
-                    {lang === "en" ? "CLIENT AREA" : "ESPACE CLIENT"}
-                  </span>
-                )}
-                <ArrowRight className="h-4 w-4 text-[#e0b866]" aria-hidden="true" />
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
