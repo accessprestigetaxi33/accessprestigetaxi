@@ -48,9 +48,6 @@ import valuePunctuality from "@/assets/value-punctuality.webp";
 import valueSecurity from "@/assets/value-security.webp";
 import valueDiscretion from "@/assets/value-discretion.webp";
 import valueComfort from "@/assets/value-comfort.webp";
-import guideNice from "@/assets/guide-nice.webp";
-import guideMonaco from "@/assets/guide-monaco.webp";
-import guideCannes from "@/assets/guide-cannes.webp";
 
 const BLOG_PICKS = GUIDE_HIGHLIGHTS;
 const SLOGAN_FR = "L'excellence à chaque trajet";
@@ -762,7 +759,29 @@ function CompactPhotoCard({
   );
 }
 
-const GUIDE_IMAGES = [guideNice, guideMonaco, guideCannes];
+const GUIDE_IMAGES_BY_CITY: Record<string, { src: string; alt: string }> = {
+  "la rochelle": {
+    src: "https://upload.wikimedia.org/wikipedia/commons/3/30/La_Rochelle_Vieux-Port.JPG",
+    alt: "Vieux-Port de La Rochelle, Charente-Maritime",
+  },
+  rochefort: {
+    src: "https://upload.wikimedia.org/wikipedia/commons/3/3b/253_-_La_Corderie_Royale_-_Rochefort.jpg",
+    alt: "Corderie Royale de Rochefort, Charente-Maritime",
+  },
+  royan: {
+    src: "https://upload.wikimedia.org/wikipedia/commons/1/18/Port_Royan.jpg",
+    alt: "Port de Royan, Charente-Maritime",
+  },
+};
+
+function guideImageForCity(city: string) {
+  const key = city
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  return GUIDE_IMAGES_BY_CITY[key];
+}
 
 function Index() {
   const { lang } = useI18n();
@@ -1114,37 +1133,55 @@ function Index() {
 
       <section className="bg-[#07111f] px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Guide & </span>
-              <span className="text-[#e0b866]">actualités</span>
-            </h2>
-          </Reveal>
+          <div className="flex items-center justify-between gap-4">
+            <Reveal>
+              <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
+                <span className="text-white">Guide & </span>
+                <span className="text-[#e0b866]">actualités</span>
+              </h2>
+            </Reveal>
+            <Link
+              to="/guide"
+              className="shrink-0 inline-flex min-h-[42px] items-center gap-2 rounded-full border-2 border-[#e0b866] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black sm:px-5 sm:text-xs"
+            >
+              {lang === "en" ? "View the guide" : "Voir le guide"}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          </div>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {BLOG_PICKS.map((e, i) => (
-              <article
-                key={e.slug}
-                className="group overflow-hidden rounded-[18px] border-2 border-[#e0b866] bg-[#07111f]"
-              >
-                <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
-                  <div className="relative h-44 overflow-hidden">
-                    <img
-                      src={GUIDE_IMAGES[i % GUIDE_IMAGES.length]}
-                      alt={`${e.name} — ${e.city}`}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-lg font-semibold text-white">{e.name}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-white/70">{lang === "en" ? e.en : e.fr}</p>
-                    <span className="mt-4 inline-flex rounded-full border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-xs font-semibold uppercase text-black">
-                      {lang === "en" ? "Read article" : "Lire l’article"}
-                    </span>
-                  </div>
-                </Link>
-              </article>
-            ))}
+            {BLOG_PICKS.map((e) => {
+              const guideImage = guideImageForCity(e.city);
+              return (
+                <article
+                  key={e.slug}
+                  className="group overflow-hidden rounded-[18px] border-2 border-[#e0b866] bg-[#07111f]"
+                >
+                  <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
+                    <div className="relative h-44 overflow-hidden">
+                      {guideImage ? (
+                        <img
+                          src={guideImage.src}
+                          alt={guideImage.alt}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-[#0b1725] px-6 text-center text-sm text-white/70">
+                          {e.city}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-display text-lg font-semibold text-white">{e.name}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-white/70">{lang === "en" ? e.en : e.fr}</p>
+                      <span className="mt-4 inline-flex rounded-full border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-xs font-semibold uppercase text-black">
+                        {lang === "en" ? "Read article" : "Lire l’article"}
+                      </span>
+                    </div>
+                  </Link>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
