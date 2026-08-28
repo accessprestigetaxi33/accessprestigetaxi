@@ -1037,7 +1037,7 @@ function Index() {
                           lang={lang === "en" ? "en" : "fr"}
                           details={card.details}
                           variant="solid"
-                          labelOverride={{ fr: "Installation app", en: "App installation" }}
+                          labelOverride={i === 3 ? { fr: "Installation app", en: "App installation" } : undefined}
                         />
                       </div>
                     </div>

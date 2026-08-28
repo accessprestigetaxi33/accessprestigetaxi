@@ -381,7 +381,7 @@ const HOME_SOCIAL_EN = {
   url: ogPageUrl("/", "en"),
 };
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/blog/")({
   component: Index,
   validateSearch: (search: Record<string, unknown>): { lang?: "en" | "fr" } => ({
     lang: search["lang"] === "en" ? "en" : search["lang"] === "fr" ? "fr" : undefined,
