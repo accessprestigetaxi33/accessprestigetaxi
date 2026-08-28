@@ -14,11 +14,9 @@ import {
   Car,
   CheckCircle2,
   ChevronDown,
-  ChevronRight,
   Clock,
   Crown,
   Gem,
-  Globe,
   HeartHandshake,
   MapPin,
   Phone,
@@ -33,7 +31,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-clean-no-text-q6-bmw-van.webp";
+import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -537,26 +535,20 @@ function SplitPhotoCard({
   reverse?: boolean;
 }) {
   return (
-    <article className="group relative overflow-hidden rounded-[12px] border-2 border-[#e0b866] bg-[#07111f] shadow-[0_10px_28px_rgba(0,0,0,0.38)] sm:rounded-[24px]">
+    <article className="group relative overflow-hidden rounded-[24px] border border-[#e0b866] bg-[#07111f] shadow-[0_18px_55px_rgba(0,0,0,0.38)]">
       <div
-        className={`grid min-h-[190px] grid-cols-[38%_62%] md:min-h-[360px] md:grid-cols-[1.05fr_0.95fr] ${reverse ? "md:grid-cols-[0.95fr_1.05fr]" : ""}`}
+        className={`grid min-h-[330px] md:min-h-[360px] ${reverse ? "md:grid-cols-[0.95fr_1.05fr]" : "md:grid-cols-[1.05fr_0.95fr]"}`}
       >
-        <div
-          className={`relative flex flex-col justify-center p-3 sm:p-8 ${reverse ? "md:order-2" : "md:order-1"} max-md:order-2 max-md:p-3`}
-        >
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)] sm:mb-6 sm:h-14 sm:w-14">
-            <Icon className="h-5 w-5 text-[#e0b866] sm:h-7 sm:w-7" aria-hidden="true" />
+        <div className={`relative flex flex-col justify-center p-6 sm:p-8 ${reverse ? "md:order-2" : "md:order-1"}`}>
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#07111f] shadow-[0_8px_24px_rgba(0,0,0,0.35)]">
+            <Icon className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
           </div>
-          <h3 className="font-display text-sm font-semibold leading-tight text-[#f6f0e5] sm:text-[28px]">{title}</h3>
-          <div className="mt-2 h-px w-8 bg-[#e0b866] sm:mt-5 sm:w-12" aria-hidden="true" />
-          {lead && (
-            <p className="mt-2 max-w-md text-[11px] leading-relaxed text-white/70 sm:mt-5 sm:text-base">{lead}</p>
-          )}
+          <h3 className="font-display text-2xl font-semibold leading-tight text-[#f6f0e5] sm:text-[28px]">{title}</h3>
+          <div className="mt-5 h-px w-12 bg-[#e0b866]" aria-hidden="true" />
+          {lead && <p className="mt-5 max-w-md text-sm leading-relaxed text-white/70 sm:text-base">{lead}</p>}
           {children}
         </div>
-        <div
-          className={`relative min-h-[190px] overflow-hidden md:min-h-0 ${reverse ? "md:order-1" : "md:order-2"} max-md:order-1`}
-        >
+        <div className={`relative min-h-[270px] overflow-hidden md:min-h-0 ${reverse ? "md:order-1" : "md:order-2"}`}>
           <img
             src={image}
             alt={alt}
@@ -797,7 +789,7 @@ function Index() {
 
       {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
       <section className="relative isolate overflow-hidden bg-black">
-        <div className="relative w-full min-h-[720px] sm:aspect-[1145/570] sm:min-h-0">
+        <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
           <img
             src={heroCars}
             alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
@@ -805,15 +797,15 @@ function Index() {
             loading="eager"
             width={1145}
             height={570}
-            className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-contain"
           />
 
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
-          <div className="absolute inset-x-0 top-[9%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
-            <h1 className="font-display text-[30px] leading-tight font-semibold uppercase tracking-wide text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
+          <div className="absolute inset-x-0 top-[10%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
+            <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] sm:text-4xl md:text-5xl lg:text-6xl">
               {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
-            <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-base md:text-lg">
+            <p className="mt-3 max-w-3xl text-sm text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-base md:text-lg">
               {lang === "en"
                 ? "Private transfers · Covered medical transport · Chauffeur service"
                 : "Transferts privés · Transport médical conventionné · Mise à disposition"}
@@ -821,7 +813,7 @@ function Index() {
           </div>
 
           {/* Un seul bouton RÉSERVER dans le hero */}
-          <div className="absolute left-1/2 top-[64%] z-20 w-[min(300px,86vw)] -translate-x-1/2 sm:top-[35%]">
+          <div className="absolute left-1/2 top-[42%] z-20 w-[min(300px,78vw)] -translate-x-1/2 sm:top-[35%]">
             <button
               type="button"
               onClick={() => setHeroMenuOpen((open) => !open)}
@@ -846,49 +838,23 @@ function Index() {
                   <Link
                     to="/reserver"
                     onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[58px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-left text-white transition hover:bg-[#e0b866] hover:text-black"
+                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
                   >
-                    <Globe
-                      className="h-5 w-5 shrink-0 text-[#e0b866] transition group-hover:text-black"
-                      aria-hidden="true"
-                    />
-                    <span className="flex-1">
-                      <span className="block text-xs font-semibold uppercase tracking-wider">
-                        {lang === "en" ? "BOOK ONLINE" : "RÉSERVER EN LIGNE"}
-                      </span>
-                      <span className="mt-0.5 block text-[11px] font-normal normal-case opacity-70">
-                        {lang === "en" ? "Book your ride in a few clicks" : "Réservez votre trajet en quelques clics"}
-                      </span>
-                    </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+                    {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
                   </Link>
                   <a
                     href="tel:0603444863"
                     onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[58px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-left text-white transition hover:bg-[#e0b866] hover:text-black"
+                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
                   >
-                    <Phone className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                    <span className="flex-1">
-                      <span className="block text-xs font-semibold uppercase tracking-wider">
-                        {lang === "en" ? "CALL ALAIN" : "APPELER ALAIN"}
-                      </span>
-                      <span className="mt-0.5 block text-[11px] font-normal opacity-70">06 03 44 48 63</span>
-                    </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+                    APPELER ALAIN – 06 03 44 48 63
                   </a>
                   <a
                     href="tel:0650260015"
                     onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[58px] items-center gap-3 px-4 py-3 text-left text-white transition hover:bg-[#e0b866] hover:text-black"
+                    className="flex min-h-[50px] items-center justify-center px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
                   >
-                    <Phone className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                    <span className="flex-1">
-                      <span className="block text-xs font-semibold uppercase tracking-wider">
-                        {lang === "en" ? "CALL PATRICIA" : "APPELER PATRICIA"}
-                      </span>
-                      <span className="mt-0.5 block text-[11px] font-normal opacity-70">06 50 26 00 15</span>
-                    </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+                    APPELER PATRICIA – 06 50 26 00 15
                   </a>
                 </motion.div>
               )}
@@ -897,59 +863,40 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. VOTRE CONFORT — carte unifiée icône / texte / valeurs */}
-      <section className="bg-[#07111f] px-5 py-5 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <div className="mx-auto max-w-5xl rounded-[14px] border-2 border-[#e0b866] px-4 py-5 sm:px-8 sm:py-7">
+      {/* 2. VOTRE CONFORT — texte de présentation à la place des pictogrammes */}
+      <section className="bg-[#07111f] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+        <div className="mx-auto max-w-5xl text-center">
           <Reveal>
-            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:gap-6 sm:text-left">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#e0b866]">
-                <HeartHandshake className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
-              </div>
+            <h2 className="font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl lg:text-5xl">
+              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
+            </h2>
+            <p className="mx-auto mt-5 max-w-4xl text-base leading-relaxed text-white/75 sm:text-lg">
+              {lang === "en"
+                ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+            </p>
 
-              <div className="flex-1">
-                <h2 className="font-display text-xl font-semibold text-[#e0b866] sm:text-2xl lg:text-3xl">
-                  {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
-                </h2>
-                <p className="mt-2 text-xs leading-relaxed text-white/80 sm:mt-3 sm:text-sm">
-                  {lang === "en"
-                    ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                    : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
-                </p>
-              </div>
-
-              <div className="mt-2 flex w-full items-stretch justify-between gap-2 border-t border-[#e0b866]/50 pt-4 sm:mt-0 sm:w-auto sm:gap-0 sm:border-0 sm:border-l sm:pt-0 sm:pl-6">
-                {(lang === "en"
-                  ? ["Elegance", "Discretion", "Excellence"]
-                  : ["Élégance", "Discrétion", "Exigence"]
-                ).map((value, i) => (
-                  <div
-                    key={value}
-                    className={`flex flex-1 flex-col items-center gap-1.5 px-1 sm:flex-none sm:px-4 ${
-                      i > 0 ? "border-l border-[#e0b866]/50" : ""
-                    }`}
-                  >
-                    <CheckCircle2 className="h-4 w-4 text-[#e0b866]" aria-hidden="true" />
-                    <span className="text-center text-[10px] font-semibold uppercase tracking-wide text-white sm:text-xs">
-                      {value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
+              {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
+                (value) => (
+                  <span key={value}>✓ {value}</span>
+                ),
+              )}
             </div>
           </Reveal>
         </div>
       </section>
 
       {/* 3. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
-      <section id="services" className="bg-[#07111f] py-6 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <section id="services" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
               <span className="text-white">Nos </span>
               <span className="text-[#e0b866]">engagements</span>
             </h2>
           </Reveal>
-          <div className="mt-4 grid grid-cols-2 gap-2 md:mt-6 md:grid-cols-2 md:gap-6">
+          <div className="mt-6 grid gap-5 md:grid-cols-2 md:gap-6">
             <Reveal>
               <SplitPhotoCard
                 image={medicalService}
@@ -973,120 +920,9 @@ function Index() {
                 <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[1].details} variant="solid" />
               </SplitPhotoCard>
             </Reveal>
-            <Reveal delay={0.16}>
-              <SplitPhotoCard
-                image={trackingPhone}
-                alt="Suivi et espace client"
-                icon={Bell}
-                title={lang === "en" ? "Trip tracking & client area" : "Suivi & espace client"}
-                lead={
-                  lang === "en"
-                    ? "Follow your booking and access your client area."
-                    : "Suivez votre réservation et accédez à votre espace client."
-                }
-              >
-                <Link
-                  to="/client/login"
-                  className="mt-3 inline-flex min-h-[36px] items-center justify-center rounded-full btn-gold border-2 border-[#e0b866] px-3 py-2 text-[10px] font-semibold uppercase text-black sm:mt-5 sm:px-5 sm:text-xs"
-                >
-                  {lang === "en" ? "Client area" : "Espace client"}
-                </Link>
-              </SplitPhotoCard>
-            </Reveal>
-            <Reveal delay={0.24}>
-              <SplitPhotoCard
-                image={appPhones}
-                alt="Application web Access Prestige Taxi"
-                icon={Smartphone}
-                title={lang === "en" ? "Web application" : "Application web"}
-                lead={
-                  lang === "en"
-                    ? "Install the web app on your phone."
-                    : "Installez l'application web sur votre téléphone."
-                }
-              >
-                <InstallAppToggle lang={lang === "en" ? "en" : "fr"} />
-              </SplitPhotoCard>
-            </Reveal>
           </div>
-
-          {/* Liste compacte — mêmes engagements sous forme de raccourcis */}
-          <Reveal delay={0.3}>
-            <div className="mt-4 overflow-hidden rounded-[14px] border-2 border-[#e0b866] md:mt-6">
-              <a
-                href="#services"
-                className="flex min-h-[52px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-white transition hover:bg-[#e0b866]/10"
-              >
-                <Stethoscope className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
-                  {engagements[0].title}
-                </span>
-                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
-              </a>
-              <div className="flex min-h-[52px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-white">
-                <Bell className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
-                  {lang === "en" ? "Trip tracking & client area" : "Suivi & espace client"}
-                </span>
-                <Link
-                  to="/client/login"
-                  className="mr-2 hidden shrink-0 rounded-full btn-gold border border-[#e0b866] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] sm:inline-flex"
-                >
-                  {lang === "en" ? "Client area" : "Espace client"}
-                </Link>
-                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
-              </div>
-              <a
-                href="#services"
-                className="flex min-h-[52px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-white transition hover:bg-[#e0b866]/10"
-              >
-                <BriefcaseBusiness className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
-                  {engagements[1].title}
-                </span>
-                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
-              </a>
-              <a
-                href="#services"
-                className="flex min-h-[52px] items-center gap-3 px-4 py-3 text-white transition hover:bg-[#e0b866]/10"
-              >
-                <Smartphone className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
-                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
-                  {lang === "en" ? "Web application" : "Application web"}
-                </span>
-                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
-              </a>
-              <Link
-                to="/client/login"
-                className="flex min-h-[48px] items-center justify-center gap-1.5 border-t border-[#e0b866]/50 btn-gold px-4 text-xs font-semibold uppercase tracking-wider text-black sm:hidden"
-              >
-                {lang === "en" ? "Client area" : "Espace client"}{" "}
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </Link>
-            </div>
-          </Reveal>
         </div>
       </section>
-
-      {/* Bandeau de valeurs — référence mobile */}
-      <div className="mx-4 mb-2 grid grid-cols-4 rounded-[12px] border-2 border-[#e0b866] bg-[#07111f] py-4 sm:hidden">
-        {[
-          { icon: Crown, label: lang === "en" ? "HIGH-END SERVICE" : "SERVICE HAUT DE GAMME" },
-          { icon: ShieldCheck, label: lang === "en" ? "SAFETY & COMFORT" : "SÉCURITÉ & CONFORT" },
-          { icon: User, label: lang === "en" ? "ABSOLUTE DISCRETION" : "DISCRÉTION ABSOLUE" },
-          { icon: Clock, label: lang === "en" ? "GUARANTEED PUNCTUALITY" : "PONCTUALITÉ GARANTIE" },
-        ].map(({ icon: Icon, label }) => (
-          <div
-            key={label}
-            className="flex min-w-0 flex-col items-center justify-center border-r border-[#e0b866]/50 px-1 last:border-r-0"
-          >
-            <Icon className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
-            <span className="mt-2 text-center text-[8px] font-semibold uppercase leading-tight text-white">
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
 
       {/* 4. NOTRE FLOTTE */}
       <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
@@ -1239,7 +1075,7 @@ function Index() {
       </section>
 
       {/* 6. SUIVI & ESPACE CLIENT */}
-      <section className="hidden bg-[#07111f] py-14 sm:block sm:py-16 lg:py-20">
+      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
