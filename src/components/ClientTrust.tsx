@@ -13,6 +13,33 @@ type Review = {
   created_at: string;
 };
 
+const IMPORTED_REVIEWS: Review[] = [
+  {
+    id: "imported-marie-souris-2026-08-13",
+    author_name: "Marie Souris",
+    note: 5,
+    commentaire:
+      "Ponctualité, Qualité, Professionnalisme, Prix. Ponctualité 5/5 · Propreté du véhicule 5/5 · Confort de conduite 5/5 · Accueil et courtoisie 5/5 · Rapport qualité / prix 5/5. Type de prestation : Gare / aéroport. Quel chauffeur ? Alain. Recommanderiez-vous Access Prestige Taxi ? Oui.",
+    created_at: "2026-08-13",
+  },
+  {
+    id: "imported-miary-rajoelina-2026-08-13",
+    author_name: "Miary RAJOELINA",
+    note: 5,
+    commentaire:
+      "Ponctualité, Qualité, Professionnalisme, Prix. Ponctualité 5/5 · Propreté du véhicule 5/5 · Confort de conduite 5/5 · Accueil et courtoisie 5/5 · Rapport qualité / prix 5/5. Type de prestation : Gare / aéroport. Recommanderiez-vous Access Prestige Taxi ? Oui.",
+    created_at: "2026-08-13",
+  },
+  {
+    id: "imported-enrico-boto-2026-08-13",
+    author_name: "enrico boto",
+    note: 5,
+    commentaire:
+      "Patricia, disponible, ponctuelle, serviable. Voiture toujours propre et qui sent bon qui rend les déplacements agréables. Bonne connaissance de la région. Ponctualité 5/5 · Propreté du véhicule 5/5 · Confort de conduite 5/5 · Accueil et courtoisie 5/5 · Rapport qualité / prix 5/5. Type de prestation : Course simple. Quel chauffeur ? Patricia. Recommanderiez-vous Access Prestige Taxi ? Oui.",
+    created_at: "2026-08-13",
+  },
+];
+
 const COPY = {
   fr: {
     eyebrow: "Avis & réassurance",
@@ -55,7 +82,7 @@ function Stars({ value, className = "" }: { value: number; className?: string })
 export function ClientTrust({ children }: { children?: ReactNode }) {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>(IMPORTED_REVIEWS);
 
   useEffect(() => {
     let active = true;
@@ -66,7 +93,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
       .order("created_at", { ascending: false })
       .limit(12)
       .then(({ data }) => {
-        if (active && data) setReviews(data as Review[]);
+        if (active && data) setReviews([...IMPORTED_REVIEWS, ...(data as Review[])]);
       });
     return () => {
       active = false;
