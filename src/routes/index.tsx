@@ -22,6 +22,7 @@ import {
   Phone,
   ShieldCheck,
   Smartphone,
+  Star,
   Stethoscope,
   User,
 } from "lucide-react";
@@ -1108,6 +1109,42 @@ function Index() {
               </Link>
             </div>
           </SplitPhotoCard>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                name: "Marie Souris",
+                date: "13 août 2026",
+                text: "Positif : Ponctualité, Qualité, Professionnalisme, Prix. Services : Ponctualité 5/5 · Propreté du véhicule 5/5 · Confort de conduite 5/5 · Accueil et courtoisie 5/5 · Rapport qualité / prix 5/5. Type de prestation : Gare / aéroport. Quel chauffeur ? Alain. Recommanderiez-vous Access Prestige Taxi ? Oui.",
+              },
+              {
+                name: "Miary RAJOELINA",
+                date: "13 août 2026",
+                text: "Positif : Ponctualité, Qualité, Professionnalisme, Prix. Ponctualité 5/5 · Propreté du véhicule 5/5 · Confort de conduite 5/5 · Accueil et courtoisie 5/5 · Rapport qualité / prix 5/5. Type de prestation : Gare / aéroport. Recommanderiez-vous Access Prestige Taxi ? Oui.",
+              },
+              {
+                name: "enrico boto",
+                date: "13 août 2026",
+                text: "Patricia, disponible, ponctuelle, serviable. Voiture toujours propre et qui sent bon, ce qui rend les déplacements agréables. Bonne connaissance de la région. Ponctualité 5/5 · Propreté du véhicule 5/5 · Confort de conduite 5/5 · Accueil et courtoisie 5/5 · Rapport qualité / prix 5/5. Type de prestation : Course simple. Quel chauffeur ? Patricia. Recommanderiez-vous Access Prestige Taxi ? Oui.",
+              },
+            ].map((review) => (
+              <article
+                key={review.name}
+                className="flex h-full flex-col rounded-[18px] border-2 border-[#e0b866] bg-[#05090d] p-5"
+              >
+                <div className="flex items-center gap-1" aria-label="5 étoiles sur 5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} className="h-4 w-4 fill-[#e0b866] text-[#e0b866]" aria-hidden="true" />
+                  ))}
+                </div>
+                <p className="mt-4 flex-1 text-sm leading-relaxed text-white/80">“{review.text}”</p>
+                <div className="mt-5 border-t border-[#e0b866]/30 pt-4">
+                  <p className="font-semibold text-white">{review.name}</p>
+                  <p className="mt-1 text-xs text-white/50">{review.date}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
