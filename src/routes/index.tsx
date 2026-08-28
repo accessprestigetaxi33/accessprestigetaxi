@@ -14,9 +14,11 @@ import {
   Car,
   CheckCircle2,
   ChevronDown,
+  ChevronRight,
   Clock,
   Crown,
   Gem,
+  Globe,
   HeartHandshake,
   MapPin,
   Phone,
@@ -844,23 +846,49 @@ function Index() {
                   <Link
                     to="/reserver"
                     onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                    className="flex min-h-[58px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-left text-white transition hover:bg-[#e0b866] hover:text-black"
                   >
-                    {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
+                    <Globe
+                      className="h-5 w-5 shrink-0 text-[#e0b866] transition group-hover:text-black"
+                      aria-hidden="true"
+                    />
+                    <span className="flex-1">
+                      <span className="block text-xs font-semibold uppercase tracking-wider">
+                        {lang === "en" ? "BOOK ONLINE" : "RÉSERVER EN LIGNE"}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] font-normal normal-case opacity-70">
+                        {lang === "en" ? "Book your ride in a few clicks" : "Réservez votre trajet en quelques clics"}
+                      </span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
                   </Link>
                   <a
                     href="tel:0603444863"
                     onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                    className="flex min-h-[58px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-left text-white transition hover:bg-[#e0b866] hover:text-black"
                   >
-                    APPELER ALAIN – 06 03 44 48 63
+                    <Phone className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                    <span className="flex-1">
+                      <span className="block text-xs font-semibold uppercase tracking-wider">
+                        {lang === "en" ? "CALL ALAIN" : "APPELER ALAIN"}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] font-normal opacity-70">06 03 44 48 63</span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
                   </a>
                   <a
                     href="tel:0650260015"
                     onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[50px] items-center justify-center px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                    className="flex min-h-[58px] items-center gap-3 px-4 py-3 text-left text-white transition hover:bg-[#e0b866] hover:text-black"
                   >
-                    APPELER PATRICIA – 06 50 26 00 15
+                    <Phone className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                    <span className="flex-1">
+                      <span className="block text-xs font-semibold uppercase tracking-wider">
+                        {lang === "en" ? "CALL PATRICIA" : "APPELER PATRICIA"}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] font-normal opacity-70">06 50 26 00 15</span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
                   </a>
                 </motion.div>
               )}
@@ -869,25 +897,44 @@ function Index() {
         </div>
       </section>
 
-      {/* 2. VOTRE CONFORT — texte de présentation à la place des pictogrammes */}
+      {/* 2. VOTRE CONFORT — carte unifiée icône / texte / valeurs */}
       <section className="bg-[#07111f] px-5 py-5 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <div className="mx-auto max-w-5xl rounded-[14px] border-2 border-[#e0b866] px-4 py-5 text-center sm:rounded-none sm:border-0 sm:px-0 sm:py-0">
+        <div className="mx-auto max-w-5xl rounded-[14px] border-2 border-[#e0b866] px-4 py-5 sm:px-8 sm:py-7">
           <Reveal>
-            <h2 className="font-display text-xl font-semibold text-[#e0b866] sm:text-4xl lg:text-5xl">
-              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
-            </h2>
-            <p className="mx-auto mt-3 max-w-4xl text-xs leading-relaxed text-white/80 sm:mt-5 sm:text-lg">
-              {lang === "en"
-                ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
-            </p>
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:gap-6 sm:text-left">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#e0b866]">
+                <HeartHandshake className="h-7 w-7 text-[#e0b866]" aria-hidden="true" />
+              </div>
 
-            <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#e0b866]/50 pt-4 text-[11px] font-medium text-white sm:mt-7 sm:justify-center sm:gap-x-8 sm:border-0 sm:pt-0 sm:text-base">
-              {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
-                (value) => (
-                  <span key={value}>✓ {value}</span>
-                ),
-              )}
+              <div className="flex-1">
+                <h2 className="font-display text-xl font-semibold text-[#e0b866] sm:text-2xl lg:text-3xl">
+                  {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
+                </h2>
+                <p className="mt-2 text-xs leading-relaxed text-white/80 sm:mt-3 sm:text-sm">
+                  {lang === "en"
+                    ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                    : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+                </p>
+              </div>
+
+              <div className="mt-2 flex w-full items-stretch justify-between gap-2 border-t border-[#e0b866]/50 pt-4 sm:mt-0 sm:w-auto sm:gap-0 sm:border-0 sm:border-l sm:pt-0 sm:pl-6">
+                {(lang === "en"
+                  ? ["Elegance", "Discretion", "Excellence"]
+                  : ["Élégance", "Discrétion", "Exigence"]
+                ).map((value, i) => (
+                  <div
+                    key={value}
+                    className={`flex flex-1 flex-col items-center gap-1.5 px-1 sm:flex-none sm:px-4 ${
+                      i > 0 ? "border-l border-[#e0b866]/50" : ""
+                    }`}
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-[#e0b866]" aria-hidden="true" />
+                    <span className="text-center text-[10px] font-semibold uppercase tracking-wide text-white sm:text-xs">
+                      {value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </Reveal>
         </div>
@@ -962,6 +1009,62 @@ function Index() {
               </SplitPhotoCard>
             </Reveal>
           </div>
+
+          {/* Liste compacte — mêmes engagements sous forme de raccourcis */}
+          <Reveal delay={0.3}>
+            <div className="mt-4 overflow-hidden rounded-[14px] border-2 border-[#e0b866] md:mt-6">
+              <a
+                href="#services"
+                className="flex min-h-[52px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-white transition hover:bg-[#e0b866]/10"
+              >
+                <Stethoscope className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
+                  {engagements[0].title}
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+              </a>
+              <div className="flex min-h-[52px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-white">
+                <Bell className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
+                  {lang === "en" ? "Trip tracking & client area" : "Suivi & espace client"}
+                </span>
+                <Link
+                  to="/client/login"
+                  className="mr-2 hidden shrink-0 rounded-full btn-gold border border-[#e0b866] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] sm:inline-flex"
+                >
+                  {lang === "en" ? "Client area" : "Espace client"}
+                </Link>
+                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+              </div>
+              <a
+                href="#services"
+                className="flex min-h-[52px] items-center gap-3 border-b border-[#e0b866]/50 px-4 py-3 text-white transition hover:bg-[#e0b866]/10"
+              >
+                <BriefcaseBusiness className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
+                  {engagements[1].title}
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+              </a>
+              <a
+                href="#services"
+                className="flex min-h-[52px] items-center gap-3 px-4 py-3 text-white transition hover:bg-[#e0b866]/10"
+              >
+                <Smartphone className="h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
+                <span className="flex-1 text-xs font-semibold uppercase tracking-wide sm:text-sm">
+                  {lang === "en" ? "Web application" : "Application web"}
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />
+              </a>
+              <Link
+                to="/client/login"
+                className="flex min-h-[48px] items-center justify-center gap-1.5 border-t border-[#e0b866]/50 btn-gold px-4 text-xs font-semibold uppercase tracking-wider text-black sm:hidden"
+              >
+                {lang === "en" ? "Client area" : "Espace client"}{" "}
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
