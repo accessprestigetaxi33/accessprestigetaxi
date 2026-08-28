@@ -901,7 +901,7 @@ function Index() {
         </div>
       </section>
 
-      {/* 3. NOS ENGAGEMENTS — 4 cartes de la maquette */}
+      {/* 3. NOS ENGAGEMENTS — 4 cartes avec contenu détaillé accessible */}
       <section id="services" className="bg-[#05090d] px-4 pb-8 pt-4 sm:px-6 sm:pb-10 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <Reveal>
@@ -914,7 +914,7 @@ function Index() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 image: medicalService,
@@ -922,8 +922,9 @@ function Index() {
                 title: lang === "en" ? "Covered medical transport" : "Transport médical conventionné",
                 text:
                   lang === "en"
-                    ? "Medicalised, punctual and caring support. CPAM covered."
-                    : "Prise en charge médicalisée, ponctuelle et bienveillante. Conventionné CPAM.",
+                    ? "Human, reassuring and professional support. CPAM covered."
+                    : "Un accompagnement humain, serein et professionnel.",
+                details: lang === "en" ? ENGAGEMENTS_EN[0].details : ENGAGEMENTS_FR[0].details,
               },
               {
                 image: prestigeService,
@@ -931,8 +932,9 @@ function Index() {
                 title: lang === "en" ? "Prestige & Private" : "Prestige & Privé",
                 text:
                   lang === "en"
-                    ? "Station and airport transfers, long distances, events, tourism and chauffeur service."
-                    : "Transferts gares, aéroports, longues distances, événements, mariages, tourisme… Mise à disposition avec chauffeur.",
+                    ? "Your journeys deserve more than a simple ride."
+                    : "Vos déplacements méritent mieux qu'un simple trajet.",
+                details: lang === "en" ? ENGAGEMENTS_EN[1].details : ENGAGEMENTS_FR[1].details,
               },
               {
                 image: trackingPhone,
@@ -940,8 +942,9 @@ function Index() {
                 title: lang === "en" ? "Tracking & client area" : "Suivi & espace client",
                 text:
                   lang === "en"
-                    ? "Follow your booking in real time. Notifications at every key step."
-                    : "Suivez votre réservation en temps réel. Notifications à chaque étape du trajet.",
+                    ? "Follow your booking in real time and receive updates at every key step."
+                    : "Suivez votre réservation en temps réel et recevez les informations importantes à chaque étape.",
+                details: c.appDetails,
               },
               {
                 image: appPhones,
@@ -949,15 +952,16 @@ function Index() {
                 title: lang === "en" ? "Web application" : "Application web",
                 text:
                   lang === "en"
-                    ? "Install our web application on your phone. No App Store or Play Store required."
-                    : "Installez notre application web sur votre téléphone. Aucune installation depuis le store.",
+                    ? "Install the web application directly from your phone, without an app store."
+                    : "Installez l'application web directement depuis votre téléphone, sans passer par un store.",
+                details: c.appDetails,
               },
             ].map((card, i) => {
               const Icon = card.icon;
               return (
                 <Reveal key={card.title} delay={i * 0.05} as="div">
-                  <article className="group relative h-full min-h-[340px] overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
-                    <div className="relative h-40 overflow-hidden sm:h-44">
+                  <article className="group relative flex h-full min-h-[410px] flex-col overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
+                    <div className="relative h-40 shrink-0 overflow-hidden sm:h-44">
                       <img
                         src={card.image}
                         alt={card.title}
@@ -970,31 +974,16 @@ function Index() {
                         aria-hidden="true"
                       />
                     </div>
-                    <div className="relative flex h-[calc(100%-10rem)] flex-col p-4 sm:h-[calc(100%-11rem)] sm:p-5">
-                      <div className="-mt-10 mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#e0b866] bg-[#07111f]">
+                    <div className="relative flex flex-1 flex-col p-4 sm:p-5">
+                      <div className="-mt-10 mb-3 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-[#e0b866] bg-[#07111f]">
                         <Icon className="h-6 w-6 text-[#e0b866]" aria-hidden="true" />
                       </div>
                       <h3 className="font-display text-base font-semibold uppercase leading-tight text-white sm:text-lg">
                         {card.title}
                       </h3>
                       <p className="mt-3 text-sm leading-relaxed text-white/80">{card.text}</p>
-                      <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
-                        {i === 2 && (
-                          <Link
-                            to="/client/login"
-                            className="inline-flex min-h-[40px] items-center gap-2 rounded-lg border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-black transition hover:brightness-110"
-                          >
-                            {lang === "en" ? "Client area" : "Espace client"}{" "}
-                            <User className="h-4 w-4" aria-hidden="true" />
-                          </Link>
-                        )}
-                        <Link
-                          to={i === 0 ? "/#services" : i === 1 ? "/#services" : i === 2 ? "/client/login" : "/reserver"}
-                          className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-[#e0b866] hover:text-white"
-                        >
-                          {lang === "en" ? "Learn more" : "En savoir plus"}{" "}
-                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                        </Link>
+                      <div className="mt-auto pt-2">
+                        <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={card.details} variant="solid" />
                       </div>
                     </div>
                   </article>
@@ -1033,14 +1022,7 @@ function Index() {
                   title={vehicle.title}
                   subtitle={vehicle.subtitle}
                 >
-                  <ul className="mt-4 space-y-2 text-sm leading-relaxed text-white/75">
-                    {vehicle.details.map((detail) => (
-                      <li key={detail} className="flex gap-2">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#e0b866]" aria-hidden="true" />
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={vehicle.details} variant="solid" />
                 </PhotoTopCard>
               </Reveal>
             ))}
