@@ -809,15 +809,16 @@ function Index() {
             />
           </picture>
 
-          {/* Zones cliquables transparentes au-dessus des boutons intégrés à l'image */}
-          <div className="absolute left-[35%] top-[34%] h-[8%] w-[30%]">
+          {/* Bouton opaque "Réserver" qui recouvre le bouton dessiné dans la photo */}
+          <div className="absolute left-[35%] top-[34%] flex h-[8%] w-[30%] items-center justify-center">
             <button
               type="button"
               onClick={() => setHeroMenuOpen((open) => !open)}
-              aria-label={c.reserveCta}
               aria-expanded={heroMenuOpen}
-              className="h-full w-full rounded-full"
-            />
+              className="btn-gold h-full w-full rounded-full border border-[#e0b866] text-[11px] font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] sm:text-sm"
+            >
+              {c.reserveCta}
+            </button>
           </div>
           {heroMenuOpen && (
             <>
