@@ -3,7 +3,18 @@ import { imgAt, imgSrcSet } from "@/lib/img";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { useMemo, useState } from "react";
-import { ArrowRight, MapPin, Search, Star, UtensilsCrossed, BedDouble, Footprints, Landmark, Waves, X } from "lucide-react";
+import {
+  ArrowRight,
+  MapPin,
+  Search,
+  Star,
+  UtensilsCrossed,
+  BedDouble,
+  Footprints,
+  Landmark,
+  Waves,
+  X,
+} from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import {
   GUIDE_ENTRIES,
@@ -28,8 +39,7 @@ const COPY = {
   fr: {
     eyebrow: "Le guide Access Prestige Taxi",
     title: "Charente-Maritime : où manger, dormir, marcher et s'émerveiller",
-    lead:
-      "Restaurants de caractère, hôtels étoilés, randonnées côtières et sites chargés d'histoire — sélectionnés par nos deux chauffeurs, et desservis en BMW iX1 100 % électrique.",
+    lead: "Restaurants de caractère, hôtels étoilés, randonnées côtières et sites chargés d'histoire — sélectionnés par nos deux chauffeurs, et desservis en BMW iX1 100 % électrique.",
     all: "Tout",
     filterCat: "Catégorie",
     filterCity: "Ville ou village",
@@ -43,14 +53,14 @@ const COPY = {
     read: "Lire l'article",
     count: (n: number) => `${n} adresse${n > 1 ? "s" : ""}`,
     ctaTitle: "On vous y emmène",
-    ctaText: "Trajet à la demande dans toute la Charente-Maritime, en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
+    ctaText:
+      "Trajet à la demande dans toute la Charente-Maritime, en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
     ctaBtn: "Réserver ma course",
   },
   en: {
     eyebrow: "The Access Prestige Taxi guide",
     title: "Charente-Maritime: where to eat, sleep, walk and wonder",
-    lead:
-      "Characterful restaurants, star-rated hotels, coastal hikes and history-rich sites — picked by our two drivers and served in a fully electric BMW iX1.",
+    lead: "Characterful restaurants, star-rated hotels, coastal hikes and history-rich sites — picked by our two drivers and served in a fully electric BMW iX1.",
     all: "All",
     filterCat: "Category",
     filterCity: "Town or village",
@@ -160,10 +170,12 @@ function BlogIndex() {
     setQuery("");
     setLimit(PAGE_SIZE);
   };
-  const onFilterChange = <T,>(setter: (v: T) => void) => (v: T) => {
-    setter(v);
-    setLimit(PAGE_SIZE);
-  };
+  const onFilterChange =
+    <T,>(setter: (v: T) => void) =>
+    (v: T) => {
+      setter(v);
+      setLimit(PAGE_SIZE);
+    };
   const hasFilter = cat !== "all" || city !== "all" || tag !== "all" || query !== "";
 
   return (
@@ -175,9 +187,7 @@ function BlogIndex() {
           <h1 className="mx-auto mt-3 max-w-3xl text-balance font-display text-2xl font-semibold leading-tight text-foreground sm:text-4xl">
             {c.title}
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {c.lead}
-          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.lead}</p>
         </div>
       </section>
 
@@ -195,7 +205,7 @@ function BlogIndex() {
               }}
               aria-label={c.searchLabel}
               placeholder={c.searchPlaceholder}
-              className="h-11 w-full rounded-xl border border-border bg-card pl-10 pr-24 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
+              className="h-11 w-full rounded-xl border border-[rgba(201,168,76,0.45)] bg-card pl-10 pr-24 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary"
             />
             <span className="absolute right-3 top-1/2 hidden -translate-y-1/2 text-xs text-muted-foreground sm:inline">
               {c.count(entries.length)}
@@ -238,7 +248,7 @@ function BlogIndex() {
                 setCity(ev.target.value);
                 setLimit(PAGE_SIZE);
               }}
-              className="h-10 min-w-[200px] flex-1 rounded-xl border border-border bg-card px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary sm:flex-none"
+              className="h-10 min-w-[200px] flex-1 rounded-xl border border-[rgba(201,168,76,0.45)] bg-card px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary sm:flex-none"
             >
               <option value="all">{c.allCities}</option>
               {GUIDE_CITY_STATS.map((s) => (
@@ -251,7 +261,7 @@ function BlogIndex() {
               <button
                 type="button"
                 onClick={resetAll}
-                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-muted-foreground transition hover:border-primary hover:text-primary"
+                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-[rgba(201,168,76,0.45)] px-3 text-xs font-semibold text-muted-foreground transition hover:border-primary hover:text-primary"
               >
                 <X className="h-3.5 w-3.5" /> {c.reset}
               </button>
@@ -272,10 +282,10 @@ function BlogIndex() {
               aria-pressed={city === s.city}
               onClick={() => onFilterChange(setCity)(city === s.city ? "all" : s.city)}
               className={[
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                "inline-flex items-center gap-1.5 rounded-full border border-[rgba(201,168,76,0.45)] px-3 py-1.5 text-xs font-semibold transition",
                 city === s.city
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-card text-foreground/80 hover:border-primary/60",
+                  : "border-[rgba(201,168,76,0.45)] bg-card text-foreground/80 hover:border-primary",
               ].join(" ")}
             >
               <MapPin className="h-3 w-3 shrink-0" />
@@ -299,7 +309,7 @@ function BlogIndex() {
               return (
                 <article
                   key={e.slug}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-[rgba(201,168,76,0.5)] bg-card transition hover:border-primary"
                 >
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
@@ -359,7 +369,7 @@ function BlogIndex() {
                               key={t}
                               type="button"
                               onClick={() => onFilterChange(setTag)(t)}
-                              className="rounded-full border border-border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition hover:border-primary hover:text-primary"
+                              className="rounded-full border border-[rgba(201,168,76,0.4)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition hover:border-primary hover:text-primary"
                             >
                               {isEn ? def.en : def.fr}
                             </button>
@@ -387,7 +397,7 @@ function BlogIndex() {
             <button
               type="button"
               onClick={() => setLimit((n) => n + PAGE_SIZE)}
-              className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-primary px-6 py-3 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-[rgba(201,168,76,0.7)] px-6 py-3 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
             >
               {c.more} ({entries.length - visible.length})
             </button>
@@ -431,7 +441,7 @@ function Chip({
         subtle ? "py-1.5" : "py-2",
         active
           ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-card text-foreground/80 hover:border-primary/60",
+          : "border-[rgba(201,168,76,0.45)] bg-card text-foreground/80 hover:border-primary",
       ].join(" ")}
     >
       {label}
@@ -443,10 +453,7 @@ export function Stars({ n }: { n: number }) {
   return (
     <p className="mt-1.5 flex items-center gap-0.5" aria-label={`${n}/5`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          className={i < n ? "h-3.5 w-3.5 fill-primary text-primary" : "h-3.5 w-3.5 text-border"}
-        />
+        <Star key={i} className={i < n ? "h-3.5 w-3.5 fill-primary text-primary" : "h-3.5 w-3.5 text-border"} />
       ))}
       <span className="ml-1.5 text-xs font-semibold text-muted-foreground">{n}★</span>
     </p>
