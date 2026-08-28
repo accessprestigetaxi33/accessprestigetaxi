@@ -771,28 +771,90 @@ function Index() {
   const c = lang === "en" ? COPY.en : COPY.fr;
   const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
-  const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
   const [heroMenuOpen, setHeroMenuOpen] = useState(false);
-  const [reserveMenuOpen, setReserveMenuOpen] = useState(false);
+
+  const engagementCards = [
+    {
+      image: medicalService,
+      icon: Stethoscope,
+      title: lang === "en" ? "Covered medical transport" : "Transport médical conventionné",
+      text:
+        lang === "en"
+          ? "Human, reassuring and professional support."
+          : "Prise en charge médicalisée, ponctuelle et bienveillante.",
+      details: engagements[0].details,
+    },
+    {
+      image: prestigeService,
+      icon: User,
+      title: lang === "en" ? "Prestige & Private" : "Prestige & Privé",
+      text:
+        lang === "en"
+          ? "Transfers, business trips, events and chauffeur services."
+          : "Transferts gares, aéroports, longues distances, événements, mariages et mise à disposition avec chauffeur.",
+      details: engagements[1].details,
+    },
+    {
+      image: trackingPhone,
+      icon: Bell,
+      title: lang === "en" ? "Tracking & client area" : "Suivi & espace client",
+      text:
+        lang === "en"
+          ? "Follow your booking in real time with notifications at each key step."
+          : "Suivez votre réservation en temps réel. Notifications à chaque étape du trajet.",
+      details: [
+        ...(lang === "en"
+          ? [
+              "Booking confirmation notification.",
+              "Driver on the way and arrival notification.",
+              "Secure client area with ride history and invoices.",
+            ]
+          : [
+              "Notification de confirmation de réservation.",
+              "Alerte lorsque le chauffeur est en route et à son arrivée.",
+              "Espace client sécurisé avec historique des courses et factures.",
+            ]),
+      ],
+      clientButton: true,
+    },
+    {
+      image: appPhones,
+      icon: Smartphone,
+      title: lang === "en" ? "Web application" : "Application web",
+      text:
+        lang === "en"
+          ? "Install the web app directly on your phone without an app store."
+          : "Installez notre application web sur votre téléphone, sans passer par un store.",
+      details:
+        lang === "en"
+          ? [
+              "Install directly from your browser.",
+              "Add the app to your home screen in a few taps.",
+              "No App Store or Play Store required.",
+            ]
+          : [
+              "Installation directement depuis votre navigateur.",
+              "Ajout à l'écran d'accueil en quelques gestes.",
+              "Aucun passage par l'App Store ou le Play Store.",
+            ],
+    },
+  ];
 
   return (
-    <main className="homepage-gold-borders">
+    <main className="homepage-gold-borders overflow-x-hidden bg-[#050b12] text-[#f6f0e5]">
       <style>{`
-        .homepage-gold-borders article {
-          border: 2px solid #e0b866 !important;
-        }
+        .homepage-gold-borders article { border: 1.5px solid #e0b866 !important; }
         .homepage-gold-borders button,
         .homepage-gold-borders a.btn-gold,
         .homepage-gold-borders a[href^="tel:"],
-        .homepage-gold-borders a[href="/avis"] {
-          border: 2px solid #e0b866 !important;
-        }
+        .homepage-gold-borders a[href="/avis"] { border: 1.5px solid #e0b866 !important; }
+        .homepage-gold-borders .gold-outline { border: 1.5px solid #e0b866 !important; }
       `}</style>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
-      {/* 1. HERO — nouvelle image Q6 / BMW iX1 / V-Class avec logos visibles */}
-      <section className="relative isolate overflow-hidden bg-black pt-[76px] sm:pt-[84px] lg:pt-[92px]">
-        <div className="relative w-full">
+      {/* HERO — référence maquette desktop/mobile */}
+      <section className="relative isolate overflow-hidden bg-black">
+        <div className="relative min-h-[650px] sm:min-h-[720px] lg:min-h-[780px]">
           <picture>
             <source media="(max-width: 767px)" srcSet={heroCarsMobile} />
             <img
@@ -806,180 +868,216 @@ function Index() {
               loading="eager"
               width={1536}
               height={600}
-              className="block h-auto w-full object-contain object-center"
+              className="absolute inset-0 h-full w-full object-cover object-center"
             />
           </picture>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.08)_40%,rgba(3,9,16,0.78)_88%,#050b12_100%)]" />
 
-          {/* Bouton opaque "Réserver" qui recouvre le bouton dessiné dans la photo */}
-          <div className="absolute left-[35%] top-[34%] flex h-[8%] w-[30%] items-center justify-center">
-            <button
-              type="button"
-              onClick={() => setHeroMenuOpen((open) => !open)}
-              aria-expanded={heroMenuOpen}
-              className="btn-gold h-full w-full rounded-full border border-[#e0b866] text-[11px] font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] sm:text-sm"
-            >
-              {c.reserveCta}
-            </button>
-          </div>
-          {heroMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40 bg-black/60"
-                onClick={() => setHeroMenuOpen(false)}
-                aria-hidden="true"
-              />
-              <div className="fixed left-1/2 top-1/2 z-50 w-64 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.45)]">
-                <Link
-                  to="/reserver"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.reserveCta}
-                </Link>
-                <a
-                  href="tel:0603444863"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.callPrefix} Alain
-                </a>
-                <a
-                  href="tel:0650260015"
-                  onClick={() => setHeroMenuOpen(false)}
-                  className="block border-t border-[#e0b866]/40 px-5 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                >
-                  {c.callPrefix} Patricia
-                </a>
-              </div>
-            </>
-          )}
-          <a
-            href="#services"
-            aria-label="Découvrir nos services"
-            className="absolute left-[35%] top-[44%] h-[7%] w-[30%]"
-          />
-        </div>
-      </section>
-
-      {/* 2. VOTRE CONFORT — texte de présentation à la place des pictogrammes */}
-      <section className="bg-[#07111f] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
-        <div className="mx-auto max-w-5xl text-center">
-          <Reveal>
-            <h2 className="font-display text-3xl font-semibold text-[#f6f0e5] sm:text-4xl lg:text-5xl">
-              {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
-            </h2>
-            <p className="mx-auto mt-5 max-w-4xl text-base leading-relaxed text-white/75 sm:text-lg">
-              {lang === "en"
-                ? "High-end transportation and approved medical transportation in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
-            </p>
-
-            <div className="relative mt-7 flex flex-col items-center">
-              <button
-                type="button"
-                onClick={() => setReserveMenuOpen((open) => !open)}
-                aria-expanded={reserveMenuOpen}
-                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full btn-gold border border-[#e0b866] px-7 py-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-              >
-                {lang === "en" ? "Book" : "Réserver"}
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${reserveMenuOpen ? "rotate-180" : ""}`}
-                  aria-hidden="true"
-                />
-              </button>
-
-              <AnimatePresence initial={false}>
-                {reserveMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8, height: 0 }}
-                    animate={{ opacity: 1, y: 0, height: "auto" }}
-                    exit={{ opacity: 0, y: -8, height: 0 }}
-                    className="mt-3 w-full max-w-sm overflow-hidden rounded-2xl border border-[#e0b866] bg-[#07111f] p-2 shadow-[0_16px_45px_rgba(0,0,0,0.45)]"
-                  >
-                    <Link
-                      to="/reserver"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "1. Book online" : "1. Réserver en ligne"}
-                    </Link>
-                    <a
-                      href="tel:0603444863"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "2. Call Alain" : "2. Appeler Alain"}
-                    </a>
-                    <a
-                      href="tel:0650260015"
-                      onClick={() => setReserveMenuOpen(false)}
-                      className="mt-1 flex min-h-[46px] items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
-                    >
-                      {lang === "en" ? "3. Call Patricia" : "3. Appeler Patricia"}
-                    </a>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-[#e0b866] sm:text-base">
-              {(lang === "en" ? ["Elegance", "Discretion", "Excellence"] : ["Élégance", "Discrétion", "Exigence"]).map(
-                (value) => (
-                  <span key={value}>✓ {value}</span>
-                ),
-              )}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 3. NOS ENGAGEMENTS — reproduction de la composition de la maquette */}
-      <section id="services" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-          <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Nos </span>
-              <span className="text-[#e0b866]">engagements</span>
-            </h2>
-          </Reveal>
-          <div className="mt-6 grid gap-5 md:grid-cols-2 md:gap-6">
+          <div className="relative z-10 mx-auto flex min-h-[650px] max-w-5xl flex-col items-center px-5 pb-24 pt-28 text-center sm:min-h-[720px] sm:pt-32 lg:min-h-[780px] lg:pt-36">
             <Reveal>
-              <SplitPhotoCard
-                image={medicalService}
-                alt="Transport médical conventionné"
-                icon={Stethoscope}
-                title={engagements[0].title}
-                lead={engagements[0].lead}
+              <h1 className="font-display text-4xl font-semibold uppercase leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                {lang === "en" ? "Excellence on every journey" : "L’élégance de votre trajet"}
+              </h1>
+              <p className="mt-5 text-sm font-medium text-white/90 sm:text-base md:text-lg">
+                {lang === "en"
+                  ? "Private transfers · Covered medical transport · Chauffeur service"
+                  : "Transferts privés · Transport médical conventionné · Mise à disposition"}
+              </p>
+
+              <div className="relative mt-7 flex flex-col items-center">
+                <button
+                  type="button"
+                  onClick={() => setHeroMenuOpen((open) => !open)}
+                  aria-expanded={heroMenuOpen}
+                  className="btn-gold inline-flex min-h-[52px] min-w-[230px] items-center justify-center gap-3 rounded-xl px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-black shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02]"
+                >
+                  <span>{lang === "en" ? "Book" : "Réserver"}</span>
+                  <ChevronDown
+                    className={`h-5 w-5 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {heroMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8, height: 0 }}
+                      animate={{ opacity: 1, y: 8, height: "auto" }}
+                      exit={{ opacity: 0, y: -8, height: 0 }}
+                      className="w-[min(92vw,360px)] overflow-hidden rounded-2xl border border-[#e0b866] bg-[#050b12]/95 text-left shadow-[0_20px_55px_rgba(0,0,0,0.55)] backdrop-blur-md"
+                    >
+                      <Link
+                        to="/reserver"
+                        onClick={() => setHeroMenuOpen(false)}
+                        className="flex items-center gap-4 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                      >
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                          <Smartphone className="h-4 w-4" />
+                        </span>
+                        <span className="flex-1">
+                          {lang === "en" ? "Book" : "Réserver"}
+                          <span className="mt-0.5 block text-[11px] font-normal normal-case tracking-normal opacity-75">
+                            {lang === "en"
+                              ? "Book your ride in a few clicks"
+                              : "Réservez votre trajet en quelques clics"}
+                          </span>
+                        </span>
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <a
+                        href="tel:0603444863"
+                        onClick={() => setHeroMenuOpen(false)}
+                        className="flex items-center gap-4 border-t border-[#e0b866]/30 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                      >
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                          <Phone className="h-4 w-4" />
+                        </span>
+                        <span className="flex-1">
+                          {lang === "en" ? "Call Alain" : "Appeler Alain"}
+                          <span className="mt-0.5 block text-sm font-normal tracking-normal">06 03 44 48 63</span>
+                        </span>
+                      </a>
+                      <a
+                        href="tel:0650260015"
+                        onClick={() => setHeroMenuOpen(false)}
+                        className="flex items-center gap-4 border-t border-[#e0b866]/30 px-5 py-4 text-sm font-semibold uppercase tracking-wide text-[#f6f0e5] transition hover:bg-[#e0b866] hover:text-black"
+                      >
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#e0b866] text-[#e0b866]">
+                          <Phone className="h-4 w-4" />
+                        </span>
+                        <span className="flex-1">
+                          {lang === "en" ? "Call Patricia" : "Appeler Patricia"}
+                          <span className="mt-0.5 block text-sm font-normal tracking-normal">06 50 26 00 15</span>
+                        </span>
+                      </a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <a
+                href="#services"
+                className="mt-20 inline-flex flex-col items-center gap-2 text-sm font-medium text-white transition hover:text-[#e0b866]"
               >
-                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[0].details} variant="solid" />
-              </SplitPhotoCard>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <SplitPhotoCard
-                image={prestigeService}
-                alt="Prestige et transport privé"
-                icon={BriefcaseBusiness}
-                title={engagements[1].title}
-                lead={engagements[1].lead}
-                reverse
-              >
-                <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={engagements[1].details} variant="solid" />
-              </SplitPhotoCard>
+                <span>{lang === "en" ? "Discover our services" : "Découvrir nos services"}</span>
+                <ChevronDown className="h-5 w-5 animate-bounce" aria-hidden="true" />
+              </a>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* 4. NOTRE FLOTTE */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+      {/* VOTRE CONFORT — texte demandé, sans pictogrammes */}
+      <section className="bg-[#050b12] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+        <div className="mx-auto max-w-6xl">
           <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Notre </span>
-              <span className="text-[#e0b866]">flotte</span>
+            <div className="gold-outline rounded-[22px] bg-[#07111f] px-6 py-8 shadow-[0_18px_55px_rgba(0,0,0,0.32)] sm:px-10 sm:py-9">
+              <div className="mx-auto max-w-4xl text-center">
+                <h2 className="font-display text-2xl font-semibold uppercase text-[#e0b866] sm:text-3xl lg:text-4xl">
+                  {lang === "en" ? "Your comfort, our priority" : "Votre confort, notre priorité"}
+                </h2>
+                <p className="mx-auto mt-4 max-w-4xl text-sm leading-relaxed text-white/80 sm:text-base lg:text-lg">
+                  {lang === "en"
+                    ? "Premium transportation and covered medical transport in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                    : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+                </p>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#f6f0e5] sm:text-sm">
+                  {(lang === "en"
+                    ? ["Elegance", "Discretion", "Excellence"]
+                    : ["Élégance", "Discrétion", "Exigence"]
+                  ).map((value) => (
+                    <span key={value} className="inline-flex items-center gap-2">
+                      <span className="text-[#e0b866]">✓</span>
+                      {value}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* NOS ENGAGEMENTS — composition de la maquette : 4 cartes */}
+      <section id="services" className="bg-[#050b12] px-5 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <h2 className="text-center font-display text-2xl font-semibold uppercase tracking-wide text-[#e0b866] sm:text-3xl lg:text-4xl">
+              Nos engagements
             </h2>
           </Reveal>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {engagementCards.map((card, i) => {
+              const Icon = card.icon;
+              return (
+                <Reveal key={card.title} delay={i * 0.06}>
+                  <article className="group flex h-full min-h-[455px] flex-col overflow-hidden rounded-[18px] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.34)]">
+                    <div className="relative h-48 shrink-0 overflow-hidden">
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-[#07111f]/90" />
+                      <div className="absolute bottom-[-18px] left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full border-2 border-[#e0b866] bg-[#050b12]">
+                        <Icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
+                      </div>
+                    </div>
+                    <div className="flex flex-1 flex-col px-5 pb-5 pt-8 text-center">
+                      <h3 className="font-display text-lg font-semibold uppercase leading-tight text-[#f6f0e5]">
+                        {card.title}
+                      </h3>
+                      <p className="mt-4 text-sm leading-relaxed text-white/75">{card.text}</p>
+                      {card.clientButton && (
+                        <Link
+                          to="/client/login"
+                          className="btn-gold mt-4 inline-flex min-h-[42px] items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+                        >
+                          {lang === "en" ? "Client area" : "Espace client"}
+                          <User className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      )}
+                      <LearnMoreToggle lang={lang === "en" ? "en" : "fr"} details={card.details} variant="solid" />
+                    </div>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* VALEURS — bandeau de la maquette */}
+      <section className="bg-[#050b12] px-5 py-5 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 overflow-hidden rounded-[18px] gold-outline bg-[#07111f] md:grid-cols-4">
+          {[
+            { icon: Crown, title: lang === "en" ? "High-end service" : "Service haut de gamme" },
+            { icon: ShieldCheck, title: lang === "en" ? "Safety & comfort" : "Sécurité & confort" },
+            { icon: User, title: lang === "en" ? "Absolute discretion" : "Discrétion absolue" },
+            { icon: Clock, title: lang === "en" ? "Guaranteed punctuality" : "Ponctualité garantie" },
+          ].map(({ icon: Icon, title }) => (
+            <div
+              key={title}
+              className="flex min-h-[115px] items-center justify-center gap-3 border-b border-[#e0b866]/20 px-4 py-5 text-center md:border-b-0 md:border-r last:md:border-r-0"
+            >
+              <Icon className="h-7 w-7 shrink-0 text-[#e0b866]" aria-hidden="true" />
+              <span className="text-xs font-semibold uppercase tracking-wide text-white sm:text-sm">{title}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* NOTRE FLOTTE — mêmes voitures, même ordre : Q6 / BMW / van */}
+      <section className="bg-[#050b12] py-12 sm:py-14 lg:py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className="text-center font-display text-2xl font-semibold uppercase text-[#e0b866] sm:text-3xl">
+              Notre flotte
+            </h2>
+          </Reveal>
+          <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {c.vehicles.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.06}>
                 <PhotoTopCard
@@ -999,29 +1097,59 @@ function Index() {
               </Reveal>
             ))}
           </div>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {fleetValues.map((v, i) => (
-              <Reveal key={v.title} delay={i * 0.04}>
-                <CompactPhotoCard
-                  image={[valuePunctuality, valueSecurity, valueDiscretion, valueComfort][i]}
-                  alt={`${v.title} — Access Prestige Taxi`}
-                  icon={v.icon}
-                  title={v.title}
-                  text={v.text}
-                />
-              </Reveal>
-            ))}
+        </div>
+      </section>
+
+      {/* POURQUOI NOUS CHOISIR */}
+      <section className="bg-[#050b12] px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <h2 className="text-center font-display text-2xl font-semibold uppercase text-[#e0b866] sm:text-3xl">
+              {lang === "en" ? "Why choose us?" : "Pourquoi nous choisir ?"}
+            </h2>
+          </Reveal>
+          <div className="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              [
+                Gem,
+                lang === "en" ? "Premium vehicles" : "Véhicules premium",
+                lang === "en" ? "Recent and comfortable" : "Récents et confortables",
+              ],
+              [
+                Crown,
+                lang === "en" ? "Punctuality" : "Ponctualité",
+                lang === "en" ? "Reliability guaranteed" : "Fiabilité garantie",
+              ],
+              [
+                User,
+                lang === "en" ? "Experienced chauffeurs" : "Chauffeurs expérimentés",
+                lang === "en" ? "Discreet and courteous" : "Discrets et courtois",
+              ],
+              [
+                HeartHandshake,
+                lang === "en" ? "Personalised service" : "Service personnalisé",
+                lang === "en" ? "Listening and care" : "À l’écoute et à votre service",
+              ],
+            ].map(([Icon, title, text]) => {
+              const CIcon = Icon as typeof Gem;
+              return (
+                <div key={title as string} className="text-center">
+                  <CIcon className="mx-auto h-9 w-9 text-[#e0b866]" aria-hidden="true" />
+                  <h3 className="mt-3 text-sm font-semibold uppercase text-white">{title as string}</h3>
+                  <p className="mt-1 text-xs text-white/60">{text as string}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 5. AVIS CLIENTS */}
-      <section id="avis" className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* AVIS — conservé */}
+      <section id="avis" className="bg-[#050b12] py-12 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Avis de nos </span>
-              <span className="text-[#e0b866]">clients</span>
+            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+              Avis de nos <span className="text-[#e0b866]">clients</span>
             </h2>
           </Reveal>
           <div className="mt-6">
@@ -1039,32 +1167,23 @@ function Index() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
                   to="/avis"
-                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
+                  className="gold-outline inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
                 >
-                  {lang === "en" ? "See reviews" : "Voir les avis"}{" "}
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  {lang === "en" ? "See reviews" : "Voir les avis"}
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
-                <ReserveButton label={c.reserveCta} />
               </div>
             </SplitPhotoCard>
-          </div>
-          <div className="mt-6 rounded-[22px] bg-black p-5 sm:p-7">
-            <ClientTrust>
-              <div className="text-black [&_p]:!text-black [&_blockquote]:!text-black [&_label]:!text-black [&_h3]:!text-black [&_h4]:!text-black [&_li]:!text-black [&_input]:!text-black [&_textarea]:!text-black [&_select]:!text-black [&_option]:text-black">
-                <ReviewForm />
-              </div>
-            </ClientTrust>
           </div>
         </div>
       </section>
 
-      {/* 6. COMMENT RÉSERVER — 4 cartes comme dans la maquette */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* COMMENT RÉSERVER — conservé */}
+      <section className="bg-[#050b12] py-12 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Comment </span>
-              <span className="text-[#e0b866]">réserver ?</span>
+            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+              Comment <span className="text-[#e0b866]">réserver ?</span>
             </h2>
           </Reveal>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -1087,24 +1206,21 @@ function Index() {
               },
             ].map(({ step, image }, i) => (
               <Reveal as="div" key={step.s} delay={i * 0.05}>
-                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] border border-[#e0b866] bg-[#07111f]">
+                <article className="group relative min-h-[300px] overflow-hidden rounded-[20px] bg-[#07111f]">
                   <img
                     src={image}
                     alt={step.t}
                     loading="lazy"
                     className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.03] ${i < 3 ? "brightness-[1.08] contrast-[1.06] saturate-[1.05]" : ""}`}
                   />
-                  <div
-                    className={`absolute inset-0 ${i < 3 ? "bg-[linear-gradient(90deg,rgba(3,10,20,0.78),rgba(3,10,20,0.38)_50%,rgba(3,10,20,0.10))]" : "bg-[linear-gradient(90deg,rgba(3,10,20,0.97),rgba(3,10,20,0.76)_50%,rgba(3,10,20,0.2))]"}`}
-                    aria-hidden="true"
-                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#030a14]/90 via-[#030a14]/55 to-[#030a14]/15" />
                   <div className="relative flex h-full flex-col p-5">
                     <span className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#e0b866]">
                       {step.s}
                     </span>
                     <div className="mt-auto">
                       <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
-                        <step.icon className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
+                        <step.icon className="h-5 w-5 text-[#e0b866]" />
                       </div>
                       <h3 className="font-display text-lg font-semibold text-[#f6f0e5]">{step.t}</h3>
                       <p className="mt-1.5 text-xs leading-relaxed text-white/65">{step.d}</p>
@@ -1120,13 +1236,12 @@ function Index() {
         </div>
       </section>
 
-      {/* 6. SUIVI & ESPACE CLIENT */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* SUIVI & ESPACE CLIENT */}
+      <section className="bg-[#050b12] py-12 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Suivi & </span>
-              <span className="text-[#e0b866]">espace client</span>
+            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+              Suivi & <span className="text-[#e0b866]">espace client</span>
             </h2>
           </Reveal>
           <div className="mt-6 grid gap-5 lg:grid-cols-2">
@@ -1137,36 +1252,17 @@ function Index() {
               title={lang === "en" ? "Trip notifications" : "Suivez votre trajet par notifications"}
               lead={
                 lang === "en"
-                  ? "No live map — instead you receive a notification at each key step: booking confirmed, driver on the way, driver arrived."
+                  ? "No live map — you receive a notification at each key step: booking confirmed, driver on the way, driver arrived."
                   : "Pas de carte en temps réel, mais une notification à chaque étape clé de votre trajet : réservation confirmée, chauffeur en route, chauffeur arrivé."
               }
             >
               <div className="mt-5 flex flex-wrap gap-3">
                 <NotificationOptIn lang={lang === "en" ? "en" : "fr"} />
               </div>
-              <LearnMoreToggle
-                lang={lang === "en" ? "en" : "fr"}
-                variant="solid"
-                details={
-                  lang === "en"
-                    ? [
-                        "Confirmation notification as soon as your booking is registered.",
-                        "Alert when your driver sets off towards your pickup point.",
-                        "Notification when your driver arrives on site.",
-                        "Automatic reminder ahead of your appointment time.",
-                      ]
-                    : [
-                        "Notification de confirmation dès l'enregistrement de votre réservation.",
-                        "Alerte lorsque votre chauffeur se met en route vers le point de prise en charge.",
-                        "Notification à l'arrivée de votre chauffeur sur place.",
-                        "Rappel automatique avant l'heure de votre rendez-vous.",
-                      ]
-                }
-              />
             </SplitPhotoCard>
             <SplitPhotoCard
               image={appPhones}
-              alt="Application mobile Access Prestige Taxi"
+              alt="Application web Access Prestige Taxi"
               icon={Smartphone}
               title={
                 lang === "en"
@@ -1175,87 +1271,63 @@ function Index() {
               }
               lead={
                 lang === "en"
-                  ? "Access Prestige Taxi is a web app: add it to your home screen in a few taps, no App Store or Play Store needed."
-                  : "Access Prestige Taxi est une application web : ajoutez-la à votre écran d'accueil en quelques gestes, sans passer par l'App Store ou le Play Store."
+                  ? "Add Access Prestige Taxi to your home screen in a few taps, without the App Store or Play Store."
+                  : "Ajoutez Access Prestige Taxi à votre écran d'accueil en quelques gestes, sans passer par l'App Store ou le Play Store."
               }
               reverse
             >
               <InstallAppToggle lang={lang === "en" ? "en" : "fr"} />
             </SplitPhotoCard>
-            <div className="lg:col-span-2">
-              <SplitPhotoCard
-                image={reviewPhone}
-                alt={lang === "en" ? "Client account" : "Espace client"}
-                icon={User}
-                title={lang === "en" ? "Your client area" : "Votre espace client"}
-                lead={
-                  lang === "en"
-                    ? "Ride history, invoices and saved addresses, all in one secure personal space."
-                    : "Historique de vos courses, factures et adresses favorites, réunis dans un espace personnel sécurisé."
-                }
-              >
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <Link
-                    to="/client/login"
-                    className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
-                  >
-                    {lang === "en" ? "Access my client area" : "Accéder à l'espace client"}{" "}
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </Link>
-                </div>
-                <LearnMoreToggle
-                  lang={lang === "en" ? "en" : "fr"}
-                  variant="solid"
-                  details={
-                    lang === "en"
-                      ? [
-                          "Full history of your past rides.",
-                          "Download your invoices at any time.",
-                          "Manage and save your favourite addresses.",
-                          "Modify or cancel a booking in one click.",
-                        ]
-                      : [
-                          "Historique complet de vos trajets passés.",
-                          "Téléchargement de vos factures à tout moment.",
-                          "Gestion et enregistrement de vos adresses favorites.",
-                          "Modification ou annulation d'une réservation en un clic.",
-                        ]
-                  }
-                />
-              </SplitPhotoCard>
-            </div>
+          </div>
+          <div className="mt-5">
+            <SplitPhotoCard
+              image={reviewPhone}
+              alt="Espace client"
+              icon={User}
+              title={lang === "en" ? "Your client area" : "Votre espace client"}
+              lead={
+                lang === "en"
+                  ? "Ride history, invoices and saved addresses, all in one secure personal space."
+                  : "Historique de vos courses, factures et adresses favorites, réunis dans un espace personnel sécurisé."
+              }
+            >
+              <div className="mt-5">
+                <Link
+                  to="/client/login"
+                  className="btn-gold inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black"
+                >
+                  {lang === "en" ? "Access client area" : "Accéder à l'espace client"}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </SplitPhotoCard>
           </div>
         </div>
       </section>
 
-      {/* 7. GUIDE & ACTUALITÉS */}
-      <section className="bg-[#07111f] py-14 sm:py-16 lg:py-20">
+      {/* GUIDE */}
+      <section className="bg-[#050b12] py-12 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="font-display text-2xl font-semibold text-[#f6f0e5] sm:text-3xl">
-              <span className="text-white">Guide & </span>
-              <span className="text-[#e0b866]">actualités</span>
+            <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
+              Guide & <span className="text-[#e0b866]">actualités</span>
             </h2>
           </Reveal>
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e, i) => (
               <Reveal key={e.slug} delay={i * 0.05}>
-                <article className="group overflow-hidden rounded-[22px] border border-[#e0b866] bg-[#07111f] shadow-[0_16px_45px_rgba(0,0,0,0.32)]">
+                <article className="group overflow-hidden rounded-[22px] bg-[#07111f]">
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative h-48 overflow-hidden">
                       <img
                         src={GUIDE_IMAGES[i % GUIDE_IMAGES.length]}
                         alt={`${e.name} — ${e.city}`}
                         loading="lazy"
-                        decoding="async"
                         className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
                       />
-                      <div
-                        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,20,0.08),rgba(3,10,20,0.76))]"
-                        aria-hidden="true"
-                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-[#07111f]/80" />
                       <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111f]/90">
-                        <MapPin className="h-5 w-5 text-[#e0b866]" aria-hidden="true" />
+                        <MapPin className="h-5 w-5 text-[#e0b866]" />
                       </div>
                     </div>
                     <div className="p-5">
