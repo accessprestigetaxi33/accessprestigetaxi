@@ -152,7 +152,7 @@ function ClientLoginPage() {
               className="mt-6 w-full rounded-2xl p-6"
               style={{
                 background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                border: "1px solid rgba(201,168,76,0.45)",
                 boxShadow: "0 25px 60px -20px rgba(0,0,0,0.6)",
               }}
             >
@@ -295,11 +295,11 @@ function ClientLoginPage() {
 function Field({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <label
-      className="flex items-center gap-2.5 rounded-xl px-3.5 transition focus-within:border-[rgba(201,168,76,0.5)]"
+      className="flex items-center gap-2.5 rounded-xl px-3.5 transition focus-within:border-[rgba(201,168,76,0.8)]"
       style={{
         height: 50,
         background: "rgba(255,255,255,0.05)",
-        border: "1px solid rgba(255,255,255,0.1)",
+        border: "1px solid rgba(201,168,76,0.32)",
       }}
     >
       <span style={{ color: "rgba(255,255,255,0.4)" }}>{icon}</span>
