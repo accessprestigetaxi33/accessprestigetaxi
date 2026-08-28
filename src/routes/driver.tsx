@@ -312,6 +312,45 @@ const css = `
   .drv-msg-in { animation: drv-fadein 0.25s ease both; }
   @keyframes drv-pulse { 0%, 100% { opacity:1; box-shadow: 0 0 0 3px rgba(34,197,94,0.3); } 50% { opacity:0.6; box-shadow: 0 0 0 6px rgba(34,197,94,0.1); } }
   .drv-visitor-dot-active { animation: drv-pulse 2s ease-in-out infinite; }
+
+  /* ── Access Prestige final mobile-first visual layer ───────────────────── */
+  html, body { background:#03070d !important; color:#f6f0e5 !important; }
+  .drv-root { max-width:520px; background:#03070d; color:#f6f0e5; box-shadow:none; }
+  .drv-header { background:#050a10 !important; color:#f6f0e5 !important; border-bottom:1px solid rgba(201,155,74,.65); }
+  .drv-header h1 { color:#f6f0e5 !important; font-family:Georgia,'Times New Roman',serif; font-weight:700; }
+  .drv-tabs { background:#050a10 !important; border-bottom:1px solid rgba(201,155,74,.35); }
+  .drv-tab { color:rgba(246,240,229,.55) !important; background:transparent !important; min-width:70px; padding:10px 7px 9px; }
+  .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
+  .drv-tab:active { background:rgba(224,184,102,.08) !important; }
+  .drv-body { padding:12px 10px max(22px, env(safe-area-inset-bottom, 22px)); background:#03070d; }
+  .drv-section { color:rgba(246,240,229,.55) !important; }
+  .drv-card { background:linear-gradient(180deg,#07131e,#040a10) !important; color:#f6f0e5 !important; border-color:rgba(201,155,74,.55) !important; border-radius:12px; box-shadow:0 10px 28px rgba(0,0,0,.24); }
+  .drv-card.pending { border-color:#e0b866 !important; }
+  .drv-card.accepted { border-color:#5fd08a !important; }
+  .drv-card.refused { border-color:#b94b4b !important; }
+  .drv-time, .drv-name, .drv-route span, .drv-stat-val { color:#f6f0e5 !important; }
+  .drv-sub, .drv-meta, .drv-stat-lbl, .drv-stat-sub { color:rgba(246,240,229,.58) !important; }
+  .drv-stat { background:#050a10 !important; border:1px solid rgba(201,155,74,.28); }
+  .drv-btn-primary { background:#e0b866 !important; color:#050a10 !important; border:1px solid #c99b4a !important; }
+  .drv-btn-secondary { background:#050a10 !important; color:#e0b866 !important; border:1px solid #c99b4a !important; }
+  .drv-btn-danger { background:#210f12 !important; color:#ffb0b0 !important; border:1px solid #7d3030 !important; }
+  .drv-route-opt { background:#050a10 !important; border-color:rgba(201,155,74,.35) !important; }
+  .drv-route-opt.selected { background:#0c1821 !important; border-color:#e0b866 !important; }
+  .drv-chat-thread { background:#050a10 !important; border-color:rgba(201,155,74,.35) !important; }
+  .drv-chat-thread.unread { background:#0c1821 !important; border-color:#e0b866 !important; }
+  .drv-chat-avatar { background:#e0b866 !important; color:#050a10 !important; }
+  .drv-chat-bubble.me { background:#e0b866 !important; color:#050a10 !important; }
+  .drv-chat-bubble.them { background:#111a23 !important; color:#f6f0e5 !important; }
+  .drv-badge { background:#e0b866 !important; color:#050a10 !important; }
+  .drv-badge-blue { background:#101d2a !important; color:#b9d8ff !important; }
+  .drv-badge-green { background:#0d2117 !important; color:#8ee39f !important; }
+  .drv-badge-amber { background:#251c0d !important; color:#e0b866 !important; }
+  .drv-badge-red { background:#281012 !important; color:#ffb0b0 !important; }
+  .drv-badge-gray { background:#111820 !important; color:#c8d0da !important; }
+  .drv-empty { color:rgba(246,240,229,.55) !important; }
+  @media (max-width:380px) { .drv-body { padding-left:8px; padding-right:8px; } .drv-tab { min-width:66px; font-size:9px; } }
+  @media (min-width:700px) { html,body { background:#03070d !important; } .drv-root { max-width:760px; box-shadow:0 0 0 1px rgba(201,155,74,.18),0 20px 60px rgba(0,0,0,.35); } }
+
 `;
 
 // ── Icons ──────────────────────────────────────────────────────────────────
