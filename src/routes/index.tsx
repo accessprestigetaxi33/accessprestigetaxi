@@ -1005,13 +1005,13 @@ function Index() {
 
                       {i === 2 && (
                         <div className="mt-4 flex flex-col gap-2">
-                          <Link
-                            to="/espace-client"
+                          <a
+                            href="https://www.accessprestigetaxi.fr/client/login"
                             className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-lg border-2 border-[#e0b866] bg-[#e0b866] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-110"
                           >
                             {lang === "en" ? "Client area" : "Espace client"}
                             <User className="h-4 w-4" aria-hidden="true" />
-                          </Link>
+                          </a>
                           <NotificationOptIn lang={lang === "en" ? "en" : "fr"} />
                         </div>
                       )}
@@ -1177,13 +1177,13 @@ function Index() {
                 <span className="text-[#e0b866]">actualités</span>
               </h2>
             </Reveal>
-            <Link
-              to="/guide"
+            <a
+              href="https://www.accessprestigetaxi.fr/blog"
               className="shrink-0 inline-flex min-h-[42px] items-center gap-2 rounded-full border-2 border-[#e0b866] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black sm:px-5 sm:text-xs"
             >
               {lang === "en" ? "View the guide" : "Voir le guide"}
               <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
+            </a>
           </div>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {BLOG_PICKS.map((e) => {
