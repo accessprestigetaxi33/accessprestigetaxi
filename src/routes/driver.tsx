@@ -168,7 +168,7 @@ const css = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
   html, body {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
-    overscroll-behavior-y: contain; background: #FDFBF7;
+    overscroll-behavior-y: contain; background: #03070d;
     font-family: 'DM Sans', sans-serif;
   }
   input, textarea, select { font-size: 16px; }
@@ -176,15 +176,15 @@ const css = `
     position: fixed; inset: 0;
     max-width: 480px; margin: 0 auto;
     display: flex; flex-direction: column;
-    background: #FDFBF7;
+    background: #03070d;
   }
   /* Tablette (iPad portrait et paysage) : colonne élargie, toujours centrée,
      avec un liseré pour la distinguer du fond beige plus soutenu de l'écran. */
   @media (min-width: 700px) {
-    html, body { background: #EFE6D8; }
+    html, body { background: #01040a; }
     .drv-root {
       max-width: 620px;
-      box-shadow: 0 0 0 1px #e2e8f0, 0 20px 60px -20px rgba(15, 23, 42, 0.25);
+      box-shadow: 0 0 0 1px rgba(201,155,74,.35), 0 20px 60px -20px rgba(0, 0, 0, 0.7);
     }
   }
   /* Desktop / grand écran : colonne encore plus large, texte légèrement agrandi. */
@@ -358,6 +358,14 @@ const css = `
   [style*="#0f172a"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
   [style*="#e2e8f0"] { border-color:rgba(201,155,74,.35) !important; }
   [style*="#64748b"], [style*="#94a3b8"] { color:rgba(246,240,229,.55) !important; }
+  [style*="#fef2f2"], [style*="#fff7ed"], [style*="#F4EFE4"], [style*="#fffbeb"], [style*="#eff6ff"], [style*="#f0fdf4"], [style*="#fff"] { background-color:#0b1118 !important; }
+  .drv-root input, .drv-root select, .drv-root textarea {
+    background:#050a10 !important; color:#f6f0e5 !important;
+    border:1px solid rgba(201,155,74,.45) !important; border-radius:10px !important;
+  }
+  .drv-root input::placeholder, .drv-root textarea::placeholder { color:rgba(246,240,229,.4) !important; }
+  .drv-root select option { background:#050a10; color:#f6f0e5; }
+  .drv-root input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(1) sepia(1) saturate(4) hue-rotate(5deg); }
   @media (max-width:600px) {
     .drv-root { max-width:100%; border:0; }
     .drv-overview-actions button { min-height:58px; }
@@ -580,8 +588,9 @@ function DriverPage() {
           alignItems: "center",
           justifyContent: "center",
           height: "100dvh",
+          background: "#03070d",
           fontFamily: "DM Sans,sans-serif",
-          color: "#64748b",
+          color: "#e0b866",
         }}
       >
         <div style={{ fontSize: 40 }}>🚕</div>

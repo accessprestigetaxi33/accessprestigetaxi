@@ -144,11 +144,11 @@ function BlogArticle() {
   const others = GUIDE_ENTRIES.filter((e) => e.slug !== entry.slug && e.dept === entry.dept).slice(0, 3);
 
   return (
-    <main className="pb-16">
+    <main className="bg-[#050708] pb-16">
       <article>
         {/* HERO IMAGE */}
         <div className="relative">
-          <div className="aspect-[16/10] w-full overflow-hidden bg-secondary sm:aspect-[21/9] lg:max-h-[560px]">
+          <div className="aspect-[16/10] w-full overflow-hidden bg-[#0b0f12] sm:aspect-[21/9] lg:max-h-[560px]">
             <img
               src={imgAt(entry.photos[0], 1280)}
               srcSet={imgSrcSet(entry.photos[0], [500, 1280, 1920])}
@@ -173,7 +173,7 @@ function BlogArticle() {
             <ArrowLeft className="h-3.5 w-3.5" /> {c.back}
           </Link>
 
-          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-white/55">
             <span className="text-primary">{isEn ? catLabel.en : catLabel.fr}</span>
             <span className="inline-flex items-center gap-1.5">
               <MapPin className="h-3.5 w-3.5 text-primary" /> {entry.city} ({entry.dept})
@@ -218,20 +218,20 @@ function BlogArticle() {
 
 
           {/* EN BREF */}
-          <dl className="mt-7 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
+          <dl className="mt-7 grid gap-px overflow-hidden rounded-2xl border border-[#e0b866]/25 bg-border sm:grid-cols-3">
             {entry.facts.map((f, i) => (
-              <div key={i} className="bg-card px-4 py-4">
-                <dt className="text-[10px] uppercase tracking-widest text-muted-foreground">
+              <div key={i} className="bg-[#080b0d] px-4 py-4">
+                <dt className="text-[10px] uppercase tracking-widest text-white/55">
                   {c.practical} · {i + 1}
                 </dt>
-                <dd className="mt-1 text-sm font-medium text-card-foreground">{isEn ? f.en : f.fr}</dd>
+                <dd className="mt-1 text-sm font-medium text-white">{isEn ? f.en : f.fr}</dd>
               </div>
             ))}
           </dl>
 
           {/* HISTOIRE */}
           <h2 className="mt-10 font-display text-xl font-semibold text-foreground sm:text-2xl">{c.history}</h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground sm:text-base">{txt.history}</p>
+          <p className="mt-3 text-[15px] leading-relaxed text-white/55 sm:text-base">{txt.history}</p>
 
           {/* GALERIE — 3 photos */}
           <h2 className="mt-10 font-display text-xl font-semibold text-foreground sm:text-2xl">{c.gallery}</h2>
@@ -240,7 +240,7 @@ function BlogArticle() {
         <div className="mx-auto mt-4 max-w-5xl px-4 sm:px-6">
           <div className="grid gap-3 sm:grid-cols-3">
             {entry.photos.map((src, i) => (
-              <figure key={i} className="overflow-hidden rounded-2xl border border-border bg-secondary">
+              <figure key={i} className="overflow-hidden rounded-2xl border border-[#e0b866]/25 bg-[#0b0f12]">
                 <img
                   src={imgAt(src, 500)}
                   srcSet={imgSrcSet(src, [250, 330, 500, 1280])}
@@ -260,12 +260,12 @@ function BlogArticle() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           {/* CONSEILS */}
           <h2 className="mt-10 font-display text-xl font-semibold text-foreground sm:text-2xl">{c.tips}</h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground sm:text-base">{txt.tips}</p>
+          <p className="mt-3 text-[15px] leading-relaxed text-white/55 sm:text-base">{txt.tips}</p>
 
           {/* CTA */}
-          <section className="mt-10 rounded-2xl border border-border bg-card p-5 sm:p-7">
-            <h2 className="font-display text-xl font-semibold text-card-foreground sm:text-2xl">{c.ctaTitle}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.ctaText}</p>
+          <section className="mt-10 rounded-2xl border border-[#e0b866]/25 bg-[#080b0d] p-5 sm:p-7">
+            <h2 className="font-display text-xl font-semibold text-white sm:text-2xl">{c.ctaTitle}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/55">{c.ctaText}</p>
             <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
               <Link
                 to="/reserver"
@@ -276,7 +276,7 @@ function BlogArticle() {
               </Link>
               <a
                 href={`tel:${PHONE}`}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3.5 text-sm font-semibold text-foreground transition hover:border-primary"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#e0b866]/25 px-6 py-3.5 text-sm font-semibold text-foreground transition hover:border-primary"
               >
                 <Phone className="h-4 w-4 text-primary" /> {PHONE_DISPLAY}
               </a>
@@ -291,7 +291,7 @@ function BlogArticle() {
                 key={o.slug}
                 to="/blog/$slug"
                 params={{ slug: o.slug }}
-                className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:border-primary/60"
+                className="group overflow-hidden rounded-2xl border border-[#e0b866]/25 bg-[#080b0d] transition hover:border-primary/60"
               >
                 <img
                   src={imgAt(o.photos[0], 500)}
@@ -305,8 +305,8 @@ function BlogArticle() {
                   className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="p-4">
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{o.city}</p>
-                  <p className="mt-1 font-display text-base font-semibold text-card-foreground">{o.name}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-white/55">{o.city}</p>
+                  <p className="mt-1 font-display text-base font-semibold text-white">{o.name}</p>
                 </div>
               </Link>
             ))}
