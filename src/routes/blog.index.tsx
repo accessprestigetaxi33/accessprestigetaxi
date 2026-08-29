@@ -183,7 +183,7 @@ function BlogIndex() {
   const hasFilter = cat !== "all" || city !== "all" || tag !== "all" || query !== "";
 
   return (
-    <main className="pb-16">
+    <main className="bg-[#050708] pb-16">
       {/* HERO — même langage visuel que la homepage */}
       <section className="relative overflow-hidden border-b border-[#e0b866]/20 bg-[#050708]">
         <div
@@ -335,7 +335,7 @@ function BlogIndex() {
             >
               <MapPin className="h-3 w-3 shrink-0" />
               {s.city}
-              <span className={city === s.city ? "opacity-80" : "text-muted-foreground"}>{s.count}</span>
+              <span className={city === s.city ? "opacity-80" : "text-white/55"}>{s.count}</span>
             </button>
           ))}
         </div>
@@ -344,7 +344,7 @@ function BlogIndex() {
       {/* GRILLE */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
         {visible.length === 0 ? (
-          <p className="py-12 text-center text-sm text-muted-foreground">{c.empty}</p>
+          <p className="py-12 text-center text-sm text-white/55">{c.empty}</p>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-6">
             {visible.map((e, i) => {
@@ -357,7 +357,7 @@ function BlogIndex() {
                   className="group flex flex-col overflow-hidden rounded-2xl border border-[#e0b866]/20 bg-[#080b0d] shadow-[0_14px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-0.5 hover:border-[#e0b866]/60"
                 >
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#0b0f12]">
                       <img
                         src={imgAt(e.photos[0], 500)}
                         srcSet={imgSrcSet(e.photos[0], [250, 330, 500])}
@@ -383,13 +383,13 @@ function BlogIndex() {
                     <button
                       type="button"
                       onClick={() => onFilterChange(setCity)(e.city)}
-                      className="flex min-w-0 items-center gap-2 text-left text-[11px] uppercase tracking-widest text-muted-foreground transition hover:text-primary"
+                      className="flex min-w-0 items-center gap-2 text-left text-[11px] uppercase tracking-widest text-white/55 transition hover:text-primary"
                     >
                       <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
                       <span className="truncate">{e.city}</span>
                     </button>
 
-                    <h2 className="mt-2 font-display text-lg font-semibold leading-snug text-card-foreground">
+                    <h2 className="mt-2 font-display text-lg font-semibold leading-snug text-white">
                       <Link to="/blog/$slug" params={{ slug: e.slug }} className="hover:text-primary">
                         {e.name}
                       </Link>
@@ -403,7 +403,7 @@ function BlogIndex() {
                       </p>
                     ) : null}
 
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{txt.teaser}</p>
+                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/55">{txt.teaser}</p>
 
                     {tags.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -414,7 +414,7 @@ function BlogIndex() {
                               key={t}
                               type="button"
                               onClick={() => onFilterChange(setTag)(t)}
-                              className="rounded-full border border-border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground transition hover:border-primary hover:text-primary"
+                              className="rounded-full border border-[#e0b866]/25 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/55 transition hover:border-primary hover:text-primary"
                             >
                               {isEn ? def.en : def.fr}
                             </button>
