@@ -358,6 +358,14 @@ const css = `
   [style*="#0f172a"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
   [style*="#e2e8f0"] { border-color:rgba(201,155,74,.35) !important; }
   [style*="#64748b"], [style*="#94a3b8"] { color:rgba(246,240,229,.55) !important; }
+  [style*="#fef2f2"], [style*="#fff7ed"], [style*="#F4EFE4"], [style*="#fffbeb"], [style*="#eff6ff"], [style*="#f0fdf4"], [style*="#fff"] { background-color:#0b1118 !important; }
+  .drv-root input, .drv-root select, .drv-root textarea {
+    background:#050a10 !important; color:#f6f0e5 !important;
+    border:1px solid rgba(201,155,74,.45) !important; border-radius:10px !important;
+  }
+  .drv-root input::placeholder, .drv-root textarea::placeholder { color:rgba(246,240,229,.4) !important; }
+  .drv-root select option { background:#050a10; color:#f6f0e5; }
+  .drv-root input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(1) sepia(1) saturate(4) hue-rotate(5deg); }
   @media (max-width:600px) {
     .drv-root { max-width:100%; border:0; }
     .drv-overview-actions button { min-height:58px; }
