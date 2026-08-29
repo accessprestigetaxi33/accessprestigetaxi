@@ -344,7 +344,7 @@ function Benefit({ icon, title, text }: { icon: React.ReactNode; title: string; 
   return (
     <div className="cl-benefit flex items-center gap-3 px-4 py-4 sm:px-5 sm:py-5">
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#e0b866]/70 text-[#e0b866]">
-        {React.cloneElement(icon as React.ReactElement, { className: "h-5 w-5" })}
+        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "h-5 w-5" })}
       </span>
       <div>
         <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-white/75">{title}</p>
