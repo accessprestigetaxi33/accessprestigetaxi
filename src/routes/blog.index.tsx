@@ -488,7 +488,9 @@ function BlogIndex() {
 function HeroStat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div className="flex min-w-0 items-center gap-2 border-r border-[#e0b866]/15 pr-2 last:border-r-0">
-      <span className="text-[#e0b866]">{React.cloneElement(icon as React.ReactElement, { className: "h-4 w-4" })}</span>
+      <span className="text-[#e0b866]">
+        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "h-4 w-4" })}
+      </span>
       <div className="min-w-0">
         <p className="font-display text-base font-semibold text-[#e8c96d]">{value}</p>
         <p className="truncate text-[9px] uppercase tracking-wider text-white/40">{label}</p>
