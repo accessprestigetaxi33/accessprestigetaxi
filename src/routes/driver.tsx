@@ -168,7 +168,7 @@ const css = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
   html, body {
     margin: 0; padding: 0; height: 100%; overflow: hidden;
-    overscroll-behavior-y: contain; background: #FDFBF7;
+    overscroll-behavior-y: contain; background: #03070d;
     font-family: 'DM Sans', sans-serif;
   }
   input, textarea, select { font-size: 16px; }
@@ -176,15 +176,15 @@ const css = `
     position: fixed; inset: 0;
     max-width: 480px; margin: 0 auto;
     display: flex; flex-direction: column;
-    background: #FDFBF7;
+    background: #03070d;
   }
   /* Tablette (iPad portrait et paysage) : colonne élargie, toujours centrée,
      avec un liseré pour la distinguer du fond beige plus soutenu de l'écran. */
   @media (min-width: 700px) {
-    html, body { background: #EFE6D8; }
+    html, body { background: #01040a; }
     .drv-root {
       max-width: 620px;
-      box-shadow: 0 0 0 1px #e2e8f0, 0 20px 60px -20px rgba(15, 23, 42, 0.25);
+      box-shadow: 0 0 0 1px rgba(201,155,74,.35), 0 20px 60px -20px rgba(0, 0, 0, 0.7);
     }
   }
   /* Desktop / grand écran : colonne encore plus large, texte légèrement agrandi. */
@@ -580,8 +580,9 @@ function DriverPage() {
           alignItems: "center",
           justifyContent: "center",
           height: "100dvh",
+          background: "#03070d",
           fontFamily: "DM Sans,sans-serif",
-          color: "#64748b",
+          color: "#e0b866",
         }}
       >
         <div style={{ fontSize: 40 }}>🚕</div>
