@@ -843,7 +843,7 @@ export function BookingStudio() {
       ref: success.suiviId,
     });
     return (
-      <main className="w-full px-4 py-10 text-white sm:py-16">
+      <main className="min-h-screen w-full bg-[#07101a] px-4 py-10 text-white sm:py-16">
         <div className="rounded-3xl border border-[#d6a83d]/50 bg-[#07101a]/55 p-6 text-center shadow-lg sm:p-10">
           {pending ? (
             <Loader2 className="mx-auto h-14 w-14 animate-spin text-[#e8bd5d]" />
@@ -1156,7 +1156,7 @@ export function BookingStudio() {
   );
 
   return (
-    <main className="w-full px-4 pb-40 pt-8 text-white sm:px-6 sm:pb-16 sm:pt-12">
+    <main className="min-h-screen w-full bg-[#07101a] px-4 pb-40 pt-8 text-white sm:px-6 sm:pb-16 sm:pt-12">
       {submitting && (
         <div
           role="status"
