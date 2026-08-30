@@ -1358,7 +1358,9 @@ function useDriverGpsTracking(driverId?: string) {
       watchRef.current = null;
     }
     setState("off");
-    stopPos({ data: { token: getDriverToken() ?? "" } }).catch(() => {});
+    const tok = getDriverToken();
+    if (tok) stopPos({ data: { token: tok } }).catch(() => {});
+
   }, [stopPos]);
 
   // Activation automatique dès l'identité (Alain/Patricia) connue, sinon deux
@@ -1634,7 +1636,13 @@ function CoursesTab({
   const mineOf = useCallback((r: Resa) => isAdmin || (r as any).assigned_driver === driverId, [isAdmin, driverId]);
 
   const load = useCallback(async () => {
-    const unreadIds = await listUnreadResasFn({ data: { driver_token: getDriverToken() } }).catch(() => [] as string[]);
+    const tok = getDriverToken();
+    if (!tok || tok.length < 8) {
+      setLoading(false);
+      return;
+    }
+    const unreadIds = await listUnreadResasFn({ data: { driver_token: tok } }).catch(() => [] as string[]);
+
     let res: any;
     try {
       res = await listCoursesFn({
@@ -4379,9 +4387,15 @@ function TrackingAnalytics() {
       const since30j = new Date();
       since30j.setDate(since30j.getDate() - 30);
 
+      const tok = getDriverToken();
+      if (!tok) {
+        setLoading(false);
+        return;
+      }
       const { events, totalCourses } = await trackingAnalyticsFn({
-        data: { token: getDriverToken() ?? "", days: 30 },
+        data: { token: tok, days: 30 },
       });
+
 
       const evts: any[] = events ?? [];
 
