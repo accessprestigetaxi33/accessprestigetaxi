@@ -10,7 +10,7 @@ const ABOUT_DESC =
   "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente-Maritime.";
 const ABOUT_URL = "https://www.accessprestigetaxi.fr/a-propos";
 
-export const Route = createFileRoute("/a-propos")({
+export const Route = createFileRoute("/client/dashboard")({
   head: ({ match }) => ({
     meta: [
       { title: ABOUT_TITLE },

@@ -86,31 +86,33 @@ function ContactPage() {
   const first = DRIVERS[0]!;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:py-14 md:py-16">
-      <div className="text-center">
-        <img
-          src={heroLogo}
-          alt="Access Prestige Taxi"
-          width={400}
-          height={150}
-          className="mx-auto h-28 w-auto object-contain sm:h-40 md:h-48"
-        />
-        <p className="mt-5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-          Access <span className="text-primary">Prestige</span> Taxi
-        </p>
-        <p className="mt-5 text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
-        <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("contact.title")}</h1>
-        <p className="mt-3 text-sm text-muted-foreground sm:mt-4 sm:text-base">{t("contact.intro")}</p>
-        <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-          {c.badge}
-        </span>
-      </div>
+    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
+      <section className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/45 px-5 py-10 text-center shadow-[0_24px_70px_rgba(0,0,0,.18)] sm:px-10 sm:py-14">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,rgba(212,169,83,.12),transparent_32%)]" />
+        <div className="relative text-center">
+          <img
+            src={heroLogo}
+            alt="Access Prestige Taxi"
+            width={400}
+            height={150}
+            className="mx-auto h-28 w-auto object-contain sm:h-40 md:h-48"
+          />
+          <p className="mt-5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+            Access <span className="text-primary">Prestige</span> Taxi
+          </p>
+          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
+          <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("contact.title")}</h1>
+          <p className="mt-3 text-sm text-muted-foreground sm:mt-4 sm:text-base">{t("contact.intro")}</p>
+          <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+            {c.badge}
+          </span>
+        </div>
+      </section>
 
-      {/* Contact cards: 1-col on mobile, 2-col on md */}
-      <div className="mt-8 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6">
+      <section className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-5">
         <a
           href={`tel:${first.tel}`}
-          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
+          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card/70 p-5 shadow-sm transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <Phone className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
           <div>
@@ -131,7 +133,7 @@ function ContactPage() {
           href={`https://wa.me/${first.intl.replace("+", "")}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
+          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card/70 p-5 shadow-sm transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <MessageCircle className="h-7 w-7 shrink-0 text-green-500 sm:h-8 sm:w-8" />
           <div>
@@ -143,7 +145,7 @@ function ContactPage() {
 
         <a
           href={`mailto:${CONTACT_EMAIL}`}
-          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
+          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card/70 p-5 shadow-sm transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
         >
           <Mail className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
           <div>
@@ -162,20 +164,19 @@ function ContactPage() {
             <p className="mt-1 text-sm text-muted-foreground sm:mt-2">{c.zoneLong}</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="mt-5 flex flex-row items-start gap-4 rounded-2xl border border-primary/30 bg-card p-5 sm:mt-6 sm:p-6">
+      <section className="mt-5 flex flex-row items-start gap-4 rounded-2xl border border-primary/30 bg-card/70 p-5 sm:mt-6 sm:p-6">
         <HeartPulse className="h-7 w-7 shrink-0 text-primary" />
         <div>
           <h2 className="font-display text-lg font-semibold sm:text-xl">{c.cmuTitle}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{c.cmuText}</p>
         </div>
-      </div>
+      </section>
 
-      <div className="mt-8 sm:mt-10">
+      <section className="mt-8 rounded-3xl border border-border bg-card/40 p-3 sm:mt-10 sm:p-6">
         <ContactForm />
-      </div>
-
-    </div>
+      </section>
+    </main>
   );
 }
