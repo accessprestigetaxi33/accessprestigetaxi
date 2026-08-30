@@ -174,22 +174,15 @@ const css = `
   input, textarea, select { font-size: 16px; }
   .drv-root {
     position: fixed; inset: 0;
-    max-width: 480px; margin: 0 auto;
     display: flex; flex-direction: column;
     background: #03070d;
   }
-  /* Tablette (iPad portrait et paysage) : colonne élargie, toujours centrée,
-     avec un liseré pour la distinguer du fond beige plus soutenu de l'écran. */
+  /* Tablette (iPad portrait et paysage) : colonne élargie, plus de cadre centré. */
   @media (min-width: 700px) {
     html, body { background: #01040a; }
-    .drv-root {
-      max-width: 620px;
-      box-shadow: 0 0 0 1px rgba(201,155,74,.35), 0 20px 60px -20px rgba(0, 0, 0, 0.7);
-    }
   }
   /* Desktop / grand écran : colonne encore plus large, texte légèrement agrandi. */
   @media (min-width: 1024px) {
-    .drv-root { max-width: 760px; }
     .drv-body { padding: 20px 28px; }
     .drv-card { padding: 16px; }
   }
@@ -200,6 +193,7 @@ const css = `
     .drv-btn-primary:hover { background: #1e293b; }
     .drv-btn-secondary:hover { background: #e2e8f0; }
     .drv-btn-danger:hover { background: #fee2e2; }
+    .drv-card:hover, .drv-route-opt:hover, .drv-chat-thread:hover { border-color: #c99b4a; }
   }
   .drv-header {
     background: #0f172a; color: #FDFBF7; display: flex; align-items: center; gap: 10px;
@@ -208,7 +202,7 @@ const css = `
   }
   .drv-header h1 { margin: 0; font-size: 17px; font-weight: 700; flex: 1; font-family: 'DM Sans', sans-serif; }
   .drv-tabs {
-    display: flex;  background: #FDFBF7;
+    display: flex; border-bottom: 1px solid rgba(201,155,74,.45); background: #FDFBF7;
     padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
     flex-shrink: 0;
     /* Fix : avec 8 onglets + labels longs ("Course + chat client"), la
@@ -222,13 +216,13 @@ const css = `
   .drv-tabs::-webkit-scrollbar { display: none; }
   .drv-tab {
     flex: 0 0 auto; min-width: 66px; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 12px 8px 10px; min-height: 48px;  background: none; color: #94a3b8;
-    font-size: 10px; font-family: 'DM Sans', sans-serif; cursor: pointer; 
+    padding: 12px 8px 10px; min-height: 48px; border: none; background: none; color: #94a3b8;
+    font-size: 10px; font-family: 'DM Sans', sans-serif; cursor: pointer; border-bottom: 2px solid transparent;
     transition: color 0.15s; -webkit-user-select: none; user-select: none;
     white-space: nowrap;
   }
   .drv-tab:active { background: #f8fafc; }
-  .drv-tab.active { color: #0f172a; }
+  .drv-tab.active { color: #0f172a; border-bottom-color: var(--gold, #c99b4a); }
   .drv-tab svg { width: 22px; height: 22px; }
   .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
   .drv-body {
@@ -237,21 +231,21 @@ const css = `
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
   }
   .drv-section { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
-  .drv-card { background: #FDFBF7; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+  .drv-card { background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
   .drv-swipe { position: relative; margin-bottom: 10px; border-radius: 16px; overflow: hidden; }
   .drv-swipe .drv-card { margin-bottom: 0; }
   .drv-swipe-content { position: relative; z-index: 1; touch-action: pan-y; will-change: transform; }
   .drv-swipe-action {
     position: absolute; top: 0; right: 0; bottom: 0; width: 96px; z-index: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-    background: #dc2626; color: #fff;  font-size: 20px; font-weight: 700; cursor: pointer;
+    background: #dc2626; color: #fff; border: none; font-size: 20px; font-weight: 700; cursor: pointer;
   }
   .drv-swipe-action span { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
-  .drv-card.pending { box-shadow: inset 4px 0 0 #f59e0b; }
-  .drv-card.new { box-shadow: inset 4px 0 0 #3b82f6, 0 0 0 3px #3b82f620; }
+  .drv-card.pending { border-color: #f59e0b; }
+  .drv-card.new { border-color: #3b82f6; box-shadow: 0 0 0 3px #3b82f620; }
   .drv-card.done { opacity: 0.5; }
-  .drv-card.accepted { box-shadow: inset 4px 0 0 #22c55e; }
-  .drv-card.refused { box-shadow: inset 4px 0 0 #ef4444; opacity: 0.6; }
+  .drv-card.accepted { border-color: #22c55e; }
+  .drv-card.refused { border-color: #ef4444; opacity: 0.6; }
   .drv-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .drv-time { font-size: 22px; font-weight: 800; color: #0f172a; }
   .drv-name { font-size: 14px; font-weight: 600; color: #0f172a; }
@@ -261,11 +255,11 @@ const css = `
   .drv-meta { display: flex; gap: 12px; font-size: 12px; color: #64748b; margin: 8px 0 12px; flex-wrap: wrap; }
   .drv-meta span { display: flex; align-items: center; gap: 4px; }
   .drv-btns { display: flex; gap: 8px; }
-  .drv-btn-primary { flex: 1; min-height: 46px; background: #0f172a; color: #FDFBF7; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-primary { flex: 1; min-height: 46px; background: #0f172a; color: #FDFBF7; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-primary:active { background: #1e293b; }
-  .drv-btn-secondary { flex: 1; min-height: 46px; background: #f1f5f9; color: #0f172a; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-secondary { flex: 1; min-height: 46px; background: #f1f5f9; color: #0f172a; border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-secondary:active { background: #e2e8f0; }
-  .drv-btn-danger { flex: 1; min-height: 46px; background: #fef2f2; color: #dc2626; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-danger { flex: 1; min-height: 46px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-danger:active { background: #fee2e2; }
   .drv-badge-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
   .drv-badge-blue { background: #eff6ff; color: #1d4ed8; }
@@ -282,26 +276,26 @@ const css = `
   .drv-stat-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
   .drv-empty { text-align: center; padding: 50px 20px; color: #94a3b8; }
   .drv-empty svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.4; }
-  .drv-route-opt { border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; min-height: 44px; }
+  .drv-route-opt { border: 1.5px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; min-height: 44px; }
   .drv-route-opt:active { background: #f8fafc; }
-  .drv-route-opt.selected { background: #f8fafc; }
+  .drv-route-opt.selected { border-color: #c99b4a; background: #f8fafc; }
   .drv-route-opt-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .drv-route-label { font-size: 13px; font-weight: 700; color: #0f172a; }
   .drv-route-price { font-size: 16px; font-weight: 800; color: #0f172a; }
   .drv-route-meta { display: flex; gap: 10px; font-size: 12px; color: #64748b; }
-  .drv-map { width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 14px; touch-action: pan-x pan-y; }
-  .drv-divider { margin: 16px 0; }
+  .drv-map { width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 14px; border: 1px solid rgba(201,155,74,.45); touch-action: pan-x pan-y; }
+  .drv-divider { border: none; border-top: 1px solid rgba(201,155,74,.25); margin: 16px 0; }
   .drv-planning-slot { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
   .drv-planning-time { font-size: 12px; color: #64748b; min-width: 40px; padding-top: 3px; }
   .drv-planning-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
-  .drv-planning-card { flex: 1; background: #FDFBF7; border-radius: 12px; padding: 10px 12px; }
+  .drv-planning-card { flex: 1; background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 10px 12px; }
   @media (max-width: 380px) {
     .drv-time { font-size: 18px; }
     .drv-stat-val { font-size: 20px; }
   }
-  .drv-chat-thread { border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
+  .drv-chat-thread { border: 1px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
   .drv-chat-thread:active { background: #f8fafc; }
-  .drv-chat-thread.unread { background: #eff6ff; }
+  .drv-chat-thread.unread { border-color: #3b82f6; background: #eff6ff; }
   .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
   .drv-chat-bubble { max-width: 78%; border-radius: 14px; padding: 9px 12px; font-size: 13.5px; line-height: 1.45; }
   .drv-chat-bubble.me { background: #0f172a; color: #FDFBF7; border-radius: 14px 14px 4px 14px; margin-left: auto; }
@@ -313,46 +307,47 @@ const css = `
 
   /* ── Access Prestige mobile visual system ───────────────────────────── */
   .drv-root { background:#03070d !important; color:#f6f0e5 !important; }
-  .drv-header { background:#050a10 !important; min-height:74px; padding:calc(env(safe-area-inset-top, 0px) + 12px) 14px 10px !important; }
-  .drv-brand-mark { width:42px; height:42px; border-radius:50%; display:grid; place-items:center; color:#050a10; background:linear-gradient(145deg,#f6cd6b,#c99b4a); font-family:Georgia,serif; font-weight:800; letter-spacing:.08em; flex:0 0 42px; }
+  .drv-header { background:#050a10 !important; border-bottom:1px solid #c99b4a; min-height:74px; padding:calc(env(safe-area-inset-top, 0px) + 12px) 14px 10px !important; }
+  .drv-brand-mark { width:42px; height:42px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; color:#e0b866; font-family:Georgia,serif; font-weight:800; letter-spacing:.08em; flex:0 0 42px; }
   .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
   .drv-header-title strong { color:#f6f0e5; font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; }
-  .drv-header-menu { width:38px; height:38px; display:grid; place-items:center; border-radius:8px; color:#e0b866; background:rgba(224,184,102,.16); text-decoration:none; font-size:20px; flex:0 0 38px; }
+  .drv-header-menu { width:38px; height:38px; display:grid; place-items:center; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; text-decoration:none; font-size:20px; flex:0 0 38px; }
   .drv-overview { padding:14px 14px 4px; background:#03070d; }
   .drv-overview-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
   .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size:9px; letter-spacing:.12em; font-weight:800; }
   .drv-overview-head h2 { margin:0; color:#f6f0e5; font-family:Georgia,serif; font-size:19px; }
-  .drv-live-pill { display:inline-flex; align-items:center; gap:6px; color:#8ee39f; background:rgba(95,208,138,.16); border-radius:999px; padding:5px 8px; font-size:9px; font-weight:800; }
+  .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size:9px; font-weight:800; }
   .drv-live-pill i { width:6px; height:6px; border-radius:50%; background:#5fd08a; display:block; }
   .drv-stat-grid { grid-template-columns:repeat(2,1fr) !important; gap:8px !important; margin-bottom:10px !important; }
-  .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border-radius:9px !important; padding:11px !important;
+  .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border:1px solid rgba(201,155,74,.45); border-radius:9px !important; padding:11px !important;
     display:grid !important; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:8px; }
   .drv-stat-lbl { grid-column:1; grid-row:1; margin:0 !important; color:rgba(246,240,229,.55) !important; font-size:8.5px !important; letter-spacing:.08em; font-weight:800; line-height:1.25; }
   .drv-stat-val { grid-column:2; grid-row:1 / span 2; justify-self:end; text-align:right; white-space:nowrap; color:#e0b866 !important; font-size:22px !important; line-height:1.1; }
   .drv-stat-sub { grid-column:1; grid-row:2; margin:0 !important; color:rgba(246,240,229,.45) !important; font-size:9px !important; line-height:1.2; }
   @media (max-width:340px) { .drv-stat-val { font-size:18px !important; } }
-  .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border-radius:9px; overflow:hidden; margin-bottom:10px; background:linear-gradient(145deg,#f6cd6b,#c99b4a); }
-  .drv-overview-actions button { min-height:64px; background:transparent; color:#050a10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
-  .drv-overview-actions svg { width:20px; height:20px; color:#050a10; }
-  .drv-tabs { background:#050a10 !important; }
+  .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(201,155,74,.45); border-radius:9px; overflow:hidden; margin-bottom:10px; background:#050a10; }
+  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.2); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
+  .drv-overview-actions button:last-child { border-right:0; }
+  .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
+  .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
   .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
-  .drv-tab.active { color:#e0b866 !important; }
+  .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
   .drv-tab:active { background:#0a1118 !important; }
   .drv-body { background:#03070d !important; padding:12px 12px calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
-  .drv-card, .drv-route-opt, .drv-chat-thread, .drv-planning-card { background:linear-gradient(145deg,#f6cd6b,#c99b4a) !important; color:#181107 !important; }
-  .drv-time, .drv-name, .drv-route-label, .drv-planning-card, .drv-route span, .drv-section { color:#181107 !important; }
-  .drv-sub, .drv-meta, .drv-route-meta, .drv-planning-time { color:rgba(24,17,7,.65) !important; }
-  .drv-btn-primary { background:#e0b866 !important; color:#050a10 !important; }
-  .drv-btn-secondary { background:#c99b4a !important; color:#050a10 !important; }
-  .drv-btn-danger { background:#1b0c0c !important; color:#f0a0a0 !important; }
+  .drv-card, .drv-route-opt, .drv-chat-thread, .drv-planning-card { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; color:#f6f0e5 !important; }
+  .drv-time, .drv-name, .drv-route-label, .drv-planning-card, .drv-route span, .drv-section { color:#f6f0e5 !important; }
+  .drv-sub, .drv-meta, .drv-route-meta, .drv-planning-time { color:rgba(246,240,229,.55) !important; }
+  .drv-btn-primary { background:#050a10 !important; color:#fff !important; border:1px solid #e0b866 !important; }
+  .drv-btn-secondary { background:#050a10 !important; color:#e0b866 !important; border:1px solid #c99b4a !important; }
+  .drv-btn-danger { background:#1b0c0c !important; color:#f0a0a0 !important; border-color:#8b3a3a !important; }
   .drv-badge-blue { background:#17243a !important; color:#9fc2ff !important; }
   .drv-badge-green { background:#10271b !important; color:#8ee39f !important; }
   .drv-badge-gray { background:#111820 !important; color:#c8c0b2 !important; }
-  .drv-chat-bubble.me { background:#e0b866 !important; color:#050a10 !important; }
-  .drv-chat-bubble.them { background:rgba(224,184,102,.16) !important; color:#f6f0e5 !important; }
-  .drv-chat-thread.unread { background:linear-gradient(145deg,#ffe08a,#e0b866) !important; }
-  .drv-team-map { background:linear-gradient(145deg,#f6cd6b,#c99b4a) !important; }
+  .drv-chat-bubble.me { background:#101820 !important; color:#fff !important; border:1px solid #e0b866 !important; }
+  .drv-chat-bubble.them { background:#101820 !important; color:#f6f0e5 !important; }
+  .drv-chat-thread.unread { background:#101d28 !important; border-color:#c99b4a !important; }
+  .drv-team-map { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; }
   /* Recolor legacy inline light surfaces without touching their behaviour.
      IMPORTANT : les navigateurs réécrivent les couleurs hex des styles inline
      en rgb(...) dans l'attribut style réellement posé sur le DOM — les
@@ -365,6 +360,9 @@ const css = `
     background-color:#050a10 !important;
   }
   [style*="#0f172a"], [style*="rgb(15, 23, 42)"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
+  [style*="#e2e8f0"], [style*="rgb(226, 232, 240)"] { border-color:rgba(201,155,74,.45) !important; }
+  [style*="#f1f5f9"], [style*="rgb(241, 245, 249)"] { border-color:rgba(201,155,74,.22) !important; }
+  [style*="rgba(255,255,255,0.2)"], [style*="rgba(255, 255, 255, 0.2)"] { border-color:rgba(201,155,74,.45) !important; }
   [style*="#64748b"], [style*="#94a3b8"], [style*="#475569"], [style*="#334155"], [style*="#cbd5e1"],
   [style*="rgb(100, 116, 139)"], [style*="rgb(148, 163, 184)"], [style*="rgb(71, 85, 105)"],
   [style*="rgb(51, 65, 85)"], [style*="rgb(203, 213, 225)"] {
@@ -377,13 +375,13 @@ const css = `
   }
   .drv-root input, .drv-root select, .drv-root textarea {
     background:#050a10 !important; color:#f6f0e5 !important;
-     border-radius:10px !important;
+    border:1px solid rgba(201,155,74,.45) !important; border-radius:10px !important;
   }
   .drv-root input::placeholder, .drv-root textarea::placeholder { color:rgba(246,240,229,.4) !important; }
   .drv-root select option { background:#050a10; color:#f6f0e5; }
   .drv-root input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(1) sepia(1) saturate(4) hue-rotate(5deg); }
   @media (max-width:600px) {
-    .drv-root { max-width:100%; }
+    .drv-root { max-width:100%; border:0; }
     .drv-overview-actions button { min-height:58px; }
     .drv-team-map { margin:8px 0 10px !important; }
   }
@@ -888,7 +886,7 @@ function DriverApp({
           <PushUnsupportedNotice
             style={{
               background: "#fff7ed",
-
+              borderBottom: "1px solid #e6ddc9",
               padding: "10px 16px",
               fontSize: 12.5,
               color: "#9a3412",
@@ -900,7 +898,7 @@ function DriverApp({
           <div
             style={{
               background: "#fef2f2",
-
+              borderBottom: "1px solid #fecaca",
               padding: "10px 16px",
               fontSize: 12.5,
               color: "#b91c1c",
@@ -922,7 +920,7 @@ function DriverApp({
               justifyContent: "space-between",
               gap: 10,
               background: pushStatus === "denied" ? "#1b0c0c" : pushStatus === "granted" ? "#0d1a12" : "#0b1118",
-
+              borderBottom: "1px solid rgba(201,155,74,.35)",
               padding: "10px 16px",
               fontSize: 12.5,
               color: pushStatus === "denied" ? "#f0a0a0" : pushStatus === "granted" ? "#8ee39f" : "#e0b866",
@@ -970,9 +968,9 @@ function DriverApp({
                     disabled={identifyPushBusy !== null}
                     style={{
                       flexShrink: 0,
-                      background: "#e0b866",
-                      color: "#050a10",
-
+                      background: "#050a10",
+                      color: "#fff",
+                      border: "1px solid #e0b866",
                       borderRadius: 8,
                       padding: "6px 12px",
                       fontSize: 12,
@@ -1006,9 +1004,9 @@ function DriverApp({
                 disabled={pushBusy}
                 style={{
                   flexShrink: 0,
-                  background: "#e0b866",
-                  color: "#050a10",
-
+                  background: "#050a10",
+                  color: "#fff",
+                  border: "1px solid #e0b866",
                   borderRadius: 8,
                   padding: "6px 12px",
                   fontSize: 12,
@@ -1219,7 +1217,7 @@ function DriverIdentitySwitcher({
           alignItems: "center",
           gap: 5,
           background: "rgba(255,255,255,0.1)",
-
+          border: "1px solid rgba(255,255,255,0.2)",
           borderRadius: 999,
           padding: "5px 11px 5px 9px",
           color: "#FDFBF7",
@@ -1239,7 +1237,7 @@ function DriverIdentitySwitcher({
             top: "calc(100% + 6px)",
             right: 0,
             background: "#FDFBF7",
-
+            border: "1px solid #e2e8f0",
             borderRadius: 14,
             boxShadow: "0 10px 30px -8px rgba(15,23,42,0.35)",
             padding: 8,
@@ -1267,7 +1265,7 @@ function DriverIdentitySwitcher({
                 textAlign: "left",
                 padding: "10px 12px",
                 borderRadius: 10,
-
+                border: "1px solid " + (driverId === d.id ? "#c99b4a" : "#e2e8f0"),
                 background: driverId === d.id ? "#f1f5f9" : "#FDFBF7",
                 color: "#0f172a",
                 fontWeight: 700,
@@ -1506,7 +1504,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
       className="drv-team-map"
       style={{
         margin: "10px 16px 0",
-
+        border: "1px solid rgba(201,155,74,.45)",
         borderRadius: 14,
         background: "#050a10",
         overflow: "hidden",
@@ -1521,7 +1519,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
           alignItems: "center",
           gap: 10,
           background: "transparent",
-
+          border: "none",
           padding: "11px 14px",
           cursor: "pointer",
           textAlign: "left",
@@ -1541,7 +1539,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
               style={{
                 borderRadius: 12,
                 overflow: "hidden",
-
+                border: "1px solid rgba(201,155,74,.45)",
                 marginBottom: 10,
               }}
             >
@@ -1570,7 +1568,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                   color: "#f6f0e5",
                   padding: "6px 10px",
                   marginBottom: 6,
-
+                  border: "1px solid rgba(201,155,74,.3)",
                   borderRadius: 10,
                   background: "rgba(224,184,102,.04)",
                 }}
@@ -1610,7 +1608,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                       marginLeft: "auto",
                       background: gps.state === "on" ? "#1b0c0c" : "#e0b866",
                       color: gps.state === "on" ? "#f0a0a0" : "#050a10",
-
+                      border: gps.state === "on" ? "1px solid #8b3a3a" : "none",
                       borderRadius: 8,
                       padding: "5px 10px",
                       fontSize: 11.5,
@@ -1918,7 +1916,7 @@ function CoursesTab({
   const chip = (active: boolean): React.CSSProperties => ({
     padding: "7px 12px",
     borderRadius: 999,
-
+    border: "1px solid " + (active ? "var(--background)" : "var(--border)"),
     background: active ? "var(--background)" : "#FDFBF7",
     color: active ? "var(--gold)" : "#334155",
     fontSize: 12,
@@ -1956,7 +1954,7 @@ function CoursesTab({
           style={{
             flex: 1,
             minWidth: 0,
-
+            border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "9px 12px",
             fontSize: 13,
@@ -1968,6 +1966,7 @@ function CoursesTab({
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
           style={{
+            border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "9px 10px",
             fontSize: 13,
@@ -1997,7 +1996,7 @@ function CoursesTab({
               setDateFilter("");
               setStatusFilter("all");
             }}
-            style={{ ...chip(false), color: "#b91c1c" }}
+            style={{ ...chip(false), borderColor: "#fecaca", color: "#b91c1c" }}
           >
             ✖ Réinitialiser
           </button>
@@ -2029,6 +2028,7 @@ function CoursesTab({
               borderRadius: 999,
               background: assigned === "patricia" ? "#fdf2f8" : "#eff6ff",
               color: assigned === "patricia" ? "#9d174d" : "#1d4ed8",
+              border: "1px solid " + (assigned === "patricia" ? "#fbcfe8" : "#bfdbfe"),
             }}
           >
             {assigned ? `👤 ${assigned === "patricia" ? "Patricia" : "Alain"}` : "👤 Non attribuée"}
@@ -2038,7 +2038,7 @@ function CoursesTab({
               onClick={() => reassign(r.id, other as "patricia" | "alain")}
               style={{
                 background: "transparent",
-
+                border: "1px solid var(--border)",
                 borderRadius: 8,
                 padding: "4px 9px",
                 fontSize: 11.5,
@@ -2791,7 +2791,7 @@ function CourseCard({
                       style={{
                         ...qb,
                         background: "var(--background)",
-
+                        border: "2px solid var(--background)",
                         color: "var(--gold)",
                       }}
                     >
@@ -2800,7 +2800,7 @@ function CourseCard({
                     <button
                       onClick={handleRefuse}
                       disabled={busy}
-                      style={{ ...qb, background: "#FDFBF7", color: "#b91c1c" }}
+                      style={{ ...qb, background: "#FDFBF7", border: "2px solid #fecaca", color: "#b91c1c" }}
                     >
                       ✖ Refuser
                     </button>
@@ -2810,7 +2810,7 @@ function CourseCard({
                   <button
                     onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
                     disabled={progressing}
-                    style={{ ...qb, background: "#eff6ff", color: "#1d4ed8" }}
+                    style={{ ...qb, background: "#eff6ff", border: "2px solid #2563eb", color: "#1d4ed8" }}
                   >
                     {progressing ? "…" : "🚕 Votre taxi arrive"}
                   </button>
@@ -2819,7 +2819,7 @@ function CourseCard({
                   <button
                     onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
                     disabled={progressing}
-                    style={{ ...qb, background: "#f5f3ff", color: "#6d28d9" }}
+                    style={{ ...qb, background: "#f5f3ff", border: "2px solid #7c3aed", color: "#6d28d9" }}
                   >
                     {progressing ? "…" : "📍 Votre taxi est arrivé"}
                   </button>
@@ -2828,7 +2828,7 @@ function CourseCard({
                   <button
                     onClick={() => setFinalPrixOpen((v) => !v)}
                     disabled={completing}
-                    style={{ ...qb, background: "#fffbeb", color: "#92400e" }}
+                    style={{ ...qb, background: "#fffbeb", border: "2px solid #d97706", color: "#92400e" }}
                   >
                     💶 Prix compteur
                   </button>
@@ -2837,7 +2837,7 @@ function CourseCard({
                   <button
                     onClick={handleComplete}
                     disabled={completing}
-                    style={{ ...qb, background: "#f0fdf4", color: "#15803d" }}
+                    style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
                   >
                     {completing ? "…" : "✓ Terminée"}
                   </button>
@@ -2852,7 +2852,7 @@ function CourseCard({
                   <button
                     onClick={handleCancel}
                     disabled={cancelling}
-                    style={{ ...qb, background: "#FDFBF7", color: "#b91c1c" }}
+                    style={{ ...qb, background: "#FDFBF7", border: "2px solid #fecaca", color: "#b91c1c" }}
                   >
                     {cancelling ? "…" : "✖ Annuler la course"}
                   </button>
@@ -2868,7 +2868,7 @@ function CourseCard({
               marginBottom: 4,
               padding: 12,
               background: "#fffbeb",
-
+              border: "1px solid #fde68a",
               borderRadius: 12,
             }}
           >
@@ -2890,7 +2890,7 @@ function CourseCard({
                   flex: 1,
                   padding: "10px 12px",
                   borderRadius: 10,
-
+                  border: "1px solid #fde68a",
                   fontSize: 16,
                   fontWeight: 600,
                   color: "#0f172a",
@@ -2903,7 +2903,7 @@ function CourseCard({
                 style={{
                   padding: "10px 16px",
                   borderRadius: 10,
-
+                  border: "none",
                   background: "#d97706",
                   color: "#fff",
                   fontWeight: 700,
@@ -2928,7 +2928,7 @@ function CourseCard({
               marginTop: 10,
               padding: "10px 12px",
               background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
-
+              border: "1px solid #f59e0b",
               borderRadius: 12,
               fontSize: 13,
               color: "#78350f",
@@ -2984,7 +2984,7 @@ function CourseCard({
               justifyContent: "space-between",
               gap: 8,
               background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
-
+              border: "1px solid #334155",
               borderRadius: "10px 10px 0 0",
               color: "#E8C96D",
               fontSize: 13,
@@ -3028,6 +3028,9 @@ function CourseCard({
           </div>
           <div
             style={{
+              borderLeft: "1px solid #334155",
+              borderRight: "1px solid #334155",
+              borderBottom: "1px solid #334155",
               borderRadius: "0 0 10px 10px",
               padding: 8,
               background: "#0b1220",
@@ -3156,7 +3159,7 @@ function CourseCard({
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 6,
-
+                  border: "1px solid #e2e8f0",
                   borderRadius: 12,
                   padding: "10px",
                   fontWeight: 700,
@@ -3168,12 +3171,15 @@ function CourseCard({
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
                     {phone && (
                       <>
-                        <a href={`tel:${phone}`} style={{ ...contactBtn, background: "#eff6ff", color: "#0369a1" }}>
+                        <a
+                          href={`tel:${phone}`}
+                          style={{ ...contactBtn, background: "#eff6ff", borderColor: "#bfdbfe", color: "#0369a1" }}
+                        >
                           📞 Appeler
                         </a>
                         <a
                           href={`sms:${phone}?body=${encodeURIComponent(body)}`}
-                          style={{ ...contactBtn, background: "#faf5ff", color: "#7e22ce" }}
+                          style={{ ...contactBtn, background: "#faf5ff", borderColor: "#e9d5ff", color: "#7e22ce" }}
                         >
                           💬 SMS
                         </a>
@@ -3181,7 +3187,7 @@ function CourseCard({
                           href={`https://wa.me/${phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}?text=${encodeURIComponent(body)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ ...contactBtn, background: "#f0fdf4", color: "#15803d" }}
+                          style={{ ...contactBtn, background: "#f0fdf4", borderColor: "#bbf7d0", color: "#15803d" }}
                         >
                           🟢 WhatsApp
                         </a>
@@ -3190,7 +3196,7 @@ function CourseCard({
                     {mail && (
                       <a
                         href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
-                        style={{ ...contactBtn, background: "#FDFBF7beb", color: "#92400e" }}
+                        style={{ ...contactBtn, background: "#FDFBF7beb", borderColor: "#fde68a", color: "#92400e" }}
                       >
                         ✉️ Email
                       </a>
@@ -3209,7 +3215,7 @@ function CourseCard({
                     width: "100%",
                     textAlign: "left",
                     background: "#f8fafc",
-
+                    border: "1px solid #e2e8f0",
                     borderRadius: 12,
                     padding: "10px 14px",
                     fontSize: 13,
@@ -3242,7 +3248,7 @@ function CourseCard({
                         width: "100%",
                         padding: "12px 14px",
                         borderRadius: 10,
-
+                        border: "1px solid var(--border)",
                         fontSize: 16,
                         marginBottom: 8,
                         fontFamily: "'DM Sans', sans-serif",
@@ -3264,7 +3270,7 @@ function CourseCard({
                           flex: 1,
                           minWidth: 70,
                           background: "#faf5ff",
-
+                          border: "1px solid #e9d5ff",
                           color: "#7e22ce",
                           borderRadius: 10,
                           padding: "8px",
@@ -3282,7 +3288,7 @@ function CourseCard({
                           flex: 1,
                           minWidth: 70,
                           background: "#f0fdf4",
-
+                          border: "1px solid #bbf7d0",
                           color: "#15803d",
                           borderRadius: 10,
                           padding: "8px",
@@ -3300,7 +3306,7 @@ function CourseCard({
                           flex: 1,
                           minWidth: 70,
                           background: "#FDFBF7beb",
-
+                          border: "1px solid #fde68a",
                           color: "#92400e",
                           borderRadius: 10,
                           padding: "8px",
@@ -3322,7 +3328,7 @@ function CourseCard({
                     width: "100%",
                     textAlign: "left",
                     background: "#f8fafc",
-
+                    border: "1px solid #e2e8f0",
                     borderRadius: 12,
                     padding: "10px 14px",
                     fontSize: 13,
@@ -3344,7 +3350,7 @@ function CourseCard({
                         flex: 1,
                         padding: "10px 12px",
                         borderRadius: 10,
-
+                        border: "1px solid #e2e8f0",
                         fontSize: 16,
                         fontFamily: "'DM Sans', sans-serif",
                       }}
@@ -3448,7 +3454,7 @@ function CourseCard({
                           textAlign: "center",
                           background: "#0f172a",
                           color: "#FDFBF7",
-
+                          border: "none",
                           borderRadius: 12,
                           padding: "13px 8px",
                           fontSize: 14,
@@ -3472,7 +3478,7 @@ function CourseCard({
                 style={{
                   width: "100%",
                   background: "#eff6ff",
-
+                  border: "2px solid #2563eb",
                   color: "#1d4ed8",
                   borderRadius: 12,
                   padding: "12px",
@@ -3493,7 +3499,7 @@ function CourseCard({
                 style={{
                   width: "100%",
                   background: "#f5f3ff",
-
+                  border: "2px solid #7c3aed",
                   color: "#6d28d9",
                   borderRadius: 12,
                   padding: "12px",
@@ -3514,7 +3520,7 @@ function CourseCard({
                 style={{
                   width: "100%",
                   background: "#f0fdf4",
-
+                  border: "2px solid #16a34a",
                   color: "#15803d",
                   borderRadius: 12,
                   padding: "12px",
@@ -3536,7 +3542,7 @@ function CourseCard({
                 width: "100%",
                 marginTop: 4,
                 background: "none",
-
+                border: "none",
                 color: "#b91c1c",
                 fontSize: 11.5,
                 fontWeight: 600,
@@ -3555,7 +3561,7 @@ function CourseCard({
             width: "100%",
             marginTop: 8,
             background: "none",
-
+            border: "none",
             color: "#94a3b8",
             fontSize: 12,
             cursor: "pointer",
@@ -3837,7 +3843,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 disabled={busy === a.id}
                 style={{
                   background: "none",
-
+                  border: "none",
                   color: "#b91c1c",
                   fontSize: 11.5,
                   fontWeight: 600,
@@ -3852,7 +3858,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 disabled={busy === a.id}
                 style={{
                   background: "none",
-
+                  border: "none",
                   color: "#b45309",
                   fontSize: 11.5,
                   fontWeight: 600,
@@ -3866,7 +3872,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
             </div>
           ))}
           {avgNote && (
-            <div style={{ textAlign: "center", marginTop: 20, padding: "16px 0" }}>
+            <div style={{ textAlign: "center", marginTop: 20, padding: "16px 0", borderTop: "1px solid #f1f5f9" }}>
               <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 4 }}>Note moyenne publiée</div>
               <div style={{ fontSize: 36, fontWeight: 800, color: "#0f172a" }}>{avgNote}</div>
               <div style={{ fontSize: 22, color: "#f59e0b" }}>★★★★★</div>
@@ -4060,7 +4066,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                     marginBottom: 10,
                     padding: "10px 12px",
                     borderRadius: 10,
-
+                    border: "1px solid #e2e8f0",
                     fontSize: 14,
                   }}
                 />
@@ -4076,7 +4082,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                     marginBottom: 10,
                     padding: "10px 12px",
                     borderRadius: 10,
-
+                    border: "1px solid #e2e8f0",
                     fontSize: 14,
                     fontFamily: "inherit",
                     resize: "vertical",
@@ -4256,7 +4262,7 @@ function ClientsTab() {
           width: "100%",
           padding: "10px 14px",
           borderRadius: 12,
-
+          border: "1px solid #e2e8f0",
           fontSize: 16,
           fontFamily: "'DM Sans', sans-serif",
           marginBottom: 14,
@@ -4302,7 +4308,7 @@ function ClientsTab() {
                   justifyContent: "center",
                   gap: 6,
                   background: "#f0fdf4",
-
+                  border: "1px solid #bbf7d0",
                   borderRadius: 12,
                   padding: "10px",
                   color: "#15803d",
@@ -4322,7 +4328,7 @@ function ClientsTab() {
                   justifyContent: "center",
                   gap: 6,
                   background: "#eff6ff",
-
+                  border: "1px solid #bfdbfe",
                   borderRadius: 12,
                   padding: "10px",
                   color: "#1d4ed8",
@@ -4344,7 +4350,7 @@ function ClientsTab() {
                   justifyContent: "center",
                   gap: 6,
                   background: "#f0fdf4",
-
+                  border: "1px solid #bbf7d0",
                   borderRadius: 12,
                   padding: "10px",
                   color: "#15803d",
@@ -4366,7 +4372,7 @@ function ClientsTab() {
                 gap: 6,
                 width: "100%",
                 background: "#eff6ff",
-
+                border: "1px solid #bfdbfe",
                 borderRadius: 12,
                 padding: "10px",
                 color: "#1e40af",
@@ -4385,7 +4391,7 @@ function ClientsTab() {
                 width: "100%",
                 marginTop: 8,
                 background: "none",
-
+                border: "none",
                 color: "#b91c1c",
                 fontSize: 11.5,
                 fontWeight: 600,
@@ -4515,7 +4521,7 @@ function TrackingAnalytics() {
           alignItems: "center",
           justifyContent: "space-between",
           background: open ? "#0f172a" : "#f8fafc",
-
+          border: `1px solid ${open ? "#0f172a" : "#e2e8f0"}`,
           borderRadius: 14,
           padding: "12px 16px",
           fontSize: 13,
@@ -4703,6 +4709,7 @@ function TrackingAnalytics() {
                         justifyContent: "space-between",
                         alignItems: "center",
                         padding: "6px 0",
+                        borderBottom: i < data.dernierEvents.length - 1 ? "1px solid #f1f5f9" : "none",
                       }}
                     >
                       <div>
@@ -4744,7 +4751,7 @@ function TrackingAnalytics() {
                   marginTop: 12,
                   width: "100%",
                   background: "#f1f5f9",
-
+                  border: "1px solid #e2e8f0",
                   borderRadius: 10,
                   padding: "8px",
                   fontSize: 12,
@@ -5009,7 +5016,7 @@ function SimulateurTab() {
     width: "100%",
     padding: "10px 12px",
     borderRadius: 10,
-
+    border: "1px solid #e2e8f0",
     fontSize: 16,
     fontFamily: "'DM Sans', sans-serif",
     color: "#0f172a",
@@ -5039,7 +5046,7 @@ function SimulateurTab() {
             fontWeight: 700,
             fontSize: 13,
             cursor: "pointer",
-
+            border: mode === "manuel" ? "2px solid #2563eb" : "1px solid #e2e8f0",
             background: mode === "manuel" ? "#eff6ff" : "#FDFBF7",
             color: mode === "manuel" ? "#1d4ed8" : "#475569",
           }}
@@ -5056,7 +5063,7 @@ function SimulateurTab() {
             fontWeight: 700,
             fontSize: 13,
             cursor: "pointer",
-
+            border: mode === "adresses" ? "2px solid #2563eb" : "1px solid #e2e8f0",
             background: mode === "adresses" ? "#eff6ff" : "#FDFBF7",
             color: mode === "adresses" ? "#1d4ed8" : "#475569",
           }}
@@ -5094,7 +5101,7 @@ function SimulateurTab() {
               width: "100%",
               background: "#0b1224",
               color: "#FDFBF7",
-
+              border: "none",
               borderRadius: 12,
               padding: "13px",
               minHeight: 46,
@@ -5138,7 +5145,7 @@ function SimulateurTab() {
               width: "100%",
               background: "#0b1224",
               color: "#FDFBF7",
-
+              border: "none",
               borderRadius: 12,
               padding: "13px",
               minHeight: 46,
@@ -5156,7 +5163,7 @@ function SimulateurTab() {
       )}
 
       {result && (
-        <div style={{ borderRadius: 14, padding: 16, background: "#f8fafc" }}>
+        <div style={{ border: "2px solid #0b1224", borderRadius: 14, padding: 16, background: "#f8fafc" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <span style={{ fontSize: 13, color: "#64748b" }}>🛣 {result.distanceKm.toFixed(1)} km</span>
 
@@ -5286,7 +5293,7 @@ function StatsTab() {
             style={{
               padding: "7px 14px",
               borderRadius: 999,
-
+              border: "1px solid " + (days === d ? "var(--background)" : "var(--border)"),
               background: days === d ? "var(--background)" : "#FDFBF7",
               color: days === d ? "var(--gold)" : "#334155",
               fontSize: 12,
@@ -5485,7 +5492,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
               flex: 1,
               padding: "8px 10px",
               borderRadius: 999,
-
+              border: "1px solid " + (filter === o.k ? "var(--background)" : "var(--border)"),
               background: filter === o.k ? "var(--background)" : "#FDFBF7",
               color: filter === o.k ? "var(--gold)" : "#334155",
               fontSize: 12.5,
@@ -5510,7 +5517,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
       ) : (
         <div className="drv-card">
           {rows.map((e) => (
-            <div key={e.id} style={{ padding: "9px 0" }}>
+            <div key={e.id} style={{ padding: "9px 0", borderBottom: "1px solid #f1f5f9" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{eventLabel(e)}</span>
                 <span style={{ fontSize: 11, color: "#94a3b8", whiteSpace: "nowrap" }}>
@@ -5585,7 +5592,7 @@ function PushDiagnostic() {
           width: "100%",
           textAlign: "center",
           background: "none",
-
+          border: "none",
           color: "#94a3b8",
           fontSize: 12,
           cursor: "pointer",
@@ -5602,7 +5609,7 @@ function PushDiagnostic() {
             <div style={{ fontSize: 13, color: "#64748b", textAlign: "center" }}>Aucun échec récent ✨</div>
           ) : (
             rows.map((r: any) => (
-              <div key={r.id} style={{ fontSize: 11.5, padding: "6px 0" }}>
+              <div key={r.id} style={{ fontSize: 11.5, padding: "6px 0", borderBottom: "1px solid #f1f5f9" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", color: "#0f172a", fontWeight: 600 }}>
                   <span>
                     {r.audience} · {r.http_status ?? "—"} {r.error_code ?? ""}
@@ -5627,7 +5634,7 @@ function PushDiagnostic() {
               marginTop: 10,
               width: "100%",
               background: "#f1f5f9",
-
+              border: "1px solid #e2e8f0",
               borderRadius: 10,
               padding: "8px",
               fontSize: 12,
@@ -5729,7 +5736,7 @@ function AppareilsTab() {
             marginLeft: "auto",
             background: "#0f172a",
             color: "#FDFBF7",
-
+            border: "none",
             borderRadius: 8,
             padding: "6px 12px",
             fontSize: 12,
@@ -5746,7 +5753,7 @@ function AppareilsTab() {
       )}
 
       {groups.map(([driver, list]) => (
-        <div key={driver} style={{ borderRadius: 12, overflow: "hidden" }}>
+        <div key={driver} style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
           <div
             style={{
               background: "var(--background)",
@@ -5760,7 +5767,7 @@ function AppareilsTab() {
           </div>
           <div style={{ display: "grid" }}>
             {list.map((d) => (
-              <div key={d.id} style={{ padding: 12, display: "grid", gap: 4 }}>
+              <div key={d.id} style={{ padding: 12, borderTop: "1px solid #f1f5f9", display: "grid", gap: 4 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                   <b style={{ fontSize: 14 }}>{d.platform}</b>
                   <span
@@ -5783,7 +5790,7 @@ function AppareilsTab() {
                       marginLeft: "auto",
                       background: "#dc2626",
                       color: "#FDFBF7",
-
+                      border: "none",
                       borderRadius: 8,
                       padding: "5px 10px",
                       fontSize: 12,
@@ -5816,7 +5823,7 @@ function AppareilsTab() {
         </div>
       ))}
 
-      <div style={{ borderRadius: 12, overflow: "hidden" }}>
+      <div style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
         <div style={{ background: "#f8fafc", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
           Journal des notifications — {stats.sent} envoyées · {stats.failed} en échec · {stats.email} repli e-mail
         </div>
@@ -5829,7 +5836,7 @@ function AppareilsTab() {
               key={e.id}
               style={{
                 padding: "8px 12px",
-
+                borderTop: "1px solid #f1f5f9",
                 fontSize: 12,
                 display: "flex",
                 gap: 8,
