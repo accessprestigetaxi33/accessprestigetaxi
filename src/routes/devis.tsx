@@ -7,9 +7,7 @@ import { DRIVERS } from "@/data/drivers";
 import { useRef, useState } from "react";
 import { QuoteForm, type QuotePrefill } from "@/components/QuoteForm";
 import { QuoteEstimator } from "@/components/QuoteEstimator";
-import heroLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
-const heroLogo = heroLogoAsset.url;
 const SITE = "https://www.accessprestigetaxi.fr";
 const URL_DEVIS = `${SITE}/devis`;
 const TITLE = "Demander un devis taxi — Charente-Maritime | Access Prestige Taxi";
@@ -81,6 +79,10 @@ const COPY = {
       { icon: Accessibility, t: "Transport sanitaire", d: "Conventionné, fauteuil roulant possible." },
       { icon: Clock3, t: "Réponse rapide", d: "Un devis clair, sans engagement." },
     ],
+    estimTag: "Estimation rapide",
+    estimTitle: "Estimez votre trajet",
+    formTag: "Formulaire de devis",
+    formTitle: "Finalisez votre demande",
     orCall: "Ou contactez-nous directement",
     track: "Déjà une demande ? Suivre mon devis par numéro de référence",
     bookNow: "Besoin d'un trajet immédiat ? Réservez en ligne",
@@ -95,6 +97,10 @@ const COPY = {
       { icon: Accessibility, t: "Medical transport", d: "Covered, wheelchair available." },
       { icon: Clock3, t: "Fast reply", d: "A clear quote, no commitment." },
     ],
+    estimTag: "Quick estimate",
+    estimTitle: "Estimate your ride",
+    formTag: "Quote form",
+    formTitle: "Finalise your request",
     orCall: "Or contact us directly",
     track: "Already sent a request? Track your quote by reference number",
     bookNow: "Need a ride right now? Book online",
@@ -109,94 +115,111 @@ function DevisPage() {
   const formRef = useRef<HTMLFormElement | null>(null);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
-      <section className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/45 px-5 py-10 text-center shadow-[0_24px_70px_rgba(0,0,0,.18)] sm:px-10 sm:py-14">
-        <div className="absolute inset-y-0 left-0 hidden w-1/3 bg-[radial-gradient(circle_at_left,rgba(212,169,83,.12),transparent_68%)] sm:block" />
-        <div className="relative text-center">
-          <img
-            src={heroLogo}
-            alt="Access Prestige Taxi"
-            width={360}
-            height={200}
-            className="mx-auto h-24 w-auto object-contain sm:h-28"
-          />
-          <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
-          <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl md:text-[2.75rem]">{c.h1}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">{c.lead}</p>
-        </div>
-      </section>
-
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
-        {c.perks.map((p) => (
-          <div key={p.t} className="rounded-2xl border border-border bg-card/70 p-4 shadow-sm">
-            <p.icon className="h-5 w-5 text-primary" />
-            <p className="mt-2 text-sm font-semibold">{p.t}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{p.d}</p>
+    <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
+      <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
+        <div className="flex h-16 items-center justify-between border-b border-white/10 px-7">
+          <div>
+            <div className="text-[9px] font-bold tracking-[.15em] text-[#e8bd5d]">ACCESS PRESTIGE TAXI</div>
+            <div className="mt-1 text-[5px] tracking-[.22em] text-white/60">L'EXCELLENCE À CHAQUE TRAJET</div>
           </div>
-        ))}
-      </div>
-
-      <section className="mt-8 rounded-3xl border border-primary/20 bg-card/35 p-3 sm:mt-10 sm:p-6">
-        <div className="mb-5 px-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Estimation rapide</p>
-          <h2 className="mt-2 font-display text-2xl font-semibold">Estimez votre trajet</h2>
+          <span className="text-xl text-[#e8bd5d]">☰</span>
         </div>
-        <QuoteEstimator
-          onQuote={(p) => {
-            setPrefill({
-              prestation,
-              depart: p.depart,
-              arrivee: p.arrivee,
-              date: p.date,
-              heure: p.heure,
-              allerRetour: p.allerRetour,
-              passagers: p.passagers,
-              vehicule: p.vehicule,
-              distanceKm: p.distanceKm,
-              prix: p.prix,
-            });
-            requestAnimationFrame(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
-          }}
-        />
-      </section>
 
-      <section className="mt-8 rounded-3xl border border-border bg-card/45 p-3 sm:mt-10 sm:p-6">
-        <div className="mb-5 px-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Formulaire de devis</p>
-          <h2 className="mt-2 font-display text-2xl font-semibold">Finalisez votre demande</h2>
+        <div className="px-6 py-5">
+          <div className="text-center">
+            <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
+              {c.eyebrow.toUpperCase()}
+            </span>
+            <h1 className="mt-4 font-display text-[29px] leading-tight text-[#f4efe5]">{c.h1}</h1>
+            <p className="mx-auto mt-3 max-w-[300px] text-[12px] leading-5 text-white/70">{c.lead}</p>
+          </div>
+
+          {/* Perks */}
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            {c.perks.map((p) => (
+              <article
+                key={p.t}
+                className="min-h-[118px] rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3"
+              >
+                <p.icon className="h-7 w-7 text-[#e8bd5d]" />
+                <h3 className="mt-2 font-display text-[14px] text-[#f4efe5]">{p.t}</h3>
+                <p className="mt-1 text-[9px] leading-4 text-white/60">{p.d}</p>
+              </article>
+            ))}
+          </div>
+
+          {/* Estimation rapide */}
+          <section className="mt-6">
+            <p className="text-center text-[13px] font-bold uppercase tracking-[0.2em] text-[#e8bd5d]">{c.estimTag}</p>
+            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-3">
+              <h2 className="font-display text-[19px] text-[#f4efe5]">{c.estimTitle}</h2>
+              <div className="mt-3">
+                <QuoteEstimator
+                  onQuote={(p) => {
+                    setPrefill({
+                      prestation,
+                      depart: p.depart,
+                      arrivee: p.arrivee,
+                      date: p.date,
+                      heure: p.heure,
+                      allerRetour: p.allerRetour,
+                      passagers: p.passagers,
+                      vehicule: p.vehicule,
+                      distanceKm: p.distanceKm,
+                      prix: p.prix,
+                    });
+                    requestAnimationFrame(() =>
+                      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+                    );
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Formulaire de devis */}
+          <section className="mt-6">
+            <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-[#e8bd5d]">{c.formTag}</p>
+            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-3">
+              <h2 className="font-display text-[19px] text-[#f4efe5]">{c.formTitle}</h2>
+              <div className="mt-3">
+                <QuoteForm prefill={prefill} formRef={formRef} />
+              </div>
+            </div>
+          </section>
+
+          <p className="mt-5 text-center text-[11px]">
+            <Link to="/devis/suivi" search={{ ref: undefined }} className="font-semibold text-[#e8bd5d] underline">
+              {c.track} →
+            </Link>
+          </p>
+
+          {/* Contact direct */}
+          <section className="mt-5 rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-4 text-center">
+            <h2 className="font-display text-[16px] text-[#f4efe5]">{c.orCall}</h2>
+            <div className="mt-3 flex flex-col items-center justify-center gap-2">
+              {DRIVERS.map((d) => (
+                <a
+                  key={d.tel}
+                  href={`tel:${d.intl}`}
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/20 px-4 text-[12px] font-semibold text-white/90"
+                >
+                  <Phone className="h-4 w-4 text-[#e8bd5d]" /> {d.name} — {d.display}
+                </a>
+              ))}
+              <a
+                href={`mailto:${EMAIL}`}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/20 px-4 text-[12px] font-semibold text-white/90"
+              >
+                <Mail className="h-4 w-4 text-[#e8bd5d]" /> {EMAIL}
+              </a>
+            </div>
+            <Link to="/reserver" className="mt-4 inline-block text-[12px] font-semibold text-[#e8bd5d] underline">
+              {c.bookNow} →
+            </Link>
+          </section>
         </div>
-        <QuoteForm prefill={prefill} formRef={formRef} />
       </section>
-
-      <p className="mt-6 text-center text-sm">
-        <Link to="/devis/suivi" search={{ ref: undefined }} className="font-semibold text-primary underline">
-          {c.track} →
-        </Link>
-      </p>
-
-      <section className="mt-8 rounded-3xl border border-primary/25 bg-card/55 p-5 text-center sm:mt-10 sm:p-8">
-        <h2 className="font-display text-lg font-semibold">{c.orCall}</h2>
-        <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          {DRIVERS.map((d) => (
-            <a
-              key={d.tel}
-              href={`tel:${d.intl}`}
-              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border border-border px-5 text-sm font-semibold transition hover:border-primary/60 sm:w-auto"
-            >
-              <Phone className="h-4 w-4 text-primary" /> {d.name} — {d.display}
-            </a>
-          ))}
-          <a
-            href={`mailto:${EMAIL}`}
-            className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border border-border px-5 text-sm font-semibold transition hover:border-primary/60 sm:w-auto"
-          >
-            <Mail className="h-4 w-4 text-primary" /> {EMAIL}
-          </a>
-        </div>
-        <Link to="/reserver" className="mt-5 inline-block text-sm font-semibold text-primary underline">
-          {c.bookNow} →
-        </Link>
-      </section>
-    </div>
+    </main>
   );
 }
