@@ -20,11 +20,15 @@ import {
   Mail,
   MapPin,
   Minus,
+  Moon,
   Phone,
   Plus,
   Route as RouteIcon,
+  ShieldCheck,
   Share2,
+  Star,
   Stethoscope,
+  Sun,
   Timer,
   User,
   Users,
@@ -134,6 +138,37 @@ const T = {
     trust1: "Chauffeurs professionnels · 20 ans d'expérience",
     trust2: "Toutes distances · Charente-Maritime et au-delà",
     trust3: "Confirmation immédiate + suivi en temps réel",
+
+    vehicle_step: "Véhicule souhaité",
+    vehicle_hint: "Le tarif se met à jour automatiquement",
+    veh_berline: "Berline électrique",
+    veh_berline_cap: "Jusqu'à 4 passagers",
+    veh_van: "Van Mercedes Class V",
+    veh_van_cap: "Jusqu'à 7 passagers",
+    veh_van_xl: "Van XL",
+    veh_van_xl_cap: "Jusqu'à 8 passagers",
+    veh_other: "Besoin d'un autre véhicule ?",
+    veh_other_cta: "Contactez-nous",
+    veh_other_note: "nous avons la solution adaptée.",
+    notif_banner_title: "Restez informé en temps réel",
+    notif_banner_body:
+      "Activez les notifications pour être prévenu quand votre chauffeur est en route, arrivé et à votre arrivée.",
+    live_badge: "Tarif mis à jour en temps réel",
+    rate_title: "Tarifs préfectoraux en vigueur",
+    rate_day: "Tarif jour (07h–19h)",
+    rate_night: "Tarif nuit (19h–07h)",
+    feat_pro: "Chauffeurs professionnels",
+    feat_pay: "Paiement sécurisé",
+    feat_cancel: "Annulation gratuite jusqu'à 2h",
+    feat_service: "Service 7j/7 – 24h/24",
+    trust_title: "Ils nous font confiance",
+    trust_rating: "4,9/5 sur Google",
+    trust_reviews: "+ de 500 avis clients",
+    help_title: "Besoin d'aide ?",
+    help_body: "Appelez-nous au",
+    help_hours: "Nous sommes disponibles 7j/7 – 24h/24",
+    secure_pay: "Paiement 100% sécurisé",
+    secure_pay_sub: "Données cryptées et protégées",
   },
   en: {
     back: "Back to site",
@@ -223,6 +258,36 @@ const T = {
     trust1: "Professional drivers · 20 years of experience",
     trust2: "Any distance · Charente-Maritime and beyond",
     trust3: "Instant confirmation + live tracking",
+
+    vehicle_step: "Vehicle",
+    vehicle_hint: "The fare updates automatically",
+    veh_berline: "Electric saloon",
+    veh_berline_cap: "Up to 4 passengers",
+    veh_van: "Mercedes Class V van",
+    veh_van_cap: "Up to 7 passengers",
+    veh_van_xl: "XL van",
+    veh_van_xl_cap: "Up to 8 passengers",
+    veh_other: "Need a different vehicle?",
+    veh_other_cta: "Contact us",
+    veh_other_note: "we'll find the right fit.",
+    notif_banner_title: "Stay updated in real time",
+    notif_banner_body: "Enable notifications to know when your driver is on the way, has arrived, and at drop-off.",
+    live_badge: "Fare updated in real time",
+    rate_title: "Official prefectural rates",
+    rate_day: "Day rate (7am–7pm)",
+    rate_night: "Night rate (7pm–7am)",
+    feat_pro: "Professional drivers",
+    feat_pay: "Secure payment",
+    feat_cancel: "Free cancellation up to 2h before",
+    feat_service: "Service 7/7 – 24/24",
+    trust_title: "Trusted by our customers",
+    trust_rating: "4.9/5 on Google",
+    trust_reviews: "500+ customer reviews",
+    help_title: "Need help?",
+    help_body: "Call us on",
+    help_hours: "We're available 7/7 – 24/24",
+    secure_pay: "100% secure payment",
+    secure_pay_sub: "Encrypted and protected data",
   },
 } satisfies Record<Lang, Record<string, string>>;
 
@@ -438,31 +503,36 @@ const QUICK_DESTINATIONS = [
 ];
 
 /**
- * Bouton "Activer les notifications" placé juste sous "Confirmer ma
- * réservation". Demande la permission et obtient le token FCM avant même
- * l'envoi du formulaire : au moment où la réservation est créée, l'abonnement
- * est rattaché à son reservation_id automatiquement (voir onSubmit), sans
- * second clic pour le client.
+ * Bandeau "Restez informé en temps réel" affiché dans la section coordonnées
+ * (maquette : encart beige avec cloche, titre, texte, bouton pleine largeur).
+ * Une fois la permission accordée, on repasse sur une simple confirmation.
  */
-function NotifyOptInButton({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeof usePushNotifications> }) {
+function NotifyBanner({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeof usePushNotifications> }) {
   if (push.status === "unsupported") return null;
 
   if (push.status === "granted") {
     return (
-      <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-        <BellRing className="h-3.5 w-3.5 text-primary" />
+      <p className="mt-5 flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 p-3 text-sm text-muted-foreground">
+        <BellRing className="h-4 w-4 shrink-0 text-primary" />
         {L.notif_on}
       </p>
     );
   }
 
   return (
-    <div className="mt-2">
+    <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+      <div className="flex items-start gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Bell className="h-4 w-4" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold">{L.notif_banner_title}</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{L.notif_banner_body}</p>
+        </div>
+      </div>
       <Button
         type="button"
-        variant="outline"
-        size="sm"
-        className="w-full"
+        className="mt-3 w-full"
         disabled={push.status === "loading"}
         onClick={() => void push.subscribe("client")}
       >
@@ -473,9 +543,7 @@ function NotifyOptInButton({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<
         )}
         {L.notif_cta}
       </Button>
-      <p className="mt-1.5 text-center text-xs text-muted-foreground">
-        {push.status === "denied" ? L.notif_denied : L.notif_hint}
-      </p>
+      {push.status === "denied" && <p className="mt-1.5 text-xs text-muted-foreground">{L.notif_denied}</p>}
     </div>
   );
 }
@@ -894,13 +962,29 @@ export function BookingStudio() {
 
   const q = quote.data;
   const priceLabel = q ? `${q.prix.toFixed(2)} €` : null;
+  // Taux €/km affichés dans l'encart "tarifs préfectoraux" : dérivés du devis
+  // en cours (prix / km parcourus dans chaque tranche) plutôt que codés en dur,
+  // pour rester toujours cohérents avec la grille tarifaire réelle appliquée.
+  const rateDay = q && q.prix_detail.kmJour > 0 ? q.prix_detail.prixJour / q.prix_detail.kmJour : null;
+  const rateNight = q && q.prix_detail.kmNuit > 0 ? q.prix_detail.prixNuit / q.prix_detail.kmNuit : null;
 
   const QuotePanel = (
     <div className="rounded-2xl border border-primary/25 bg-card p-5 shadow-sm">
-      <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <RouteIcon className="h-5 w-5 text-primary" />
-        {L.quote}
-      </h2>
+      <header className="mb-1 flex items-center gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+          6
+        </span>
+        <h2 className="flex items-center gap-2 font-display text-lg font-semibold sm:text-xl">
+          <RouteIcon className="h-5 w-5 text-primary" />
+          {L.quote}
+        </h2>
+      </header>
+      {q && (
+        <p className="mb-3 flex items-center gap-1.5 pl-11 text-xs text-muted-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+          {L.live_badge}
+        </p>
+      )}
 
       {!q && !quote.loading && <p className="mt-3 text-sm text-muted-foreground">{quote.error ?? L.quote_wait}</p>}
       {quote.loading && (
@@ -910,34 +994,48 @@ export function BookingStudio() {
       )}
 
       {q && (
-        <div className="mt-4 space-y-4">
-          <div className="rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 p-4 text-center">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">{L.price}</p>
-            <p className="font-display text-4xl font-bold text-primary">≈ {priceLabel}</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {q.prix_detail.regime === "mixte"
-                ? L.regime_mixte
-                : q.prix_detail.regime === "nuit"
-                  ? L.regime_nuit
-                  : L.regime_jour}
-            </p>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 p-3">
+              <RouteIcon className="h-4 w-4 shrink-0 text-primary" />
+              <span>
+                <span className="block text-sm font-semibold tabular-nums">{q.distance_km.toFixed(1)} km</span>
+                <span className="text-xs text-muted-foreground">{L.distance}</span>
+              </span>
+            </div>
+            <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 p-3">
+              <Timer className="h-4 w-4 shrink-0 text-primary" />
+              <span>
+                <span className="block text-sm font-semibold tabular-nums">{Math.round(q.duree_s / 60)} min</span>
+                <span className="text-xs text-muted-foreground">{L.duration}</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/60 p-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-secondary/70">
+              <Car className="h-5 w-5 text-primary" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold">{q.vehicule === "van" ? L.van : L.berline}</span>
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Users className="h-3.5 w-3.5" />
+                {q.vehicule === "van" ? L.veh_van_cap : L.veh_berline_cap}
+              </span>
+            </span>
+            <span className="shrink-0 text-right">
+              <span className="block font-display text-2xl font-bold text-primary">{priceLabel}</span>
+              <span className="text-xs text-muted-foreground">{L.price}</span>
+            </span>
           </div>
 
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">{L.distance}</dt>
-              <dd className="font-medium tabular-nums">{q.distance_km.toFixed(1)} km</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">{L.duration}</dt>
-              <dd className="font-medium tabular-nums">{Math.round(q.duree_s / 60)} min</dd>
-            </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between border-b border-dashed border-border/70 pb-2">
               <dt className="text-muted-foreground">{L.detail_base}</dt>
               <dd className="tabular-nums">{q.prix_detail.priseEnCharge.toFixed(2)} €</dd>
             </div>
             {q.prix_detail.prixJour > 0 && (
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-dashed border-border/70 pb-2">
                 <dt className="text-muted-foreground">
                   {L.detail_day} ({q.prix_detail.kmJour.toFixed(1)} km)
                 </dt>
@@ -945,7 +1043,7 @@ export function BookingStudio() {
               </div>
             )}
             {q.prix_detail.prixNuit > 0 && (
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-dashed border-border/70 pb-2">
                 <dt className="text-muted-foreground">
                   {L.detail_night} ({q.prix_detail.kmNuit.toFixed(1)} km)
                 </dt>
@@ -954,17 +1052,110 @@ export function BookingStudio() {
             )}
           </dl>
 
-          <div className="flex items-start gap-2 rounded-xl border border-border/70 bg-background/60 p-3 text-sm">
-            <Car className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <span>
-              <span className="block text-xs uppercase tracking-wide text-muted-foreground">{L.vehicle}</span>
-              {q.vehicule === "van" ? L.van : L.berline}
-            </span>
-          </div>
+          {(rateDay !== null || rateNight !== null) && (
+            <div className="space-y-1.5 rounded-xl border border-border/70 bg-background/60 p-3 text-sm">
+              {rateDay !== null && (
+                <p className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Sun className="h-3.5 w-3.5" />
+                    {L.rate_day}
+                  </span>
+                  <span className="tabular-nums">{rateDay.toFixed(2)} €/km</span>
+                </p>
+              )}
+              {rateNight !== null && (
+                <p className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Moon className="h-3.5 w-3.5" />
+                    {L.rate_night}
+                  </span>
+                  <span className="tabular-nums">{rateNight.toFixed(2)} €/km</span>
+                </p>
+              )}
+              <p className="pt-1 text-xs text-muted-foreground">{L.rate_title}</p>
+            </div>
+          )}
 
           <p className="text-[11px] leading-relaxed text-muted-foreground">{L.legal}</p>
         </div>
       )}
+
+      <Button
+        type="submit"
+        size="lg"
+        disabled={submitting}
+        aria-disabled={!canSubmit}
+        className="mt-4 w-full [touch-action:manipulation]"
+      >
+        {submitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {L.submitting}
+          </>
+        ) : (
+          L.submit
+        )}
+      </Button>
+
+      <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-border/70 pt-4 text-center text-[11px] text-muted-foreground sm:grid-cols-4">
+        {[
+          { icon: <BadgeCheck className="h-4 w-4 text-primary" />, label: L.feat_pro },
+          { icon: <ShieldCheck className="h-4 w-4 text-primary" />, label: L.feat_pay },
+          { icon: <RouteIcon className="h-4 w-4 text-primary" />, label: L.feat_cancel },
+          { icon: <CalendarClock className="h-4 w-4 text-primary" />, label: L.feat_service },
+        ].map((f, i) => (
+          <div key={i} className="flex flex-col items-center gap-1">
+            {f.icon}
+            <span className="leading-tight">{f.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-xl border border-border/70 bg-background/60 p-3 text-center">
+        <p className="text-sm font-semibold">{L.trust_title}</p>
+        <div className="mt-1 flex items-center justify-center gap-0.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+          ))}
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">{L.trust_rating}</p>
+        <p className="text-xs text-muted-foreground">{L.trust_reviews}</p>
+      </div>
+
+      <div className="mt-4 flex items-start gap-3 rounded-xl border border-border/70 bg-background/60 p-3 text-sm">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <User className="h-4 w-4" />
+        </span>
+        <div className="min-w-0">
+          <p className="font-semibold">{L.help_title}</p>
+          <p className="text-muted-foreground">{L.help_body}</p>
+          <a href="tel:+33603444863" className="flex items-center gap-1.5 font-semibold text-primary">
+            <Phone className="h-3.5 w-3.5" />
+            06 03 44 48 63
+          </a>
+          <p className="mt-0.5 text-xs text-muted-foreground">{L.help_hours}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-2 border-t border-border/70 pt-4">
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
+          <span>
+            {L.secure_pay}
+            <span className="block">{L.secure_pay_sub}</span>
+          </span>
+        </p>
+        <div className="flex shrink-0 items-center gap-1">
+          {["VISA", "MC", "AMEX"].map((c) => (
+            <span
+              key={c}
+              className="rounded border border-border/70 bg-background px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-muted-foreground"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -1088,46 +1279,49 @@ export function BookingStudio() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-5">
+              <p className="mb-2 flex items-center gap-2 text-sm font-medium">
+                <CalendarClock className="h-4 w-4 text-primary" />
+                {L.when}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Chip active={quickWhen === "now"} onClick={() => setQuick("now")}>
+                  {L.now}
+                </Chip>
+                <Chip active={quickWhen === "asap"} onClick={() => setQuick("asap")}>
+                  {L.asap}
+                </Chip>
+                <Chip active={quickWhen === "1h"} onClick={() => setQuick("1h")}>
+                  {L.in1h}
+                </Chip>
+                <Chip active={quickWhen === "tomorrow"} onClick={() => setQuick("tomorrow")}>
+                  {L.tomorrow}
+                </Chip>
+              </div>
+              <div className="mt-3">
+                <label htmlFor="when" className="mb-1.5 block text-sm font-medium">
+                  {L.datetime}
+                </label>
+                <Input
+                  id="when"
+                  type="datetime-local"
+                  value={when}
+                  min={getMinWhen()}
+                  step={60}
+                  onChange={(e) => {
+                    setWhen(e.target.value);
+                    setQuickWhen(null);
+                  }}
+                  className="h-12 text-base"
+                />
+                {when && <p className="mt-1.5 text-sm text-muted-foreground">{formatWhen(when, isEn ? "en" : "fr")}</p>}
+              </div>
+            </div>
           </SectionCard>
 
-          {/* 2 — quand */}
-          <SectionCard step={2} icon={<CalendarClock className="h-5 w-5" />} title={L.when}>
-            <div className="flex flex-wrap gap-2">
-              <Chip active={quickWhen === "now"} onClick={() => setQuick("now")}>
-                {L.now}
-              </Chip>
-              <Chip active={quickWhen === "asap"} onClick={() => setQuick("asap")}>
-                {L.asap}
-              </Chip>
-              <Chip active={quickWhen === "1h"} onClick={() => setQuick("1h")}>
-                {L.in1h}
-              </Chip>
-              <Chip active={quickWhen === "tomorrow"} onClick={() => setQuick("tomorrow")}>
-                {L.tomorrow}
-              </Chip>
-            </div>
-            <div className="mt-3">
-              <label htmlFor="when" className="mb-1.5 block text-sm font-medium">
-                {L.datetime}
-              </label>
-              <Input
-                id="when"
-                type="datetime-local"
-                value={when}
-                min={getMinWhen()}
-                step={60}
-                onChange={(e) => {
-                  setWhen(e.target.value);
-                  setQuickWhen(null);
-                }}
-                className="h-12 text-base"
-              />
-              {when && <p className="mt-1.5 text-sm text-muted-foreground">{formatWhen(when, isEn ? "en" : "fr")}</p>}
-            </div>
-          </SectionCard>
-
-          {/* 3 — passagers & options */}
-          <SectionCard step={3} icon={<Users className="h-5 w-5" />} title={L.who}>
+          {/* 2 — passagers, bagages & options */}
+          <SectionCard step={2} icon={<Users className="h-5 w-5" />} title={L.who}>
             <div className="grid gap-3 sm:grid-cols-2">
               <Stepper
                 label={L.pax}
@@ -1162,11 +1356,59 @@ export function BookingStudio() {
                 </Chip>
               ))}
             </div>
+          </SectionCard>
 
-            <p className="mb-2 mt-5 flex items-center gap-2 text-sm font-medium">
-              <CreditCard className="h-4 w-4 text-primary" />
-              {L.payment}
+          {/* 3 — véhicule souhaité (sélection automatique selon trajet/passagers) */}
+          <SectionCard step={3} icon={<Car className="h-5 w-5" />} title={L.vehicle_step}>
+            <p className="-mt-2 mb-3 text-sm text-muted-foreground">{L.vehicle_hint}</p>
+            <div className="space-y-2.5">
+              {(
+                [
+                  { id: "berline" as const, name: L.veh_berline, cap: L.veh_berline_cap },
+                  { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap },
+                  { id: "van_xl" as const, name: L.veh_van_xl, cap: L.veh_van_xl_cap },
+                ] as const
+              ).map((v) => {
+                // Le véhicule est déterminé automatiquement côté serveur à partir
+                // du trajet et du nombre de passagers (q.vehicule) ; tant qu'aucun
+                // devis n'est disponible, la berline est affichée par défaut.
+                const isSelected = quote.data ? quote.data.vehicule === v.id : v.id === "berline";
+                return (
+                  <div
+                    key={v.id}
+                    aria-current={isSelected}
+                    className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
+                      isSelected ? "border-primary bg-primary/5 shadow-sm" : "border-border/70 bg-background/60"
+                    }`}
+                  >
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-secondary/70">
+                      <Car className="h-6 w-6 text-primary" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold">{v.name}</span>
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Users className="h-3.5 w-3.5" />
+                        {v.cap}
+                      </span>
+                    </span>
+                    {isSelected && <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-3 flex items-start gap-2 rounded-xl border border-border/70 bg-background/60 p-3 text-sm text-muted-foreground">
+              <span>
+                {L.veh_other}{" "}
+                <a href="tel:+33603444863" className="font-medium text-primary underline underline-offset-2">
+                  {L.veh_other_cta}
+                </a>
+                , {L.veh_other_note}
+              </span>
             </p>
+          </SectionCard>
+
+          {/* 4 — paiement */}
+          <SectionCard step={4} icon={<CreditCard className="h-5 w-5" />} title={L.payment}>
             <div className="flex flex-wrap gap-2">
               {(
                 [
@@ -1182,8 +1424,8 @@ export function BookingStudio() {
             </div>
           </SectionCard>
 
-          {/* 4 — coordonnées */}
-          <SectionCard step={4} icon={<User className="h-5 w-5" />} title={L.contact}>
+          {/* 5 — coordonnées */}
+          <SectionCard step={5} icon={<User className="h-5 w-5" />} title={L.contact}>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <label htmlFor="nom" className="mb-1.5 block text-sm font-medium">
@@ -1242,36 +1484,18 @@ export function BookingStudio() {
                 />
               </div>
             </div>
+
+            <NotifyBanner L={L} push={push} />
           </SectionCard>
 
           {/* panneau devis en flux mobile */}
           <div className="lg:hidden">{QuotePanel}</div>
-          <div className="lg:hidden">
-            <NotifyOptInButton L={L} push={push} />
-          </div>
         </div>
 
         {/* colonne devis desktop */}
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-4">
             {QuotePanel}
-            <Button
-              type="submit"
-              size="lg"
-              disabled={submitting}
-              aria-disabled={!canSubmit}
-              className="w-full [touch-action:manipulation]"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {L.submitting}
-                </>
-              ) : (
-                L.submit
-              )}
-            </Button>
-            <NotifyOptInButton L={L} push={push} />
             {missing.length > 0 && (
               <p className="text-center text-xs text-muted-foreground">
                 {L.missing} {missing.join(", ")}
