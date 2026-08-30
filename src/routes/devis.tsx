@@ -74,8 +74,7 @@ const COPY = {
   fr: {
     eyebrow: "Devis gratuit",
     h1: "Demander un devis",
-    lead:
-      "Décrivez votre trajet en une minute : nous vous répondons avec un prix ferme, adapté à votre véhicule et à vos besoins (transport sanitaire conventionné, transport de groupe, longue distance).",
+    lead: "Décrivez votre trajet en une minute : nous vous répondons avec un prix ferme, adapté à votre véhicule et à vos besoins (transport sanitaire conventionné, transport de groupe, longue distance).",
     perks: [
       { icon: Zap, t: "Véhicules électriques", d: "BMW iX1 et Audi Q6 e-tron, 5 places." },
       { icon: Users, t: "Van 8 places", d: "Mercedes classe V pour les groupes et les bagages." },
@@ -89,8 +88,7 @@ const COPY = {
   en: {
     eyebrow: "Free quote",
     h1: "Request a quote",
-    lead:
-      "Describe your journey in a minute: we reply with a firm price matched to your vehicle and your needs (covered medical transport, group transport, long distance).",
+    lead: "Describe your journey in a minute: we reply with a firm price matched to your vehicle and your needs (covered medical transport, group transport, long distance).",
     perks: [
       { icon: Zap, t: "Electric vehicles", d: "BMW iX1 and Audi Q6 e-tron, 5 seats." },
       { icon: Users, t: "8-seat van", d: "Mercedes V-Class for groups and luggage." },
@@ -107,29 +105,30 @@ function DevisPage() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
   const { prestation } = Route.useSearch();
-  const [prefill, setPrefill] = useState<QuotePrefill | undefined>(
-    prestation ? { prestation } : undefined,
-  );
+  const [prefill, setPrefill] = useState<QuotePrefill | undefined>(prestation ? { prestation } : undefined);
   const formRef = useRef<HTMLFormElement | null>(null);
 
   return (
-    <div className="mx-auto max-w-4xl px-5 py-12 sm:px-6 sm:py-16 lg:px-8">
-      <div className="text-center">
-        <img
-          src={heroLogo}
-          alt="Access Prestige Taxi"
-          width={360}
-          height={200}
-          className="mx-auto h-24 w-auto object-contain sm:h-28"
-        />
-        <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
-        <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl md:text-[2.75rem]">{c.h1}</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">{c.lead}</p>
-      </div>
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
+      <section className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/45 px-5 py-10 text-center shadow-[0_24px_70px_rgba(0,0,0,.18)] sm:px-10 sm:py-14">
+        <div className="absolute inset-y-0 left-0 hidden w-1/3 bg-[radial-gradient(circle_at_left,rgba(212,169,83,.12),transparent_68%)] sm:block" />
+        <div className="relative text-center">
+          <img
+            src={heroLogo}
+            alt="Access Prestige Taxi"
+            width={360}
+            height={200}
+            className="mx-auto h-24 w-auto object-contain sm:h-28"
+          />
+          <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
+          <h1 className="mt-3 font-display text-3xl font-semibold sm:text-4xl md:text-[2.75rem]">{c.h1}</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">{c.lead}</p>
+        </div>
+      </section>
 
-      <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
         {c.perks.map((p) => (
-          <div key={p.t} className="rounded-xl border border-border bg-card/60 p-4">
+          <div key={p.t} className="rounded-2xl border border-border bg-card/70 p-4 shadow-sm">
             <p.icon className="h-5 w-5 text-primary" />
             <p className="mt-2 text-sm font-semibold">{p.t}</p>
             <p className="mt-1 text-xs text-muted-foreground">{p.d}</p>
@@ -137,7 +136,11 @@ function DevisPage() {
         ))}
       </div>
 
-      <div className="mt-10">
+      <section className="mt-8 rounded-3xl border border-primary/20 bg-card/35 p-3 sm:mt-10 sm:p-6">
+        <div className="mb-5 px-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Estimation rapide</p>
+          <h2 className="mt-2 font-display text-2xl font-semibold">Estimez votre trajet</h2>
+        </div>
         <QuoteEstimator
           onQuote={(p) => {
             setPrefill({
@@ -155,11 +158,15 @@ function DevisPage() {
             requestAnimationFrame(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
           }}
         />
-      </div>
+      </section>
 
-      <div className="mt-10">
+      <section className="mt-8 rounded-3xl border border-border bg-card/45 p-3 sm:mt-10 sm:p-6">
+        <div className="mb-5 px-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Formulaire de devis</p>
+          <h2 className="mt-2 font-display text-2xl font-semibold">Finalisez votre demande</h2>
+        </div>
         <QuoteForm prefill={prefill} formRef={formRef} />
-      </div>
+      </section>
 
       <p className="mt-6 text-center text-sm">
         <Link to="/devis/suivi" search={{ ref: undefined }} className="font-semibold text-primary underline">
@@ -167,7 +174,7 @@ function DevisPage() {
         </Link>
       </p>
 
-      <section className="mt-10 rounded-2xl border border-border bg-card/40 p-6 text-center">
+      <section className="mt-8 rounded-3xl border border-primary/25 bg-card/55 p-5 text-center sm:mt-10 sm:p-8">
         <h2 className="font-display text-lg font-semibold">{c.orCall}</h2>
         <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
           {DRIVERS.map((d) => (
