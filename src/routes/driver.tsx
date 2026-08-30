@@ -896,11 +896,11 @@ function DriverApp({
               alignItems: "center",
               justifyContent: "space-between",
               gap: 10,
-              background: pushStatus === "denied" ? "#fef2f2" : pushStatus === "granted" ? "#F4EFE4" : "#FDFBF7",
-              borderBottom: "1px solid #e6ddc9",
+              background: pushStatus === "denied" ? "#1b0c0c" : pushStatus === "granted" ? "#0d1a12" : "#0b1118",
+              borderBottom: "1px solid rgba(201,155,74,.35)",
               padding: "10px 16px",
               fontSize: 12.5,
-              color: pushStatus === "denied" ? "#b91c1c" : pushStatus === "granted" ? "#5b4a22" : "#7a6320",
+              color: pushStatus === "denied" ? "#f0a0a0" : pushStatus === "granted" ? "#8ee39f" : "#e0b866",
             }}
           >
             <span>
