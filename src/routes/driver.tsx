@@ -355,12 +355,29 @@ const css = `
   .drv-chat-bubble.them { background:#101820 !important; color:#f6f0e5 !important; }
   .drv-chat-thread.unread { background:#101d28 !important; border-color:#c99b4a !important; }
   .drv-team-map { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; }
-  /* Recolor legacy inline light surfaces without touching their behaviour. */
-  [style*="#FDFBF7"], [style*="#f8fafc"], [style*="#f1f5f9"] { background-color:#050a10 !important; }
-  [style*="#0f172a"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
-  [style*="#e2e8f0"] { border-color:rgba(201,155,74,.35) !important; }
-  [style*="#64748b"], [style*="#94a3b8"] { color:rgba(246,240,229,.55) !important; }
-  [style*="#fef2f2"], [style*="#fff7ed"], [style*="#F4EFE4"], [style*="#fffbeb"], [style*="#eff6ff"], [style*="#f0fdf4"], [style*="#fff"] { background-color:#0b1118 !important; }
+  /* Recolor legacy inline light surfaces without touching their behaviour.
+     IMPORTANT : les navigateurs réécrivent les couleurs hex des styles inline
+     en rgb(...) dans l'attribut style réellement posé sur le DOM — les
+     sélecteurs [style*="#hex"] ci-dessous ne matchent donc quasiment jamais
+     en pratique (c'est ce qui rendait des textes/bordures "trop sombres" un
+     peu partout, écran + onglets, malgré ces règles). On ajoute donc pour
+     chaque couleur son équivalent rgb() en plus du hex. */
+  [style*="#FDFBF7"], [style*="#f8fafc"], [style*="#f1f5f9"],
+  [style*="rgb(253, 251, 247)"], [style*="rgb(248, 250, 252)"], [style*="rgb(241, 245, 249)"] {
+    background-color:#050a10 !important;
+  }
+  [style*="#0f172a"], [style*="rgb(15, 23, 42)"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
+  [style*="#e2e8f0"], [style*="rgb(226, 232, 240)"] { border-color:rgba(201,155,74,.45) !important; }
+  [style*="#64748b"], [style*="#94a3b8"], [style*="#475569"], [style*="#334155"], [style*="#cbd5e1"],
+  [style*="rgb(100, 116, 139)"], [style*="rgb(148, 163, 184)"], [style*="rgb(71, 85, 105)"],
+  [style*="rgb(51, 65, 85)"], [style*="rgb(203, 213, 225)"] {
+    color:rgba(246,240,229,.6) !important;
+  }
+  [style*="#fef2f2"], [style*="#fff7ed"], [style*="#F4EFE4"], [style*="#fffbeb"], [style*="#eff6ff"], [style*="#f0fdf4"], [style*="#fff"],
+  [style*="rgb(254, 242, 242)"], [style*="rgb(255, 247, 237)"], [style*="rgb(244, 239, 228)"], [style*="rgb(255, 251, 235)"],
+  [style*="rgb(239, 246, 255)"], [style*="rgb(240, 253, 244)"], [style*="rgb(255, 255, 255)"] {
+    background-color:#0b1118 !important;
+  }
   .drv-root input, .drv-root select, .drv-root textarea {
     background:#050a10 !important; color:#f6f0e5 !important;
     border:1px solid rgba(201,155,74,.45) !important; border-radius:10px !important;
@@ -746,7 +763,9 @@ function DriverApp({
   useEffect(() => {
     const load = async () => {
       try {
-        if (!getDriverToken()) { return; }
+        if (!getDriverToken()) {
+          return;
+        }
         const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
         if (!response.ok) return;
         const result = await response.json();
@@ -804,7 +823,9 @@ function DriverApp({
     let cancelled = false;
     const loadDevisBadge = async () => {
       try {
-        if (!getDriverToken()) { return; }
+        if (!getDriverToken()) {
+          return;
+        }
         const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
         if (!cancelled) setPendingDevis(res?.pending ?? 0);
       } catch {
@@ -1365,7 +1386,6 @@ function useDriverGpsTracking(driverId?: string) {
     setState("off");
     const tok = getDriverToken();
     if (tok) stopPos({ data: { token: tok } }).catch(() => {});
-
   }, [stopPos]);
 
   // Activation automatique dès l'identité (Alain/Patricia) connue, sinon deux
@@ -1489,9 +1509,9 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
       className="drv-team-map"
       style={{
         margin: "10px 16px 0",
-        border: "1px solid #e2e8f0",
+        border: "1px solid rgba(201,155,74,.45)",
         borderRadius: 14,
-        background: "#FDFBF7",
+        background: "#050a10",
         overflow: "hidden",
         fontFamily: "'DM Sans', sans-serif",
       }}
@@ -1511,8 +1531,8 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
         }}
       >
         <span style={{ fontSize: 15 }}>🗺️</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>Équipe</span>
-        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "#64748b" }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#f6f0e5" }}>Équipe</span>
+        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "rgba(246,240,229,.55)" }}>
           {distKm != null ? `${distKm.toFixed(1)} km entre vous` : `${pts.length}/2 en ligne`} {open ? "▲" : "▼"}
         </span>
       </button>
@@ -1520,11 +1540,18 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
       {open && (
         <div style={{ padding: "0 14px 14px" }}>
           {pts.length > 0 ? (
-            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #e2e8f0", marginBottom: 10 }}>
+            <div
+              style={{
+                borderRadius: 12,
+                overflow: "hidden",
+                border: "1px solid rgba(201,155,74,.45)",
+                marginBottom: 10,
+              }}
+            >
               <div ref={mapRef} style={{ width: "100%", height: 220 }} />
             </div>
           ) : (
-            <div style={{ fontSize: 12.5, color: "#64748b", marginBottom: 10 }}>
+            <div style={{ fontSize: 12.5, color: "rgba(246,240,229,.55)", marginBottom: 10 }}>
               Aucune position partagée pour l'instant.
             </div>
           )}
@@ -1543,8 +1570,12 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                   alignItems: "center",
                   gap: 8,
                   fontSize: 12.5,
-                  color: "#334155",
-                  padding: "4px 0",
+                  color: "#f6f0e5",
+                  padding: "6px 10px",
+                  marginBottom: 6,
+                  border: "1px solid rgba(201,155,74,.3)",
+                  borderRadius: 10,
+                  background: "rgba(224,184,102,.04)",
                 }}
               >
                 <span
@@ -1552,12 +1583,12 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                     width: 9,
                     height: 9,
                     borderRadius: "50%",
-                    background: (isMe ? gps.state === "on" : r?.is_active) ? TEAM_COLORS[id] : "#cbd5e1",
+                    background: (isMe ? gps.state === "on" : r?.is_active) ? TEAM_COLORS[id] : "rgba(246,240,229,.3)",
                     flexShrink: 0,
                   }}
                 />
                 <b style={{ minWidth: 60 }}>{TEAM_NAMES[id]}</b>
-                <span style={{ color: "#64748b" }}>
+                <span style={{ color: "rgba(246,240,229,.6)" }}>
                   {isMe
                     ? gps.state === "on"
                       ? myLastSync
@@ -1580,9 +1611,9 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                     onClick={gps.state === "on" ? gps.stop : gps.start}
                     style={{
                       marginLeft: "auto",
-                      background: gps.state === "on" ? "#fff" : "#0f172a",
-                      color: gps.state === "on" ? "#b91c1c" : "#FDFBF7",
-                      border: gps.state === "on" ? "1px solid #fecaca" : "none",
+                      background: gps.state === "on" ? "#1b0c0c" : "#e0b866",
+                      color: gps.state === "on" ? "#f0a0a0" : "#050a10",
+                      border: gps.state === "on" ? "1px solid #8b3a3a" : "none",
                       borderRadius: 8,
                       padding: "5px 10px",
                       fontSize: 11.5,
@@ -1599,7 +1630,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
           })}
 
           {distKm != null && (
-            <div style={{ fontSize: 12, color: "#64748b", marginTop: 8 }}>
+            <div style={{ fontSize: 12, color: "rgba(246,240,229,.55)", marginTop: 8 }}>
               📏 ≈ {distKm.toFixed(1)} km à vol d'oiseau entre vous — trop loin pour une course ? Passez-la depuis
               l'onglet Courses.
             </div>
@@ -3555,7 +3586,10 @@ function PlanningTab() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    if (!getDriverToken()) { setLoading(false); return; }
+    if (!getDriverToken()) {
+      setLoading(false);
+      return;
+    }
     const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "planning" } });
     setCourses((res?.rows ?? []) as Resa[]);
     setLoading(false);
@@ -3641,7 +3675,9 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
 
   const load = useCallback(async () => {
     try {
-      if (!getDriverToken()) { return; }
+      if (!getDriverToken()) {
+        return;
+      }
       const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "chargement impossible");
@@ -3863,7 +3899,9 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
 
   const load = useCallback(async () => {
     try {
-      if (!getDriverToken()) { return; }
+      if (!getDriverToken()) {
+        return;
+      }
       const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
       setItems((res?.devis ?? []) as Devis[]);
       onBadgeChange(res?.pending ?? 0);
@@ -4095,7 +4133,10 @@ function ClientsTab() {
   const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
-    if (!getDriverToken()) { setLoading(false); return; }
+    if (!getDriverToken()) {
+      setLoading(false);
+      return;
+    }
     const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "clients" } });
     const data: any[] = res?.rows ?? [];
     const clientsRows: any[] = res?.clients ?? [];
@@ -4404,7 +4445,6 @@ function TrackingAnalytics() {
       const { events, totalCourses } = await trackingAnalyticsFn({
         data: { token: tok, days: 30 },
       });
-
 
       const evts: any[] = events ?? [];
 
@@ -4762,7 +4802,10 @@ function VisitorCounter({
       // le client anonyme n'a aucun droit d'écriture sur active_visitors.
 
       try {
-        if (!getDriverToken()) { setCount(0); return; }
+        if (!getDriverToken()) {
+          setCount(0);
+          return;
+        }
         const res = await getActiveVisitorCount({ data: { token: getDriverToken(), scope } });
         setCount(res?.count ?? 0);
       } catch {
@@ -5197,7 +5240,9 @@ function StatsTab() {
 
   const load = useCallback(async () => {
     try {
-      if (!getDriverToken()) { return; }
+      if (!getDriverToken()) {
+        return;
+      }
       const res = await getStats({ data: { token: getDriverToken(), days } });
       setData(res);
     } catch {
@@ -5387,7 +5432,9 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
 
   const load = useCallback(async () => {
     try {
-      if (!getDriverToken()) { return; }
+      if (!getDriverToken()) {
+        return;
+      }
       const res = await listEvents({ data: { token: getDriverToken(), limit: 120, driver: filter } });
       setRows((res as any)?.events ?? []);
     } catch {
@@ -5525,7 +5572,10 @@ function PushDiagnostic() {
   const load = async () => {
     setLoading(true);
     try {
-      if (!getDriverToken()) { setLoading(false); return; }
+      if (!getDriverToken()) {
+        setLoading(false);
+        return;
+      }
       const res = await fetchFailures({ data: { pin: getDriverToken(), only_price_update: false, limit: 30 } });
       setRows((res as any)?.failures ?? []);
     } catch {
