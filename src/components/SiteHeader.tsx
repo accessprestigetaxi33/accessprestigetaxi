@@ -101,6 +101,12 @@ export function SiteHeader() {
             <ThemeToggle className="h-10 w-10 shrink-0" />
           </span>
           <LanguageSwitcher className="site-header-language shrink-0" />
+          <Link
+            to="/reserver"
+            className="inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-md bg-primary px-2.5 text-[11px] font-bold uppercase tracking-tight text-primary-foreground shadow-[var(--shadow-gold)] xs:px-3 xs:text-xs"
+          >
+            {t("nav.book")}
+          </Link>
           <button
             type="button"
             aria-label={open ? t("aria.close_menu") : t("aria.open_menu")}

@@ -327,10 +327,12 @@ const css = `
   .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size:9px; font-weight:800; }
   .drv-live-pill i { width:6px; height:6px; border-radius:50%; background:#5fd08a; display:block; }
   .drv-stat-grid { grid-template-columns:repeat(2,1fr) !important; gap:8px !important; margin-bottom:10px !important; }
-  .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border:1px solid rgba(201,155,74,.45); border-radius:9px !important; padding:11px !important; }
-  .drv-stat-lbl { color:rgba(246,240,229,.55) !important; font-size:8px !important; }
-  .drv-stat-val { color:#e0b866 !important; font-size:21px !important; }
-  .drv-stat-sub { color:rgba(246,240,229,.55) !important; font-size:9px !important; }
+  .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border:1px solid rgba(201,155,74,.45); border-radius:9px !important; padding:11px !important;
+    display:grid !important; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:8px; }
+  .drv-stat-lbl { grid-column:1; grid-row:1; margin:0 !important; color:rgba(246,240,229,.55) !important; font-size:8.5px !important; letter-spacing:.08em; font-weight:800; line-height:1.25; }
+  .drv-stat-val { grid-column:2; grid-row:1 / span 2; justify-self:end; text-align:right; white-space:nowrap; color:#e0b866 !important; font-size:22px !important; line-height:1.1; }
+  .drv-stat-sub { grid-column:1; grid-row:2; margin:0 !important; color:rgba(246,240,229,.45) !important; font-size:9px !important; line-height:1.2; }
+  @media (max-width:340px) { .drv-stat-val { font-size:18px !important; } }
   .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(201,155,74,.45); border-radius:9px; overflow:hidden; margin-bottom:10px; background:#050a10; }
   .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.2); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
   .drv-overview-actions button:last-child { border-right:0; }
@@ -1136,7 +1138,7 @@ function DriverApp({
               seules dépasser la hauteur de l'écran et rendre la barre
               d'onglets + tout le contenu (avis, clients…) inaccessibles,
               sans aucun moyen de scroller pour les atteindre. */}
-          {(driverId === "alain" || driverId === "patricia") && <TeamMapCard driverId={driverId} gps={gps} />}
+          {tab === "courses" && <TeamMapCard driverId={driverId} gps={gps} />}
 
           {tab === "courses" && (
             <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
@@ -1403,8 +1405,10 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
   const [open, setOpen] = useState(false);
 
   const refresh = useCallback(async () => {
+    const token = getDriverToken();
+    if (!token) return;
     try {
-      const res: any = await listPos({ data: { token: getDriverToken() ?? "" } });
+      const res: any = await listPos({ data: { token } });
       setRows((res?.positions ?? []).filter((p: any) => p.id === "alain" || p.id === "patricia"));
     } catch {}
   }, [listPos]);
