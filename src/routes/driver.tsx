@@ -1358,7 +1358,9 @@ function useDriverGpsTracking(driverId?: string) {
       watchRef.current = null;
     }
     setState("off");
-    stopPos({ data: { token: getDriverToken() ?? "" } }).catch(() => {});
+    const tok = getDriverToken();
+    if (tok) stopPos({ data: { token: tok } }).catch(() => {});
+
   }, [stopPos]);
 
   // Activation automatique dès l'identité (Alain/Patricia) connue, sinon deux
