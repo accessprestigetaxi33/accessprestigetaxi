@@ -1138,7 +1138,7 @@ function DriverApp({
               seules dépasser la hauteur de l'écran et rendre la barre
               d'onglets + tout le contenu (avis, clients…) inaccessibles,
               sans aucun moyen de scroller pour les atteindre. */}
-          {(driverId === "alain" || driverId === "patricia") && <TeamMapCard driverId={driverId} gps={gps} />}
+          {tab === "courses" && <TeamMapCard driverId={driverId} gps={gps} />}
 
           {tab === "courses" && (
             <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
