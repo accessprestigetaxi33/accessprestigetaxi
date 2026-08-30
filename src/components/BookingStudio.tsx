@@ -407,7 +407,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-card/70 p-4 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-[#D4AF37]/60 bg-card/70 p-4 shadow-sm sm:p-6">
       <header className="mb-4 flex items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
           {step}
@@ -438,7 +438,7 @@ function Stepper({
   onChange: (v: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border/70 bg-background/60 px-3 py-2.5">
+    <div className="flex items-center justify-between rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 px-3 py-2.5">
       <span className="flex items-center gap-2 text-sm font-medium">
         <span className="text-primary">{icon}</span>
         {label}
@@ -449,7 +449,7 @@ function Stepper({
           aria-label={`${label} -1`}
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -459,7 +459,7 @@ function Stepper({
           aria-label={`${label} +1`}
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -476,8 +476,8 @@ function Chip({ active, onClick, children }: { active?: boolean; onClick: () => 
       aria-pressed={active}
       className={`inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition active:scale-[0.98] [touch-action:manipulation] ${
         active
-          ? "border-primary bg-primary text-primary-foreground shadow-sm"
-          : "border-border bg-background/70 text-foreground hover:border-primary/60 hover:bg-primary/5"
+          ? "border-[#D4AF37] bg-[#D4AF37] text-neutral-900 shadow-sm"
+          : "border-[#D4AF37]/60 bg-background/70 text-foreground hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
       }`}
     >
       {children}
@@ -512,7 +512,7 @@ function NotifyBanner({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeo
 
   if (push.status === "granted") {
     return (
-      <p className="mt-5 flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 p-3 text-sm text-muted-foreground">
+      <p className="mt-5 flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm text-muted-foreground">
         <BellRing className="h-4 w-4 shrink-0 text-primary" />
         {L.notif_on}
       </p>
@@ -520,7 +520,7 @@ function NotifyBanner({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeo
   }
 
   return (
-    <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+    <div className="mt-5 rounded-2xl border border-[#D4AF37]/40 bg-primary/5 p-4">
       <div className="flex items-start gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Bell className="h-4 w-4" />
@@ -848,7 +848,7 @@ export function BookingStudio() {
     });
     return (
       <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
-        <div className="rounded-3xl border border-primary/30 bg-card/55 p-6 text-center shadow-lg sm:p-10">
+        <div className="rounded-3xl border border-[#D4AF37]/50 bg-card/55 p-6 text-center shadow-lg sm:p-10">
           {pending ? (
             <Loader2 className="mx-auto h-14 w-14 animate-spin text-primary" />
           ) : (
@@ -969,7 +969,7 @@ export function BookingStudio() {
   const rateNight = q && q.prix_detail.kmNuit > 0 ? q.prix_detail.prixNuit / q.prix_detail.kmNuit : null;
 
   const QuotePanel = (
-    <div className="rounded-2xl border border-primary/25 bg-card/45 p-5 shadow-sm">
+    <div className="rounded-2xl border border-[#D4AF37]/45 bg-card/45 p-5 shadow-sm">
       <header className="mb-1 flex items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
           6
@@ -996,14 +996,14 @@ export function BookingStudio() {
       {q && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 p-3">
+            <div className="flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3">
               <RouteIcon className="h-4 w-4 shrink-0 text-primary" />
               <span>
                 <span className="block text-sm font-semibold tabular-nums">{q.distance_km.toFixed(1)} km</span>
                 <span className="text-xs text-muted-foreground">{L.distance}</span>
               </span>
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/60 p-3">
+            <div className="flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3">
               <Timer className="h-4 w-4 shrink-0 text-primary" />
               <span>
                 <span className="block text-sm font-semibold tabular-nums">{Math.round(q.duree_s / 60)} min</span>
@@ -1012,7 +1012,7 @@ export function BookingStudio() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-background/60 p-3">
+          <div className="flex items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-secondary/70">
               <Car className="h-5 w-5 text-primary" />
             </span>
@@ -1030,12 +1030,12 @@ export function BookingStudio() {
           </div>
 
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between border-b border-dashed border-border/70 pb-2">
+            <div className="flex justify-between border-b border-dashed border-[#D4AF37]/40 pb-2">
               <dt className="text-muted-foreground">{L.detail_base}</dt>
               <dd className="tabular-nums">{q.prix_detail.priseEnCharge.toFixed(2)} €</dd>
             </div>
             {q.prix_detail.prixJour > 0 && (
-              <div className="flex justify-between border-b border-dashed border-border/70 pb-2">
+              <div className="flex justify-between border-b border-dashed border-[#D4AF37]/40 pb-2">
                 <dt className="text-muted-foreground">
                   {L.detail_day} ({q.prix_detail.kmJour.toFixed(1)} km)
                 </dt>
@@ -1043,7 +1043,7 @@ export function BookingStudio() {
               </div>
             )}
             {q.prix_detail.prixNuit > 0 && (
-              <div className="flex justify-between border-b border-dashed border-border/70 pb-2">
+              <div className="flex justify-between border-b border-dashed border-[#D4AF37]/40 pb-2">
                 <dt className="text-muted-foreground">
                   {L.detail_night} ({q.prix_detail.kmNuit.toFixed(1)} km)
                 </dt>
@@ -1053,7 +1053,7 @@ export function BookingStudio() {
           </dl>
 
           {(rateDay !== null || rateNight !== null) && (
-            <div className="space-y-1.5 rounded-xl border border-border/70 bg-background/60 p-3 text-sm">
+            <div className="space-y-1.5 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm">
               {rateDay !== null && (
                 <p className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
@@ -1097,7 +1097,7 @@ export function BookingStudio() {
         )}
       </Button>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-border/70 pt-4 text-center text-[11px] text-muted-foreground sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[#D4AF37]/40 pt-4 text-center text-[11px] text-muted-foreground sm:grid-cols-4">
         {[
           { icon: <BadgeCheck className="h-4 w-4 text-primary" />, label: L.feat_pro },
           { icon: <ShieldCheck className="h-4 w-4 text-primary" />, label: L.feat_pay },
@@ -1111,7 +1111,7 @@ export function BookingStudio() {
         ))}
       </div>
 
-      <div className="mt-4 rounded-xl border border-border/70 bg-background/60 p-3 text-center">
+      <div className="mt-4 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-center">
         <p className="text-sm font-semibold">{L.trust_title}</p>
         <div className="mt-1 flex items-center justify-center gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -1122,7 +1122,7 @@ export function BookingStudio() {
         <p className="text-xs text-muted-foreground">{L.trust_reviews}</p>
       </div>
 
-      <div className="mt-4 flex items-start gap-3 rounded-xl border border-border/70 bg-background/60 p-3 text-sm">
+      <div className="mt-4 flex items-start gap-3 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
           <User className="h-4 w-4" />
         </span>
@@ -1137,7 +1137,7 @@ export function BookingStudio() {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-2 border-t border-border/70 pt-4">
+      <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#D4AF37]/40 pt-4">
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
           <span>
@@ -1149,7 +1149,7 @@ export function BookingStudio() {
           {["VISA", "MC", "AMEX"].map((c) => (
             <span
               key={c}
-              className="rounded border border-border/70 bg-background px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-muted-foreground"
+              className="rounded border border-[#D4AF37]/40 bg-background px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-muted-foreground"
             >
               {c}
             </span>
@@ -1165,7 +1165,7 @@ export function BookingStudio() {
         <div
           role="status"
           aria-live="assertive"
-          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+1rem)] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-lg border border-primary/30 bg-card p-4 shadow-xl"
+          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+1rem)] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-lg border border-[#D4AF37]/50 bg-card p-4 shadow-xl"
         >
           <Loader2 className="h-6 w-6 shrink-0 animate-spin text-primary" />
           <div className="min-w-0">
@@ -1246,7 +1246,7 @@ export function BookingStudio() {
                   type="button"
                   onClick={swap}
                   aria-label={L.swap}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background transition hover:border-primary hover:text-primary active:scale-95 [touch-action:manipulation]"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-background transition hover:border-[#D4AF37] hover:text-[#D4AF37] active:scale-95 [touch-action:manipulation]"
                 >
                   <ArrowDownUp className="h-4 w-4" />
                 </button>
@@ -1378,7 +1378,7 @@ export function BookingStudio() {
                     key={v.id}
                     aria-current={isSelected}
                     className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
-                      isSelected ? "border-primary bg-primary/5 shadow-sm" : "border-border/70 bg-background/60"
+                      isSelected ? "border-[#D4AF37] bg-[#D4AF37]/10 shadow-sm" : "border-[#D4AF37]/40 bg-[#D4AF37]/5"
                     }`}
                   >
                     <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-secondary/70">
@@ -1396,7 +1396,7 @@ export function BookingStudio() {
                 );
               })}
             </div>
-            <p className="mt-3 flex items-start gap-2 rounded-xl border border-border/70 bg-background/60 p-3 text-sm text-muted-foreground">
+            <p className="mt-3 flex items-start gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm text-muted-foreground">
               <span>
                 {L.veh_other}{" "}
                 <a href="tel:+33603444863" className="font-medium text-primary underline underline-offset-2">
@@ -1505,7 +1505,7 @@ export function BookingStudio() {
         </aside>
 
         {/* barre d'action mobile / tablette */}
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#D4AF37]/40 bg-card/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur lg:hidden">
           <div className="mx-auto flex max-w-3xl items-center gap-3">
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs text-muted-foreground">
