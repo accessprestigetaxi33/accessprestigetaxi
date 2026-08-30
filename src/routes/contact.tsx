@@ -136,15 +136,6 @@ function ContactPage() {
   return (
     <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] p-4 shadow-[0_0_40px_rgba(214,168,61,.08)]">
-        <div className="flex items-center justify-between border-b border-white/10 px-4 pb-4">
-          <div>
-            <div className="text-[9px] font-bold tracking-[.15em] text-[#e8bd5d]">ACCESS PRESTIGE TAXI</div>
-            <div className="mt-1 text-[5px] tracking-[.22em] text-white/60">L'EXCELLENCE À CHAQUE TRAJET</div>
-          </div>
-          <span className="grid h-9 w-9 place-items-center rounded-lg border border-[#d6a83d]/40 text-[#e8bd5d]">
-            ☰
-          </span>
-        </div>
         <div className="pt-3 text-center">
           <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
             CONTACTEZ-NOUS
@@ -163,13 +154,13 @@ function ContactPage() {
               <a
                 key={label}
                 href={href}
-                className="flex min-h-[74px] items-center gap-3 rounded-xl border border-white/20 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3 text-left"
+                className="flex min-h-[74px] items-center gap-3 rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3 text-left"
               >
                 <span
                   className={
                     isWhatsapp
                       ? "grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#25D366]"
-                      : "grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/10 bg-[#111b25]"
+                      : "grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#d6a83d]/40 bg-[#111b25]"
                   }
                 >
                   {isWhatsapp ? (
@@ -188,7 +179,7 @@ function ContactPage() {
             );
           })}
         </div>
-        <section className="mt-3 flex gap-4 rounded-xl border border-white/20 bg-[linear-gradient(145deg,#111b26,#07101a)] p-4">
+        <section className="mt-3 flex gap-4 rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-4">
           <HeartPulse className="mt-1 h-8 w-8 shrink-0 text-[#e8bd5d]" />
           <div>
             <h2 className="font-display text-[17px] text-[#e8bd5d]">{c.cmuTitle}</h2>
@@ -201,7 +192,7 @@ function ContactPage() {
         >
           ÉCRIRE UN MESSAGE
         </a>
-        <div id="contact-form" className="mt-4 rounded-xl border border-white/15 p-2">
+        <div id="contact-form" className="mt-4 rounded-xl border border-[#d6a83d]/45 p-2">
           <ContactForm />
         </div>
       </section>
