@@ -6,7 +6,7 @@ import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
 import { useT } from "@/i18n/I18nProvider";
 
-export const Route = createFileRoute("/client/chat")({
+export const Route = createFileRoute("/client/profil")({
   head: () => ({
     meta: [{ title: "Chat — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),

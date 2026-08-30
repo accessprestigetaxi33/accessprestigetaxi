@@ -26,6 +26,37 @@ function monthLabel(year: number, month: number) {
   return new Date(year, month - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 }
 
+const css = `
+.cf-root{min-height:100dvh;background:#030a13;color:#f5f1e8;font-family:Inter,system-ui,sans-serif;padding:0 0 82px}
+.cf-main{padding:12px}
+.cf-main-inner{max-width:390px;margin:0 auto}
+.cf-shell{border-radius:24px;padding:13px;background:#030a13;box-shadow:0 0 40px rgba(214,168,61,.06)}
+.cf-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cf-back{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none}
+.cf-year{border:1px solid rgba(255,255,255,.15);border-radius:8px;background:#0b1520;padding:6px 10px;font-size:11px;color:#f5f1e8}
+.cf-kicker{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a;margin-top:14px}
+.cf-title{font-family:Georgia,serif;font-size:20px;margin:4px 0 0;display:flex;align-items:center;gap:8px}
+.cf-subtitle{margin-top:4px;font-size:11px;color:rgba(255,255,255,.55)}
+.cf-prompt{margin-top:14px;border:1px solid rgba(214,168,61,.35);border-radius:12px;background:rgba(214,168,61,.06);padding:12px;display:flex;gap:10px;font-size:11px;color:rgba(255,255,255,.75);line-height:1.5}
+.cf-prompt a{margin-left:6px;font-weight:700;color:#e7bd5d;text-decoration:underline}
+.cf-loading{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#07101a;padding:34px 12px;color:rgba(255,255,255,.6);font-size:12px;margin-top:14px}
+.cf-empty{margin-top:14px;padding:24px 16px;border:1px dashed rgba(214,168,61,.45);border-radius:14px;text-align:center;color:rgba(255,255,255,.55);font-size:11px}
+.cf-recap{margin-top:14px;border:1px solid rgba(214,168,61,.35);border-radius:14px;padding:14px;background:linear-gradient(135deg,rgba(214,168,61,.14),rgba(232,201,109,.04));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.cf-recap-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a}
+.cf-recap-total{margin-top:4px;font-family:Georgia,serif;font-size:21px;color:#fff}
+.cf-recap-total span{font-family:Inter,sans-serif;font-size:11px;font-weight:400;color:rgba(255,255,255,.55);margin-left:4px}
+.cf-recap-btn{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:9px 14px;font-size:11px;font-weight:800;color:#171006;background:linear-gradient(135deg,#f6cd6b,#cf962a);border:none}
+.cf-recap-btn:disabled{opacity:.6}
+.cf-by-month{margin:18px 0 8px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.cf-months{display:flex;flex-direction:column;gap:8px}
+.cf-month{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(214,168,61,.45);border-radius:12px;background:linear-gradient(145deg,#111b26,#07101a);padding:12px}
+.cf-month-name{font-size:12px;font-weight:600;text-transform:capitalize;color:#f5f1e8}
+.cf-month-sub{margin-top:2px;font-size:10px;color:rgba(255,255,255,.5)}
+.cf-month-pdf{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(214,168,61,.5);border-radius:7px;padding:7px 10px;font-size:9px;font-weight:800;color:#e7bd5d;background:transparent}
+.cf-month-pdf:disabled{opacity:.5}
+@media(min-width:700px){.cf-main-inner{max-width:720px}.cf-shell{padding:20px}}
+`;
+
 function ClientFactures() {
   const navigate = useNavigate();
   const t = useT();
@@ -123,131 +154,100 @@ function ClientFactures() {
   const years = [new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2];
 
   return (
-    <main
-      className="relative min-h-[100dvh] px-4 pt-8 pb-4"
-      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
-    >
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="mb-5 flex items-center justify-between">
-          <Link
-            to="/client/profil"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-foreground/60 hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Profil
-          </Link>
-          <select
-            value={year}
-            onChange={(e) => setYear(parseInt(e.target.value, 10))}
-            className="rounded-lg border border-border bg-muted px-3 py-1.5 text-xs text-foreground"
-          >
-            {years.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("client.eyebrow")}</p>
-          <h1
-            className="mt-1 flex items-center gap-2 text-2xl font-bold text-foreground sm:text-3xl"
-            style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
-          >
-            <FileText className="h-6 w-6 text-primary" /> {t("client.factures.title")}
-          </h1>
-          <p className="mt-1 text-sm text-foreground/60">
-            {t("client.factures.subtitle")}
-          </p>
-        </div>
-
-        {!company?.company_name && (
-          <div className="mb-5 rounded-xl border border-primary/30 bg-primary/5 p-4">
-            <div className="flex items-start gap-3">
-              <Briefcase className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div className="flex-1 text-sm text-foreground/80">
-                {t("client.factures.company_prompt")}
-                <Link
-                  to="/client/profil"
-                  className="ml-2 font-semibold text-primary underline-offset-2 hover:underline"
-                >
-                  {t("client.factures.complete_profile")}
+    <>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <div className="cf-root">
+        <main className="cf-main">
+          <div className="cf-main-inner">
+            <div className="cf-shell">
+              <div className="cf-top">
+                <Link to="/client/profil" className="cf-back">
+                  <ArrowLeft size={13} /> Profil
                 </Link>
+                <select className="cf-year" value={year} onChange={(e) => setYear(parseInt(e.target.value, 10))}>
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
-          </div>
-        )}
 
-        {loading ? (
-          <div className="flex items-center justify-center gap-2 py-12 text-foreground/60">
-            <BrandLoader size={20} /> {t("client.trajets.loading")}
-          </div>
-        ) : (rows ?? []).length === 0 ? (
-          <div className="rounded-2xl border border-border bg-white/[0.03] p-8 text-center text-sm text-foreground/60">
-            {t("client.factures.empty_year")} {year}.
-          </div>
-        ) : (
-          <>
-            {/* Récap annuel */}
-            <div
-              className="mb-6 rounded-2xl border border-primary/30 p-5"
-              style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.10), rgba(232,201,109,0.04))" }}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("client.factures.year_label")} {year}</p>
-                  <p
-                    className="mt-1 text-2xl font-bold text-foreground"
-                    style={{ fontFamily: "'Syne', serif" }}
-                  >
-                    {totalYear.toFixed(2)} €{" "}
-                    <span className="text-sm font-normal text-foreground/60">/ {(rows ?? []).length} {t("client.factures.courses")}</span>
-                  </p>
+              <div className="cf-kicker">{t("client.eyebrow")}</div>
+              <h1 className="cf-title">
+                <FileText size={18} style={{ color: "#e7bd5d" }} /> {t("client.factures.title")}
+              </h1>
+              <p className="cf-subtitle">{t("client.factures.subtitle")}</p>
+
+              {!company?.company_name && (
+                <div className="cf-prompt">
+                  <Briefcase size={15} style={{ color: "#e7bd5d", flexShrink: 0, marginTop: 1 }} />
+                  <div>
+                    {t("client.factures.company_prompt")}
+                    <Link to="/client/profil">{t("client.factures.complete_profile")}</Link>
+                  </div>
                 </div>
-                <button
-                  onClick={downloadYear}
-                  disabled={busy === "year"}
-                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-black disabled:opacity-60"
-                  style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
-                >
-                  <Download className="h-4 w-4" /> {t("client.factures.year_pdf")}
-                </button>
-              </div>
-            </div>
+              )}
 
-            {/* Par mois */}
-            <p className="mb-3 text-xs uppercase tracking-[0.2em] text-foreground/50">{t("client.factures.by_month")}</p>
-            <div className="space-y-2.5">
-              {Array.from(byMonth.entries())
-                .sort(([a], [b]) => b - a)
-                .map(([month, list]) => {
-                  const total = list.reduce((s, r) => s + r.prix_estime, 0);
-                  return (
-                    <div
-                      key={month}
-                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-white/[0.04] p-4"
-                    >
-                      <div>
-                        <div className="text-sm font-semibold capitalize text-foreground">{monthLabel(year, month)}</div>
-                        <div className="text-xs text-foreground/50">
-                          {list.length} course{list.length > 1 ? "s" : ""} · {total.toFixed(2)} €
-                        </div>
+              {loading ? (
+                <div className="cf-loading">
+                  <BrandLoader size={18} /> {t("client.trajets.loading")}
+                </div>
+              ) : (rows ?? []).length === 0 ? (
+                <div className="cf-empty">
+                  {t("client.factures.empty_year")} {year}.
+                </div>
+              ) : (
+                <>
+                  <div className="cf-recap">
+                    <div>
+                      <div className="cf-recap-label">
+                        {t("client.factures.year_label")} {year}
                       </div>
-                      <button
-                        onClick={() => downloadMonth(month)}
-                        disabled={busy === `m-${month}`}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-primary/40 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
-                      >
-                        <Download className="h-3.5 w-3.5" /> PDF
-                      </button>
+                      <div className="cf-recap-total">
+                        {totalYear.toFixed(2)} €
+                        <span>
+                          / {(rows ?? []).length} {t("client.factures.courses")}
+                        </span>
+                      </div>
                     </div>
-                  );
-                })}
+                    <button className="cf-recap-btn" onClick={downloadYear} disabled={busy === "year"}>
+                      <Download size={14} /> {t("client.factures.year_pdf")}
+                    </button>
+                  </div>
+
+                  <p className="cf-by-month">{t("client.factures.by_month")}</p>
+                  <div className="cf-months">
+                    {Array.from(byMonth.entries())
+                      .sort(([a], [b]) => b - a)
+                      .map(([month, list]) => {
+                        const total = list.reduce((s, r) => s + r.prix_estime, 0);
+                        return (
+                          <div className="cf-month" key={month}>
+                            <div>
+                              <div className="cf-month-name">{monthLabel(year, month)}</div>
+                              <div className="cf-month-sub">
+                                {list.length} course{list.length > 1 ? "s" : ""} · {total.toFixed(2)} €
+                              </div>
+                            </div>
+                            <button
+                              className="cf-month-pdf"
+                              onClick={() => downloadMonth(month)}
+                              disabled={busy === `m-${month}`}
+                            >
+                              <Download size={12} /> PDF
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </>
+              )}
             </div>
-          </>
-        )}
+          </div>
+        </main>
+        <ClientBottomNav />
       </div>
-      <ClientBottomNav />
-    </main>
+    </>
   );
 }
