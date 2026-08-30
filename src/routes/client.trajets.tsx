@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { Calendar, MapPin, ArrowRight, Eye, Plus, RefreshCw, Share2 } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Eye, Plus, RefreshCw, Share2, Car, ChevronRight } from "lucide-react";
 import { shareRideTracking } from "@/lib/share-ride";
 import { BrandLoader } from "@/components/BrandLoader";
 import { toast } from "sonner";
@@ -39,6 +39,34 @@ function fmtDate(iso: string) {
     return iso;
   }
 }
+
+const css = `
+.ct-root{min-height:100dvh;background:#030a13;color:#f5f1e8;font-family:Inter,system-ui,sans-serif;padding:0 0 82px}
+.ct-main{padding:12px}
+.ct-main-inner{max-width:390px;margin:0 auto}
+.ct-shell{border-radius:24px;padding:13px;background:#030a13;box-shadow:0 0 40px rgba(214,168,61,.06)}
+.ct-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ct-kicker{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a}
+.ct-title{font-family:Georgia,serif;font-size:20px;margin:4px 0 0}
+.ct-refresh{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(214,168,61,.45);border-radius:8px;padding:7px 10px;font-size:10px;color:#e7bd5d;background:transparent}
+.ct-loading{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#07101a;padding:34px 12px;color:rgba(255,255,255,.6);font-size:12px;margin-top:14px}
+.ct-empty{margin-top:14px;padding:24px 16px;border:1px dashed rgba(214,168,61,.45);border-radius:14px;text-align:center;color:rgba(255,255,255,.55);font-size:11px}
+.ct-empty a{margin-top:14px;display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:9px 16px;font-size:10px;font-weight:800;color:#171006;background:linear-gradient(135deg,#f6cd6b,#cf962a);text-decoration:none}
+.ct-list{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.ct-ride{position:relative;border:1px solid rgba(214,168,61,.45);border-radius:12px;padding:12px;background:linear-gradient(145deg,#111b26,#07101a)}
+.ct-ride-top{display:flex;align-items:center;gap:8px}
+.ct-ride-icon{display:grid;place-items:center;width:30px;height:30px;flex-shrink:0;border-radius:999px;border:1px solid rgba(214,168,61,.5);color:#e7bd5d}
+.ct-ride-when{flex:1;font-size:10px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:5px}
+.ct-status{font-size:9px;font-weight:700;border-radius:999px;padding:4px 8px;flex-shrink:0}
+.ct-route{margin-top:8px;padding-left:38px;font-size:12px;line-height:1.6;color:#fff;display:flex;align-items:flex-start;gap:6px}
+.ct-price{margin-top:6px;padding-left:38px;font-size:11px;color:rgba(255,255,255,.6)}
+.ct-price b{color:#e7bd5d;font-weight:700}
+.ct-actions{margin-top:10px;padding-left:38px;display:flex;flex-wrap:wrap;gap:8px}
+.ct-actions a,.ct-actions button{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:7px 10px;font-size:9px;font-weight:800;text-decoration:none;border:1px solid rgba(214,168,61,.5)}
+.ct-actions a.primary{background:linear-gradient(135deg,#f6cd6b,#cf962a);color:#171006;border-color:transparent}
+.ct-actions button,.ct-actions a.secondary{color:#f5f1e8;background:transparent;border-color:rgba(255,255,255,.2)}
+@media(min-width:700px){.ct-main-inner{max-width:720px}.ct-shell{padding:20px}}
+`;
 
 function ClientTrajets() {
   const navigate = useNavigate();
@@ -96,131 +124,104 @@ function ClientTrajets() {
     };
   }, [session, rows, refresh]);
 
-
   if (!session) return null;
 
   return (
-    <main
-      className="relative min-h-[100dvh] overflow-hidden px-4 py-8"
-      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, #C9A84C 0%, transparent 70%)" }}
-      />
-      <div className="relative mx-auto max-w-3xl">
-        <div className="mb-6 flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-[#E8C96D]">{t("client.eyebrow")}</p>
-            <h1
-              className="mt-1 text-2xl font-bold text-foreground sm:text-3xl"
-              style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
-            >
-              {t("client.trajets.title")}
-            </h1>
-          </div>
-          <button
-            onClick={refresh}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border/40 px-3 py-2 text-xs text-foreground/70 hover:bg-muted/50"
-          >
-            <RefreshCw className="h-3.5 w-3.5" /> {t("client.trajets.refresh")}
-          </button>
-        </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <div className="ct-root">
+        <main className="ct-main">
+          <div className="ct-main-inner">
+            <div className="ct-shell">
+              <div className="ct-top">
+                <div>
+                  <div className="ct-kicker">{t("client.eyebrow")}</div>
+                  <h1 className="ct-title">{t("client.trajets.title")}</h1>
+                </div>
+                <button className="ct-refresh" onClick={refresh}>
+                  <RefreshCw size={13} /> {t("client.trajets.refresh")}
+                </button>
+              </div>
 
-        {loading && (
-          <div className="flex items-center justify-center rounded-2xl border border-border/40 bg-muted/50 p-10 text-foreground/60">
-            <BrandLoader size={20} /> {t("client.trajets.loading")}
-          </div>
-        )}
+              {loading && (
+                <div className="ct-loading">
+                  <BrandLoader size={18} /> {t("client.trajets.loading")}
+                </div>
+              )}
 
-        {!loading && rows && rows.length === 0 && (
-          <div className="rounded-2xl border border-border/40 bg-muted/50 p-8 text-center text-sm text-foreground/60">
-            {t("client.trajets.empty")}
-            <div className="mt-4">
-              <Link
-                to="/reserver"
-                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold text-black"
-                style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
-              >
-                <Plus className="h-3.5 w-3.5" /> {t("client.trajets.new_reservation")}
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {!loading && rows && rows.length > 0 && (
-          <ul className="space-y-3">
-            {rows.map((r) => {
-              const meta = STATUS_KEY[r.status] || { key: r.status, bg: "rgba(255,255,255,0.08)", fg: "#fff" };
-              const dest = r.arrivee || r.destination || "—";
-              return (
-                <li
-                  key={r.id}
-                  className="overflow-hidden rounded-2xl border border-border/40 bg-white/[0.04] p-4 backdrop-blur sm:p-5"
-                >
-                  <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-foreground/60">
-                      <Calendar className="h-3.5 w-3.5" /> {fmtDate(r.pickup_datetime)}
-                    </span>
-                    <span
-                      className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
-                      style={{ background: meta.bg, color: meta.fg }}
-                    >
-                      {t(meta.key)}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2 text-sm text-foreground">
-                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#E8C96D]" />
-                    <div className="flex-1 leading-snug">
-                      <span className="text-foreground/90">{r.depart}</span>
-                      <ArrowRight className="mx-1.5 inline h-3.5 w-3.5 text-foreground/40" />
-                      <span className="text-foreground/90">{dest}</span>
-                    </div>
-                  </div>
-                  {r.prix_estime != null && (
-                    <div className="mt-2 text-xs text-foreground/60">
-                      {t("client.trajets.estimated")} :{" "}
-                      <span className="font-semibold text-[#E8C96D]">{Number(r.prix_estime).toFixed(2)} €</span>
-                    </div>
-                  )}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <a
-                      href={`/reservation/${r.id}`}
-                      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-black"
-                      style={{ background: "linear-gradient(135deg, #C9A84C 0%, #E8C96D 100%)" }}
-                    >
-                      <Eye className="h-3.5 w-3.5" /> {t("client.trajets.follow")}
-                    </a>
-                    <button
-                      onClick={() =>
-                        shareRideTracking({
-                          id: r.id,
-                          suivi_id: r.suivi_id,
-                          tracking_id: r.tracking_id,
-                          depart: r.depart,
-                          destination: r.arrivee || r.destination,
-                        })
-                      }
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border/40 bg-muted/50 px-3 py-2 text-xs text-white hover:bg-muted/70"
-                    >
-                      <Share2 className="h-3.5 w-3.5" /> {t("client.trajets.share")}
-                    </button>
-                    <Link
-                      to="/client/dashboard"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border/40 bg-muted/50 px-3 py-2 text-xs text-white hover:bg-muted/70"
-                    >
-                      {t("client.trajets.details")}
+              {!loading && rows && rows.length === 0 && (
+                <div className="ct-empty">
+                  {t("client.trajets.empty")}
+                  <div>
+                    <Link to="/reserver">
+                      <Plus size={13} /> {t("client.trajets.new_reservation")}
                     </Link>
                   </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+                </div>
+              )}
 
-      <ClientBottomNav />
-    </main>
+              {!loading && rows && rows.length > 0 && (
+                <div className="ct-list">
+                  {rows.map((r) => {
+                    const meta = STATUS_KEY[r.status] || { key: r.status, bg: "rgba(255,255,255,0.08)", fg: "#fff" };
+                    const dest = r.arrivee || r.destination || "—";
+                    return (
+                      <div className="ct-ride" key={r.id}>
+                        <div className="ct-ride-top">
+                          <span className="ct-ride-icon">
+                            <Car size={16} />
+                          </span>
+                          <span className="ct-ride-when">
+                            <Calendar size={12} /> {fmtDate(r.pickup_datetime)}
+                          </span>
+                          <span className="ct-status" style={{ background: meta.bg, color: meta.fg }}>
+                            {t(meta.key)}
+                          </span>
+                        </div>
+                        <div className="ct-route">
+                          <MapPin size={14} className="shrink-0" style={{ color: "#e8bd5d", marginTop: 2 }} />
+                          <div>
+                            <span>{r.depart}</span>
+                            <ArrowRight size={13} className="mx-1 inline" style={{ opacity: 0.4 }} />
+                            <span>{dest}</span>
+                          </div>
+                        </div>
+                        {r.prix_estime != null && (
+                          <div className="ct-price">
+                            {t("client.trajets.estimated")} : <b>{Number(r.prix_estime).toFixed(2)} €</b>
+                          </div>
+                        )}
+                        <div className="ct-actions">
+                          <a href={`/reservation/${r.id}`} className="primary">
+                            <Eye size={12} /> {t("client.trajets.follow")}
+                          </a>
+                          <button
+                            onClick={() =>
+                              shareRideTracking({
+                                id: r.id,
+                                suivi_id: r.suivi_id,
+                                tracking_id: r.tracking_id,
+                                depart: r.depart,
+                                destination: r.arrivee || r.destination,
+                              })
+                            }
+                          >
+                            <Share2 size={12} /> {t("client.trajets.share")}
+                          </button>
+                          <Link to="/client/dashboard" className="secondary">
+                            {t("client.trajets.details")} <ChevronRight size={12} />
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+        <ClientBottomNav />
+      </div>
+    </>
   );
 }

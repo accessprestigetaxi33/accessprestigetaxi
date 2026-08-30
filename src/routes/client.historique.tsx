@@ -15,7 +15,7 @@ import {
 } from "@/lib/client-billing.functions";
 import { downloadMonthlyInvoicePDF, downloadYearlyInvoicePDF } from "@/lib/client-invoices";
 
-export const Route = createFileRoute("/client/factures")({
+export const Route = createFileRoute("/client/historique")({
   head: () => ({
     meta: [{ title: "Mes factures — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
