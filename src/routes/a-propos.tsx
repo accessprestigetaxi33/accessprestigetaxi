@@ -54,7 +54,7 @@ function AboutPage() {
   ];
   return (
     <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
-      <section className="overflow-hidden rounded-[30px] border border-[#d6a83d]/70 bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
+      <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="flex h-16 items-center justify-between border-b border-white/10 px-7">
           <div>
             <div className="text-[9px] font-bold tracking-[.15em] text-[#e8bd5d]">ACCESS PRESTIGE TAXI</div>
