@@ -115,11 +115,11 @@ function DevisPage() {
   const formRef = useRef<HTMLFormElement | null>(null);
 
   return (
-    <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
+    <main className="px-3 py-5 text-white sm:px-6">
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="px-6 py-5">
           <div className="text-center">
-            <span className="inline-block rounded-full bg-[#d6a83d] px-3 py-1 text-[10px] font-bold tracking-wider text-[#181107]">
+            <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
               {c.eyebrow.toUpperCase()}
             </span>
             <h1 className="mt-4 font-display text-[29px] leading-tight text-[#f4efe5]">{c.h1}</h1>
@@ -129,10 +129,13 @@ function DevisPage() {
           {/* Perks */}
           <div className="mt-5 grid grid-cols-2 gap-2">
             {c.perks.map((p) => (
-              <article key={p.t} className="min-h-[118px] rounded-xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-3">
-                <p.icon className="h-7 w-7 text-[#181107]" />
-                <h3 className="mt-2 font-display text-[14px] text-[#181107]">{p.t}</h3>
-                <p className="mt-1 text-[9px] leading-4 text-[#181107]/70">{p.d}</p>
+              <article
+                key={p.t}
+                className="min-h-[118px] rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3"
+              >
+                <p.icon className="h-7 w-7 text-[#e8bd5d]" />
+                <h3 className="mt-2 font-display text-[14px] text-[#f4efe5]">{p.t}</h3>
+                <p className="mt-1 text-[9px] leading-4 text-white/60">{p.d}</p>
               </article>
             ))}
           </div>
@@ -140,8 +143,8 @@ function DevisPage() {
           {/* Estimation rapide */}
           <section className="mt-6">
             <p className="text-center text-[13px] font-bold uppercase tracking-[0.2em] text-[#e8bd5d]">{c.estimTag}</p>
-            <div className="mt-3 rounded-2xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-3">
-              <h2 className="font-display text-[19px] text-[#181107]">{c.estimTitle}</h2>
+            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-3">
+              <h2 className="font-display text-[19px] text-[#f4efe5]">{c.estimTitle}</h2>
               <div className="mt-3">
                 <QuoteEstimator
                   onQuote={(p) => {
@@ -169,8 +172,8 @@ function DevisPage() {
           {/* Formulaire de devis */}
           <section className="mt-6">
             <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-[#e8bd5d]">{c.formTag}</p>
-            <div className="mt-3 rounded-2xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-3">
-              <h2 className="font-display text-[19px] text-[#181107]">{c.formTitle}</h2>
+            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-3">
+              <h2 className="font-display text-[19px] text-[#f4efe5]">{c.formTitle}</h2>
               <div className="mt-3">
                 <QuoteForm prefill={prefill} formRef={formRef} />
               </div>
@@ -184,23 +187,23 @@ function DevisPage() {
           </p>
 
           {/* Contact direct */}
-          <section className="mt-5 rounded-2xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-4 text-center">
-            <h2 className="font-display text-[16px] text-[#181107]">{c.orCall}</h2>
+          <section className="mt-5 rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-4 text-center">
+            <h2 className="font-display text-[16px] text-[#f4efe5]">{c.orCall}</h2>
             <div className="mt-3 flex flex-col items-center justify-center gap-2">
               {DRIVERS.map((d) => (
                 <a
                   key={d.tel}
                   href={`tel:${d.intl}`}
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-black/10 px-4 text-[12px] font-semibold text-[#181107]"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#d6a83d]/45 px-4 text-[12px] font-semibold text-white/90"
                 >
-                  <Phone className="h-4 w-4 text-[#181107]" /> {d.name} — {d.display}
+                  <Phone className="h-4 w-4 text-[#e8bd5d]" /> {d.name} — {d.display}
                 </a>
               ))}
               <a
                 href={`mailto:${EMAIL}`}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-black/10 px-4 text-[12px] font-semibold text-[#181107]"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#d6a83d]/45 px-4 text-[12px] font-semibold text-white/90"
               >
-                <Mail className="h-4 w-4 text-[#181107]" /> {EMAIL}
+                <Mail className="h-4 w-4 text-[#e8bd5d]" /> {EMAIL}
               </a>
             </div>
             <Link to="/reserver" className="mt-4 inline-block text-[12px] font-semibold text-[#e8bd5d] underline">
