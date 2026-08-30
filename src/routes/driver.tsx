@@ -746,6 +746,7 @@ function DriverApp({
   useEffect(() => {
     const load = async () => {
       try {
+        if (!getDriverToken()) { return; }
         const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
         if (!response.ok) return;
         const result = await response.json();
@@ -803,6 +804,7 @@ function DriverApp({
     let cancelled = false;
     const loadDevisBadge = async () => {
       try {
+        if (!getDriverToken()) { return; }
         const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
         if (!cancelled) setPendingDevis(res?.pending ?? 0);
       } catch {
@@ -3553,6 +3555,7 @@ function PlanningTab() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    if (!getDriverToken()) { setLoading(false); return; }
     const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "planning" } });
     setCourses((res?.rows ?? []) as Resa[]);
     setLoading(false);
@@ -3638,6 +3641,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
 
   const load = useCallback(async () => {
     try {
+      if (!getDriverToken()) { return; }
       const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "chargement impossible");
@@ -3859,6 +3863,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
 
   const load = useCallback(async () => {
     try {
+      if (!getDriverToken()) { return; }
       const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
       setItems((res?.devis ?? []) as Devis[]);
       onBadgeChange(res?.pending ?? 0);
@@ -4090,6 +4095,7 @@ function ClientsTab() {
   const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
+    if (!getDriverToken()) { setLoading(false); return; }
     const res: any = await driverListReservations({ data: { token: getDriverToken(), scope: "clients" } });
     const data: any[] = res?.rows ?? [];
     const clientsRows: any[] = res?.clients ?? [];
@@ -4756,6 +4762,7 @@ function VisitorCounter({
       // le client anonyme n'a aucun droit d'écriture sur active_visitors.
 
       try {
+        if (!getDriverToken()) { setCount(0); return; }
         const res = await getActiveVisitorCount({ data: { token: getDriverToken(), scope } });
         setCount(res?.count ?? 0);
       } catch {
@@ -5190,6 +5197,7 @@ function StatsTab() {
 
   const load = useCallback(async () => {
     try {
+      if (!getDriverToken()) { return; }
       const res = await getStats({ data: { token: getDriverToken(), days } });
       setData(res);
     } catch {
@@ -5379,6 +5387,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
 
   const load = useCallback(async () => {
     try {
+      if (!getDriverToken()) { return; }
       const res = await listEvents({ data: { token: getDriverToken(), limit: 120, driver: filter } });
       setRows((res as any)?.events ?? []);
     } catch {
@@ -5516,6 +5525,7 @@ function PushDiagnostic() {
   const load = async () => {
     setLoading(true);
     try {
+      if (!getDriverToken()) { setLoading(false); return; }
       const res = await fetchFailures({ data: { pin: getDriverToken(), only_price_update: false, limit: 30 } });
       setRows((res as any)?.failures ?? []);
     } catch {
