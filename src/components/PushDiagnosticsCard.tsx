@@ -14,13 +14,13 @@ import {
 import { getDriverToken } from "@/lib/driver-token";
 
 const card: React.CSSProperties = {
-  background: "#FDFBF7",
-  border: "1px solid #e6ddc9",
+  background: "#050a10",
+  border: "1px solid rgba(201,155,74,.45)",
   borderRadius: 12,
   padding: 12,
   margin: "10px 0",
   fontSize: 12.5,
-  color: "#5b4a22",
+  color: "#e0b866",
 };
 
 export default function PushDiagnosticsCard({
@@ -67,7 +67,7 @@ export default function PushDiagnosticsCard({
   const mine = subs.filter((s) => s.driver_id === driverId);
 
   return (
-    <div style={{ ...card, color: "#5b4a22" }}>
+    <div style={{ ...card, color: "#e0b866" }}>
       <button
         onClick={() => setOpen((v) => !v)}
         style={{
@@ -77,7 +77,7 @@ export default function PushDiagnosticsCard({
           font: "inherit",
           fontWeight: 700,
           cursor: "pointer",
-          color: "#5b4a22",
+          color: "#e0b866",
         }}
       >
         {open ? "▾" : "▸"} 🧪 Diagnostic notifications
