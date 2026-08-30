@@ -87,63 +87,61 @@ const PREMIUM_CSS = `
   button,a,input,textarea { -webkit-tap-highlight-color:transparent; }
   .suivi-root { min-height:100dvh; background:radial-gradient(circle at 50% 0%, rgba(201,155,74,.08), transparent 34%), #03070d; padding:0 20px 30px; }
   .suivi-shell { max-width:1280px; margin:0 auto; }
-  .suivi-topbar { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid rgba(201,155,74,.75); background:#050a10; }
+  .suivi-topbar { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:16px; background:#050a10; }
   .suivi-brand { display:flex; align-items:center; gap:10px; color:#e0b866; font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:.12em; text-transform:uppercase; }
-  .suivi-brand-mark { width:42px; height:42px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; font-size:19px; }
+  .suivi-brand-mark { width:42px; height:42px; border-radius:50%; display:grid; place-items:center; font-size:19px; }
   .suivi-top-phone { font-size:12px; color:#f6f0e5; }
   .suivi-top-actions { display:flex; align-items:center; gap:9px; }
-  .suivi-outline { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:8px 12px; border:1px solid #c99b4a; border-radius:8px; background:transparent; color:#e0b866; text-decoration:none; font-size:11px; font-weight:800; cursor:pointer; }
+  .suivi-outline { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:8px 12px; border-radius:8px; background:transparent; color:#e0b866; text-decoration:none; font-size:11px; font-weight:800; cursor:pointer; }
   .suivi-titlebar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 14px; }
   .suivi-titlebar h1 { margin:0; text-align:center; flex:1; font-family:'Playfair Display',Georgia,serif; font-size:24px; letter-spacing:.02em; color:#f6f0e5; }
   .suivi-titlebar p { margin:3px 0 0; text-align:center; font-size:11px; color:rgba(246,240,229,.62); }
   .suivi-main-grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(300px,.7fr); gap:14px; align-items:start; }
-  .suivi-card { background:linear-gradient(180deg,#07131e,#040a10); border:1px solid #c99b4a; border-radius:10px; color:#f6f0e5; box-shadow:0 12px 35px rgba(0,0,0,.25); }
+  .suivi-card { background:linear-gradient(145deg,#f6cd6b,#c99b4a); border-radius:10px; color:#181107; box-shadow:0 12px 35px rgba(0,0,0,.25); }
   .suivi-card-flat { padding:14px; }
-  .suivi-section-title { color:#e0b866; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 10px; }
+  .suivi-section-title { color:#181107; font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 10px; }
   .suivi-timeline { padding:15px 14px; margin-bottom:14px; }
   .suivi-timeline-track { display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative; }
   .suivi-timeline-track::before { content:""; position:absolute; left:10%; right:10%; top:17px; height:2px; background:rgba(246,240,229,.22); }
   .suivi-step { position:relative; z-index:1; text-align:center; min-width:0; }
-  .suivi-step-dot { width:34px; height:34px; margin:0 auto 6px; border-radius:50%; border:1px solid #c99b4a; background:#07111b; color:#e0b866; display:grid; place-items:center; font-size:14px; font-weight:900; }
-  .suivi-step.done .suivi-step-dot, .suivi-step.active .suivi-step-dot { background:#e0b866; color:#050a10; }
-  .suivi-step-label { font-size:10px; line-height:1.25; color:rgba(246,240,229,.65); }
-  .suivi-step.active .suivi-step-label { color:#e0b866; font-weight:800; }
+  .suivi-step-dot { width:34px; height:34px; margin:0 auto 6px; border-radius:50%; background:rgba(24,17,7,.12); color:#181107; display:grid; place-items:center; font-size:14px; font-weight:900; }
+  .suivi-step.done .suivi-step-dot, .suivi-step.active .suivi-step-dot { background:#181107; color:#e0b866; }
+  .suivi-step-label { font-size:10px; line-height:1.25; color:rgba(24,17,7,.65); }
+  .suivi-step.active .suivi-step-label { color:#181107; font-weight:800; }
   .suivi-details-grid { display:grid; grid-template-columns:1fr; gap:10px; }
   .suivi-driver-card { padding:14px; }
   .suivi-driver-row { display:flex; align-items:center; gap:12px; }
-  .suivi-driver-symbol { width:46px; height:46px; flex:0 0 46px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; color:#e0b866; background:#050a10; }
-  .suivi-driver-name { font-size:15px; font-weight:800; color:#fff; }
-  .suivi-driver-role { margin-top:2px; font-size:10px; color:rgba(246,240,229,.58); }
+  .suivi-driver-symbol { width:46px; height:46px; flex:0 0 46px; border-radius:50%; display:grid; place-items:center; color:#e0b866; background:#050a10; }
+  .suivi-driver-name { font-size:15px; font-weight:800; color:#181107; }
+  .suivi-driver-role { margin-top:2px; font-size:10px; color:rgba(24,17,7,.6); }
 
   .suivi-route { padding:14px; }
-  .suivi-route-row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid rgba(224,184,102,.16); }
-  .suivi-route-row:last-child { border-bottom:0; }
-  .suivi-route-icon { color:#e0b866; flex:0 0 auto; }
-  .suivi-route-label { font-size:10px; color:rgba(246,240,229,.55); text-transform:uppercase; letter-spacing:.05em; }
-  .suivi-route-value { font-size:12px; color:#fff; font-weight:700; margin-top:2px; }
+  .suivi-route-row { display:flex; gap:10px; padding:8px 0; }
+  .suivi-route-icon { color:#181107; flex:0 0 auto; }
+  .suivi-route-label { font-size:10px; color:rgba(24,17,7,.55); text-transform:uppercase; letter-spacing:.05em; }
+  .suivi-route-value { font-size:12px; color:#181107; font-weight:700; margin-top:2px; }
   .suivi-contact-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
-  .suivi-gold-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border:1px solid #c99b4a; border-radius:7px; background:#e0b866; color:#080b0d; text-decoration:none; font-size:10px; font-weight:900; }
-  .suivi-dark-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border:1px solid #c99b4a; border-radius:7px; background:#050a10; color:#e0b866; text-decoration:none; font-size:10px; font-weight:900; }
+  .suivi-gold-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border-radius:7px; background:#181107; color:#f6cd6b; text-decoration:none; font-size:10px; font-weight:900; }
+  .suivi-dark-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:8px 10px; border-radius:7px; background:rgba(24,17,7,.55); color:#e0b866; text-decoration:none; font-size:10px; font-weight:900; }
   .suivi-side-stack { display:flex; flex-direction:column; gap:10px; }
   .suivi-notifications { padding:14px; }
-  .suivi-notif { display:grid; grid-template-columns:14px 42px 1fr; gap:8px; padding:8px 0; border-bottom:1px solid rgba(224,184,102,.14); }
-  .suivi-notif:last-child { border-bottom:0; }
-  .suivi-notif-line { width:2px; height:100%; background:#c99b4a; margin:0 auto; }
-  .suivi-notif-time { font-size:10px; color:#e0b866; font-weight:800; }
-  .suivi-notif-title { font-size:11px; color:#fff; font-weight:800; }
-  .suivi-notif-text { font-size:10px; line-height:1.45; color:rgba(246,240,229,.58); margin-top:2px; }
+  .suivi-notif { display:grid; grid-template-columns:14px 42px 1fr; gap:8px; padding:8px 0; }
+  .suivi-notif-line { width:2px; height:100%; background:rgba(24,17,7,.3); margin:0 auto; }
+  .suivi-notif-time { font-size:10px; color:#181107; font-weight:800; }
+  .suivi-notif-title { font-size:11px; color:#181107; font-weight:800; }
+  .suivi-notif-text { font-size:10px; line-height:1.45; color:rgba(24,17,7,.6); margin-top:2px; }
   .suivi-help { padding:14px; }
-  .suivi-help p { margin:0 0 10px; font-size:10px; color:rgba(246,240,229,.62); }
+  .suivi-help p { margin:0 0 10px; font-size:10px; color:rgba(24,17,7,.65); }
   .suivi-chat-card { margin-top:14px; }
   .suivi-completed { margin-top:14px; padding:14px; }
-  .suivi-completed-head { text-align:center; padding-bottom:10px; border-bottom:1px solid rgba(224,184,102,.18); margin-bottom:10px; }
+  .suivi-completed-head { text-align:center; padding-bottom:10px; margin-bottom:10px; }
   .suivi-completed-head strong { color:#8ee39f; font-family:'Playfair Display',Georgia,serif; font-size:18px; }
-  .suivi-completed-head div { font-size:10px; color:rgba(246,240,229,.58); margin-top:3px; }
+  .suivi-completed-head div { font-size:10px; color:rgba(24,17,7,.6); margin-top:3px; }
   .suivi-completed-grid { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:8px; }
-  .suivi-summary-box { border:1px solid rgba(201,155,74,.65); border-radius:8px; padding:10px; background:#050a10; }
-  .suivi-summary-box h3 { margin:0 0 7px; color:#e0b866; font-size:10px; text-transform:uppercase; letter-spacing:.05em; }
-  .suivi-summary-row { display:flex; justify-content:space-between; gap:8px; font-size:9.5px; padding:3px 0; color:rgba(246,240,229,.68); }
-  .suivi-summary-row strong { color:#fff; text-align:right; }
+  .suivi-summary-box { border-radius:8px; padding:10px; background:linear-gradient(145deg,#c99b4a,#a97f38); }
+  .suivi-summary-box h3 { margin:0 0 7px; color:#181107; font-size:10px; text-transform:uppercase; letter-spacing:.05em; }
+  .suivi-summary-row { display:flex; justify-content:space-between; gap:8px; font-size:9.5px; padding:3px 0; color:rgba(24,17,7,.7); }
+  .suivi-summary-row strong { color:#181107; text-align:right; }
   .suivi-bottom-help { margin-top:10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
   @media (max-width: 900px) {
     .suivi-root { padding:0 10px 24px; }
@@ -206,7 +204,7 @@ const STATUS_CONFIG: Record<
     label: string;
     color: string;
     bgGradient: string;
-    borderColor: string;
+
     icon: string;
   }
 > = {
@@ -214,42 +212,42 @@ const STATUS_CONFIG: Record<
     label: "suivi.status.pending",
     color: "#f0c069",
     bgGradient: "linear-gradient(135deg, #241d0e 0%, #2f2513 100%)",
-    borderColor: "rgba(217, 119, 6, 0.2)",
+
     icon: "⏳",
   },
   accepted: {
     label: "suivi.status.accepted",
     color: "#5fd08a",
     bgGradient: "linear-gradient(135deg, #0e2318 0%, #123122 100%)",
-    borderColor: "rgba(34, 197, 94, 0.2)",
+
     icon: "✨",
   },
   en_route: {
     label: "suivi.status.en_route",
     color: "#e0b866",
     bgGradient: "linear-gradient(135deg, #101f33 0%, #16283f 100%)",
-    borderColor: "rgba(29, 78, 216, 0.2)",
+
     icon: "🚕",
   },
   arrived: {
     label: "suivi.status.arrived",
     color: "#c4b5fd",
     bgGradient: "linear-gradient(135deg, #1a1730 0%, #221d3d 100%)",
-    borderColor: "rgba(124, 58, 237, 0.2)",
+
     icon: "📍",
   },
   completed: {
     label: "suivi.status.completed",
     color: "#cfd6df",
     bgGradient: "linear-gradient(135deg, #0c1929 0%, #f6f0e5 100%)",
-    borderColor: "rgba(71, 85, 105, 0.2)",
+
     icon: "✓",
   },
   cancelled: {
     label: "suivi.status.cancelled",
     color: "#f19a9a",
     bgGradient: "linear-gradient(135deg, #2a1212 0%, #3a1a1a 100%)",
-    borderColor: "rgba(185, 28, 28, 0.2)",
+
     icon: "✕",
   },
 };
@@ -300,7 +298,7 @@ function PremiumTimeline({ status }: { status: string }) {
                   height: "30px",
                   borderRadius: "50%",
                   background: isDone ? config.bgGradient : "#f6f0e5",
-                  border: `2px solid ${isDone ? config.borderColor : "transparent"}`,
+
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -634,7 +632,7 @@ function AnonChat({
             flex: 1,
             padding: "12px 12px",
             borderRadius: "8px",
-            border: "1px solid #f6f0e5",
+
             fontSize: "16px",
             fontFamily: "inherit",
             transition: "all 0.3s",
@@ -653,7 +651,7 @@ function AnonChat({
             minHeight: "44px",
             background: sending || !text.trim() ? "#cbb894" : "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
-            border: "none",
+
             borderRadius: "8px",
             cursor: sending || !text.trim() ? "not-allowed" : "pointer",
             display: "flex",
@@ -778,21 +776,20 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
 <style>
   @media print { body { margin: 0; } .no-print { display: none; } }
   body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #f6f0e5; max-width: 700px; margin: 40px auto; padding: 0 24px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #e0b866; padding-bottom: 20px; margin-bottom: 28px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 20px; margin-bottom: 28px; }
   .brand { font-size: 22px; font-weight: 900; color: #e0b866; letter-spacing: -0.5px; }
   .brand small { display: block; font-size: 12px; font-weight: 400; color: #9fb0c2; margin-top: 2px; }
   .meta { text-align: right; font-size: 12px; color: #9fb0c2; }
   .meta strong { display: block; font-size: 16px; color: #f6f0e5; font-weight: 700; }
   h2 { font-size: 13px; font-weight: 700; color: #9fb0c2; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px; }
-  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #0c1929; font-size: 14px; }
-  .row:last-child { border: none; }
+  .row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
   .row .label { color: #cfd6df; }
   .row .value { font-weight: 600; }
   .total-box { margin-top: 24px; background: #09141f; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
   .total-box .label { font-size: 14px; color: #cfd6df; }
   .total-box .amount { font-size: 26px; font-weight: 900; color: #e0b866; }
-  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #f6f0e5; font-size: 11px; color: #9fb0c2; text-align: center; }
-  .btn { display: inline-block; margin: 20px 8px 0; padding: 10px 24px; background: #e0b866; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .footer { margin-top: 40px; padding-top: 16px; font-size: 11px; color: #9fb0c2; text-align: center; }
+  .btn { display: inline-block; margin: 20px 8px 0; padding: 10px 24px; background: #e0b866; color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 </style></head><body>
 <div class="header">
   <div class="brand">🚕 Access Prestige Taxi<small>accessprestigetaxi.lovable.app · 06 50 26 00 15</small></div>
@@ -842,7 +839,6 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             justifyContent: "space-between",
             fontSize: "13px",
             paddingBottom: "8px",
-            borderBottom: "1px solid #0c1929",
           }}
         >
           <span style={{ color: "#9fb0c2" }}>{t("suivi.depart_label")} 🟢</span>
@@ -856,7 +852,6 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             justifyContent: "space-between",
             fontSize: "13px",
             paddingBottom: "8px",
-            borderBottom: "1px solid #0c1929",
           }}
         >
           <span style={{ color: "#9fb0c2" }}>{t("suivi.arrivee_label")} 🔴</span>
@@ -871,7 +866,6 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
               justifyContent: "space-between",
               fontSize: "13px",
               paddingBottom: "8px",
-              borderBottom: "1px solid #0c1929",
             }}
           >
             <span style={{ color: "#9fb0c2" }}>{t("suivi.distance")}</span>
@@ -885,7 +879,6 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
               justifyContent: "space-between",
               fontSize: "13px",
               paddingBottom: "8px",
-              borderBottom: "1px solid #0c1929",
             }}
           >
             <span style={{ color: "#9fb0c2" }}>{t("suivi.paiement")}</span>
@@ -924,7 +917,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             padding: "12px 10px",
             background: "rgba(255,255,255,0.08)",
             color: "#9fb0c2",
-            border: "1px solid rgba(148,163,184,0.2)",
+
             borderRadius: "10px",
             fontSize: "13px",
             fontWeight: 600,
@@ -943,7 +936,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             padding: "12px 10px",
             background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
-            border: "none",
+
             borderRadius: "10px",
             fontSize: "13px",
             fontWeight: 600,
@@ -969,7 +962,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
                 ? "#cbb894"
                 : "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
-            border: "none",
+
             borderRadius: "10px",
             fontSize: "13px",
             fontWeight: 600,
@@ -1108,8 +1101,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
                   borderRadius: 10,
                   fontSize: 11,
                   fontWeight: 700,
-                  border: "2px solid",
-                  borderColor: freq === f ? "#e0b866" : "#f6f0e5",
+
                   background: freq === f ? "#12212f" : "#fff",
                   color: freq === f ? "#e0b866" : "#9fb0c2",
                   cursor: "pointer",
@@ -1145,8 +1137,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
                   borderRadius: 8,
                   fontSize: 12,
                   fontWeight: 700,
-                  border: "2px solid",
-                  borderColor: dayOfWeek === i ? "#e0b866" : "#f6f0e5",
+
                   background: dayOfWeek === i ? "#12212f" : "#fff",
                   color: dayOfWeek === i ? "#e0b866" : "#9fb0c2",
                   cursor: "pointer",
@@ -1180,7 +1171,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
               width: "100%",
               padding: "12px 14px",
               borderRadius: 10,
-              border: "1.5px solid #f6f0e5",
+
               fontSize: 16,
               color: "#f6f0e5",
               fontFamily: "inherit",
@@ -1199,7 +1190,7 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
               ? "linear-gradient(135deg, #5fd08a 0%, #5fd08a 100%)"
               : "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
             color: "#fff",
-            border: "none",
+
             borderRadius: 12,
             fontSize: 15,
             fontWeight: 800,
@@ -1323,7 +1314,7 @@ function ReviewBlock({
             onMouseLeave={() => setHover(0)}
             style={{
               background: "none",
-              border: "none",
+
               cursor: "pointer",
               padding: "6px",
               minWidth: "44px",
@@ -1365,7 +1356,7 @@ function ReviewBlock({
           width: "100%",
           padding: "10px 12px",
           borderRadius: "10px",
-          border: "1px solid #f6f0e5",
+
           fontSize: "16px",
           fontFamily: "inherit",
           resize: "vertical",
@@ -1384,7 +1375,7 @@ function ReviewBlock({
           padding: "12px 16px",
           background: rating === 0 || submitting ? "#f6f0e5" : "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
           color: rating === 0 || submitting ? "#9fb0c2" : "#fff",
-          border: "none",
+
           borderRadius: "10px",
           fontSize: "13px",
           fontWeight: 700,
@@ -1460,7 +1451,7 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
         onClick={() => setOpen(true)}
         style={{
           background: "linear-gradient(135deg, #e0b866 0%, #c99b4a 100%)",
-          border: "none",
+
           borderRadius: "8px",
           padding: "8px 12px",
           minHeight: "36px",
@@ -1524,7 +1515,7 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
             fontSize: 13,
             color: "#e9e2d5",
             lineHeight: 1.6,
-            border: "1px solid #f6f0e5",
+
             whiteSpace: "pre-line",
           }}
         >
@@ -1588,7 +1579,7 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
               padding: "13px 16px",
               background: "rgba(248,250,252,1)",
               color: "#e9e2d5",
-              border: "1px solid #f6f0e5",
+
               borderRadius: 12,
               fontWeight: 700,
               fontSize: 14,
