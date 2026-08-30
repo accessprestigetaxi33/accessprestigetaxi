@@ -137,7 +137,7 @@ function ContactPage() {
     <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] p-4 shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="pt-3 text-center">
-          <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
+          <span className="inline-block rounded-full bg-[#d6a83d] px-3 py-1 text-[10px] font-bold tracking-wider text-[#181107]">
             CONTACTEZ-NOUS
           </span>
           <h1 className="mt-5 font-display text-[31px] leading-none text-[#f4efe5]">À votre écoute</h1>
@@ -154,36 +154,36 @@ function ContactPage() {
               <a
                 key={label}
                 href={href}
-                className="flex min-h-[74px] items-center gap-3 rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3 text-left"
+                className="flex min-h-[74px] items-center gap-3 rounded-xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-3 text-left"
               >
                 <span
                   className={
                     isWhatsapp
                       ? "grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#25D366]"
-                      : "grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#d6a83d]/40 bg-[#111b25]"
+                      : "grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#181107]/10"
                   }
                 >
                   {isWhatsapp ? (
                     <WhatsAppIcon className="h-6 w-6 text-white" />
                   ) : (
-                    <Icon className="h-7 w-7 text-[#e8bd5d]" />
+                    <Icon className="h-7 w-7 text-[#181107]" />
                   )}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[10px] font-semibold text-[#e8bd5d]">{label}</span>
-                  <span className="mt-1 block break-all text-[13px] text-white/90">{main}</span>
-                  <span className="mt-1 block text-[10px] text-white/60">{sub}</span>
+                  <span className="block text-[10px] font-semibold text-[#181107]">{label}</span>
+                  <span className="mt-1 block break-all text-[13px] text-[#181107]/90">{main}</span>
+                  <span className="mt-1 block text-[10px] text-[#181107]/60">{sub}</span>
                 </span>
-                <span className="text-[#e8bd5d]">›</span>
+                <span className="text-[#181107]">›</span>
               </a>
             );
           })}
         </div>
-        <section className="mt-3 flex gap-4 rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-4">
-          <HeartPulse className="mt-1 h-8 w-8 shrink-0 text-[#e8bd5d]" />
+        <section className="mt-3 flex gap-4 rounded-xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-4">
+          <HeartPulse className="mt-1 h-8 w-8 shrink-0 text-[#181107]" />
           <div>
-            <h2 className="font-display text-[17px] text-[#e8bd5d]">{c.cmuTitle}</h2>
-            <p className="mt-2 text-[11px] leading-5 text-white/70">{c.cmuText}</p>
+            <h2 className="font-display text-[17px] text-[#181107]">{c.cmuTitle}</h2>
+            <p className="mt-2 text-[11px] leading-5 text-[#181107]/70">{c.cmuText}</p>
           </div>
         </section>
         <a
@@ -192,7 +192,7 @@ function ContactPage() {
         >
           ÉCRIRE UN MESSAGE
         </a>
-        <div id="contact-form" className="mt-4 rounded-xl border border-[#d6a83d]/45 p-2">
+        <div id="contact-form" className="mt-4 rounded-xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-2">
           <ContactForm />
         </div>
       </section>
