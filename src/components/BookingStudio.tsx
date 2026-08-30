@@ -95,8 +95,8 @@ const T = {
     distance: "Distance",
     duration: "Durée estimée",
     vehicle: "Véhicule proposé",
-    berline: "Berline électrique · jusqu'à 4 passagers",
-    van: "Van Mercedes · jusqu'à 7 passagers",
+    berline: "BMW iX1 / Audi Q6 e-tron électriques · jusqu'à 5 passagers",
+    van: "Van Mercedes V-Class · jusqu'à 8 passagers",
     price: "Tarif estimé",
     detail_base: "Prise en charge",
     detail_day: "Km tarif jour",
@@ -141,12 +141,10 @@ const T = {
 
     vehicle_step: "Véhicule souhaité",
     vehicle_hint: "Le tarif se met à jour automatiquement",
-    veh_berline: "Berline électrique",
-    veh_berline_cap: "Jusqu'à 4 passagers",
-    veh_van: "Van Mercedes Class V",
-    veh_van_cap: "Jusqu'à 7 passagers",
-    veh_van_xl: "Van XL",
-    veh_van_xl_cap: "Jusqu'à 8 passagers",
+    veh_berline: "BMW iX1 / Audi Q6 e-tron",
+    veh_berline_cap: "Électriques · jusqu'à 5 passagers",
+    veh_van: "Van Mercedes V-Class",
+    veh_van_cap: "Jusqu'à 8 passagers",
     veh_other: "Besoin d'un autre véhicule ?",
     veh_other_cta: "Contactez-nous",
     veh_other_note: "nous avons la solution adaptée.",
@@ -215,8 +213,8 @@ const T = {
     distance: "Distance",
     duration: "Estimated time",
     vehicle: "Suggested vehicle",
-    berline: "Electric saloon · up to 4 passengers",
-    van: "Mercedes van · up to 7 passengers",
+    berline: "BMW iX1 / Audi Q6 e-tron electric · up to 5 passengers",
+    van: "Mercedes V-Class van · up to 8 passengers",
     price: "Estimated fare",
     detail_base: "Pick-up charge",
     detail_day: "Day-rate km",
@@ -261,12 +259,10 @@ const T = {
 
     vehicle_step: "Vehicle",
     vehicle_hint: "The fare updates automatically",
-    veh_berline: "Electric saloon",
-    veh_berline_cap: "Up to 4 passengers",
-    veh_van: "Mercedes Class V van",
-    veh_van_cap: "Up to 7 passengers",
-    veh_van_xl: "XL van",
-    veh_van_xl_cap: "Up to 8 passengers",
+    veh_berline: "BMW iX1 / Audi Q6 e-tron",
+    veh_berline_cap: "Electric · up to 5 passengers",
+    veh_van: "Mercedes V-Class van",
+    veh_van_cap: "Up to 8 passengers",
     veh_other: "Need a different vehicle?",
     veh_other_cta: "Contact us",
     veh_other_note: "we'll find the right fit.",
@@ -407,13 +403,13 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-[#D4AF37]/60 bg-card/70 p-4 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-[#d6a83d]/60 bg-[#07101a]/70 p-4 shadow-sm sm:p-6">
       <header className="mb-4 flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#111b25] text-sm font-semibold text-[#e8bd5d]">
           {step}
         </span>
         <h2 className="flex items-center gap-2 font-display text-lg font-semibold sm:text-xl">
-          <span className="text-primary">{icon}</span>
+          <span className="text-[#e8bd5d]">{icon}</span>
           {title}
         </h2>
       </header>
@@ -438,9 +434,9 @@ function Stepper({
   onChange: (v: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 px-3 py-2.5">
+    <div className="flex items-center justify-between rounded-xl border border-[#d6a83d]/40 bg-[#07101a] px-3 py-2.5">
       <span className="flex items-center gap-2 text-sm font-medium">
-        <span className="text-primary">{icon}</span>
+        <span className="text-[#e8bd5d]">{icon}</span>
         {label}
       </span>
       <span className="flex items-center gap-1">
@@ -449,7 +445,7 @@ function Stepper({
           aria-label={`${label} -1`}
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d6a83d]/60 bg-[#07101a]/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -459,7 +455,7 @@ function Stepper({
           aria-label={`${label} +1`}
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d6a83d]/60 bg-[#07101a]/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -476,8 +472,8 @@ function Chip({ active, onClick, children }: { active?: boolean; onClick: () => 
       aria-pressed={active}
       className={`inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium transition active:scale-[0.98] [touch-action:manipulation] ${
         active
-          ? "border-[#D4AF37] bg-[#D4AF37] text-neutral-900 shadow-sm"
-          : "border-[#D4AF37]/60 bg-background/70 text-foreground hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
+          ? "border-[#e8bd5d] bg-[#07101a] text-[#e8bd5d] shadow-sm"
+          : "border-[#d6a83d]/60 bg-[#07101a] text-white hover:border-[#d6a83d] hover:bg-[#07101a]"
       }`}
     >
       {children}
@@ -512,22 +508,22 @@ function NotifyBanner({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeo
 
   if (push.status === "granted") {
     return (
-      <p className="mt-5 flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm text-muted-foreground">
-        <BellRing className="h-4 w-4 shrink-0 text-primary" />
+      <p className="mt-5 flex items-center gap-2 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3 text-sm text-white/60">
+        <BellRing className="h-4 w-4 shrink-0 text-[#e8bd5d]" />
         {L.notif_on}
       </p>
     );
   }
 
   return (
-    <div className="mt-5 rounded-2xl border border-[#D4AF37]/40 bg-primary/5 p-4">
+    <div className="mt-5 rounded-2xl border border-[#d6a83d]/40 bg-[#07101a] p-4">
       <div className="flex items-start gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#111b25] text-[#e8bd5d]">
           <Bell className="h-4 w-4" />
         </span>
         <div className="min-w-0">
           <p className="text-sm font-semibold">{L.notif_banner_title}</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">{L.notif_banner_body}</p>
+          <p className="mt-0.5 text-sm text-white/60">{L.notif_banner_body}</p>
         </div>
       </div>
       <Button
@@ -543,7 +539,7 @@ function NotifyBanner({ L, push }: { L: (typeof T)["fr"]; push: ReturnType<typeo
         )}
         {L.notif_cta}
       </Button>
-      {push.status === "denied" && <p className="mt-1.5 text-xs text-muted-foreground">{L.notif_denied}</p>}
+      {push.status === "denied" && <p className="mt-1.5 text-xs text-white/60">{L.notif_denied}</p>}
     </div>
   );
 }
@@ -847,38 +843,38 @@ export function BookingStudio() {
       ref: success.suiviId,
     });
     return (
-      <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
-        <div className="rounded-3xl border border-[#D4AF37]/50 bg-card/55 p-6 text-center shadow-lg sm:p-10">
+      <main className="w-full px-4 py-10 text-white sm:py-16">
+        <div className="rounded-3xl border border-[#d6a83d]/50 bg-[#07101a]/55 p-6 text-center shadow-lg sm:p-10">
           {pending ? (
-            <Loader2 className="mx-auto h-14 w-14 animate-spin text-primary" />
+            <Loader2 className="mx-auto h-14 w-14 animate-spin text-[#e8bd5d]" />
           ) : (
-            <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
+            <CheckCircle2 className="mx-auto h-14 w-14 text-[#e8bd5d]" />
           )}
           <h1 className="mt-4 font-display text-2xl font-bold sm:text-3xl">{L.ok_title}</h1>
-          <p className="mt-2 text-muted-foreground">{pending ? L.pending_note : L.ok_sub}</p>
+          <p className="mt-2 text-white/60">{pending ? L.pending_note : L.ok_sub}</p>
 
-          <dl className="mt-6 space-y-2 rounded-2xl bg-secondary/60 p-4 text-left text-sm">
+          <dl className="mt-6 space-y-2 rounded-2xl bg-[#111b25] p-4 text-left text-sm">
             <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">{L.from}</dt>
+              <dt className="text-white/60">{L.from}</dt>
               <dd className="text-right font-medium">{depart}</dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">{L.to}</dt>
+              <dt className="text-white/60">{L.to}</dt>
               <dd className="text-right font-medium">{arrivee}</dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">{L.when}</dt>
+              <dt className="text-white/60">{L.when}</dt>
               <dd className="text-right font-medium">{formatWhen(when, isEn ? "en" : "fr")}</dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">{L.price}</dt>
-              <dd className="text-right font-semibold text-primary">≈ {success.prix.toFixed(2)} €</dd>
+              <dt className="text-white/60">{L.price}</dt>
+              <dd className="text-right font-semibold text-[#e8bd5d]">≈ {success.prix.toFixed(2)} €</dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">{L.ok_ref}</dt>
+              <dt className="text-white/60">{L.ok_ref}</dt>
               <dd className="text-right font-mono font-semibold">
                 {pending ? (
-                  <span className="inline-block animate-pulse rounded bg-muted px-2 py-0.5 text-xs font-normal text-muted-foreground">
+                  <span className="inline-block animate-pulse rounded bg-muted px-2 py-0.5 text-xs font-normal text-white/60">
                     {L.pending_ref}
                   </span>
                 ) : (
@@ -935,7 +931,7 @@ export function BookingStudio() {
           {!pending && (
             <button
               type="button"
-              className="mt-6 text-sm text-muted-foreground underline underline-offset-4"
+              className="mt-6 text-sm text-white/60 underline underline-offset-4"
               onClick={() => {
                 setSuccess(null);
                 setDepart("");
@@ -969,26 +965,26 @@ export function BookingStudio() {
   const rateNight = q && q.prix_detail.kmNuit > 0 ? q.prix_detail.prixNuit / q.prix_detail.kmNuit : null;
 
   const QuotePanel = (
-    <div className="rounded-2xl border border-[#D4AF37]/45 bg-card/45 p-5 shadow-sm">
+    <div className="rounded-2xl border border-[#d6a83d]/45 bg-[#07101a]/45 p-5 shadow-sm">
       <header className="mb-1 flex items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#111b25] text-sm font-semibold text-[#e8bd5d]">
           6
         </span>
         <h2 className="flex items-center gap-2 font-display text-lg font-semibold sm:text-xl">
-          <RouteIcon className="h-5 w-5 text-primary" />
+          <RouteIcon className="h-5 w-5 text-[#e8bd5d]" />
           {L.quote}
         </h2>
       </header>
       {q && (
-        <p className="mb-3 flex items-center gap-1.5 pl-11 text-xs text-muted-foreground">
+        <p className="mb-3 flex items-center gap-1.5 pl-11 text-xs text-white/60">
           <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
           {L.live_badge}
         </p>
       )}
 
-      {!q && !quote.loading && <p className="mt-3 text-sm text-muted-foreground">{quote.error ?? L.quote_wait}</p>}
+      {!q && !quote.loading && <p className="mt-3 text-sm text-white/60">{quote.error ?? L.quote_wait}</p>}
       {quote.loading && (
-        <p className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+        <p className="mt-3 flex items-center gap-2 text-sm text-white/60">
           <Loader2 className="h-4 w-4 animate-spin" /> {L.computing}
         </p>
       )}
@@ -996,55 +992,55 @@ export function BookingStudio() {
       {q && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3">
-              <RouteIcon className="h-4 w-4 shrink-0 text-primary" />
+            <div className="flex items-center gap-2 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3">
+              <RouteIcon className="h-4 w-4 shrink-0 text-[#e8bd5d]" />
               <span>
                 <span className="block text-sm font-semibold tabular-nums">{q.distance_km.toFixed(1)} km</span>
-                <span className="text-xs text-muted-foreground">{L.distance}</span>
+                <span className="text-xs text-white/60">{L.distance}</span>
               </span>
             </div>
-            <div className="flex items-center gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3">
-              <Timer className="h-4 w-4 shrink-0 text-primary" />
+            <div className="flex items-center gap-2 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3">
+              <Timer className="h-4 w-4 shrink-0 text-[#e8bd5d]" />
               <span>
                 <span className="block text-sm font-semibold tabular-nums">{Math.round(q.duree_s / 60)} min</span>
-                <span className="text-xs text-muted-foreground">{L.duration}</span>
+                <span className="text-xs text-white/60">{L.duration}</span>
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-secondary/70">
-              <Car className="h-5 w-5 text-primary" />
+          <div className="flex items-center gap-3 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#111b25]">
+              <Car className="h-5 w-5 text-[#e8bd5d]" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-semibold">{q.vehicule === "van" ? L.van : L.berline}</span>
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1 text-xs text-white/60">
                 <Users className="h-3.5 w-3.5" />
                 {q.vehicule === "van" ? L.veh_van_cap : L.veh_berline_cap}
               </span>
             </span>
             <span className="shrink-0 text-right">
-              <span className="block font-display text-2xl font-bold text-primary">{priceLabel}</span>
-              <span className="text-xs text-muted-foreground">{L.price}</span>
+              <span className="block font-display text-2xl font-bold text-[#e8bd5d]">{priceLabel}</span>
+              <span className="text-xs text-white/60">{L.price}</span>
             </span>
           </div>
 
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between border-b border-dashed border-[#D4AF37]/40 pb-2">
-              <dt className="text-muted-foreground">{L.detail_base}</dt>
+            <div className="flex justify-between border-b border-dashed border-[#d6a83d]/40 pb-2">
+              <dt className="text-white/60">{L.detail_base}</dt>
               <dd className="tabular-nums">{q.prix_detail.priseEnCharge.toFixed(2)} €</dd>
             </div>
             {q.prix_detail.prixJour > 0 && (
-              <div className="flex justify-between border-b border-dashed border-[#D4AF37]/40 pb-2">
-                <dt className="text-muted-foreground">
+              <div className="flex justify-between border-b border-dashed border-[#d6a83d]/40 pb-2">
+                <dt className="text-white/60">
                   {L.detail_day} ({q.prix_detail.kmJour.toFixed(1)} km)
                 </dt>
                 <dd className="tabular-nums">{q.prix_detail.prixJour.toFixed(2)} €</dd>
               </div>
             )}
             {q.prix_detail.prixNuit > 0 && (
-              <div className="flex justify-between border-b border-dashed border-[#D4AF37]/40 pb-2">
-                <dt className="text-muted-foreground">
+              <div className="flex justify-between border-b border-dashed border-[#d6a83d]/40 pb-2">
+                <dt className="text-white/60">
                   {L.detail_night} ({q.prix_detail.kmNuit.toFixed(1)} km)
                 </dt>
                 <dd className="tabular-nums">{q.prix_detail.prixNuit.toFixed(2)} €</dd>
@@ -1053,10 +1049,10 @@ export function BookingStudio() {
           </dl>
 
           {(rateDay !== null || rateNight !== null) && (
-            <div className="space-y-1.5 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm">
+            <div className="space-y-1.5 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3 text-sm">
               {rateDay !== null && (
                 <p className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-white/60">
                     <Sun className="h-3.5 w-3.5" />
                     {L.rate_day}
                   </span>
@@ -1065,18 +1061,18 @@ export function BookingStudio() {
               )}
               {rateNight !== null && (
                 <p className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-white/60">
                     <Moon className="h-3.5 w-3.5" />
                     {L.rate_night}
                   </span>
                   <span className="tabular-nums">{rateNight.toFixed(2)} €/km</span>
                 </p>
               )}
-              <p className="pt-1 text-xs text-muted-foreground">{L.rate_title}</p>
+              <p className="pt-1 text-xs text-white/60">{L.rate_title}</p>
             </div>
           )}
 
-          <p className="text-[11px] leading-relaxed text-muted-foreground">{L.legal}</p>
+          <p className="text-[11px] leading-relaxed text-white/60">{L.legal}</p>
         </div>
       )}
 
@@ -1097,12 +1093,12 @@ export function BookingStudio() {
         )}
       </Button>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[#D4AF37]/40 pt-4 text-center text-[11px] text-muted-foreground sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[#d6a83d]/40 pt-4 text-center text-[11px] text-white/60 sm:grid-cols-4">
         {[
-          { icon: <BadgeCheck className="h-4 w-4 text-primary" />, label: L.feat_pro },
-          { icon: <ShieldCheck className="h-4 w-4 text-primary" />, label: L.feat_pay },
-          { icon: <RouteIcon className="h-4 w-4 text-primary" />, label: L.feat_cancel },
-          { icon: <CalendarClock className="h-4 w-4 text-primary" />, label: L.feat_service },
+          { icon: <BadgeCheck className="h-4 w-4 text-[#e8bd5d]" />, label: L.feat_pro },
+          { icon: <ShieldCheck className="h-4 w-4 text-[#e8bd5d]" />, label: L.feat_pay },
+          { icon: <RouteIcon className="h-4 w-4 text-[#e8bd5d]" />, label: L.feat_cancel },
+          { icon: <CalendarClock className="h-4 w-4 text-[#e8bd5d]" />, label: L.feat_service },
         ].map((f, i) => (
           <div key={i} className="flex flex-col items-center gap-1">
             {f.icon}
@@ -1111,35 +1107,35 @@ export function BookingStudio() {
         ))}
       </div>
 
-      <div className="mt-4 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-center">
+      <div className="mt-4 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3 text-center">
         <p className="text-sm font-semibold">{L.trust_title}</p>
         <div className="mt-1 flex items-center justify-center gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+            <Star key={i} className="h-4 w-4 fill-primary text-[#e8bd5d]" />
           ))}
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">{L.trust_rating}</p>
-        <p className="text-xs text-muted-foreground">{L.trust_reviews}</p>
+        <p className="mt-1 text-xs text-white/60">{L.trust_rating}</p>
+        <p className="text-xs text-white/60">{L.trust_reviews}</p>
       </div>
 
-      <div className="mt-4 flex items-start gap-3 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <div className="mt-4 flex items-start gap-3 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3 text-sm">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#111b25] text-[#e8bd5d]">
           <User className="h-4 w-4" />
         </span>
         <div className="min-w-0">
           <p className="font-semibold">{L.help_title}</p>
-          <p className="text-muted-foreground">{L.help_body}</p>
-          <a href="tel:+33603444863" className="flex items-center gap-1.5 font-semibold text-primary">
+          <p className="text-white/60">{L.help_body}</p>
+          <a href="tel:+33603444863" className="flex items-center gap-1.5 font-semibold text-[#e8bd5d]">
             <Phone className="h-3.5 w-3.5" />
             06 03 44 48 63
           </a>
-          <p className="mt-0.5 text-xs text-muted-foreground">{L.help_hours}</p>
+          <p className="mt-0.5 text-xs text-white/60">{L.help_hours}</p>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#D4AF37]/40 pt-4">
-        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
+      <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#d6a83d]/40 pt-4">
+        <p className="flex items-center gap-1.5 text-xs text-white/60">
+          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#e8bd5d]" />
           <span>
             {L.secure_pay}
             <span className="block">{L.secure_pay_sub}</span>
@@ -1149,7 +1145,7 @@ export function BookingStudio() {
           {["VISA", "MC", "AMEX"].map((c) => (
             <span
               key={c}
-              className="rounded border border-[#D4AF37]/40 bg-background px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-muted-foreground"
+              className="rounded border border-[#d6a83d]/40 bg-[#07101a] px-1.5 py-0.5 text-[9px] font-bold tracking-tight text-white/60"
             >
               {c}
             </span>
@@ -1160,24 +1156,24 @@ export function BookingStudio() {
   );
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 pb-40 pt-8 sm:px-6 sm:pb-16 sm:pt-12">
+    <main className="w-full px-4 pb-40 pt-8 text-white sm:px-6 sm:pb-16 sm:pt-12">
       {submitting && (
         <div
           role="status"
           aria-live="assertive"
-          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+1rem)] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-lg border border-[#D4AF37]/50 bg-card p-4 shadow-xl"
+          className="fixed inset-x-4 top-[calc(env(safe-area-inset-top)+1rem)] z-[70] mx-auto flex max-w-md items-center gap-3 rounded-lg border border-[#d6a83d]/50 bg-[#07101a] p-4 shadow-xl"
         >
-          <Loader2 className="h-6 w-6 shrink-0 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 shrink-0 animate-spin text-[#e8bd5d]" />
           <div className="min-w-0">
-            <p className="font-semibold text-foreground">{L.submitting}</p>
-            <p className="text-sm leading-snug text-muted-foreground">{L.submitting_detail}</p>
+            <p className="font-semibold text-white">{L.submitting}</p>
+            <p className="text-sm leading-snug text-white/60">{L.submitting_detail}</p>
           </div>
         </div>
       )}
       <div className="mx-auto max-w-3xl">
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-primary"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-white/60 transition hover:text-[#e8bd5d]"
         >
           <ArrowLeft className="h-4 w-4" />
           {L.back}
@@ -1185,13 +1181,13 @@ export function BookingStudio() {
       </div>
 
       <header className="mx-auto mt-4 max-w-3xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{L.eyebrow}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#e8bd5d]">{L.eyebrow}</p>
         <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{L.title}</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">{L.subtitle}</p>
-        <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-white/60 sm:text-base">{L.subtitle}</p>
+        <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/60 sm:text-sm">
           {[L.trust1, L.trust2, L.trust3].map((t) => (
             <li key={t} className="flex items-center gap-1.5">
-              <BadgeCheck className="h-4 w-4 text-primary" />
+              <BadgeCheck className="h-4 w-4 text-[#e8bd5d]" />
               {t}
             </li>
           ))}
@@ -1246,7 +1242,7 @@ export function BookingStudio() {
                   type="button"
                   onClick={swap}
                   aria-label={L.swap}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-background transition hover:border-[#D4AF37] hover:text-[#D4AF37] active:scale-95 [touch-action:manipulation]"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d6a83d]/60 bg-[#07101a] transition hover:border-[#d6a83d] hover:text-[#d6a83d] active:scale-95 [touch-action:manipulation]"
                 >
                   <ArrowDownUp className="h-4 w-4" />
                 </button>
@@ -1282,7 +1278,7 @@ export function BookingStudio() {
 
             <div className="mt-5">
               <p className="mb-2 flex items-center gap-2 text-sm font-medium">
-                <CalendarClock className="h-4 w-4 text-primary" />
+                <CalendarClock className="h-4 w-4 text-[#e8bd5d]" />
                 {L.when}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -1315,7 +1311,7 @@ export function BookingStudio() {
                   }}
                   className="h-12 text-base"
                 />
-                {when && <p className="mt-1.5 text-sm text-muted-foreground">{formatWhen(when, isEn ? "en" : "fr")}</p>}
+                {when && <p className="mt-1.5 text-sm text-white/60">{formatWhen(when, isEn ? "en" : "fr")}</p>}
               </div>
             </div>
           </SectionCard>
@@ -1360,13 +1356,12 @@ export function BookingStudio() {
 
           {/* 3 — véhicule souhaité (sélection automatique selon trajet/passagers) */}
           <SectionCard step={3} icon={<Car className="h-5 w-5" />} title={L.vehicle_step}>
-            <p className="-mt-2 mb-3 text-sm text-muted-foreground">{L.vehicle_hint}</p>
+            <p className="-mt-2 mb-3 text-sm text-white/60">{L.vehicle_hint}</p>
             <div className="space-y-2.5">
               {(
                 [
                   { id: "berline" as const, name: L.veh_berline, cap: L.veh_berline_cap },
                   { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap },
-                  { id: "van_xl" as const, name: L.veh_van_xl, cap: L.veh_van_xl_cap },
                 ] as const
               ).map((v) => {
                 // Le véhicule est déterminé automatiquement côté serveur à partir
@@ -1378,28 +1373,28 @@ export function BookingStudio() {
                     key={v.id}
                     aria-current={isSelected}
                     className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
-                      isSelected ? "border-[#D4AF37] bg-[#D4AF37]/10 shadow-sm" : "border-[#D4AF37]/40 bg-[#D4AF37]/5"
+                      isSelected ? "border-[#d6a83d] bg-[#07101a] shadow-sm" : "border-[#d6a83d]/40 bg-[#07101a]"
                     }`}
                   >
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-secondary/70">
-                      <Car className="h-6 w-6 text-primary" />
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#111b25]">
+                      <Car className="h-6 w-6 text-[#e8bd5d]" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{v.name}</span>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1 text-xs text-white/60">
                         <Users className="h-3.5 w-3.5" />
                         {v.cap}
                       </span>
                     </span>
-                    {isSelected && <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />}
+                    {isSelected && <CheckCircle2 className="h-5 w-5 shrink-0 text-[#e8bd5d]" aria-hidden="true" />}
                   </div>
                 );
               })}
             </div>
-            <p className="mt-3 flex items-start gap-2 rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/5 p-3 text-sm text-muted-foreground">
+            <p className="mt-3 flex items-start gap-2 rounded-xl border border-[#d6a83d]/40 bg-[#07101a] p-3 text-sm text-white/60">
               <span>
                 {L.veh_other}{" "}
-                <a href="tel:+33603444863" className="font-medium text-primary underline underline-offset-2">
+                <a href="tel:+33603444863" className="font-medium text-[#e8bd5d] underline underline-offset-2">
                   {L.veh_other_cta}
                 </a>
                 , {L.veh_other_note}
@@ -1441,7 +1436,7 @@ export function BookingStudio() {
               </div>
               <div>
                 <label htmlFor="tel" className="mb-1.5 block text-sm font-medium">
-                  <Phone className="mr-1 inline h-3.5 w-3.5 text-primary" />
+                  <Phone className="mr-1 inline h-3.5 w-3.5 text-[#e8bd5d]" />
                   {L.phone}
                 </label>
                 <Input
@@ -1457,7 +1452,7 @@ export function BookingStudio() {
               </div>
               <div className="sm:col-span-2">
                 <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
-                  <Mail className="mr-1 inline h-3.5 w-3.5 text-primary" />
+                  <Mail className="mr-1 inline h-3.5 w-3.5 text-[#e8bd5d]" />
                   {L.email}
                 </label>
                 <Input
@@ -1497,7 +1492,7 @@ export function BookingStudio() {
           <div className="sticky top-24 space-y-4">
             {QuotePanel}
             {missing.length > 0 && (
-              <p className="text-center text-xs text-muted-foreground">
+              <p className="text-center text-xs text-white/60">
                 {L.missing} {missing.join(", ")}
               </p>
             )}
@@ -1505,13 +1500,13 @@ export function BookingStudio() {
         </aside>
 
         {/* barre d'action mobile / tablette */}
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#D4AF37]/40 bg-card/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#d6a83d]/40 bg-[#07101a]/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur lg:hidden">
           <div className="mx-auto flex max-w-3xl items-center gap-3">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs text-muted-foreground">
+              <p className="truncate text-xs text-white/60">
                 {missing.length ? `${L.missing} ${missing.join(", ")}` : L.price}
               </p>
-              <p className="font-display text-xl font-bold text-primary">
+              <p className="font-display text-xl font-bold text-[#e8bd5d]">
                 {quote.loading ? "…" : priceLabel ? `≈ ${priceLabel}` : "—"}
               </p>
             </div>
