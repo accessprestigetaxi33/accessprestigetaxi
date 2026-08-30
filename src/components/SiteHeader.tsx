@@ -6,6 +6,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { Phone } from "lucide-react";
+import logoLockupAsset from "@/assets/apt-logo-lockup.webp.asset.json";
+const logoLockup = logoLockupAsset.url;
 
 export function SiteHeader() {
   const t = useT();
@@ -28,13 +30,13 @@ export function SiteHeader() {
       className="sticky top-0 z-40 bg-[#030a13]/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl border-b border-[#d6a83d]/25"
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6 lg:px-8">
-        <Link to="/" className="min-w-0 leading-none" onClick={() => setOpen(false)} aria-label={t("aria.logo_home")}>
-          <span className="block truncate font-display text-[11px] font-bold uppercase tracking-[0.15em] text-[#f4efe5] sm:text-sm lg:text-base">
-            ACCESS <span className="text-[#e8bd5d]">PRESTIGE</span> TAXI
-          </span>
-          <span className="mt-1 block text-[7px] uppercase tracking-[0.22em] text-white/60 sm:text-[8px]">
-            L'excellence à chaque trajet
-          </span>
+        <Link
+          to="/"
+          className="min-w-0 shrink-0 leading-none"
+          onClick={() => setOpen(false)}
+          aria-label={t("aria.logo_home")}
+        >
+          <img src={logoLockup} alt="Access Prestige Taxi" className="h-9 w-auto sm:h-11 lg:h-12" />
         </Link>
 
         <nav aria-label={t("aria.nav_main")} className="hidden items-center gap-5 lg:flex xl:gap-7">
