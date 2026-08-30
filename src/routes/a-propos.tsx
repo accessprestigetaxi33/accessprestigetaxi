@@ -52,56 +52,57 @@ function AboutPage() {
     { icon: MapPin, title: t("about.b3.t"), desc: t("about.b3.d") },
     { icon: Heart, title: t("about.b4.t"), desc: t("about.b4.d") },
   ];
-
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
-      <section className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/40 px-5 py-10 text-center shadow-[0_24px_70px_rgba(0,0,0,.18)] sm:px-10 sm:py-16">
-        <div className="absolute inset-y-0 right-0 hidden w-2/5 bg-[radial-gradient(circle_at_center,rgba(212,169,83,.13),transparent_65%)] sm:block" />
-        <div className="relative mx-auto max-w-2xl">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary">{t("about.eyebrow")}</p>
-          <h1 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">
-            {t("about.title")}
-          </h1>
-          <div className="mx-auto mt-5 h-px w-10 bg-primary" />
+    <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
+      <section className="overflow-hidden rounded-[30px] border border-[#d6a83d]/70 bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
+        <div className="flex h-16 items-center justify-between border-b border-white/10 px-7">
+          <div>
+            <div className="text-[9px] font-bold tracking-[.15em] text-[#e8bd5d]">ACCESS PRESTIGE TAXI</div>
+            <div className="mt-1 text-[5px] tracking-[.22em] text-white/60">L'EXCELLENCE À CHAQUE TRAJET</div>
+          </div>
+          <span className="text-xl text-[#e8bd5d]">☰</span>
+        </div>
+        <div className="px-6 py-5">
+          <div className="text-center">
+            <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
+              À PROPOS
+            </span>
+            <h1 className="mt-4 font-display text-[29px] leading-tight text-[#f4efe5]">
+              Notre histoire,
+              <br />
+              vos trajets
+            </h1>
+            <div className="mx-auto mt-4 h-px w-7 bg-[#e8bd5d]" />
+          </div>
+          <div className="mt-4 space-y-3 text-[12px] leading-5 text-white/70">
+            <p>
+              <b className="text-[#e8bd5d]">Access Prestige Taxi</b>, c'est l'histoire de deux chauffeurs passionnés :{" "}
+              <b className="text-[#e8bd5d]">Patricia et Alain.</b>
+            </p>
+            <p>Basés en Charente-Maritime, nous mettons tout notre savoir-faire au service de vos déplacements.</p>
+            <p>Ponctualité, discrétion et confort sont les valeurs qui nous guident au quotidien.</p>
+          </div>
+          <h2 className="mt-4 text-center font-display text-[22px]">Nos engagements</h2>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {commitments.map((b) => (
+              <article
+                key={b.title}
+                className="min-h-[118px] rounded-xl border border-white/20 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3"
+              >
+                <b.icon className="h-7 w-7 text-[#e8bd5d]" />
+                <h3 className="mt-2 font-display text-[14px] text-[#e8bd5d]">{b.title}</h3>
+                <p className="mt-2 text-[9px] leading-4 text-white/60">{b.desc}</p>
+              </article>
+            ))}
+          </div>
+          <Link
+            to="/reserver"
+            className="mt-4 flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#f6cd6b] to-[#cf962a] text-[11px] font-extrabold text-[#181107]"
+          >
+            RÉSERVER MAINTENANT
+          </Link>
         </div>
       </section>
-
-      <section className="mx-auto mt-10 max-w-3xl space-y-5 text-[15px] leading-8 text-muted-foreground sm:mt-14 sm:text-lg">
-        <p>
-          <span className="font-semibold text-foreground">{t("about.p1.brand")}</span> {t("about.p1")}
-        </p>
-        <p>{t("about.p2")}</p>
-        <p>{t("about.p3")}</p>
-      </section>
-
-      <section className="mt-14 border-t border-border/70 pt-10 sm:mt-16 sm:pt-14">
-        <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl">
-          {t("about.b.section") !== "about.b.section" ? t("about.b.section") : "Nos engagements"}
-        </h2>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-5">
-          {commitments.map((b) => (
-            <article
-              key={b.title}
-              className="rounded-2xl border border-border bg-card/70 p-5 transition hover:-translate-y-0.5 hover:border-primary/50 sm:p-7"
-            >
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-primary/30 bg-primary/5">
-                <b.icon className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="mt-4 font-display text-xl font-semibold">{b.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{b.desc}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <div className="mt-10 text-center sm:mt-14">
-        <Link
-          to="/reserver"
-          className="inline-flex min-h-14 w-full items-center justify-center rounded-xl bg-primary px-8 text-sm font-semibold uppercase tracking-[0.08em] text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90 sm:w-auto sm:min-w-72"
-        >
-          {t("about.cta")}
-        </Link>
-      </div>
     </main>
   );
 }
