@@ -407,7 +407,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-border bg-card/70 p-4 shadow-sm sm:p-6">
       <header className="mb-4 flex items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
           {step}
@@ -449,7 +449,7 @@ function Stepper({
           aria-label={`${label} -1`}
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Minus className="h-4 w-4" />
         </button>
@@ -459,7 +459,7 @@ function Stepper({
           aria-label={`${label} +1`}
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 transition active:scale-95 disabled:opacity-40 [touch-action:manipulation]"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -848,7 +848,7 @@ export function BookingStudio() {
     });
     return (
       <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
-        <div className="rounded-3xl border border-primary/30 bg-card p-6 text-center shadow-lg sm:p-10">
+        <div className="rounded-3xl border border-primary/30 bg-card/55 p-6 text-center shadow-lg sm:p-10">
           {pending ? (
             <Loader2 className="mx-auto h-14 w-14 animate-spin text-primary" />
           ) : (
@@ -969,7 +969,7 @@ export function BookingStudio() {
   const rateNight = q && q.prix_detail.kmNuit > 0 ? q.prix_detail.prixNuit / q.prix_detail.kmNuit : null;
 
   const QuotePanel = (
-    <div className="rounded-2xl border border-primary/25 bg-card p-5 shadow-sm">
+    <div className="rounded-2xl border border-primary/25 bg-card/45 p-5 shadow-sm">
       <header className="mb-1 flex items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
           6
