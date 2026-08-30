@@ -4385,9 +4385,15 @@ function TrackingAnalytics() {
       const since30j = new Date();
       since30j.setDate(since30j.getDate() - 30);
 
+      const tok = getDriverToken();
+      if (!tok) {
+        setLoading(false);
+        return;
+      }
       const { events, totalCourses } = await trackingAnalyticsFn({
-        data: { token: getDriverToken() ?? "", days: 30 },
+        data: { token: tok, days: 30 },
       });
+
 
       const evts: any[] = events ?? [];
 
