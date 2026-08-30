@@ -57,7 +57,7 @@ function AboutPage() {
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="px-6 py-5">
           <div className="text-center">
-            <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
+            <span className="inline-block rounded-full bg-[#d6a83d] px-3 py-1 text-[10px] font-bold tracking-wider text-[#181107]">
               À PROPOS
             </span>
             <h1 className="mt-4 font-display text-[29px] leading-tight text-[#f4efe5]">
@@ -80,11 +80,11 @@ function AboutPage() {
             {commitments.map((b) => (
               <article
                 key={b.title}
-                className="min-h-[118px] rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3"
+                className="min-h-[118px] rounded-xl bg-[linear-gradient(145deg,#f6cd6b,#c99b4a)] p-3"
               >
-                <b.icon className="h-7 w-7 text-[#e8bd5d]" />
-                <h3 className="mt-2 font-display text-[14px] text-[#e8bd5d]">{b.title}</h3>
-                <p className="mt-2 text-[9px] leading-4 text-white/60">{b.desc}</p>
+                <b.icon className="h-7 w-7 text-[#181107]" />
+                <h3 className="mt-2 font-display text-[14px] text-[#181107]">{b.title}</h3>
+                <p className="mt-2 text-[9px] leading-4 text-[#181107]/70">{b.desc}</p>
               </article>
             ))}
           </div>
