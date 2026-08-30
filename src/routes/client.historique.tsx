@@ -33,7 +33,7 @@ const css = `
 .cf-shell{border-radius:24px;padding:13px;background:#030a13;box-shadow:0 0 40px rgba(214,168,61,.06)}
 .cf-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .cf-back{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none}
-.cf-year{border:1px solid rgba(255,255,255,.15);border-radius:8px;background:#0b1520;padding:6px 10px;font-size:11px;color:#f5f1e8}
+.cf-year{border:1px solid rgba(214,168,61,.45);border-radius:8px;background:#0b1520;padding:6px 10px;font-size:11px;color:#f5f1e8}
 .cf-kicker{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a;margin-top:14px}
 .cf-title{font-family:Georgia,serif;font-size:20px;margin:4px 0 0;display:flex;align-items:center;gap:8px}
 .cf-subtitle{margin-top:4px;font-size:11px;color:rgba(255,255,255,.55)}
