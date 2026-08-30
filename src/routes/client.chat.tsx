@@ -13,6 +13,18 @@ export const Route = createFileRoute("/client/chat")({
   component: ClientChatPage,
 });
 
+const css = `
+.cc-root{min-height:100dvh;background:#030a13;color:#f5f1e8;font-family:Inter,system-ui,sans-serif;padding:0 0 82px;display:flex;flex-direction:column}
+.cc-main{padding:12px;flex:1;display:flex;flex-direction:column;min-height:0}
+.cc-main-inner{max-width:390px;margin:0 auto;width:100%;flex:1;display:flex;flex-direction:column;min-height:0}
+.cc-shell{border-radius:24px;padding:13px;background:#030a13;box-shadow:0 0 40px rgba(214,168,61,.06);flex:1;display:flex;flex-direction:column;min-height:0}
+.cc-kicker{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a}
+.cc-title{font-family:Georgia,serif;font-size:20px;margin:4px 0 0}
+.cc-subtitle{margin-top:2px;font-size:11px;color:rgba(255,255,255,.5)}
+.cc-panel{margin-top:14px;flex:1;min-height:360px;display:flex;flex-direction:column;overflow:hidden;border-radius:16px;background:#07101a;border:1px solid rgba(214,168,61,.45)}
+@media(min-width:700px){.cc-main-inner{max-width:720px}.cc-shell{padding:20px}}
+`;
+
 function ClientChatPage() {
   const navigate = useNavigate();
   const t = useT();
@@ -30,29 +42,28 @@ function ClientChatPage() {
   if (!session) return null;
 
   return (
-    <main
-      className="relative flex min-h-[100dvh] flex-col overflow-hidden px-4 pt-8"
-      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
-    >
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="mb-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-[#E8C96D]">{t("client.eyebrow")}</p>
-          <h1
-            className="mt-1 text-2xl font-bold text-foreground sm:text-3xl"
-            style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
-          >
-            {t("client.chat.title")}
-          </h1>
-          <p className="mt-1 text-xs text-foreground/50">{t("client.chat.subtitle")}</p>
-        </div>
-        <div
-          className="flex flex-col overflow-hidden rounded-2xl border border-border/40"
-          style={{ height: "calc(100dvh - 240px)", minHeight: 360 }}
-        >
-          <DirectChatPanel accountId={session.id} authToken={session.token} role="client" peerName="Access Prestige Taxi 🚖" />
-        </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <div className="cc-root">
+        <main className="cc-main">
+          <div className="cc-main-inner">
+            <div className="cc-shell">
+              <div className="cc-kicker">{t("client.eyebrow")}</div>
+              <h1 className="cc-title">{t("client.chat.title")}</h1>
+              <p className="cc-subtitle">{t("client.chat.subtitle")}</p>
+              <div className="cc-panel">
+                <DirectChatPanel
+                  accountId={session.id}
+                  authToken={session.token}
+                  role="client"
+                  peerName="Access Prestige Taxi 🚖"
+                />
+              </div>
+            </div>
+          </div>
+        </main>
+        <ClientBottomNav />
       </div>
-      <ClientBottomNav />
-    </main>
+    </>
   );
 }
