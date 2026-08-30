@@ -46,49 +46,62 @@ export const Route = createFileRoute("/a-propos")({
 
 function AboutPage() {
   const t = useT();
-  return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:py-14 md:py-16">
-      <div className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("about.eyebrow")}</p>
-        <h1 className="mt-3 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("about.title")}</h1>
-      </div>
+  const commitments = [
+    { icon: Award, title: t("about.b1.t"), desc: t("about.b1.d") },
+    { icon: Clock, title: t("about.b2.t"), desc: t("about.b2.d") },
+    { icon: MapPin, title: t("about.b3.t"), desc: t("about.b3.d") },
+    { icon: Heart, title: t("about.b4.t"), desc: t("about.b4.d") },
+  ];
 
-      <div className="mt-10 space-y-5 text-base text-muted-foreground sm:mt-12 sm:space-y-6 sm:text-lg">
+  return (
+    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
+      <section className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/40 px-5 py-10 text-center shadow-[0_24px_70px_rgba(0,0,0,.18)] sm:px-10 sm:py-16">
+        <div className="absolute inset-y-0 right-0 hidden w-2/5 bg-[radial-gradient(circle_at_center,rgba(212,169,83,.13),transparent_65%)] sm:block" />
+        <div className="relative mx-auto max-w-2xl">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary">{t("about.eyebrow")}</p>
+          <h1 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl md:text-6xl">
+            {t("about.title")}
+          </h1>
+          <div className="mx-auto mt-5 h-px w-10 bg-primary" />
+        </div>
+      </section>
+
+      <section className="mx-auto mt-10 max-w-3xl space-y-5 text-[15px] leading-8 text-muted-foreground sm:mt-14 sm:text-lg">
         <p>
           <span className="font-semibold text-foreground">{t("about.p1.brand")}</span> {t("about.p1")}
         </p>
         <p>{t("about.p2")}</p>
         <p>{t("about.p3")}</p>
-      </div>
+      </section>
 
-      <h2 className="mt-12 text-center font-display text-2xl font-semibold sm:text-3xl">
-        {t("about.b.section") !== "about.b.section" ? t("about.b.section") : "Nos engagements"}
-      </h2>
-
-      {/* 1-col on mobile, 2-col on md */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6">
-        {[
-          { icon: Award, title: t("about.b1.t"), desc: t("about.b1.d") },
-          { icon: Clock, title: t("about.b2.t"), desc: t("about.b2.d") },
-          { icon: MapPin, title: t("about.b3.t"), desc: t("about.b3.d") },
-          { icon: Heart, title: t("about.b4.t"), desc: t("about.b4.d") },
-        ].map((b) => (
-          <div key={b.title} className="rounded-xl border border-border bg-card p-5 sm:p-6">
-            <b.icon className="h-7 w-7 text-primary sm:h-8 sm:w-8" />
-            <h3 className="mt-3 font-display text-lg font-semibold sm:mt-4 sm:text-xl">{b.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{b.desc}</p>
-          </div>
-        ))}
-      </div>
+      <section className="mt-14 border-t border-border/70 pt-10 sm:mt-16 sm:pt-14">
+        <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl">
+          {t("about.b.section") !== "about.b.section" ? t("about.b.section") : "Nos engagements"}
+        </h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-5">
+          {commitments.map((b) => (
+            <article
+              key={b.title}
+              className="rounded-2xl border border-border bg-card/70 p-5 transition hover:-translate-y-0.5 hover:border-primary/50 sm:p-7"
+            >
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-primary/30 bg-primary/5">
+                <b.icon className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="mt-4 font-display text-xl font-semibold">{b.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{b.desc}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-10 text-center sm:mt-14">
         <Link
           to="/reserver"
-          className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-8 py-3.5 font-semibold text-primary-foreground shadow-[var(--shadow-gold)] active:scale-95 sm:w-auto sm:rounded-md sm:py-3"
+          className="inline-flex min-h-14 w-full items-center justify-center rounded-xl bg-primary px-8 text-sm font-semibold uppercase tracking-[0.08em] text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90 sm:w-auto sm:min-w-72"
         >
           {t("about.cta")}
         </Link>
       </div>
-    </div>
+    </main>
   );
 }
