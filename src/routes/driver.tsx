@@ -945,8 +945,8 @@ function DriverApp({
                     disabled={identifyPushBusy !== null}
                     style={{
                       flexShrink: 0,
-                      background: "#0f172a",
-                      color: "#FDFBF7",
+                      background: "#e0b866",
+                      color: "#050a10",
                       border: "none",
                       borderRadius: 8,
                       padding: "6px 12px",
@@ -981,8 +981,8 @@ function DriverApp({
                 disabled={pushBusy}
                 style={{
                   flexShrink: 0,
-                  background: "#0f172a",
-                  color: "#FDFBF7",
+                  background: "#e0b866",
+                  color: "#050a10",
                   border: "none",
                   borderRadius: 8,
                   padding: "6px 12px",
