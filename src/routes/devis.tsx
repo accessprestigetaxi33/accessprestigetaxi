@@ -117,14 +117,6 @@ function DevisPage() {
   return (
     <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
-        <div className="flex h-16 items-center justify-between border-b border-white/10 px-7">
-          <div>
-            <div className="text-[9px] font-bold tracking-[.15em] text-[#e8bd5d]">ACCESS PRESTIGE TAXI</div>
-            <div className="mt-1 text-[5px] tracking-[.22em] text-white/60">L'EXCELLENCE À CHAQUE TRAJET</div>
-          </div>
-          <span className="text-xl text-[#e8bd5d]">☰</span>
-        </div>
-
         <div className="px-6 py-5">
           <div className="text-center">
             <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
@@ -202,14 +194,14 @@ function DevisPage() {
                 <a
                   key={d.tel}
                   href={`tel:${d.intl}`}
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/20 px-4 text-[12px] font-semibold text-white/90"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#d6a83d]/45 px-4 text-[12px] font-semibold text-white/90"
                 >
                   <Phone className="h-4 w-4 text-[#e8bd5d]" /> {d.name} — {d.display}
                 </a>
               ))}
               <a
                 href={`mailto:${EMAIL}`}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/20 px-4 text-[12px] font-semibold text-white/90"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#d6a83d]/45 px-4 text-[12px] font-semibold text-white/90"
               >
                 <Mail className="h-4 w-4 text-[#e8bd5d]" /> {EMAIL}
               </a>
