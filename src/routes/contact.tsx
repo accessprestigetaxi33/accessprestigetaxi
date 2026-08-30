@@ -84,98 +84,84 @@ function ContactPage() {
   const { lang } = useI18n();
   const c = lang === "en" ? COPY.en : COPY.fr;
   const first = DRIVERS[0]!;
-
+  const cards = [
+    {
+      icon: Phone,
+      label: "Appelez-nous",
+      main: first.display,
+      sub: "Disponible 24h/24 – 7j/7",
+      href: `tel:${first.tel}`,
+    },
+    {
+      icon: MessageCircle,
+      label: c.whatsappTitle,
+      main: c.whatsappHeadline,
+      sub: "Réponse rapide",
+      href: `https://wa.me/${first.intl.replace("+", "")}`,
+    },
+    {
+      icon: Mail,
+      label: "E-Mail",
+      main: CONTACT_EMAIL,
+      sub: "Nous vous répondons rapidement",
+      href: `mailto:${CONTACT_EMAIL}`,
+    },
+    { icon: MapPin, label: c.zoneTitle, main: c.zoneMain, sub: c.zoneSub, href: "#" },
+  ];
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:py-20">
-      <section className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/45 px-5 py-10 text-center shadow-[0_24px_70px_rgba(0,0,0,.18)] sm:px-10 sm:py-14">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,rgba(212,169,83,.12),transparent_32%)]" />
-        <div className="relative text-center">
-          <img
-            src={heroLogo}
-            alt="Access Prestige Taxi"
-            width={400}
-            height={150}
-            className="mx-auto h-28 w-auto object-contain sm:h-40 md:h-48"
-          />
-          <p className="mt-5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-            Access <span className="text-primary">Prestige</span> Taxi
-          </p>
-          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.3em] text-primary">{t("contact.eyebrow")}</p>
-          <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl md:text-5xl">{t("contact.title")}</h1>
-          <p className="mt-3 text-sm text-muted-foreground sm:mt-4 sm:text-base">{t("contact.intro")}</p>
-          <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-            {c.badge}
+    <main className="mx-auto max-w-[390px] px-3 py-5 text-white sm:max-w-3xl sm:px-6">
+      <section className="overflow-hidden rounded-[30px] border border-[#d6a83d]/70 bg-[#030a13] p-4 shadow-[0_0_40px_rgba(214,168,61,.08)]">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 pb-4">
+          <div>
+            <div className="text-[9px] font-bold tracking-[.15em] text-[#e8bd5d]">ACCESS PRESTIGE TAXI</div>
+            <div className="mt-1 text-[5px] tracking-[.22em] text-white/60">L'EXCELLENCE À CHAQUE TRAJET</div>
+          </div>
+          <span className="grid h-9 w-9 place-items-center rounded-lg border border-[#d6a83d]/40 text-[#e8bd5d]">
+            ☰
           </span>
         </div>
-      </section>
-
-      <section className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-5">
-        <a
-          href={`tel:${first.tel}`}
-          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card/70 p-5 shadow-sm transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
-        >
-          <Phone className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
-          <div>
-            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{t("contact.phone")}</h2>
-            {DRIVERS.map((d) => (
-              <p key={d.tel} className="text-lg font-bold text-primary sm:mt-1 sm:text-xl">
-                <span className="mr-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  {d.name}
-                </span>
-                {d.display}
-              </p>
-            ))}
-            <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{t("contact.phone.sub")}</p>
-          </div>
-        </a>
-
-        <a
-          href={`https://wa.me/${first.intl.replace("+", "")}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card/70 p-5 shadow-sm transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
-        >
-          <MessageCircle className="h-7 w-7 shrink-0 text-green-500 sm:h-8 sm:w-8" />
-          <div>
-            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{c.whatsappTitle}</h2>
-            <p className="font-semibold text-green-500 sm:mt-1 sm:text-lg">{c.whatsappHeadline}</p>
-            <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{c.whatsappSub}</p>
-          </div>
-        </a>
-
-        <a
-          href={`mailto:${CONTACT_EMAIL}`}
-          className="group flex flex-row items-center gap-4 rounded-2xl border border-border bg-card/70 p-5 shadow-sm transition hover:border-primary sm:flex-col sm:items-start sm:p-6"
-        >
-          <Mail className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
-          <div>
-            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{t("contact.email")}</h2>
-            <p className="break-all font-semibold sm:mt-1 sm:text-base">✉️ {CONTACT_EMAIL}</p>
-            <p className="mt-0.5 text-sm text-muted-foreground sm:mt-1">{t("contact.email.sub")}</p>
-          </div>
-        </a>
-
-        <div className="flex flex-row items-center gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-col sm:items-start sm:p-6">
-          <MapPin className="h-7 w-7 shrink-0 text-primary sm:h-8 sm:w-8" />
-          <div>
-            <h2 className="font-display text-lg font-semibold sm:mt-3 sm:text-xl">{c.zoneTitle}</h2>
-            <p className="font-semibold sm:mt-1">{c.zoneMain}</p>
-            <p className="text-sm text-muted-foreground">{c.zoneSub}</p>
-            <p className="mt-1 text-sm text-muted-foreground sm:mt-2">{c.zoneLong}</p>
-          </div>
+        <div className="pt-3 text-center">
+          <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
+            CONTACTEZ-NOUS
+          </span>
+          <h1 className="mt-5 font-display text-[31px] leading-none text-[#f4efe5]">À votre écoute</h1>
+          <div className="mt-5 text-[16px] tracking-wide text-[#e8bd5d]">❯ 20 ans d’expérience ❮</div>
         </div>
-      </section>
-
-      <section className="mt-5 flex flex-row items-start gap-4 rounded-2xl border border-primary/30 bg-card/70 p-5 sm:mt-6 sm:p-6">
-        <HeartPulse className="h-7 w-7 shrink-0 text-primary" />
-        <div>
-          <h2 className="font-display text-lg font-semibold sm:text-xl">{c.cmuTitle}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{c.cmuText}</p>
+        <div className="mt-5 space-y-2">
+          {cards.map(({ icon: Icon, label, main, sub, href }) => (
+            <a
+              key={label}
+              href={href}
+              className="flex min-h-[74px] items-center gap-3 rounded-xl border border-white/20 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3 text-left"
+            >
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/10 bg-[#111b25]">
+                <Icon className="h-7 w-7 text-[#e8bd5d]" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[10px] font-semibold text-[#e8bd5d]">{label}</span>
+                <span className="mt-1 block break-all text-[13px] text-white/90">{main}</span>
+                <span className="mt-1 block text-[10px] text-white/60">{sub}</span>
+              </span>
+              <span className="text-[#e8bd5d]">›</span>
+            </a>
+          ))}
         </div>
-      </section>
-
-      <section className="mt-8 rounded-3xl border border-border bg-card/40 p-3 sm:mt-10 sm:p-6">
-        <ContactForm />
+        <section className="mt-3 flex gap-4 rounded-xl border border-white/20 bg-[linear-gradient(145deg,#111b26,#07101a)] p-4">
+          <HeartPulse className="mt-1 h-8 w-8 shrink-0 text-[#e8bd5d]" />
+          <div>
+            <h2 className="font-display text-[17px] text-[#e8bd5d]">{c.cmuTitle}</h2>
+            <p className="mt-2 text-[11px] leading-5 text-white/70">{c.cmuText}</p>
+          </div>
+        </section>
+        <a
+          href="#contact-form"
+          className="mt-3 flex min-h-11 items-center justify-center rounded-lg bg-gradient-to-b from-[#f6cd6b] to-[#cf962a] text-[11px] font-extrabold text-[#181107]"
+        >
+          ÉCRIRE UN MESSAGE
+        </a>
+        <div id="contact-form" className="mt-4 rounded-xl border border-white/15 p-2">
+          <ContactForm />
+        </div>
       </section>
     </main>
   );
