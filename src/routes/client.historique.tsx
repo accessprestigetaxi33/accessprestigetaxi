@@ -1,46 +1,71 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Calendar, MapPin, ArrowRight, Download, FileText, Search } from "lucide-react";
-import { BrandLoader } from "@/components/BrandLoader";
+import { FileText, Download, ArrowLeft, Briefcase } from "lucide-react";
 import { toast } from "sonner";
+import { BrandLoader } from "@/components/BrandLoader";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
+import { useT } from "@/i18n/I18nProvider";
 import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
-import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
-import { downloadReceiptPDF, exportReservationsCSV } from "@/lib/client-receipt";
-import { useT } from "@/i18n/I18nProvider";
+import {
+  getClientCompanyInfo,
+  listCompletedForBilling,
+  type CompanyInfo,
+  type InvoiceRow,
+} from "@/lib/client-billing.functions";
+import { downloadMonthlyInvoicePDF, downloadYearlyInvoicePDF } from "@/lib/client-invoices";
 
-
-export const Route = createFileRoute("/client/historique")({
+export const Route = createFileRoute("/client/factures")({
   head: () => ({
-    meta: [{ title: "Historique — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: "Mes factures — Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
-  component: ClientHistorique,
+  component: ClientFactures,
 });
 
-const PAST = new Set(["completed", "cancelled", "refused"]);
-
-function fmtDate(iso: string) {
-  try {
-    return new Date(iso).toLocaleString("fr-FR", {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "Europe/Paris",
-    });
-  } catch {
-    return iso;
-  }
+function monthLabel(year: number, month: number) {
+  return new Date(year, month - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 }
 
-function ClientHistorique() {
+const css = `
+.cf-root{min-height:100dvh;background:#030a13;color:#f5f1e8;font-family:Inter,system-ui,sans-serif;padding:0 0 82px}
+.cf-main{padding:12px}
+.cf-main-inner{max-width:390px;margin:0 auto}
+.cf-shell{border-radius:24px;padding:13px;background:#030a13;box-shadow:0 0 40px rgba(214,168,61,.06)}
+.cf-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cf-back{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none}
+.cf-year{border:1px solid rgba(255,255,255,.15);border-radius:8px;background:#0b1520;padding:6px 10px;font-size:11px;color:#f5f1e8}
+.cf-kicker{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a;margin-top:14px}
+.cf-title{font-family:Georgia,serif;font-size:20px;margin:4px 0 0;display:flex;align-items:center;gap:8px}
+.cf-subtitle{margin-top:4px;font-size:11px;color:rgba(255,255,255,.55)}
+.cf-prompt{margin-top:14px;border:1px solid rgba(214,168,61,.35);border-radius:12px;background:rgba(214,168,61,.06);padding:12px;display:flex;gap:10px;font-size:11px;color:rgba(255,255,255,.75);line-height:1.5}
+.cf-prompt a{margin-left:6px;font-weight:700;color:#e7bd5d;text-decoration:underline}
+.cf-loading{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#07101a;padding:34px 12px;color:rgba(255,255,255,.6);font-size:12px;margin-top:14px}
+.cf-empty{margin-top:14px;padding:24px 16px;border:1px dashed rgba(214,168,61,.45);border-radius:14px;text-align:center;color:rgba(255,255,255,.55);font-size:11px}
+.cf-recap{margin-top:14px;border:1px solid rgba(214,168,61,.35);border-radius:14px;padding:14px;background:linear-gradient(135deg,rgba(214,168,61,.14),rgba(232,201,109,.04));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.cf-recap-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#e6b95a}
+.cf-recap-total{margin-top:4px;font-family:Georgia,serif;font-size:21px;color:#fff}
+.cf-recap-total span{font-family:Inter,sans-serif;font-size:11px;font-weight:400;color:rgba(255,255,255,.55);margin-left:4px}
+.cf-recap-btn{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:9px 14px;font-size:11px;font-weight:800;color:#171006;background:linear-gradient(135deg,#f6cd6b,#cf962a);border:none}
+.cf-recap-btn:disabled{opacity:.6}
+.cf-by-month{margin:18px 0 8px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.cf-months{display:flex;flex-direction:column;gap:8px}
+.cf-month{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border:1px solid rgba(214,168,61,.45);border-radius:12px;background:linear-gradient(145deg,#111b26,#07101a);padding:12px}
+.cf-month-name{font-size:12px;font-weight:600;text-transform:capitalize;color:#f5f1e8}
+.cf-month-sub{margin-top:2px;font-size:10px;color:rgba(255,255,255,.5)}
+.cf-month-pdf{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(214,168,61,.5);border-radius:7px;padding:7px 10px;font-size:9px;font-weight:800;color:#e7bd5d;background:transparent}
+.cf-month-pdf:disabled{opacity:.5}
+@media(min-width:700px){.cf-main-inner{max-width:720px}.cf-shell{padding:20px}}
+`;
+
+function ClientFactures() {
   const navigate = useNavigate();
   const t = useT();
   const [session, setSession] = useState<ClientSession | null>(null);
-  const [rows, setRows] = useState<ClientReservation[] | null>(null);
+  const [company, setCompany] = useState<CompanyInfo | null>(null);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [rows, setRows] = useState<InvoiceRow[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
     const s = getClientSession();
@@ -55,201 +80,174 @@ function ClientHistorique() {
     if (!session) return;
     setLoading(true);
     try {
-      const data = await listClientReservations({
-        data: { token: session.token },
-      });
-      setRows(data.filter((r) => PAST.has(r.status)));
-    } catch {
-      toast.error(t("client.historique.load_err"));
+      const [comp, data] = await Promise.all([
+        getClientCompanyInfo({ data: { token: session.token } }),
+        listCompletedForBilling({
+          data: {
+            token: session.token,
+            from: new Date(year, 0, 1).toISOString(),
+            to: new Date(year + 1, 0, 1).toISOString(),
+          },
+        }),
+      ]);
+      setCompany(comp);
+      setRows(data);
+    } catch (e) {
+      console.error(e);
+      toast.error("Impossible de charger vos factures");
     } finally {
       setLoading(false);
     }
-  }, [session, t]);
+  }, [session, year]);
 
   useEffect(() => {
     if (session) refresh();
   }, [session, refresh]);
 
-  // Rafraîchissement — SANS postgres_changes.
-  // La lecture de `reservations` est fermée côté RLS (aucune policy SELECT
-  // pour anon / authenticated) : l'abonnement realtime ne délivrait jamais
-  // rien. L'historique se remet à jour au retour sur l'onglet / la fenêtre.
-  useEffect(() => {
-    if (!session) return;
-    const onWake = () => {
-      if (document.visibilityState === "visible") refresh();
-    };
-    document.addEventListener("visibilitychange", onWake);
-    window.addEventListener("focus", onWake);
-    return () => {
-      document.removeEventListener("visibilitychange", onWake);
-      window.removeEventListener("focus", onWake);
-    };
-  }, [session, refresh]);
+  const byMonth = useMemo(() => {
+    const map = new Map<number, InvoiceRow[]>();
+    for (const r of rows ?? []) {
+      const m = new Date(r.date).getMonth() + 1;
+      if (!map.has(m)) map.set(m, []);
+      map.get(m)!.push(r);
+    }
+    return map;
+  }, [rows]);
 
+  const totalYear = useMemo(() => (rows ?? []).reduce((s, r) => s + r.prix_estime, 0), [rows]);
 
-  const filtered = useMemo(() => {
-    if (!rows) return null;
-    const q = query.trim().toLowerCase();
-    const fromTs = from ? new Date(from).getTime() : null;
-    const toTs = to ? new Date(to).getTime() + 86400000 : null;
-    return rows.filter((r) => {
-      const ts = new Date(r.pickup_datetime).getTime();
-      if (fromTs && ts < fromTs) return false;
-      if (toTs && ts > toTs) return false;
-      if (q) {
-        const hay = `${r.depart} ${r.arrivee || ""} ${r.destination || ""} ${r.tracking_id || ""}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [rows, query, from, to]);
+  function downloadMonth(month: number) {
+    if (!session || !company) return;
+    const list = byMonth.get(month) ?? [];
+    if (list.length === 0) return;
+    setBusy(`m-${month}`);
+    try {
+      downloadMonthlyInvoicePDF({
+        accountId: session.id,
+        year,
+        month,
+        rows: list,
+        client: { name: session.name || "", email: session.email || "", phone: session.phone || "" },
+        company,
+      });
+    } finally {
+      setBusy(null);
+    }
+  }
 
-  const totalEur = useMemo(
-    () => (filtered || []).reduce((sum, r) => sum + (r.prix_estime ? Number(r.prix_estime) : 0), 0),
-    [filtered],
-  );
+  function downloadYear() {
+    if (!session || !company || !rows || rows.length === 0) return;
+    setBusy("year");
+    try {
+      downloadYearlyInvoicePDF({
+        accountId: session.id,
+        year,
+        rows,
+        client: { name: session.name || "", email: session.email || "", phone: session.phone || "" },
+        company,
+      });
+    } finally {
+      setBusy(null);
+    }
+  }
 
-  if (!session) return null;
+  const years = [new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2];
 
   return (
-    <main
-      className="relative min-h-[100dvh] overflow-hidden px-4 py-8"
-      style={{ background: "linear-gradient(180deg, #F5F0E6 0%, #EDE6D4 100%)" }}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
-      />
-      <div className="relative mx-auto max-w-3xl">
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("client.eyebrow")}</p>
-          <h1
-            className="mt-1 text-2xl font-bold text-foreground sm:text-3xl"
-            style={{ fontFamily: "'Syne', 'Playfair Display', serif" }}
-          >
-            {t("client.historique.title")}
-          </h1>
-        </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <div className="cf-root">
+        <main className="cf-main">
+          <div className="cf-main-inner">
+            <div className="cf-shell">
+              <div className="cf-top">
+                <Link to="/client/profil" className="cf-back">
+                  <ArrowLeft size={13} /> Profil
+                </Link>
+                <select className="cf-year" value={year} onChange={(e) => setYear(parseInt(e.target.value, 10))}>
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-        {/* Filters */}
-        <div className="mb-4 grid gap-2 rounded-2xl border border-border bg-white/[0.04] p-3 backdrop-blur sm:grid-cols-4">
-          <label className="relative sm:col-span-2">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("client.historique.search_ph")}
-              className="w-full rounded-lg border border-border bg-muted py-2 pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary"
-            />
-          </label>
-          <input
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          />
-          <input
-            type="date"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          />
-        </div>
+              <div className="cf-kicker">{t("client.eyebrow")}</div>
+              <h1 className="cf-title">
+                <FileText size={18} style={{ color: "#e7bd5d" }} /> {t("client.factures.title")}
+              </h1>
+              <p className="cf-subtitle">{t("client.factures.subtitle")}</p>
 
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <div className="text-xs text-foreground/60">
-            {filtered ? `${filtered.length} ${t("client.historique.courses_total")} — ${totalEur.toFixed(2)} €` : "—"}
-          </div>
-          <button
-            disabled={!filtered || filtered.length === 0}
-            onClick={() => filtered && exportReservationsCSV(filtered)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-foreground hover:bg-muted/60 disabled:opacity-40"
-          >
-            <Download className="h-3.5 w-3.5" /> {t("client.historique.export_csv")}
-          </button>
-        </div>
-
-        {loading && (
-          <div className="flex items-center justify-center rounded-2xl border border-border bg-muted/50 p-10 text-foreground/60">
-            <BrandLoader size={20} /> {t("client.trajets.loading")}
-          </div>
-        )}
-
-        {!loading && filtered && filtered.length === 0 && (
-          <div className="rounded-2xl border border-border bg-muted/50 p-8 text-center text-sm text-foreground/60">
-            {t("client.historique.empty")}
-          </div>
-        )}
-
-        {!loading && filtered && filtered.length > 0 && (
-          <ul className="space-y-3">
-            {filtered.map((r) => {
-              const dest = r.arrivee || r.destination || "—";
-              const isCompleted = r.status === "completed";
-              return (
-                <li key={r.id} className="rounded-2xl border border-border bg-white/[0.04] p-4 backdrop-blur sm:p-5">
-                  <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-foreground/60">
-                      <Calendar className="h-3.5 w-3.5" /> {fmtDate(r.pickup_datetime)}
-                    </span>
-                    <span
-                      className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
-                      style={{
-                        background: isCompleted ? "rgba(148,163,184,0.18)" : "rgba(239,68,68,0.18)",
-                        color: isCompleted ? "#cbd5e1" : "#fca5a5",
-                      }}
-                    >
-                      {isCompleted
-                        ? t("client.historique.completed")
-                        : r.status === "cancelled"
-                          ? t("client.historique.cancelled")
-                          : t("client.historique.refused")}
-                    </span>
+              {!company?.company_name && (
+                <div className="cf-prompt">
+                  <Briefcase size={15} style={{ color: "#e7bd5d", flexShrink: 0, marginTop: 1 }} />
+                  <div>
+                    {t("client.factures.company_prompt")}
+                    <Link to="/client/profil">{t("client.factures.complete_profile")}</Link>
                   </div>
-                  <div className="flex items-start gap-2 text-sm text-foreground">
-                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <div className="flex-1 leading-snug">
-                      <span className="text-foreground/90">{r.depart}</span>
-                      <ArrowRight className="mx-1.5 inline h-3.5 w-3.5 text-muted-foreground/60" />
-                      <span className="text-foreground/90">{dest}</span>
+                </div>
+              )}
+
+              {loading ? (
+                <div className="cf-loading">
+                  <BrandLoader size={18} /> {t("client.trajets.loading")}
+                </div>
+              ) : (rows ?? []).length === 0 ? (
+                <div className="cf-empty">
+                  {t("client.factures.empty_year")} {year}.
+                </div>
+              ) : (
+                <>
+                  <div className="cf-recap">
+                    <div>
+                      <div className="cf-recap-label">
+                        {t("client.factures.year_label")} {year}
+                      </div>
+                      <div className="cf-recap-total">
+                        {totalYear.toFixed(2)} €
+                        <span>
+                          / {(rows ?? []).length} {t("client.factures.courses")}
+                        </span>
+                      </div>
                     </div>
+                    <button className="cf-recap-btn" onClick={downloadYear} disabled={busy === "year"}>
+                      <Download size={14} /> {t("client.factures.year_pdf")}
+                    </button>
                   </div>
-                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-                    <div className="text-xs text-foreground/60">
-                      {t("client.historique.ref")} {(r.tracking_id || r.id).slice(0, 10)}
-                      {r.prix_estime != null && (
-                        <>
-                          {" — "}
-                          <span className="font-semibold text-primary">{Number(r.prix_estime).toFixed(2)} €</span>
-                        </>
-                      )}
-                    </div>
-                    {isCompleted && (
-                      <button
-                        onClick={() =>
-                          downloadReceiptPDF(r, {
-                            name: session.name,
-                            email: session.email,
-                            phone: session.phone,
-                          })
-                        }
-                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-black"
-                        style={{ background: "linear-gradient(135deg, var(--gold) 0%, #E8C96D 100%)" }}
-                      >
-                        <FileText className="h-3.5 w-3.5" /> {t("client.historique.receipt_pdf")}
-                      </button>
-                    )}
+
+                  <p className="cf-by-month">{t("client.factures.by_month")}</p>
+                  <div className="cf-months">
+                    {Array.from(byMonth.entries())
+                      .sort(([a], [b]) => b - a)
+                      .map(([month, list]) => {
+                        const total = list.reduce((s, r) => s + r.prix_estime, 0);
+                        return (
+                          <div className="cf-month" key={month}>
+                            <div>
+                              <div className="cf-month-name">{monthLabel(year, month)}</div>
+                              <div className="cf-month-sub">
+                                {list.length} course{list.length > 1 ? "s" : ""} · {total.toFixed(2)} €
+                              </div>
+                            </div>
+                            <button
+                              className="cf-month-pdf"
+                              onClick={() => downloadMonth(month)}
+                              disabled={busy === `m-${month}`}
+                            >
+                              <Download size={12} /> PDF
+                            </button>
+                          </div>
+                        );
+                      })}
                   </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+                </>
+              )}
+            </div>
+          </div>
+        </main>
+        <ClientBottomNav />
       </div>
-
-      <ClientBottomNav />
-    </main>
+    </>
   );
 }
