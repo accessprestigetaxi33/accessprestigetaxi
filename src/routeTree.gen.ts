@@ -22,6 +22,7 @@ import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
 import { Route as ReservationRouteImport } from './routes/reservation'
+import { Route as ReserverRouteImport } from './routes/reserver'
 import { Route as SecuriteRouteImport } from './routes/securite'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -131,6 +132,11 @@ const QrGeneratorRoute = QrGeneratorRouteImport.update({
 const ReservationRoute = ReservationRouteImport.update({
   id: '/reservation',
   path: '/reservation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReserverRoute = ReserverRouteImport.update({
+  id: '/reserver',
+  path: '/reserver',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SecuriteRoute = SecuriteRouteImport.update({
@@ -380,6 +386,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
+  '/reserver': typeof ReserverRoute
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -440,6 +447,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
+  '/reserver': typeof ReserverRoute
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -501,6 +509,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
+  '/reserver': typeof ReserverRoute
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -563,6 +572,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/qr-generator'
     | '/reservation'
+    | '/reserver'
     | '/securite'
     | '/services'
     | '/sitemap.xml'
@@ -623,6 +633,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/qr-generator'
     | '/reservation'
+    | '/reserver'
     | '/securite'
     | '/services'
     | '/sitemap.xml'
@@ -683,6 +694,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/qr-generator'
     | '/reservation'
+    | '/reserver'
     | '/securite'
     | '/services'
     | '/sitemap.xml'
@@ -744,6 +756,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   QrGeneratorRoute: typeof QrGeneratorRoute
   ReservationRoute: typeof ReservationRouteWithChildren
+  ReserverRoute: typeof ReserverRoute
   SecuriteRoute: typeof SecuriteRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -879,6 +892,13 @@ declare module '@tanstack/react-router' {
       path: '/reservation'
       fullPath: '/reservation'
       preLoaderRoute: typeof ReservationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reserver': {
+      id: '/reserver'
+      path: '/reserver'
+      fullPath: '/reserver'
+      preLoaderRoute: typeof ReserverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/securite': {
@@ -1246,6 +1266,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   QrGeneratorRoute: QrGeneratorRoute,
   ReservationRoute: ReservationRouteWithChildren,
+  ReserverRoute: ReserverRoute,
   SecuriteRoute: SecuriteRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
