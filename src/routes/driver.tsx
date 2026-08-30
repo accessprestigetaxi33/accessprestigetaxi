@@ -714,7 +714,10 @@ function DriverApp({
     let cancelled = false;
     const load = async () => {
       try {
-        const res: any = await listCoursesFn({ data: { token: getDriverToken() } });
+        const tok = getDriverToken();
+        if (!tok) return;
+        const res: any = await listCoursesFn({ data: { token: tok } });
+
         if (cancelled) return;
         const list = (res?.courses ?? []) as Resa[];
         setDashboardCourses(list);
