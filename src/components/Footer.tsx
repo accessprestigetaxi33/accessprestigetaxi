@@ -25,7 +25,7 @@ import { useI18n, useT } from "@/i18n/I18nProvider";
 
 const PHONE = "0603444863";
 const PHONE_DISPLAY = "06 03 44 48 63";
-const EMAIL = "contact@accessprestigetaxi.fr";
+const EMAIL = "accessprestigetaxi@gmail.com";
 const WHATSAPP = `https://wa.me/33${PHONE.replace(/^0/, "")}`;
 
 // TODO: swap in the real social profile URLs once available.
@@ -38,10 +38,11 @@ const SOCIALS = [
 
 const COPY = {
   fr: {
-    tagline: "Votre service de taxi premium à Bordeaux et en Gironde. Confort, ponctualité et discrétion.",
+    tagline:
+      "Votre service de taxi premium en Charente-Maritime. Toutes distances, confort, ponctualité et discrétion.",
     highlights: [
       { Icon: Clock, text: "Service 7j/7 – 24h/24" },
-      { Icon: MapPin, text: "Bordeaux et toute la Gironde" },
+      { Icon: MapPin, text: "Charente-Maritime et au-delà, toutes distances" },
       { Icon: ShieldCheck, text: "Chauffeurs professionnels et véhicules haut de gamme" },
     ],
     navTitle: "Navigation",
@@ -67,8 +68,8 @@ const COPY = {
     contactTitle: "Contact",
     phoneNote: "Appel direct",
     emailNote: "Réponse rapide",
-    zone: "Bordeaux, Gironde",
-    country: "France",
+    zone: "Charente-Maritime",
+    country: "Toutes distances, France et Europe",
     whatsapp: "Nous écrire sur WhatsApp",
     features: [
       { Icon: Car, title: "Véhicules premium", subtitle: "Confort & électriques" },
@@ -84,10 +85,10 @@ const COPY = {
     ],
   },
   en: {
-    tagline: "Your premium taxi service in Bordeaux and the Gironde. Comfort, punctuality and discretion.",
+    tagline: "Your premium taxi service in Charente-Maritime. Any distance, comfort, punctuality and discretion.",
     highlights: [
       { Icon: Clock, text: "Available 7 days a week, 24/7" },
-      { Icon: MapPin, text: "Bordeaux and the whole Gironde" },
+      { Icon: MapPin, text: "Charente-Maritime and beyond, any distance" },
       { Icon: ShieldCheck, text: "Professional drivers and premium vehicles" },
     ],
     navTitle: "Navigation",
@@ -112,8 +113,8 @@ const COPY = {
     contactTitle: "Contact",
     phoneNote: "Call us directly",
     emailNote: "Quick reply",
-    zone: "Bordeaux, Gironde",
-    country: "France",
+    zone: "Charente-Maritime",
+    country: "Any distance, France and Europe",
     whatsapp: "Message us on WhatsApp",
     features: [
       { Icon: Car, title: "Premium vehicles", subtitle: "Comfort & electric" },
