@@ -1405,8 +1405,10 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
   const [open, setOpen] = useState(false);
 
   const refresh = useCallback(async () => {
+    const token = getDriverToken();
+    if (!token) return;
     try {
-      const res: any = await listPos({ data: { token: getDriverToken() ?? "" } });
+      const res: any = await listPos({ data: { token } });
       setRows((res?.positions ?? []).filter((p: any) => p.id === "alain" || p.id === "patricia"));
     } catch {}
   }, [listPos]);
