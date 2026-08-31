@@ -2575,7 +2575,13 @@ function CourseCard({
   // ── Terminer la course ──
   const [completing, setCompleting] = useState(false);
   const handleComplete = async () => {
-    if (!confirm("Marquer cette course comme terminée ?")) return;
+    const val = parseFloat((finalPrix || "").trim().replace(",", "."));
+    const hasVal = !!finalPrix && !isNaN(val) && val > 0;
+    if (!hasVal) {
+      if (!confirm("Aucun prix final saisi — terminer quand même la course sans tarif final ?")) return;
+    } else if (!confirm(`Marquer cette course comme terminée avec un tarif final de ${val.toFixed(2)} € ?`)) {
+      return;
+    }
     const actionKey = `${resa.id}:completed`;
     if (!claimAction(actionKey)) return;
     setCompleting(true);
@@ -2584,7 +2590,7 @@ function CourseCard({
         data: {
           token: getDriverToken(),
           reservation_id: resa.id,
-          patch: { status: "completed" },
+          patch: hasVal ? { status: "completed", prix_estime: val } : { status: "completed" },
           not_status: "completed",
         },
       });
@@ -2594,12 +2600,13 @@ function CourseCard({
         return;
       }
       broadcastSuiviUpdate(resa.id, "completed");
+      if (hasVal) broadcastSuiviUpdate(resa.id, "price");
       try {
         await notifyStatus({ data: { reservation_id: resa.id, status: "completed" } });
       } catch (pushErr) {
         console.warn("[driver] client completed push failed", pushErr);
       }
-      toast.success("🏁 Course terminée");
+      toast.success(hasVal ? `🏁 Course terminée — ${val.toFixed(2)} €` : "🏁 Course terminée");
       onRefresh();
     } catch (e: any) {
       toast.error("Erreur : " + (e.message ?? e));
@@ -2826,15 +2833,6 @@ function CourseCard({
                 )}
                 {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
                   <button
-                    onClick={() => setFinalPrixOpen((v) => !v)}
-                    disabled={completing}
-                    style={{ ...qb, background: "#fffbeb", border: "2px solid #d97706", color: "#92400e" }}
-                  >
-                    💶 Prix compteur
-                  </button>
-                )}
-                {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-                  <button
                     onClick={handleComplete}
                     disabled={completing}
                     style={{ ...qb, background: "#f0fdf4", border: "2px solid #16a34a", color: "#15803d" }}
@@ -2861,25 +2859,24 @@ function CourseCard({
             );
           })()}
 
-        {finalPrixOpen && (
+        {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
           <div
             style={{
               marginTop: 10,
               marginBottom: 4,
               padding: 12,
-              background: "#fffbeb",
-              border: "1px solid #fde68a",
+              background: "#03070d",
+              border: "2px solid #c99b4a",
               borderRadius: 12,
             }}
           >
-            <label style={{ fontSize: 12, fontWeight: 700, color: "#92400e", display: "block", marginBottom: 6 }}>
-              💶 Prix réel affiché au compteur
+            <label style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", display: "block", marginBottom: 6 }}>
+              💶 Prix final au compteur
             </label>
             <div style={{ display: "flex", gap: 8 }}>
               <input
                 type="text"
                 inputMode="decimal"
-                autoFocus
                 placeholder="Ex : 24,50"
                 value={finalPrix}
                 onChange={(e) => setFinalPrix(e.target.value)}
@@ -2890,10 +2887,11 @@ function CourseCard({
                   flex: 1,
                   padding: "10px 12px",
                   borderRadius: 10,
-                  border: "1px solid #fde68a",
+                  border: "1px solid rgba(201,155,74,.45)",
+                  background: "#0b1220",
                   fontSize: 16,
                   fontWeight: 600,
-                  color: "#0f172a",
+                  color: "#FDFBF7",
                   outline: "none",
                 }}
               />
@@ -2904,8 +2902,8 @@ function CourseCard({
                   padding: "10px 16px",
                   borderRadius: 10,
                   border: "none",
-                  background: "#d97706",
-                  color: "#fff",
+                  background: "#c99b4a",
+                  color: "#03070d",
                   fontWeight: 700,
                   fontSize: 13,
                   cursor: finalPrixSaving ? "not-allowed" : "pointer",
@@ -2915,9 +2913,28 @@ function CourseCard({
                 {finalPrixSaving ? "…" : "Valider"}
               </button>
             </div>
-            <div style={{ fontSize: 11, color: "#92400e", marginTop: 6 }}>
-              Met à jour le prix affiché au client sur sa page de suivi et sur la facture, en temps réel.
+            <div style={{ fontSize: 11, color: "#FDFBF799", marginTop: 6 }}>
+              Facultatif ici : enregistré tout de suite si vous cliquez « Valider », sinon repris automatiquement au
+              clic sur « ✓ Terminée ».
             </div>
+          </div>
+        )}
+
+        {(resa.status === "completed" || resa.status === "terminee") && resa.prix_estime != null && (
+          <div
+            style={{
+              marginTop: 10,
+              marginBottom: 4,
+              padding: 12,
+              background: "#03070d",
+              border: "2px solid #c99b4a",
+              borderRadius: 12,
+            }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
+              💶 Tarif final (compteur)
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>{resa.prix_estime.toFixed(2)} €</div>
           </div>
         )}
 
