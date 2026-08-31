@@ -29,14 +29,14 @@ export function SiteHeader() {
       aria-label={t("aria.header")}
       className="sticky top-0 z-40 bg-[#030a13]/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl border-b border-[#d6a83d]/25"
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-20 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-20 sm:gap-3 sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="min-w-0 shrink-0 leading-none"
+          className="min-w-0 flex-1 leading-none lg:flex-none lg:shrink-0"
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <img src={logoLockup} alt="Access Prestige Taxi" className="h-14 w-auto sm:h-11 lg:h-12" />
+          <img src={logoLockup} alt="Access Prestige Taxi" className="h-16 w-auto max-w-full sm:h-11 lg:h-12" />
         </Link>
 
         <nav aria-label={t("aria.nav_main")} className="hidden items-center gap-5 lg:flex xl:gap-7">
