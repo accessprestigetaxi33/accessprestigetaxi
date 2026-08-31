@@ -239,6 +239,9 @@ const T = {
     m_phone: "your phone",
     legal:
       "Estimate based on official taxi rates (pick-up charge + km, day 7am–7pm / night). Final amount depends on the actual route.",
+    disclaimer:
+      "* Indicative fare excluding traffic jams and accidents — the taxi meter is the only valid fare.",
+
     ok_title: "Booking confirmed",
     ok_sub: "Your driver has been notified. A confirmation email is on its way.",
     ok_ref: "Tracking reference",
