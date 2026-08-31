@@ -180,11 +180,14 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
   }
 
   const inputCls =
-    "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-primary";
-  const labelCls = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
+    "w-full rounded-xl border border-[#d6a83d]/45 bg-[#07101a] px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-primary";
+  const labelCls = "text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70";
 
   return (
-    <section id="tarifs" className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+    <section
+      id="tarifs"
+      className="rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-5 text-white sm:p-7"
+    >
       <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
       <h2 className="mt-2 flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl">
         <Calculator className="h-5 w-5 text-primary" /> {c.title}
