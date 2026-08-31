@@ -139,7 +139,7 @@ function ContactPage() {
     <main className="px-3 py-5 text-white sm:px-6">
       <Link
         to="/"
-        className="mb-3 inline-flex items-center gap-1.5 text-[12px] font-medium text-white/60 transition hover:text-[#e8bd5d]"
+        className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#d6a83d]/45 bg-[#07101a] px-3 py-1.5 text-[12px] font-semibold text-[#e8bd5d] transition hover:bg-[#111b26]"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         {c.back}
