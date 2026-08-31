@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   CarFront,
   Sparkles,
+  Car,
 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
@@ -57,6 +58,7 @@ const COPY = {
     empty: "Aucune adresse ne correspond à votre recherche.",
     more: "Voir plus d'adresses",
     read: "Lire l'article",
+    book: "Réserver",
     count: (n: number) => `${n} adresse${n > 1 ? "s" : ""}`,
     ctaTitle: "On vous y emmène",
     ctaText:
@@ -79,6 +81,7 @@ const COPY = {
     empty: "No place matches your search.",
     more: "Show more places",
     read: "Read the article",
+    book: "Book",
     count: (n: number) => `${n} place${n > 1 ? "s" : ""}`,
     ctaTitle: "We'll take you there",
     ctaText: "On-demand rides across Charente-Maritime in an electric BMW iX1, Audi Q6 e-tron or 8-seat Mercedes van.",
@@ -404,13 +407,23 @@ function BlogIndex() {
                       </div>
                     )}
 
-                    <Link
-                      to="/blog/$slug"
-                      params={{ slug: e.slug }}
-                      className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary"
-                    >
-                      {c.read} <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#e0b866]/15 pt-3">
+                      <Link
+                        to="/blog/$slug"
+                        params={{ slug: e.slug }}
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"
+                      >
+                        {c.read} <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <Link
+                        to="/reserver"
+                        search={{ to: `${e.name}, ${e.city}` }}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#e0b866] bg-[#e0b866] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-105"
+                      >
+                        <Car className="h-3.5 w-3.5" />
+                        {c.book}
+                      </Link>
+                    </div>
                   </div>
                 </article>
               );
