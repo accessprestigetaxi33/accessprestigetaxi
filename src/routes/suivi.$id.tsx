@@ -92,7 +92,7 @@ const PREMIUM_CSS = `
   .suivi-brand-mark { width:42px; height:42px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; font-size:19px; }
   .suivi-top-phone { font-size:12px; color:#f6f0e5; }
   .suivi-top-actions { display:flex; align-items:center; gap:9px; }
-  .suivi-outline { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:8px 12px; border:1px solid #c99b4a; border-radius:8px; background:transparent; color:#e0b866; text-decoration:none; font-size:11px; font-weight:800; cursor:pointer; }
+  .suivi-outline { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:36px; padding:8px 12px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size:11px; font-weight:800; cursor:pointer; }
   .suivi-titlebar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 14px; }
   .suivi-titlebar h1 { margin:0; text-align:center; flex:1; font-family:'Playfair Display',Georgia,serif; font-size:24px; letter-spacing:.02em; color:#f6f0e5; }
   .suivi-titlebar p { margin:3px 0 0; text-align:center; font-size:11px; color:rgba(246,240,229,.62); }
