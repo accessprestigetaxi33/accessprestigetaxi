@@ -312,7 +312,7 @@ const css = `
   .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
   .drv-header-title strong { color:#f6f0e5; font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; }
-  .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; text-decoration:none; font-size:11.5px; font-weight:700; white-space:nowrap; flex:0 0 auto; }
+  .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size:11.5px; font-weight:700; white-space:nowrap; flex:0 0 auto; }
   .drv-header-back svg { flex-shrink:0; }
   @media (max-width: 380px) {
     .drv-header-back span.drv-header-back-label { display:none; }
