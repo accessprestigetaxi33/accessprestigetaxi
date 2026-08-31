@@ -1236,9 +1236,10 @@ export function BookingStudio() {
                     variant="outline"
                     onClick={useMyPosition}
                     disabled={locating}
-                    className="shrink-0"
+                    className="shrink-0 bg-black text-white hover:bg-black/90 hover:text-white"
                     aria-label={L.mypos}
                   >
+
                     {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />}
                     <span className="ml-2 hidden sm:inline">{locating ? L.locating : L.mypos}</span>
                   </Button>
