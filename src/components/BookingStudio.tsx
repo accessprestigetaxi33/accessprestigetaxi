@@ -118,6 +118,9 @@ const T = {
     m_phone: "votre téléphone",
     legal:
       "Tarif estimé selon les tarifs préfectoraux (prise en charge + km, jour 07h–19h / nuit). Le montant final dépend de l'itinéraire réel.",
+    disclaimer:
+      "* Tarif indicatif hors bouchons et accidents — seul le compteur du taxi fait foi.",
+
     ok_title: "Réservation confirmée",
     ok_sub: "Votre chauffeur est prévenu. Vous recevez la confirmation par e-mail.",
     ok_ref: "Référence de suivi",
