@@ -552,11 +552,13 @@ a.btn {
 }
 
 /* ===========================
-   AUCUNE BORDURE SUR LE SITE (demande client)
-   Seuls les champs de formulaire gardent un contour pour rester utilisables.
+   BORDURES DORÉES SUR TOUT LE SITE (demande client)
+   Même or que les cases de la page d'accueil.
    =========================== */
-*:not(input):not(textarea):not(select) {
-  border-style: none !important;
+*,
+*::before,
+*::after {
+  border-color: var(--gold) !important;
 }
 input,
 textarea,
