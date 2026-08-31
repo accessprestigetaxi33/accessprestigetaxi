@@ -929,6 +929,14 @@ function Index() {
             </div>
           </div>
         </div>
+        <div className="mt-6 text-center">
+          <Link
+            to="/reserver"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border-2 border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+          >
+            {lang === "en" ? "BOOK" : "RÉSERVER"}
+          </Link>
+        </div>
       </section>
 
       {/* 3. NOS ENGAGEMENTS — 4 cartes avec contenu détaillé accessible */}
@@ -1047,6 +1055,14 @@ function Index() {
             })}
           </div>
         </div>
+        <div className="mt-8 text-center">
+          <Link
+            to="/reserver"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border-2 border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+          >
+            {lang === "en" ? "BOOK" : "RÉSERVER"}
+          </Link>
+        </div>
       </section>
 
       {/* 4. NOTRE FLOTTE — visible directement sur la homepage */}
@@ -1082,6 +1098,14 @@ function Index() {
               </Reveal>
             ))}
           </div>
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            to="/reserver"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border-2 border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+          >
+            {lang === "en" ? "BOOK" : "RÉSERVER"}
+          </Link>
         </div>
       </section>
 
@@ -1161,6 +1185,14 @@ function Index() {
             ))}
           </div>
         </div>
+        <div className="mt-8 text-center">
+          <Link
+            to="/reserver"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border-2 border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+          >
+            {lang === "en" ? "BOOK" : "RÉSERVER"}
+          </Link>
+        </div>
       </section>
 
       {/* 6. BANDEAU FINAL — 4 valeurs de la maquette */}
@@ -1180,6 +1212,14 @@ function Index() {
               <span className="text-[10px] font-semibold uppercase leading-tight text-white sm:text-xs">{label}</span>
             </div>
           ))}
+        </div>
+        <div className="mt-6 text-center">
+          <Link
+            to="/reserver"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border-2 border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+          >
+            {lang === "en" ? "BOOK" : "RÉSERVER"}
+          </Link>
         </div>
       </section>
 
@@ -1235,6 +1275,14 @@ function Index() {
               );
             })}
           </div>
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            to="/reserver"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full btn-gold border-2 border-[#e0b866] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02]"
+          >
+            {lang === "en" ? "BOOK" : "RÉSERVER"}
+          </Link>
         </div>
       </section>
     </main>
