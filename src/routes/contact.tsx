@@ -197,11 +197,11 @@ function ContactPage() {
         </section>
         <a
           href="#contact-form"
-          className="mt-3 flex min-h-11 items-center justify-center rounded-lg border border-[#d6a83d]/45 bg-[#07101a] text-[11px] font-extrabold text-[#e8bd5d]"
+          className="mt-3 flex min-h-11 items-center justify-center rounded-lg border border-[#d6a83d]/45 bg-black text-[11px] font-extrabold text-white"
         >
           ÉCRIRE UN MESSAGE
         </a>
-        <div id="contact-form" className="mt-4 rounded-xl border border-[#d6a83d]/45 p-2">
+        <div id="contact-form" className="mt-4 rounded-xl border border-[#d6a83d]/45 bg-black p-2 text-white">
           <ContactForm />
         </div>
       </section>
