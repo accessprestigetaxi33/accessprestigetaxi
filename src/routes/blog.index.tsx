@@ -322,35 +322,6 @@ function BlogIndex() {
         </div>
       </section>
 
-      {/* NAVIGATION PAR VILLE ET VILLAGE */}
-      <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4">
-          <span className="h-px flex-1 bg-[#e0b866]/30" />
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#e0b866]">{c.filterCity}</h2>
-          <span className="h-px flex-1 bg-[#e0b866]/30" />
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {GUIDE_CITY_STATS.map((s) => (
-            <button
-              key={s.city}
-              type="button"
-              aria-pressed={city === s.city}
-              onClick={() => onFilterChange(setCity)(city === s.city ? "all" : s.city)}
-              className={[
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-                city === s.city
-                  ? "border-[#e0b866] bg-[#e0b866] text-black"
-                  : "border-[#e0b866]/20 bg-[#080b0d] text-white/75 hover:border-[#e0b866]/60",
-              ].join(" ")}
-            >
-              <MapPin className="h-3 w-3 shrink-0" />
-              {s.city}
-              <span className={city === s.city ? "opacity-80" : "text-white/55"}>{s.count}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
       {/* GRILLE */}
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
         {visible.length === 0 ? (
