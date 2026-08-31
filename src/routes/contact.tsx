@@ -201,10 +201,7 @@ function ContactPage() {
         >
           ÉCRIRE UN MESSAGE
         </a>
-        <div
-          id="contact-form"
-          className="mt-4 rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-2 text-white"
-        >
+        <div id="contact-form" className="mt-4">
           <ContactForm />
         </div>
       </section>
