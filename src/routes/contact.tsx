@@ -1,7 +1,7 @@
 import { socialImageMeta } from "@/lib/og";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Phone, Mail, MapPin, MessageCircle, HeartPulse } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MapPin, MessageCircle, HeartPulse } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { ContactForm } from "@/components/ContactForm";
@@ -52,6 +52,7 @@ export const Route = createFileRoute("/contact")({
 
 const COPY = {
   fr: {
+    back: "Retour au site",
     whatsappTitle: "WhatsApp",
     whatsappHeadline: "Discutons sur WhatsApp",
     whatsappSub: "Messagerie instantanée",
@@ -65,6 +66,7 @@ const COPY = {
     badge: "20 ans d'expérience",
   },
   en: {
+    back: "Back to website",
     whatsappTitle: "WhatsApp",
     whatsappHeadline: "Chat with us on WhatsApp",
     whatsappSub: "Instant messaging",
@@ -135,6 +137,13 @@ function ContactPage() {
   ];
   return (
     <main className="px-3 py-5 text-white sm:px-6">
+      <Link
+        to="/"
+        className="mb-3 inline-flex items-center gap-1.5 text-[12px] font-medium text-white/60 transition hover:text-[#e8bd5d]"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        {c.back}
+      </Link>
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] p-4 shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="pt-3 text-center">
           <span className="inline-block rounded-full border border-[#d6a83d]/45 px-3 py-1 text-[10px] font-bold tracking-wider text-[#e8bd5d]">
