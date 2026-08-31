@@ -1,7 +1,7 @@
 import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Accessibility, Clock3, Mail, Phone, Users, Zap } from "lucide-react";
+import { Accessibility, ArrowLeft, Clock3, Mail, Phone, Users, Zap } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { useRef, useState } from "react";
@@ -70,6 +70,7 @@ export const Route = createFileRoute("/devis")({
 
 const COPY = {
   fr: {
+    back: "Retour au site",
     eyebrow: "Devis gratuit",
     h1: "Demander un devis",
     lead: "Décrivez votre trajet en une minute : nous vous répondons avec un prix ferme, adapté à votre véhicule et à vos besoins (transport sanitaire conventionné, transport de groupe, longue distance).",
@@ -88,6 +89,7 @@ const COPY = {
     bookNow: "Besoin d'un trajet immédiat ? Réservez en ligne",
   },
   en: {
+    back: "Back to website",
     eyebrow: "Free quote",
     h1: "Request a quote",
     lead: "Describe your journey in a minute: we reply with a firm price matched to your vehicle and your needs (covered medical transport, group transport, long distance).",
@@ -116,6 +118,13 @@ function DevisPage() {
 
   return (
     <main className="px-3 py-5 text-white sm:px-6">
+      <Link
+        to="/"
+        className="mb-3 inline-flex items-center gap-1.5 text-[12px] font-medium text-white/60 transition hover:text-[#e8bd5d]"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        {c.back}
+      </Link>
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="px-6 py-5">
           <div className="text-center">
