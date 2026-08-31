@@ -969,7 +969,7 @@ function Index() {
               {
                 image: trackingPhone,
                 icon: Bell,
-                title: lang === "en" ? "Tracking & client area" : "Suivi & espace client",
+                title: lang === "en" ? "Client area & tracking" : "Espace client & suivi",
                 text:
                   lang === "en"
                     ? "Follow your booking in real time and receive updates at every key step."
