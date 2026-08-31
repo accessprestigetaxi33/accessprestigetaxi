@@ -1,8 +1,8 @@
 import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Award, MapPin, Clock, Heart } from "lucide-react";
-import { useT } from "@/i18n/I18nProvider";
+import { ArrowLeft, Award, MapPin, Clock, Heart } from "lucide-react";
+import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
 const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
@@ -46,6 +46,8 @@ export const Route = createFileRoute("/a-propos")({
 
 function AboutPage() {
   const t = useT();
+  const { lang } = useI18n();
+  const backLabel = lang === "en" ? "Back to website" : "Retour au site";
   const commitments = [
     { icon: Award, title: t("about.b1.t"), desc: t("about.b1.d") },
     { icon: Clock, title: t("about.b2.t"), desc: t("about.b2.d") },
@@ -54,6 +56,13 @@ function AboutPage() {
   ];
   return (
     <main className="px-3 py-5 text-white sm:px-6">
+      <Link
+        to="/"
+        className="mb-3 inline-flex items-center gap-1.5 text-[12px] font-medium text-white/60 transition hover:text-[#e8bd5d]"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        {backLabel}
+      </Link>
       <section className="overflow-hidden rounded-[30px] bg-[#030a13] shadow-[0_0_40px_rgba(214,168,61,.08)]">
         <div className="px-6 py-5">
           <div className="text-center">
