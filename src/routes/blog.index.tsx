@@ -4,6 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import React, { useMemo, useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   MapPin,
   Search,
@@ -41,6 +42,7 @@ const CAT_ICON: Record<GuideCategory, typeof UtensilsCrossed> = {
 
 const COPY = {
   fr: {
+    back: "Retour au site",
     eyebrow: "Le guide Access Prestige Taxi",
     title: "Charente-Maritime : où manger, dormir, marcher et s'émerveiller",
     lead: "Restaurants de caractère, hôtels étoilés, randonnées côtières et sites chargés d'histoire — sélectionnés par nos deux chauffeurs, et desservis en BMW iX1 100 % électrique.",
@@ -62,6 +64,7 @@ const COPY = {
     ctaBtn: "Réserver ma course",
   },
   en: {
+    back: "Back to website",
     eyebrow: "The Access Prestige Taxi guide",
     title: "Charente-Maritime: where to eat, sleep, walk and wonder",
     lead: "Characterful restaurants, star-rated hotels, coastal hikes and history-rich sites — picked by our two drivers and served in a fully electric BMW iX1.",
@@ -192,6 +195,13 @@ function BlogIndex() {
         />
         <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1.05fr_.95fr] lg:gap-12 lg:px-8 lg:py-16">
           <div>
+            <Link
+              to="/"
+              className="mb-4 inline-flex items-center gap-1.5 text-[12px] font-medium text-white/60 transition hover:text-[#e0b866]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {c.back}
+            </Link>
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#e0b866] sm:text-[11px]">
               {c.eyebrow}
             </p>
