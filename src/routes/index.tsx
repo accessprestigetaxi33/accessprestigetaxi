@@ -835,7 +835,7 @@ function Index() {
             <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-4xl md:text-5xl lg:text-6xl">
               {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
-            <p className="mt-3 max-w-3xl text-sm font-bold text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-base md:text-lg">
+            <p className="mt-3 max-w-3xl text-sm font-extrabold text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-base md:text-lg">
               {lang === "en"
                 ? "Private transfers · Covered medical transport · Chauffeur service"
                 : "Transferts privés · Transport médical conventionné · Mise à disposition"}
@@ -845,7 +845,7 @@ function Index() {
           {/* Boutons RÉSERVER + DEVIS dans le hero */}
           <div className="absolute left-1/2 top-[65%] z-20 w-[min(380px,88vw)] -translate-x-1/2 sm:top-[70%]">
             <div className="flex gap-2">
-              <div className="relative flex-1">
+              <div className="relative min-w-0 flex-1">
                 <button
                   type="button"
                   onClick={() => setHeroMenuOpen((open) => !open)}
@@ -895,7 +895,7 @@ function Index() {
 
               <Link
                 to="/devis"
-                className="btn-gold flex min-h-[48px] flex-1 items-center justify-center rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
+                className="btn-gold !box-border flex min-h-[48px] !w-auto !min-w-0 !max-w-none flex-1 items-center justify-center rounded-xl border-2 border-[#e0b866] !px-4 !py-0 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
               >
                 {lang === "en" ? "QUOTE" : "DEVIS"}
               </Link>
