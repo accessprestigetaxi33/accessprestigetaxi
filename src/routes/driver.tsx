@@ -312,7 +312,12 @@ const css = `
   .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
   .drv-header-title strong { color:#f6f0e5; font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; }
-  .drv-header-menu { width:38px; height:38px; display:grid; place-items:center; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; text-decoration:none; font-size:20px; flex:0 0 38px; }
+  .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; text-decoration:none; font-size:11.5px; font-weight:700; white-space:nowrap; flex:0 0 auto; }
+  .drv-header-back svg { flex-shrink:0; }
+  @media (max-width: 380px) {
+    .drv-header-back span.drv-header-back-label { display:none; }
+    .drv-header-back { width:34px; height:34px; padding:0; justify-content:center; }
+  }
   .drv-overview { padding:14px 14px 4px; background:#03070d; }
   .drv-overview-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
   .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size:9px; letter-spacing:.12em; font-weight:800; }
@@ -876,8 +881,22 @@ function DriverApp({
             busy={identifyBusy}
             error={identifyError}
           />
-          <Link className="drv-header-menu" to="/" aria-label="Retour au site">
-            ☰
+          <Link className="drv-header-back" to="/" aria-label="Retour au site">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 12H5" />
+              <path d="M12 19l-7-7 7-7" />
+            </svg>
+            <span className="drv-header-back-label">Retour au site</span>
           </Link>
         </div>
 
