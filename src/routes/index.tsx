@@ -842,53 +842,64 @@ function Index() {
             </p>
           </div>
 
-          {/* Un seul bouton RÉSERVER dans le hero */}
-          <div className="absolute left-1/2 top-[65%] z-20 w-[min(300px,78vw)] -translate-x-1/2 sm:top-[70%]">
-            <button
-              type="button"
-              onClick={() => setHeroMenuOpen((open) => !open)}
-              aria-expanded={heroMenuOpen}
-              className="btn-gold flex min-h-[48px] w-full items-center justify-center gap-3 rounded-xl border-2 border-[#e0b866] px-6 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
-            >
-              {lang === "en" ? "BOOK" : "RÉSERVER"}
-              <ChevronDown
-                className={`h-4 w-4 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
-                aria-hidden="true"
-              />
-            </button>
-
-            <AnimatePresence initial={false}>
-              {heroMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="mt-1 overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+          {/* Boutons RÉSERVER + DEVIS dans le hero */}
+          <div className="absolute left-1/2 top-[65%] z-20 w-[min(380px,88vw)] -translate-x-1/2 sm:top-[70%]">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <button
+                  type="button"
+                  onClick={() => setHeroMenuOpen((open) => !open)}
+                  aria-expanded={heroMenuOpen}
+                  className="btn-gold flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
                 >
-                  <Link
-                    to="/reserver"
-                    onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
-                  >
-                    {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
-                  </Link>
-                  <a
-                    href="tel:0603444863"
-                    onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
-                  >
-                    APPELER ALAIN – 06 03 44 48 63
-                  </a>
-                  <a
-                    href="tel:0650260015"
-                    onClick={() => setHeroMenuOpen(false)}
-                    className="flex min-h-[50px] items-center justify-center px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
-                  >
-                    APPELER PATRICIA – 06 50 26 00 15
-                  </a>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {lang === "en" ? "BOOK" : "RÉSERVER"}
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {heroMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="absolute inset-x-0 mt-1 overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+                    >
+                      <Link
+                        to="/reserver"
+                        onClick={() => setHeroMenuOpen(false)}
+                        className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                      >
+                        {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
+                      </Link>
+                      <a
+                        href="tel:0603444863"
+                        onClick={() => setHeroMenuOpen(false)}
+                        className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                      >
+                        APPELER ALAIN – 06 03 44 48 63
+                      </a>
+                      <a
+                        href="tel:0650260015"
+                        onClick={() => setHeroMenuOpen(false)}
+                        className="flex min-h-[50px] items-center justify-center px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                      >
+                        APPELER PATRICIA – 06 50 26 00 15
+                      </a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <Link
+                to="/devis"
+                className="flex min-h-[48px] flex-1 items-center justify-center rounded-xl border-2 border-[#e0b866] bg-black/40 px-4 text-xs font-semibold uppercase tracking-wider text-[#e0b866] shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:scale-[1.02] hover:bg-[#e0b866] hover:text-black sm:text-sm"
+              >
+                {lang === "en" ? "QUOTE" : "DEVIS"}
+              </Link>
+            </div>
           </div>
         </div>
       </section>
