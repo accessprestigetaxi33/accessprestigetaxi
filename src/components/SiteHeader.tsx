@@ -36,7 +36,7 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <img src={logoLockup} alt="Access Prestige Taxi" className="h-9 w-auto sm:h-11 lg:h-12" />
+          <img src={logoLockup} alt="Access Prestige Taxi" className="h-14 w-auto sm:h-11 lg:h-12" />
         </Link>
 
         <nav aria-label={t("aria.nav_main")} className="hidden items-center gap-5 lg:flex xl:gap-7">
