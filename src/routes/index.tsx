@@ -843,7 +843,7 @@ function Index() {
           </div>
 
           {/* Un seul bouton RÉSERVER dans le hero */}
-          <div className="absolute left-1/2 top-[63%] z-20 w-[min(300px,78vw)] -translate-x-1/2 sm:top-[68%]">
+          <div className="absolute left-1/2 top-[74%] z-20 w-[min(300px,78vw)] -translate-x-1/2 sm:top-[78%]">
             <button
               type="button"
               onClick={() => setHeroMenuOpen((open) => !open)}
