@@ -263,7 +263,7 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
         </Field>
       </div>
 
-      <fieldset className="mt-6 rounded-xl border border-border p-4">
+      <fieldset className="mt-6 rounded-xl border border-[#d6a83d]/45 p-4">
         <legend className="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
           {c.sanitaireTitle}
         </legend>
@@ -271,7 +271,7 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
         {sanitaire && <Check2 name="fauteuil" label={c.fauteuil} />}
       </fieldset>
 
-      <fieldset className="mt-4 rounded-xl border border-border p-4">
+      <fieldset className="mt-4 rounded-xl border border-[#d6a83d]/45 p-4">
         <legend className="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
           {c.groupeTitle}
         </legend>
@@ -317,7 +317,7 @@ function Field({
 }) {
   return (
     <label className={className?.includes("col-span") ? "block sm:col-span-2" : "block"}>
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">{label}</span>
       <div className="mt-1.5">{children}</div>
     </label>
   );
