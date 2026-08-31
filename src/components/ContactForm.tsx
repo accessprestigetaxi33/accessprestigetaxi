@@ -11,8 +11,7 @@ const COPY = {
     tel: "Téléphone (facultatif)",
     sujet: "Sujet (facultatif)",
     message: "Votre message",
-    placeholder:
-      "Trajet souhaité, date, nombre de passagers, transport sanitaire conventionné, longue distance…",
+    placeholder: "Trajet souhaité, date, nombre de passagers, transport sanitaire conventionné, longue distance…",
     send: "Envoyer le message",
     sending: "Envoi…",
     ok: "Message envoyé ! Nous vous répondons très vite.",
@@ -65,21 +64,24 @@ export function ContactForm() {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-primary";
+    "w-full rounded-xl border border-[#d6a83d]/30 bg-[#07101a] px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-[#e8bd5d]";
 
   if (state === "ok") {
     return (
-      <div className="rounded-2xl border border-primary/40 bg-card p-8 text-center">
-        <CheckCircle2 className="mx-auto h-9 w-9 text-primary" />
-        <p className="mt-3 font-display text-lg font-semibold">{c.ok}</p>
+      <div className="rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-8 text-center">
+        <CheckCircle2 className="mx-auto h-9 w-9 text-[#e8bd5d]" />
+        <p className="mt-3 font-display text-lg font-semibold text-white">{c.ok}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-5 sm:p-7">
-      <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.title}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{c.sub}</p>
+    <form
+      onSubmit={onSubmit}
+      className="rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-5 sm:p-7"
+    >
+      <h2 className="font-display text-xl font-semibold text-[#e8bd5d] sm:text-2xl">{c.title}</h2>
+      <p className="mt-1 text-sm text-white/60">{c.sub}</p>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <input name="nom" required minLength={2} maxLength={100} placeholder={c.nom} className={inputCls} />
@@ -99,12 +101,12 @@ export function ContactForm() {
         aria-label={c.message}
       />
 
-      {state === "error" && <p className="mt-3 text-sm font-medium text-destructive">{c.err}</p>}
+      {state === "error" && <p className="mt-3 text-sm font-medium text-red-400">{c.err}</p>}
 
       <button
         type="submit"
         disabled={state === "sending"}
-        className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold uppercase tracking-wider text-primary-foreground transition hover:opacity-90 disabled:opacity-60 sm:w-auto"
+        className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-[#e0b866] px-6 text-sm font-semibold uppercase tracking-wider text-black transition hover:brightness-105 disabled:opacity-60 sm:w-auto"
       >
         {state === "sending" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         {state === "sending" ? c.sending : c.send}
