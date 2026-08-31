@@ -96,15 +96,14 @@
 
 @layer base {
   * {
-    border-color: transparent;
+    border-color: var(--gold);
   }
 
-  /* Aucune bordure visible sur le site — on garde uniquement un léger
-     contour sur les champs de formulaire pour rester utilisable. */
+  /* Bordures dorées sur tout le site, y compris les champs de formulaire. */
   input,
   select,
   textarea {
-    border-color: color-mix(in oklab, var(--color-border) 70%, transparent);
+    border-color: var(--gold);
   }
   body {
     background-color: var(--color-background);
