@@ -174,17 +174,17 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
   }
 
   const inputCls =
-    "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-primary";
-  const labelCls = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
+    "w-full rounded-xl border border-[#d6a83d]/45 bg-[#07101a] px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-primary";
+  const labelCls = "text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70";
 
   if (state === "ok") {
     return (
-      <div className="rounded-2xl border border-primary/40 bg-card p-8 text-center">
+      <div className="rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-8 text-center text-white">
         <CheckCircle2 className="mx-auto h-9 w-9 text-primary" />
         <p className="mt-3 font-display text-lg font-semibold">{c.ok}</p>
         {reference && (
           <>
-            <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{c.refLabel}</p>
+            <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/70">{c.refLabel}</p>
             <p className="mt-1 font-display text-2xl font-semibold tracking-[0.12em] text-primary">{reference}</p>
             <Link
               to="/devis/suivi"
@@ -201,9 +201,14 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
 
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-5 sm:p-7">
-      <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.title}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{c.sub}</p>
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      className="rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-5 text-white sm:p-7"
+    >
+      <h2 className="font-display text-xl font-semibold text-[#f4efe5] sm:text-2xl">{c.title}</h2>
+      <p className="mt-1 text-sm text-white/70">{c.sub}</p>
+
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <Field label={c.nom} className={labelCls}>
@@ -258,7 +263,7 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
         </Field>
       </div>
 
-      <fieldset className="mt-6 rounded-xl border border-border p-4">
+      <fieldset className="mt-6 rounded-xl border border-[#d6a83d]/45 p-4">
         <legend className="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
           {c.sanitaireTitle}
         </legend>
@@ -266,7 +271,7 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
         {sanitaire && <Check2 name="fauteuil" label={c.fauteuil} />}
       </fieldset>
 
-      <fieldset className="mt-4 rounded-xl border border-border p-4">
+      <fieldset className="mt-4 rounded-xl border border-[#d6a83d]/45 p-4">
         <legend className="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
           {c.groupeTitle}
         </legend>
@@ -312,7 +317,7 @@ function Field({
 }) {
   return (
     <label className={className?.includes("col-span") ? "block sm:col-span-2" : "block"}>
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">{label}</span>
       <div className="mt-1.5">{children}</div>
     </label>
   );

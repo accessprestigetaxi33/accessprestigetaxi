@@ -180,16 +180,19 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
   }
 
   const inputCls =
-    "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-primary";
-  const labelCls = "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground";
+    "w-full rounded-xl border border-[#d6a83d]/45 bg-[#07101a] px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-primary";
+  const labelCls = "text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70";
 
   return (
-    <section id="tarifs" className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+    <section
+      id="tarifs"
+      className="rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-5 text-white sm:p-7"
+    >
       <p className="text-[11px] uppercase tracking-[0.3em] text-primary">{c.eyebrow}</p>
       <h2 className="mt-2 flex items-center gap-2 font-display text-xl font-semibold sm:text-2xl">
         <Calculator className="h-5 w-5 text-primary" /> {c.title}
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.lead}</p>
+      <p className="mt-2 text-sm leading-relaxed text-white/70">{c.lead}</p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <label className="block">
@@ -279,25 +282,25 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
       {error && <p className="mt-3 text-sm font-medium text-destructive">{error}</p>}
 
       {detail && state === "done" && (
-        <div ref={resultRef} className="mt-6 rounded-2xl border border-primary/40 bg-background p-5">
+        <div ref={resultRef} className="mt-6 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-5 text-white">
           <p className={labelCls}>{c.result}</p>
           <p className="mt-1 font-display text-3xl font-semibold text-primary">{formatEUR(detail.total, lang)}</p>
-          <dl className="mt-4 grid gap-2 text-sm text-muted-foreground sm:grid-cols-3">
+          <dl className="mt-4 grid gap-2 text-sm text-white/70 sm:grid-cols-3">
             <div>
               <dt className="text-xs uppercase tracking-wider">{c.distance}</dt>
-              <dd className="text-foreground">{detail.distanceKm.toFixed(1)} km</dd>
+              <dd className="text-white">{detail.distanceKm.toFixed(1)} km</dd>
             </div>
             <div>
               <dt className="text-xs uppercase tracking-wider">{c.duration}</dt>
-              <dd className="text-foreground">{detail.dureeMin} min</dd>
+              <dd className="text-white">{detail.dureeMin} min</dd>
             </div>
             <div>
               <dt className="text-xs uppercase tracking-wider">Tarif</dt>
-              <dd className="text-foreground">{c.regime[detail.regime]}</dd>
+              <dd className="text-white">{c.regime[detail.regime]}</dd>
             </div>
           </dl>
           {allerRetour && <p className="mt-3 text-xs text-primary">{c.round}</p>}
-          <p className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
+          <p className="mt-3 flex items-start gap-2 text-xs text-white/70">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {c.disclaimer}
           </p>
           {onQuote && (

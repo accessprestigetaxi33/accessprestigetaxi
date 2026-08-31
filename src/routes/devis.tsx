@@ -143,7 +143,7 @@ function DevisPage() {
           {/* Estimation rapide */}
           <section className="mt-6">
             <p className="text-center text-[13px] font-bold uppercase tracking-[0.2em] text-[#e8bd5d]">{c.estimTag}</p>
-            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-3">
+            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3">
               <h2 className="font-display text-[19px] text-[#f4efe5]">{c.estimTitle}</h2>
               <div className="mt-3">
                 <QuoteEstimator
@@ -172,7 +172,7 @@ function DevisPage() {
           {/* Formulaire de devis */}
           <section className="mt-6">
             <p className="text-[13px] font-bold uppercase tracking-[0.2em] text-[#e8bd5d]">{c.formTag}</p>
-            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[#07101a] p-3">
+            <div className="mt-3 rounded-2xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3">
               <h2 className="font-display text-[19px] text-[#f4efe5]">{c.formTitle}</h2>
               <div className="mt-3">
                 <QuoteForm prefill={prefill} formRef={formRef} />
