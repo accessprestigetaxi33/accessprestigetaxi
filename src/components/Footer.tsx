@@ -46,14 +46,13 @@ const COPY = {
       { Icon: ShieldCheck, text: "Chauffeurs professionnels et véhicules haut de gamme" },
     ],
     navTitle: "Navigation",
-    // NB : vérifier les chemins de route "/notre-flotte" et "/avis-clients", absents des fichiers fournis.
     nav: [
       { to: "/", label: "Accueil" },
       { to: "/reserver", label: "Réserver une course" },
       { to: "/services", label: "Nos services" },
-      { to: "/notre-flotte", label: "Notre flotte" },
+      { to: "/services", label: "Notre flotte" },
       { to: "/a-propos", label: "À propos" },
-      { to: "/avis-clients", label: "Avis clients" },
+      { to: "/avis", label: "Avis clients" },
       { to: "/contact", label: "Contact" },
     ],
     servicesTitle: "Nos services",
@@ -81,7 +80,6 @@ const COPY = {
     legal: [
       { to: "/mentions-legales", label: "Mentions légales" },
       { to: "/confidentialite", label: "Politique de confidentialité" },
-      { to: "/cgv", label: "CGV" }, // TODO : créer la route /cgv si elle n'existe pas encore
     ],
   },
   en: {
@@ -96,9 +94,9 @@ const COPY = {
       { to: "/", label: "Home" },
       { to: "/reserver", label: "Book a ride" },
       { to: "/services", label: "Our services" },
-      { to: "/notre-flotte", label: "Our fleet" },
+      { to: "/services", label: "Our fleet" },
       { to: "/a-propos", label: "About" },
-      { to: "/avis-clients", label: "Reviews" },
+      { to: "/avis", label: "Reviews" },
       { to: "/contact", label: "Contact" },
     ],
     servicesTitle: "Our services",
@@ -126,7 +124,6 @@ const COPY = {
     legal: [
       { to: "/mentions-legales", label: "Legal notice" },
       { to: "/confidentialite", label: "Privacy policy" },
-      { to: "/cgv", label: "Terms & conditions" },
     ],
   },
 } as const;
