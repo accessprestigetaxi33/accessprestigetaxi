@@ -1079,7 +1079,9 @@ export function BookingStudio() {
           )}
 
           <p className="text-[11px] leading-relaxed text-white/60">{L.legal}</p>
+          <p className="text-[11px] leading-relaxed text-red-400">{L.disclaimer}</p>
         </div>
+
       )}
 
       <Button
