@@ -118,6 +118,9 @@ const T = {
     m_phone: "votre téléphone",
     legal:
       "Tarif estimé selon les tarifs préfectoraux (prise en charge + km, jour 07h–19h / nuit). Le montant final dépend de l'itinéraire réel.",
+    disclaimer:
+      "* Tarif indicatif hors bouchons et accidents — seul le compteur du taxi fait foi.",
+
     ok_title: "Réservation confirmée",
     ok_sub: "Votre chauffeur est prévenu. Vous recevez la confirmation par e-mail.",
     ok_ref: "Référence de suivi",
@@ -236,6 +239,9 @@ const T = {
     m_phone: "your phone",
     legal:
       "Estimate based on official taxi rates (pick-up charge + km, day 7am–7pm / night). Final amount depends on the actual route.",
+    disclaimer:
+      "* Indicative fare excluding traffic jams and accidents — the taxi meter is the only valid fare.",
+
     ok_title: "Booking confirmed",
     ok_sub: "Your driver has been notified. A confirmation email is on its way.",
     ok_ref: "Tracking reference",
@@ -1073,7 +1079,9 @@ export function BookingStudio() {
           )}
 
           <p className="text-[11px] leading-relaxed text-white/60">{L.legal}</p>
+          <p className="text-[11px] leading-relaxed text-red-400">{L.disclaimer}</p>
         </div>
+
       )}
 
       <Button
@@ -1228,9 +1236,10 @@ export function BookingStudio() {
                     variant="outline"
                     onClick={useMyPosition}
                     disabled={locating}
-                    className="shrink-0"
+                    className="shrink-0 bg-black text-white hover:bg-black/90 hover:text-white"
                     aria-label={L.mypos}
                   >
+
                     {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />}
                     <span className="ml-2 hidden sm:inline">{locating ? L.locating : L.mypos}</span>
                   </Button>
