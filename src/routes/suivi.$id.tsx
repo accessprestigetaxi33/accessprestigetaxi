@@ -2327,11 +2327,15 @@ function SuiviPage() {
                     </div>
                   </div>
                 ))}
+                {!isCompleted && !isCancelled && (
+                  <TrackingPushOptIn reservationId={reservation.id} locale={locale} />
+                )}
                 {!isCompleted && (
                   <Link to="/client/dashboard" className="suivi-dark-btn" style={{ marginTop: 8 }}>
                     {locale === "en" ? "View client area" : "Voir mon espace client"} →
                   </Link>
                 )}
+
               </section>
               <section className="suivi-card suivi-help">
                 <h2 className="suivi-section-title">{locale === "en" ? "Need help?" : "Besoin d'aide ?"}</h2>
