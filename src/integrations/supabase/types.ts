@@ -1131,9 +1131,11 @@ export type Database = {
           duree_recomputed_at: string | null
           duree_s: number | null
           email: string | null
+          final_price: number | null
           gps_validated_at: string | null
           heure_course: string | null
           id: string
+          invoice_sent_at: string | null
           lang: string | null
           message: string | null
           nb_passagers: number | null
@@ -1174,9 +1176,11 @@ export type Database = {
           duree_recomputed_at?: string | null
           duree_s?: number | null
           email?: string | null
+          final_price?: number | null
           gps_validated_at?: string | null
           heure_course?: string | null
           id?: string
+          invoice_sent_at?: string | null
           lang?: string | null
           message?: string | null
           nb_passagers?: number | null
@@ -1217,9 +1221,11 @@ export type Database = {
           duree_recomputed_at?: string | null
           duree_s?: number | null
           email?: string | null
+          final_price?: number | null
           gps_validated_at?: string | null
           heure_course?: string | null
           id?: string
+          invoice_sent_at?: string | null
           lang?: string | null
           message?: string | null
           nb_passagers?: number | null
@@ -1448,9 +1454,11 @@ export type Database = {
           duree_recomputed_at: string | null
           duree_s: number | null
           email: string | null
+          final_price: number | null
           gps_validated_at: string | null
           heure_course: string | null
           id: string
+          invoice_sent_at: string | null
           lang: string | null
           message: string | null
           nb_passagers: number | null
