@@ -199,7 +199,8 @@ function RootComponent() {
   // Firebase (SDK + Service Worker FCM) et le contrôleur PWA ne servent qu'aux
   // notifications push de l'espace chauffeur / client. Les monter sur le site
   // public (homepage, pages contenu) ralentit le premier chargement pour rien.
-  const needsPush = pathname.startsWith("/driver") || pathname.startsWith("/client");
+  const needsPush =
+    pathname.startsWith("/driver") || pathname.startsWith("/client") || pathname.startsWith("/suivi");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -219,12 +220,10 @@ function RootComponent() {
           </div>
         )}
         <Toaster />
-        {needsPush && (
-          <>
-            <FirebaseInitializer />
-            <PwaController />
-          </>
-        )}
+        {needsPush && <FirebaseInitializer />}
+        {/* PwaController : service worker + envoi différé des avis hors-ligne.
+            Doit tourner sur TOUT le site (y compris pages publiques /avis). */}
+        <PwaController />
         <AnalyticsTracker />
       </I18nProvider>
     </QueryClientProvider>
