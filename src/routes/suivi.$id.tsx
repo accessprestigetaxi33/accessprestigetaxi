@@ -20,6 +20,9 @@ import {
   CalendarPlus,
   Share2,
   WifiOff,
+  Bell,
+  BellRing,
+  BellOff,
 } from "lucide-react";
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { getReservationForFinPublic } from "@/lib/reservation.functions";
@@ -35,6 +38,69 @@ import {
 } from "@/lib/chat.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+
+
+/** Opt-in notifications push pour un client anonyme suivant sa course. */
+function TrackingPushOptIn({ reservationId, locale }: { reservationId: string; locale: string }) {
+  const en = locale === "en";
+  const { status, subscribe, lastError } = usePushNotifications({
+    autoAudience: "client",
+    reservationId,
+  });
+  const [busy, setBusy] = useState(false);
+
+  if (status === "unsupported") return null;
+
+  const granted = status === "granted";
+  const denied = status === "denied";
+
+  async function enable() {
+    setBusy(true);
+    try {
+      const ok = await subscribe("client", reservationId);
+      if (ok) toast.success(en ? "Notifications enabled." : "Notifications activées.");
+      else toast.error(en ? "Could not enable notifications." : "Activation impossible.");
+    } catch (e: any) {
+      toast.error(e?.message ?? (en ? "Error" : "Erreur"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      {denied ? (
+        <div style={{ fontSize: 11, color: "rgba(246,240,229,.62)", display: "flex", gap: 6 }}>
+          <BellOff size={13} />
+          {en
+            ? "Notifications are blocked in your browser settings."
+            : "Notifications bloquées dans les réglages du navigateur."}
+        </div>
+      ) : (
+        <button type="button" className="suivi-dark-btn" onClick={enable} disabled={busy || status === "loading"}>
+          {busy || status === "loading" ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : granted ? (
+            <BellRing size={14} />
+          ) : (
+            <Bell size={14} />
+          )}
+          {granted
+            ? en
+              ? "Alerts enabled for this ride"
+              : "Alertes activées pour cette course"
+            : en
+              ? "Enable ride alerts"
+              : "Activer les alertes de ma course"}
+        </button>
+      )}
+      {lastError && (
+        <div style={{ marginTop: 6, fontSize: 11, color: "#fca5a5" }}>{lastError}</div>
+      )}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/suivi/$id")({
   head: () => ({
