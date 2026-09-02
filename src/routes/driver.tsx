@@ -43,7 +43,17 @@ import {
 // serveur, puis conservé localement pour authentifier les appels du panneau.
 
 // ── Types ─────────────────────────────────────────────────────────────────
-type Tab = "courses" | "planning" | "avis" | "clients" | "stats" | "historique" | "simulateur" | "devis" | "appareils";
+type Tab =
+  | "dashboard"
+  | "courses"
+  | "planning"
+  | "avis"
+  | "clients"
+  | "stats"
+  | "historique"
+  | "simulateur"
+  | "devis"
+  | "appareils";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -321,7 +331,10 @@ const css = `
     .drv-header-back { width:34px; height:34px; padding:0; justify-content:center; }
   }
   .drv-overview { padding:14px 14px 4px; background:#03070d; }
-  .drv-overview-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .drv-overview-head {
+    display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
+    border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 12px 14px; background:#050a10;
+  }
   .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size:9px; letter-spacing:.12em; font-weight:800; }
   .drv-overview-head h2 { margin:0; color:#f6f0e5; font-family:Georgia,serif; font-size:19px; }
   .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size:9px; font-weight:800; }
@@ -334,14 +347,69 @@ const css = `
   .drv-stat-sub { grid-column:1; grid-row:2; margin:0 !important; color:rgba(246,240,229,.45) !important; font-size:9px !important; line-height:1.2; }
   @media (max-width:340px) { .drv-stat-val { font-size:18px !important; } }
   .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(201,155,74,.45); border-radius:9px; overflow:hidden; margin-bottom:10px; background:#050a10; }
-  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.2); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
+  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.45); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
   .drv-overview-actions button:last-child { border-right:0; }
   .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
-  .drv-quick6 { grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(201,155,74,.25); }
-  .drv-quick6 button { position:relative; background:#050a10; border-right:0; min-height:70px; font-size:9.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
+  .drv-quick6 { grid-template-columns:repeat(3,1fr); gap:8px; background:transparent; border:0; }
+  .drv-quick6 button { position:relative; background:#050a10; border:1px solid rgba(201,155,74,.45) !important; border-radius:9px; min-height:70px; font-size:9.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
   .drv-quick6 button:active { background:#0a1118; }
   .drv-quick6 .drv-badge { position:absolute; top:6px; right:10px; }
   @media (min-width:640px) { .drv-quick6 { grid-template-columns:repeat(6,1fr); } }
+
+  /* ── Tableau de bord (grille responsive) ─────────────────────────────── */
+  .drv-main { display:flex; flex-direction:column; flex:1; min-height:0; }
+  .drv-section-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+  .drv-section-row .drv-section { margin:0; }
+  .drv-link-btn { background:none; border:none; color:#e0b866; font-size:11px; font-weight:700; cursor:pointer; padding:2px 0; text-transform:uppercase; letter-spacing:.04em; }
+  .drv-live-pill-sm { font-size:8px; padding:3px 7px; }
+  .drv-dash-grid { display:grid; grid-template-columns:1fr; gap:0; padding:0 14px; }
+  .drv-dash-col { display:flex; flex-direction:column; min-width:0; }
+  .drv-dash-next .drv-empty { padding:24px 10px; }
+  .drv-dash-row {
+    display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer;
+    border: 1px solid rgba(201,155,74,.45); border-radius: 10px; margin-bottom: 8px;
+  }
+  .drv-dash-row:last-child { margin-bottom: 0; }
+  .drv-dash-row-time { flex:0 0 48px; font-size:12px; font-weight:700; color:#e0b866; }
+  .drv-dash-row-route { flex:1; min-width:0; font-size:13px; color:#f6f0e5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .drv-dash-row-price { flex:0 0 auto; font-size:12px; font-weight:700; color:#f6f0e5; }
+  .drv-dash-notif {
+    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; cursor:pointer;
+    border: 1px solid rgba(201,155,74,.45); border-radius: 10px; margin-bottom: 8px;
+    font-size:12.5px; color:rgba(246,240,229,.75);
+  }
+  .drv-dash-notif:last-child { margin-bottom: 0; }
+  .drv-dash-notif strong { color:#e0b866; font-size:14px; }
+
+  /* Tablette : deux colonnes pour le tableau de bord. */
+  @media (min-width:700px) {
+    .drv-dash-grid { grid-template-columns: 1.4fr 1fr; gap:14px; align-items:start; padding:0 14px; }
+  }
+  /* Desktop / grand écran : sidebar de navigation fixe + contenu élargi. */
+  @media (min-width:1024px) {
+    .drv-tabs {
+      position: fixed; top:74px; left:0; bottom:0; width:230px; z-index:5;
+      flex-direction: column; align-items:stretch; overflow-y:auto; overflow-x:hidden;
+      background:#050a10; border-bottom:0; border-right:1px solid rgba(201,155,74,.3);
+      padding:0 0 16px;
+    }
+    .drv-tabs::before {
+      content:'ACCESS PRESTIGE TAXI'; display:block; padding:18px 18px 14px;
+      font-family:Georgia,serif; font-weight:800; color:#e0b866; font-size:12px;
+      letter-spacing:.1em; border-bottom:1px solid rgba(201,155,74,.25); margin-bottom:6px;
+    }
+    .drv-tab {
+      flex-direction:row; justify-content:flex-start; align-items:center; gap:12px;
+      min-height:44px; padding:10px 18px; font-size:13px; font-weight:600;
+      border-bottom:0; border-left:3px solid transparent; text-align:left; white-space:normal;
+    }
+    .drv-tab svg { width:18px; height:18px; flex-shrink:0; }
+    .drv-tab.active { color:#f6f0e5; border-left-color:#c99b4a; background:rgba(201,155,74,.12); }
+    .drv-main { margin-left:230px; }
+    .drv-dash-grid { grid-template-columns: 1.6fr 1fr; gap:18px; padding:0; }
+    .drv-overview { padding:18px 0 4px; }
+    .drv-body { padding:20px 28px; }
+  }
   .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
   .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
   .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
@@ -508,6 +576,35 @@ const IconDevice = () => (
   </svg>
 );
 
+const IconHome = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 9.5 12 3l9 6.5" />
+    <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
+  </svg>
+);
+
+const IconCar = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
+    <path d="M3 17V11l2-5h14l2 5v6" />
+    <path d="M5 11h14" />
+  </svg>
+);
+
 const IconDevis = () => (
   <svg
     viewBox="0 0 24 24"
@@ -665,7 +762,7 @@ function DriverApp({
   identifyError: string | null;
 }) {
   const listCoursesFn = useServerFn(listDriverCourses);
-  const [tab, setTab] = useState<Tab>("courses");
+  const [tab, setTab] = useState<Tab>("dashboard");
   const [dashboardCourses, setDashboardCourses] = useState<Resa[]>([]);
 
   // Suivi GPS en continu, indépendant de l'onglet affiché (démarre seul dès
@@ -869,6 +966,22 @@ function DriverApp({
     return !Number.isNaN(d.getTime()) && d.getTime() > Date.now() && !["completed", "cancelled"].includes(r.status);
   });
   const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.final_price ?? r.prix_estime) || 0), 0);
+  const dashboardNext = [...dashboardUpcoming].sort(
+    (a, b) =>
+      new Date(a.pickup_datetime || a.date_heure).getTime() - new Date(b.pickup_datetime || b.date_heure).getTime(),
+  )[0];
+  const dashboardNextMinutes = dashboardNext
+    ? Math.max(
+        0,
+        Math.round(
+          (new Date(dashboardNext.pickup_datetime || dashboardNext.date_heure).getTime() - Date.now()) / 60000,
+        ),
+      )
+    : null;
+  const dashboardTodaySorted = [...dashboardToday].sort(
+    (a, b) =>
+      new Date(a.pickup_datetime || a.date_heure).getTime() - new Date(b.pickup_datetime || b.date_heure).getTime(),
+  );
 
   return (
     <>
@@ -907,307 +1020,440 @@ function DriverApp({
           </Link>
         </div>
 
-        {/* Push indisponible : on explique pourquoi au lieu de tout masquer */}
-        {pushStatus === "unsupported" && (
-          <PushUnsupportedNotice
-            style={{
-              background: "#fff7ed",
-              borderBottom: "1px solid #e6ddc9",
-              padding: "10px 16px",
-              fontSize: 12.5,
-              color: "#9a3412",
-            }}
-          />
-        )}
+        <div className="drv-main">
+          {/* Push indisponible : on explique pourquoi au lieu de tout masquer */}
+          {pushStatus === "unsupported" && (
+            <PushUnsupportedNotice
+              style={{
+                background: "#fff7ed",
+                borderBottom: "1px solid #e6ddc9",
+                padding: "10px 16px",
+                fontSize: 12.5,
+                color: "#9a3412",
+              }}
+            />
+          )}
 
-        {pushError && (
-          <div
-            style={{
-              background: "#fef2f2",
-              borderBottom: "1px solid #fecaca",
-              padding: "10px 16px",
-              fontSize: 12.5,
-              color: "#b91c1c",
-            }}
-          >
-            ⚠️ {pushError}
-          </div>
-        )}
+          {pushError && (
+            <div
+              style={{
+                background: "#fef2f2",
+                borderBottom: "1px solid #fecaca",
+                padding: "10px 16px",
+                fontSize: 12.5,
+                color: "#b91c1c",
+              }}
+            >
+              ⚠️ {pushError}
+            </div>
+          )}
 
-        {/* Bandeau activation / reconfirmation notifications.
+          {/* Bandeau activation / reconfirmation notifications.
             Affiché même en statut "unsupported" : la détection peut se tromper
             (PWA iOS/Android installée), et seul un vrai essai d'enregistrement
             Firebase donne la cause exacte. */}
-        {true && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              background: pushStatus === "denied" ? "#1b0c0c" : pushStatus === "granted" ? "#0d1a12" : "#0b1118",
-              borderBottom: "1px solid rgba(201,155,74,.35)",
-              padding: "10px 16px",
-              fontSize: 12.5,
-              color: pushStatus === "denied" ? "#f0a0a0" : pushStatus === "granted" ? "#8ee39f" : "#e0b866",
-            }}
-          >
-            <span>
-              {pushStatus === "denied"
-                ? "🔕 Notifications bloquées — Réglages iPhone → Notifications → « APT Chauffeur » → Autoriser les notifications, puis rouvrez l'app."
-                : pushStatus === "granted"
-                  ? "🔔 Notifications actives"
-                  : "🔔 Recevez une alerte à chaque nouvelle course, sans garder l'app ouverte."}
-            </span>
-            {pushStatus !== "denied" && !(driverId === "alain" || driverId === "patricia") && (
-              // Pas encore identifié : un bouton par chauffeur, qui identifie
-              // ET active les notifications en un seul tap (au lieu de choisir
-              // "Alain"/"Patricia" dans le sélecteur du header puis cliquer
-              // "Activer" séparément dans ce bandeau).
-              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                {[
-                  { id: "alain" as const, name: "Alain" },
-                  { id: "patricia" as const, name: "Patricia" },
-                ].map((d) => (
-                  <button
-                    key={d.id}
-                    onClick={async () => {
-                      setIdentifyPushBusy(d.id);
-                      try {
-                        const identified = await onIdentify(d.id);
-                        if (!identified) {
-                          toast.error("Accès indisponible, réessayez.");
-                          return;
-                        }
-                        // driverIdOverride évite la valeur périmée du hook (setDriverId
-                        // ci-dessus est asynchrone, le driverId du hook ne sera à jour
-                        // qu'au prochain render).
-                        const ok = await subscribePush("chauffeur", null, null, undefined, d.id);
-                        if (ok) toast.success(`Notifications activées pour ${d.name}.`);
-                        else toast.error("Impossible d'activer les notifications sur cet appareil.");
-                      } catch {
-                        toast.error("Impossible d'activer les notifications sur cet appareil.");
-                      } finally {
-                        setIdentifyPushBusy(null);
-                      }
-                    }}
-                    disabled={identifyPushBusy !== null}
-                    style={{
-                      flexShrink: 0,
-                      background: "#050a10",
-                      color: "#fff",
-                      border: "1px solid #e0b866",
-                      borderRadius: 8,
-                      padding: "6px 12px",
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: identifyPushBusy ? "wait" : "pointer",
-                      opacity: identifyPushBusy !== null && identifyPushBusy !== d.id ? 0.5 : 1,
-                      minHeight: 32,
-                    }}
-                  >
-                    {identifyPushBusy === d.id ? "…" : `🔔 ${d.name}`}
-                  </button>
-                ))}
-              </div>
-            )}
-            {pushStatus !== "denied" && (driverId === "alain" || driverId === "patricia") && (
-              // Déjà identifié : comportement inchangé, un seul bouton pour
-              // activer/ré-activer sur cet appareil pour le chauffeur courant.
-              <button
-                onClick={async () => {
-                  setPushBusy(true);
-                  try {
-                    const ok = await subscribePush("chauffeur", null, null);
-                    if (ok) toast.success("Notifications activées sur cet appareil.");
-                    else toast.error("Impossible d'activer les notifications sur cet appareil.");
-                  } catch {
-                    toast.error("Impossible d'activer les notifications sur cet appareil.");
-                  } finally {
-                    setPushBusy(false);
-                  }
-                }}
-                disabled={pushBusy}
-                style={{
-                  flexShrink: 0,
-                  background: "#050a10",
-                  color: "#fff",
-                  border: "1px solid #e0b866",
-                  borderRadius: 8,
-                  padding: "6px 12px",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  cursor: pushBusy ? "wait" : "pointer",
-                  opacity: pushBusy ? 0.6 : 1,
-                  minHeight: 32,
-                }}
-              >
-                {pushBusy ? "Activation…" : pushStatus === "granted" ? "🔄 Ré-activer" : "Activer"}
-              </button>
-            )}
-          </div>
-        )}
-
-        <div style={{ padding: "0 16px" }}>
-          <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
-        </div>
-
-        {tab === "courses" && (
-          <section className="drv-overview" aria-label="Résumé chauffeur">
-            <div className="drv-overview-head">
-              <div>
-                <p>TABLEAU DE BORD</p>
-                <h2>Alain & Patricia</h2>
-              </div>
-              <span className="drv-live-pill">
-                <i /> ACTIF
-              </span>
-            </div>
-            <div className="drv-stat-grid">
-              <div className="drv-stat">
-                <span className="drv-stat-lbl">AUJOURD'HUI</span>
-                <strong className="drv-stat-val">{dashboardToday.length}</strong>
-                <span className="drv-stat-sub">Courses</span>
-              </div>
-              <div className="drv-stat">
-                <span className="drv-stat-lbl">EN COURS</span>
-                <strong className="drv-stat-val">{dashboardInProgress.length}</strong>
-                <span className="drv-stat-sub">Courses</span>
-              </div>
-              <div className="drv-stat">
-                <span className="drv-stat-lbl">À VENIR</span>
-                <strong className="drv-stat-val">{dashboardUpcoming.length}</strong>
-                <span className="drv-stat-sub">Courses</span>
-              </div>
-              <div className="drv-stat">
-                <span className="drv-stat-lbl">CA ESTIMÉ</span>
-                <strong className="drv-stat-val">{dashboardRevenue.toFixed(0)} €</strong>
-                <span className="drv-stat-sub">Aujourd'hui</span>
-              </div>
-            </div>
-            <div className="drv-overview-actions drv-quick6">
-              <button type="button" onClick={() => setTab("planning")}>
-                <IconCalendar />
-                <span>Planning</span>
-              </button>
-              <button type="button" onClick={() => setTab("clients")}>
-                <IconUsers />
-                <span>Clients</span>
-              </button>
-              <button type="button" onClick={() => setTab("stats")}>
-                <IconChart />
-                <span>Stats</span>
-              </button>
-              <button type="button" onClick={() => setTab("devis")}>
-                <IconDevis />
-                <span>Devis</span>
-                {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
-              </button>
-              <button type="button" onClick={() => setTab("historique")}>
-                <IconCalendar />
-                <span>Historique</span>
-              </button>
-              <button type="button" onClick={() => setTab("simulateur")}>
-                <IconCalc />
-                <span>Simu</span>
-              </button>
-            </div>
-          </section>
-        )}
-
-        {/* Tabs */}
-        <div className="drv-tabs">
-          {(
-            [
-              "courses",
-              "planning",
-              "avis",
-              "clients",
-              "stats",
-              "historique",
-              "simulateur",
-              "devis",
-              "appareils",
-            ] as Tab[]
-          ).map((t) => (
-            <button
-              key={t}
-              className={`drv-tab${tab === t ? " active" : ""}`}
-              onClick={() => {
-                setTab(t);
-                gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
-                // Reset optimiste du badge chat à l'ouverture de l'onglet ;
-                // le prochain refresh Realtime/reconcile remettra la vraie valeur.
-                if (t === "courses") setUnreadChat(0);
+          {true && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 10,
+                background: pushStatus === "denied" ? "#1b0c0c" : pushStatus === "granted" ? "#0d1a12" : "#0b1118",
+                borderBottom: "1px solid rgba(201,155,74,.35)",
+                padding: "10px 16px",
+                fontSize: 12.5,
+                color: pushStatus === "denied" ? "#f0a0a0" : pushStatus === "granted" ? "#8ee39f" : "#e0b866",
               }}
             >
-              <div style={{ position: "relative", display: "inline-block" }}>
-                {t === "courses" && (
-                  <>
-                    <IconBell />
-                    {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
-                  </>
-                )}
-                {t === "planning" && <IconCalendar />}
-                {t === "avis" && (
-                  <>
-                    <IconStar />
-                    {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
-                  </>
-                )}
-                {t === "clients" && <IconUsers />}
-                {t === "stats" && <IconChart />}
-                {t === "historique" && <IconCalendar />}
-                {t === "simulateur" && <IconCalc />}
-                {t === "devis" && (
-                  <>
-                    <IconDevis />
-                    {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
-                  </>
-                )}
-                {t === "appareils" && <IconDevice />}
-              </div>
               <span>
-                {
-                  {
-                    courses: "Course + chat client",
-                    planning: "Planning",
-                    avis: "Avis",
-                    clients: "Clients",
-                    stats: "Stats",
-                    historique: "Historique",
-                    simulateur: "Simu",
-                    devis: "Devis",
-                    appareils: "Appareils",
-                  }[t]
-                }
+                {pushStatus === "denied"
+                  ? "🔕 Notifications bloquées — Réglages iPhone → Notifications → « APT Chauffeur » → Autoriser les notifications, puis rouvrez l'app."
+                  : pushStatus === "granted"
+                    ? "🔔 Notifications actives"
+                    : "🔔 Recevez une alerte à chaque nouvelle course, sans garder l'app ouverte."}
               </span>
-            </button>
-          ))}
-        </div>
+              {pushStatus !== "denied" && !(driverId === "alain" || driverId === "patricia") && (
+                // Pas encore identifié : un bouton par chauffeur, qui identifie
+                // ET active les notifications en un seul tap (au lieu de choisir
+                // "Alain"/"Patricia" dans le sélecteur du header puis cliquer
+                // "Activer" séparément dans ce bandeau).
+                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  {[
+                    { id: "alain" as const, name: "Alain" },
+                    { id: "patricia" as const, name: "Patricia" },
+                  ].map((d) => (
+                    <button
+                      key={d.id}
+                      onClick={async () => {
+                        setIdentifyPushBusy(d.id);
+                        try {
+                          const identified = await onIdentify(d.id);
+                          if (!identified) {
+                            toast.error("Accès indisponible, réessayez.");
+                            return;
+                          }
+                          // driverIdOverride évite la valeur périmée du hook (setDriverId
+                          // ci-dessus est asynchrone, le driverId du hook ne sera à jour
+                          // qu'au prochain render).
+                          const ok = await subscribePush("chauffeur", null, null, undefined, d.id);
+                          if (ok) toast.success(`Notifications activées pour ${d.name}.`);
+                          else toast.error("Impossible d'activer les notifications sur cet appareil.");
+                        } catch {
+                          toast.error("Impossible d'activer les notifications sur cet appareil.");
+                        } finally {
+                          setIdentifyPushBusy(null);
+                        }
+                      }}
+                      disabled={identifyPushBusy !== null}
+                      style={{
+                        flexShrink: 0,
+                        background: "#050a10",
+                        color: "#fff",
+                        border: "1px solid #e0b866",
+                        borderRadius: 8,
+                        padding: "6px 12px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: identifyPushBusy ? "wait" : "pointer",
+                        opacity: identifyPushBusy !== null && identifyPushBusy !== d.id ? 0.5 : 1,
+                        minHeight: 32,
+                      }}
+                    >
+                      {identifyPushBusy === d.id ? "…" : `🔔 ${d.name}`}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {pushStatus !== "denied" && (driverId === "alain" || driverId === "patricia") && (
+                // Déjà identifié : comportement inchangé, un seul bouton pour
+                // activer/ré-activer sur cet appareil pour le chauffeur courant.
+                <button
+                  onClick={async () => {
+                    setPushBusy(true);
+                    try {
+                      const ok = await subscribePush("chauffeur", null, null);
+                      if (ok) toast.success("Notifications activées sur cet appareil.");
+                      else toast.error("Impossible d'activer les notifications sur cet appareil.");
+                    } catch {
+                      toast.error("Impossible d'activer les notifications sur cet appareil.");
+                    } finally {
+                      setPushBusy(false);
+                    }
+                  }}
+                  disabled={pushBusy}
+                  style={{
+                    flexShrink: 0,
+                    background: "#050a10",
+                    color: "#fff",
+                    border: "1px solid #e0b866",
+                    borderRadius: 8,
+                    padding: "6px 12px",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: pushBusy ? "wait" : "pointer",
+                    opacity: pushBusy ? 0.6 : 1,
+                    minHeight: 32,
+                  }}
+                >
+                  {pushBusy ? "Activation…" : pushStatus === "granted" ? "🔄 Ré-activer" : "Activer"}
+                </button>
+              )}
+            </div>
+          )}
 
-        <div className="drv-body">
-          {/* Position et GPS de l'équipe regroupés au même endroit. Placé ICI
+          <div style={{ padding: "0 16px" }}>
+            <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
+          </div>
+
+          {tab === "dashboard" && (
+            <>
+              <section className="drv-overview" aria-label="Tableau de bord">
+                <div className="drv-overview-head">
+                  <div>
+                    <p>TABLEAU DE BORD</p>
+                    <h2>Bonjour {(driverLabel || "Alain & Patricia").split(" & ")[0]} 👋</h2>
+                  </div>
+                  <span className="drv-live-pill">
+                    <i /> EN LIGNE
+                  </span>
+                </div>
+                <div className="drv-stat-grid">
+                  <div className="drv-stat">
+                    <span className="drv-stat-lbl">AUJOURD'HUI</span>
+                    <strong className="drv-stat-val">{dashboardToday.length}</strong>
+                    <span className="drv-stat-sub">Courses</span>
+                  </div>
+                  <div className="drv-stat">
+                    <span className="drv-stat-lbl">EN COURS</span>
+                    <strong className="drv-stat-val">{dashboardInProgress.length}</strong>
+                    <span className="drv-stat-sub">Courses</span>
+                  </div>
+                  <div className="drv-stat">
+                    <span className="drv-stat-lbl">À VENIR</span>
+                    <strong className="drv-stat-val">{dashboardUpcoming.length}</strong>
+                    <span className="drv-stat-sub">Courses</span>
+                  </div>
+                  <div className="drv-stat">
+                    <span className="drv-stat-lbl">CA AUJOURD'HUI</span>
+                    <strong className="drv-stat-val">{dashboardRevenue.toFixed(0)} €</strong>
+                    <span className="drv-stat-sub">Estimé</span>
+                  </div>
+                </div>
+              </section>
+
+              <div className="drv-dash-grid">
+                <div className="drv-dash-col drv-dash-col-main">
+                  {/* Prochaine course */}
+                  <div className="drv-card drv-dash-next">
+                    <div className="drv-section-row">
+                      <span className="drv-section">PROCHAINE COURSE</span>
+                      {dashboardNext && (
+                        <span className="drv-badge-pill drv-badge-blue">
+                          {dashboardNextMinutes === 0 ? "Imminente" : `Dans ${dashboardNextMinutes} min`}
+                        </span>
+                      )}
+                    </div>
+                    {dashboardNext ? (
+                      <>
+                        <div className="drv-row">
+                          <span className="drv-time">
+                            {formatHeure(dashboardNext.pickup_datetime || dashboardNext.date_heure)}
+                          </span>
+                          <span className="drv-sub" style={{ textTransform: "capitalize" }}>
+                            {formatDate(dashboardNext.pickup_datetime || dashboardNext.date_heure)}
+                          </span>
+                        </div>
+                        <div className="drv-route">
+                          <span>📍 {dashboardNext.depart}</span>
+                          <span>📍 {dashboardNext.destination}</span>
+                        </div>
+                        <div className="drv-meta">
+                          {dashboardNext.client_name && (
+                            <span>
+                              👤 {dashboardNext.client_name}
+                              {dashboardNext.client_phone ? ` · ${dashboardNext.client_phone}` : ""}
+                            </span>
+                          )}
+                          <span>💶 {(dashboardNext.final_price ?? dashboardNext.prix_estime ?? 0).toString()} €</span>
+                        </div>
+                        <div className="drv-btns">
+                          <button type="button" className="drv-btn-primary" onClick={() => setTab("courses")}>
+                            ▶ Voir la course
+                          </button>
+                          <button type="button" className="drv-btn-secondary" onClick={() => setTab("courses")}>
+                            Voir le détail
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="drv-empty">Aucune course à venir pour le moment.</div>
+                    )}
+                  </div>
+
+                  {/* Courses du jour */}
+                  <div className="drv-card">
+                    <div className="drv-section-row">
+                      <span className="drv-section">COURSES DU JOUR</span>
+                      <button type="button" className="drv-link-btn" onClick={() => setTab("courses")}>
+                        Voir tout
+                      </button>
+                    </div>
+                    {dashboardTodaySorted.length === 0 ? (
+                      <div className="drv-empty" style={{ padding: "20px 10px" }}>
+                        Aucune course prévue aujourd'hui.
+                      </div>
+                    ) : (
+                      dashboardTodaySorted.map((r) => (
+                        <div key={r.id} className="drv-dash-row" onClick={() => setTab("courses")}>
+                          <span className="drv-dash-row-time">{formatHeure(r.pickup_datetime || r.date_heure)}</span>
+                          <span className="drv-dash-row-route">
+                            {r.depart} → {r.destination}
+                          </span>
+                          <span className="drv-dash-row-price">
+                            {(r.final_price ?? r.prix_estime ?? 0).toString()} €
+                          </span>
+                          <span
+                            className={`drv-badge-pill ${
+                              r.status === "completed"
+                                ? "drv-badge-green"
+                                : ["en_route", "arrived"].includes(r.status)
+                                  ? "drv-badge-blue"
+                                  : "drv-badge-gray"
+                            }`}
+                          >
+                            {r.status === "completed"
+                              ? "Terminée"
+                              : ["en_route", "arrived"].includes(r.status)
+                                ? "En cours"
+                                : "À venir"}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className="drv-dash-col drv-dash-side">
+                  {/* Position GPS (carte dépliable, avec son propre en-tête) */}
+                  <div style={{ marginBottom: 10 }}>
+                    <TeamMapCard driverId={driverId} gps={gps} />
+                  </div>
+
+                  {/* Notifications */}
+                  <div className="drv-card">
+                    <span className="drv-section">NOTIFICATIONS</span>
+                    <div className="drv-dash-notif" onClick={() => setTab("courses")}>
+                      <span>Nouvelles demandes de course</span>
+                      <strong>{newCount}</strong>
+                    </div>
+                    <div className="drv-dash-notif" onClick={() => setTab("courses")}>
+                      <span>Messages client non lus</span>
+                      <strong>{unreadChat}</strong>
+                    </div>
+                    <div className="drv-dash-notif" onClick={() => setTab("avis")}>
+                      <span>Avis en attente</span>
+                      <strong>{pendingAvis}</strong>
+                    </div>
+                    <div className="drv-dash-notif" onClick={() => setTab("devis")}>
+                      <span>Devis en attente</span>
+                      <strong>{pendingDevis}</strong>
+                    </div>
+                  </div>
+
+                  {/* Raccourcis */}
+                  <div className="drv-card">
+                    <span className="drv-section">RACCOURCIS</span>
+                    <div className="drv-overview-actions drv-quick6">
+                      <button type="button" onClick={() => setTab("planning")}>
+                        <IconCalendar />
+                        <span>Planning</span>
+                      </button>
+                      <button type="button" onClick={() => setTab("clients")}>
+                        <IconUsers />
+                        <span>Clients</span>
+                      </button>
+                      <button type="button" onClick={() => setTab("stats")}>
+                        <IconChart />
+                        <span>Stats</span>
+                      </button>
+                      <button type="button" onClick={() => setTab("devis")}>
+                        <IconDevis />
+                        <span>Devis</span>
+                        {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
+                      </button>
+                      <button type="button" onClick={() => setTab("historique")}>
+                        <IconCalendar />
+                        <span>Historique</span>
+                      </button>
+                      <button type="button" onClick={() => setTab("simulateur")}>
+                        <IconCalc />
+                        <span>Simu</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Tabs */}
+          <div className="drv-tabs">
+            {(
+              [
+                "dashboard",
+                "courses",
+                "planning",
+                "avis",
+                "clients",
+                "stats",
+                "historique",
+                "simulateur",
+                "devis",
+                "appareils",
+              ] as Tab[]
+            ).map((t) => (
+              <button
+                key={t}
+                className={`drv-tab${tab === t ? " active" : ""}`}
+                onClick={() => {
+                  setTab(t);
+                  gaEvent("driver_tab_view", { tab: t, driver: driverLabel });
+                  // Reset optimiste du badge chat à l'ouverture de l'onglet ;
+                  // le prochain refresh Realtime/reconcile remettra la vraie valeur.
+                  if (t === "courses") setUnreadChat(0);
+                }}
+              >
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  {t === "dashboard" && <IconHome />}
+                  {t === "courses" && (
+                    <>
+                      <IconBell />
+                      {newCount + unreadChat > 0 && <span className="drv-badge">{newCount + unreadChat}</span>}
+                    </>
+                  )}
+                  {t === "planning" && <IconCalendar />}
+                  {t === "avis" && (
+                    <>
+                      <IconStar />
+                      {pendingAvis > 0 && <span className="drv-badge">{pendingAvis}</span>}
+                    </>
+                  )}
+                  {t === "clients" && <IconUsers />}
+                  {t === "stats" && <IconChart />}
+                  {t === "historique" && <IconCalendar />}
+                  {t === "simulateur" && <IconCalc />}
+                  {t === "devis" && (
+                    <>
+                      <IconDevis />
+                      {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
+                    </>
+                  )}
+                  {t === "appareils" && <IconDevice />}
+                </div>
+                <span>
+                  {
+                    {
+                      dashboard: "Tableau de bord",
+                      courses: "Course + chat client",
+                      planning: "Planning",
+                      avis: "Avis",
+                      clients: "Clients",
+                      stats: "Stats",
+                      historique: "Historique",
+                      simulateur: "Simu",
+                      devis: "Devis",
+                      appareils: "Appareils",
+                    }[t]
+                  }
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="drv-body">
+            {/* Position et GPS de l'équipe regroupés au même endroit. Placé ICI
               (dans la zone scrollable .drv-body, au-dessus du contenu de
               l'onglet actif) plutôt qu'au-dessus de la barre d'onglets :
               sinon, sur un écran court, ces deux cartes GPS pouvaient à elles
               seules dépasser la hauteur de l'écran et rendre la barre
               d'onglets + tout le contenu (avis, clients…) inaccessibles,
               sans aucun moyen de scroller pour les atteindre. */}
-          {tab === "courses" && <TeamMapCard driverId={driverId} gps={gps} />}
+            {tab === "courses" && <TeamMapCard driverId={driverId} gps={gps} />}
 
-          {tab === "courses" && (
-            <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
-          )}
+            {tab === "courses" && (
+              <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
+            )}
 
-          {tab === "planning" && <PlanningTab />}
-          {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
-          {tab === "clients" && <ClientsTab />}
-          {tab === "stats" && <StatsTab />}
-          {tab === "historique" && <HistoriqueTab driverId={driverId} />}
-          {tab === "simulateur" && <SimulateurTab />}
-          {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
-          {tab === "appareils" && <AppareilsTab />}
+            {tab === "planning" && <PlanningTab />}
+            {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
+            {tab === "clients" && <ClientsTab />}
+            {tab === "stats" && <StatsTab />}
+            {tab === "historique" && <HistoriqueTab driverId={driverId} />}
+            {tab === "simulateur" && <SimulateurTab />}
+            {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
+            {tab === "appareils" && <AppareilsTab />}
+          </div>
         </div>
       </div>
     </>
@@ -2961,25 +3207,26 @@ function CourseCard({
           </div>
         )}
 
-        {(resa.status === "completed" || resa.status === "terminee") && (resa.final_price ?? resa.prix_estime) != null && (
-          <div
-            style={{
-              marginTop: 10,
-              marginBottom: 4,
-              padding: 12,
-              background: "#03070d",
-              border: "2px solid #c99b4a",
-              borderRadius: 12,
-            }}
-          >
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
-              💶 Tarif final (compteur)
+        {(resa.status === "completed" || resa.status === "terminee") &&
+          (resa.final_price ?? resa.prix_estime) != null && (
+            <div
+              style={{
+                marginTop: 10,
+                marginBottom: 4,
+                padding: 12,
+                background: "#03070d",
+                border: "2px solid #c99b4a",
+                borderRadius: 12,
+              }}
+            >
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
+                💶 Tarif final (compteur)
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
+                {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
+              </div>
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
-              {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
-            </div>
-          </div>
-        )}
+          )}
 
         {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
         {resa.message && resa.message.trim().length > 0 && (
@@ -3710,7 +3957,9 @@ function PlanningTab() {
               </div>
               <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
                 {r.distance_km ? `${r.distance_km} km · ` : ""}
-                {(r as any).final_price ?? r.prix_estime ? `${Number((r as any).final_price ?? r.prix_estime).toFixed(2)} €` : ""}
+                {((r as any).final_price ?? r.prix_estime)
+                  ? `${Number((r as any).final_price ?? r.prix_estime).toFixed(2)} €`
+                  : ""}
                 {["terminee", "completed"].includes(r.status) ? " · Terminée" : ""}
               </div>
             </div>
