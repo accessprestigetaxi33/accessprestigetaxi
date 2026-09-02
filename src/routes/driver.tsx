@@ -337,6 +337,11 @@ const css = `
   .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.2); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
   .drv-overview-actions button:last-child { border-right:0; }
   .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
+  .drv-quick6 { grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(201,155,74,.25); }
+  .drv-quick6 button { position:relative; background:#050a10; border-right:0; min-height:70px; font-size:9.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
+  .drv-quick6 button:active { background:#0a1118; }
+  .drv-quick6 .drv-badge { position:absolute; top:6px; right:10px; }
+  @media (min-width:640px) { .drv-quick6 { grid-template-columns:repeat(6,1fr); } }
   .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
   .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
   .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
