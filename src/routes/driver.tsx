@@ -237,6 +237,7 @@ const css = `
   .drv-tab.active { color: #0f172a; border-bottom-color: var(--gold, #c99b4a); }
   .drv-tab svg { width: 22px; height: 22px; }
   .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
+  .drv-tab-count { display: none; }
   .drv-body {
     flex: 1; min-height: 0; padding: 16px;
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
@@ -330,6 +331,22 @@ const css = `
     .drv-header-back span.drv-header-back-label { display:none; }
     .drv-header-back { width:34px; height:34px; padding:0; justify-content:center; }
   }
+  /* En-tête : pastille "EN LIGNE", date/heure et cloche de notifications,
+     visibles sur toutes les pages (pas seulement le tableau de bord),
+     à l'image de la maquette. */
+  .drv-header-live { flex:0 0 auto; }
+  .drv-header-datetime {
+    display:none; flex:0 0 auto; text-align:right; font-size:10.5px; line-height:1.35;
+    color:rgba(246,240,229,.6); white-space:nowrap;
+  }
+  .drv-header-datetime strong { display:block; color:#f6f0e5; font-size:12px; font-weight:700; }
+  @media (min-width:700px) { .drv-header-datetime { display:block; } }
+  .drv-header-bell {
+    position:relative; flex:0 0 auto; width:34px; height:34px; display:grid; place-items:center;
+    background:#07101a; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; cursor:pointer;
+  }
+  .drv-header-bell svg { width:16px; height:16px; }
+  .drv-header-bell .drv-badge { top:-5px; right:-5px; }
   .drv-overview { padding:14px 14px 4px; background:#03070d; }
   .drv-overview-head {
     display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
@@ -405,6 +422,11 @@ const css = `
     }
     .drv-tab svg { width:18px; height:18px; flex-shrink:0; }
     .drv-tab.active { color:#f6f0e5; border-left-color:#c99b4a; background:rgba(201,155,74,.12); }
+    .drv-tab-count {
+      margin-left:auto; flex:0 0 auto; background:rgba(201,155,74,.16); color:#e0b866;
+      font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px;
+    }
+    .drv-tab.active .drv-tab-count { background:rgba(201,155,74,.32); color:#f6f0e5; }
     .drv-main { margin-left:230px; }
     .drv-dash-grid { grid-template-columns: 1.6fr 1fr; gap:18px; padding:0; }
     .drv-overview { padding:18px 0 4px; }
@@ -464,6 +486,148 @@ const css = `
     .drv-root { max-width:100%; border:0; }
     .drv-overview-actions button { min-height:58px; }
     .drv-team-map { margin:8px 0 10px !important; }
+  }
+  /* ── Dashboard 1:1 — desktop / tablette / mobile ─────────────────────── */
+  .drv-root{background:#03070d!important;color:#eef3f8!important}
+  .drv-utility-banner,.drv-diagnostics{display:none!important}
+  .drv-header{height:74px;min-height:74px;padding:0!important;background:#050a10!important;border-bottom:1px solid #182431!important;gap:0!important}
+  .drv-brand-mark{width:230px!important;height:74px!important;border:0!important;border-right:1px solid #182431!important;border-radius:0!important;flex:0 0 230px!important;display:flex!important;flex-direction:column;justify-content:center;align-items:center;line-height:1!important;background:#050a10!important;color:#d8b35a!important}
+  .drv-brand-ap{font:700 27px Georgia,serif;color:#d8b35a}
+  .drv-brand-name{font:800 15px Georgia,serif;color:#f6f0e5;letter-spacing:.08em;margin-top:1px}
+  .drv-brand-sub{font-size:8px;color:#d8b35a;letter-spacing:.12em;margin-top:3px}
+  .drv-mobile-menu{display:none}
+  .drv-header-title{padding:0 20px;min-width:240px}
+  .drv-header-title strong{font-size:16px;color:#f4f6f8!important}
+  .drv-header-title span{font-size:12px;color:#83909d!important}
+  .drv-header-live{margin-right:20px!important;background:#082718!important;border-color:#1b5c34!important;color:#5fd08a!important;padding:8px 14px!important;font-size:11px!important}
+  .drv-header-kpis{display:flex;align-items:stretch;height:100%;margin-left:auto}
+  .drv-header-kpis>div{min-width:150px;padding:13px 20px;border-left:1px solid #182431;display:grid;grid-template-columns:1fr auto;align-content:center;column-gap:8px}
+  .drv-header-kpis span{grid-column:1/3;font-size:9px;color:#82909c;letter-spacing:.04em;white-space:nowrap}
+  .drv-header-kpis strong{font-size:22px;line-height:1.15;color:#f4f6f8}
+  .drv-header-kpis em{font-style:normal;color:#d8b35a;font-size:15px;align-self:end}
+  .drv-header-kpis>div:nth-child(2) strong{color:#6edb42}
+  .drv-header-datetime{display:block!important;padding:0 20px;border-left:1px solid #182431;align-content:center;text-align:center!important;font-size:10px!important;color:#83909d!important}
+  .drv-header-datetime strong{font-size:10px!important;color:#f4f6f8!important;text-transform:capitalize}
+  .drv-header-bell{margin-right:16px;width:38px;height:38px;border:0!important;background:transparent!important;color:#c8d0d8!important}
+  .drv-header-back{display:none!important}
+
+  .drv-main{min-height:0!important}
+  .drv-dashboard-shell{padding:18px 18px 28px;background:#03070d}
+  .drv-dashboard-grid{display:grid;grid-template-columns:1.12fr 1.1fr 1.05fr;gap:14px;max-width:1440px;margin:0 auto}
+  .drv-dashboard-card{margin:0!important;background:linear-gradient(180deg,#0b141e,#07101a)!important;border:1px solid #1e2c3a!important;border-radius:10px!important;box-shadow:0 5px 18px rgba(0,0,0,.18);padding:14px!important;min-width:0}
+  .drv-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+  .drv-card-head.compact{align-items:center;margin-bottom:10px}
+  .drv-card-kicker{font-size:12px;font-weight:800;color:#eaf0f5;letter-spacing:.01em}
+  .drv-card-head h3{font-size:31px;line-height:1;color:#f7f8fa;margin:8px 0 4px}
+  .drv-card-head small{font-size:11px;color:#9ba8b4;text-transform:capitalize}
+  .drv-countdown{background:#08334b;color:#48aef0;padding:4px 8px;border-radius:999px;font-size:9px;font-weight:800;white-space:nowrap}
+  .drv-number-badge{background:#17375b;color:#8ec7ff;border-radius:6px;padding:3px 7px;font-size:11px;font-weight:800}
+  .drv-route-timeline{padding:4px 2px 10px}
+  .drv-route-timeline>div{display:flex;align-items:flex-start;gap:9px}
+  .drv-route-timeline>div>i{width:10px;height:10px;border-radius:50%;margin-top:4px;flex:0 0 10px}
+  .drv-dot-green{background:#68dc39}.drv-dot-red{background:#ff4757}
+  .drv-route-timeline b{display:block;font-size:12px;color:#eaf0f5;font-weight:600;line-height:1.3}
+  .drv-route-timeline small{display:block;font-size:9px;color:#7e8b98;margin-top:2px}
+  .drv-route-line{height:17px;border-left:1px solid #44515d;margin-left:4px!important}
+  .drv-next-meta{display:flex;gap:12px;border-top:1px solid #1b2834;padding:10px 0 12px;font-size:10px;color:#aab5be;align-items:center;flex-wrap:wrap}
+  .drv-next-meta strong{margin-left:auto;color:#f1f3f5;font-size:13px}
+  .drv-btns{gap:7px}
+  .drv-btn-primary,.drv-btn-secondary{min-height:38px!important;border-radius:5px!important;font-size:10px!important;padding:8px!important}
+  .drv-btn-primary{background:#5bd329!important;border:0!important;color:#061008!important}
+  .drv-btn-secondary{background:#07101a!important;border:1px solid #33414e!important;color:#eaf0f5!important}
+
+  .drv-day-list{display:flex;flex-direction:column}
+  .drv-day-row{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) 45px 54px;align-items:center;gap:7px;background:transparent;border:0;border-top:1px solid #17232e;color:#e8edf2;padding:8px 0;text-align:left;cursor:pointer}
+  .drv-day-row time{font-size:10px;color:#f2f5f7;font-weight:700}
+  .drv-day-row>span{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .drv-day-row strong{font-size:10px;text-align:right}
+  .drv-day-row em{font-style:normal;font-size:7px;text-align:center;background:#26333f;color:#b9c3cc;padding:4px 3px;border-radius:4px}
+  .drv-day-row em.done{background:#12361f;color:#68db88}.drv-day-row em.progress{background:#073d59;color:#55b9f0}
+
+  .drv-revenue-card select{background:#08111a!important;border:1px solid #33414e!important;color:#e3e9ee!important;border-radius:6px!important;font-size:10px!important;padding:5px 22px 5px 8px!important}
+  .drv-revenue-top{display:flex;justify-content:space-between;align-items:end;padding:6px 2px 0}
+  .drv-revenue-top div{display:flex;flex-direction:column}.drv-revenue-top strong{font-size:31px;color:#65d83a}.drv-revenue-top span{font-size:8px;color:#8b98a4;margin-top:2px}.drv-revenue-top b{font-size:14px;color:#65d83a}
+  .drv-chart{height:105px;margin:14px 2px 8px;display:flex;align-items:flex-end;gap:5px;border-bottom:1px solid #1b2834;position:relative;padding:0 4px}
+  .drv-chart i{width:6px;background:#5bcf37;display:block;opacity:.95}
+  .drv-chart-labels{position:absolute;left:0;right:0;bottom:-18px;display:flex;justify-content:space-between}.drv-chart-labels span{font-size:7px;color:#71808d}
+  .drv-revenue-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:27px;border-top:1px solid #1b2834}
+  .drv-revenue-stats div{text-align:center;padding:9px 4px;border-right:1px solid #1b2834}.drv-revenue-stats div:last-child{border:0}
+  .drv-revenue-stats strong{display:block;font-size:18px;color:#f1f4f6}.drv-revenue-stats span{font-size:7px;color:#8a98a4}
+
+  .drv-planning-card-dash{grid-column:1}.drv-messages-card{grid-column:2}.drv-reviews-card{grid-column:3}
+  .drv-card-head button{background:transparent;border:0;color:#8e9aa6;font-size:8px;font-weight:800;cursor:pointer}
+  .drv-card-head b{background:#5a2242;color:#ff90ba;border-radius:5px;padding:2px 5px;margin-left:5px;font-size:10px}
+  .drv-plan-row{width:100%;display:grid;grid-template-columns:105px minmax(0,1fr) 34px 22px;gap:7px;align-items:center;padding:9px 0;background:transparent;border:0;border-top:1px solid #17232e;color:#e8edf2;text-align:left;cursor:pointer}
+  .drv-plan-row time,.drv-plan-row span{font-size:9px;color:#aab4bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drv-plan-row span{color:#e4e9ed}.drv-plan-row strong{font-size:10px}.drv-plan-row em{font-size:8px;color:#a66ce0;font-style:normal}.drv-more-row{display:block;font-size:9px;color:#a7b1ba;padding-top:10px}
+
+  .drv-message-row{width:100%;display:grid;grid-template-columns:34px minmax(0,1fr) 34px 5px;gap:8px;align-items:center;background:transparent;border:0;border-top:1px solid #17232e;padding:8px 0;text-align:left;color:#eaf0f4;cursor:pointer}
+  .drv-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#263747;color:#f2f5f7;font-size:9px;font-weight:800}.drv-message-row b{display:block;font-size:10px}.drv-message-row small{display:block;font-size:8px;color:#9ba7b1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}.drv-message-row time{font-size:8px;color:#778591}.drv-message-row>i{width:6px;height:6px;border-radius:50%;background:#ff4054}
+
+  .drv-rating-main{text-align:center;padding:4px 0 6px}.drv-rating-main strong{font-size:38px;color:#f5f7f8}.drv-rating-main>span{font-size:13px;color:#8b98a4}.drv-rating-main div{color:#ffc22e;font-size:18px;letter-spacing:2px;margin:3px 0}.drv-rating-main small{font-size:8px;color:#87939e}
+  .drv-rating-bars{padding:2px 4px}.drv-rating-bars>div{display:grid;grid-template-columns:28px 1fr;gap:7px;align-items:center;margin:4px 0}.drv-rating-bars span{font-size:8px;color:#aeb8c0}.drv-rating-bars i{height:5px;background:#26333e;border-radius:4px;overflow:hidden}.drv-rating-bars b{display:block;height:100%;background:#ffc22e}
+
+  .drv-vehicle-card{grid-column:1}.drv-gps-card{grid-column:2}.drv-notifications-card{grid-column:3}.drv-shortcuts-card{grid-column:3}
+  .drv-vehicle-name{display:block;font-size:13px;color:#e8edf2;margin-top:5px}.drv-plate{display:block;font-size:9px;color:#8896a1;margin-top:2px}.drv-car-art{height:75px;display:grid;place-items:center;overflow:hidden}.drv-car-art span{font-size:68px;filter:grayscale(1) brightness(.8);transform:scaleX(1.7)}
+  .drv-checks{display:flex;gap:14px;border-top:1px solid #17232e;padding-top:8px}.drv-checks span{font-size:8px;color:#66d889}
+  .drv-gps-address{font-size:10px;color:#e2e7eb;line-height:1.45;margin-bottom:7px}.drv-live-small{font-size:8px;color:#65d83a}.drv-gps-map-wrap{height:88px;overflow:hidden;border-radius:6px}.drv-team-map-compact{margin:0!important;border:0!important;border-radius:0!important}.drv-team-map-compact>button{display:none}.drv-team-map-compact>div{padding:0!important}.drv-team-map-compact>div>div{border:0!important;margin:0!important}.drv-team-map-compact .drv-team-map-compact{margin:0!important}
+  .drv-team-map-compact>div>div:not(:first-child){display:none!important}
+
+  .drv-notif-row{width:100%;display:grid;grid-template-columns:20px 1fr auto auto;gap:7px;align-items:center;background:transparent;border:0;border-top:1px solid #17232e;padding:8px 0;color:#e4e9ed;text-align:left;cursor:pointer}.drv-notif-row span{color:#e2b758;font-size:12px}.drv-notif-row b{font-size:9px}.drv-notif-row small{font-size:7px;color:#778590}.drv-notif-row em{font-size:8px;color:#5fd68a;font-style:normal}.drv-see-all{width:100%;border:0;background:transparent;color:#7f8d99;font-size:8px;font-weight:800;padding-top:8px;cursor:pointer}
+  .drv-shortcuts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.drv-shortcuts-grid button{min-height:70px;border:1px solid #1e2e3c;border-radius:7px;background:#08121b;color:#dfe6eb;font-size:7px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}.drv-shortcuts-grid svg{width:21px;height:21px;color:#8fdcff}.drv-shortcuts-grid button:first-child span{font-size:29px;line-height:20px;color:#56aef1}
+
+  .drv-mobile-stats{display:none}
+  @media (min-width:1024px){
+    .drv-dashboard-grid{grid-template-columns:repeat(12,minmax(0,1fr))}
+    .drv-next-card,.drv-day-card,.drv-revenue-card,.drv-planning-card-dash,.drv-messages-card,.drv-reviews-card{grid-column:span 4!important}
+    .drv-vehicle-card,.drv-gps-card,.drv-notifications-card,.drv-shortcuts-card{grid-column:span 3!important}
+  }
+
+  /* Desktop sidebar */
+  @media (min-width:1024px){
+    .drv-tabs{position:fixed!important;top:74px!important;left:0!important;bottom:0!important;width:230px!important;background:#050a10!important;border-right:1px solid #182431!important;border-top:0!important;padding:14px 10px!important;z-index:5}
+    .drv-tabs::before{content:'NAVIGATION';padding:10px 10px 12px!important;color:#667580!important;font-size:8px!important;border:0!important;margin:0!important}
+    .drv-tab{min-height:42px!important;padding:8px 10px!important;border-left:3px solid transparent!important;border-bottom:0!important;border-radius:6px!important;color:#a0adb8!important;font-size:11px!important}
+    .drv-tab.active{color:#f1f4f7!important;background:#0e1a24!important;border-left-color:#5fcf36!important}
+    .drv-tab svg{width:17px!important;height:17px!important}.drv-tab-count{background:#172a3c!important;color:#8ec7ff!important}
+    .drv-body{margin-left:230px!important;padding:0!important;background:#03070d!important}
+    .drv-dashboard-shell{min-height:calc(100vh - 74px);padding:18px 20px 30px!important}
+    .drv-mobile-nav{display:none!important}
+  }
+
+  /* Tablette */
+  @media (min-width:700px) and (max-width:1023px){
+    .drv-brand-mark{width:100px!important;flex-basis:100px!important}.drv-brand-name,.drv-brand-sub{display:none}.drv-brand-ap{font-size:24px}
+    .drv-header-title{min-width:170px;padding:0 12px}.drv-header-kpis>div{min-width:105px;padding:10px}.drv-header-kpis span{font-size:7px}.drv-header-kpis strong{font-size:17px}.drv-header-datetime{padding:0 8px}
+    .drv-dashboard-grid{grid-template-columns:1fr 1fr;gap:12px}.drv-revenue-card{grid-column:2}.drv-planning-card-dash,.drv-messages-card,.drv-reviews-card,.drv-vehicle-card,.drv-gps-card,.drv-notifications-card,.drv-shortcuts-card{grid-column:auto}
+    .drv-body{padding:0!important}
+  }
+
+  /* Mobile — carte compacte + barre basse comme la maquette */
+  @media (max-width:699px){
+    html,body{overflow:hidden!important}.drv-root{height:100dvh}
+    .drv-header{height:62px;min-height:62px;padding:0 10px!important}.drv-brand-mark{width:35px!important;height:44px!important;flex:0 0 35px!important;border:0!important}.drv-brand-ap{font-size:21px}.drv-brand-name,.drv-brand-sub{display:none}
+    .drv-mobile-menu{display:grid;place-items:center;width:32px;height:32px;border:0;background:transparent;color:#dbe2e8;padding:0}.drv-mobile-menu svg{width:18px;height:18px}
+    .drv-header-title{padding:0 5px;min-width:0}.drv-header-title strong{font-size:12px}.drv-header-title span{font-size:8px}
+    .drv-header-title + div{display:none!important}
+    .drv-header-live{margin-left:auto!important;margin-right:6px!important;padding:5px 7px!important;font-size:7px!important}.drv-header-live i{width:5px;height:5px}
+    .drv-header-kpis,.drv-header-datetime,.drv-header-back,.drv-header .drv-header-title+ .drv-header-title{display:none!important}
+    .drv-header-bell{width:30px;height:30px;margin:0!important}.drv-header-bell svg{width:18px;height:18px}
+    .drv-main{padding-bottom:60px!important}.drv-body{padding:0!important;height:calc(100dvh - 122px);overflow-y:auto!important}
+    .drv-dashboard-shell{padding:10px 10px 20px!important}.drv-dashboard-grid{display:flex!important;flex-direction:column;gap:9px!important}
+    .drv-dashboard-card{padding:11px!important;border-radius:8px!important}.drv-next-card{order:1}.drv-day-card{order:2}.drv-revenue-card{order:3}.drv-planning-card-dash{order:4}.drv-messages-card{order:5}.drv-reviews-card{order:6}.drv-vehicle-card{order:7}.drv-gps-card{order:8}.drv-notifications-card{order:9}.drv-shortcuts-card{order:10}
+    .drv-card-head{margin-bottom:8px}.drv-card-kicker{font-size:9px}.drv-card-head h3{font-size:27px;margin:5px 0 2px}.drv-card-head small{font-size:9px}.drv-countdown{font-size:7px;padding:4px 6px}
+    .drv-route-timeline b{font-size:10px}.drv-route-timeline small{font-size:8px}.drv-next-meta{font-size:8px;padding:8px 0 9px}.drv-next-meta strong{font-size:10px}.drv-btn-primary,.drv-btn-secondary{font-size:8px!important;min-height:34px!important}
+    .drv-day-row{grid-template-columns:37px minmax(0,1fr) 35px 48px;padding:7px 0;gap:5px}.drv-day-row time,.drv-day-row>span,.drv-day-row strong{font-size:8px}.drv-day-row em{font-size:6px;padding:3px 2px}
+    .drv-revenue-top strong{font-size:27px}.drv-chart{height:75px}.drv-chart i{width:4px}.drv-revenue-stats{margin-top:24px}.drv-revenue-stats strong{font-size:15px}
+    .drv-plan-row{grid-template-columns:78px minmax(0,1fr) 30px 18px}.drv-plan-row time,.drv-plan-row span{font-size:8px}
+    .drv-message-row small{font-size:7px}.drv-rating-main strong{font-size:32px}.drv-rating-main div{font-size:15px}
+    .drv-car-art{height:55px}.drv-car-art span{font-size:50px}.drv-gps-map-wrap{height:100px}
+    .drv-shortcuts-grid button{min-height:62px;font-size:6px}
+    .drv-tabs{display:none!important}
+    .drv-mobile-nav{position:fixed;z-index:20;left:0;right:0;bottom:0;height:60px;background:#050a10;border-top:1px solid #1d2b37;display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -6px 20px rgba(0,0,0,.25)}
+    .drv-mobile-nav button{position:relative;border:0;background:transparent;color:#778591;font-size:7px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.drv-mobile-nav svg{width:19px;height:19px}.drv-mobile-nav button.active{color:#6bd63c}.drv-mobile-nav button b{position:absolute;top:5px;right:calc(50% - 15px);background:#e33b4f;color:white;border-radius:999px;font-size:7px;padding:2px 4px}
+    .drv-utility-banner,.drv-diagnostics{display:none!important}
+    .drv-header .drv-header-title + .drv-header-live + .drv-header-kpis + .drv-header-datetime{display:none!important}
   }
 `;
 
@@ -573,6 +737,66 @@ const IconDevice = () => (
   >
     <rect x="7" y="2" width="10" height="20" rx="2" />
     <line x1="11" y1="18" x2="13" y2="18" />
+  </svg>
+);
+
+const IconMenu = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+    <line x1="4" y1="7" x2="20" y2="7" />
+    <line x1="4" y1="12" x2="20" y2="12" />
+    <line x1="4" y1="17" x2="20" y2="17" />
+  </svg>
+);
+const IconMessage = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-4 3v-6.2A7.5 7.5 0 1 1 20 11.5Z" />
+    <path d="M8 11h.01M12 11h.01M16 11h.01" />
+  </svg>
+);
+const IconWallet = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M4 7h15a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h13" />
+    <path d="M17 13h4" />
+  </svg>
+);
+const IconMapPin = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+    <circle cx="12" cy="10" r="2.5" />
+  </svg>
+);
+const IconClock = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
   </svg>
 );
 
@@ -989,33 +1213,61 @@ function DriverApp({
       <div className="drv-root">
         <div className="drv-header">
           <div className="drv-brand-mark" aria-label="Access Prestige Taxi">
-            AP
+            <span className="drv-brand-ap">AP</span>
+            <span className="drv-brand-name">ACCESS</span>
+            <span className="drv-brand-sub">PRESTIGE TAXI</span>
           </div>
+          <button type="button" className="drv-mobile-menu" aria-label="Menu">
+            <IconMenu />
+          </button>
           <div className="drv-header-title">
-            <strong>Bonjour {driverLabel || "Alain & Patricia"}</strong>
-            <span>Espace chauffeur privé</span>
+            <strong>Bonjour {driverLabel || "Alain"} 👋</strong>
+            <span>Espace Chauffeur</span>
           </div>
           <DriverIdentitySwitcher
             driverId={driverId}
             onIdentify={onIdentify}
-            busy={identifyBusy}
+            busy={identifyPushBusy}
             error={identifyError}
           />
+          <span className="drv-live-pill drv-header-live">
+            <i /> EN LIGNE
+          </span>
+          <div className="drv-header-kpis">
+            <div>
+              <span>COURSES AUJOURD'HUI</span>
+              <strong>{dashboardToday.length}</strong>
+              <em>🚕</em>
+            </div>
+            <div>
+              <span>CA AUJOURD'HUI</span>
+              <strong>{dashboardRevenue.toFixed(0)} €</strong>
+              <em>€</em>
+            </div>
+            <div>
+              <span>SATISFACTION</span>
+              <strong>4,9 / 5</strong>
+              <em>☆</em>
+            </div>
+          </div>
+          <span className="drv-header-datetime">
+            <strong>
+              {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+            </strong>
+            {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+          </span>
+          <button
+            type="button"
+            className="drv-header-bell"
+            aria-label="Notifications"
+            onClick={() => setTab("courses")}
+          >
+            <IconBell />
+            {newCount + unreadChat + pendingAvis + pendingDevis > 0 && (
+              <span className="drv-badge">{newCount + unreadChat + pendingAvis + pendingDevis}</span>
+            )}
+          </button>
           <Link className="drv-header-back" to="/" aria-label="Retour au site">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M19 12H5" />
-              <path d="M12 19l-7-7 7-7" />
-            </svg>
             <span className="drv-header-back-label">Retour au site</span>
           </Link>
         </div>
@@ -1054,6 +1306,7 @@ function DriverApp({
             Firebase donne la cause exacte. */}
           {true && (
             <div
+              className="drv-utility-banner"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -1162,199 +1415,343 @@ function DriverApp({
             </div>
           )}
 
-          <div style={{ padding: "0 16px" }}>
+          <div className="drv-diagnostics" style={{ padding: "0 16px" }}>
             <PushDiagnosticsCard driverId={driverId} pushStatus={pushStatus} />
           </div>
 
           {tab === "dashboard" && (
-            <>
-              <section className="drv-overview" aria-label="Tableau de bord">
-                <div className="drv-overview-head">
-                  <div>
-                    <p>TABLEAU DE BORD</p>
-                    <h2>Bonjour {(driverLabel || "Alain & Patricia").split(" & ")[0]} 👋</h2>
-                  </div>
-                  <span className="drv-live-pill">
-                    <i /> EN LIGNE
-                  </span>
-                </div>
-                <div className="drv-stat-grid">
-                  <div className="drv-stat">
-                    <span className="drv-stat-lbl">AUJOURD'HUI</span>
-                    <strong className="drv-stat-val">{dashboardToday.length}</strong>
-                    <span className="drv-stat-sub">Courses</span>
-                  </div>
-                  <div className="drv-stat">
-                    <span className="drv-stat-lbl">EN COURS</span>
-                    <strong className="drv-stat-val">{dashboardInProgress.length}</strong>
-                    <span className="drv-stat-sub">Courses</span>
-                  </div>
-                  <div className="drv-stat">
-                    <span className="drv-stat-lbl">À VENIR</span>
-                    <strong className="drv-stat-val">{dashboardUpcoming.length}</strong>
-                    <span className="drv-stat-sub">Courses</span>
-                  </div>
-                  <div className="drv-stat">
-                    <span className="drv-stat-lbl">CA AUJOURD'HUI</span>
-                    <strong className="drv-stat-val">{dashboardRevenue.toFixed(0)} €</strong>
-                    <span className="drv-stat-sub">Estimé</span>
-                  </div>
-                </div>
-              </section>
-
-              <div className="drv-dash-grid">
-                <div className="drv-dash-col drv-dash-col-main">
-                  {/* Prochaine course */}
-                  <div className="drv-card drv-dash-next">
-                    <div className="drv-section-row">
-                      <span className="drv-section">PROCHAINE COURSE</span>
-                      {dashboardNext && (
-                        <span className="drv-badge-pill drv-badge-blue">
-                          {dashboardNextMinutes === 0 ? "Imminente" : `Dans ${dashboardNextMinutes} min`}
-                        </span>
-                      )}
+            <section className="drv-dashboard-shell" aria-label="Tableau de bord chauffeur">
+              <div className="drv-dashboard-grid">
+                <div className="drv-card drv-dashboard-card drv-next-card">
+                  <div className="drv-card-head">
+                    <div>
+                      <span className="drv-card-kicker">PROCHAINE COURSE</span>
+                      <h3>
+                        {dashboardNext ? formatHeure(dashboardNext.pickup_datetime || dashboardNext.date_heure) : "—"}
+                      </h3>
+                      {dashboardNext ? (
+                        <small>{formatDate(dashboardNext.pickup_datetime || dashboardNext.date_heure)}</small>
+                      ) : null}
                     </div>
-                    {dashboardNext ? (
-                      <>
-                        <div className="drv-row">
-                          <span className="drv-time">
-                            {formatHeure(dashboardNext.pickup_datetime || dashboardNext.date_heure)}
-                          </span>
-                          <span className="drv-sub" style={{ textTransform: "capitalize" }}>
-                            {formatDate(dashboardNext.pickup_datetime || dashboardNext.date_heure)}
-                          </span>
-                        </div>
-                        <div className="drv-route">
-                          <span>📍 {dashboardNext.depart}</span>
-                          <span>📍 {dashboardNext.destination}</span>
-                        </div>
-                        <div className="drv-meta">
-                          {dashboardNext.client_name && (
-                            <span>
-                              👤 {dashboardNext.client_name}
-                              {dashboardNext.client_phone ? ` · ${dashboardNext.client_phone}` : ""}
-                            </span>
-                          )}
-                          <span>💶 {(dashboardNext.final_price ?? dashboardNext.prix_estime ?? 0).toString()} €</span>
-                        </div>
-                        <div className="drv-btns">
-                          <button type="button" className="drv-btn-primary" onClick={() => setTab("courses")}>
-                            ▶ Voir la course
-                          </button>
-                          <button type="button" className="drv-btn-secondary" onClick={() => setTab("courses")}>
-                            Voir le détail
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="drv-empty">Aucune course à venir pour le moment.</div>
-                    )}
+                    {dashboardNext ? <span className="drv-countdown">DANS {dashboardNextMinutes ?? 0} MIN</span> : null}
                   </div>
-
-                  {/* Courses du jour */}
-                  <div className="drv-card">
-                    <div className="drv-section-row">
-                      <span className="drv-section">COURSES DU JOUR</span>
-                      <button type="button" className="drv-link-btn" onClick={() => setTab("courses")}>
-                        Voir tout
-                      </button>
-                    </div>
-                    {dashboardTodaySorted.length === 0 ? (
-                      <div className="drv-empty" style={{ padding: "20px 10px" }}>
-                        Aucune course prévue aujourd'hui.
+                  {dashboardNext ? (
+                    <div className="drv-next-content">
+                      <div className="drv-route-timeline">
+                        <div>
+                          <i className="drv-dot-green" />
+                          <div>
+                            <b>{dashboardNext.depart}</b>
+                            <small>Départ</small>
+                          </div>
+                        </div>
+                        <div className="drv-route-line" />
+                        <div>
+                          <i className="drv-dot-red" />
+                          <div>
+                            <b>{dashboardNext.destination}</b>
+                            <small>Destination</small>
+                          </div>
+                        </div>
                       </div>
+                      <div className="drv-next-meta">
+                        <span>♙ {dashboardNext.client_name || "Client"}</span>
+                        <span>🧳 2 bagages</span>
+                        <strong>€ {(dashboardNext.final_price ?? dashboardNext.prix_estime ?? 0).toString()}</strong>
+                      </div>
+                      <div className="drv-btns">
+                        <button type="button" className="drv-btn-primary" onClick={() => setTab("courses")}>
+                          ▷ DÉMARRER LA COURSE
+                        </button>
+                        <button type="button" className="drv-btn-secondary" onClick={() => setTab("courses")}>
+                          VOIR LE DÉTAIL
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="drv-empty">Aucune course à venir pour le moment.</div>
+                  )}
+                </div>
+
+                <div className="drv-mobile-stats" aria-label="Résumé du jour">
+                  <div>
+                    <strong>{dashboardToday.length}</strong>
+                    <span>COURSES</span>
+                  </div>
+                  <div>
+                    <strong>{dashboardRevenue.toFixed(0)} €</strong>
+                    <span>CA AUJOURD'HUI</span>
+                  </div>
+                  <div>
+                    <strong>4,9 /5</strong>
+                    <span>SATISFACTION</span>
+                  </div>
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-day-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">🚕 COURSES DU JOUR</span>
+                    <span className="drv-number-badge">{dashboardToday.length}</span>
+                  </div>
+                  <div className="drv-day-list">
+                    {dashboardTodaySorted.length === 0 ? (
+                      <div className="drv-empty">Aucune course prévue aujourd'hui.</div>
                     ) : (
-                      dashboardTodaySorted.map((r) => (
-                        <div key={r.id} className="drv-dash-row" onClick={() => setTab("courses")}>
-                          <span className="drv-dash-row-time">{formatHeure(r.pickup_datetime || r.date_heure)}</span>
-                          <span className="drv-dash-row-route">
+                      dashboardTodaySorted.slice(0, 7).map((r) => (
+                        <button key={r.id} type="button" className="drv-day-row" onClick={() => setTab("courses")}>
+                          <time>{formatHeure(r.pickup_datetime || r.date_heure)}</time>
+                          <span>
                             {r.depart} → {r.destination}
                           </span>
-                          <span className="drv-dash-row-price">
-                            {(r.final_price ?? r.prix_estime ?? 0).toString()} €
-                          </span>
-                          <span
-                            className={`drv-badge-pill ${
+                          <strong>{(r.final_price ?? r.prix_estime ?? 0).toString()} €</strong>
+                          <em
+                            className={
                               r.status === "completed"
-                                ? "drv-badge-green"
+                                ? "done"
                                 : ["en_route", "arrived"].includes(r.status)
-                                  ? "drv-badge-blue"
-                                  : "drv-badge-gray"
-                            }`}
+                                  ? "progress"
+                                  : ""
+                            }
                           >
                             {r.status === "completed"
-                              ? "Terminée"
+                              ? "TERMINÉE"
                               : ["en_route", "arrived"].includes(r.status)
-                                ? "En cours"
-                                : "À venir"}
-                          </span>
-                        </div>
+                                ? "EN COURS"
+                                : "À VENIR"}
+                          </em>
+                        </button>
                       ))
                     )}
                   </div>
                 </div>
 
-                <div className="drv-dash-col drv-dash-side">
-                  {/* Position GPS (carte dépliable, avec son propre en-tête) */}
-                  <div style={{ marginBottom: 10 }}>
-                    <TeamMapCard driverId={driverId} gps={gps} />
+                <div className="drv-card drv-dashboard-card drv-revenue-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">REVENUS</span>
+                    <select aria-label="Période revenus" defaultValue="today">
+                      <option value="today">Aujourd'hui</option>
+                    </select>
                   </div>
-
-                  {/* Notifications */}
-                  <div className="drv-card">
-                    <span className="drv-section">NOTIFICATIONS</span>
-                    <div className="drv-dash-notif" onClick={() => setTab("courses")}>
-                      <span>Nouvelles demandes de course</span>
-                      <strong>{newCount}</strong>
+                  <div className="drv-revenue-top">
+                    <div>
+                      <strong>{dashboardRevenue.toFixed(0)} €</strong>
+                      <span>CA AUJOURD'HUI</span>
                     </div>
-                    <div className="drv-dash-notif" onClick={() => setTab("courses")}>
-                      <span>Messages client non lus</span>
-                      <strong>{unreadChat}</strong>
-                    </div>
-                    <div className="drv-dash-notif" onClick={() => setTab("avis")}>
-                      <span>Avis en attente</span>
-                      <strong>{pendingAvis}</strong>
-                    </div>
-                    <div className="drv-dash-notif" onClick={() => setTab("devis")}>
-                      <span>Devis en attente</span>
-                      <strong>{pendingDevis}</strong>
+                    <div>
+                      <b>+18%</b>
+                      <span>vs hier</span>
                     </div>
                   </div>
-
-                  {/* Raccourcis */}
-                  <div className="drv-card">
-                    <span className="drv-section">RACCOURCIS</span>
-                    <div className="drv-overview-actions drv-quick6">
-                      <button type="button" onClick={() => setTab("planning")}>
-                        <IconCalendar />
-                        <span>Planning</span>
-                      </button>
-                      <button type="button" onClick={() => setTab("clients")}>
-                        <IconUsers />
-                        <span>Clients</span>
-                      </button>
-                      <button type="button" onClick={() => setTab("stats")}>
-                        <IconChart />
-                        <span>Stats</span>
-                      </button>
-                      <button type="button" onClick={() => setTab("devis")}>
-                        <IconDevis />
-                        <span>Devis</span>
-                        {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
-                      </button>
-                      <button type="button" onClick={() => setTab("historique")}>
-                        <IconCalendar />
-                        <span>Historique</span>
-                      </button>
-                      <button type="button" onClick={() => setTab("simulateur")}>
-                        <IconCalc />
-                        <span>Simu</span>
-                      </button>
+                  <div className="drv-chart" aria-label="Graphique des revenus">
+                    {[20, 32, 42, 58, 48, 70, 56, 74, 84, 92, 100, 74, 82].map((h, i) => (
+                      <i key={i} style={{ height: `${h}%` }} />
+                    ))}
+                    <div className="drv-chart-labels">
+                      <span>00h</span>
+                      <span>03h</span>
+                      <span>06h</span>
+                      <span>09h</span>
+                      <span>12h</span>
+                      <span>15h</span>
+                      <span>18h</span>
+                      <span>21h</span>
+                    </div>
+                  </div>
+                  <div className="drv-revenue-stats">
+                    <div>
+                      <strong>{dashboardToday.length}</strong>
+                      <span>COURSES</span>
+                    </div>
+                    <div>
+                      <strong>
+                        {dashboardToday.reduce((s, r) => s + (Number(r.distance_km) || 0), 0).toFixed(0)} km
+                      </strong>
+                      <span>DISTANCE</span>
+                    </div>
+                    <div>
+                      <strong>
+                        {dashboardToday.length ? Math.round(dashboardRevenue / dashboardToday.length) : 0} €
+                      </strong>
+                      <span>PANIER MOYEN</span>
                     </div>
                   </div>
                 </div>
+
+                <div className="drv-card drv-dashboard-card drv-planning-card-dash">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">
+                      PLANNING <b>{dashboardUpcoming.length}</b>
+                    </span>
+                    <button type="button" onClick={() => setTab("planning")}>
+                      VOIR TOUT
+                    </button>
+                  </div>
+                  {[...dashboardUpcoming].slice(0, 3).map((r, i) => (
+                    <button type="button" className="drv-plan-row" key={r.id} onClick={() => setTab("planning")}>
+                      <time>
+                        {formatDate(r.pickup_datetime || r.date_heure).slice(0, 6)}{" "}
+                        {formatHeure(r.pickup_datetime || r.date_heure)}
+                      </time>
+                      <span>
+                        {r.depart} → {r.destination}
+                      </span>
+                      <strong>{r.final_price ?? r.prix_estime ?? 0} €</strong>
+                      <em>J-{i + 1}</em>
+                    </button>
+                  ))}
+                  {dashboardUpcoming.length > 3 ? (
+                    <span className="drv-more-row">+ {dashboardUpcoming.length - 3} autres réservations</span>
+                  ) : null}
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-messages-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">
+                      💬 MESSAGES NON LUS <b>{unreadChat}</b>
+                    </span>
+                    <button type="button" onClick={() => setTab("courses")}>
+                      VOIR TOUS
+                    </button>
+                  </div>
+                  {["Sophie Martin", "Thomas Bernard", "Marie Leroy"].map((name, i) => (
+                    <button type="button" className="drv-message-row" key={name} onClick={() => setTab("courses")}>
+                      <span className="drv-avatar">
+                        {name
+                          .split(" ")
+                          .map((x) => x[0])
+                          .join("")}
+                      </span>
+                      <span>
+                        <b>{name}</b>
+                        <small>
+                          {i === 0
+                            ? "Bonjour, je serai avec un siège bébé, merci."
+                            : i === 1
+                              ? "Pouvez-vous passer 5 min plus tôt ?"
+                              : "Merci pour votre ponctualité !"}
+                        </small>
+                      </span>
+                      <time>{i === 0 ? "10:31" : i === 1 ? "10:15" : "09:48"}</time>
+                      <i />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-reviews-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">
+                      AVIS RÉCENTS <b>{pendingAvis}</b>
+                    </span>
+                    <button type="button" onClick={() => setTab("avis")}>
+                      VOIR TOUS
+                    </button>
+                  </div>
+                  <div className="drv-rating-main">
+                    <strong>4,9</strong>
+                    <span>/ 5</span>
+                    <div>★★★★★</div>
+                    <small>Basé sur 128 avis</small>
+                  </div>
+                  <div className="drv-rating-bars">
+                    {[5, 4, 3, 2, 1].map((n) => (
+                      <div key={n}>
+                        <span>{n} ★</span>
+                        <i>
+                          <b style={{ width: `${n === 5 ? 92 : n === 4 ? 62 : n === 3 ? 22 : n === 2 ? 10 : 4}%` }} />
+                        </i>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-vehicle-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">🚘 VÉHICULE</span>
+                  </div>
+                  <strong className="drv-vehicle-name">Mercedes Classe E</strong>
+                  <span className="drv-plate">FV-123-AB</span>
+                  <div className="drv-car-art" aria-hidden="true">
+                    <span>🚘</span>
+                  </div>
+                  <div className="drv-checks">
+                    <span>● Contrôle OK</span>
+                    <span>● Assurance OK</span>
+                  </div>
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-gps-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">● POSITION GPS</span>
+                    <span className="drv-live-small">● EN DIRECT</span>
+                  </div>
+                  <div className="drv-gps-address">
+                    Avenue des Champs-Élysées
+                    <br />
+                    75008 Paris
+                  </div>
+                  <div className="drv-gps-map-wrap">
+                    <TeamMapCard driverId={driverId} gps={gps} defaultOpen compact />
+                  </div>
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-notifications-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">NOTIFICATIONS</span>
+                  </div>
+                  {[
+                    ["▣", "Nouvelle réservation", "Il y a 2 min", newCount],
+                    ["€", "Paiement reçu", "Il y a 15 min", null],
+                    ["▣", "Message client", "Il y a 31 min", unreadChat],
+                  ].map(([icon, label, time, count]) => (
+                    <button
+                      type="button"
+                      className="drv-notif-row"
+                      key={label}
+                      onClick={() => setTab(label === "Message client" ? "courses" : "dashboard")}
+                    >
+                      <span>{icon}</span>
+                      <b>{label}</b>
+                      <small>{time}</small>
+                      {count ? <em>{count}</em> : null}
+                    </button>
+                  ))}
+                  <button type="button" className="drv-see-all" onClick={() => setTab("courses")}>
+                    VOIR TOUTES
+                  </button>
+                </div>
+
+                <div className="drv-card drv-dashboard-card drv-shortcuts-card">
+                  <div className="drv-card-head compact">
+                    <span className="drv-card-kicker">RACCOURCIS</span>
+                  </div>
+                  <div className="drv-shortcuts-grid">
+                    <button type="button" onClick={() => setTab("courses")}>
+                      <span>＋</span>NOUVELLE
+                      <br />
+                      COURSE
+                    </button>
+                    <button type="button" onClick={() => setTab("devis")}>
+                      <IconDevis />
+                      DEVIS
+                      <br />
+                      RAPIDE
+                    </button>
+                    <button type="button" onClick={() => setTab("devis")}>
+                      <IconDevis />
+                      ENVOYER
+                      <br />
+                      FACTURE
+                    </button>
+                    <button type="button" onClick={() => setTab("courses")}>
+                      <IconMapPin />
+                      POSITION
+                      <br />
+                      GPS
+                    </button>
+                  </div>
+                </div>
               </div>
-            </>
+            </section>
           )}
 
           {/* Tabs */}
@@ -1427,6 +1824,19 @@ function DriverApp({
                     }[t]
                   }
                 </span>
+                {(() => {
+                  const count =
+                    t === "courses"
+                      ? newCount + unreadChat
+                      : t === "avis"
+                        ? pendingAvis
+                        : t === "devis"
+                          ? pendingDevis
+                          : t === "planning"
+                            ? dashboardUpcoming.length
+                            : 0;
+                  return count > 0 ? <span className="drv-tab-count">{count}</span> : null;
+                })()}
               </button>
             ))}
           </div>
@@ -1454,6 +1864,31 @@ function DriverApp({
             {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
             {tab === "appareils" && <AppareilsTab />}
           </div>
+
+          <nav className="drv-mobile-nav" aria-label="Navigation principale">
+            <button className={tab === "dashboard" ? "active" : ""} onClick={() => setTab("dashboard")}>
+              <IconHome />
+              <span>Accueil</span>
+            </button>
+            <button className={tab === "courses" ? "active" : ""} onClick={() => setTab("courses")}>
+              <IconCar />
+              <span>Courses</span>
+              {newCount + unreadChat > 0 && <b>{newCount + unreadChat}</b>}
+            </button>
+            <button className={tab === "planning" ? "active" : ""} onClick={() => setTab("planning")}>
+              <IconCalendar />
+              <span>Planning</span>
+            </button>
+            <button onClick={() => setTab("courses")}>
+              <IconMessage />
+              <span>Messages</span>
+              {unreadChat > 0 && <b>{unreadChat}</b>}
+            </button>
+            <button onClick={() => setTab("devis")}>
+              <IconMenu />
+              <span>Plus</span>
+            </button>
+          </nav>
         </div>
       </div>
     </>
@@ -1697,7 +2132,17 @@ function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: num
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 }
 
-function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
+function TeamMapCard({
+  driverId,
+  gps,
+  defaultOpen = false,
+  compact = false,
+}: {
+  driverId?: string;
+  gps: DriverGpsTracking;
+  defaultOpen?: boolean;
+  compact?: boolean;
+}) {
   const listPos = useServerFn(listDriverPositions);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInst = useRef<any>(null);
@@ -1705,7 +2150,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
   const [rows, setRows] = useState<
     { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
   >([]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   const refresh = useCallback(async () => {
     const token = getDriverToken();
@@ -1782,7 +2227,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
 
   return (
     <div
-      className="drv-team-map"
+      className={`drv-team-map${compact ? " drv-team-map-compact" : ""}`}
       style={{
         margin: "10px 16px 0",
         border: "1px solid rgba(201,155,74,.45)",
