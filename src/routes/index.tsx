@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useRef, useEffect, type ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
@@ -57,17 +57,6 @@ const SITE_URL = "https://www.accessprestigetaxi.fr";
 
 function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
-}
-
-function ReserveButton({ label, className = "" }: { label: string; className?: string }) {
-  return (
-    <Link
-      to="/reserver"
-      className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full btn-gold border border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:scale-[1.02] ${className}`}
-    >
-      {label} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-    </Link>
-  );
 }
 
 const ENGAGEMENTS_FR = [
@@ -141,12 +130,6 @@ const HERO_VALUES_EN = ["Elegance", "Discretion", "Excellence"] as const;
 
 const COPY = {
   fr: {
-    h1: "Votre confort, notre priorité",
-    tagline: "",
-    lead: "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails.",
-    ctaBook: "Réserver mon trajet",
-    reserveCta: "Réserver",
-    callPrefix: "Appeler",
     fleetEyebrow: "Notre flotte",
     fleetTitle: "Votre confort, notre priorité",
     fleetText:
@@ -224,40 +207,13 @@ const COPY = {
         ],
       },
     ],
-    appEyebrow: "Suivi & espace client",
-    appText:
-      "Installez l'application pour un suivi en temps réel, et retrouvez dans votre espace personnel l'historique de vos courses, vos factures et vos adresses favorites.",
     appDetails: [
       "Application installable directement depuis votre navigateur, sans passer par un store, en quelques secondes.",
       "Notifications en temps réel : chauffeur en route, arrivée imminente, confirmation de course.",
       "Espace client sécurisé : historique complet de vos trajets, téléchargement de vos factures et gestion de vos adresses favorites.",
     ],
-    notify: "Activer les notifications",
-    client: "Accéder à l'espace client",
-    ios: [
-      "Ouvrez Safari et allez sur accessprestigetaxi.fr",
-      "Tapez le bouton Partager (carré avec flèche)",
-      "Sélectionnez « Sur l'écran d'accueil »",
-      "Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver",
-    ],
-    android: [
-      "Ouvrez Chrome et allez sur accessprestigetaxi.fr",
-      "Tapez le menu ⋮ (trois points) en haut à droite",
-      "Sélectionnez « Ajouter à l'écran d'accueil »",
-      "Ouvrez l'appli, puis appuyez sur « Activer les notifications » sur la page Réserver",
-    ],
-    blogEyebrow: "Le blog",
-    blogTitle: "Guide Charente-Maritime",
-    blogText: "Restaurants, hôtels, randonnées et lieux à visiter — repérés par vos chauffeurs.",
-    blogCta: "Voir tout le guide",
   },
   en: {
-    h1: "Your comfort, our priority",
-    tagline: "",
-    lead: "Premium transport and covered medical transport across Charente-Maritime. Personalised care, premium vehicles and a service considered down to the smallest detail.",
-    ctaBook: "Book my ride",
-    reserveCta: "Book",
-    callPrefix: "Call",
     fleetEyebrow: "Our fleet",
     fleetTitle: "Your comfort, our priority",
     fleetText: "The Access Prestige Taxi collection: premium, perfectly maintained vehicles designed for every need.",
@@ -334,32 +290,11 @@ const COPY = {
         ],
       },
     ],
-    appEyebrow: "Tracking & account",
-    appText:
-      "Install the app for real-time tracking, and find your ride history, invoices and saved addresses in your personal account.",
     appDetails: [
       "Installable straight from your browser in a few seconds, with no app store needed.",
       "Real-time notifications: driver on the way, arrival imminent, ride confirmed.",
       "A secure client area: full ride history, downloadable invoices and saved favourite addresses.",
     ],
-    notify: "Enable notifications",
-    client: "Go to the client area",
-    ios: [
-      "Open Safari and go to accessprestigetaxi.fr",
-      "Tap the Share button (square with arrow)",
-      "Select “Add to Home Screen”",
-      "Open the app, then tap “Enable notifications” on the Book a ride page",
-    ],
-    android: [
-      "Open Chrome and go to accessprestigetaxi.fr",
-      "Tap the ⋮ menu at the top right",
-      "Select “Add to Home Screen”",
-      "Open the app, then tap “Enable notifications” on the Book a ride page",
-    ],
-    blogEyebrow: "Blog",
-    blogTitle: "Charente-Maritime guide",
-    blogText: "Restaurants, hotels, hikes and places to visit — picked by your drivers.",
-    blogCta: "See the full guide",
   },
 } as const;
 
@@ -801,6 +736,22 @@ function Index() {
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
   const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
   const [heroMenuOpen, setHeroMenuOpen] = useState(false);
+  const heroMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!heroMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (heroMenuRef.current && !heroMenuRef.current.contains(e.target as Node)) {
+        setHeroMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [heroMenuOpen]);
 
   return (
     <main className="homepage-gold-borders">
@@ -845,7 +796,7 @@ function Index() {
           {/* Boutons RÉSERVER + DEVIS dans le hero */}
           <div className="absolute left-1/2 top-[65%] z-20 w-[min(380px,88vw)] -translate-x-1/2 sm:top-[70%]">
             <div className="grid grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
-              <div className="relative">
+              <div className="relative" ref={heroMenuRef}>
                 <button
                   type="button"
                   onClick={() => setHeroMenuOpen((open) => !open)}
