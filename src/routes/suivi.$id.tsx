@@ -77,7 +77,12 @@ function TrackingPushOptIn({ reservationId, locale }: { reservationId: string; l
             : "Notifications bloquées dans les réglages du navigateur."}
         </div>
       ) : (
-        <button type="button" className="suivi-dark-btn" onClick={enable} disabled={busy || status === "loading"}>
+        <button
+          type="button"
+          className="suivi-dark-btn"
+          onClick={enable}
+          disabled={busy || status === "loading"}
+        >
           {busy || status === "loading" ? (
             <Loader2 size={14} className="animate-spin" />
           ) : granted ? (
@@ -323,7 +328,10 @@ const STATUS_CONFIG: Record<
 };
 
 // ─── Badge de statut simplifié (en attente / en cours / terminé / annulé) ──────────
-const SIMPLE_STATUS: Record<string, { fr: string; en: string; color: string; bg: string; border: string }> = {
+const SIMPLE_STATUS: Record<
+  string,
+  { fr: string; en: string; color: string; bg: string; border: string }
+> = {
   pending: {
     fr: "En attente",
     en: "Pending",
@@ -420,7 +428,11 @@ function PremiumTimeline({ status }: { status: string }) {
         return (
           <div
             key={s}
-            style={{ display: "flex", alignItems: "flex-start", flex: i < steps.length - 1 ? 1 : "0 0 auto" }}
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              flex: i < steps.length - 1 ? 1 : "0 0 auto",
+            }}
           >
             {/* Étape + label */}
             <div
@@ -477,7 +489,9 @@ function PremiumTimeline({ status }: { status: string }) {
                 <div
                   style={{
                     height: "2px",
-                    background: isDone ? `linear-gradient(90deg, ${config.color}40, ${config.color}70)` : "#f6f0e5",
+                    background: isDone
+                      ? `linear-gradient(90deg, ${config.color}40, ${config.color}70)`
+                      : "#f6f0e5",
                     borderRadius: "1px",
                     transition: "all 0.4s ease",
                   }}
@@ -558,7 +572,12 @@ function ChatSection({
           </span>
         )}
       </div>
-      <AnonChat suiviKey={suiviKey} reservationId={reservationId} driverName={driverName} onUnreadChange={setUnread} />
+      <AnonChat
+        suiviKey={suiviKey}
+        reservationId={reservationId}
+        driverName={driverName}
+        onUnreadChange={setUnread}
+      />
     </div>
   );
 }
@@ -684,7 +703,9 @@ function AnonChat({
       try {
         await markReadFn({ data: { suivi_key: suiviKey, role: "client" } });
         if (!cancelled) {
-          setMessages((prev) => prev.map((m) => (!m.read_by_client ? { ...m, read_by_client: true } : m)));
+          setMessages((prev) =>
+            prev.map((m) => (!m.read_by_client ? { ...m, read_by_client: true } : m)),
+          );
           setUnreadSql(0);
         }
       } catch {}
@@ -692,7 +713,7 @@ function AnonChat({
     return () => {
       cancelled = true;
     };
-  }, [unreadSql, reservationId, markReadFn]);
+  }, [unreadSql, reservationId, suiviKey, markReadFn]);
 
   const send = async () => {
     const trimmed = text.trim();
@@ -718,7 +739,9 @@ function AnonChat({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "12px", height: "min(320px, 40dvh)" }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", gap: "12px", height: "min(320px, 40dvh)" }}
+    >
       <div
         style={{
           flex: 1,
@@ -730,7 +753,9 @@ function AnonChat({
         }}
       >
         {messages.length === 0 && (
-          <div style={{ textAlign: "center", color: "#9fb0c2", fontSize: "12px", padding: "20px 0" }}>
+          <div
+            style={{ textAlign: "center", color: "#9fb0c2", fontSize: "12px", padding: "20px 0" }}
+          >
             {t("suivi.chat_empty")}
           </div>
         )}
@@ -755,7 +780,9 @@ function AnonChat({
               >
                 {msg.content}
               </div>
-              <div style={{ fontSize: "10px", color: "#9fb0c2", marginTop: "3px", padding: "0 4px" }}>
+              <div
+                style={{ fontSize: "10px", color: "#9fb0c2", marginTop: "3px", padding: "0 4px" }}
+              >
                 {mine ? t("suivi.chat_you") || u.you : driverName}
               </div>
             </div>
@@ -819,7 +846,9 @@ function generateICS(reservation: any, t: (k: string) => string): string {
   if (!reservation?.pickup_datetime) return "#";
   const start = new Date(reservation.pickup_datetime);
   // Utilise duree_s si disponible, sinon 1h par défaut
-  const durationMs = reservation.duree_s ? durationSecondsToMs(reservation.duree_s) : 60 * 60 * 1000;
+  const durationMs = reservation.duree_s
+    ? durationSecondsToMs(reservation.duree_s)
+    : 60 * 60 * 1000;
   const end = new Date(start.getTime() + durationMs);
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   const labelDepart = t("suivi.depart_label");
@@ -844,7 +873,15 @@ function generateICS(reservation: any, t: (k: string) => string): string {
 }
 
 // ─── Facture ──────────────────────────────────────────────────────────────────────
-function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: string; t: (k: string) => string }) {
+function InvoiceBlock({
+  reservation,
+  locale,
+  t,
+}: {
+  reservation: any;
+  locale: string;
+  t: (k: string) => string;
+}) {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
 
@@ -860,7 +897,9 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
 
   const handleSendEmail = async () => {
     const emailAddr =
-      (reservation as any).email || (reservation as any).client_email || window.prompt(t("suivi.invoice_email_prompt"));
+      (reservation as any).email ||
+      (reservation as any).client_email ||
+      window.prompt(t("suivi.invoice_email_prompt"));
     if (!emailAddr) return;
     setEmailSending(true);
     try {
@@ -897,7 +936,9 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
         })
       : new Date().toLocaleDateString(intlLocale);
     const prix = getDisplayPrice(reservation)
-      ? new Intl.NumberFormat(intlLocale, { style: "currency", currency: "EUR" }).format(getDisplayPrice(reservation)!)
+      ? new Intl.NumberFormat(intlLocale, { style: "currency", currency: "EUR" }).format(
+          getDisplayPrice(reservation)!,
+        )
       : "—";
     // Fix #1 — résoudre les labels i18n avant le template string
     const labelDepart = t("suivi.depart_label");
@@ -1016,7 +1057,9 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             }}
           >
             <span style={{ color: "#9fb0c2" }}>{t("suivi.distance")}</span>
-            <span style={{ fontWeight: 600, color: "#f6f0e5" }}>{Number(reservation.distance_km).toFixed(1)} km</span>
+            <span style={{ fontWeight: 600, color: "#f6f0e5" }}>
+              {Number(reservation.distance_km).toFixed(1)} km
+            </span>
           </div>
         )}
         {reservation.mode_paiement && (
@@ -1034,8 +1077,17 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
           </div>
         )}
         {getDisplayPrice(reservation) != null && (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-            <span style={{ fontSize: "13px", color: "#9fb0c2" }}>{getPriceLabel(reservation, t, true, locale)}</span>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "4px",
+            }}
+          >
+            <span style={{ fontSize: "13px", color: "#9fb0c2" }}>
+              {getPriceLabel(reservation, t, true, locale)}
+            </span>
             <span style={{ fontSize: "22px", fontWeight: 900, color: "#e0b866" }}>
               {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
                 getDisplayPrice(reservation)!,
@@ -1214,8 +1266,18 @@ function RecurringModal({ reservation, onClose }: { reservation: any; onClose: (
           boxSizing: "border-box",
         }}
       >
-        <div style={{ width: 40, height: 4, background: "#f6f0e5", borderRadius: 2, margin: "0 auto 20px" }} />
-        <div style={{ fontSize: 16, fontWeight: 800, color: "#f6f0e5", marginBottom: 4 }}>{t("suivi.rec_title")}</div>
+        <div
+          style={{
+            width: 40,
+            height: 4,
+            background: "#f6f0e5",
+            borderRadius: 2,
+            margin: "0 auto 20px",
+          }}
+        />
+        <div style={{ fontSize: 16, fontWeight: 800, color: "#f6f0e5", marginBottom: 4 }}>
+          {t("suivi.rec_title")}
+        </div>
         <div style={{ fontSize: 13, color: "#9fb0c2", marginBottom: 20 }}>
           {reservation.depart} → {reservation.destination ?? reservation.arrivee ?? "—"}
         </div>
@@ -1374,7 +1436,9 @@ function ReviewBlock({
     let cancelled = false;
     (async () => {
       try {
-        const response = await fetch(`/api/public/reviews?reservation_id=${encodeURIComponent(reservationId)}`);
+        const response = await fetch(
+          `/api/public/reviews?reservation_id=${encodeURIComponent(reservationId)}`,
+        );
         if (!response.ok) return;
         const state = await response.json();
         if (!cancelled && state.hasReview) setAlreadyReviewed(true);
@@ -1419,7 +1483,10 @@ function ReviewBlock({
 
   if (alreadyReviewed || submitted) {
     return (
-      <div className="suivi-premium suivi-card" style={{ marginBottom: "16px", padding: "20px", textAlign: "center" }}>
+      <div
+        className="suivi-premium suivi-card"
+        style={{ marginBottom: "16px", padding: "20px", textAlign: "center" }}
+      >
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>⭐</div>
         <div style={{ fontSize: "14px", fontWeight: 700, color: "#f6f0e5", marginBottom: "4px" }}>
           {t("suivi.review_sent")}
@@ -1480,11 +1547,24 @@ function ReviewBlock({
       </div>
 
       {rating > 0 && (
-        <div style={{ fontSize: "13px", fontWeight: 600, color: "#f59e0b", textAlign: "center", marginBottom: "12px" }}>
+        <div
+          style={{
+            fontSize: "13px",
+            fontWeight: 600,
+            color: "#f59e0b",
+            textAlign: "center",
+            marginBottom: "12px",
+          }}
+        >
           {
-            ["", t("fin.star.bad"), t("fin.star.ok"), t("fin.star.good"), t("fin.star.great"), t("fin.star.excellent")][
-              rating
-            ]
+            [
+              "",
+              t("fin.star.bad"),
+              t("fin.star.ok"),
+              t("fin.star.good"),
+              t("fin.star.great"),
+              t("fin.star.excellent"),
+            ][rating]
           }
         </div>
       )}
@@ -1516,7 +1596,10 @@ function ReviewBlock({
         style={{
           width: "100%",
           padding: "12px 16px",
-          background: rating === 0 || submitting ? "#f6f0e5" : "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+          background:
+            rating === 0 || submitting
+              ? "#f6f0e5"
+              : "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
           color: rating === 0 || submitting ? "#9fb0c2" : "#fff",
           border: "none",
           borderRadius: "10px",
@@ -1530,7 +1613,11 @@ function ReviewBlock({
           transition: "all 0.3s",
         }}
       >
-        {submitting ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Star size={15} />}
+        {submitting ? (
+          <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+        ) : (
+          <Star size={15} />
+        )}
         {submitting ? t("suivi.review_submitting") : t("suivi.review_submit")}
       </button>
     </div>
@@ -1546,7 +1633,9 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
   // Arrivée estimée : pickup_datetime + duree_s si dispo, sinon "en cours"
   const getETA = (): string => {
     if (reservation.pickup_datetime && reservation.duree_s) {
-      const eta = new Date(new Date(reservation.pickup_datetime).getTime() + durationSecondsToMs(reservation.duree_s));
+      const eta = new Date(
+        new Date(reservation.pickup_datetime).getTime() + durationSecondsToMs(reservation.duree_s),
+      );
       const ETA_LOCALE: Record<string, string> = {
         fr: "fr-FR",
         en: "en-GB",
@@ -1645,8 +1734,18 @@ function ShareTrajetButton({ reservation }: { reservation: any }) {
           boxSizing: "border-box",
         }}
       >
-        <div style={{ width: 40, height: 4, background: "#f6f0e5", borderRadius: 2, margin: "0 auto 18px" }} />
-        <div style={{ fontSize: 15, fontWeight: 800, color: "#f6f0e5", marginBottom: 4 }}>{t("suivi.share_title")}</div>
+        <div
+          style={{
+            width: 40,
+            height: 4,
+            background: "#f6f0e5",
+            borderRadius: 2,
+            margin: "0 auto 18px",
+          }}
+        />
+        <div style={{ fontSize: 15, fontWeight: 800, color: "#f6f0e5", marginBottom: 4 }}>
+          {t("suivi.share_title")}
+        </div>
         {/* Aperçu du message */}
         <div
           style={{
@@ -1754,7 +1853,9 @@ function SuiviPage() {
   const [error, setError] = useState<string | null>(null);
   const [showRecurring, setShowRecurring] = useState(false);
   const assignedDriver =
-    DRIVERS.find((d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase()) ?? DRIVERS[0];
+    DRIVERS.find(
+      (d) => d.name.toLowerCase() === (reservation?.driver_name ?? "").trim().toLowerCase(),
+    ) ?? DRIVERS[0];
   const josePhone = assignedDriver?.tel ?? JOSE_PHONE;
 
   // Filet de sécurité : force la page à démarrer tout en haut au montage.
@@ -1774,15 +1875,7 @@ function SuiviPage() {
   // révoque l'ancienne à chaque changement / démontage.
   const icsUrl = useMemo(
     () => generateICS(reservation, t),
-    [
-      reservation?.pickup_datetime,
-      reservation?.duree_s,
-      reservation?.depart,
-      reservation?.destination,
-      reservation?.arrivee,
-      reservation?.id,
-      t,
-    ],
+    [reservation, t],
   );
   useEffect(() => {
     return () => {
@@ -1792,13 +1885,21 @@ function SuiviPage() {
 
   // ── Historique des changements de prix (RPC SECURITY DEFINER, lien public) ──
   const [priceHistory, setPriceHistory] = useState<
-    Array<{ id: string; old_price: number | null; new_price: number; motif: string | null; created_at: string }>
+    Array<{
+      id: string;
+      old_price: number | null;
+      new_price: number;
+      motif: string | null;
+      created_at: string;
+    }>
   >([]);
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       try {
-        const { data, error } = await (supabase as any).rpc("get_price_history_for_suivi", { p_key: id });
+        const { data, error } = await (supabase as any).rpc("get_price_history_for_suivi", {
+          p_key: id,
+        });
         if (!cancelled && !error && Array.isArray(data)) setPriceHistory(data);
       } catch {
         /* silencieux */
@@ -1829,11 +1930,16 @@ function SuiviPage() {
           setReservation((prev) => {
             if (prev) {
               if (prev.status !== r.status) {
-                if (r.status === "accepted") toast.success("✅ " + t("suivi.status.accepted") + " !");
-                else if (r.status === "en_route") toast.success("🚕 " + t("suivi.status.en_route") + " !");
-                else if (r.status === "arrived") toast.success("📍 " + t("suivi.status.arrived") + " !");
+                if (r.status === "accepted")
+                  toast.success("✅ " + t("suivi.status.accepted") + " !");
+                else if (r.status === "en_route")
+                  toast.success("🚕 " + t("suivi.status.en_route") + " !");
+                else if (r.status === "arrived")
+                  toast.success("📍 " + t("suivi.status.arrived") + " !");
                 else if (r.status === "completed")
-                  toast.success("🏁 " + t("suivi.status.completed") + " — " + t("suivi.completed_title"));
+                  toast.success(
+                    "🏁 " + t("suivi.status.completed") + " — " + t("suivi.completed_title"),
+                  );
               }
               const prevPrice = getDisplayPrice(prev);
               const nextPrice = getDisplayPrice(r);
@@ -2082,7 +2188,10 @@ function SuiviPage() {
         }}
       >
         <style>{PREMIUM_CSS}</style>
-        <div className="suivi-card" style={{ maxWidth: "400px", padding: "40px 24px", textAlign: "center" }}>
+        <div
+          className="suivi-card"
+          style={{ maxWidth: "400px", padding: "40px 24px", textAlign: "center" }}
+        >
           <AlertTriangle size={48} style={{ color: "#f19a9a", marginBottom: "16px" }} />
           <h1 style={{ fontSize: "13px", fontWeight: 700, color: "#f6f0e5", marginBottom: "8px" }}>
             {error || t("suivi.not_found")}
@@ -2118,7 +2227,10 @@ function SuiviPage() {
         }}
       >
         <style>{PREMIUM_CSS}</style>
-        <div className="suivi-card" style={{ maxWidth: "400px", padding: "40px 24px", textAlign: "center" }}>
+        <div
+          className="suivi-card"
+          style={{ maxWidth: "400px", padding: "40px 24px", textAlign: "center" }}
+        >
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔏</div>
           <h1 style={{ fontSize: "16px", fontWeight: 800, color: "#f6f0e5", marginBottom: "8px" }}>
             {t("suivi.expired_title")}
@@ -2154,9 +2266,21 @@ function SuiviPage() {
   const config = STATUS_CONFIG[reservation.status] || STATUS_CONFIG.pending;
 
   const steps = [
-    { key: "accepted", label: locale === "en" ? "Booking confirmed" : "Réservation confirmée", icon: "✓" },
-    { key: "accepted_driver", label: locale === "en" ? "Driver accepted" : "Chauffeur accepté", icon: "✓" },
-    { key: "en_route", label: locale === "en" ? "Driver on the way" : "Chauffeur en route", icon: "🚕" },
+    {
+      key: "accepted",
+      label: locale === "en" ? "Booking confirmed" : "Réservation confirmée",
+      icon: "✓",
+    },
+    {
+      key: "accepted_driver",
+      label: locale === "en" ? "Driver accepted" : "Chauffeur accepté",
+      icon: "✓",
+    },
+    {
+      key: "en_route",
+      label: locale === "en" ? "Driver on the way" : "Chauffeur en route",
+      icon: "🚕",
+    },
     { key: "arrived", label: locale === "en" ? "Driver arrived" : "Chauffeur arrivé", icon: "🚕" },
     { key: "completed", label: locale === "en" ? "Ride completed" : "Course terminée", icon: "✓" },
   ];
@@ -2201,7 +2325,10 @@ function SuiviPage() {
             ? "Booking confirmed"
             : "Réservation confirmée"
           : t("suivi.status.pending"),
-      text: locale === "en" ? "Your reservation has been registered." : "Votre réservation a bien été enregistrée.",
+      text:
+        locale === "en"
+          ? "Your reservation has been registered."
+          : "Votre réservation a bien été enregistrée.",
       time: "✓",
     },
   ].filter(Boolean) as Array<{ title: string; text: string; time: string }>;
@@ -2221,7 +2348,9 @@ function SuiviPage() {
               {typeof navigator !== "undefined" && navigator.share ? (
                 <button
                   className="suivi-outline"
-                  onClick={() => navigator.share({ title: "Suivi de ma course", url: window.location.href })}
+                  onClick={() =>
+                    navigator.share({ title: "Suivi de ma course", url: window.location.href })
+                  }
                 >
                   <Share2 size={13} />
                   {locale === "en" ? "Share ride" : "Partager le trajet"}
@@ -2251,14 +2380,22 @@ function SuiviPage() {
                   borderColor: getSimpleStatus(reservation.status).border,
                 }}
               >
-                <span className="suivi-status-dot" style={{ background: getSimpleStatus(reservation.status).color }} />
-                {locale === "en" ? getSimpleStatus(reservation.status).en : getSimpleStatus(reservation.status).fr}
+                <span
+                  className="suivi-status-dot"
+                  style={{ background: getSimpleStatus(reservation.status).color }}
+                />
+                {locale === "en"
+                  ? getSimpleStatus(reservation.status).en
+                  : getSimpleStatus(reservation.status).fr}
               </span>
             </div>
           </div>
 
           {!isCompleted && !isCancelled && !realtimeOk && (
-            <div className="suivi-card suivi-card-flat" style={{ marginBottom: 10, color: "#f0a0a0", fontSize: 11 }}>
+            <div
+              className="suivi-card suivi-card-flat"
+              style={{ marginBottom: 10, color: "#f0a0a0", fontSize: 11 }}
+            >
               <WifiOff size={14} style={{ verticalAlign: "-2px", marginRight: 6 }} />
               {t("suivi.offline_banner")}
             </div>
@@ -2272,7 +2409,10 @@ function SuiviPage() {
                     const done = i < progressIndex || (isCompleted && i === progressIndex);
                     const active = i === progressIndex;
                     return (
-                      <div key={step.key} className={`suivi-step ${done ? "done" : ""} ${active ? "active" : ""}`}>
+                      <div
+                        key={step.key}
+                        className={`suivi-step ${done ? "done" : ""} ${active ? "active" : ""}`}
+                      >
                         <div className="suivi-step-dot">{done && !active ? "✓" : step.icon}</div>
                         <div className="suivi-step-label">{step.label}</div>
                       </div>
@@ -2283,13 +2423,17 @@ function SuiviPage() {
 
               {!isCancelled && (
                 <section className="suivi-card suivi-driver-card" style={{ marginBottom: 10 }}>
-                  <h2 className="suivi-section-title">{locale === "en" ? "Your driver" : "Votre chauffeur"}</h2>
+                  <h2 className="suivi-section-title">
+                    {locale === "en" ? "Your driver" : "Votre chauffeur"}
+                  </h2>
                   <div className="suivi-driver-row">
                     <div className="suivi-driver-symbol" aria-hidden="true">
                       <span style={{ fontSize: 20 }}>✦</span>
                     </div>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <div className="suivi-driver-name">{reservation.driver_name || assignedDriver.name}</div>
+                      <div className="suivi-driver-name">
+                        {reservation.driver_name || assignedDriver.name}
+                      </div>
                       <div className="suivi-driver-role">
                         {locale === "en" ? "Partner driver" : "Chauffeur partenaire"}
                       </div>
@@ -2335,7 +2479,9 @@ function SuiviPage() {
                     <MapPin size={17} className="suivi-route-icon" />
                     <div>
                       <div className="suivi-route-label">{t("suivi.arrivee_label")}</div>
-                      <div className="suivi-route-value">{reservation.destination ?? reservation.arrivee ?? u.tbd}</div>
+                      <div className="suivi-route-value">
+                        {reservation.destination ?? reservation.arrivee ?? u.tbd}
+                      </div>
                     </div>
                   </div>
                   <div className="suivi-route-row">
@@ -2367,11 +2513,17 @@ function SuiviPage() {
                     <div className="suivi-route-row">
                       <CreditCard size={17} className="suivi-route-icon" />
                       <div>
-                        <div className="suivi-route-label">{getPriceLabel(reservation, t, isCompleted, locale)}</div>
-                        <div className="suivi-route-value" style={{ color: "#e0b866", fontSize: 16 }}>
-                          {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
-                            getDisplayPrice(reservation)!,
-                          )}
+                        <div className="suivi-route-label">
+                          {getPriceLabel(reservation, t, isCompleted, locale)}
+                        </div>
+                        <div
+                          className="suivi-route-value"
+                          style={{ color: "#e0b866", fontSize: 16 }}
+                        >
+                          {new Intl.NumberFormat(locale, {
+                            style: "currency",
+                            currency: "EUR",
+                          }).format(getDisplayPrice(reservation)!)}
                         </div>
                       </div>
                     </div>
@@ -2394,7 +2546,12 @@ function SuiviPage() {
 
               {!isCompleted && !isCancelled && (
                 <div id="suivi-chat" className="suivi-chat-card">
-                  <ChatSection suiviKey={id} reservationId={reservation.id} driverName={assignedDriver.name} t={t} />
+                  <ChatSection
+                    suiviKey={id}
+                    reservationId={reservation.id}
+                    driverName={assignedDriver.name}
+                    t={t}
+                  />
                 </div>
               )}
 
@@ -2422,7 +2579,9 @@ function SuiviPage() {
                       <div className="suivi-summary-row">
                         <span>{t("suivi.distance")}</span>
                         <strong>
-                          {reservation.distance_km != null ? `${Number(reservation.distance_km).toFixed(1)} km` : "—"}
+                          {reservation.distance_km != null
+                            ? `${Number(reservation.distance_km).toFixed(1)} km`
+                            : "—"}
                         </strong>
                       </div>
                       <div className="suivi-summary-row">
@@ -2436,9 +2595,10 @@ function SuiviPage() {
                         <span>{getPriceLabel(reservation, t, true, locale)}</span>
                         <strong style={{ color: "#e0b866", fontSize: 14 }}>
                           {getDisplayPrice(reservation) != null
-                            ? new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
-                                getDisplayPrice(reservation)!,
-                              )
+                            ? new Intl.NumberFormat(locale, {
+                                style: "currency",
+                                currency: "EUR",
+                              }).format(getDisplayPrice(reservation)!)
                             : "—"}
                         </strong>
                       </div>
@@ -2466,7 +2626,9 @@ function SuiviPage() {
 
             <aside className="suivi-side-stack">
               <section className="suivi-card suivi-notifications">
-                <h2 className="suivi-section-title">{locale === "en" ? "Notifications" : "Notifications"}</h2>
+                <h2 className="suivi-section-title">
+                  {locale === "en" ? "Notifications" : "Notifications"}
+                </h2>
                 {notificationItems.map((n, i) => (
                   <div className="suivi-notif" key={`${n.title}-${i}`}>
                     <div className="suivi-notif-line" />
@@ -2477,7 +2639,9 @@ function SuiviPage() {
                     </div>
                   </div>
                 ))}
-                {!isCompleted && !isCancelled && <TrackingPushOptIn reservationId={reservation.id} locale={locale} />}
+                {!isCompleted && !isCancelled && (
+                  <TrackingPushOptIn reservationId={reservation.id} locale={locale} />
+                )}
                 {!isCompleted && (
                   <Link to="/client/dashboard" className="suivi-dark-btn" style={{ marginTop: 8 }}>
                     {locale === "en" ? "View client area" : "Voir mon espace client"} →
@@ -2485,9 +2649,13 @@ function SuiviPage() {
                 )}
               </section>
               <section className="suivi-card suivi-help">
-                <h2 className="suivi-section-title">{locale === "en" ? "Need help?" : "Besoin d'aide ?"}</h2>
+                <h2 className="suivi-section-title">
+                  {locale === "en" ? "Need help?" : "Besoin d'aide ?"}
+                </h2>
                 <p>
-                  {locale === "en" ? "Our team is available 7 days a week." : "Notre équipe est à votre écoute 7j/7."}
+                  {locale === "en"
+                    ? "Our team is available 7 days a week."
+                    : "Notre équipe est à votre écoute 7j/7."}
                 </p>
                 {!isCompleted && (
                   <>
@@ -2519,7 +2687,9 @@ function SuiviPage() {
           )}
         </div>
       </div>
-      {showRecurring && <RecurringModal reservation={reservation} onClose={() => setShowRecurring(false)} />}
+      {showRecurring && (
+        <RecurringModal reservation={reservation} onClose={() => setShowRecurring(false)} />
+      )}
     </>
   );
 }
