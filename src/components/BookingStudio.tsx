@@ -1403,9 +1403,9 @@ export function BookingStudio() {
             <div className="space-y-2.5">
               {(
                 [
-                  { id: "bmw" as const, name: L.veh_bmw, cap: L.veh_bmw_cap },
-                  { id: "q6" as const, name: L.veh_q6, cap: L.veh_q6_cap },
-                  { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap },
+                  { id: "bmw" as const, name: L.veh_bmw, cap: L.veh_bmw_cap, photo: "/bmw-ix1.webp" },
+                  { id: "q6" as const, name: L.veh_q6, cap: L.veh_q6_cap, photo: "/audi-q6-etron.webp" },
+                  { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap, photo: "/mercedes-v-class.webp" },
                 ] as const
               ).map((v) => {
                 // BMW iX1 et Audi Q6 e-tron ne sont proposables que jusqu'à 4
@@ -1431,8 +1431,21 @@ export function BookingStudio() {
                           : "border-[#d6a83d]/40 bg-[#07101a] hover:border-[#d6a83d]/70"
                     }`}
                   >
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#111b25]">
-                      <Car className="h-6 w-6 text-[#e8bd5d]" />
+                    <span className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#111b25]">
+                      <img
+                        src={v.photo}
+                        alt={v.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        // Filet de sécurité : tant que les photos ne sont pas déployées
+                        // dans public/vehicules/, ou en cas d'échec réseau, on retombe
+                        // sur l'icône générique plutôt que d'afficher une image cassée.
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                          e.currentTarget.nextElementSibling?.classList.remove("hidden");
+                        }}
+                      />
+                      <Car className="hidden h-6 w-6 text-[#e8bd5d]" aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold">{v.name}</span>
