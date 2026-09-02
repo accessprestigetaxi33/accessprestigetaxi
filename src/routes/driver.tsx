@@ -559,6 +559,329 @@ const css = `
   @media (min-width:1101px) { .drv-header { margin-left:164px !important; } }
   @media (max-width:700px) { #root { overflow:visible !important; } .drv-root { overflow:visible !important; } .drv-main,.drv-content { overflow:visible !important; } }
 
+  /* ================================================================
+     APT — ALIGNEMENT FINAL SUR LA MAQUETTE FOURNIE
+     Breakpoints: mobile / tablette / desktop.
+     Ces règles restent uniquement visuelles et ne modifient aucune
+     logique métier, donnée, navigation ou appel serveur.
+     ================================================================ */
+
+  /* ---------- DESKTOP : >= 1101px ---------- */
+  @media (min-width:1101px) {
+    html, body { overflow-x:hidden !important; }
+
+    .drv-header {
+      margin-left:145px !important;
+      height:78px !important;
+      min-height:78px !important;
+      padding:0 18px !important;
+      gap:10px !important;
+    }
+
+    .drv-tabs {
+      width:145px !important;
+      padding:0 9px 18px !important;
+    }
+
+    .drv-side-logo {
+      height:104px !important;
+      margin:0 -9px 12px !important;
+    }
+
+    .drv-content {
+      margin-left:145px !important;
+      padding:0 15px 26px !important;
+      min-width:0 !important;
+    }
+
+    .drv-dashboard {
+      max-width:none !important;
+      width:100% !important;
+      padding:12px 0 30px !important;
+    }
+
+    /* La maquette desktop utilise trois colonnes de même poids. */
+    .drv-dashboard-grid-top {
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      gap:10px !important;
+    }
+
+    .drv-dashboard-grid-mid {
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      gap:10px !important;
+      margin-top:10px !important;
+    }
+
+    /* 4 cartes du bas : véhicule / GPS / notifications / raccourcis. */
+    .drv-dashboard-grid-bottom {
+      grid-template-columns:.83fr 1fr .86fr 1.39fr !important;
+      gap:10px !important;
+      margin-top:10px !important;
+    }
+
+    .drv-dashboard .drv-card {
+      min-width:0 !important;
+      overflow:hidden !important;
+    }
+
+    .drv-next-card,
+    .drv-day-card,
+    .drv-revenue-card {
+      min-height:315px !important;
+    }
+
+    .drv-next-card { padding:14px !important; }
+    .drv-day-card,
+    .drv-revenue-card { padding:14px !important; }
+
+    .drv-next-layout { grid-template-columns:100px minmax(0,1fr) !important; }
+    .drv-next-route { min-width:0 !important; }
+    .drv-next-route strong,
+    .drv-day-row span,
+    .drv-plan-row > span,
+    .drv-message-row div:nth-child(2) span {
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+
+    .drv-plan-row {
+      grid-template-columns:102px minmax(0,1fr) 40px 25px !important;
+    }
+
+    .drv-message-row {
+      grid-template-columns:32px minmax(0,1fr) 38px !important;
+    }
+
+    .drv-rating-bars {
+      margin-left:120px !important;
+    }
+
+    .shortcut-grid {
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      gap:6px !important;
+    }
+
+    .shortcut-grid b {
+      width:46px !important;
+      height:46px !important;
+    }
+  }
+
+  /* ---------- TABLETTE : 701–1100px ----------
+     Navigation horizontale + contenu en grille 2 colonnes. */
+  @media (min-width:701px) and (max-width:1100px) {
+    html, body { overflow-x:hidden !important; }
+
+    .drv-header {
+      height:72px !important;
+      min-height:72px !important;
+      padding:0 16px !important;
+    }
+
+    .drv-header > .drv-brand-mark {
+      display:grid !important;
+      width:42px !important;
+      height:42px !important;
+      flex:0 0 42px !important;
+      font-size:17px !important;
+    }
+
+    .drv-header-title strong { font-size:16px !important; }
+    .drv-header-title span { font-size:10px !important; }
+
+    .drv-header-live {
+      margin-left:auto !important;
+    }
+
+    .drv-header-kpi {
+      min-width:84px !important;
+      padding:0 10px !important;
+    }
+
+    .drv-header-kpi small { font-size:8px !important; }
+    .drv-header-kpi strong { font-size:16px !important; }
+
+    .drv-header-datetime { display:block !important; font-size:9px !important; }
+    .drv-header-datetime strong { font-size:10px !important; }
+
+    .drv-tabs {
+      position:sticky !important;
+      top:0 !important;
+      width:100% !important;
+      height:56px !important;
+      min-height:56px !important;
+      padding:0 6px !important;
+      flex-direction:row !important;
+      align-items:stretch !important;
+      overflow-x:auto !important;
+      overflow-y:hidden !important;
+      z-index:20 !important;
+    }
+
+    .drv-side-logo { display:none !important; }
+
+    .drv-tab {
+      min-width:86px !important;
+      min-height:56px !important;
+      flex:0 0 auto !important;
+      padding:7px 8px !important;
+      flex-direction:column !important;
+      justify-content:center !important;
+      gap:3px !important;
+      border-left:0 !important;
+      border-bottom:3px solid transparent !important;
+      border-radius:0 !important;
+      font-size:9px !important;
+    }
+
+    .drv-tab.active {
+      border-left:0 !important;
+      border-bottom-color:#e0b866 !important;
+    }
+
+    .drv-tab-icon svg { width:17px !important; height:17px !important; }
+
+    .drv-content {
+      margin-left:0 !important;
+      padding:0 14px 26px !important;
+    }
+
+    .drv-dashboard {
+      max-width:none !important;
+      padding:12px 0 28px !important;
+    }
+
+    .drv-dashboard-grid-top {
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:10px !important;
+    }
+
+    .drv-next-card,
+    .drv-day-card {
+      min-height:315px !important;
+    }
+
+    .drv-revenue-card {
+      grid-column:1 / -1 !important;
+      min-height:270px !important;
+    }
+
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom {
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:10px !important;
+    }
+
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom { margin-top:10px !important; }
+
+    .drv-dashboard .drv-card {
+      min-width:0 !important;
+      overflow:hidden !important;
+    }
+  }
+
+  /* ---------- MOBILE : <= 700px ----------
+     On colle au téléphone de la maquette : barre compacte,
+     carte prochaine course, 3 KPI, courses du jour et navigation basse. */
+  @media (max-width:700px) {
+    .drv-header {
+      height:58px !important;
+      min-height:58px !important;
+      padding:7px 10px !important;
+      gap:7px !important;
+    }
+
+    .drv-header > .drv-brand-mark {
+      display:grid !important;
+      width:34px !important;
+      height:34px !important;
+      flex:0 0 34px !important;
+      font-size:15px !important;
+    }
+
+    /* Dans la maquette téléphone, le nom n'occupe pas la barre du haut :
+       le bouton hamburger reste juste à côté du logo. */
+    .drv-header-title { display:none !important; }
+
+    .drv-header-live {
+      margin-left:auto !important;
+      padding:4px 7px !important;
+      font-size:7px !important;
+    }
+
+    .drv-header-bell {
+      width:31px !important;
+      height:31px !important;
+    }
+
+    .drv-content {
+      margin:0 !important;
+      padding:0 10px !important;
+    }
+
+    .drv-dashboard {
+      width:100% !important;
+      padding:9px 0 22px !important;
+    }
+
+    .drv-dashboard-grid-top {
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+    }
+
+    .drv-next-card {
+      order:0 !important;
+      min-height:0 !important;
+      padding:11px !important;
+    }
+
+    .drv-mobile-stats {
+      order:1 !important;
+      display:grid !important;
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      gap:6px !important;
+    }
+
+    .drv-day-card {
+      order:2 !important;
+      min-height:0 !important;
+      padding:10px !important;
+    }
+
+    .drv-revenue-card,
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom {
+      display:none !important;
+    }
+
+    .drv-next-layout {
+      grid-template-columns:70px minmax(0,1fr) !important;
+      gap:9px !important;
+    }
+
+    .drv-next-route { min-width:0 !important; }
+    .drv-next-route strong {
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      white-space:nowrap !important;
+    }
+
+    .drv-next-meta {
+      grid-template-columns:1.25fr 1fr .65fr !important;
+    }
+
+    .drv-btns {
+      gap:7px !important;
+    }
+
+    .drv-mobile-nav {
+      height:68px !important;
+    }
+  }
+
+
 `;
 
 // ── Icons ──────────────────────────────────────────────────────────────────
