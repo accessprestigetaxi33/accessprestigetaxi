@@ -43,6 +43,9 @@ import { quoteRide, bookRide } from "@/lib/booking.functions";
 import { locateUser } from "@/lib/geolocation";
 import { placesReverse } from "@/lib/places";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import bmwIx1Photo from "@/assets/bmw-ix1.webp";
+import audiQ6EtronPhoto from "@/assets/audi-q6-etron.webp";
+import mercedesVClassPhoto from "@/assets/mercedes-v-class.webp";
 
 /* ────────────────────────────── i18n ────────────────────────────── */
 
@@ -1403,9 +1406,9 @@ export function BookingStudio() {
             <div className="space-y-2.5">
               {(
                 [
-                  { id: "bmw" as const, name: L.veh_bmw, cap: L.veh_bmw_cap, photo: "/bmw-ix1.webp" },
-                  { id: "q6" as const, name: L.veh_q6, cap: L.veh_q6_cap, photo: "/audi-q6-etron.webp" },
-                  { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap, photo: "/mercedes-v-class.webp" },
+                  { id: "bmw" as const, name: L.veh_bmw, cap: L.veh_bmw_cap, photo: bmwIx1Photo },
+                  { id: "q6" as const, name: L.veh_q6, cap: L.veh_q6_cap, photo: audiQ6EtronPhoto },
+                  { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap, photo: mercedesVClassPhoto },
                 ] as const
               ).map((v) => {
                 // BMW iX1 et Audi Q6 e-tron ne sont proposables que jusqu'à 4
