@@ -882,6 +882,268 @@ const css = `
   }
 
 
+  /* ================================================================
+     APT — DASHBOARD FINAL / MAQUETTE
+     Priorité au rendu d'arrivée sur /driver.
+     On conserve volontairement le sélecteur Alain/Patricia et
+     « Retour au site ». Aucun comportement métier n'est modifié.
+     ================================================================ */
+  @media (min-width:1101px) {
+    html, body { overflow-x:hidden !important; }
+
+    .drv-root {
+      min-height:100dvh !important;
+      background:#02070d !important;
+    }
+
+    /* Sidebar = colonne fixe de la maquette */
+    .drv-tabs {
+      position:fixed !important;
+      inset:0 auto 0 0 !important;
+      width:145px !important;
+      height:100dvh !important;
+      padding:0 9px 18px !important;
+      display:flex !important;
+      flex-direction:column !important;
+      background:#040a11 !important;
+      border:0 !important;
+      border-right:1px solid rgba(201,155,74,.18) !important;
+      overflow-y:auto !important;
+      overflow-x:hidden !important;
+      z-index:40 !important;
+    }
+
+    .drv-side-logo {
+      width:auto !important;
+      height:104px !important;
+      margin:0 -9px 12px !important;
+      flex:0 0 104px !important;
+    }
+
+    .drv-tab {
+      width:100% !important;
+      min-height:42px !important;
+      flex:0 0 42px !important;
+      padding:9px 8px !important;
+      display:flex !important;
+      flex-direction:row !important;
+      justify-content:flex-start !important;
+      align-items:center !important;
+      gap:10px !important;
+      border:0 !important;
+      border-left:3px solid transparent !important;
+      border-radius:6px !important;
+      color:#b9c1ca !important;
+      font-size:10px !important;
+      font-weight:700 !important;
+    }
+
+    .drv-tab.active {
+      color:#fff !important;
+      border-left-color:#e0b866 !important;
+      background:linear-gradient(90deg,rgba(201,155,74,.22),rgba(201,155,74,.04)) !important;
+    }
+
+    .drv-tab-icon { width:20px !important; flex:0 0 20px !important; display:grid !important; place-items:center !important; }
+    .drv-tab-icon svg { width:18px !important; height:18px !important; }
+    .drv-tab-label { min-width:0 !important; overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important; }
+    .drv-tab-count { display:inline-flex !important; margin-left:auto !important; flex:0 0 auto !important; }
+
+    /* Header aligné sur le bord droit de la sidebar */
+    .drv-header {
+      position:relative !important;
+      z-index:35 !important;
+      margin-left:145px !important;
+      width:calc(100% - 145px) !important;
+      height:78px !important;
+      min-height:78px !important;
+      padding:0 18px !important;
+      gap:10px !important;
+      background:linear-gradient(180deg,#07111a,#03080e) !important;
+      border-bottom:1px solid rgba(201,155,74,.16) !important;
+      overflow:visible !important;
+    }
+
+    .drv-brand-mark { display:none !important; }
+
+    .drv-header-title {
+      min-width:180px !important;
+      flex:1 1 auto !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:2px !important;
+    }
+    .drv-header-title strong { font-size:17px !important; color:#f6f0e5 !important; }
+    .drv-header-title span { font-size:11px !important; color:rgba(246,240,229,.55) !important; }
+
+    /* Conservation explicite du sélecteur */
+    .drv-header > div[style*="position: relative"] {
+      display:block !important;
+      flex:0 0 auto !important;
+    }
+    .drv-header > div[style*="position: relative"] > button {
+      min-height:32px !important;
+      white-space:nowrap !important;
+    }
+
+    .drv-header-live {
+      flex:0 0 auto !important;
+      margin-left:0 !important;
+    }
+
+    .drv-header-kpi {
+      min-width:105px !important;
+      padding:0 15px !important;
+    }
+    .drv-header-kpi small { font-size:8px !important; }
+    .drv-header-kpi strong { font-size:18px !important; }
+
+    .drv-header-datetime {
+      display:block !important;
+      flex:0 0 auto !important;
+      margin-left:auto !important;
+      min-width:96px !important;
+      font-size:10px !important;
+      text-align:right !important;
+    }
+    .drv-header-datetime strong { font-size:11px !important; }
+
+    .drv-header-bell {
+      flex:0 0 34px !important;
+      width:34px !important;
+      height:34px !important;
+    }
+
+    /* Conservation explicite de « Retour au site » */
+    .drv-header-back {
+      display:flex !important;
+      flex:0 0 auto !important;
+      align-items:center !important;
+      height:34px !important;
+      padding:0 10px !important;
+      border:1px solid rgba(201,155,74,.65) !important;
+      border-radius:8px !important;
+      background:#07101a !important;
+      color:#e0b866 !important;
+      font-size:10px !important;
+      font-weight:700 !important;
+      white-space:nowrap !important;
+    }
+
+    .drv-main {
+      margin-left:0 !important;
+      min-height:calc(100dvh - 78px) !important;
+      display:block !important;
+      overflow:visible !important;
+    }
+
+    .drv-content {
+      margin-left:145px !important;
+      width:calc(100% - 145px) !important;
+      min-width:0 !important;
+      padding:0 15px 26px !important;
+      overflow:visible !important;
+    }
+
+    .drv-dashboard {
+      width:100% !important;
+      max-width:none !important;
+      margin:0 !important;
+      padding:12px 0 30px !important;
+    }
+
+    /* Trois colonnes égales, comme la maquette */
+    .drv-dashboard-grid-top,
+    .drv-dashboard-grid-mid {
+      width:100% !important;
+      display:grid !important;
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      gap:10px !important;
+    }
+    .drv-dashboard-grid-mid { margin-top:10px !important; }
+
+    /* Quatre blocs en bas avec le poids visuel de la maquette */
+    .drv-dashboard-grid-bottom {
+      width:100% !important;
+      display:grid !important;
+      grid-template-columns:.83fr .96fr .87fr 1.39fr !important;
+      gap:10px !important;
+      margin-top:10px !important;
+    }
+
+    .drv-dashboard .drv-card {
+      min-width:0 !important;
+      margin:0 !important;
+      padding:14px !important;
+      border-radius:9px !important;
+      background:linear-gradient(145deg,#08131d,#050b12) !important;
+      border:1px solid rgba(116,146,169,.22) !important;
+      box-shadow:inset 0 1px rgba(255,255,255,.025) !important;
+      overflow:hidden !important;
+    }
+
+    .drv-next-card,
+    .drv-day-card,
+    .drv-revenue-card { min-height:315px !important; }
+
+    .drv-card-head {
+      min-height:22px !important;
+      margin-bottom:8px !important;
+      font-size:11px !important;
+    }
+    .drv-card-head > span { min-width:0 !important; }
+
+    .drv-next-layout {
+      grid-template-columns:100px minmax(0,1fr) !important;
+      gap:14px !important;
+    }
+    .drv-next-time strong { font-size:31px !important; }
+    .drv-next-route { min-width:0 !important; }
+    .drv-next-route strong,
+    .drv-day-row span,
+    .drv-plan-row > span,
+    .drv-message-row div:nth-child(2) span {
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+
+    .drv-day-list { min-width:0 !important; }
+    .drv-day-row {
+      grid-template-columns:40px minmax(0,1fr) 38px 54px !important;
+      min-width:0 !important;
+      padding:7px 0 !important;
+    }
+
+    .drv-plan-row {
+      grid-template-columns:102px minmax(0,1fr) 40px 25px !important;
+      min-width:0 !important;
+    }
+
+    .drv-message-row {
+      grid-template-columns:32px minmax(0,1fr) 38px !important;
+    }
+
+    .drv-rating-bars { margin-left:120px !important; }
+
+    .shortcut-grid {
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      gap:6px !important;
+    }
+    .shortcut-grid b { width:46px !important; height:46px !important; }
+  }
+
+  /* Tablette : dashboard lisible sans supprimer les contrôles du header */
+  @media (min-width:701px) and (max-width:1100px) {
+    .drv-header-back { display:flex !important; }
+    .drv-header > div[style*="position: relative"] { display:block !important; }
+    .drv-header-kpi { min-width:78px !important; padding:0 7px !important; }
+    .drv-header-kpi small { font-size:7px !important; }
+    .drv-header-kpi strong { font-size:14px !important; }
+    .drv-dashboard-grid-top { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+    .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  }
+
+
 `;
 
 // ── Icons ──────────────────────────────────────────────────────────────────
