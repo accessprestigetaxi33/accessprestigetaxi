@@ -585,12 +585,24 @@ const css = `
     .drv-body { overflow:visible !important; -webkit-overflow-scrolling:auto !important; touch-action:auto !important; padding:8px 0 28px !important; } .drv-body * { touch-action:auto; }
   }
 
+  /* Mobile: the fifth action opens the complete navigation drawer. */
+  .drv-mobile-drawer-backdrop { display:none; }
+  .drv-mobile-drawer { display:none; }
+  @media (max-width:700px) {
+    .drv-mobile-drawer-backdrop { position:fixed; inset:0; z-index:110; display:block; background:rgba(0,0,0,.62); }
+    .drv-mobile-drawer { position:fixed; top:0; right:0; bottom:0; z-index:111; display:flex; width:min(86vw,340px); flex-direction:column; gap:5px; overflow-y:auto; padding:calc(env(safe-area-inset-top,0px) + 18px) 14px calc(env(safe-area-inset-bottom,0px) + 84px); background:#050a10; border-left:1px solid rgba(201,155,74,.45); box-shadow:-18px 0 40px rgba(0,0,0,.35); }
+    .drv-mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 14px; margin-bottom:4px; border-bottom:1px solid rgba(201,155,74,.25); color:#e0b866; font-size:13px; font-weight:800; }
+    .drv-mobile-drawer-close { width:34px; height:34px; border:1px solid rgba(201,155,74,.45); border-radius:7px; background:#07101a; color:#e0b866; font-size:20px; cursor:pointer; }
+    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 12px; border:1px solid transparent; border-radius:7px; background:transparent; color:#b9c1ca; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
+    .drv-mobile-drawer button.active { color:#fff; background:rgba(201,155,74,.14); border-color:rgba(201,155,74,.35); }
+    .drv-mobile-drawer svg { width:19px; height:19px; flex:0 0 auto; color:#e0b866; }
+    .drv-mobile-drawer .drv-tab-count { margin-left:auto; }
+  }
+
   @media (min-width:701px) { .drv-header > .drv-brand-mark { display:none !important; } }
   @media (max-width:700px) {
-    .drv-header > div[style*="position: relative"] { display:block !important; flex:0 0 30px !important; }
-    .drv-header > div[style*="position: relative"] > button { width:30px !important; height:30px !important; min-height:30px !important; padding:0 !important; font-size:0 !important; border:0 !important; background:transparent !important; color:#e8edf0 !important; }
-    .drv-header > div[style*="position: relative"] > button:before { content:"☰"; font-size:19px; }
-    .drv-header > div[style*="position: relative"] > button > span { display:none !important; }
+    .drv-header > div[style*="position: relative"] { display:block !important; flex:0 0 auto !important; }
+    .drv-header > div[style*="position: relative"] > button { width:auto !important; height:32px !important; min-height:32px !important; padding:5px 9px !important; font-size:11px !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
   }
 
   #root { height:auto !important; min-height:100% !important; overflow:visible !important; }
@@ -1509,6 +1521,7 @@ function DriverApp({
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [pendingDevis, setPendingDevis] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [pushBusy, setPushBusy] = useState(false);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
   // fusionnent identification + activation en un seul clic (distinct de
@@ -2278,11 +2291,71 @@ function DriverApp({
             {unreadChat > 0 && <b>{unreadChat}</b>}
             <span>Messages</span>
           </button>
-          <button onClick={() => setTab("devis")}>
+          <button onClick={() => setMobileMenuOpen(true)}>
             <IconDevice />
             <span>Plus</span>
           </button>
         </nav>
+        {mobileMenuOpen && (
+          <>
+            <button
+              type="button"
+              className="drv-mobile-drawer-backdrop"
+              aria-label="Fermer le menu"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <aside className="drv-mobile-drawer" aria-label="Toutes les rubriques chauffeur">
+              <div className="drv-mobile-drawer-head">
+                <span>MENU CHAUFFEUR</span>
+                <button
+                  type="button"
+                  className="drv-mobile-drawer-close"
+                  aria-label="Fermer le menu"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+              {(
+                [
+                  ["dashboard", "Tableau de bord", IconHome],
+                  ["courses", "Courses + chat", IconCar],
+                  ["planning", "Planning", IconCalendar],
+                  ["devis", "Devis", IconDevis],
+                  ["clients", "Clients", IconUsers],
+                  ["avis", "Avis", IconStar],
+                  ["stats", "Statistiques", IconChart],
+                  ["historique", "Historique", IconCalendar],
+                  ["simulateur", "Simulateur", IconCalc],
+                  ["gps", "Position GPS", IconGps],
+                  ["appareils", "Appareils", IconDevice],
+                ] as const
+              ).map(([key, label, Icon]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={tab === key ? "active" : ""}
+                  onClick={() => {
+                    setTab(key);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <Icon />
+                  <span>{label}</span>
+                  {key === "courses" && newCount > 0 && (
+                    <span className="drv-tab-count">{newCount}</span>
+                  )}
+                  {key === "avis" && pendingAvis > 0 && (
+                    <span className="drv-tab-count">{pendingAvis}</span>
+                  )}
+                  {key === "devis" && pendingDevis > 0 && (
+                    <span className="drv-tab-count">{pendingDevis}</span>
+                  )}
+                </button>
+              ))}
+            </aside>
+          </>
+        )}
       </div>
     </>
   );
