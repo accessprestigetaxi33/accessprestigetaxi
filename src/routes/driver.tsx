@@ -511,6 +511,83 @@ const css = `
       touch-action: pan-x !important;
     }
   }
+  /* ── Dashboard final : structure desktop/tablette/mobile inspirée de la maquette ── */
+  .drv-dash-period { font-size:10px; color:rgba(246,240,229,.65); border:1px solid rgba(201,155,74,.3); border-radius:7px; padding:4px 7px; }
+  .drv-revenue-head { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin:8px 0 12px; }
+  .drv-revenue-head strong { display:block; color:#6fe34f; font-size:30px; line-height:1; }
+  .drv-revenue-head span { display:block; color:#6fe34f; font-size:9px; text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
+  .drv-revenue-mini { color:rgba(246,240,229,.55); font-size:11px; text-align:right; }
+  .drv-revenue-mini span { color:#e0b866; font-size:18px; font-weight:800; margin:0; }
+  .drv-revenue-bars { height:82px; display:flex; align-items:flex-end; gap:4px; border-bottom:1px solid rgba(201,155,74,.18); padding:0 4px; }
+  .drv-revenue-bars span { flex:1; min-width:3px; max-width:13px; margin:0 auto; background:linear-gradient(180deg,#6fe34f,#2e9d35); border-radius:2px 2px 0 0; opacity:.9; }
+  .drv-revenue-foot { display:grid; grid-template-columns:auto auto auto auto; gap:6px; align-items:center; margin-top:11px; font-size:9px; color:rgba(246,240,229,.5); }
+  .drv-revenue-foot strong { color:#f6f0e5; font-size:12px; }
+  .drv-dash-extra-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; padding:0; margin-top:14px; }
+  .drv-plan-row { display:grid; grid-template-columns:72px minmax(0,1fr) auto; gap:8px; align-items:center; padding:9px 0; border-top:1px solid rgba(201,155,74,.16); cursor:pointer; font-size:11px; }
+  .drv-plan-time { color:rgba(246,240,229,.6); white-space:nowrap; }
+  .drv-plan-route { color:#f6f0e5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .drv-plan-row strong { color:#e0b866; white-space:nowrap; }
+  .drv-empty-small { padding:18px 6px; }
+  .drv-count-badge { background:#17243a; color:#9fc2ff; border-radius:6px; padding:3px 7px; font-size:10px; font-weight:800; }
+  .drv-count-badge.gold { background:rgba(201,155,74,.16); color:#e0b866; }
+  .drv-message-summary { display:flex; gap:10px; align-items:center; min-height:82px; }
+  .drv-message-avatar { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; flex:0 0 40px; background:#0b1824; border:1px solid rgba(201,155,74,.35); color:#e0b866; }
+  .drv-message-summary strong { display:block; color:#f6f0e5; font-size:13px; }
+  .drv-message-summary span { display:block; margin-top:4px; color:rgba(246,240,229,.5); font-size:10px; line-height:1.4; }
+  .drv-rating-big { display:flex; align-items:baseline; gap:4px; margin-top:5px; }
+  .drv-rating-big strong { color:#f6f0e5; font-size:38px; line-height:1; }
+  .drv-rating-big span { color:rgba(246,240,229,.5); font-size:14px; }
+  .drv-stars-row { color:#e0b866; letter-spacing:2px; font-size:18px; margin:8px 0 5px; }
+  .drv-review-note { color:rgba(246,240,229,.55); font-size:10px; }
+  .drv-status-ok { color:#70d98b; font-size:9px; font-weight:700; }
+  .drv-vehicle-main { display:flex; gap:12px; align-items:center; min-height:80px; }
+  .drv-vehicle-main svg { width:66px; height:46px; color:#cfd5dd; opacity:.9; }
+  .drv-vehicle-main strong { display:block; color:#f6f0e5; font-size:14px; }
+  .drv-vehicle-main span { display:block; color:rgba(246,240,229,.5); font-size:10px; margin-top:4px; }
+  .drv-vehicle-checks { display:flex; gap:12px; padding-top:8px; border-top:1px solid rgba(201,155,74,.16); color:#72d78b; font-size:9px; }
+  @media (min-width:1024px) {
+    .drv-header { height:74px; padding:0 22px 0 18px !important; }
+    .drv-main { margin-left:230px; }
+    .drv-body { padding:18px 14px 28px !important; }
+    .drv-overview { padding:14px 0 8px; }
+    .drv-overview-head { border:0; padding:0; margin-bottom:10px; background:transparent; }
+    .drv-overview-head p { display:none; }
+    .drv-stat-grid { display:none !important; }
+    .drv-dash-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:14px; padding:0 !important; align-items:stretch; }
+    .drv-dash-col { display:contents; }
+    .drv-dash-grid > .drv-dash-col-main > .drv-card:nth-child(1) { grid-column:span 4; grid-row:1; }
+    .drv-dash-grid > .drv-dash-col-main > .drv-card:nth-child(2) { grid-column:span 4; grid-row:1; }
+    .drv-dash-grid > .drv-dash-col-main > .drv-card:nth-child(3) { grid-column:span 4; grid-row:1; }
+    .drv-dash-grid > .drv-dash-col-side > div:nth-child(1) { grid-column:span 3; grid-row:3; }
+    .drv-dash-grid > .drv-dash-col-side > .drv-card:nth-child(2) { grid-column:span 3; grid-row:3; }
+    .drv-dash-grid > .drv-dash-col-side > .drv-card:nth-child(3) { grid-column:span 3; grid-row:3; }
+    .drv-dash-extra-grid { display:contents; }
+    .drv-dash-extra-grid > .drv-card:nth-child(1) { grid-column:span 4; grid-row:2; }
+    .drv-dash-extra-grid > .drv-card:nth-child(2) { grid-column:span 4; grid-row:2; }
+    .drv-dash-extra-grid > .drv-card:nth-child(3) { grid-column:span 4; grid-row:2; }
+    .drv-dash-extra-grid > .drv-card:nth-child(4) { grid-column:span 3; grid-row:3; }
+    .drv-dash-col-side > div:nth-child(1) { grid-column:span 3 !important; grid-row:3 !important; }
+    .drv-dash-col-side > .drv-card:nth-child(2) { grid-column:span 3 !important; grid-row:3 !important; }
+    .drv-dash-col-side > .drv-card:nth-child(3) { grid-column:span 3 !important; grid-row:3 !important; }
+    .drv-dash-col-side > .drv-card:nth-child(3) { grid-column:span 3 !important; }
+    .drv-dash-extra-grid > .drv-card:nth-child(4) { grid-column:1 / span 3; }
+    .drv-dash-col-side > div:nth-child(1) { grid-column:4 / span 3 !important; }
+    .drv-dash-col-side > .drv-card:nth-child(2) { grid-column:7 / span 3 !important; }
+    .drv-dash-col-side > .drv-card:nth-child(3) { grid-column:10 / span 3 !important; }
+    .drv-dash-extra-grid .drv-card { margin-bottom:0; min-height:150px; }
+    .drv-team-map { margin:0 !important; }
+  }
+  @media (max-width:1023px) {
+    .drv-dash-extra-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width:600px) {
+    .drv-dash-extra-grid { grid-template-columns:1fr; margin-top:0; }
+    .drv-dash-extra-grid .drv-card { margin-bottom:10px; }
+    .drv-plan-row { grid-template-columns:58px minmax(0,1fr) auto; }
+    .drv-revenue-head strong { font-size:27px; }
+    .drv-message-summary { min-height:68px; }
+  }
+
 `;
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -1355,6 +1432,47 @@ function DriverApp({
                       ))
                     )}
                   </div>
+
+                  {/* Revenus */}
+                  <div className="drv-card drv-dash-revenue">
+                    <div className="drv-section-row">
+                      <span className="drv-section">REVENUS</span>
+                      <span className="drv-dash-period">Aujourd'hui</span>
+                    </div>
+                    <div className="drv-revenue-head">
+                      <div>
+                        <strong>{dashboardRevenue.toFixed(0)} €</strong>
+                        <span>CA aujourd'hui</span>
+                      </div>
+                      <div className="drv-revenue-mini">
+                        <span>{dashboardToday.length}</span> courses
+                      </div>
+                    </div>
+                    <div className="drv-revenue-bars" aria-label="Répartition des revenus par course">
+                      {dashboardTodaySorted.slice(0, 12).map((r) => {
+                        const values = dashboardTodaySorted.map(
+                          (x) => Number(x.final_price ?? x.prix_estime ?? 0) || 0,
+                        );
+                        const max = Math.max(1, ...values);
+                        const value = Number(r.final_price ?? r.prix_estime ?? 0) || 0;
+                        return (
+                          <span
+                            key={r.id}
+                            style={{ height: `${Math.max(14, Math.round((value / max) * 100))}%` }}
+                            title={`${value.toFixed(0)} €`}
+                          />
+                        );
+                      })}
+                    </div>
+                    <div className="drv-revenue-foot">
+                      <span>Courses</span>
+                      <strong>{dashboardToday.length}</strong>
+                      <span>Panier moyen</span>
+                      <strong>
+                        {dashboardToday.length ? (dashboardRevenue / dashboardToday.length).toFixed(0) : "0"} €
+                      </strong>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="drv-dash-col drv-dash-side">
@@ -1413,6 +1531,104 @@ function DriverApp({
                         <IconCalc />
                         <span>Simu</span>
                       </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="drv-dash-extra-grid">
+                  <div className="drv-card">
+                    <div className="drv-section-row">
+                      <span className="drv-section">PLANNING</span>
+                      <button type="button" className="drv-link-btn" onClick={() => setTab("planning")}>
+                        Voir tout
+                      </button>
+                    </div>
+                    {dashboardUpcoming.slice(0, 3).map((r) => (
+                      <div key={r.id} className="drv-plan-row" onClick={() => setTab("courses")}>
+                        <span className="drv-plan-time">{formatHeure(r.pickup_datetime || r.date_heure)}</span>
+                        <span className="drv-plan-route">
+                          {r.depart} → {r.destination}
+                        </span>
+                        <strong>{Number(r.final_price ?? r.prix_estime ?? 0).toFixed(0)} €</strong>
+                      </div>
+                    ))}
+                    {dashboardUpcoming.length === 0 && (
+                      <div className="drv-empty drv-empty-small">Aucune réservation à venir.</div>
+                    )}
+                  </div>
+
+                  <div className="drv-card drv-dash-message-card" onClick={() => setTab("courses")}>
+                    <div className="drv-section-row">
+                      <span className="drv-section">MESSAGES NON LUS</span>
+                      <span className="drv-count-badge">{unreadChat}</span>
+                      <button
+                        type="button"
+                        className="drv-link-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTab("courses");
+                        }}
+                      >
+                        Voir tout
+                      </button>
+                    </div>
+                    <div className="drv-message-summary">
+                      <div className="drv-message-avatar">✉</div>
+                      <div>
+                        <strong>
+                          {unreadChat > 0
+                            ? `${unreadChat} message${unreadChat > 1 ? "s" : ""} à lire`
+                            : "Aucun message non lu"}
+                        </strong>
+                        <span>
+                          {unreadChat > 0
+                            ? "Ouvrez Courses pour retrouver les échanges clients."
+                            : "Les nouveaux messages apparaîtront ici."}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="drv-card drv-dash-review-card" onClick={() => setTab("avis")}>
+                    <div className="drv-section-row">
+                      <span className="drv-section">AVIS RÉCENTS</span>
+                      <span className="drv-count-badge gold">{pendingAvis}</span>
+                      <button
+                        type="button"
+                        className="drv-link-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTab("avis");
+                        }}
+                      >
+                        Voir tout
+                      </button>
+                    </div>
+                    <div className="drv-rating-big">
+                      <strong>—</strong>
+                      <span>/ 5</span>
+                    </div>
+                    <div className="drv-stars-row">★★★★★</div>
+                    <span className="drv-review-note">
+                      {pendingAvis > 0 ? `${pendingAvis} avis en attente` : "Consultez vos avis clients"}
+                    </span>
+                  </div>
+
+                  <div className="drv-card drv-vehicle-card">
+                    <div className="drv-section-row">
+                      <span className="drv-section">VÉHICULE</span>
+                      <span className="drv-status-ok">● Opérationnel</span>
+                    </div>
+                    <div className="drv-vehicle-main">
+                      <IconCar />
+                      <div>
+                        <strong>Véhicule professionnel</strong>
+                        <span>Access Prestige Taxi</span>
+                      </div>
+                    </div>
+                    <div className="drv-vehicle-checks">
+                      <span>✓ Contrôle</span>
+                      <span>✓ Assurance</span>
                     </div>
                   </div>
                 </div>
