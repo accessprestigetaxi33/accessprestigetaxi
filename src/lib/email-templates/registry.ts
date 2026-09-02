@@ -18,6 +18,7 @@ import { template as reservationCancelled } from "./reservation-cancelled";
 import { template as reservationTracking } from "./reservation-tracking";
 import { template as devisConfirmation } from "./devis-confirmation";
 import { template as devisAdmin } from "./devis-admin";
+import { template as rideInvoice } from "./ride-invoice";
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   "contact-message": contactMessage,
@@ -29,4 +30,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   "reservation-tracking": reservationTracking,
   "devis-confirmation": devisConfirmation,
   "devis-admin": devisAdmin,
+  "ride-invoice": rideInvoice,
 };
