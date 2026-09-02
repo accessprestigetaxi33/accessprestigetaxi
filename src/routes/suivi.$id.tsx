@@ -40,7 +40,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
-
 /** Opt-in notifications push pour un client anonyme suivant sa course. */
 function TrackingPushOptIn({ reservationId, locale }: { reservationId: string; locale: string }) {
   const en = locale === "en";
@@ -95,9 +94,7 @@ function TrackingPushOptIn({ reservationId, locale }: { reservationId: string; l
               : "Activer les alertes de ma course"}
         </button>
       )}
-      {lastError && (
-        <div style={{ marginTop: 6, fontSize: 11, color: "#fca5a5" }}>{lastError}</div>
-      )}
+      {lastError && <div style={{ marginTop: 6, fontSize: 11, color: "#fca5a5" }}>{lastError}</div>}
     </div>
   );
 }
@@ -162,6 +159,9 @@ const PREMIUM_CSS = `
   .suivi-titlebar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 0 14px; }
   .suivi-titlebar h1 { margin:0; text-align:center; flex:1; font-family:'Playfair Display',Georgia,serif; font-size:24px; letter-spacing:.02em; color:#f6f0e5; }
   .suivi-titlebar p { margin:3px 0 0; text-align:center; font-size:11px; color:rgba(246,240,229,.62); }
+  .suivi-status-wrap { min-width:78px; display:flex; justify-content:flex-end; }
+  .suivi-status-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; border:1px solid; font-size:10.5px; font-weight:800; letter-spacing:.03em; white-space:nowrap; }
+  .suivi-status-dot { width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
   .suivi-main-grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(300px,.7fr); gap:14px; align-items:start; }
   .suivi-card { background:linear-gradient(180deg,#07131e,#040a10); border:1px solid #c99b4a; border-radius:10px; color:#f6f0e5; box-shadow:0 12px 35px rgba(0,0,0,.25); }
   .suivi-card-flat { padding:14px; }
@@ -234,6 +234,7 @@ const PREMIUM_CSS = `
     .suivi-titlebar > .suivi-outline { width: 100%; margin-bottom: 10px; }
     .suivi-titlebar h1 { font-size: 18px; text-align: left; }
     .suivi-titlebar p { text-align: left; }
+    .suivi-status-wrap { justify-content: flex-start; margin-top: 10px; }
     .suivi-timeline { overflow-x: auto; }
     .suivi-timeline-track { min-width: 520px; }
     .suivi-route-value { font-size: 13px; }
@@ -253,6 +254,7 @@ type Reservation = {
   updated_at?: string | null;
   status: string;
   prix_estime?: number | null;
+  final_price?: number | null;
   distance_km?: number | null;
   duree_s?: number | null;
   client_name?: string | null;
@@ -319,6 +321,78 @@ const STATUS_CONFIG: Record<
     icon: "✕",
   },
 };
+
+// ─── Badge de statut simplifié (en attente / en cours / terminé / annulé) ──────────
+const SIMPLE_STATUS: Record<string, { fr: string; en: string; color: string; bg: string; border: string }> = {
+  pending: {
+    fr: "En attente",
+    en: "Pending",
+    color: "#f0c069",
+    bg: "rgba(240,192,105,.14)",
+    border: "rgba(240,192,105,.45)",
+  },
+  accepted: {
+    fr: "En cours",
+    en: "In progress",
+    color: "#e0b866",
+    bg: "rgba(224,184,102,.14)",
+    border: "rgba(224,184,102,.45)",
+  },
+  en_route: {
+    fr: "En cours",
+    en: "In progress",
+    color: "#e0b866",
+    bg: "rgba(224,184,102,.14)",
+    border: "rgba(224,184,102,.45)",
+  },
+  arrived: {
+    fr: "En cours",
+    en: "In progress",
+    color: "#e0b866",
+    bg: "rgba(224,184,102,.14)",
+    border: "rgba(224,184,102,.45)",
+  },
+  completed: {
+    fr: "Terminé",
+    en: "Completed",
+    color: "#5fd08a",
+    bg: "rgba(95,208,138,.14)",
+    border: "rgba(95,208,138,.45)",
+  },
+  cancelled: {
+    fr: "Annulé",
+    en: "Cancelled",
+    color: "#f19a9a",
+    bg: "rgba(241,154,154,.14)",
+    border: "rgba(241,154,154,.45)",
+  },
+};
+function getSimpleStatus(status: string) {
+  return SIMPLE_STATUS[status] ?? SIMPLE_STATUS.pending;
+}
+
+// ─── Prix final (compteur) vs tarif estimé ─────────────────────────────────────────
+// `final_price` doit être renvoyé par la fonction serveur `getReservationForFinPublic`
+// (ainsi que par le payload realtime) pour que cette priorité prenne effet — si le
+// champ n'est pas encore sélectionné côté serveur, il faudra l'ajouter là-bas aussi.
+function getDisplayPrice(r: Pick<Reservation, "final_price" | "prix_estime">): number | null {
+  if (r.final_price != null) return Number(r.final_price);
+  if (r.prix_estime != null) return Number(r.prix_estime);
+  return null;
+}
+function getPriceLabel(
+  r: Pick<Reservation, "final_price">,
+  t: (k: string) => string,
+  isCompleted: boolean,
+  locale: string,
+): string {
+  if (r.final_price != null) {
+    const label = t("suivi.final_price_label");
+    if (label !== "suivi.final_price_label") return label;
+    return locale === "en" ? "Final fare (metered)" : "Tarif final (compteur)";
+  }
+  return isCompleted ? t("fin.price_label") : t("suivi.tarif_estime");
+}
 
 // ─── Timeline Stepper ──────────────────────────────────────────────────────────────
 function PremiumTimeline({ status }: { status: string }) {
@@ -822,8 +896,8 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
           timeZone: "Europe/Paris",
         })
       : new Date().toLocaleDateString(intlLocale);
-    const prix = reservation.prix_estime
-      ? new Intl.NumberFormat(intlLocale, { style: "currency", currency: "EUR" }).format(reservation.prix_estime)
+    const prix = getDisplayPrice(reservation)
+      ? new Intl.NumberFormat(intlLocale, { style: "currency", currency: "EUR" }).format(getDisplayPrice(reservation)!)
       : "—";
     // Fix #1 — résoudre les labels i18n avant le template string
     const labelDepart = t("suivi.depart_label");
@@ -834,11 +908,11 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
     const labelDetailsTitle = t("suivi.receipt.details_title");
     const labelDistance = t("suivi.receipt.distance");
     const labelPayment = t("suivi.receipt.payment");
-    const labelTotal = t("suivi.receipt.total");
     const labelPrint = t("suivi.receipt.print");
     const labelClose = t("suivi.receipt.close");
     const labelFooterLegal = t("suivi.receipt.footer_legal");
     const labelFooterThanks = t("suivi.receipt.footer_thanks");
+    const labelTotalFinal = getPriceLabel(reservation, t, true, locale);
     const dir = locale === "ar" ? "rtl" : "ltr";
     const html = `<!DOCTYPE html><html lang="${locale}" dir="${dir}"><head><meta charset="UTF-8"/>
 <title>${labelDocTitle}</title>
@@ -871,7 +945,7 @@ function InvoiceBlock({ reservation, locale, t }: { reservation: any; locale: st
 ${reservation.distance_km != null ? `<div class="row"><span class="label">${labelDistance}</span><span class="value">${Number(reservation.distance_km).toFixed(1)} km</span></div>` : ""}
 ${reservation.nb_passagers != null ? `<div class="row"><span class="label">${labelPassagers}</span><span class="value">${reservation.nb_passagers}</span></div>` : ""}
 ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayment}</span><span class="value">${reservation.mode_paiement}</span></div>` : ""}
-<div class="total-box"><span class="label">${labelTotal}</span><span class="amount">${prix}</span></div>
+<div class="total-box"><span class="label">${labelTotalFinal}</span><span class="amount">${prix}</span></div>
 <div class="no-print" style="text-align:center">
   <button class="btn" onclick="window.print()">${labelPrint}</button>
   <button class="btn" onclick="window.close()" style="background:#9fb0c2">${labelClose}</button>
@@ -959,11 +1033,13 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
             <span style={{ fontWeight: 600, color: "#f6f0e5" }}>{reservation.mode_paiement}</span>
           </div>
         )}
-        {reservation.prix_estime != null && (
+        {getDisplayPrice(reservation) != null && (
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-            <span style={{ fontSize: "13px", color: "#9fb0c2" }}>{t("fin.price_label")}</span>
+            <span style={{ fontSize: "13px", color: "#9fb0c2" }}>{getPriceLabel(reservation, t, true, locale)}</span>
             <span style={{ fontSize: "22px", fontWeight: 900, color: "#e0b866" }}>
-              {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(reservation.prix_estime)}
+              {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
+                getDisplayPrice(reservation)!,
+              )}
             </span>
           </div>
         )}
@@ -1732,7 +1808,7 @@ function SuiviPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, reservation?.prix_estime, reservation?.id]);
+  }, [id, reservation?.prix_estime, reservation?.final_price, reservation?.id]);
 
   const fetchReservation = useServerFn(getReservationForFinPublic);
 
@@ -1759,11 +1835,9 @@ function SuiviPage() {
                 else if (r.status === "completed")
                   toast.success("🏁 " + t("suivi.status.completed") + " — " + t("suivi.completed_title"));
               }
-              if (
-                prev.prix_estime != null &&
-                r.prix_estime != null &&
-                Number(prev.prix_estime) !== Number(r.prix_estime)
-              ) {
+              const prevPrice = getDisplayPrice(prev);
+              const nextPrice = getDisplayPrice(r);
+              if (prevPrice != null && nextPrice != null && prevPrice !== nextPrice) {
                 toast.success(t("suivi.price_updated"));
               }
             }
@@ -2168,7 +2242,19 @@ function SuiviPage() {
                   : "Nous vous tenons informé à chaque étape de votre trajet."}
               </p>
             </div>
-            <div style={{ minWidth: 78 }} />
+            <div className="suivi-status-wrap">
+              <span
+                className="suivi-status-pill"
+                style={{
+                  color: getSimpleStatus(reservation.status).color,
+                  background: getSimpleStatus(reservation.status).bg,
+                  borderColor: getSimpleStatus(reservation.status).border,
+                }}
+              >
+                <span className="suivi-status-dot" style={{ background: getSimpleStatus(reservation.status).color }} />
+                {locale === "en" ? getSimpleStatus(reservation.status).en : getSimpleStatus(reservation.status).fr}
+              </span>
+            </div>
           </div>
 
           {!isCompleted && !isCancelled && !realtimeOk && (
@@ -2277,16 +2363,14 @@ function SuiviPage() {
                       <div className="suivi-route-value">{reservation.nb_passagers ?? "—"}</div>
                     </div>
                   </div>
-                  {reservation.prix_estime != null && (
+                  {getDisplayPrice(reservation) != null && (
                     <div className="suivi-route-row">
                       <CreditCard size={17} className="suivi-route-icon" />
                       <div>
-                        <div className="suivi-route-label">
-                          {isCompleted ? t("fin.price_label") : t("suivi.tarif_estime")}
-                        </div>
+                        <div className="suivi-route-label">{getPriceLabel(reservation, t, isCompleted, locale)}</div>
                         <div className="suivi-route-value" style={{ color: "#e0b866", fontSize: 16 }}>
                           {new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
-                            Number(reservation.prix_estime),
+                            getDisplayPrice(reservation)!,
                           )}
                         </div>
                       </div>
@@ -2349,11 +2433,11 @@ function SuiviPage() {
                     <div className="suivi-summary-box">
                       <h3>{locale === "en" ? "Invoice" : "Facture"}</h3>
                       <div className="suivi-summary-row">
-                        <span>{t("fin.price_label")}</span>
+                        <span>{getPriceLabel(reservation, t, true, locale)}</span>
                         <strong style={{ color: "#e0b866", fontSize: 14 }}>
-                          {reservation.prix_estime != null
+                          {getDisplayPrice(reservation) != null
                             ? new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(
-                                Number(reservation.prix_estime),
+                                getDisplayPrice(reservation)!,
                               )
                             : "—"}
                         </strong>
@@ -2393,15 +2477,12 @@ function SuiviPage() {
                     </div>
                   </div>
                 ))}
-                {!isCompleted && !isCancelled && (
-                  <TrackingPushOptIn reservationId={reservation.id} locale={locale} />
-                )}
+                {!isCompleted && !isCancelled && <TrackingPushOptIn reservationId={reservation.id} locale={locale} />}
                 {!isCompleted && (
                   <Link to="/client/dashboard" className="suivi-dark-btn" style={{ marginTop: 8 }}>
                     {locale === "en" ? "View client area" : "Voir mon espace client"} →
                   </Link>
                 )}
-
               </section>
               <section className="suivi-card suivi-help">
                 <h2 className="suivi-section-title">{locale === "en" ? "Need help?" : "Besoin d'aide ?"}</h2>
