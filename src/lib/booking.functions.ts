@@ -104,6 +104,11 @@ const BookSchema = QuoteSchema.extend({
   options: z.array(z.string().trim().max(60)).max(12).default([]),
   note: z.string().trim().max(1000).default(""),
   lang: z.enum(["fr", "en"]).default("fr"),
+  /** Modèle choisi explicitement par le client sur la carte véhicule (BookingStudio).
+   * Optionnel/nullable pour rester compatible avec d'anciens clients qui
+   * n'enverraient pas ce champ. Le tarif n'en dépend pas (identique pour bmw
+   * et q6) ; seul "van" peut faire basculer `service_type` — voir plus bas. */
+  vehicule_prefere: z.enum(["bmw", "q6", "van"]).nullable().optional(),
   /** Clé d'idempotence générée par le client (anti double-clic). */
   client_request_id: z.string().trim().min(8).max(80).nullable().optional(),
 });
@@ -165,7 +170,31 @@ export const bookRide = createServerFn({ method: "POST" })
 
     const suiviId = newSuiviId();
     const email = data.email || null;
-    const message = [data.options.join(" · ") || null, data.note || null].filter(Boolean).join(" — ") || null;
+    // Libellé lisible du modèle souhaité, pour le chauffeur et l'admin — le
+    // véhicule précis (BMW iX1 / Audi Q6 e-tron) n'existe pas comme colonne
+    // dédiée ; seul le van a un impact sur `service_type` (voir ci-dessous).
+    const vehiculeLabel =
+      data.vehicule_prefere === "van"
+        ? "Van"
+        : data.vehicule_prefere === "bmw"
+          ? "BMW iX1"
+          : data.vehicule_prefere === "q6"
+            ? "Audi Q6 e-tron"
+            : null;
+    const message =
+      [
+        vehiculeLabel ? `Véhicule souhaité : ${vehiculeLabel}` : null,
+        data.options.join(" · ") || null,
+        data.note || null,
+      ]
+        .filter(Boolean)
+        .join(" — ") || null;
+    // `service_type` ne connaît que "van" / "standard" (valeur déjà lue
+    // ailleurs, ex. tableau chauffeur) : on le bascule sur "van" si le calcul
+    // serveur l'impose (>5 passagers) OU si le client l'a demandé explicitement,
+    // même pour un trajet qui tiendrait en berline (confort). On ne touche pas
+    // au tarif calculé par `computeQuote`, qui reste basé sur le trajet réel.
+    const serviceType = q.vehicule === "van" || data.vehicule_prefere === "van" ? "van" : "standard";
 
     const { data: inserted, error } = await supabaseAdmin
       .from("reservations")
@@ -184,7 +213,7 @@ export const bookRide = createServerFn({ method: "POST" })
         passagers: data.passagers,
         nb_passagers: data.passagers,
         bagages: data.bagages,
-        service_type: q.vehicule === "van" ? "van" : "standard",
+        service_type: serviceType,
         status: "pending",
         suivi_id: suiviId,
         distance_km: q.distanceKm,
@@ -291,6 +320,7 @@ export const bookRide = createServerFn({ method: "POST" })
               pickup_datetime: data.pickup_datetime,
               passagers: data.passagers,
               bagages: data.bagages,
+              vehicule: vehiculeLabel ?? (serviceType === "van" ? "Van" : undefined),
               admin_url: "https://accessprestigetaxi.fr/driver",
             },
           });
