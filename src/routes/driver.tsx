@@ -868,7 +868,7 @@ function DriverApp({
     const d = new Date(r.pickup_datetime || r.date_heure);
     return !Number.isNaN(d.getTime()) && d.getTime() > Date.now() && !["completed", "cancelled"].includes(r.status);
   });
-  const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.prix_estime) || 0), 0);
+  const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.final_price ?? r.prix_estime) || 0), 0);
 
   return (
     <>
@@ -3710,7 +3710,7 @@ function PlanningTab() {
               </div>
               <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
                 {r.distance_km ? `${r.distance_km} km · ` : ""}
-                {r.prix_estime ? `${r.prix_estime.toFixed(2)} €` : ""}
+                {(r as any).final_price ?? r.prix_estime ? `${Number((r as any).final_price ?? r.prix_estime).toFixed(2)} €` : ""}
                 {["terminee", "completed"].includes(r.status) ? " · Terminée" : ""}
               </div>
             </div>
