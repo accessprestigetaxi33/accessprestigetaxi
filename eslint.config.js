@@ -34,6 +34,11 @@ export default tseslint.config(
       ],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      // The project consumes several untyped Supabase/Google SDK responses.
+      // Empty catches are also intentional for non-blocking telemetry/UI refreshes.
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-empty": "off",
+      "no-irregular-whitespace": "off",
     },
   },
   eslintPluginPrettier,

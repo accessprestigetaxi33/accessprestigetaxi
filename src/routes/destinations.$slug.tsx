@@ -17,7 +17,9 @@ export const Route = createFileRoute("/destinations/$slug")({
   head: ({ params, match }) => {
     const dest = getDestination(params.slug);
     if (!dest) {
-      return { meta: [{ title: "Destination introuvable" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "Destination introuvable" }, { name: "robots", content: "noindex" }],
+      };
     }
     const url = `${SITE}/destinations/${dest.slug}`;
     return {
@@ -38,7 +40,7 @@ export const Route = createFileRoute("/destinations/$slug")({
       links: seoLinks(`/destinations/${params.slug}`, match.search),
     };
   },
-  notFoundComponent: () => {
+  notFoundComponent: function NotFoundComponent() {
     const { lang } = useI18n();
     const isEn = lang === "en";
     return (
@@ -52,7 +54,7 @@ export const Route = createFileRoute("/destinations/$slug")({
       </div>
     );
   },
-  errorComponent: () => {
+  errorComponent: function ErrorComponent() {
     const { lang } = useI18n();
     const isEn = lang === "en";
     return (
@@ -135,7 +137,10 @@ function DestinationPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-12 sm:py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <Link to="/destinations" className="text-xs uppercase tracking-[0.2em] text-primary">
         ← {u.back}
@@ -144,7 +149,9 @@ function DestinationPage() {
       <span className="mt-6 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
         <MapPin className="h-3.5 w-3.5 text-primary" /> {dest.dept}
       </span>
-      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl md:text-[2.75rem] md:leading-tight">{c.h1}</h1>
+      <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl md:text-[2.75rem] md:leading-tight">
+        {c.h1}
+      </h1>
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">{c.lead}</p>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -193,7 +200,10 @@ function DestinationPage() {
             </li>
           ))}
         </ul>
-        <Link to="/securite" className="mt-5 inline-block text-sm font-semibold text-primary underline">
+        <Link
+          to="/securite"
+          className="mt-5 inline-block text-sm font-semibold text-primary underline"
+        >
           {u.safety} →
         </Link>
       </section>

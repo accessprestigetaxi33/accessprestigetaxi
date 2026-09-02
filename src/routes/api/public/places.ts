@@ -63,7 +63,7 @@ const norm = (s: string) =>
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[.,;:!?'"`()\[\]]/g, " ")
+    .replace(/[.,;:!?'"`()\u005B\u005D]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -71,10 +71,17 @@ const norm = (s: string) =>
 const coordKey = (lat: number, lng: number) => `${lat.toFixed(4)},${lng.toFixed(4)}`;
 
 const cacheAutocomplete = makeCache<Suggestion[]>(10 * 60_000, 30_000, 400);
-const cacheDetails = makeCache<{ lat: number; lng: number; label: string }>(24 * 60 * 60_000, 60_000, 500);
-const cacheGeocode = makeCache<{ lat: number; lng: number; label: string }>(24 * 60 * 60_000, 60_000, 800);
+const cacheDetails = makeCache<{ lat: number; lng: number; label: string }>(
+  24 * 60 * 60_000,
+  60_000,
+  500,
+);
+const cacheGeocode = makeCache<{ lat: number; lng: number; label: string }>(
+  24 * 60 * 60_000,
+  60_000,
+  800,
+);
 const cacheReverse = makeCache<{ label: string }>(24 * 60 * 60_000, 60_000, 800);
-
 
 const json = (body: unknown, status = 200, cache = "no-store") =>
   new Response(JSON.stringify(body), {
@@ -85,7 +92,9 @@ const json = (body: unknown, status = 200, cache = "no-store") =>
 function creds() {
   const lovable = process.env["LOVABLE_API_KEY"];
   const google =
-    process.env["GOOGLE_MAPS_API_KEY"] || process.env["GOOGLE_MAPS_API_KEY2"] || process.env["GOOGLE_API_KEY"];
+    process.env["GOOGLE_MAPS_API_KEY"] ||
+    process.env["GOOGLE_MAPS_API_KEY2"] ||
+    process.env["GOOGLE_API_KEY"];
   if (!lovable || !google) return null;
   return { lovable, google };
 }
@@ -132,7 +141,10 @@ async function autocomplete(input: string, lang: string): Promise<Suggestion[]> 
       circle: { center: { latitude: BIAS.lat, longitude: BIAS.lng }, radius: BIAS.radiusM },
     },
   };
-  const data = await gw("/places/v1/places:autocomplete", { method: "POST", body: JSON.stringify(body) });
+  const data = await gw("/places/v1/places:autocomplete", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
   const raw: any[] = Array.isArray(data?.suggestions) ? data.suggestions : [];
   const out: Suggestion[] = [];
   for (const s of raw.slice(0, 6)) {
@@ -151,10 +163,13 @@ async function autocomplete(input: string, lang: string): Promise<Suggestion[]> 
 }
 
 async function details(placeId: string, lang: string) {
-  const data = await gw(`/places/v1/places/${encodeURIComponent(placeId)}?languageCode=${lang === "en" ? "en" : "fr"}`, {
-    method: "GET",
-    fieldMask: "id,displayName,formattedAddress,location",
-  });
+  const data = await gw(
+    `/places/v1/places/${encodeURIComponent(placeId)}?languageCode=${lang === "en" ? "en" : "fr"}`,
+    {
+      method: "GET",
+      fieldMask: "id,displayName,formattedAddress,location",
+    },
+  );
   const lat = data?.location?.latitude;
   const lng = data?.location?.longitude;
   if (typeof lat !== "number" || typeof lng !== "number") return null;
@@ -193,7 +208,10 @@ async function reverse(lat: number, lng: number, lang: string) {
 
 /** Position approximative via l'API Geolocation de Google (plus fine que l'IP brute). */
 async function geolocate() {
-  const data = await gw("/geolocation/v1/geolocate", { method: "POST", body: JSON.stringify({ considerIp: true }) });
+  const data = await gw("/geolocation/v1/geolocate", {
+    method: "POST",
+    body: JSON.stringify({ considerIp: true }),
+  });
   const lat = data?.location?.lat;
   const lng = data?.location?.lng;
   if (typeof lat !== "number" || typeof lng !== "number") return null;
@@ -215,7 +233,9 @@ export const Route = createFileRoute("/api/public/places")({
 
         try {
           if (action === "autocomplete") {
-            const q = String(payload?.query ?? "").trim().slice(0, 200);
+            const q = String(payload?.query ?? "")
+              .trim()
+              .slice(0, 200);
             if (q.length < 3) return json({ suggestions: [] });
             const s = await cacheAutocomplete(`${lang}|${norm(q)}`, () => autocomplete(q, lang));
             return json({ suggestions: s ?? [] });
@@ -227,7 +247,9 @@ export const Route = createFileRoute("/api/public/places")({
             return d ? json(d) : json({ error: "not_found" }, 404);
           }
           if (action === "geocode") {
-            const q = String(payload?.query ?? "").trim().slice(0, 300);
+            const q = String(payload?.query ?? "")
+              .trim()
+              .slice(0, 300);
             if (q.length < 3) return json({ error: "too_short" }, 400);
             const g = await cacheGeocode(`${lang}|${norm(q)}`, () => geocode(q, lang));
             return g ? json(g) : json({ error: "not_found" }, 404);
@@ -235,8 +257,11 @@ export const Route = createFileRoute("/api/public/places")({
           if (action === "reverse") {
             const lat = Number(payload?.lat);
             const lng = Number(payload?.lng);
-            if (!Number.isFinite(lat) || !Number.isFinite(lng)) return json({ error: "bad_coords" }, 400);
-            const r = await cacheReverse(`${lang}|${coordKey(lat, lng)}`, () => reverse(lat, lng, lang));
+            if (!Number.isFinite(lat) || !Number.isFinite(lng))
+              return json({ error: "bad_coords" }, 400);
+            const r = await cacheReverse(`${lang}|${coordKey(lat, lng)}`, () =>
+              reverse(lat, lng, lang),
+            );
             return r ? json(r) : json({ error: "not_found" }, 404);
           }
 

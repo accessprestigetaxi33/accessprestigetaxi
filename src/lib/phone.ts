@@ -27,7 +27,7 @@ export function normalizePhone(input: string, country: CountryCode): string | nu
   // Keep digits and a possible leading +
   const cleaned = input.replace(/[^\d+]/g, "");
 
-  let national: string;
+  const national = cleaned.replace(/^0+/, "");
   if (cleaned.startsWith("+")) {
     // Already in international form — keep as-is (strip extra +)
     const digits = cleaned.replace(/\+/g, "");
@@ -40,8 +40,6 @@ export function normalizePhone(input: string, country: CountryCode): string | nu
     return `+${digits}`;
   }
   // Strip leading zero(s) for trunk prefix
-  national = cleaned.replace(/^0+/, "");
-
   if (national.length < 6 || national.length > 13) return null;
   return `${dial}${national}`;
 }
