@@ -54,6 +54,7 @@ interface Resa {
   pickup_datetime: string;
   status: string;
   prix_estime?: number | null;
+  final_price?: number | null;
   distance_km?: number | null;
   client_name?: string | null;
   client_phone?: string | null;
@@ -2440,7 +2441,7 @@ function CourseCard({
   // l'affichage suivi.tsx ET la facture (InvoiceBlock lit reservation.prix_estime).
   // Le broadcastSuiviUpdate déclenche le refetch temps réel côté client.
   const [finalPrixOpen, setFinalPrixOpen] = useState(false);
-  const [finalPrix, setFinalPrix] = useState("");
+  const [finalPrix, setFinalPrix] = useState(() => (resa.final_price != null ? String(resa.final_price) : ""));
   const [finalPrixSaving, setFinalPrixSaving] = useState(false);
   const handleSetFinalPrix = async () => {
     const val = parseFloat((finalPrix || "").trim().replace(",", "."));
@@ -2451,7 +2452,7 @@ function CourseCard({
     setFinalPrixSaving(true);
     try {
       await driverUpdateReservation({
-        data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val } },
+        data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val, final_price: val } },
       });
       broadcastSuiviUpdate(resa.id, "price");
       toast.success(`💶 Prix compteur enregistré — ${val.toFixed(2)} €`);
@@ -2609,7 +2610,7 @@ function CourseCard({
         data: {
           token: getDriverToken(),
           reservation_id: resa.id,
-          patch: hasVal ? { status: "completed", prix_estime: val } : { status: "completed" },
+          patch: hasVal ? { status: "completed", prix_estime: val, final_price: val } : { status: "completed" },
           not_status: "completed",
         },
       });
@@ -2624,6 +2625,12 @@ function CourseCard({
         await notifyStatus({ data: { reservation_id: resa.id, status: "completed" } });
       } catch (pushErr) {
         console.warn("[driver] client completed push failed", pushErr);
+      }
+      try {
+        const inv = await sendRideInvoice({ data: { token: getDriverToken(), reservation_id: resa.id } });
+        if (inv?.sent) toast.success("📧 Facture envoyée au client");
+      } catch (invErr) {
+        console.warn("[driver] invoice email failed", invErr);
       }
       toast.success(hasVal ? `🏁 Course terminée — ${val.toFixed(2)} €` : "🏁 Course terminée");
       onRefresh();
@@ -2939,7 +2946,7 @@ function CourseCard({
           </div>
         )}
 
-        {(resa.status === "completed" || resa.status === "terminee") && resa.prix_estime != null && (
+        {(resa.status === "completed" || resa.status === "terminee") && (resa.final_price ?? resa.prix_estime) != null && (
           <div
             style={{
               marginTop: 10,
@@ -2953,7 +2960,9 @@ function CourseCard({
             <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
               💶 Tarif final (compteur)
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>{resa.prix_estime.toFixed(2)} €</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
+              {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
+            </div>
           </div>
         )}
 
