@@ -1,5 +1,16 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { CalendarDays, Menu, X, UserCircle2, Home, FileText, Tag, Mail, Info, ChevronRight } from "lucide-react";
+import {
+  CalendarDays,
+  Menu,
+  X,
+  UserCircle2,
+  Home,
+  FileText,
+  Tag,
+  Mail,
+  Info,
+  ChevronRight,
+} from "lucide-react";
 import { useState } from "react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -32,11 +43,15 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-20 sm:gap-3 sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="min-w-0 flex-1 leading-none lg:flex-none lg:shrink-0"
+          className="site-header-logo min-w-0 flex-1 leading-none lg:flex-none lg:shrink-0"
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <img src={logoLockup} alt="Access Prestige Taxi" className="h-16 w-auto max-w-full sm:h-11 lg:h-12" />
+          <img
+            src={logoLockup}
+            alt="Access Prestige Taxi"
+            className="site-header-logo-img h-16 w-auto max-w-full sm:h-11 lg:h-12"
+          />
         </Link>
 
         <nav aria-label={t("aria.nav_main")} className="hidden items-center gap-5 lg:flex xl:gap-7">
@@ -87,7 +102,11 @@ export function SiteHeader() {
             onClick={() => setOpen((v) => !v)}
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#d6a83d]/45 bg-[#0b1520]"
           >
-            {open ? <X className="h-5 w-5 text-[#e8bd5d]" /> : <Menu className="h-5 w-5 text-[#e8bd5d]" />}
+            {open ? (
+              <X className="h-5 w-5 text-[#e8bd5d]" />
+            ) : (
+              <Menu className="h-5 w-5 text-[#e8bd5d]" />
+            )}
           </button>
         </div>
       </div>

@@ -97,6 +97,7 @@
 @layer base {
   * {
     border-color: var(--gold);
+    box-sizing: border-box;
   }
 
   /* Bordures dorées sur tout le site, y compris les champs de formulaire. */
@@ -109,12 +110,29 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    min-width: 320px;
+    overflow-x: hidden;
   }
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
+  }
+
+  img,
+  video,
+  canvas,
+  iframe {
+    max-width: 100%;
+  }
+
+  :where(main, section, article, aside, header, footer, nav, form, div) {
+    min-width: 0;
+  }
+
+  :where(p, li, dt, dd, h1, h2, h3, h4, button, a, label, td, th) {
+    overflow-wrap: anywhere;
   }
 
   /* Numéros de téléphone : jamais coupés sur 2 lignes */
