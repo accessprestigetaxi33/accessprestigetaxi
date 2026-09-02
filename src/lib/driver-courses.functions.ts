@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const COURSE_FIELDS =
-  "id,depart,destination,arrivee,pickup_datetime,status,prix_estime,distance_km,client_name,client_phone,client_email,nom,telephone,email,suivi_id,message,assigned_driver,created_at";
+  "id,depart,destination,arrivee,pickup_datetime,status,prix_estime,final_price,distance_km,client_name,client_phone,client_email,nom,telephone,email,suivi_id,message,assigned_driver,created_at";
 
 const ACTIVE_STATUSES = ["pending", "accepted", "en_route", "arrived"];
 

@@ -17,6 +17,7 @@ export type Resa = {
   pickup_datetime: string;
   status: string;
   prix_estime: number | null;
+  final_price: number | null;
   distance_km: number | null;
   client_name: string | null;
   client_phone: string | null;
@@ -28,13 +29,14 @@ export type Resa = {
 };
 
 const RESA_COLUMNS =
-  "id,depart,destination,date_heure,pickup_datetime,status,prix_estime,distance_km,client_name,client_phone,client_email,email,suivi_id,message,assigned_driver";
+  "id,depart,destination,date_heure,pickup_datetime,status,prix_estime,final_price,distance_km,client_name,client_phone,client_email,email,suivi_id,message,assigned_driver";
 
 const PatchSchema = z
   .object({
     status: z.string().trim().max(40).optional(),
     distance_km: z.number().nonnegative().max(5000).nullable().optional(),
     prix_estime: z.number().nonnegative().max(100000).nullable().optional(),
+    final_price: z.number().nonnegative().max(100000).nullable().optional(),
     pickup_datetime: z.string().trim().min(10).max(40).optional(),
   })
   .partial();

@@ -24,6 +24,7 @@ import { verifyDriverToken, getActiveVisitorCount, openDriverSession } from "@/l
 import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver, driverDeleteReservation } from "@/lib/driver-courses.functions";
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
+import { sendRideInvoice } from "@/lib/ride-invoice.functions";
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
 import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } from "@/lib/driver-devis.functions";
@@ -54,6 +55,7 @@ interface Resa {
   pickup_datetime: string;
   status: string;
   prix_estime?: number | null;
+  final_price?: number | null;
   distance_km?: number | null;
   client_name?: string | null;
   client_phone?: string | null;
@@ -335,6 +337,11 @@ const css = `
   .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.2); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
   .drv-overview-actions button:last-child { border-right:0; }
   .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
+  .drv-quick6 { grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(201,155,74,.25); }
+  .drv-quick6 button { position:relative; background:#050a10; border-right:0; min-height:70px; font-size:9.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
+  .drv-quick6 button:active { background:#0a1118; }
+  .drv-quick6 .drv-badge { position:absolute; top:6px; right:10px; }
+  @media (min-width:640px) { .drv-quick6 { grid-template-columns:repeat(6,1fr); } }
   .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
   .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
   .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
@@ -861,7 +868,7 @@ function DriverApp({
     const d = new Date(r.pickup_datetime || r.date_heure);
     return !Number.isNaN(d.getTime()) && d.getTime() > Date.now() && !["completed", "cancelled"].includes(r.status);
   });
-  const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.prix_estime) || 0), 0);
+  const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.final_price ?? r.prix_estime) || 0), 0);
 
   return (
     <>
@@ -1078,7 +1085,7 @@ function DriverApp({
                 <span className="drv-stat-sub">Aujourd'hui</span>
               </div>
             </div>
-            <div className="drv-overview-actions">
+            <div className="drv-overview-actions drv-quick6">
               <button type="button" onClick={() => setTab("planning")}>
                 <IconCalendar />
                 <span>Planning</span>
@@ -1094,6 +1101,15 @@ function DriverApp({
               <button type="button" onClick={() => setTab("devis")}>
                 <IconDevis />
                 <span>Devis</span>
+                {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
+              </button>
+              <button type="button" onClick={() => setTab("historique")}>
+                <IconCalendar />
+                <span>Historique</span>
+              </button>
+              <button type="button" onClick={() => setTab("simulateur")}>
+                <IconCalc />
+                <span>Simu</span>
               </button>
             </div>
           </section>
@@ -2440,7 +2456,7 @@ function CourseCard({
   // l'affichage suivi.tsx ET la facture (InvoiceBlock lit reservation.prix_estime).
   // Le broadcastSuiviUpdate déclenche le refetch temps réel côté client.
   const [finalPrixOpen, setFinalPrixOpen] = useState(false);
-  const [finalPrix, setFinalPrix] = useState("");
+  const [finalPrix, setFinalPrix] = useState(() => (resa.final_price != null ? String(resa.final_price) : ""));
   const [finalPrixSaving, setFinalPrixSaving] = useState(false);
   const handleSetFinalPrix = async () => {
     const val = parseFloat((finalPrix || "").trim().replace(",", "."));
@@ -2451,7 +2467,7 @@ function CourseCard({
     setFinalPrixSaving(true);
     try {
       await driverUpdateReservation({
-        data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val } },
+        data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val, final_price: val } },
       });
       broadcastSuiviUpdate(resa.id, "price");
       toast.success(`💶 Prix compteur enregistré — ${val.toFixed(2)} €`);
@@ -2609,7 +2625,7 @@ function CourseCard({
         data: {
           token: getDriverToken(),
           reservation_id: resa.id,
-          patch: hasVal ? { status: "completed", prix_estime: val } : { status: "completed" },
+          patch: hasVal ? { status: "completed", prix_estime: val, final_price: val } : { status: "completed" },
           not_status: "completed",
         },
       });
@@ -2624,6 +2640,12 @@ function CourseCard({
         await notifyStatus({ data: { reservation_id: resa.id, status: "completed" } });
       } catch (pushErr) {
         console.warn("[driver] client completed push failed", pushErr);
+      }
+      try {
+        const inv = await sendRideInvoice({ data: { token: getDriverToken(), reservation_id: resa.id } });
+        if (inv?.sent) toast.success("📧 Facture envoyée au client");
+      } catch (invErr) {
+        console.warn("[driver] invoice email failed", invErr);
       }
       toast.success(hasVal ? `🏁 Course terminée — ${val.toFixed(2)} €` : "🏁 Course terminée");
       onRefresh();
@@ -2939,7 +2961,7 @@ function CourseCard({
           </div>
         )}
 
-        {(resa.status === "completed" || resa.status === "terminee") && resa.prix_estime != null && (
+        {(resa.status === "completed" || resa.status === "terminee") && (resa.final_price ?? resa.prix_estime) != null && (
           <div
             style={{
               marginTop: 10,
@@ -2953,7 +2975,9 @@ function CourseCard({
             <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
               💶 Tarif final (compteur)
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>{resa.prix_estime.toFixed(2)} €</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
+              {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
+            </div>
           </div>
         )}
 
@@ -3686,7 +3710,7 @@ function PlanningTab() {
               </div>
               <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
                 {r.distance_km ? `${r.distance_km} km · ` : ""}
-                {r.prix_estime ? `${r.prix_estime.toFixed(2)} €` : ""}
+                {(r as any).final_price ?? r.prix_estime ? `${Number((r as any).final_price ?? r.prix_estime).toFixed(2)} €` : ""}
                 {["terminee", "completed"].includes(r.status) ? " · Terminée" : ""}
               </div>
             </div>
