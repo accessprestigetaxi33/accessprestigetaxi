@@ -24,6 +24,7 @@ import { verifyDriverToken, getActiveVisitorCount, openDriverSession } from "@/l
 import { gaEvent } from "@/lib/ga4";
 import { listDriverCourses, setCourseDriver, driverDeleteReservation } from "@/lib/driver-courses.functions";
 import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
+import { sendRideInvoice } from "@/lib/ride-invoice.functions";
 import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
 import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
 import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } from "@/lib/driver-devis.functions";
