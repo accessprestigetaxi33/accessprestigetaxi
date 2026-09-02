@@ -95,7 +95,7 @@ const T = {
     distance: "Distance",
     duration: "Durée estimée",
     vehicle: "Véhicule proposé",
-    berline: "BMW iX1 / Audi Q6 e-tron électriques · jusqu'à 5 passagers",
+    berline: "BMW iX1 / Audi Q6 e-tron électriques · jusqu'à 4 passagers",
     van: "Van Mercedes V-Class · jusqu'à 8 passagers",
     price: "Tarif estimé",
     detail_base: "Prise en charge",
@@ -144,9 +144,14 @@ const T = {
     vehicle_step: "Véhicule souhaité",
     vehicle_hint: "Le tarif se met à jour automatiquement",
     veh_berline: "BMW iX1 / Audi Q6 e-tron",
-    veh_berline_cap: "Électriques · jusqu'à 5 passagers",
+    veh_berline_cap: "Électriques · jusqu'à 4 passagers",
+    veh_bmw: "BMW iX1",
+    veh_bmw_cap: "Électrique · jusqu'à 4 passagers",
+    veh_q6: "Audi Q6 e-tron",
+    veh_q6_cap: "Électrique · jusqu'à 4 passagers",
     veh_van: "Van Mercedes V-Class",
     veh_van_cap: "Jusqu'à 8 passagers",
+    veh_pax_limit: "Van requis au-delà de 4 passagers ou 4 bagages",
     veh_other: "Besoin d'un autre véhicule ?",
     veh_other_cta: "Contactez-nous",
     veh_other_note: "nous avons la solution adaptée.",
@@ -215,7 +220,7 @@ const T = {
     distance: "Distance",
     duration: "Estimated time",
     vehicle: "Suggested vehicle",
-    berline: "BMW iX1 / Audi Q6 e-tron electric · up to 5 passengers",
+    berline: "BMW iX1 / Audi Q6 e-tron electric · up to 4 passengers",
     van: "Mercedes V-Class van · up to 8 passengers",
     price: "Estimated fare",
     detail_base: "Pick-up charge",
@@ -264,9 +269,14 @@ const T = {
     vehicle_step: "Vehicle",
     vehicle_hint: "The fare updates automatically",
     veh_berline: "BMW iX1 / Audi Q6 e-tron",
-    veh_berline_cap: "Electric · up to 5 passengers",
+    veh_berline_cap: "Electric · up to 4 passengers",
+    veh_bmw: "BMW iX1",
+    veh_bmw_cap: "Electric · up to 4 passengers",
+    veh_q6: "Audi Q6 e-tron",
+    veh_q6_cap: "Electric · up to 4 passengers",
     veh_van: "Mercedes V-Class van",
     veh_van_cap: "Up to 8 passengers",
+    veh_pax_limit: "Van required beyond 4 passengers or 4 bags",
     veh_other: "Need a different vehicle?",
     veh_other_cta: "Contact us",
     veh_other_note: "we'll find the right fit.",
@@ -569,6 +579,12 @@ export function BookingStudio() {
   const [quickWhen, setQuickWhen] = useState<"now" | "asap" | "1h" | "tomorrow" | null>("asap");
   const [pax, setPax] = useState(1);
   const [bags, setBags] = useState(1);
+  // Choix explicite du client parmi les 3 véhicules (BMW iX1 / Audi Q6 e-tron /
+  // van Mercedes). Avant cet ajout, la carte n'était qu'un affichage lecture
+  // seule déterminé automatiquement par le serveur selon le nombre de
+  // passagers — impossible de choisir. `null` tant que le client n'a pas
+  // cliqué : on affiche alors une suggestion par défaut (voir `vehiculeEffectif`).
+  const [vehiculeManuel, setVehiculeManuel] = useState<"bmw" | "q6" | "van" | null>(null);
   const [options, setOptions] = useState<string[]>([]);
   const [paiement, setPaiement] = useState<"cb" | "especes" | "facture">("cb");
   const [nom, setNom] = useState("");
@@ -595,6 +611,27 @@ export function BookingStudio() {
   // Si la permission n'a jamais été demandée, ceci ne déclenche PAS la popup
   // du navigateur — le bouton reste visible pour un clic explicite.
   const push = usePushNotifications({ autoAudience: "client" });
+  // Les berlines électriques (BMW iX1 / Audi Q6 e-tron) ne sont proposables
+  // que si le trajet resterait en tarif "berline" côté serveur. Règle exacte
+  // reprise de `pickVehicle` (booking.server.ts) : le van est imposé dès que
+  // passagers > 4 OU bagages > 4 — garder ces deux fichiers synchronisés si
+  // cette règle change un jour côté serveur.
+  const BERLINE_MAX_PAX = 4;
+  const BERLINE_MAX_BAGS = 4;
+  const berlineIndisponible = pax > BERLINE_MAX_PAX || bags > BERLINE_MAX_BAGS;
+  // Si le client avait choisi une berline puis dépasse la capacité (passagers
+  // ou bagages), on bascule automatiquement sur le van plutôt que de laisser
+  // une sélection invalide.
+  useEffect(() => {
+    if (berlineIndisponible && (vehiculeManuel === "bmw" || vehiculeManuel === "q6")) {
+      setVehiculeManuel("van");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [berlineIndisponible]);
+  // Tant que le client n'a pas cliqué sur une carte, on affiche une
+  // suggestion par défaut (Audi Q6 e-tron, ou van si le nombre de passagers
+  // l'impose) — dès qu'il clique, son choix prime.
+  const vehiculeEffectif: "bmw" | "q6" | "van" = vehiculeManuel ?? (berlineIndisponible ? "van" : "q6");
   const [quote, setQuote] = useState<QuoteState>({ loading: false, error: null, data: null });
   // Clé d'idempotence : identique pour tous les clics d'une même réservation.
   const requestIdRef = useRef<string>("");
@@ -794,6 +831,7 @@ export function BookingStudio() {
             paiement,
             options: optionLabels,
             note: note.trim(),
+            vehicule_prefere: vehiculeEffectif,
             lang: isEn ? "en" : "fr",
             client_request_id: requestIdRef.current,
           },
@@ -1359,26 +1397,38 @@ export function BookingStudio() {
             </div>
           </SectionCard>
 
-          {/* 3 — véhicule souhaité (sélection automatique selon trajet/passagers) */}
+          {/* 3 — véhicule souhaité (sélection manuelle par le client) */}
           <SectionCard step={3} icon={<Car className="h-5 w-5" />} title={L.vehicle_step}>
             <p className="-mt-2 mb-3 text-sm text-white/60">{L.vehicle_hint}</p>
             <div className="space-y-2.5">
               {(
                 [
-                  { id: "berline" as const, name: L.veh_berline, cap: L.veh_berline_cap },
+                  { id: "bmw" as const, name: L.veh_bmw, cap: L.veh_bmw_cap },
+                  { id: "q6" as const, name: L.veh_q6, cap: L.veh_q6_cap },
                   { id: "van" as const, name: L.veh_van, cap: L.veh_van_cap },
                 ] as const
               ).map((v) => {
-                // Le véhicule est déterminé automatiquement côté serveur à partir
-                // du trajet et du nombre de passagers (q.vehicule) ; tant qu'aucun
-                // devis n'est disponible, la berline est affichée par défaut.
-                const isSelected = quote.data ? quote.data.vehicule === v.id : v.id === "berline";
+                // BMW iX1 et Audi Q6 e-tron ne sont proposables que jusqu'à 4
+                // passagers et 4 bagages (règle serveur `pickVehicle`) ; au-delà,
+                // seul le van reste cliquable. Le tarif (jour/nuit/km) reste
+                // identique pour les 3 véhicules ; c'est `computeQuote` côté
+                // serveur qui choisit déjà la bonne classe tarifaire.
+                const disabled = v.id !== "van" && berlineIndisponible;
+                const isSelected = vehiculeEffectif === v.id;
                 return (
-                  <div
+                  <button
                     key={v.id}
+                    type="button"
+                    disabled={disabled}
                     aria-current={isSelected}
-                    className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
-                      isSelected ? "border-[#d6a83d] bg-[#07101a] shadow-sm" : "border-[#d6a83d]/40 bg-[#07101a]"
+                    aria-pressed={isSelected}
+                    onClick={() => setVehiculeManuel(v.id)}
+                    className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition ${
+                      disabled
+                        ? "cursor-not-allowed border-[#d6a83d]/20 bg-[#07101a]/60 opacity-50"
+                        : isSelected
+                          ? "border-[#d6a83d] bg-[#07101a] shadow-sm"
+                          : "border-[#d6a83d]/40 bg-[#07101a] hover:border-[#d6a83d]/70"
                     }`}
                   >
                     <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#111b25]">
@@ -1388,11 +1438,13 @@ export function BookingStudio() {
                       <span className="block truncate text-sm font-semibold">{v.name}</span>
                       <span className="flex items-center gap-1 text-xs text-white/60">
                         <Users className="h-3.5 w-3.5" />
-                        {v.cap}
+                        {disabled ? L.veh_pax_limit : v.cap}
                       </span>
                     </span>
-                    {isSelected && <CheckCircle2 className="h-5 w-5 shrink-0 text-[#e8bd5d]" aria-hidden="true" />}
-                  </div>
+                    {isSelected && !disabled && (
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#e8bd5d]" aria-hidden="true" />
+                    )}
+                  </button>
                 );
               })}
             </div>
