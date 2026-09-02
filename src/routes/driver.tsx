@@ -1080,7 +1080,7 @@ function DriverApp({
                 <span className="drv-stat-sub">Aujourd'hui</span>
               </div>
             </div>
-            <div className="drv-overview-actions">
+            <div className="drv-overview-actions drv-quick6">
               <button type="button" onClick={() => setTab("planning")}>
                 <IconCalendar />
                 <span>Planning</span>
@@ -1096,6 +1096,15 @@ function DriverApp({
               <button type="button" onClick={() => setTab("devis")}>
                 <IconDevis />
                 <span>Devis</span>
+                {pendingDevis > 0 && <span className="drv-badge">{pendingDevis}</span>}
+              </button>
+              <button type="button" onClick={() => setTab("historique")}>
+                <IconCalendar />
+                <span>Historique</span>
+              </button>
+              <button type="button" onClick={() => setTab("simulateur")}>
+                <IconCalc />
+                <span>Simu</span>
               </button>
             </div>
           </section>
