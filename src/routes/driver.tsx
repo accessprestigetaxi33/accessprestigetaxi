@@ -33,6 +33,8 @@ import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driv
 import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } from "@/lib/driver-devis.functions";
 import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/googleGeocode";
+import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
+const APT_LOGO = aptLogoAsset.url;
 
 import DriverMessagesTab from "@/components/DriverMessagesTab";
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
