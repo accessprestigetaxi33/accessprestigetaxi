@@ -2186,6 +2186,7 @@ function DriverApp({
                   {tab === "simulateur" && <SimulateurTab />}
                   {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
                   {tab === "appareils" && <AppareilsTab />}
+                  {tab === "gps" && <GpsTab driverId={driverId} gps={gps} />}
                 </>
               </div>
             )}
