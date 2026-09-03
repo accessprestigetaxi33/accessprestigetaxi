@@ -2938,22 +2938,22 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
 
       {open && (
         <div style={{ padding: "0 14px 14px" }}>
-          {pts.length > 0 ? (
-            <div
-              style={{
-                borderRadius: 12,
-                overflow: "hidden",
-                border: "1px solid rgba(201,155,74,.45)",
-                marginBottom: 10,
-              }}
-            >
-              <div ref={mapRef} style={{ width: "100%", height: 220 }} />
-            </div>
-          ) : (
+          <div
+            style={{
+              borderRadius: 12,
+              overflow: "hidden",
+              border: "1px solid rgba(201,155,74,.45)",
+              marginBottom: 10,
+            }}
+          >
+            <div ref={mapRef} style={{ width: "100%", height: 220, background: "#0b1520" }} />
+          </div>
+          {(pts.length === 0 || mapError) && (
             <div style={{ fontSize: 12.5, color: "rgba(246,240,229,.55)", marginBottom: 10 }}>
-              Aucune position partagée pour l'instant.
+              {mapError ?? "Aucune position partagée pour l'instant — activez le GPS."}
             </div>
           )}
+
 
           {(["alain", "patricia"] as const).map((id) => {
             const r = rows.find((x) => x.id === id);
