@@ -174,6 +174,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
             url: `/suivi/${suiviId}`,
             tag: `chat-client-resa-${data.reservation_id}`,
             requireInteraction: true,
+            actions: [{ action: "read", title: "Lire le message" }],
             data: { reservation_id: data.reservation_id },
           },
           { reservationId: data.reservation_id, accountId },
@@ -589,6 +590,7 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
           url: "/client/chat",
           tag: `chat-client-direct-${accountId}`,
           requireInteraction: true,
+          actions: [{ action: "read", title: "Lire le message" }],
         },
         { accountId },
       );
@@ -1288,4 +1290,199 @@ export const countUnreadDirectForClient = createServerFn({ method: "POST" })
       .eq("read_by_client", false);
     if (error) throw new Error(error.message);
     return { unread: count ?? 0 };
+  });
+
+// ─── Vue FUSIONNÉE côté CLIENT (miroir exact de l'onglet Messages chauffeur) ──
+// Le chauffeur voit un thread unique par client = direct_messages + messages de
+// toutes ses réservations. Le client doit voir EXACTEMENT le même flux, sinon
+// les deux côtés se répondent dans des canaux différents. On agrège donc ici
+// les mêmes sources, scopées au compte client authentifié.
+
+export type ClientMergedMessage = {
+  id: string;
+  source: MergedSource;
+  reservation_id: string | null;
+  reservation_label: string | null;
+  sender: "client" | "chauffeur";
+  content: string;
+  read_by_client: boolean;
+  created_at: string;
+};
+
+const clientAuthSchema = z.object({ role: z.literal("client"), token: z.string().min(8).max(200) });
+
+async function clientReservationIds(accountId: string): Promise<{ id: string; status: string | null; created_at: string }[]> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin
+    .from("reservations")
+    .select("id,status,created_at")
+    .eq("client_account_id", accountId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  return ((data ?? []) as any[]).map((r) => ({ id: r.id, status: r.status ?? null, created_at: r.created_at }));
+}
+
+export const listClientMergedMessages = createServerFn({ method: "POST" })
+  .inputValidator((input) => clientAuthSchema.extend({ limit: z.number().int().min(1).max(300).optional() }).parse(input))
+  .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const lim = data.limit ?? 200;
+    const out: ClientMergedMessage[] = [];
+
+    const { data: directRows } = await supabaseAdmin
+      .from("direct_messages")
+      .select("id,sender,content,read_by_client,created_at")
+      .eq("client_account_id", accountId)
+      .order("created_at", { ascending: false })
+      .limit(lim);
+    for (const r of (directRows ?? []) as any[]) {
+      out.push({
+        id: r.id,
+        source: "direct",
+        reservation_id: null,
+        reservation_label: null,
+        sender: r.sender,
+        content: r.content,
+        read_by_client: r.read_by_client,
+        created_at: r.created_at,
+      });
+    }
+
+    const resas = await clientReservationIds(accountId);
+    if (resas.length > 0) {
+      const ids = resas.map((r) => r.id);
+      const { data: rows } = await supabaseAdmin
+        .from("reservation_messages")
+        .select("id,reservation_id,sender,content,read_by_client,created_at")
+        .in("reservation_id", ids)
+        .order("created_at", { ascending: false })
+        .limit(lim);
+      for (const r of (rows ?? []) as any[]) {
+        out.push({
+          id: r.id,
+          source: "reservation",
+          reservation_id: r.reservation_id,
+          reservation_label: `#${String(r.reservation_id).slice(0, 6).toUpperCase()}`,
+          sender: r.sender,
+          content: r.content,
+          read_by_client: r.read_by_client,
+          created_at: r.created_at,
+        });
+      }
+    }
+
+    out.sort((a, b) => a.created_at.localeCompare(b.created_at));
+    return out;
+  });
+
+// Envoi client dans le MÊME canal que celui ciblé par le chauffeur : la course
+// active si elle existe (le chauffeur répond dessus), sinon le fil direct.
+export const sendClientMergedMessage = createServerFn({ method: "POST" })
+  .inputValidator((input) => clientAuthSchema.extend({ content: z.string().trim().min(1).max(2000) }).parse(input))
+  .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
+    const resas = await clientReservationIds(accountId);
+    const active = resas.find((r) => !["completed", "cancelled", "terminee", "annulee"].includes((r.status ?? "").toLowerCase()));
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: acct } = await supabaseAdmin
+      .from("client_accounts")
+      .select("client_name, email")
+      .eq("id", accountId)
+      .maybeSingle();
+    const clientName = (acct as any)?.client_name || (acct as any)?.email || "Client";
+
+    const table = active ? "reservation_messages" : "direct_messages";
+    const payload: Record<string, unknown> = {
+      sender: "client",
+      content: data.content,
+      read_by_client: true,
+      read_by_chauffeur: false,
+    };
+    if (active) payload.reservation_id = active.id;
+    else payload.client_account_id = accountId;
+
+    const { data: row, error } = await supabaseAdmin.from(table).insert(payload as any).select().single();
+    if (error) throw new Error(error.message);
+
+    try {
+      const { sendPushToAudience, resolveReservationDriver } = await import("@/lib/push.server");
+      const driverId = active ? (await resolveReservationDriver(active.id)).driverId : undefined;
+      await sendPushToAudience(
+        "chauffeur",
+        {
+          title: `💬 Message de ${clientName}`,
+          body: data.content.slice(0, 100),
+          url: "/driver",
+          tag: `chat-driver-merged-${accountId}-${Date.now()}`,
+          requireInteraction: true,
+          data: active ? { reservation_id: active.id, kind: "chat" } : { kind: "chat" },
+        },
+        driverId ? { driverId } : undefined,
+      );
+    } catch (e) {
+      console.warn("[chat] push chauffeur (merged client) failed (non-blocking)", e);
+    }
+
+    return {
+      id: (row as any).id,
+      source: active ? ("reservation" as const) : ("direct" as const),
+      reservation_id: active ? active.id : null,
+      reservation_label: active ? `#${String(active.id).slice(0, 6).toUpperCase()}` : null,
+      sender: "client" as const,
+      content: data.content,
+      read_by_client: true,
+      created_at: (row as any).created_at,
+    } satisfies ClientMergedMessage;
+  });
+
+export const markClientMergedRead = createServerFn({ method: "POST" })
+  .inputValidator((input) => clientAuthSchema.parse(input))
+  .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("direct_messages")
+      .update({ read_by_client: true })
+      .eq("client_account_id", accountId)
+      .eq("sender", "chauffeur")
+      .eq("read_by_client", false);
+    const resas = await clientReservationIds(accountId);
+    if (resas.length > 0) {
+      await supabaseAdmin
+        .from("reservation_messages")
+        .update({ read_by_client: true })
+        .in("reservation_id", resas.map((r) => r.id))
+        .eq("sender", "chauffeur")
+        .eq("read_by_client", false);
+    }
+    return { ok: true };
+  });
+
+// Badge client : non-lus des DEUX canaux (direct + courses), comme le badge
+// chauffeur agrège déjà les deux côtés.
+export const countUnreadMergedForClient = createServerFn({ method: "POST" })
+  .inputValidator((input) => clientAuthSchema.parse(input))
+  .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { count: direct } = await supabaseAdmin
+      .from("direct_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("client_account_id", accountId)
+      .eq("sender", "chauffeur")
+      .eq("read_by_client", false);
+    let resaUnread = 0;
+    const resas = await clientReservationIds(accountId);
+    if (resas.length > 0) {
+      const { count } = await supabaseAdmin
+        .from("reservation_messages")
+        .select("id", { count: "exact", head: true })
+        .in("reservation_id", resas.map((r) => r.id))
+        .eq("sender", "chauffeur")
+        .eq("read_by_client", false);
+      resaUnread = count ?? 0;
+    }
+    return { unread: (direct ?? 0) + resaUnread };
   });

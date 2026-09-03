@@ -10,6 +10,8 @@ export type PushPayload = {
   icon?: string;
   requireInteraction?: boolean;
   data?: Record<string, unknown>;
+  /** Boutons d'action affichés dans la notification (ex: « Lire »). */
+  actions?: { action: string; title: string }[];
 };
 
 export type PushAudience = "chauffeur" | "client";
@@ -164,6 +166,7 @@ async function sendFcmToToken(
     tag: payload.tag || "taxi-fcm",
     audience,
     require_interaction: payload.requireInteraction ? "true" : "false",
+    ...(payload.actions && payload.actions.length > 0 ? { actions: JSON.stringify(payload.actions) } : {}),
     // Marqueur unique pour différencier les deux apps en cas de collision
     // Utile en cas de bug où une notif chauffeur arrive au client ou vice-versa
     audience_marker: `${audience}:${Date.now()}`,
