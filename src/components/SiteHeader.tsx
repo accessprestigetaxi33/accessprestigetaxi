@@ -17,8 +17,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { Phone } from "lucide-react";
-import logoLockupAsset from "@/assets/apt-logo-lockup.webp.asset.json";
-const logoLockup = logoLockupAsset.url;
 
 export function SiteHeader() {
   const t = useT();
