@@ -1574,6 +1574,7 @@ function DriverApp({
   // l'identification, comme avant) — seul l'affichage vit désormais dans
   // l'onglet "GPS".
   const gps = useDriverGpsTracking(driverId);
+  const { vehicle: dashboardVehicle } = useSelectedVehicle(driverId);
 
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
