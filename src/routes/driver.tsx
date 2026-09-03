@@ -1275,6 +1275,19 @@ const css = `
   .drv-brand-mark img { width:100%; height:100%; object-fit:contain; }
   .drv-side-logo img { max-width:100%; height:auto; object-fit:contain; padding:0 6px; }
 
+  /* Bouton "activer les notifications" du header (visible tant que la
+     permission n'est pas accordée). */
+  .drv-header-pushbtn { display:inline-flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; font-size:11.5px; font-weight:800; white-space:nowrap; cursor:pointer; flex:0 0 auto; }
+  .drv-header-pushbtn:disabled { opacity:.6; cursor:progress; }
+
+  /* Mobile : on conserve « Retour au site » et l'activation des notifications
+     (uniquement l'icône pour tenir dans la barre). */
+  @media (max-width:700px) {
+    .drv-header-back { display:inline-flex !important; width:31px !important; height:31px !important; padding:0 !important; justify-content:center !important; }
+    .drv-header-back .drv-header-back-label { display:none !important; }
+    .drv-header-pushbtn { height:31px !important; padding:0 8px !important; font-size:10px !important; }
+  }
+
 
 `;
 
