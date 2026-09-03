@@ -146,6 +146,42 @@ const FLEET = [
   },
 ] as const;
 
+// Véhicule sélectionné par le chauffeur : partagé entre la carte "Véhicules"
+// du tableau de bord et les cartes de course (localStorage + événements).
+const SELECTED_VEHICLE_KEY = "drv-selected-vehicle";
+const SELECTED_VEHICLE_EVENT = "drv-selected-vehicle-change";
+
+function readSelectedVehicleId(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(SELECTED_VEHICLE_KEY);
+}
+
+function setSelectedVehicleId(id: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SELECTED_VEHICLE_KEY, id);
+  window.dispatchEvent(new CustomEvent(SELECTED_VEHICLE_EVENT, { detail: id }));
+}
+
+function useSelectedVehicle(driverId?: string) {
+  const [id, setId] = useState<string | null>(null);
+  useEffect(() => {
+    const apply = () => setId(readSelectedVehicleId());
+    apply();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === SELECTED_VEHICLE_KEY) apply();
+    };
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(SELECTED_VEHICLE_EVENT, apply as EventListener);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(SELECTED_VEHICLE_EVENT, apply as EventListener);
+    };
+  }, []);
+  const fallback = driverId ? FLEET.find((v) => v.driver === driverId) : undefined;
+  const vehicle = FLEET.find((v) => v.id === id) ?? fallback ?? null;
+  return { vehicleId: id, vehicle };
+}
+
 const DRIVER_SOCIAL_FR = {
   title: "Espace Chauffeur — Access Prestige Taxi",
   description: "Application privée d'Alain et Patricia : courses, GPS, messagerie et notifications.",
