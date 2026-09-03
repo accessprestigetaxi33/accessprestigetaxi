@@ -884,6 +884,20 @@ function InvoiceBlock({
 }) {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [invoiceBusy, setInvoiceBusy] = useState(false);
+
+  // Facture PDF réelle (jsPDF) avec le prix final au compteur quand il existe.
+  const handleDownloadInvoice = async () => {
+    setInvoiceBusy(true);
+    try {
+      const { downloadRideInvoicePDF } = await import("@/lib/ride-invoice-pdf");
+      await downloadRideInvoicePDF(reservation, locale);
+    } catch {
+      toast.error(t("suivi.invoice_error"));
+    } finally {
+      setInvoiceBusy(false);
+    }
+  };
 
   // Fix #7 — sur mobile, "Imprimer" ouvre la facture PDF plutôt que window.print() sur toute la page
   const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
