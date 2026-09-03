@@ -2814,6 +2814,8 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
     { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
   >([]);
   const [open, setOpen] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+
 
   const refresh = useCallback(async () => {
     const token = getDriverToken();
