@@ -1161,7 +1161,7 @@ function Index() {
 
       {/* 6. BANDEAU FINAL — 4 valeurs de la maquette */}
       <section className="bg-[#05090d] px-4 pb-8 pt-2 sm:px-6 sm:pb-12 lg:px-8">
-        <div className="mx-auto grid max-w-6xl grid-cols-4 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f] sm:grid-cols-4">
           {[
             { icon: Crown, label: lang === "en" ? "HIGH-END SERVICE" : "SERVICE HAUT DE GAMME" },
             { icon: ShieldCheck, label: lang === "en" ? "SAFETY & COMFORT" : "SÉCURITÉ & CONFORT" },
@@ -1170,13 +1170,16 @@ function Index() {
           ].map(({ icon: Icon, label }) => (
             <div
               key={label}
-              className="flex min-h-[92px] items-center justify-center gap-3 border-b border-r border-[#e0b866]/50 px-3 py-4 text-center last:border-r-0 sm:min-h-[105px] sm:border-b-0"
+              className="flex min-h-[104px] min-w-0 flex-col items-center justify-center gap-2 border-b border-r border-[#e0b866]/50 px-2 py-4 text-center last:border-r-0 sm:min-h-[105px] sm:flex-row sm:gap-3 sm:px-3 sm:border-b-0"
             >
-              <Icon className="h-8 w-8 shrink-0 text-[#e0b866]" aria-hidden="true" />
-              <span className="text-[10px] font-semibold uppercase leading-tight text-white sm:text-xs">{label}</span>
+              <Icon className="h-7 w-7 shrink-0 text-[#e0b866] sm:h-8 sm:w-8" aria-hidden="true" />
+              <span className="min-w-0 break-words text-[11px] font-semibold uppercase leading-tight text-white sm:text-xs">
+                {label}
+              </span>
             </div>
           ))}
         </div>
+
         <div className="mt-6 text-center">
           <Link
             to="/reserver"
