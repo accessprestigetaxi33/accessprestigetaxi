@@ -174,6 +174,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
             url: `/suivi/${suiviId}`,
             tag: `chat-client-resa-${data.reservation_id}`,
             requireInteraction: true,
+            actions: [{ action: "read", title: "Lire le message" }],
             data: { reservation_id: data.reservation_id },
           },
           { reservationId: data.reservation_id, accountId },
@@ -589,6 +590,7 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
           url: "/client/chat",
           tag: `chat-client-direct-${accountId}`,
           requireInteraction: true,
+          actions: [{ action: "read", title: "Lire le message" }],
         },
         { accountId },
       );

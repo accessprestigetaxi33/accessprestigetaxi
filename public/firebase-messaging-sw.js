@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 
-const SW_VERSION = "apt-2026-10.fcm-key-fix";
+const SW_VERSION = "apt-2026-11.chat-actions";
 console.log("[FCM SW] boot version =", SW_VERSION);
 
 const DRIVER_URL = "/driver";
@@ -126,6 +126,21 @@ function sanitizeDeepLink(rawUrl, audience, reservationId) {
   return url.pathname + url.search + url.hash;
 }
 
+function parseActions(raw) {
+  // Boutons d'action ("Lire" pour la messagerie). Ignorés silencieusement par
+  // les navigateurs qui ne les supportent pas (iOS).
+  try {
+    const list = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (!Array.isArray(list)) return undefined;
+    return list
+      .filter((a) => a && a.action && a.title)
+      .slice(0, 2)
+      .map((a) => ({ action: String(a.action), title: String(a.title) }));
+  } catch (_) {
+    return undefined;
+  }
+}
+
 function closeExistingNotifications(tag) {
   return self.registration.getNotifications({ tag }).then((existing) => existing.forEach((n) => n.close()));
 }
@@ -149,6 +164,7 @@ function showFrom(data, notif) {
       tag,
       data: { ...data, url, audience: data.audience, reservation_id: data.reservation_id, sw_version: SW_VERSION },
       vibrate: [200, 100, 200],
+      actions: parseActions(data.actions),
       requireInteraction,
     }),
   );
