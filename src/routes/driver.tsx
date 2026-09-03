@@ -1278,8 +1278,6 @@ const css = `
 
 `;
 
-
-
 // ── Icons ──────────────────────────────────────────────────────────────────
 const IconBell = () => (
   <svg
@@ -1721,7 +1719,6 @@ function DriverApp({
       clearInterval(timer);
     };
   }, [driverId]);
-
 
   const [pushBusy, setPushBusy] = useState(false);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
@@ -2241,9 +2238,7 @@ function DriverApp({
                       </span>
                       <button onClick={() => setTab("messages")}>VOIR TOUS</button>
                     </div>
-                    {dashboardThreads.length === 0 && (
-                      <div className="drv-more">Aucun message client en attente.</div>
-                    )}
+                    {dashboardThreads.length === 0 && <div className="drv-more">Aucun message client en attente.</div>}
                     {dashboardThreads.slice(0, 3).map((t) => {
                       const name = t.client_name || t.client_phone || "Client";
                       const initials = name
@@ -2338,8 +2333,7 @@ function DriverApp({
                           }}
                           style={{
                             cursor: "pointer",
-                            border:
-                              dashboardVehicle?.id === v.id ? "2px solid #e0b866" : "2px solid transparent",
+                            border: dashboardVehicle?.id === v.id ? "2px solid #e0b866" : "2px solid transparent",
                             borderRadius: 10,
                           }}
                           className={v.driver === driverId ? "is-mine" : undefined}
@@ -2816,7 +2810,6 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
   const [open, setOpen] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
 
-
   const refresh = useCallback(async () => {
     const token = getDriverToken();
     if (!token) return;
@@ -2891,7 +2884,6 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
     };
   }, [open, rows]);
 
-
   const mine = rows.find((r) => r.id === driverId);
   const other = rows.find((r) => r.id !== driverId && (r.id === "alain" || r.id === "patricia"));
   const pts = rows.filter((r) => r.lat != null && r.lng != null);
@@ -2953,7 +2945,6 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
               {mapError ?? "Aucune position partagée pour l'instant — activez le GPS."}
             </div>
           )}
-
 
           {(["alain", "patricia"] as const).map((id) => {
             const r = rows.find((x) => x.id === id);
@@ -4250,7 +4241,6 @@ function CourseCard({
           </div>
         )}
 
-
         {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
         {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
           (() => {
@@ -5218,6 +5208,83 @@ function PlanningTab() {
   );
 }
 
+// ── Swipe-to-delete générique (réutilisé par Devis / Avis / Clients) ───────
+// Même logique que le swipe des courses (CoursesTab) mais factorisée pour
+// pouvoir être posée sur n'importe quelle carte : glisser vers la gauche
+// révèle le bouton 🗑 rouge, qui appelle `onDelete`.
+function SwipeToDeleteCard({
+  onDelete,
+  deleting,
+  ariaLabel,
+  cardClassName,
+  children,
+}: {
+  onDelete: () => void;
+  deleting?: boolean;
+  ariaLabel: string;
+  cardClassName?: string;
+  children: React.ReactNode;
+}) {
+  const [swipeX, setSwipeX] = useState(0);
+  const swipeStart = useRef<{ x: number; y: number; base: number } | null>(null);
+  const swipeLock = useRef<"none" | "x" | "y">("none");
+  const SWIPE_MAX = 88;
+
+  const onSwipeStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    if (!t) return;
+    swipeStart.current = { x: t.clientX, y: t.clientY, base: swipeX };
+    swipeLock.current = "none";
+  };
+  const onSwipeMove = (e: React.TouchEvent) => {
+    const s = swipeStart.current;
+    const t = e.touches[0];
+    if (!s || !t) return;
+    const dx = t.clientX - s.x;
+    const dy = t.clientY - s.y;
+    if (swipeLock.current === "none") {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      swipeLock.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    }
+    if (swipeLock.current !== "x") return;
+    const next = Math.min(0, Math.max(-SWIPE_MAX - 24, s.base + dx));
+    setSwipeX(next);
+  };
+  const onSwipeEnd = () => {
+    if (swipeLock.current === "x") setSwipeX(swipeX < -SWIPE_MAX / 2 ? -SWIPE_MAX : 0);
+    swipeStart.current = null;
+    swipeLock.current = "none";
+  };
+
+  // Referme le tiroir une fois la suppression lancée (évite un bouton
+  // "collé" ouvert sur une carte qui va disparaître de la liste).
+  useEffect(() => {
+    if (deleting) setSwipeX(0);
+  }, [deleting]);
+
+  return (
+    <div className="drv-swipe">
+      <button type="button" className="drv-swipe-action" aria-label={ariaLabel} onClick={onDelete} disabled={deleting}>
+        {deleting ? "…" : "🗑"}
+        <span>Suppr.</span>
+      </button>
+      <div
+        className={`drv-card drv-swipe-content${cardClassName ? ` ${cardClassName}` : ""}`}
+        style={{
+          transform: `translateX(${swipeX}px)`,
+          transition: swipeStart.current ? "none" : "transform .22s ease",
+        }}
+        onTouchStart={onSwipeStart}
+        onTouchMove={onSwipeMove}
+        onTouchEnd={onSwipeEnd}
+        onTouchCancel={onSwipeEnd}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ── Onglet Avis ────────────────────────────────────────────────────────────
 function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   const [pending, setPending] = useState<Avis[]>([]);
@@ -5320,7 +5387,13 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
         <>
           <p className="drv-section">À modérer ({pending.length})</p>
           {pending.map((a) => (
-            <div key={a.id} className="drv-card pending">
+            <SwipeToDeleteCard
+              key={a.id}
+              onDelete={() => removeAvis(a.id)}
+              deleting={busy === a.id}
+              ariaLabel="Supprimer cet avis"
+              cardClassName="pending"
+            >
               <div className="drv-row">
                 <span className="drv-name">{a.author_name || "Anonyme"}</span>
                 <span className="drv-badge-pill drv-badge-amber">En attente</span>
@@ -5345,7 +5418,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                   {busy === a.id ? "…" : "⚑ Signaler"}
                 </button>
               </div>
-            </div>
+            </SwipeToDeleteCard>
           ))}
           <hr className="drv-divider" />
         </>
@@ -5355,7 +5428,12 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
         <>
           <p className="drv-section">Avis signalés ({flagged.length})</p>
           {flagged.map((a) => (
-            <div key={a.id} className="drv-card">
+            <SwipeToDeleteCard
+              key={a.id}
+              onDelete={() => removeAvis(a.id)}
+              deleting={busy === a.id}
+              ariaLabel="Supprimer cet avis"
+            >
               <div className="drv-row">
                 <span className="drv-name">{a.author_name || "Anonyme"}</span>
                 <span className="drv-badge-pill drv-badge-amber">Signalé</span>
@@ -5372,7 +5450,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                   {busy === a.id ? "…" : "Remettre en attente"}
                 </button>
               </div>
-            </div>
+            </SwipeToDeleteCard>
           ))}
           <hr className="drv-divider" />
         </>
@@ -5386,47 +5464,54 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
       ) : (
         <>
           {published.map((a) => (
-            <div key={a.id} className="drv-card" style={{ opacity: 0.75 }}>
-              <div className="drv-row">
-                <span className="drv-name">{a.author_name || "Anonyme"}</span>
-                <span className="drv-badge-pill drv-badge-green">Publié</span>
+            <SwipeToDeleteCard
+              key={a.id}
+              onDelete={() => removeAvis(a.id)}
+              deleting={busy === a.id}
+              ariaLabel="Supprimer cet avis"
+            >
+              <div style={{ opacity: 0.75 }}>
+                <div className="drv-row">
+                  <span className="drv-name">{a.author_name || "Anonyme"}</span>
+                  <span className="drv-badge-pill drv-badge-green">Publié</span>
+                </div>
+                <div style={{ marginBottom: 4 }}>
+                  <Stars n={a.note} />
+                </div>
+                <p style={{ fontSize: 13, color: "#475569", margin: "0 0 8px", lineHeight: 1.5 }}>"{a.commentaire}"</p>
+                <button
+                  onClick={() => removeAvis(a.id)}
+                  disabled={busy === a.id}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#b91c1c",
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                >
+                  {busy === a.id ? "…" : "🗑 Supprimer"}
+                </button>
+                <button
+                  onClick={() => moderate(a.id, "flagged")}
+                  disabled={busy === a.id}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#b45309",
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    padding: 0,
+                    marginLeft: 12,
+                  }}
+                >
+                  {busy === a.id ? "…" : "⚑ Signaler"}
+                </button>
               </div>
-              <div style={{ marginBottom: 4 }}>
-                <Stars n={a.note} />
-              </div>
-              <p style={{ fontSize: 13, color: "#475569", margin: "0 0 8px", lineHeight: 1.5 }}>"{a.commentaire}"</p>
-              <button
-                onClick={() => removeAvis(a.id)}
-                disabled={busy === a.id}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "#b91c1c",
-                  fontSize: 11.5,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  padding: 0,
-                }}
-              >
-                {busy === a.id ? "…" : "🗑 Supprimer"}
-              </button>
-              <button
-                onClick={() => moderate(a.id, "flagged")}
-                disabled={busy === a.id}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "#b45309",
-                  fontSize: 11.5,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  padding: 0,
-                  marginLeft: 12,
-                }}
-              >
-                {busy === a.id ? "…" : "⚑ Signaler"}
-              </button>
-            </div>
+            </SwipeToDeleteCard>
           ))}
           {avgNote && (
             <div
@@ -5580,7 +5665,12 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
         const isOpen = expandedId === d.id;
         const draft = draftFor(d);
         return (
-          <div key={d.id} className="drv-card">
+          <SwipeToDeleteCard
+            key={d.id}
+            onDelete={() => removeDevis(d.id)}
+            deleting={busy === d.id}
+            ariaLabel="Supprimer ce devis"
+          >
             <div className="drv-row" style={{ cursor: "pointer" }} onClick={() => setExpandedId(isOpen ? null : d.id)}>
               <span className="drv-name">{d.nom}</span>
               <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
@@ -5680,7 +5770,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 </div>
               </>
             )}
-          </div>
+          </SwipeToDeleteCard>
         );
       })}
     </>
@@ -5846,7 +5936,12 @@ function ClientsTab() {
         </div>
       ) : (
         filtered.map((c) => (
-          <div key={c.phone} className="drv-card">
+          <SwipeToDeleteCard
+            key={c.phone}
+            onDelete={() => removeClient(c)}
+            deleting={deletingPhone === c.phone}
+            ariaLabel="Supprimer ce client"
+          >
             <div className="drv-row">
               <span className="drv-name">{c.name}</span>
               <span className="drv-badge-pill drv-badge-gray">
@@ -5971,7 +6066,7 @@ function ClientsTab() {
             >
               {deletingPhone === c.phone ? "Suppression…" : "🗑 Supprimer ce client"}
             </button>
-          </div>
+          </SwipeToDeleteCard>
         ))
       )}
     </>
