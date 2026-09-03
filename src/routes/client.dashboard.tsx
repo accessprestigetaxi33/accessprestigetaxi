@@ -407,24 +407,19 @@ function ClientDashboard() {
         <main className="cd-main">
           <div className="cd-main-inner">
             <div className="cd-mobile-shell">
-              <div className="cd-top-row">
-                <Link to="/" className="cd-back">
-                  <Home size={13} />
-                  {c.backSite}
-                </Link>
-                <LanguageSwitcher />
-              </div>
+              <ClientTopBar />
               <div className="cd-mobile-top">
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <div className="cd-mobile-kicker">{c.eyebrow}</div>
                   <h1 className="cd-mobile-hello">{c.hello(greeting)}</h1>
                   <div className="cd-mobile-kicker">{c.subtitle}</div>
                 </div>
-                <span className="cd-mobile-bell">
+                <Link to="/notifications" className="cd-mobile-bell" aria-label="Notifications">
                   <Bell size={20} />
-                  <span className="cd-bell-dot" />
-                </span>
+                  {unreadMessages > 0 && <span className="cd-bell-dot" />}
+                </Link>
               </div>
+
               <section className="cd-next">
                 <div className="cd-next-head">
                   <b>{heroTitle}</b>
