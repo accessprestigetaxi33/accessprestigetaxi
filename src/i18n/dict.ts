@@ -1833,6 +1833,7 @@ const en: Dict = {
   "client.trajets.refresh": "Refresh",
   "client.trajets.loading": "Loading…",
   "client.trajets.estimated": "Estimated",
+  "client.trajets.final_price": "Final fare",
   "client.trajets.share": "Share with a loved one",
   "client.trajets.share_short": "Share",
   "client.trajets.details": "Details & actions",
