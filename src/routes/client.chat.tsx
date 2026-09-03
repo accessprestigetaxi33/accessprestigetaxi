@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
 import { DirectChatPanel } from "@/components/DirectChatPanel";
+import { ClientTopBar } from "@/components/ClientTopBar";
 import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
 import { useT } from "@/i18n/I18nProvider";
@@ -22,7 +23,8 @@ const css = `
 .cc-title{font-family:Georgia,serif;font-size:20px;margin:4px 0 0}
 .cc-subtitle{margin-top:2px;font-size:11px;color:rgba(255,255,255,.5)}
 .cc-panel{margin-top:14px;flex:1;min-height:360px;display:flex;flex-direction:column;overflow:hidden;border-radius:16px;background:#07101a;border:1px solid rgba(214,168,61,.45)}
-@media(min-width:700px){.cc-main-inner{max-width:720px}.cc-shell{padding:20px}}
+@media(min-width:700px){.cc-main-inner{max-width:760px}.cc-shell{padding:20px}}
+@media(min-width:1024px){.cc-main-inner{max-width:1080px}.cc-panel{min-height:520px}}
 `;
 
 function ClientChatPage() {
@@ -48,6 +50,7 @@ function ClientChatPage() {
         <main className="cc-main">
           <div className="cc-main-inner">
             <div className="cc-shell">
+              <ClientTopBar />
               <div className="cc-kicker">{t("client.eyebrow")}</div>
               <h1 className="cc-title">{t("client.chat.title")}</h1>
               <p className="cc-subtitle">{t("client.chat.subtitle")}</p>

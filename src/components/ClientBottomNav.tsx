@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, Car, History, MessageCircle, User } from "lucide-react";
 import { useT } from "@/i18n/I18nProvider";
+import { useClientUnreadMessages } from "@/hooks/useClientUnreadMessages";
 
 const TABS = [
   { to: "/client/dashboard", key: "nav.client.home", Icon: Home },
@@ -13,6 +14,7 @@ const TABS = [
 export function ClientBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const t = useT();
+  const unread = useClientUnreadMessages();
 
   return (
     <>
@@ -37,7 +39,17 @@ export function ClientBottomNav() {
                     color: active ? "#E8C96D" : "rgba(255,255,255,0.55)",
                   }}
                 >
-                  <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 1.8} />
+                  <span className="relative inline-flex">
+                    <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 1.8} />
+                    {to === "/client/chat" && unread > 0 && (
+                      <span
+                        className="absolute -right-2 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9px] font-extrabold text-white"
+                        style={{ background: "#ef4444" }}
+                      >
+                        {unread > 9 ? "9+" : unread}
+                      </span>
+                    )}
+                  </span>
                   <span
                     className="text-[10px] font-semibold uppercase tracking-wider"
                     style={{ letterSpacing: "0.08em" }}
