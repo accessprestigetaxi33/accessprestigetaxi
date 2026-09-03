@@ -33,7 +33,6 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
-import aptLogo from "@/assets/apt-logo-lockup.webp";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -771,19 +770,8 @@ function Index() {
 
       {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
       <section className="relative isolate overflow-hidden bg-black">
-        {/* Logo centré au-dessus de la photo du hero (mobile / tablette / desktop) */}
-        <div className="flex w-full justify-center bg-black px-4 py-5 sm:py-6">
-          <img
-            src={aptLogo}
-            alt="Access Prestige Taxi"
-            width={420}
-            height={140}
-            loading="eager"
-            fetchPriority="high"
-            className="mx-auto h-auto w-[min(260px,70vw)] object-contain sm:w-[300px] lg:w-[340px]"
-          />
-        </div>
         <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
+
           <img
             src={heroCars}
             alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
@@ -799,11 +787,12 @@ function Index() {
             <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-4xl md:text-5xl lg:text-6xl">
               {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
-            <p className="mt-3 max-w-3xl text-sm font-extrabold text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-base md:text-lg">
+            <p className="mt-3 max-w-3xl text-base font-black text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-lg md:text-xl lg:text-2xl">
               {lang === "en"
-                ? "Private transfers · Covered medical transport · Chauffeur service"
-                : "Transferts privés · Transport médical conventionné · Mise à disposition"}
+                ? "Pro private transport · Covered medical transport · Chauffeur service"
+                : "Transport privé pro · Transport médical conventionné · Mise à disposition"}
             </p>
+
           </div>
 
           {/* Boutons RÉSERVER + DEVIS dans le hero */}
@@ -1172,7 +1161,7 @@ function Index() {
 
       {/* 6. BANDEAU FINAL — 4 valeurs de la maquette */}
       <section className="bg-[#05090d] px-4 pb-8 pt-2 sm:px-6 sm:pb-12 lg:px-8">
-        <div className="mx-auto grid max-w-6xl grid-cols-4 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f]">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 overflow-hidden rounded-[14px] border-2 border-[#e0b866] bg-[#07111f] sm:grid-cols-4">
           {[
             { icon: Crown, label: lang === "en" ? "HIGH-END SERVICE" : "SERVICE HAUT DE GAMME" },
             { icon: ShieldCheck, label: lang === "en" ? "SAFETY & COMFORT" : "SÉCURITÉ & CONFORT" },
@@ -1181,13 +1170,16 @@ function Index() {
           ].map(({ icon: Icon, label }) => (
             <div
               key={label}
-              className="flex min-h-[92px] items-center justify-center gap-3 border-b border-r border-[#e0b866]/50 px-3 py-4 text-center last:border-r-0 sm:min-h-[105px] sm:border-b-0"
+              className="flex min-h-[104px] min-w-0 flex-col items-center justify-center gap-2 border-b border-r border-[#e0b866]/50 px-2 py-4 text-center last:border-r-0 sm:min-h-[105px] sm:flex-row sm:gap-3 sm:px-3 sm:border-b-0"
             >
-              <Icon className="h-8 w-8 shrink-0 text-[#e0b866]" aria-hidden="true" />
-              <span className="text-[10px] font-semibold uppercase leading-tight text-white sm:text-xs">{label}</span>
+              <Icon className="h-7 w-7 shrink-0 text-[#e0b866] sm:h-8 sm:w-8" aria-hidden="true" />
+              <span className="min-w-0 break-words text-[11px] font-semibold uppercase leading-tight text-white sm:text-xs">
+                {label}
+              </span>
             </div>
           ))}
         </div>
+
         <div className="mt-6 text-center">
           <Link
             to="/reserver"
