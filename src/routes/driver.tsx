@@ -1991,10 +1991,9 @@ function DriverApp({
         <div className="drv-main">
           <aside className="drv-tabs" aria-label="Navigation chauffeur">
             <div className="drv-side-logo">
-              <span>AP</span>
-              <b>ACCESS</b>
-              <em>PRESTIGE TAXI</em>
+              <img src={APT_LOGO} alt="Access Prestige Taxi" />
             </div>
+
             {(
               [
                 "dashboard",
