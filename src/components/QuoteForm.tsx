@@ -349,7 +349,7 @@ function Check2({
         />
         <span className="absolute inset-0 rounded-md bg-[#d6a83d] opacity-0 transition peer-checked:opacity-100" />
         <svg
-          className="relative z-10 h-3.5 w-3.5 text-[#07101a] opacity-0 transition peer-checked:opacity-100"
+          className="pointer-events-none relative z-10 h-3.5 w-3.5 text-[#07101a] opacity-0 transition peer-checked:opacity-100"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
