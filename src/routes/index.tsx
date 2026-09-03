@@ -33,6 +33,7 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
+import aptLogo from "@/assets/apt-logo-lockup.webp";
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -770,6 +771,18 @@ function Index() {
 
       {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
       <section className="relative isolate overflow-hidden bg-black">
+        {/* Logo centré au-dessus de la photo du hero (mobile / tablette / desktop) */}
+        <div className="flex w-full justify-center bg-black px-4 py-5 sm:py-6">
+          <img
+            src={aptLogo}
+            alt="Access Prestige Taxi"
+            width={420}
+            height={140}
+            loading="eager"
+            fetchPriority="high"
+            className="mx-auto h-auto w-[min(260px,70vw)] object-contain sm:w-[300px] lg:w-[340px]"
+          />
+        </div>
         <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
           <img
             src={heroCars}
@@ -796,12 +809,12 @@ function Index() {
           {/* Boutons RÉSERVER + DEVIS dans le hero */}
           <div className="absolute left-1/2 top-[65%] z-20 w-[min(380px,88vw)] -translate-x-1/2 sm:top-[70%]">
             <div className="grid grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
-              <div className="relative" ref={heroMenuRef}>
+              <div className="relative h-full" ref={heroMenuRef}>
                 <button
                   type="button"
                   onClick={() => setHeroMenuOpen((open) => !open)}
                   aria-expanded={heroMenuOpen}
-                  className="btn-gold flex min-h-[48px] w-full min-w-0 items-center justify-center gap-2 truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
+                  className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center gap-2 truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
                 >
                   {lang === "en" ? "BOOK" : "RÉSERVER"}
                   <ChevronDown
@@ -846,7 +859,7 @@ function Index() {
 
               <Link
                 to="/devis"
-                className="btn-gold flex min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
+                className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
               >
                 {lang === "en" ? "QUOTE" : "DEVIS"}
               </Link>

@@ -146,6 +146,42 @@ const FLEET = [
   },
 ] as const;
 
+// Véhicule sélectionné par le chauffeur : partagé entre la carte "Véhicules"
+// du tableau de bord et les cartes de course (localStorage + événements).
+const SELECTED_VEHICLE_KEY = "drv-selected-vehicle";
+const SELECTED_VEHICLE_EVENT = "drv-selected-vehicle-change";
+
+function readSelectedVehicleId(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(SELECTED_VEHICLE_KEY);
+}
+
+function setSelectedVehicleId(id: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SELECTED_VEHICLE_KEY, id);
+  window.dispatchEvent(new CustomEvent(SELECTED_VEHICLE_EVENT, { detail: id }));
+}
+
+function useSelectedVehicle(driverId?: string) {
+  const [id, setId] = useState<string | null>(null);
+  useEffect(() => {
+    const apply = () => setId(readSelectedVehicleId());
+    apply();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === SELECTED_VEHICLE_KEY) apply();
+    };
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(SELECTED_VEHICLE_EVENT, apply as EventListener);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(SELECTED_VEHICLE_EVENT, apply as EventListener);
+    };
+  }, []);
+  const fallback = driverId ? FLEET.find((v) => v.driver === driverId) : undefined;
+  const vehicle = FLEET.find((v) => v.id === id) ?? fallback ?? null;
+  return { vehicleId: id, vehicle };
+}
+
 const DRIVER_SOCIAL_FR = {
   title: "Espace Chauffeur — Access Prestige Taxi",
   description: "Application privée d'Alain et Patricia : courses, GPS, messagerie et notifications.",
@@ -1538,6 +1574,7 @@ function DriverApp({
   // l'identification, comme avant) — seul l'affichage vit désormais dans
   // l'onglet "GPS".
   const gps = useDriverGpsTracking(driverId);
+  const { vehicle: dashboardVehicle } = useSelectedVehicle(driverId);
 
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
@@ -2247,13 +2284,36 @@ function DriverApp({
                     </div>
                     <ul className="drv-fleet">
                       {FLEET.map((v) => (
-                        <li key={v.id} className={v.driver === driverId ? "is-mine" : undefined}>
+                        <li
+                          key={v.id}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={dashboardVehicle?.id === v.id}
+                          onClick={() => setSelectedVehicleId(v.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setSelectedVehicleId(v.id);
+                            }
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            border:
+                              dashboardVehicle?.id === v.id ? "2px solid #e0b866" : "2px solid transparent",
+                            borderRadius: 10,
+                          }}
+                          className={v.driver === driverId ? "is-mine" : undefined}
+                        >
                           <img src={v.photo} alt={v.name} loading="lazy" />
                           <div>
                             <strong>{v.name}</strong>
                             <span>{v.desc}</span>
                           </div>
-                          {v.driver === driverId && <em>MON VÉHICULE</em>}
+                          {dashboardVehicle?.id === v.id ? (
+                            <em>SÉLECTIONNÉ</em>
+                          ) : (
+                            v.driver === driverId && <em>MON VÉHICULE</em>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -3426,6 +3486,7 @@ function CourseCard({
 }) {
   const [routes, setRoutes] = useState<RouteOption[]>([]);
   const routeStorageKey = `drv-selected-route:${resa.id}`;
+  const { vehicle: cardVehicle } = useSelectedVehicle();
   const [selectedRoute, setSelectedRoute] = useState<number>(() => {
     if (typeof window === "undefined") return 0;
     const raw = window.localStorage.getItem(routeStorageKey);
@@ -4094,6 +4155,46 @@ function CourseCard({
           <span>📍 {resa.depart}</span>
           <span>🏁 {resa.destination}</span>
         </div>
+
+        {/* Véhicule sélectionné par le chauffeur */}
+        {cardVehicle && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginTop: 10,
+              padding: "7px 9px",
+              borderRadius: 10,
+              border: "1px solid #e0b866",
+              background: "#0b0b0b",
+              color: "#fff",
+            }}
+          >
+            <img
+              src={cardVehicle.photo}
+              alt={cardVehicle.name}
+              loading="lazy"
+              style={{ width: 46, height: 32, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
+            />
+            <div style={{ minWidth: 0 }}>
+              <strong style={{ display: "block", fontSize: 12, color: "#e0b866" }}>VÉHICULE</strong>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {cardVehicle.name}
+              </span>
+            </div>
+          </div>
+        )}
+
 
         {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
         {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
