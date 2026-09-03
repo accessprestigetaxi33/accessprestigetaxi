@@ -846,7 +846,7 @@ function Index() {
 
               <Link
                 to="/devis"
-                className="btn-gold flex min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
+                className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
               >
                 {lang === "en" ? "QUOTE" : "DEVIS"}
               </Link>
