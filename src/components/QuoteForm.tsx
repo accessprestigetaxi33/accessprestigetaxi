@@ -347,8 +347,9 @@ function Check2({
           onChange={onChange ? (e) => onChange(e.target.checked) : undefined}
           className="peer absolute inset-0 h-full w-full cursor-pointer opacity-0"
         />
+        <span className="absolute inset-0 rounded-md bg-[#d6a83d] opacity-0 transition peer-checked:opacity-100" />
         <svg
-          className="h-3.5 w-3.5 text-[#07101a] opacity-0 transition peer-checked:opacity-100"
+          className="relative z-10 h-3.5 w-3.5 text-[#07101a] opacity-0 transition peer-checked:opacity-100"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -358,7 +359,6 @@ function Check2({
         >
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        <span className="absolute inset-0 -z-10 rounded-md bg-[#d6a83d] opacity-0 transition peer-checked:opacity-100" />
       </span>
       <span className="leading-snug">{label}</span>
     </label>
