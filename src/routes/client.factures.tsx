@@ -4,6 +4,7 @@ import { FileText, Download, ArrowLeft, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 import { BrandLoader } from "@/components/BrandLoader";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
+import { ClientTopBar } from "@/components/ClientTopBar";
 import { useT } from "@/i18n/I18nProvider";
 import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
@@ -54,7 +55,8 @@ const css = `
 .cf-month-sub{margin-top:2px;font-size:10px;color:rgba(255,255,255,.5)}
 .cf-month-pdf{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(214,168,61,.5);border-radius:7px;padding:7px 10px;font-size:9px;font-weight:800;color:#e7bd5d;background:transparent}
 .cf-month-pdf:disabled{opacity:.5}
-@media(min-width:700px){.cf-main-inner{max-width:720px}.cf-shell{padding:20px}}
+@media(min-width:1024px){.cf-main-inner{max-width:1080px}}
+@media(min-width:700px){.cf-main-inner{max-width:760px}.cf-shell{padding:20px}}
 `;
 
 function ClientFactures() {
@@ -160,6 +162,7 @@ function ClientFactures() {
         <main className="cf-main">
           <div className="cf-main-inner">
             <div className="cf-shell">
+              <ClientTopBar />
               <div className="cf-top">
                 <Link to="/client/profil" className="cf-back">
                   <ArrowLeft size={13} /> Profil

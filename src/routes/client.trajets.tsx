@@ -5,6 +5,7 @@ import { shareRideTracking } from "@/lib/share-ride";
 import { BrandLoader } from "@/components/BrandLoader";
 import { toast } from "sonner";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
+import { ClientTopBar } from "@/components/ClientTopBar";
 import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
 import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
@@ -67,7 +68,8 @@ const css = `
 .ct-actions a,.ct-actions button{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:7px 10px;font-size:9px;font-weight:800;text-decoration:none;border:1px solid rgba(214,168,61,.5)}
 .ct-actions a.primary{background:linear-gradient(135deg,#f6cd6b,#cf962a);color:#171006;border-color:transparent}
 .ct-actions button,.ct-actions a.secondary{color:#f5f1e8;background:transparent;border-color:rgba(255,255,255,.2)}
-@media(min-width:700px){.ct-main-inner{max-width:720px}.ct-shell{padding:20px}}
+@media(min-width:1024px){.ct-main-inner{max-width:1080px}}
+@media(min-width:700px){.ct-main-inner{max-width:760px}.ct-shell{padding:20px}}
 `;
 
 function ClientTrajets() {
@@ -135,6 +137,7 @@ function ClientTrajets() {
         <main className="ct-main">
           <div className="ct-main-inner">
             <div className="ct-shell">
+              <ClientTopBar />
               <div className="ct-top">
                 <div>
                   <div className="ct-kicker">{t("client.eyebrow")}</div>
