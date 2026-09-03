@@ -1794,7 +1794,8 @@ function DriverApp({
           <div className="drv-header-kpi">
             <small>SATISFACTION</small>
             <strong>
-              4,9 /5 <span>★</span>
+              {reviewStats && reviewStats.count > 0 ? reviewStats.avg.toFixed(1).replace(".", ",") : "—"} /5{" "}
+              <span>★</span>
             </strong>
           </div>
           <span className="drv-header-datetime">
@@ -2115,20 +2116,33 @@ function DriverApp({
                       <button onClick={() => setTab("avis")}>VOIR TOUS</button>
                     </div>
                     <div className="drv-rating">
-                      <strong>4,9</strong>
+                      <strong>
+                        {reviewStats && reviewStats.count > 0 ? reviewStats.avg.toFixed(1).replace(".", ",") : "—"}
+                      </strong>
                       <span>/ 5</span>
-                      <div>★★★★★</div>
-                      <small>Basé sur 128 avis</small>
+                      <div>
+                        {"★".repeat(Math.round(reviewStats?.avg ?? 0)) +
+                          "☆".repeat(5 - Math.round(reviewStats?.avg ?? 0))}
+                      </div>
+                      <small>
+                        {reviewStats
+                          ? `Basé sur ${reviewStats.count} avis publié${reviewStats.count > 1 ? "s" : ""}`
+                          : "Chargement des avis…"}
+                      </small>
                     </div>
                     <div className="drv-rating-bars">
-                      {[5, 4, 3, 2, 1].map((n) => (
-                        <div key={n}>
-                          <b>{n} ★</b>
-                          <i>
-                            <span style={{ width: `${n === 5 ? 92 : n === 4 ? 6 : n === 3 ? 2 : 1}%` }} />
-                          </i>
-                        </div>
-                      ))}
+                      {[5, 4, 3, 2, 1].map((n) => {
+                        const total = reviewStats?.count ?? 0;
+                        const pct = total ? Math.round(((reviewStats?.dist[n] ?? 0) / total) * 100) : 0;
+                        return (
+                          <div key={n}>
+                            <b>{n} ★</b>
+                            <i>
+                              <span style={{ width: `${pct}%` }} />
+                            </i>
+                          </div>
+                        );
+                      })}
                     </div>
                   </section>
                 </div>
