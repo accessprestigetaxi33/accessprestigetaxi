@@ -1280,6 +1280,22 @@ const css = `
   .drv-header-pushbtn { display:inline-flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; font-size:11.5px; font-weight:800; white-space:nowrap; cursor:pointer; flex:0 0 auto; }
   .drv-header-pushbtn:disabled { opacity:.6; cursor:progress; }
 
+  /* Rangée d'actions rapides ("Activer les notifications" / "Retour au
+     site") affichée en haut du tableau de bord, juste avant la carte
+     "Prochaine course" — indépendante du header pour ne pas hériter de ses
+     règles responsive (qui masquent certains éléments sur mobile). */
+  .drv-quick-actions { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+  .drv-quick-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 14px; border-radius:9px; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; text-decoration:none; }
+  .drv-quick-btn svg { width:15px; height:15px; flex-shrink:0; }
+  .drv-quick-btn-notif { border:1px solid #c99b4a; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; }
+  .drv-quick-btn-notif:disabled { cursor:progress; opacity:.7; }
+  .drv-quick-btn-notif.is-done { background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4); color:#16a34a; cursor:default; opacity:1; }
+  .drv-quick-btn-back { border:1px solid rgba(148,163,184,.4); background:#0d1720; color:#cbd5e1; }
+  .drv-quick-btn-back:hover { border-color:#c99b4a; color:#e0b866; }
+  @media (max-width:700px) {
+    .drv-quick-btn { height:33px; padding:0 11px; font-size:11.5px; }
+  }
+
   /* Mobile : on conserve « Retour au site » et l'activation des notifications
      (uniquement l'icône pour tenir dans la barre). */
   @media (max-width:700px) {
@@ -1734,6 +1750,25 @@ function DriverApp({
   }, [driverId]);
 
   const [pushBusy, setPushBusy] = useState(false);
+  // Reflète l'état réel de Notification.permission pour piloter l'affichage
+  // du bouton "Activer les notifications" (masqué/changé dès que la
+  // permission est déjà accordée), sans devoir relire window.Notification à
+  // chaque rendu — utile aussi pour refléter une activation faite depuis les
+  // réglages du navigateur/OS pendant que l'app est ouverte.
+  const [notifPermission, setNotifPermission] = useState<"granted" | "denied" | "default" | "unsupported">(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
+    return Notification.permission;
+  });
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return;
+    const sync = () => setNotifPermission(Notification.permission);
+    document.addEventListener("visibilitychange", sync);
+    window.addEventListener("focus", sync);
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("focus", sync);
+    };
+  }, []);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
   // fusionnent identification + activation en un seul clic (distinct de
   // pushBusy, utilisé une fois l'identité déjà connue).
@@ -1989,28 +2024,6 @@ function DriverApp({
             </strong>
             {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
           </span>
-          {typeof window !== "undefined" && "Notification" in window && Notification.permission !== "granted" && (
-            <button
-              type="button"
-              className="drv-header-pushbtn"
-              disabled={pushBusy}
-              onClick={async () => {
-                setPushBusy(true);
-                try {
-                  await subscribePush("chauffeur", null, null);
-                } catch (e) {
-                  toast.error(
-                    "Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""),
-                  );
-                } finally {
-                  setPushBusy(false);
-                }
-              }}
-            >
-              <IconBell />
-              {pushBusy ? "…" : "Activer les notifications"}
-            </button>
-          )}
           <button
             type="button"
             className="drv-header-bell"
@@ -2022,9 +2035,6 @@ function DriverApp({
               <span className="drv-badge">{newCount + unreadChat + pendingAvis + pendingDevis}</span>
             )}
           </button>
-          <Link className="drv-header-back" to="/" aria-label="Retour au site">
-            <span className="drv-header-back-label">Retour au site</span>
-          </Link>
         </header>
 
         <div className="drv-main">
@@ -2115,6 +2125,41 @@ function DriverApp({
           <div className="drv-content">
             {tab === "dashboard" && (
               <main className="drv-dashboard" aria-label="Tableau de bord chauffeur">
+                <div className="drv-quick-actions">
+                  {notifPermission === "granted" ? (
+                    <button type="button" className="drv-quick-btn drv-quick-btn-notif is-done" disabled>
+                      <IconBell />
+                      Notifications activées
+                    </button>
+                  ) : notifPermission !== "unsupported" ? (
+                    <button
+                      type="button"
+                      className="drv-quick-btn drv-quick-btn-notif"
+                      disabled={pushBusy}
+                      onClick={async () => {
+                        setPushBusy(true);
+                        try {
+                          await subscribePush("chauffeur", null, null);
+                          if (typeof window !== "undefined" && "Notification" in window) {
+                            setNotifPermission(Notification.permission);
+                          }
+                        } catch (e) {
+                          toast.error(
+                            "Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""),
+                          );
+                        } finally {
+                          setPushBusy(false);
+                        }
+                      }}
+                    >
+                      <IconBell />
+                      {pushBusy ? "…" : "Activer les notifications"}
+                    </button>
+                  ) : null}
+                  <Link className="drv-quick-btn drv-quick-btn-back" to="/">
+                    Retour au site
+                  </Link>
+                </div>
                 <div className="drv-dashboard-grid-top">
                   <section className="drv-card drv-next-card">
                     <div className="drv-card-head">
