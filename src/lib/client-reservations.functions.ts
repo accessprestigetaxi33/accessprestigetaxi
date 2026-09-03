@@ -87,6 +87,7 @@ export const listClientReservations = createServerFn({ method: "POST" })
       destination: r.destination,
       status: r.status,
       prix_estime: r.prix_estime,
+      final_price: (r as any).final_price ?? null,
       nb_passagers: r.nb_passagers,
       passagers: r.passagers,
       bagages: r.bagages,
