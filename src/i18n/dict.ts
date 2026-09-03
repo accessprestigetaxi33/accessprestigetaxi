@@ -696,6 +696,7 @@ const fr: Dict = {
   "client.trajets.refresh": "Actualiser",
   "client.trajets.loading": "Chargement…",
   "client.trajets.estimated": "Estimé",
+  "client.trajets.final_price": "Prix final",
   "client.trajets.share": "Partager à un proche",
   "client.trajets.share_short": "Partager",
   "client.trajets.details": "Détails & actions",
