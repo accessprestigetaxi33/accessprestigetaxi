@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
 import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
 import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
