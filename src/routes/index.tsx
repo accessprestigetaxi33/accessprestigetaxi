@@ -33,6 +33,8 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
+import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
+
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
