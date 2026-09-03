@@ -2247,6 +2247,7 @@ function DriverApp({
                   ["dashboard", "Tableau de bord", IconHome],
                   ["courses", "Courses + chat", IconCar],
                   ["planning", "Planning", IconCalendar],
+                  ["messages", "Messages", IconMessage],
                   ["devis", "Devis", IconDevis],
                   ["clients", "Clients", IconUsers],
                   ["avis", "Avis", IconStar],
@@ -2260,9 +2261,9 @@ function DriverApp({
                 <button
                   key={key}
                   type="button"
-                  className={tab === key ? "active" : ""}
+                  className={tab === (key === "messages" ? "courses" : key) ? "active" : ""}
                   onClick={() => {
-                    setTab(key);
+                    setTab((key === "messages" ? "courses" : key) as Tab);
                     setMobileMenuOpen(false);
                   }}
                 >
