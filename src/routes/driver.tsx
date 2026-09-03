@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
 import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
 import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
@@ -1509,7 +1509,81 @@ function DriverApp({
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [pendingDevis, setPendingDevis] = useState(0);
+  // Statistiques d'avis réelles (note moyenne + répartition) pour l'en-tête
+  // et la carte "Avis récents" du tableau de bord.
+  const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; dist: Record<number, number> } | null>(
+    null,
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Notifications réelles du tableau de bord, dérivées des compteurs déjà
+  // suivis (nouvelles courses, messages non lus, avis et devis en attente).
+  const dashboardNotifications = useMemo(() => {
+    const list: { key: string; label: string; detail: string }[] = [];
+    if (newCount > 0)
+      list.push({
+        key: "courses",
+        label: `${newCount} nouvelle${newCount > 1 ? "s" : ""} réservation${newCount > 1 ? "s" : ""}`,
+        detail: "À accepter",
+      });
+    if (unreadChat > 0)
+      list.push({
+        key: "chat",
+        label: `${unreadChat} message${unreadChat > 1 ? "s" : ""} client`,
+        detail: "Non lu" + (unreadChat > 1 ? "s" : ""),
+      });
+    if (pendingDevis > 0)
+      list.push({
+        key: "devis",
+        label: `${pendingDevis} demande${pendingDevis > 1 ? "s" : ""} de devis`,
+        detail: "En attente",
+      });
+    if (pendingAvis > 0)
+      list.push({
+        key: "avis",
+        label: `${pendingAvis} avis à modérer`,
+        detail: "En attente",
+      });
+    return list;
+  }, [newCount, unreadChat, pendingAvis, pendingDevis]);
+
+  // Charge les avis publiés une fois le chauffeur identifié, puis toutes les
+  // 2 min (les avis évoluent lentement : inutile de solliciter la base plus).
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const token = getDriverToken();
+      if (!token) return;
+      try {
+        const res = await fetch(`/api/public/reviews?token=${encodeURIComponent(token)}`);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || cancelled) return;
+        const published: Avis[] = json.published ?? [];
+        const dist: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        let sum = 0;
+        for (const a of published) {
+          const n = Math.min(5, Math.max(1, Math.round(Number(a.note) || 0)));
+          dist[n] = (dist[n] ?? 0) + 1;
+          sum += n;
+        }
+        setReviewStats({
+          avg: published.length ? sum / published.length : 0,
+          count: published.length,
+          dist,
+        });
+      } catch {
+        /* réseau indisponible : on garde la dernière valeur connue */
+      }
+    };
+    load();
+    const timer = setInterval(load, 120000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [driverId]);
+
+
   const [pushBusy, setPushBusy] = useState(false);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
   // fusionnent identification + activation en un seul clic (distinct de
@@ -1751,7 +1825,8 @@ function DriverApp({
           <div className="drv-header-kpi">
             <small>SATISFACTION</small>
             <strong>
-              4,9 /5 <span>★</span>
+              {reviewStats && reviewStats.count > 0 ? reviewStats.avg.toFixed(1).replace(".", ",") : "—"} /5{" "}
+              <span>★</span>
             </strong>
           </div>
           <span className="drv-header-datetime">
@@ -2072,20 +2147,33 @@ function DriverApp({
                       <button onClick={() => setTab("avis")}>VOIR TOUS</button>
                     </div>
                     <div className="drv-rating">
-                      <strong>4,9</strong>
+                      <strong>
+                        {reviewStats && reviewStats.count > 0 ? reviewStats.avg.toFixed(1).replace(".", ",") : "—"}
+                      </strong>
                       <span>/ 5</span>
-                      <div>★★★★★</div>
-                      <small>Basé sur 128 avis</small>
+                      <div>
+                        {"★".repeat(Math.round(reviewStats?.avg ?? 0)) +
+                          "☆".repeat(5 - Math.round(reviewStats?.avg ?? 0))}
+                      </div>
+                      <small>
+                        {reviewStats
+                          ? `Basé sur ${reviewStats.count} avis publié${reviewStats.count > 1 ? "s" : ""}`
+                          : "Chargement des avis…"}
+                      </small>
                     </div>
                     <div className="drv-rating-bars">
-                      {[5, 4, 3, 2, 1].map((n) => (
-                        <div key={n}>
-                          <b>{n} ★</b>
-                          <i>
-                            <span style={{ width: `${n === 5 ? 92 : n === 4 ? 6 : n === 3 ? 2 : 1}%` }} />
-                          </i>
-                        </div>
-                      ))}
+                      {[5, 4, 3, 2, 1].map((n) => {
+                        const total = reviewStats?.count ?? 0;
+                        const pct = total ? Math.round(((reviewStats?.dist[n] ?? 0) / total) * 100) : 0;
+                        return (
+                          <div key={n}>
+                            <b>{n} ★</b>
+                            <i>
+                              <span style={{ width: `${pct}%` }} />
+                            </i>
+                          </div>
+                        );
+                      })}
                     </div>
                   </section>
                 </div>
@@ -2118,18 +2206,19 @@ function DriverApp({
                     <div className="drv-card-head">
                       <span>NOTIFICATIONS</span>
                     </div>
-                    <div className="drv-notif-row">
-                      ◉ <span>Nouvelle réservation</span>
-                      <small>Il y a 2 min</small>
-                    </div>
-                    <div className="drv-notif-row">
-                      ◉ <span>Paiement reçu</span>
-                      <small>Il y a 15 min</small>
-                    </div>
-                    <div className="drv-notif-row">
-                      ◉ <span>Message client</span>
-                      <small>Il y a 31 min</small>
-                    </div>
+                    {dashboardNotifications.length === 0 ? (
+                      <div className="drv-notif-row">
+                        ◉ <span>Aucune notification</span>
+                        <small>À jour</small>
+                      </div>
+                    ) : (
+                      dashboardNotifications.map((n) => (
+                        <div className="drv-notif-row" key={n.key}>
+                          ◉ <span>{n.label}</span>
+                          <small>{n.detail}</small>
+                        </div>
+                      ))
+                    )}
                     <button className="drv-see-all" onClick={() => setTab("courses")}>
                       VOIR TOUTES
                     </button>
@@ -2247,6 +2336,7 @@ function DriverApp({
                   ["dashboard", "Tableau de bord", IconHome],
                   ["courses", "Courses + chat", IconCar],
                   ["planning", "Planning", IconCalendar],
+                  ["messages", "Messages", IconMessage],
                   ["devis", "Devis", IconDevis],
                   ["clients", "Clients", IconUsers],
                   ["avis", "Avis", IconStar],
@@ -2260,9 +2350,9 @@ function DriverApp({
                 <button
                   key={key}
                   type="button"
-                  className={tab === key ? "active" : ""}
+                  className={tab === (key === "messages" ? "courses" : key) ? "active" : ""}
                   onClick={() => {
-                    setTab(key);
+                    setTab((key === "messages" ? "courses" : key) as Tab);
                     setMobileMenuOpen(false);
                   }}
                 >

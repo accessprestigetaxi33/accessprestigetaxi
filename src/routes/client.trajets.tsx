@@ -26,6 +26,8 @@ const STATUS_KEY: Record<string, { key: string; bg: string; fg: string }> = {
   accepted: { key: "cd_status_accepted", bg: "rgba(34,197,94,0.15)", fg: "#4ade80" },
   en_route: { key: "cd_status_en_route", bg: "rgba(59,130,246,0.18)", fg: "#60a5fa" },
   arrived: { key: "cd_status_arrived", bg: "rgba(99,102,241,0.18)", fg: "#a5b4fc" },
+  completed: { key: "cd_status_completed", bg: "rgba(214,168,61,0.18)", fg: "#e7bd5d" },
+  cancelled: { key: "cd_status_cancelled", bg: "rgba(239,68,68,0.15)", fg: "#f87171" },
 };
 
 function fmtDate(iso: string) {
@@ -186,13 +188,19 @@ function ClientTrajets() {
                             <span>{dest}</span>
                           </div>
                         </div>
-                        {r.prix_estime != null && (
+                        {(r.final_price ?? r.prix_estime) != null && (
                           <div className="ct-price">
-                            {t("client.trajets.estimated")} : <b>{Number(r.prix_estime).toFixed(2)} €</b>
+                            {r.final_price != null
+                              ? t("client.trajets.final_price")
+                              : t("client.trajets.estimated")}{" "}
+                            : <b>{Number(r.final_price ?? r.prix_estime).toFixed(2)} €</b>
                           </div>
                         )}
                         <div className="ct-actions">
-                          <a href={`/reservation/${r.id}`} className="primary">
+                          <a
+                            href={r.suivi_id ? `/suivi/${r.suivi_id}` : `/reservation/${r.id}`}
+                            className="primary"
+                          >
                             <Eye size={12} /> {t("client.trajets.follow")}
                           </a>
                           <button
