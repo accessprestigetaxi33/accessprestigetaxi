@@ -1798,6 +1798,8 @@ function DriverApp({
                 "avis",
                 "stats",
                 "historique",
+                "simulateur",
+                "gps",
                 "appareils",
               ] as const
             ).map((t) => {
