@@ -1270,3 +1270,22 @@ export const deleteMergedThread = createServerFn({ method: "POST" })
     }
     return { ok: true, deleted };
   });
+
+// Nombre de messages chauffeur non lus dans le fil direct du client connecté.
+// Sert au badge "Messagerie" du dashboard client et à la barre de navigation.
+export const countUnreadDirectForClient = createServerFn({ method: "POST" })
+  .inputValidator((input) =>
+    z.object({ role: z.literal("client"), token: z.string().min(8).max(200) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const accountId = await resolveDirectAccount(data);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { count, error } = await supabaseAdmin
+      .from("direct_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("client_account_id", accountId)
+      .eq("sender", "chauffeur")
+      .eq("read_by_client", false);
+    if (error) throw new Error(error.message);
+    return { unread: count ?? 0 };
+  });
