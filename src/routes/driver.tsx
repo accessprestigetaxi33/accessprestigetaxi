@@ -2213,15 +2213,26 @@ function DriverApp({
                 <div className="drv-dashboard-grid-bottom">
                   <section className="drv-card drv-vehicle-card">
                     <div className="drv-card-head">
-                      <span>▱ &nbsp;VÉHICULE</span>
+                      <span>▱ &nbsp;VÉHICULES</span>
+                      <b>{FLEET.length} · FLOTTE</b>
                     </div>
-                    <strong>{driverId === "patricia" ? "BMW iX1 — 100 % électrique" : "Van Mercedes — jusqu'à 7 passagers"}</strong>
-                    <span>{driverId === "patricia" ? "Berline électrique · sièges enfant/bébé" : "Van 7 places · groupes & bagages"}</span>
-                    <div className="drv-car-placeholder">{driverId === "patricia" ? "BMW iX1" : "VAN 7 PL."}</div>
+                    <ul className="drv-fleet">
+                      {FLEET.map((v) => (
+                        <li key={v.id} className={v.driver === driverId ? "is-mine" : undefined}>
+                          <img src={v.photo} alt={v.name} loading="lazy" />
+                          <div>
+                            <strong>{v.name}</strong>
+                            <span>{v.desc}</span>
+                          </div>
+                          {v.driver === driverId && <em>MON VÉHICULE</em>}
+                        </li>
+                      ))}
+                    </ul>
                     <footer>
                       <i>●</i> Contrôle OK <i>●</i> Assurance OK
                     </footer>
                   </section>
+
                   <section className="drv-card drv-gps-card">
                     <div className="drv-card-head">
                       <span>
