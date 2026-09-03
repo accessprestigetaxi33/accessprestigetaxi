@@ -31,10 +31,13 @@ import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } fro
 import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/googleGeocode";
 
+import DriverMessagesTab from "@/components/DriverMessagesTab";
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
   getUnreadCountsForReservations,
+  countUnreadChauffeurMessages,
+  listMergedChauffeurThreads,
   type UnreadMap,
 } from "@/lib/chat.functions";
 
@@ -47,6 +50,7 @@ type Tab =
   | "dashboard"
   | "courses"
   | "planning"
+  | "messages"
   | "avis"
   | "clients"
   | "stats"
@@ -531,6 +535,7 @@ const css = `
   .drv-revenue-footer { display:grid; grid-template-columns:repeat(3,1fr); text-align:center; border-top:1px solid rgba(255,255,255,.06); padding-top:10px; } .drv-revenue-footer span { font-size:8px; color:#a5afb8; border-right:1px solid rgba(255,255,255,.06); } .drv-revenue-footer span:last-child { border:0; } .drv-revenue-footer b { display:block; color:#eef0f0; font-size:15px; margin-bottom:3px; }
   .drv-plan-row { display:grid; grid-template-columns:102px minmax(0,1fr) 40px 25px; gap:7px; align-items:center; padding:11px 0; border-top:1px solid rgba(255,255,255,.06); font-size:10px; } .drv-plan-row:first-of-type { border-top:0; } .drv-plan-row > span { color:#bbc3c9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-plan-row > b { text-align:right; } .drv-plan-row > em { color:#be6eff; font-style:normal; }
   .violet-pill { background:#32225b !important; color:#c69bff !important; } .red-pill { background:#54232c !important; color:#ff8c98 !important; } .gold-pill { background:#58440d !important; color:#ffd449 !important; }
+  button.drv-message-row { width:100%; background:transparent; border:0; text-align:left; color:inherit; cursor:pointer; font:inherit; }
   .drv-message-row { display:grid; grid-template-columns:32px 1fr 38px; gap:8px; align-items:center; padding:9px 0; border-top:1px solid rgba(255,255,255,.06); } .avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#d9b49a; color:#16202a; font-size:8px; font-weight:900; } .drv-message-row div:nth-child(2) b { display:block; font-size:10px; } .drv-message-row div:nth-child(2) span { display:block; color:#9ba5ae; font-size:9px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-message-row > small { color:#7e8993; text-align:right; font-size:8px; } .drv-message-row > small i { display:inline-block; width:5px; height:5px; border-radius:50%; background:#ff4b55; }
   .drv-rating strong { font-size:42px; color:#f4f4f1; } .drv-rating > span { color:#9aa5ae; font-size:14px; } .drv-rating div { color:#ffc928; font-size:17px; letter-spacing:2px; margin-top:8px; } .drv-rating small { display:block; color:#9aa5ae; font-size:9px; margin-top:5px; } .drv-rating-bars { margin-top:-50px; margin-left:120px; } .drv-rating-bars > div { display:flex; align-items:center; gap:5px; margin:5px 0; } .drv-rating-bars b { width:28px; font-size:8px; } .drv-rating-bars i { height:5px; flex:1; background:#25313a; border-radius:5px; overflow:hidden; } .drv-rating-bars i span { display:block; height:100%; background:#f5bb18; }
   .drv-vehicle-card > strong { display:block; font-size:14px; margin-bottom:3px; } .drv-vehicle-card > span { color:#9aa5ae; font-size:10px; } .drv-car-placeholder { height:70px; margin:10px 0 5px; display:grid; place-items:end center; color:#687580; font-size:28px; font-weight:900; font-style:italic; background:radial-gradient(ellipse at center,#1a2731 0,transparent 55%); } .drv-vehicle-card footer { display:flex; gap:10px; border-top:1px solid rgba(255,255,255,.06); padding-top:8px; color:#b8c1c8; font-size:8px; } .drv-vehicle-card footer i { color:#44cc39; font-style:normal; }
@@ -1507,6 +1512,7 @@ function DriverApp({
 
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
+  const [dashboardThreads, setDashboardThreads] = useState<any[]>([]);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [pendingDevis, setPendingDevis] = useState(0);
   // Statistiques d'avis réelles (note moyenne + répartition) pour l'en-tête
@@ -1546,6 +1552,33 @@ function DriverApp({
       });
     return list;
   }, [newCount, unreadChat, pendingAvis, pendingDevis]);
+
+  // Compteur global de messages clients non lus (indépendant de l'onglet
+  // affiché : le badge reste juste depuis le tableau de bord).
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const token = getDriverToken();
+      if (!token) return;
+      try {
+        const [n, threads] = await Promise.all([
+          countUnreadChauffeurMessages({ data: { driver_token: token } }),
+          listMergedChauffeurThreads({ data: { driver_token: token } }).catch(() => [] as any[]),
+        ]);
+        if (cancelled) return;
+        setUnreadChat(n ?? 0);
+        setDashboardThreads((threads ?? []) as any[]);
+      } catch {
+        /* réseau indisponible : on garde la dernière valeur */
+      }
+    };
+    load();
+    const timer = setInterval(load, 20000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [driverId]);
 
   // Charge les avis publiés une fois le chauffeur identifié, puis toutes les
   // 2 min (les avis évoluent lentement : inutile de solliciter la base plus).
@@ -1878,7 +1911,7 @@ function DriverApp({
                 "appareils",
               ] as const
             ).map((t) => {
-              const realTab = t === "messages" ? "courses" : t;
+              const realTab = t;
               const count =
                 t === "courses"
                   ? newCount
@@ -2100,44 +2133,43 @@ function DriverApp({
                       <span>
                         ▣ &nbsp;MESSAGES NON LUS <b className="red-pill">{unreadChat}</b>
                       </span>
-                      <button onClick={() => setTab("courses")}>VOIR TOUS</button>
+                      <button onClick={() => setTab("messages")}>VOIR TOUS</button>
                     </div>
-                    <div className="drv-message-row">
-                      <div className="avatar">SM</div>
-                      <div>
-                        <b>Sophie Martin</b>
-                        <span>Bonjour, je serai avec un siège bébé, merci.</span>
-                      </div>
-                      <small>
-                        10:31
-                        <br />
-                        <i />
-                      </small>
-                    </div>
-                    <div className="drv-message-row">
-                      <div className="avatar">TB</div>
-                      <div>
-                        <b>Thomas Bernard</b>
-                        <span>Pouvez-vous passer 5 min plus tôt ?</span>
-                      </div>
-                      <small>
-                        10:15
-                        <br />
-                        <i />
-                      </small>
-                    </div>
-                    <div className="drv-message-row">
-                      <div className="avatar">ML</div>
-                      <div>
-                        <b>Marie Leroy</b>
-                        <span>Merci pour votre ponctualité !</span>
-                      </div>
-                      <small>
-                        09:48
-                        <br />
-                        <i />
-                      </small>
-                    </div>
+                    {dashboardThreads.length === 0 && (
+                      <div className="drv-more">Aucun message client en attente.</div>
+                    )}
+                    {dashboardThreads.slice(0, 3).map((t) => {
+                      const name = t.client_name || t.client_phone || "Client";
+                      const initials = name
+                        .split(/\s+/)
+                        .slice(0, 2)
+                        .map((w: string) => w[0]?.toUpperCase() ?? "")
+                        .join("");
+                      return (
+                        <button
+                          type="button"
+                          className="drv-message-row"
+                          key={t.thread_key}
+                          onClick={() => setTab("messages")}
+                        >
+                          <div className="avatar">{initials || "C"}</div>
+                          <div>
+                            <b>{name}</b>
+                            <span>{t.last_message_content}</span>
+                          </div>
+                          <small>
+                            {t.last_message_at
+                              ? new Date(t.last_message_at).toLocaleTimeString("fr-FR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              : ""}
+                            <br />
+                            {t.unread_chauffeur > 0 && <i />}
+                          </small>
+                        </button>
+                      );
+                    })}
                   </section>
                   <section className="drv-card">
                     <div className="drv-card-head">
@@ -2273,6 +2305,7 @@ function DriverApp({
                     <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
                   )}
                   {tab === "planning" && <PlanningTab />}
+                  {tab === "messages" && <DriverMessagesTab onBadgeChange={setUnreadChat} />}
                   {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
                   {tab === "clients" && <ClientsTab />}
                   {tab === "stats" && <StatsTab />}
@@ -2301,7 +2334,7 @@ function DriverApp({
             <IconCalendar />
             <span>Planning</span>
           </button>
-          <button onClick={() => setTab("courses")}>
+          <button className={tab === "messages" ? "active" : ""} onClick={() => setTab("messages")}>
             <IconMessage />
             {unreadChat > 0 && <b>{unreadChat}</b>}
             <span>Messages</span>
@@ -2350,9 +2383,9 @@ function DriverApp({
                 <button
                   key={key}
                   type="button"
-                  className={tab === (key === "messages" ? "courses" : key) ? "active" : ""}
+                  className={tab === key ? "active" : ""}
                   onClick={() => {
-                    setTab((key === "messages" ? "courses" : key) as Tab);
+                    setTab(key);
                     setMobileMenuOpen(false);
                   }}
                 >

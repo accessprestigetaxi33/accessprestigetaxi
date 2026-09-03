@@ -864,7 +864,10 @@ type ClientIdentity = {
   phone_display: string | null;
 };
 
-export const listMergedChauffeurThreads = createServerFn({ method: "GET" }).handler(async () => {
+export const listMergedChauffeurThreads = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
+  .handler(async ({ data }) => {
+  await requireDriver(data.driver_token);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   // 1) Direct messages
@@ -1133,12 +1136,13 @@ export const listMergedChauffeurThreads = createServerFn({ method: "GET" }).hand
   }));
   out.sort((a, b) => b.last_message_at.localeCompare(a.last_message_at));
   return out;
-});
+  });
 
 export const loadMergedConversation = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z
       .object({
+        driver_token: driverTokenSchema,
         client_account_id: z.string().uuid().nullable().optional(),
         reservation_ids: z.array(z.string().uuid()).max(50).optional(),
         limit: z.number().int().min(1).max(500).optional(),
@@ -1146,6 +1150,7 @@ export const loadMergedConversation = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const lim = data.limit ?? 200;
     const out: MergedMessage[] = [];
@@ -1203,12 +1208,14 @@ export const markMergedConversationRead = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z
       .object({
+        driver_token: driverTokenSchema,
         client_account_id: z.string().uuid().nullable().optional(),
         reservation_ids: z.array(z.string().uuid()).max(50).optional(),
       })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.client_account_id) {
       await supabaseAdmin
@@ -1236,12 +1243,14 @@ export const deleteMergedThread = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z
       .object({
+        driver_token: driverTokenSchema,
         client_account_id: z.string().uuid().nullable().optional(),
         reservation_ids: z.array(z.string().uuid()).max(100).optional(),
       })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    await requireDriver(data.driver_token);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let deleted = 0;
     if (data.client_account_id) {

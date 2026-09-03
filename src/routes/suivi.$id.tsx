@@ -1143,25 +1143,7 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
           <PrinterIcon size={15} /> {t("suivi.print")}
         </button>
         <button
-          onClick={handleDownloadPDF}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "6px",
-            padding: "12px 10px",
-            background: "#0d1a2b",
-            color: "#fff",
-            border: "1px solid #e0b866",
-            borderRadius: "10px",
-            fontSize: "13px",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          <Download size={15} /> {t("suivi.download_pdf")}
-        </button>
-        <button
+
           onClick={handleDownloadInvoice}
           disabled={invoiceBusy}
           style={{
