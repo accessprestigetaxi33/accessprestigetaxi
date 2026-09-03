@@ -1932,8 +1932,9 @@ function DriverApp({
       <div className="drv-root">
         <header className="drv-header">
           <div className="drv-brand-mark" aria-label="Access Prestige Taxi">
-            AP
+            <img src={APT_LOGO} alt="Access Prestige Taxi" />
           </div>
+
           <div className="drv-header-title">
             <strong>Bonjour {(driverLabel || "Alain").split(" & ")[0]} 👋</strong>
             <span>Espace Chauffeur</span>
