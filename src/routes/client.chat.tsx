@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
-import { DirectChatPanel } from "@/components/DirectChatPanel";
+import { ClientMergedChatPanel } from "@/components/ClientMergedChatPanel";
 import { ClientTopBar } from "@/components/ClientTopBar";
 import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
@@ -55,12 +55,7 @@ function ClientChatPage() {
               <h1 className="cc-title">{t("client.chat.title")}</h1>
               <p className="cc-subtitle">{t("client.chat.subtitle")}</p>
               <div className="cc-panel">
-                <DirectChatPanel
-                  accountId={session.id}
-                  authToken={session.token}
-                  role="client"
-                  peerName="Access Prestige Taxi 🚖"
-                />
+                <ClientMergedChatPanel token={session.token} />
               </div>
             </div>
           </div>

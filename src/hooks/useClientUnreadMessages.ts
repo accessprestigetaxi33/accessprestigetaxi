@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { countUnreadDirectForClient } from "@/lib/chat.functions";
+import { countUnreadMergedForClient } from "@/lib/chat.functions";
 import { getClientSession } from "@/lib/client-session";
 
 /**
@@ -20,7 +20,7 @@ export function useClientUnreadMessages(pollMs = 25000) {
         return;
       }
       try {
-        const res = await countUnreadDirectForClient({
+        const res = await countUnreadMergedForClient({
           data: { role: "client", token: session.token },
         });
         if (!stop) setUnread(res.unread ?? 0);
