@@ -2283,13 +2283,36 @@ function DriverApp({
                     </div>
                     <ul className="drv-fleet">
                       {FLEET.map((v) => (
-                        <li key={v.id} className={v.driver === driverId ? "is-mine" : undefined}>
+                        <li
+                          key={v.id}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={dashboardVehicle?.id === v.id}
+                          onClick={() => setSelectedVehicleId(v.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setSelectedVehicleId(v.id);
+                            }
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            border:
+                              dashboardVehicle?.id === v.id ? "2px solid #e0b866" : "2px solid transparent",
+                            borderRadius: 10,
+                          }}
+                          className={v.driver === driverId ? "is-mine" : undefined}
+                        >
                           <img src={v.photo} alt={v.name} loading="lazy" />
                           <div>
                             <strong>{v.name}</strong>
                             <span>{v.desc}</span>
                           </div>
-                          {v.driver === driverId && <em>MON VÉHICULE</em>}
+                          {dashboardVehicle?.id === v.id ? (
+                            <em>SÉLECTIONNÉ</em>
+                          ) : (
+                            v.driver === driverId && <em>MON VÉHICULE</em>
+                          )}
                         </li>
                       ))}
                     </ul>
