@@ -1509,7 +1509,13 @@ function DriverApp({
   const [unreadChat, setUnreadChat] = useState(0);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [pendingDevis, setPendingDevis] = useState(0);
+  // Statistiques d'avis réelles (note moyenne + répartition) pour l'en-tête
+  // et la carte "Avis récents" du tableau de bord.
+  const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; dist: Record<number, number> } | null>(
+    null,
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const [pushBusy, setPushBusy] = useState(false);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
   // fusionnent identification + activation en un seul clic (distinct de
