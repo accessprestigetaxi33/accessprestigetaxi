@@ -15,7 +15,6 @@ import {
   MapPin,
   Headphones,
   LogOut,
-  Home,
   Bell,
 } from "lucide-react";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
@@ -25,7 +24,6 @@ import { ClientMessagesCard } from "@/components/ClientMessagesCard";
 import { useClientUnreadMessages } from "@/hooks/useClientUnreadMessages";
 
 import { BrandLoader } from "@/components/BrandLoader";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getClientSession, clearClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
 import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
