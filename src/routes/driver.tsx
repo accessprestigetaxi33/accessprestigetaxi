@@ -1989,6 +1989,28 @@ function DriverApp({
             </strong>
             {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
           </span>
+          {typeof window !== "undefined" && "Notification" in window && Notification.permission !== "granted" && (
+            <button
+              type="button"
+              className="drv-header-pushbtn"
+              disabled={pushBusy}
+              onClick={async () => {
+                setPushBusy(true);
+                try {
+                  await subscribePush("chauffeur", null, null);
+                } catch (e) {
+                  toast.error(
+                    "Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""),
+                  );
+                } finally {
+                  setPushBusy(false);
+                }
+              }}
+            >
+              <IconBell />
+              {pushBusy ? "…" : "Activer les notifications"}
+            </button>
+          )}
           <button
             type="button"
             className="drv-header-bell"
@@ -5684,39 +5706,64 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
             deleting={busy === d.id}
             ariaLabel="Supprimer ce devis"
           >
-            <div className="drv-row" style={{ cursor: "pointer" }} onClick={() => setExpandedId(isOpen ? null : d.id)}>
-              <span className="drv-name">{d.nom}</span>
-              <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
-            </div>
-            <div className="drv-route">
-              <span>📍 {d.depart}</span>
-              <span>🏁 {d.arrivee}</span>
-            </div>
-            <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>
-              {d.date_souhaitee ? `${d.date_souhaitee} ` : ""}
-              {d.heure_souhaitee ?? ""}
-              {d.aller_retour ? " · aller-retour" : ""}
-              {" · "}
-              {d.passagers} pers.{d.bagages ? ` · ${d.bagages} bagage(s)` : ""}
-            </div>
-            {(d.transport_sanitaire || d.fauteuil_roulant || d.transport_groupe || d.sieges_enfant) && (
-              <div style={{ fontSize: 12, color: "#b45309", marginTop: 4 }}>
-                {[
-                  d.transport_sanitaire && "Transport sanitaire",
-                  d.fauteuil_roulant && "Fauteuil roulant",
-                  d.transport_groupe && "Groupe",
-                  d.sieges_enfant && "Siège enfant",
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => setExpandedId(isOpen ? null : d.id)}
+              role="button"
+              tabIndex={0}
+              aria-expanded={isOpen}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setExpandedId(isOpen ? null : d.id);
+                }
+              }}
+            >
+              <div className="drv-row">
+                <span className="drv-name">{d.nom}</span>
+                <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
               </div>
-            )}
-            {d.precisions && (
-              <p style={{ fontSize: 13, color: "#334155", margin: "8px 0 0", lineHeight: 1.5 }}>{d.precisions}</p>
-            )}
-            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 6 }}>
-              ✉️ {d.email}
-              {d.telephone ? ` · ☎ ${d.telephone}` : ""}
+              <div className="drv-route">
+                <span>📍 {d.depart}</span>
+                <span>🏁 {d.arrivee}</span>
+              </div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>
+                {d.date_souhaitee ? `${d.date_souhaitee} ` : ""}
+                {d.heure_souhaitee ?? ""}
+                {d.aller_retour ? " · aller-retour" : ""}
+                {" · "}
+                {d.passagers} pers.{d.bagages ? ` · ${d.bagages} bagage(s)` : ""}
+              </div>
+              {(d.transport_sanitaire || d.fauteuil_roulant || d.transport_groupe || d.sieges_enfant) && (
+                <div style={{ fontSize: 12, color: "#b45309", marginTop: 4 }}>
+                  {[
+                    d.transport_sanitaire && "Transport sanitaire",
+                    d.fauteuil_roulant && "Fauteuil roulant",
+                    d.transport_groupe && "Groupe",
+                    d.sieges_enfant && "Siège enfant",
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </div>
+              )}
+              {d.precisions && (
+                <p style={{ fontSize: 13, color: "#334155", margin: "8px 0 0", lineHeight: 1.5 }}>{d.precisions}</p>
+              )}
+              <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 6 }}>
+                ✉️ {d.email}
+                {d.telephone ? ` · ☎ ${d.telephone}` : ""}
+              </div>
+              <button
+                type="button"
+                className="drv-btn-primary"
+                style={{ width: "100%", marginTop: 10 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedId(isOpen ? null : d.id);
+                }}
+              >
+                {isOpen ? "▲ Masquer le détail" : "👁 Voir / Répondre"}
+              </button>
             </div>
 
             {isOpen && (
