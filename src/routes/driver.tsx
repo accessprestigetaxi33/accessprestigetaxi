@@ -53,7 +53,8 @@ type Tab =
   | "historique"
   | "simulateur"
   | "devis"
-  | "appareils";
+  | "appareils"
+  | "gps";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -1336,6 +1337,21 @@ const IconDevis = () => (
   </svg>
 );
 
+const IconGps = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+  </svg>
+);
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function Stars({ n }: { n: number }) {
   return (
@@ -2170,6 +2186,7 @@ function DriverApp({
                   {tab === "simulateur" && <SimulateurTab />}
                   {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
                   {tab === "appareils" && <AppareilsTab />}
+                  {tab === "gps" && <GpsTab driverId={driverId} gps={gps} />}
                 </>
               </div>
             )}
@@ -2491,6 +2508,19 @@ function useDriverGpsTracking(driverId?: string) {
 }
 
 type DriverGpsTracking = ReturnType<typeof useDriverGpsTracking>;
+
+// ── Onglet GPS ─────────────────────────────────────────────────────────────
+function GpsTab({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
+  return (
+    <div className="drv-tab-panel">
+      <div className="drv-card-head">
+        <span>POSITION GPS ÉQUIPE</span>
+        <b className={gps.state === "on" ? "live-small" : ""}>● {gps.state === "on" ? "EN DIRECT" : "INACTIF"}</b>
+      </div>
+      <TeamMapCard driverId={driverId} gps={gps} />
+    </div>
+  );
+}
 
 // ── Carte équipe (positions Alain / Patricia) ────────────────────────────
 const TEAM_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
