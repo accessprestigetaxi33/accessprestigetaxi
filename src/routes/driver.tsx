@@ -33,6 +33,8 @@ import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driv
 import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } from "@/lib/driver-devis.functions";
 import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/googleGeocode";
+import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
+const APT_LOGO = aptLogoAsset.url;
 
 import DriverMessagesTab from "@/components/DriverMessagesTab";
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
@@ -1268,8 +1270,14 @@ const css = `
     .drv-dashboard-grid-bottom { margin-top:8px !important; }
   }
 
+  /* Logo officiel du site dans l'espace chauffeur (header + sidebar). */
+  .drv-brand-mark { border:0 !important; border-radius:8px !important; overflow:hidden; background:#03070d; }
+  .drv-brand-mark img { width:100%; height:100%; object-fit:contain; }
+  .drv-side-logo img { max-width:100%; height:auto; object-fit:contain; padding:0 6px; }
+
 
 `;
+
 
 
 // ── Icons ──────────────────────────────────────────────────────────────────
@@ -1553,7 +1561,7 @@ function DriverPage() {
           color: "#e0b866",
         }}
       >
-        <div style={{ fontSize: 40 }}>🚕</div>
+        <img src={APT_LOGO} alt="Access Prestige Taxi" style={{ width: "min(260px,70vw)", height: "auto" }} />
       </div>
     );
   }
@@ -1930,8 +1938,9 @@ function DriverApp({
       <div className="drv-root">
         <header className="drv-header">
           <div className="drv-brand-mark" aria-label="Access Prestige Taxi">
-            AP
+            <img src={APT_LOGO} alt="Access Prestige Taxi" />
           </div>
+
           <div className="drv-header-title">
             <strong>Bonjour {(driverLabel || "Alain").split(" & ")[0]} 👋</strong>
             <span>Espace Chauffeur</span>
@@ -1989,10 +1998,9 @@ function DriverApp({
         <div className="drv-main">
           <aside className="drv-tabs" aria-label="Navigation chauffeur">
             <div className="drv-side-logo">
-              <span>AP</span>
-              <b>ACCESS</b>
-              <em>PRESTIGE TAXI</em>
+              <img src={APT_LOGO} alt="Access Prestige Taxi" />
             </div>
+
             {(
               [
                 "dashboard",
@@ -2806,6 +2814,8 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
     { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
   >([]);
   const [open, setOpen] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+
 
   const refresh = useCallback(async () => {
     const token = getDriverToken();
@@ -2824,19 +2834,26 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
 
   useEffect(() => {
     if (!open) return;
+    let cancelled = false;
     const pts = rows.filter((r) => r.lat != null && r.lng != null);
-    if (pts.length === 0) return;
     (async () => {
       try {
-        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
+        if (!mapRef.current) return;
+        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current);
+        if (cancelled || !mapRef.current) return;
         if (!mapInst.current) {
-          mapInst.current = new mapsApi.maps.Map(mapRef.current!, {
-            zoom: 12,
+          mapInst.current = new mapsApi.maps.Map(mapRef.current, {
+            // Centre par défaut (Charente-Maritime) tant qu'aucune position
+            // n'est partagée : la carte reste toujours visible.
+            center: { lat: 45.9, lng: -0.95 },
+            zoom: 9,
             disableDefaultUI: true,
             gestureHandling: "cooperative",
             styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
           });
         }
+        setMapError(null);
+        if (pts.length === 0) return;
         const bounds = new mapsApi.maps.LatLngBounds();
         pts.forEach((p) => {
           const pos = { lat: p.lat as number, lng: p.lng as number };
@@ -2865,9 +2882,15 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
         } else {
           mapInst.current.fitBounds(bounds, 40);
         }
-      } catch {}
+      } catch {
+        if (!cancelled) setMapError("Carte indisponible pour le moment.");
+      }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [open, rows]);
+
 
   const mine = rows.find((r) => r.id === driverId);
   const other = rows.find((r) => r.id !== driverId && (r.id === "alain" || r.id === "patricia"));
@@ -2915,22 +2938,22 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
 
       {open && (
         <div style={{ padding: "0 14px 14px" }}>
-          {pts.length > 0 ? (
-            <div
-              style={{
-                borderRadius: 12,
-                overflow: "hidden",
-                border: "1px solid rgba(201,155,74,.45)",
-                marginBottom: 10,
-              }}
-            >
-              <div ref={mapRef} style={{ width: "100%", height: 220 }} />
-            </div>
-          ) : (
+          <div
+            style={{
+              borderRadius: 12,
+              overflow: "hidden",
+              border: "1px solid rgba(201,155,74,.45)",
+              marginBottom: 10,
+            }}
+          >
+            <div ref={mapRef} style={{ width: "100%", height: 220, background: "#0b1520" }} />
+          </div>
+          {(pts.length === 0 || mapError) && (
             <div style={{ fontSize: 12.5, color: "rgba(246,240,229,.55)", marginBottom: 10 }}>
-              Aucune position partagée pour l'instant.
+              {mapError ?? "Aucune position partagée pour l'instant — activez le GPS."}
             </div>
           )}
+
 
           {(["alain", "patricia"] as const).map((id) => {
             const r = rows.find((x) => x.id === id);

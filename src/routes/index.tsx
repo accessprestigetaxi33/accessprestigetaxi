@@ -33,6 +33,8 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
+import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
+
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
 import photoVanReal from "@/assets/apt-van-real.png";
@@ -770,7 +772,20 @@ function Index() {
 
       {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
       <section className="relative isolate overflow-hidden bg-black">
+        {/* Logo du site centré au-dessus de la photo (mobile / tablette / desktop) */}
+        <div className="flex w-full justify-center bg-black px-4 py-5 sm:py-6">
+          <img
+            src={aptLogoAsset.url}
+            alt="Access Prestige Taxi"
+            width={586}
+            height={379}
+            loading="eager"
+            fetchPriority="high"
+            className="mx-auto h-auto w-[min(280px,72vw)] object-contain sm:w-[320px] lg:w-[360px]"
+          />
+        </div>
         <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
+
 
           <img
             src={heroCars}
