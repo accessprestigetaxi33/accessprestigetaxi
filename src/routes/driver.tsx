@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import bmwIx1Photo from "@/assets/bmw-ix1.webp";
+import audiQ6EtronPhoto from "@/assets/audi-q6-etron.webp";
+import mercedesVClassPhoto from "@/assets/mercedes-v-class.webp";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
 import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
 import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
@@ -118,6 +121,31 @@ interface RouteOption {
 
 // Visuels de partage localisés de l'espace chauffeur (page privée : noindex,
 // mais le lien est partagé par SMS/WhatsApp à Alain et Patricia).
+// Flotte Access Prestige Taxi affichée sur la carte "Véhicules" du dashboard.
+const FLEET = [
+  {
+    id: "q6",
+    name: "Audi Q6 e-tron — 100 % électrique",
+    desc: "Berline électrique · sièges enfant/bébé",
+    photo: audiQ6EtronPhoto,
+    driver: "alain",
+  },
+  {
+    id: "ix1",
+    name: "BMW iX1 — 100 % électrique",
+    desc: "SUV électrique · confort & silence",
+    photo: bmwIx1Photo,
+    driver: "patricia",
+  },
+  {
+    id: "vclass",
+    name: "Mercedes Classe V — Van",
+    desc: "Jusqu'à 7 passagers · groupes & bagages",
+    photo: mercedesVClassPhoto,
+    driver: "alain",
+  },
+] as const;
+
 const DRIVER_SOCIAL_FR = {
   title: "Espace Chauffeur — Access Prestige Taxi",
   description: "Application privée d'Alain et Patricia : courses, GPS, messagerie et notifications.",
@@ -538,6 +566,7 @@ const css = `
   button.drv-message-row { width:100%; background:transparent; border:0; text-align:left; color:inherit; cursor:pointer; font:inherit; }
   .drv-message-row { display:grid; grid-template-columns:32px 1fr 38px; gap:8px; align-items:center; padding:9px 0; border-top:1px solid rgba(255,255,255,.06); } .avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#d9b49a; color:#16202a; font-size:8px; font-weight:900; } .drv-message-row div:nth-child(2) b { display:block; font-size:10px; } .drv-message-row div:nth-child(2) span { display:block; color:#9ba5ae; font-size:9px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-message-row > small { color:#7e8993; text-align:right; font-size:8px; } .drv-message-row > small i { display:inline-block; width:5px; height:5px; border-radius:50%; background:#ff4b55; }
   .drv-rating strong { font-size:42px; color:#f4f4f1; } .drv-rating > span { color:#9aa5ae; font-size:14px; } .drv-rating div { color:#ffc928; font-size:17px; letter-spacing:2px; margin-top:8px; } .drv-rating small { display:block; color:#9aa5ae; font-size:9px; margin-top:5px; } .drv-rating-bars { margin-top:-50px; margin-left:120px; } .drv-rating-bars > div { display:flex; align-items:center; gap:5px; margin:5px 0; } .drv-rating-bars b { width:28px; font-size:8px; } .drv-rating-bars i { height:5px; flex:1; background:#25313a; border-radius:5px; overflow:hidden; } .drv-rating-bars i span { display:block; height:100%; background:#f5bb18; }
+  .drv-fleet { list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:8px; } .drv-fleet li { display:grid; grid-template-columns:64px minmax(0,1fr) auto; align-items:center; gap:9px; padding:7px; border:1px solid rgba(201,155,74,.35); border-radius:9px; background:rgba(255,255,255,.02); } .drv-fleet li.is-mine { border-color:rgba(201,155,74,.85); box-shadow:inset 0 0 0 1px rgba(201,155,74,.25); } .drv-fleet img { width:64px; height:44px; object-fit:cover; border-radius:7px; flex-shrink:0; } .drv-fleet strong { display:block; font-size:11px; line-height:1.25; } .drv-fleet span { display:block; color:#9aa5ae; font-size:9px; } .drv-fleet em { font-style:normal; font-size:7px; font-weight:800; letter-spacing:.06em; color:#e7bd5d; border:1px solid rgba(201,155,74,.6); border-radius:999px; padding:3px 6px; white-space:nowrap; } @media(max-width:420px){ .drv-fleet li { grid-template-columns:52px minmax(0,1fr); } .drv-fleet img { width:52px; height:38px; } .drv-fleet em { grid-column:1 / -1; justify-self:start; } }
   .drv-vehicle-card > strong { display:block; font-size:14px; margin-bottom:3px; } .drv-vehicle-card > span { color:#9aa5ae; font-size:10px; } .drv-car-placeholder { height:70px; margin:10px 0 5px; display:grid; place-items:end center; color:#687580; font-size:28px; font-weight:900; font-style:italic; background:radial-gradient(ellipse at center,#1a2731 0,transparent 55%); } .drv-vehicle-card footer { display:flex; gap:10px; border-top:1px solid rgba(255,255,255,.06); padding-top:8px; color:#b8c1c8; font-size:8px; } .drv-vehicle-card footer i { color:#44cc39; font-style:normal; }
   .drv-gps-card > strong { display:block; font-size:10px; } .drv-gps-card > span { color:#a4adb4; font-size:9px; display:block; margin-top:2px; } .gps-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#4ed239; margin-right:5px; } .live-small { background:#15371c !important; color:#5cdb44 !important; }
   .gps-map { height:97px; margin-top:8px; border-radius:6px; position:relative; overflow:hidden; background-color:#6f6c60; background-image:linear-gradient(25deg,transparent 45%,rgba(255,255,255,.5) 46%,rgba(255,255,255,.5) 48%,transparent 49%),linear-gradient(120deg,transparent 40%,rgba(53,54,47,.65) 41%,rgba(53,54,47,.65) 44%,transparent 45%),repeating-linear-gradient(12deg,rgba(180,177,160,.35) 0 2px,transparent 2px 15px); } .gps-map > span { position:absolute; z-index:2; left:50%; top:52%; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:#2387ed; border:3px solid #d9efff; color:transparent; }
@@ -2213,15 +2242,26 @@ function DriverApp({
                 <div className="drv-dashboard-grid-bottom">
                   <section className="drv-card drv-vehicle-card">
                     <div className="drv-card-head">
-                      <span>▱ &nbsp;VÉHICULE</span>
+                      <span>▱ &nbsp;VÉHICULES</span>
+                      <b>{FLEET.length} · FLOTTE</b>
                     </div>
-                    <strong>{driverId === "patricia" ? "BMW iX1 — 100 % électrique" : "Van Mercedes — jusqu'à 7 passagers"}</strong>
-                    <span>{driverId === "patricia" ? "Berline électrique · sièges enfant/bébé" : "Van 7 places · groupes & bagages"}</span>
-                    <div className="drv-car-placeholder">{driverId === "patricia" ? "BMW iX1" : "VAN 7 PL."}</div>
+                    <ul className="drv-fleet">
+                      {FLEET.map((v) => (
+                        <li key={v.id} className={v.driver === driverId ? "is-mine" : undefined}>
+                          <img src={v.photo} alt={v.name} loading="lazy" />
+                          <div>
+                            <strong>{v.name}</strong>
+                            <span>{v.desc}</span>
+                          </div>
+                          {v.driver === driverId && <em>MON VÉHICULE</em>}
+                        </li>
+                      ))}
+                    </ul>
                     <footer>
                       <i>●</i> Contrôle OK <i>●</i> Assurance OK
                     </footer>
                   </section>
+
                   <section className="drv-card drv-gps-card">
                     <div className="drv-card-head">
                       <span>
