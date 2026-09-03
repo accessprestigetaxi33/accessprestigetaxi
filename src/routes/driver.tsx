@@ -2095,9 +2095,9 @@ function DriverApp({
                     <div className="drv-card-head">
                       <span>▱ &nbsp;VÉHICULE</span>
                     </div>
-                    <strong>Mercedes Classe E</strong>
-                    <span>FV-123-AB</span>
-                    <div className="drv-car-placeholder">SEDAN</div>
+                    <strong>{driverId === "patricia" ? "BMW iX1 — 100 % électrique" : "Van Mercedes — jusqu'à 7 passagers"}</strong>
+                    <span>{driverId === "patricia" ? "Berline électrique · sièges enfant/bébé" : "Van 7 places · groupes & bagages"}</span>
+                    <div className="drv-car-placeholder">{driverId === "patricia" ? "BMW iX1" : "VAN 7 PL."}</div>
                     <footer>
                       <i>●</i> Contrôle OK <i>●</i> Assurance OK
                     </footer>
