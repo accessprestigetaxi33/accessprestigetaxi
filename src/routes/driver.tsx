@@ -53,7 +53,8 @@ type Tab =
   | "historique"
   | "simulateur"
   | "devis"
-  | "appareils";
+  | "appareils"
+  | "gps";
 
 // (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
 
@@ -1333,6 +1334,21 @@ const IconDevis = () => (
     <polyline points="14 2 14 8 20 8" />
     <line x1="8" y1="13" x2="16" y2="13" />
     <line x1="8" y1="17" x2="13" y2="17" />
+  </svg>
+);
+
+const IconGps = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
   </svg>
 );
 

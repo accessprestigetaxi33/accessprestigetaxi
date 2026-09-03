@@ -455,7 +455,10 @@ function ClientDashboard() {
                 )}
               </section>
               <div className="cd-section">
-                <ClientPushOptInCard />
+                <ClientPushOptInCard
+                  clientAccountId={session?.id}
+                  clientSessionToken={session?.token ?? ""}
+                />
               </div>
               <nav className="cd-quick">
                 <Link to="/reserver">
