@@ -2002,7 +2002,7 @@ const en: Dict = {
   "mc.status.accepted": "Accepted",
   "mc.status.pending": "Pending",
   "mc.status.refused": "Refused",
-  "mc.status.en_route": "En route",
+  "mc.status.en_route": "On the way",
   "mc.status.arrived": "Arrived",
   "mc.status.cancelled": "Cancelled",
   "mc.rebook.title": "🔁 Same route",
