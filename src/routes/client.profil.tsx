@@ -4,6 +4,7 @@ import { LogOut, Plus, Trash2, Home, Briefcase, Plane, MapPin, ExternalLink, Rep
 import { BrandLoader } from "@/components/BrandLoader";
 import { toast } from "sonner";
 import { ClientBottomNav } from "@/components/ClientBottomNav";
+import { ClientTopBar } from "@/components/ClientTopBar";
 import { useT } from "@/i18n/I18nProvider";
 import { getClientSession, clearClientSession } from "@/lib/client-session";
 import { clientLogout } from "@/lib/client-auth.functions";
@@ -87,7 +88,8 @@ const css = `
 .cp-company-hint{margin-bottom:10px;font-size:10px;color:rgba(255,255,255,.45)}
 .cp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cp-logout{margin-top:24px;display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(214,168,61,.4);border-radius:10px;padding:10px 16px;font-size:12px;color:rgba(255,255,255,.7);background:transparent}
-@media(min-width:700px){.cp-main-inner{max-width:720px}.cp-shell{padding:20px}}
+@media(min-width:1024px){.cp-main-inner{max-width:1080px}}
+@media(min-width:700px){.cp-main-inner{max-width:760px}.cp-shell{padding:20px}}
 `;
 
 function ClientProfil() {
@@ -182,6 +184,7 @@ function ClientProfil() {
         <main className="cp-main">
           <div className="cp-main-inner">
             <div className="cp-shell">
+              <ClientTopBar />
               <div className="cp-kicker">{t("profil.eyebrow")}</div>
               <h1 className="cp-title">{t("profil.title")}</h1>
 
