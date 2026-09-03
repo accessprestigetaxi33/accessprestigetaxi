@@ -31,6 +31,7 @@ import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } fro
 import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
 import { reverseGeocode } from "@/lib/googleGeocode";
 
+import DriverMessagesTab from "@/components/DriverMessagesTab";
 import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
 import {
   listReservationsWithUnreadChauffeur,
@@ -47,6 +48,7 @@ type Tab =
   | "dashboard"
   | "courses"
   | "planning"
+  | "messages"
   | "avis"
   | "clients"
   | "stats"
@@ -1878,7 +1880,7 @@ function DriverApp({
                 "appareils",
               ] as const
             ).map((t) => {
-              const realTab = t === "messages" ? "courses" : t;
+              const realTab = t;
               const count =
                 t === "courses"
                   ? newCount
@@ -2273,6 +2275,7 @@ function DriverApp({
                     <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
                   )}
                   {tab === "planning" && <PlanningTab />}
+                  {tab === "messages" && <DriverMessagesTab onBadgeChange={setUnreadChat} />}
                   {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
                   {tab === "clients" && <ClientsTab />}
                   {tab === "stats" && <StatsTab />}
@@ -2301,7 +2304,7 @@ function DriverApp({
             <IconCalendar />
             <span>Planning</span>
           </button>
-          <button onClick={() => setTab("courses")}>
+          <button className={tab === "messages" ? "active" : ""} onClick={() => setTab("messages")}>
             <IconMessage />
             {unreadChat > 0 && <b>{unreadChat}</b>}
             <span>Messages</span>
@@ -2350,9 +2353,9 @@ function DriverApp({
                 <button
                   key={key}
                   type="button"
-                  className={tab === (key === "messages" ? "courses" : key) ? "active" : ""}
+                  className={tab === key ? "active" : ""}
                   onClick={() => {
-                    setTab((key === "messages" ? "courses" : key) as Tab);
+                    setTab(key);
                     setMobileMenuOpen(false);
                   }}
                 >
