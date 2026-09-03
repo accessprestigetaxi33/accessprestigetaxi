@@ -3486,7 +3486,7 @@ function CourseCard({
 }) {
   const [routes, setRoutes] = useState<RouteOption[]>([]);
   const routeStorageKey = `drv-selected-route:${resa.id}`;
-  const { vehicle: cardVehicle } = useSelectedVehicle(resa.chauffeur ?? undefined);
+  const { vehicle: cardVehicle } = useSelectedVehicle();
   const [selectedRoute, setSelectedRoute] = useState<number>(() => {
     if (typeof window === "undefined") return 0;
     const raw = window.localStorage.getItem(routeStorageKey);
