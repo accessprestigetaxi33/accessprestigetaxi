@@ -9,6 +9,7 @@ export type ClientReservation = {
   destination: string | null;
   status: string;
   prix_estime: number | null;
+  final_price: number | null;
   nb_passagers: number | null;
   passagers: number | null;
   bagages: number | null;
@@ -39,7 +40,7 @@ export const listClientReservations = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const cols =
-      "id, pickup_datetime, depart, arrivee, destination, status, prix_estime, nb_passagers, passagers, bagages, suivi_id, tracking_id, paiement, client_account_id, phone_cancel_requested_at, source, created_at, client_phone, telephone, client_email, email";
+      "id, pickup_datetime, depart, arrivee, destination, status, prix_estime, final_price, nb_passagers, passagers, bagages, suivi_id, tracking_id, paiement, client_account_id, phone_cancel_requested_at, source, created_at, client_phone, telephone, client_email, email";
 
     const { data: byAccount } = await supabaseAdmin
       .from("reservations")
