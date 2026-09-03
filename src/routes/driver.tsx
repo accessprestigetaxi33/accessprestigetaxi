@@ -2107,13 +2107,12 @@ function DriverApp({
                       <span>
                         <i className="gps-dot" /> POSITION GPS
                       </span>
-                      <b className="live-small">● EN DIRECT</b>
+                      <b className={gps.state === "on" ? "live-small" : ""}>
+                        ● {gps.state === "on" ? "EN DIRECT" : "INACTIF"}
+                      </b>
                     </div>
-                    <strong>{gps.addr || "Avenue des Champs-Élysées"}</strong>
-                    <span>75008 Paris</span>
-                    <div className="gps-map">
-                      <span>●</span>
-                    </div>
+                    <strong>{gps.addr || "Localisation en cours…"}</strong>
+                    <TeamMapCard driverId={driverId} gps={gps} />
                   </section>
                   <section className="drv-card">
                     <div className="drv-card-head">
