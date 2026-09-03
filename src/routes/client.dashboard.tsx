@@ -464,31 +464,30 @@ function ClientDashboard() {
                   clientSessionToken={session?.token ?? ""}
                 />
               </div>
-              <nav className="cd-quick">
+              <nav className="cd-quick" aria-label={c.eyebrow}>
                 <Link to="/reserver">
-                  <Plus size={16} />
-                  <span>{c.book}</span>
-                  <ChevronRight size={15} />
+                  <Plus size={18} />
+                  <span>{c.bookShort}</span>
+                </Link>
+                <Link to="/client/trajets">
+                  <Car size={18} />
+                  <span>{c.trips}</span>
                 </Link>
                 <Link to="/client/historique">
-                  <History size={16} />
+                  <History size={18} />
                   <span>{c.history}</span>
-                  <ChevronRight size={15} />
                 </Link>
                 <Link to="/client/chat">
-                  <MessageCircle size={16} />
+                  <MessageCircle size={18} />
                   <span>{c.chat}</span>
-                  <ChevronRight size={15} />
                 </Link>
                 <Link to="/client/profil">
-                  <User size={16} />
+                  <User size={18} />
                   <span>{c.profile}</span>
-                  <ChevronRight size={15} />
                 </Link>
                 <button type="button" className="cd-logout" onClick={handleLogout}>
-                  <LogOut size={16} />
+                  <LogOut size={18} />
                   <span>{c.logout}</span>
-                  <ChevronRight size={15} />
                 </button>
               </nav>
               <div className="cd-bottom-note">Access Prestige Taxi · {c.tagline}</div>
