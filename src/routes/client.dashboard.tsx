@@ -9,6 +9,7 @@ import {
   History,
   User,
   ChevronRight,
+  Download,
   CalendarDays,
   FileText,
   MapPin,
@@ -333,7 +334,7 @@ function ClientDashboard() {
   const renderRide = (ride: ClientReservation, past = false) => {
     const x = ride as any;
     const status = STATUS_META[ride.status];
-    const price = x.prix_estime ?? x.prix_final ?? x.total_ttc;
+    const price = x.final_price ?? x.prix_final ?? x.prix_estime ?? x.total_ttc;
     const depMain = ride.depart || "—";
     const depSub = x.depart_detail || x.adresse_depart || "";
     const arrMain = ride.arrivee || ride.destination || "—";
@@ -369,7 +370,7 @@ function ClientDashboard() {
             {arrSub && <span className="cd-route-sub">{arrSub}</span>}
           </div>
         </div>
-        {past && price != null && (
+        {price != null && (
           <div className="cd-price">
             {new Intl.NumberFormat(lang === "en" ? "en-GB" : "fr-FR", {
               style: "currency",
@@ -377,6 +378,24 @@ function ClientDashboard() {
             }).format(Number(price))}
           </div>
         )}
+        <div className="cd-ride-actions">
+          {ride.suivi_id ? (
+            <Link to="/suivi/$id" params={{ id: String(ride.suivi_id) }}>
+              {c.track}
+            </Link>
+          ) : (
+            <Link to="/client/trajets">{c.details}</Link>
+          )}
+          <button
+            type="button"
+            onClick={async () => {
+              const { downloadRideInvoicePDF } = await import("@/lib/ride-invoice-pdf");
+              await downloadRideInvoicePDF(x, lang);
+            }}
+          >
+            <Download size={13} /> {c.invoice}
+          </button>
+        </div>
       </div>
     );
   };
