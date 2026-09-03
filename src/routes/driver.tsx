@@ -1555,7 +1555,7 @@ function DriverPage() {
           color: "#e0b866",
         }}
       >
-        <div style={{ fontSize: 40 }}>🚕</div>
+        <img src={APT_LOGO} alt="Access Prestige Taxi" style={{ width: "min(260px,70vw)", height: "auto" }} />
       </div>
     );
   }
