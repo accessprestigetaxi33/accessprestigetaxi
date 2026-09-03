@@ -1516,6 +1516,43 @@ function DriverApp({
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Charge les avis publiés une fois le chauffeur identifié, puis toutes les
+  // 2 min (les avis évoluent lentement : inutile de solliciter la base plus).
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const token = getDriverToken();
+      if (!token) return;
+      try {
+        const res = await fetch(`/api/public/reviews?token=${encodeURIComponent(token)}`);
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || cancelled) return;
+        const published: Avis[] = json.published ?? [];
+        const dist: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        let sum = 0;
+        for (const a of published) {
+          const n = Math.min(5, Math.max(1, Math.round(Number(a.note) || 0)));
+          dist[n] = (dist[n] ?? 0) + 1;
+          sum += n;
+        }
+        setReviewStats({
+          avg: published.length ? sum / published.length : 0,
+          count: published.length,
+          dist,
+        });
+      } catch {
+        /* réseau indisponible : on garde la dernière valeur connue */
+      }
+    };
+    load();
+    const timer = setInterval(load, 120000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [driverId]);
+
+
   const [pushBusy, setPushBusy] = useState(false);
   // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
   // fusionnent identification + activation en un seul clic (distinct de
