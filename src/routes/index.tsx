@@ -771,19 +771,8 @@ function Index() {
 
       {/* 1. HERO — image hero de référence : Q6 / BMW iX1 / V-Class avec logos */}
       <section className="relative isolate overflow-hidden bg-black">
-        {/* Logo centré au-dessus de la photo du hero (mobile / tablette / desktop) */}
-        <div className="flex w-full justify-center bg-black px-4 py-5 sm:py-6">
-          <img
-            src={aptLogo}
-            alt="Access Prestige Taxi"
-            width={420}
-            height={140}
-            loading="eager"
-            fetchPriority="high"
-            className="mx-auto h-auto w-[min(260px,70vw)] object-contain sm:w-[300px] lg:w-[340px]"
-          />
-        </div>
         <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
+
           <img
             src={heroCars}
             alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
