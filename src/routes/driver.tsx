@@ -1549,6 +1549,28 @@ function DriverApp({
     return list;
   }, [newCount, unreadChat, pendingAvis, pendingDevis]);
 
+  // Compteur global de messages clients non lus (indépendant de l'onglet
+  // affiché : le badge reste juste depuis le tableau de bord).
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const token = getDriverToken();
+      if (!token) return;
+      try {
+        const n = await countUnreadChauffeurMessages({ data: { driver_token: token } });
+        if (!cancelled) setUnreadChat(n ?? 0);
+      } catch {
+        /* réseau indisponible : on garde la dernière valeur */
+      }
+    };
+    load();
+    const timer = setInterval(load, 20000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [driverId]);
+
   // Charge les avis publiés une fois le chauffeur identifié, puis toutes les
   // 2 min (les avis évoluent lentement : inutile de solliciter la base plus).
   useEffect(() => {
