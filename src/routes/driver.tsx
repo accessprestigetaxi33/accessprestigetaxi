@@ -2163,7 +2163,7 @@ function DriverApp({
                           FACTURE
                         </span>
                       </button>
-                      <button onClick={() => setTab("courses")}>
+                      <button onClick={() => setTab("gps")}>
                         <b>◉</b>
                         <span>
                           POSITION
