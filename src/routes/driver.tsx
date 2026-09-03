@@ -4155,6 +4155,46 @@ function CourseCard({
           <span>🏁 {resa.destination}</span>
         </div>
 
+        {/* Véhicule sélectionné par le chauffeur */}
+        {cardVehicle && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginTop: 10,
+              padding: "7px 9px",
+              borderRadius: 10,
+              border: "1px solid #e0b866",
+              background: "#0b0b0b",
+              color: "#fff",
+            }}
+          >
+            <img
+              src={cardVehicle.photo}
+              alt={cardVehicle.name}
+              loading="lazy"
+              style={{ width: 46, height: 32, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
+            />
+            <div style={{ minWidth: 0 }}>
+              <strong style={{ display: "block", fontSize: 12, color: "#e0b866" }}>VÉHICULE</strong>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {cardVehicle.name}
+              </span>
+            </div>
+          </div>
+        )}
+
+
         {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
         {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
           (() => {
