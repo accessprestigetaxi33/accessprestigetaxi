@@ -37,6 +37,7 @@ import {
   listReservationsWithUnreadChauffeur,
   getUnreadCountsForReservations,
   countUnreadChauffeurMessages,
+  listMergedChauffeurThreads,
   type UnreadMap,
 } from "@/lib/chat.functions";
 
@@ -1510,6 +1511,7 @@ function DriverApp({
 
   const [newCount, setNewCount] = useState(0);
   const [unreadChat, setUnreadChat] = useState(0);
+  const [dashboardThreads, setDashboardThreads] = useState<any[]>([]);
   const [pendingAvis, setPendingAvis] = useState(0);
   const [pendingDevis, setPendingDevis] = useState(0);
   // Statistiques d'avis réelles (note moyenne + répartition) pour l'en-tête
@@ -1558,8 +1560,13 @@ function DriverApp({
       const token = getDriverToken();
       if (!token) return;
       try {
-        const n = await countUnreadChauffeurMessages({ data: { driver_token: token } });
-        if (!cancelled) setUnreadChat(n ?? 0);
+        const [n, threads] = await Promise.all([
+          countUnreadChauffeurMessages({ data: { driver_token: token } }),
+          listMergedChauffeurThreads({ data: { driver_token: token } }).catch(() => [] as any[]),
+        ]);
+        if (cancelled) return;
+        setUnreadChat(n ?? 0);
+        setDashboardThreads((threads ?? []) as any[]);
       } catch {
         /* réseau indisponible : on garde la dernière valeur */
       }
@@ -2125,44 +2132,43 @@ function DriverApp({
                       <span>
                         ▣ &nbsp;MESSAGES NON LUS <b className="red-pill">{unreadChat}</b>
                       </span>
-                      <button onClick={() => setTab("courses")}>VOIR TOUS</button>
+                      <button onClick={() => setTab("messages")}>VOIR TOUS</button>
                     </div>
-                    <div className="drv-message-row">
-                      <div className="avatar">SM</div>
-                      <div>
-                        <b>Sophie Martin</b>
-                        <span>Bonjour, je serai avec un siège bébé, merci.</span>
-                      </div>
-                      <small>
-                        10:31
-                        <br />
-                        <i />
-                      </small>
-                    </div>
-                    <div className="drv-message-row">
-                      <div className="avatar">TB</div>
-                      <div>
-                        <b>Thomas Bernard</b>
-                        <span>Pouvez-vous passer 5 min plus tôt ?</span>
-                      </div>
-                      <small>
-                        10:15
-                        <br />
-                        <i />
-                      </small>
-                    </div>
-                    <div className="drv-message-row">
-                      <div className="avatar">ML</div>
-                      <div>
-                        <b>Marie Leroy</b>
-                        <span>Merci pour votre ponctualité !</span>
-                      </div>
-                      <small>
-                        09:48
-                        <br />
-                        <i />
-                      </small>
-                    </div>
+                    {dashboardThreads.length === 0 && (
+                      <div className="drv-more">Aucun message client en attente.</div>
+                    )}
+                    {dashboardThreads.slice(0, 3).map((t) => {
+                      const name = t.client_name || t.client_phone || "Client";
+                      const initials = name
+                        .split(/\s+/)
+                        .slice(0, 2)
+                        .map((w: string) => w[0]?.toUpperCase() ?? "")
+                        .join("");
+                      return (
+                        <button
+                          type="button"
+                          className="drv-message-row"
+                          key={t.thread_key}
+                          onClick={() => setTab("messages")}
+                        >
+                          <div className="avatar">{initials || "C"}</div>
+                          <div>
+                            <b>{name}</b>
+                            <span>{t.last_message_content}</span>
+                          </div>
+                          <small>
+                            {t.last_message_at
+                              ? new Date(t.last_message_at).toLocaleTimeString("fr-FR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              : ""}
+                            <br />
+                            {t.unread_chauffeur > 0 && <i />}
+                          </small>
+                        </button>
+                      );
+                    })}
                   </section>
                   <section className="drv-card">
                     <div className="drv-card-head">
