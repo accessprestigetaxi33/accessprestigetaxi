@@ -36,6 +36,7 @@ import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDri
 import {
   listReservationsWithUnreadChauffeur,
   getUnreadCountsForReservations,
+  countUnreadChauffeurMessages,
   type UnreadMap,
 } from "@/lib/chat.functions";
 
