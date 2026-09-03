@@ -47,12 +47,14 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <img
-            src={logoLockup}
-            alt="Access Prestige Taxi"
-            className="site-header-logo-img h-16 w-auto max-w-full sm:h-11 lg:h-12"
-          />
+          <span className="block font-display text-base font-extrabold uppercase tracking-[0.18em] text-[#e8bd5d] sm:text-lg">
+            Access Prestige
+          </span>
+          <span className="block text-[10px] font-semibold uppercase tracking-[0.34em] text-white/70 sm:text-xs">
+            Taxi
+          </span>
         </Link>
+
 
         <nav aria-label={t("aria.nav_main")} className="hidden items-center gap-5 lg:flex xl:gap-7">
           {links.slice(2).map((l) => (
