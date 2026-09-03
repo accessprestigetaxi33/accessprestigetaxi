@@ -1836,6 +1836,8 @@ function DriverApp({
                     {t === "avis" && <IconStar />}
                     {t === "stats" && <IconChart />}
                     {t === "historique" && <IconCalendar />}
+                    {t === "simulateur" && <IconCalc />}
+                    {t === "gps" && <IconGps />}
                     {t === "appareils" && <IconDevice />}
                   </span>
                   <span className="drv-tab-label">
@@ -1851,6 +1853,8 @@ function DriverApp({
                           avis: "AVIS",
                           stats: "STATISTIQUES",
                           historique: "HISTORIQUE",
+                          simulateur: "SIMULATEUR",
+                          gps: "POSITION GPS",
                           appareils: "APPAREILS",
                         } as Record<string, string>
                       )[t]
