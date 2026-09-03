@@ -2832,19 +2832,26 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
 
   useEffect(() => {
     if (!open) return;
+    let cancelled = false;
     const pts = rows.filter((r) => r.lat != null && r.lng != null);
-    if (pts.length === 0) return;
     (async () => {
       try {
-        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
+        if (!mapRef.current) return;
+        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current);
+        if (cancelled || !mapRef.current) return;
         if (!mapInst.current) {
-          mapInst.current = new mapsApi.maps.Map(mapRef.current!, {
-            zoom: 12,
+          mapInst.current = new mapsApi.maps.Map(mapRef.current, {
+            // Centre par défaut (Charente-Maritime) tant qu'aucune position
+            // n'est partagée : la carte reste toujours visible.
+            center: { lat: 45.9, lng: -0.95 },
+            zoom: 9,
             disableDefaultUI: true,
             gestureHandling: "cooperative",
             styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
           });
         }
+        setMapError(null);
+        if (pts.length === 0) return;
         const bounds = new mapsApi.maps.LatLngBounds();
         pts.forEach((p) => {
           const pos = { lat: p.lat as number, lng: p.lng as number };
@@ -2873,9 +2880,15 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
         } else {
           mapInst.current.fitBounds(bounds, 40);
         }
-      } catch {}
+      } catch {
+        if (!cancelled) setMapError("Carte indisponible pour le moment.");
+      }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [open, rows]);
+
 
   const mine = rows.find((r) => r.id === driverId);
   const other = rows.find((r) => r.id !== driverId && (r.id === "alain" || r.id === "patricia"));
