@@ -1270,8 +1270,14 @@ const css = `
     .drv-dashboard-grid-bottom { margin-top:8px !important; }
   }
 
+  /* Logo officiel du site dans l'espace chauffeur (header + sidebar). */
+  .drv-brand-mark { border:0 !important; border-radius:8px !important; overflow:hidden; background:#03070d; }
+  .drv-brand-mark img { width:100%; height:100%; object-fit:contain; }
+  .drv-side-logo img { max-width:100%; height:auto; object-fit:contain; padding:0 6px; }
+
 
 `;
+
 
 
 // ── Icons ──────────────────────────────────────────────────────────────────
