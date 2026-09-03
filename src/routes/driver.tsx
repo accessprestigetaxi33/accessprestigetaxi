@@ -1237,8 +1237,40 @@ const css = `
     .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
   }
 
+  /* ================================================================
+     APT — PARITÉ MOBILE / TABLETTE / DESKTOP DU TABLEAU DE BORD
+     Le mobile affiche exactement les mêmes cartes que le PC,
+     empilées sur une colonne (aucune section masquée).
+     ================================================================ */
+  @media (max-width:700px) {
+    .drv-mobile-stats { display:none !important; }
+    .drv-dashboard-grid-top,
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom {
+      display:grid !important;
+      grid-template-columns:minmax(0,1fr) !important;
+      gap:8px !important;
+    }
+    .drv-dashboard-grid-top > *,
+    .drv-dashboard-grid-mid > *,
+    .drv-dashboard-grid-bottom > * {
+      grid-column:auto !important;
+      min-width:0 !important;
+      min-height:0 !important;
+    }
+    .drv-revenue-card {
+      display:block !important;
+      order:3 !important;
+      min-height:0 !important;
+      padding:11px !important;
+    }
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom { margin-top:8px !important; }
+  }
+
 
 `;
+
 
 // ── Icons ──────────────────────────────────────────────────────────────────
 const IconBell = () => (
