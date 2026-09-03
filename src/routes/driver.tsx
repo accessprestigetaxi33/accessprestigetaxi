@@ -1516,6 +1516,37 @@ function DriverApp({
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Notifications réelles du tableau de bord, dérivées des compteurs déjà
+  // suivis (nouvelles courses, messages non lus, avis et devis en attente).
+  const dashboardNotifications = useMemo(() => {
+    const list: { key: string; label: string; detail: string }[] = [];
+    if (newCount > 0)
+      list.push({
+        key: "courses",
+        label: `${newCount} nouvelle${newCount > 1 ? "s" : ""} réservation${newCount > 1 ? "s" : ""}`,
+        detail: "À accepter",
+      });
+    if (unreadChat > 0)
+      list.push({
+        key: "chat",
+        label: `${unreadChat} message${unreadChat > 1 ? "s" : ""} client`,
+        detail: "Non lu" + (unreadChat > 1 ? "s" : ""),
+      });
+    if (pendingDevis > 0)
+      list.push({
+        key: "devis",
+        label: `${pendingDevis} demande${pendingDevis > 1 ? "s" : ""} de devis`,
+        detail: "En attente",
+      });
+    if (pendingAvis > 0)
+      list.push({
+        key: "avis",
+        label: `${pendingAvis} avis à modérer`,
+        detail: "En attente",
+      });
+    return list;
+  }, [newCount, unreadChat, pendingAvis, pendingDevis]);
+
   // Charge les avis publiés une fois le chauffeur identifié, puis toutes les
   // 2 min (les avis évoluent lentement : inutile de solliciter la base plus).
   useEffect(() => {
@@ -2175,18 +2206,19 @@ function DriverApp({
                     <div className="drv-card-head">
                       <span>NOTIFICATIONS</span>
                     </div>
-                    <div className="drv-notif-row">
-                      ◉ <span>Nouvelle réservation</span>
-                      <small>Il y a 2 min</small>
-                    </div>
-                    <div className="drv-notif-row">
-                      ◉ <span>Paiement reçu</span>
-                      <small>Il y a 15 min</small>
-                    </div>
-                    <div className="drv-notif-row">
-                      ◉ <span>Message client</span>
-                      <small>Il y a 31 min</small>
-                    </div>
+                    {dashboardNotifications.length === 0 ? (
+                      <div className="drv-notif-row">
+                        ◉ <span>Aucune notification</span>
+                        <small>À jour</small>
+                      </div>
+                    ) : (
+                      dashboardNotifications.map((n) => (
+                        <div className="drv-notif-row" key={n.key}>
+                          ◉ <span>{n.label}</span>
+                          <small>{n.detail}</small>
+                        </div>
+                      ))
+                    )}
                     <button className="drv-see-all" onClick={() => setTab("courses")}>
                       VOIR TOUTES
                     </button>
