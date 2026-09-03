@@ -8,6 +8,13 @@
       "when": 1788251436569,
       "tag": "0000_add_final_price_to_reservations",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788445948705,
+      "tag": "0001_price_history_for_suivi",
+      "breakpoints": true
     }
   ]
 }

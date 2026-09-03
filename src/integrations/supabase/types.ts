@@ -1406,6 +1406,16 @@ export type Database = {
         Returns: number
       }
       get_active_visitor_count: { Args: { p_scope?: string }; Returns: number }
+      get_price_history_for_suivi: {
+        Args: { p_key: string }
+        Returns: {
+          created_at: string
+          id: string
+          motif: string
+          new_price: number
+          old_price: number
+        }[]
+      }
       get_reservation_by_tracking: {
         Args: { p_tracking_id: string }
         Returns: {
