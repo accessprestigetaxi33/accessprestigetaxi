@@ -2509,6 +2509,19 @@ function useDriverGpsTracking(driverId?: string) {
 
 type DriverGpsTracking = ReturnType<typeof useDriverGpsTracking>;
 
+// ── Onglet GPS ─────────────────────────────────────────────────────────────
+function GpsTab({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
+  return (
+    <div className="drv-tab-panel">
+      <div className="drv-card-head">
+        <span>POSITION GPS ÉQUIPE</span>
+        <b className={gps.state === "on" ? "live-small" : ""}>● {gps.state === "on" ? "EN DIRECT" : "INACTIF"}</b>
+      </div>
+      <TeamMapCard driverId={driverId} gps={gps} />
+    </div>
+  );
+}
+
 // ── Carte équipe (positions Alain / Patricia) ────────────────────────────
 const TEAM_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
 const TEAM_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
