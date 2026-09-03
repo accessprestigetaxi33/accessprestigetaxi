@@ -85,6 +85,19 @@ export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (
 
   const active = useMemo(() => threads.find((t) => t.thread_key === activeKey) ?? null, [threads, activeKey]);
 
+  // Sélectionne automatiquement la première conversation dès qu'elle arrive,
+  // pour éviter un champ de saisie inerte tant que le chauffeur n'a pas
+  // cliqué manuellement sur un thread. On ne retouche activeKey que si rien
+  // n'est encore sélectionné ou si la sélection en cours a disparu (thread
+  // supprimé/fusionné) — jamais si le chauffeur a déjà choisi une autre
+  // conversation encore présente dans la liste.
+  useEffect(() => {
+    if (threads.length === 0) return;
+    const stillExists = activeKey != null && threads.some((t) => t.thread_key === activeKey);
+    if (stillExists) return;
+    setActiveKey(threads[0].thread_key);
+  }, [threads, activeKey]);
+
   // ── État réseau (suivi hors-ligne) ───────────────────────────────────────
   useEffect(() => {
     const sync = () => setOnline(navigator.onLine);
@@ -199,7 +212,11 @@ export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (
 
   const send = async () => {
     const content = draft.trim();
-    if (!content || !active) return;
+    if (!content) return;
+    if (!active) {
+      toast.info("Aucune conversation disponible pour l'instant.");
+      return;
+    }
     const p: Pending = {
       id: `q-${Date.now()}`,
       thread_key: active.thread_key,
@@ -328,11 +345,17 @@ export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
-              placeholder={active ? "Votre message…" : "Sélectionnez un client"}
-              disabled={!active || sending}
+              placeholder={
+                active
+                  ? "Votre message…"
+                  : loading
+                    ? "Chargement des conversations…"
+                    : "Aucune conversation pour l'instant"
+              }
+              disabled={sending}
               aria-label="Message au client"
             />
-            <button type="submit" disabled={!active || sending || draft.trim().length === 0}>
+            <button type="submit" disabled={sending || draft.trim().length === 0}>
               {sending ? "…" : "Envoyer"}
             </button>
           </form>
