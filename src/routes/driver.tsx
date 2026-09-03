@@ -1798,6 +1798,8 @@ function DriverApp({
                 "avis",
                 "stats",
                 "historique",
+                "simulateur",
+                "gps",
                 "appareils",
               ] as const
             ).map((t) => {
@@ -1834,6 +1836,8 @@ function DriverApp({
                     {t === "avis" && <IconStar />}
                     {t === "stats" && <IconChart />}
                     {t === "historique" && <IconCalendar />}
+                    {t === "simulateur" && <IconCalc />}
+                    {t === "gps" && <IconGps />}
                     {t === "appareils" && <IconDevice />}
                   </span>
                   <span className="drv-tab-label">
@@ -1849,6 +1853,8 @@ function DriverApp({
                           avis: "AVIS",
                           stats: "STATISTIQUES",
                           historique: "HISTORIQUE",
+                          simulateur: "SIMULATEUR",
+                          gps: "POSITION GPS",
                           appareils: "APPAREILS",
                         } as Record<string, string>
                       )[t]
@@ -2089,9 +2095,9 @@ function DriverApp({
                     <div className="drv-card-head">
                       <span>▱ &nbsp;VÉHICULE</span>
                     </div>
-                    <strong>Mercedes Classe E</strong>
-                    <span>FV-123-AB</span>
-                    <div className="drv-car-placeholder">SEDAN</div>
+                    <strong>{driverId === "patricia" ? "BMW iX1 — 100 % électrique" : "Van Mercedes — jusqu'à 7 passagers"}</strong>
+                    <span>{driverId === "patricia" ? "Berline électrique · sièges enfant/bébé" : "Van 7 places · groupes & bagages"}</span>
+                    <div className="drv-car-placeholder">{driverId === "patricia" ? "BMW iX1" : "VAN 7 PL."}</div>
                     <footer>
                       <i>●</i> Contrôle OK <i>●</i> Assurance OK
                     </footer>
@@ -2101,13 +2107,12 @@ function DriverApp({
                       <span>
                         <i className="gps-dot" /> POSITION GPS
                       </span>
-                      <b className="live-small">● EN DIRECT</b>
+                      <b className={gps.state === "on" ? "live-small" : ""}>
+                        ● {gps.state === "on" ? "EN DIRECT" : "INACTIF"}
+                      </b>
                     </div>
-                    <strong>{gps.addr || "Avenue des Champs-Élysées"}</strong>
-                    <span>75008 Paris</span>
-                    <div className="gps-map">
-                      <span>●</span>
-                    </div>
+                    <strong>{gps.addr || "Localisation en cours…"}</strong>
+                    <TeamMapCard driverId={driverId} gps={gps} />
                   </section>
                   <section className="drv-card">
                     <div className="drv-card-head">
@@ -2158,7 +2163,7 @@ function DriverApp({
                           FACTURE
                         </span>
                       </button>
-                      <button onClick={() => setTab("courses")}>
+                      <button onClick={() => setTab("gps")}>
                         <b>◉</b>
                         <span>
                           POSITION

@@ -884,6 +884,20 @@ function InvoiceBlock({
 }) {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [invoiceBusy, setInvoiceBusy] = useState(false);
+
+  // Facture PDF réelle (jsPDF) avec le prix final au compteur quand il existe.
+  const handleDownloadInvoice = async () => {
+    setInvoiceBusy(true);
+    try {
+      const { downloadRideInvoicePDF } = await import("@/lib/ride-invoice-pdf");
+      await downloadRideInvoicePDF(reservation, locale);
+    } catch {
+      toast.error(t("suivi.invoice_error"));
+    } finally {
+      setInvoiceBusy(false);
+    }
+  };
 
   // Fix #7 — sur mobile, "Imprimer" ouvre la facture PDF plutôt que window.print() sur toute la page
   const isMobile = typeof navigator !== "undefined" && /Mobi|Android/i.test(navigator.userAgent);
@@ -1146,6 +1160,32 @@ ${reservation.mode_paiement ? `<div class="row"><span class="label">${labelPayme
           }}
         >
           <Download size={15} /> {t("suivi.download_pdf")}
+        </button>
+        <button
+          onClick={handleDownloadInvoice}
+          disabled={invoiceBusy}
+          style={{
+            gridColumn: "1 / -1",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "6px",
+            padding: "13px 10px",
+            background: "linear-gradient(#f6cd6b,#cf962a)",
+            color: "#171006",
+            border: "1px solid #e0b866",
+            borderRadius: "10px",
+            fontSize: "13px",
+            fontWeight: 800,
+            cursor: invoiceBusy ? "wait" : "pointer",
+          }}
+        >
+          {invoiceBusy ? (
+            <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
+          ) : (
+            <Download size={15} />
+          )}
+          {invoiceBusy ? t("suivi.invoice_generating") : t("suivi.download_invoice")}
         </button>
         <button
           onClick={handleSendEmail}
