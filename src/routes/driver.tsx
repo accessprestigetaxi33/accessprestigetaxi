@@ -2432,6 +2432,7 @@ function DriverApp({
                   <Icon />
                   <span>{label}</span>
                   {key === "courses" && newCount > 0 && <span className="drv-tab-count">{newCount}</span>}
+                  {key === "messages" && unreadChat > 0 && <span className="drv-tab-count">{unreadChat}</span>}
                   {key === "avis" && pendingAvis > 0 && <span className="drv-tab-count">{pendingAvis}</span>}
                   {key === "devis" && pendingDevis > 0 && <span className="drv-tab-count">{pendingDevis}</span>}
                 </button>
