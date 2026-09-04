@@ -26,6 +26,7 @@ import { Route as ReserverRouteImport } from './routes/reserver'
 import { Route as SecuriteRouteImport } from './routes/securite'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TaxiMarennesRouteImport } from './routes/taxi-marennes'
 import { Route as AdminPushRouteImport } from './routes/admin.push'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiManifestRouteImport } from './routes/api/manifest'
@@ -152,6 +153,11 @@ const ServicesRoute = ServicesRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaxiMarennesRoute = TaxiMarennesRouteImport.update({
+  id: '/taxi-marennes',
+  path: '/taxi-marennes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminPushRoute = AdminPushRouteImport.update({
@@ -390,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/taxi-marennes': typeof TaxiMarennesRoute
   '/admin/push': typeof AdminPushRoute
   '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -451,6 +458,7 @@ export interface FileRoutesByTo {
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/taxi-marennes': typeof TaxiMarennesRoute
   '/admin/push': typeof AdminPushRoute
   '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -513,6 +521,7 @@ export interface FileRoutesById {
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/taxi-marennes': typeof TaxiMarennesRoute
   '/admin/push': typeof AdminPushRoute
   '/api/chat': typeof ApiChatRoute
   '/api/manifest': typeof ApiManifestRoute
@@ -576,6 +585,7 @@ export interface FileRouteTypes {
     | '/securite'
     | '/services'
     | '/sitemap.xml'
+    | '/taxi-marennes'
     | '/admin/push'
     | '/api/chat'
     | '/api/manifest'
@@ -637,6 +647,7 @@ export interface FileRouteTypes {
     | '/securite'
     | '/services'
     | '/sitemap.xml'
+    | '/taxi-marennes'
     | '/admin/push'
     | '/api/chat'
     | '/api/manifest'
@@ -698,6 +709,7 @@ export interface FileRouteTypes {
     | '/securite'
     | '/services'
     | '/sitemap.xml'
+    | '/taxi-marennes'
     | '/admin/push'
     | '/api/chat'
     | '/api/manifest'
@@ -760,6 +772,7 @@ export interface RootRouteChildren {
   SecuriteRoute: typeof SecuriteRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TaxiMarennesRoute: typeof TaxiMarennesRoute
   AdminPushRoute: typeof AdminPushRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiManifestRoute: typeof ApiManifestRoute
@@ -920,6 +933,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/taxi-marennes': {
+      id: '/taxi-marennes'
+      path: '/taxi-marennes'
+      fullPath: '/taxi-marennes'
+      preLoaderRoute: typeof TaxiMarennesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/push': {
@@ -1270,6 +1290,7 @@ const rootRouteChildren: RootRouteChildren = {
   SecuriteRoute: SecuriteRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TaxiMarennesRoute: TaxiMarennesRoute,
   AdminPushRoute: AdminPushRoute,
   ApiChatRoute: ApiChatRoute,
   ApiManifestRoute: ApiManifestRoute,

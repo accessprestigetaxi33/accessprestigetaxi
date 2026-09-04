@@ -263,12 +263,13 @@ function BlogArticle() {
           <h2 className="mt-10 font-display text-xl font-semibold text-foreground sm:text-2xl">{c.tips}</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-white/55 sm:text-base">{txt.tips}</p>
 
-          {/* LIEN INTERNE — page d'accueil / service taxi Marennes */}
+          {/* LIEN INTERNE — page dédiée Taxi Marennes */}
           <p className="mt-4 text-[15px] leading-relaxed text-white/70">
-            <Link to="/" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            <Link to="/taxi-marennes" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
               {c.homeLink}
             </Link>
           </p>
+
 
 
           {/* CTA */}
