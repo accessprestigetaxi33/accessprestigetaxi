@@ -12867,3 +12867,8 @@ export function normalize(s: string): string {
     .toLowerCase()
     .trim();
 }
+
+/** Titre de l'article dans la langue demandée (repli sur le titre français). */
+export function guideName(entry: GuideEntry, isEn: boolean): string {
+  return isEn ? (entry.nameEn ?? entry.name) : entry.name;
+}
