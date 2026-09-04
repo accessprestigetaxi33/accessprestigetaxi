@@ -330,15 +330,16 @@ export const Route = createFileRoute("/")({
       meta: [
         {
           title: isEn
-            ? "Electric taxi in Charente-Maritime | Access Prestige"
-            : "Taxi électrique Charente-Maritime | Access Prestige",
+            ? "Taxi in Marennes & Charente-Maritime | Access Prestige Taxi"
+            : "Taxi à Marennes et en Charente-Maritime | Access Prestige Taxi",
         },
         {
           name: "description",
           content: isEn
-            ? "Taxi in Charente-Maritime: electric premium vehicles, 8-seat van and covered medical transport."
-            : "Taxi en Charente-Maritime : véhicules électriques premium, van 8 places et transport sanitaire conventionné.",
+            ? "Taxi based in Marennes, serving Oléron, Rochefort, La Rochelle and all of Charente-Maritime: electric premium vehicles, 8-seat van, covered medical transport."
+            : "Taxi basé à Marennes, au service de l'île d'Oléron, Rochefort, La Rochelle et toute la Charente-Maritime : véhicules électriques premium, van 8 places et transport sanitaire conventionné.",
         },
+
         { property: "og:site_name", content: "Access Prestige Taxi" },
         { property: "og:title", content: social.title },
         { property: "og:description", content: social.description },
