@@ -2035,7 +2035,34 @@ function DriverApp({
               <span className="drv-badge">{newCount + unreadChat + pendingAvis + pendingDevis}</span>
             )}
           </button>
+          {notifPermission !== "granted" && notifPermission !== "unsupported" && (
+            <button
+              type="button"
+              className="drv-header-notif"
+              disabled={pushBusy}
+              aria-label="Activer les notifications"
+              onClick={async () => {
+                setPushBusy(true);
+                try {
+                  await subscribePush("chauffeur", null, null);
+                  if (typeof window !== "undefined" && "Notification" in window) {
+                    setNotifPermission(Notification.permission);
+                  }
+                } catch (e) {
+                  toast.error(
+                    "Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""),
+                  );
+                } finally {
+                  setPushBusy(false);
+                }
+              }}
+            >
+              <IconBell />
+              <span className="drv-header-notif-label">{pushBusy ? "…" : "Activer les notifications"}</span>
+            </button>
+          )}
           <Link className="drv-header-back" to="/" aria-label="Retour au site">
+
             <IconHome />
             <span className="drv-header-back-label">Retour au site</span>
           </Link>
