@@ -3,8 +3,8 @@
 // PERFORMANCE : le module `guide-charente.ts` pèse ~700 Ko une fois compilé.
 // L'importer depuis la home obligeait chaque visiteur à télécharger tout le
 // guide avant l'interactivité. On ne garde donc ici que les 3 cartes mises en
-// avant (hôtel / restaurant / visite). Si vous changez ces articles, mettez à
-// jour les slugs ci-dessous — ils doivent exister dans guide-charente.ts.
+// avant. Si vous changez ces articles, mettez à jour les slugs ci-dessous —
+// ils doivent exister dans guide-charente.ts.
 export type GuideHighlight = {
   slug: string;
   name: string;
@@ -15,7 +15,28 @@ export type GuideHighlight = {
 };
 
 export const GUIDE_HIGHLIGHTS: GuideHighlight[] = [
-  {"slug": "hotel-la-monnaie-la-rochelle", "name": "Hôtel La Monnaie", "city": "La Rochelle", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_rochelle%2C_Le_vieux_port.JPG/960px-La_rochelle%2C_Le_vieux_port.JPG", "fr": "L'ancien atelier monétaire du roi, cour d'honneur et pierre blonde, à cent mètres des tours du port.", "en": "The king's former mint, with a grand courtyard and golden stone, a hundred metres from the harbour towers."},
-  {"slug": "christopher-coutanceau-la-rochelle", "name": "Christopher Coutanceau", "city": "La Rochelle", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/La_rochelle%2C_Le_vieux_port.JPG/960px-La_rochelle%2C_Le_vieux_port.JPG", "fr": "La grande table marine de l'Atlantique : poissons de ligne, coquillages du pertuis et une salle ouverte sur l'océan.", "en": "The great Atlantic seafood table: line-caught fish, shellfish from the pertuis and a dining room open to the ocean."},
-  {"slug": "corderie-royale-rochefort", "name": "Corderie Royale de Rochefort", "city": "Rochefort", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Corderie-Royale-de-l%27Arsenal-de-Rochefort%2C_Charente-Maritime%2C-France-DSC_5828.jpg/960px-Corderie-Royale-de-l%27Arsenal-de-Rochefort%2C_Charente-Maritime%2C-France-DSC_5828.jpg", "fr": "Le plus long bâtiment industriel d'Europe au XVIIᵉ siècle : 374 mètres de pierre pour fabriquer les cordages du roi.", "en": "Europe's longest industrial building in the 17th century: 374 metres of stone to make the king's ropes."}
+  {
+    slug: "guide-marennes-capitale-de-l-huitre",
+    name: "Guide de Marennes, capitale de l’huître",
+    city: "Marennes",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
+    fr: "Notre ville. Entre marais, claires et chenaux, Marennes donne son nom à l’huître la plus connue de France — et c’est d’ici que partent nos courses.",
+    en: "Our home town. Between marshes, claires and channels, Marennes gives its name to France’s best-known oyster — and every ride of ours starts here.",
+  },
+  {
+    slug: "marennes-plage-et-le-port-de-la-cayenne",
+    name: "Marennes-Plage et le port de La Cayenne",
+    city: "Marennes",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Site_de_Marennes-Plage.JPG/1280px-Site_de_Marennes-Plage.JPG",
+    fr: "Une balade plate au ras de l’eau : la plage de Marennes, le chenal de La Cayenne et les cabanes, face au viaduc de la Seudre.",
+    en: "A flat waterside walk: Marennes beach, the La Cayenne channel and the oyster huts, facing the Seudre viaduct.",
+  },
+  {
+    slug: "surf-autour-de-marennes",
+    name: "Surfer autour de Marennes",
+    city: "Marennes",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Vert_bois_-_2016a.jpg/1280px-Vert_bois_-_2016a.jpg",
+    fr: "Marennes n’a pas de vague, mais elle est au centre du triangle : Vert-Bois, Gatseau et Ronce sont tous à moins de 30 minutes.",
+    en: "Marennes has no waves of its own, but it sits at the centre of the triangle: Vert-Bois, Gatseau and Ronce are all under 30 minutes away.",
+  },
 ];
