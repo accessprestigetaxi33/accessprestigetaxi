@@ -58,6 +58,7 @@ const COPY = {
     empty: "Aucune adresse ne correspond à votre recherche.",
     more: "Voir plus d'adresses",
     read: "Lire l'article",
+    readShort: "Lire",
     book: "Réserver",
     count: (n: number) => `${n} adresse${n > 1 ? "s" : ""}`,
     ctaTitle: "On vous y emmène",
@@ -81,6 +82,7 @@ const COPY = {
     empty: "No place matches your search.",
     more: "Show more places",
     read: "Read the article",
+    readShort: "Read",
     book: "Book",
     count: (n: number) => `${n} place${n > 1 ? "s" : ""}`,
     ctaTitle: "We'll take you there",
@@ -341,7 +343,7 @@ function BlogIndex() {
                   className="group flex flex-col overflow-hidden rounded-2xl border border-[#e0b866]/20 bg-[#080b0d] shadow-[0_14px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-0.5 hover:border-[#e0b866]/60"
                 >
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[#0b0f12]">
+                    <div className="relative aspect-square overflow-hidden bg-[#0b0f12] sm:aspect-[4/3]">
                       <img
                         src={imgAt(e.photos[0], 500)}
                         srcSet={imgSrcSet(e.photos[0], [250, 330, 500])}
@@ -387,7 +389,9 @@ function BlogIndex() {
                       </p>
                     ) : null}
 
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/55">{txt.teaser}</p>
+                    <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-white/55 sm:line-clamp-3 sm:text-sm">
+                      {txt.teaser}
+                    </p>
 
                     {tags.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -407,21 +411,24 @@ function BlogIndex() {
                       </div>
                     )}
 
-                    <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#e0b866]/15 pt-3">
+                    <div className="mt-4 grid grid-cols-2 items-stretch gap-2 border-t border-[#e0b866]/15 pt-3">
                       <Link
                         to="/blog/$slug"
                         params={{ slug: e.slug }}
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"
+                        aria-label={`${c.read} — ${e.name}`}
+                        className="inline-flex min-h-[44px] w-full min-w-0 items-center justify-center gap-1.5 rounded-full border border-[#e0b866]/60 px-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
                       >
-                        {c.read} <ArrowRight className="h-4 w-4" />
+                        <span className="truncate sm:hidden">{c.readShort}</span>
+                        <span className="hidden truncate sm:inline">{c.read}</span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                       </Link>
                       <Link
                         to="/reserver"
                         search={{ to: `${e.name}, ${e.city}` }}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#e0b866] bg-[#e0b866] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-105"
+                        className="inline-flex min-h-[44px] w-full min-w-0 items-center justify-center gap-1.5 rounded-full border border-[#e0b866] bg-[#e0b866] px-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-105"
                       >
-                        <Car className="h-3.5 w-3.5" />
-                        {c.book}
+                        <Car className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{c.book}</span>
                       </Link>
                     </div>
                   </div>
