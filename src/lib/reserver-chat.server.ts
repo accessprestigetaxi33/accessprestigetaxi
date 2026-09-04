@@ -18,9 +18,9 @@ const OPEN_DAYS = [1, 2, 3, 4, 5]; // lundi-vendredi
 
 const BRAND = "Access Prestige Taxi";
 const PHONE_PATRICIA = "+33650260015";
-const PHONE_ALAIN = "+33650321923";
+const PHONE_ALAIN = "+33603444863";
 const WHATSAPP_PATRICIA = "https://wa.me/33650260015";
-const WHATSAPP_ALAIN = "https://wa.me/33650321923";
+const WHATSAPP_ALAIN = "https://wa.me/33603444863";
 const EMAIL = "accessprestigetaxi@gmail.com";
 
 const SYSTEM_PROMPT_FR = `Tu es Margot, l'assistante de réservation de ${BRAND} en Charente-Maritime.
