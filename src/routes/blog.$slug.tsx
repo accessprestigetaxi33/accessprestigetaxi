@@ -22,6 +22,7 @@ const COPY = {
     bookHere: "Réserver un taxi vers",
     call: "Appeler un chauffeur",
     stars: "étoiles",
+    homeLink: "Taxi à Marennes et en Charente-Maritime : découvrir notre service",
   },
   en: {
     back: "Back to the guide",
@@ -36,7 +37,7 @@ const COPY = {
     bookHere: "Book a taxi to",
     call: "Call a driver",
     stars: "stars",
-
+    homeLink: "Taxi in Marennes and Charente-Maritime: discover our service",
   },
 } as const;
 
