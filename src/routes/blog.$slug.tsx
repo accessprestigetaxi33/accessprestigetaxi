@@ -250,7 +250,7 @@ function BlogArticle() {
                   decoding="async"
                   width={800}
                   height={600}
-                  className="aspect-[4/3] w-full object-cover"
+                  className="aspect-square w-full object-cover sm:aspect-[4/3]"
                 />
               </figure>
             ))}
@@ -302,7 +302,7 @@ function BlogArticle() {
                   decoding="async"
                   width={640}
                   height={400}
-                  className="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-105"
+                  className="aspect-square w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[16/10]"
                 />
                 <div className="p-4">
                   <p className="text-[10px] uppercase tracking-widest text-white/55">{o.city}</p>
