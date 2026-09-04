@@ -1,3 +1,4 @@
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Check, Clock, MapPin, Phone, Euro } from "lucide-react";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
@@ -16,6 +17,7 @@ const DESC_EN =
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["taxi Marennes horaires", "tarif taxi Marennes", "taxi Marennes Oléron"]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
       { property: "og:title", content: TITLE_FR },

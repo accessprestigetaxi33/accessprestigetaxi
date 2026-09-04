@@ -1,4 +1,5 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowLeft, Phone, Mail, MapPin, MessageCircle, HeartPulse } from "lucide-react";
@@ -9,14 +10,15 @@ import heroLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 const heroLogo = heroLogoAsset.url;
 
 const CONTACT_EMAIL = "accessprestigetaxi@gmail.com";
-const CONTACT_TITLE = "Contact taxi Charente-Maritime — Access Prestige Taxi";
+const CONTACT_TITLE = "Contact taxi Marennes, Oléron & Charente-Maritime";
 const CONTACT_DESC =
-  "Contactez Access Prestige Taxi : 06 03 44 48 63, accessprestigetaxi@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
+  "Contactez votre taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime : 06 03 44 48 63, accessprestigetaxi@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
 const CONTACT_URL = "https://www.accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["numéro taxi Marennes", "téléphone taxi île d'Oléron", "contact taxi Charente-Maritime"]),
       { title: CONTACT_TITLE },
       { name: "description", content: CONTACT_DESC },
       { property: "og:title", content: CONTACT_TITLE },

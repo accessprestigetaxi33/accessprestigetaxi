@@ -1,4 +1,5 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { BadgeCheck, FileText, MapPin, Phone, ShieldCheck, Sparkles, Clock } from "lucide-react";
@@ -6,13 +7,14 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
 const SITE = "https://www.accessprestigetaxi.fr";
-const TITLE = "Sécurité & mentions légales — Access Prestige Taxi";
+const TITLE = "Sécurité taxi Marennes, Oléron & Charente-Maritime";
 const DESC =
-  "Chauffeurs de taxi agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente-Maritime.";
+  "Taxi agréé à Marennes et sur l'île d'Oléron : chauffeurs agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente-Maritime.";
 
 export const Route = createFileRoute("/securite")({
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["taxi agréé Marennes", "sécurité taxi île d'Oléron", "taxi assuré Charente-Maritime"]),
       { title: TITLE },
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },

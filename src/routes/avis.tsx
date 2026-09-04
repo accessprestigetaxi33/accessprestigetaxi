@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
@@ -24,16 +25,16 @@ interface PublicAvis {
 
 // ── Visuels de partage ──────────────────────────────────────────────────────
 const AVIS_SOCIAL_FR = {
-  title: "Tous les avis clients | Access Prestige Taxi",
+  title: "Avis clients — taxi Marennes, Oléron & Charente-Maritime",
   description:
-    "Découvrez tous les avis vérifiés de nos clients : transferts aéroport, transport médical conventionné et mises à disposition en Charente-Maritime.",
+    "Avis vérifiés de nos clients à Marennes, sur l'île d'Oléron et en Charente-Maritime : transferts aéroport, transport médical conventionné et mises à disposition en Charente-Maritime.",
   image: ogImageUrl(ogHomeFr.url),
   url: ogPageUrl("/avis", "fr"),
 };
 const AVIS_SOCIAL_EN = {
-  title: "All client reviews | Access Prestige Taxi",
+  title: "Reviews — taxi in Marennes, Oléron & Charente-Maritime",
   description:
-    "See every verified review from our clients: airport transfers, covered medical transport and chauffeur services in Charente-Maritime.",
+    "Verified reviews from our clients in Marennes, Oléron island and Charente-Maritime: airport transfers, covered medical transport and chauffeur services in Charente-Maritime.",
   image: ogImageUrl(ogHomeEn.url),
   url: ogPageUrl("/avis", "en"),
 };
@@ -48,6 +49,7 @@ export const Route = createFileRoute("/avis")({
     const social = isEn ? AVIS_SOCIAL_EN : AVIS_SOCIAL_FR;
     return {
       meta: [
+        keywordsMeta(["avis taxi Marennes", "avis taxi île d'Oléron", "meilleur taxi Charente-Maritime"]),
         { title: social.title },
         { name: "description", content: social.description },
         { name: "robots", content: "index, follow" },
