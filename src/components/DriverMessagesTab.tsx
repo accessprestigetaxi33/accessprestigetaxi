@@ -128,10 +128,11 @@ export default function DriverMessagesTab({
   // conversation encore présente dans la liste.
   useEffect(() => {
     if (threads.length === 0) return;
+    if (newResaId) return;
     const stillExists = activeKey != null && threads.some((t) => t.thread_key === activeKey);
     if (stillExists) return;
     setActiveKey(threads[0].thread_key);
-  }, [threads, activeKey]);
+  }, [threads, activeKey, newResaId]);
 
   // ── État réseau (suivi hors-ligne) ───────────────────────────────────────
   useEffect(() => {

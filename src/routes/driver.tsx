@@ -2558,7 +2558,15 @@ function DriverApp({
                     <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
                   )}
                   {tab === "planning" && <PlanningTab />}
-                  {tab === "messages" && <DriverMessagesTab onBadgeChange={setUnreadChat} />}
+                  {tab === "messages" && (
+                    <DriverMessagesTab
+                      onBadgeChange={setUnreadChat}
+                      contacts={dashboardCourses.slice(0, 40).map((c) => ({
+                        reservation_id: c.id,
+                        label: `${c.client_name || c.client_phone || "Client"} — ${c.depart} → ${c.destination || "—"}`,
+                      }))}
+                    />
+                  )}
                   {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
                   {tab === "clients" && <ClientsTab />}
                   {tab === "stats" && <StatsTab />}
