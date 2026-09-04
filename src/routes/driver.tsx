@@ -2035,7 +2035,12 @@ function DriverApp({
               <span className="drv-badge">{newCount + unreadChat + pendingAvis + pendingDevis}</span>
             )}
           </button>
+          <Link className="drv-header-back" to="/" aria-label="Retour au site">
+            <IconHome />
+            <span className="drv-header-back-label">Retour au site</span>
+          </Link>
         </header>
+
 
         <div className="drv-main">
           <aside className="drv-tabs" aria-label="Navigation chauffeur">
