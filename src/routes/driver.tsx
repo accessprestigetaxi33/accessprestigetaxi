@@ -401,6 +401,13 @@ const css = `
   .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; }
   .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size:11.5px; font-weight:700; white-space:nowrap; flex:0 0 auto; }
   .drv-header-back svg { flex-shrink:0; }
+  .drv-header-notif { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #d6a83d; border-radius:8px; background:#d6a83d; color:#07101a; font-size:11.5px; font-weight:800; white-space:nowrap; flex:0 0 auto; cursor:pointer; }
+  .drv-header-notif svg { flex-shrink:0; }
+  @media (max-width: 900px) {
+    .drv-header-notif .drv-header-notif-label { display:none; }
+    .drv-header-notif { width:34px; padding:0; justify-content:center; }
+  }
+
   @media (max-width: 380px) {
     .drv-header-back span.drv-header-back-label { display:none; }
     .drv-header-back { width:34px; height:34px; padding:0; justify-content:center; }
