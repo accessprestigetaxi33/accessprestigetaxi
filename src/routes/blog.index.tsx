@@ -343,7 +343,7 @@ function BlogIndex() {
                   className="group flex flex-col overflow-hidden rounded-2xl border border-[#e0b866]/20 bg-[#080b0d] shadow-[0_14px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-0.5 hover:border-[#e0b866]/60"
                 >
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[#0b0f12]">
+                    <div className="relative aspect-square overflow-hidden bg-[#0b0f12] sm:aspect-[4/3]">
                       <img
                         src={imgAt(e.photos[0], 500)}
                         srcSet={imgSrcSet(e.photos[0], [250, 330, 500])}
@@ -389,7 +389,9 @@ function BlogIndex() {
                       </p>
                     ) : null}
 
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/55">{txt.teaser}</p>
+                    <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-white/55 sm:line-clamp-3 sm:text-sm">
+                      {txt.teaser}
+                    </p>
 
                     {tags.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-1.5">
