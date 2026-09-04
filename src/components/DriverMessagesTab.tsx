@@ -72,7 +72,18 @@ function fmtTime(iso: string) {
         d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 }
 
-export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (n: number) => void }) {
+export type MessageContact = {
+  reservation_id: string;
+  label: string;
+};
+
+export default function DriverMessagesTab({
+  onBadgeChange,
+  contacts = [],
+}: {
+  onBadgeChange?: (n: number) => void;
+  contacts?: MessageContact[];
+}) {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -83,7 +94,31 @@ export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (
   const [queue, setQueue] = useState<Pending[]>([]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const active = useMemo(() => threads.find((t) => t.thread_key === activeKey) ?? null, [threads, activeKey]);
+  // Conversation ouverte manuellement depuis une course (aucun message
+  // échangé pour l'instant) : permet d'écrire au client même quand la liste
+  // des conversations est vide.
+  const [newResaId, setNewResaId] = useState<string>("");
+
+  const active = useMemo(() => {
+    const found = threads.find((t) => t.thread_key === activeKey) ?? null;
+    if (found) return found;
+    if (!newResaId) return null;
+    const c = contacts.find((x) => x.reservation_id === newResaId);
+    if (!c) return null;
+    return {
+      thread_key: `resa:${c.reservation_id}`,
+      client_account_id: null,
+      client_phone: null,
+      client_name: c.label,
+      reservation_ids: [c.reservation_id],
+      active_reservation_id: c.reservation_id,
+      active_reservation_label: "Nouvelle conversation",
+      last_message_at: new Date().toISOString(),
+      last_message_content: "",
+      last_message_source: "reservation" as const,
+      unread_chauffeur: 0,
+    } satisfies Thread;
+  }, [threads, activeKey, newResaId, contacts]);
 
   // Sélectionne automatiquement la première conversation dès qu'elle arrive,
   // pour éviter un champ de saisie inerte tant que le chauffeur n'a pas
@@ -288,6 +323,34 @@ export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (
           <b>{threads.length}</b>
         </div>
         {!online && <div className="drv-msg-offline">Hors-ligne — dernières données affichées</div>}
+        {contacts.length > 0 && (
+          <div style={{ padding: "10px 12px", borderBottom: "1px solid rgba(214,168,61,.3)" }}>
+            <select
+              value={newResaId}
+              onChange={(e) => {
+                setActiveKey(null);
+                setNewResaId(e.target.value);
+              }}
+              aria-label="Écrire au client d'une course"
+              style={{
+                width: "100%",
+                background: "#07101a",
+                color: "#fff",
+                border: "1px solid #d6a83d",
+                borderRadius: 10,
+                padding: "9px 10px",
+                fontSize: 12,
+              }}
+            >
+              <option value="">+ Nouvelle conversation (depuis une course)</option>
+              {contacts.map((c) => (
+                <option key={c.reservation_id} value={c.reservation_id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <div className="drv-msg-items">
           {loading && <div className="drv-msg-empty">Chargement…</div>}
           {!loading && threads.length === 0 && <div className="drv-msg-empty">Aucune conversation pour l'instant</div>}
@@ -316,7 +379,11 @@ export default function DriverMessagesTab({ onBadgeChange }: { onBadgeChange?: (
         </div>
         <div className="drv-msg-body">
           <div className="drv-msg-scroll">
-            {!active && <div className="drv-msg-empty">Choisissez une conversation à gauche.</div>}
+            {!active && (
+              <div className="drv-msg-empty">
+                Choisissez une conversation, ou démarrez-en une depuis une course.
+              </div>
+            )}
             {active && messages.length === 0 && <div className="drv-msg-empty">Aucun message échangé.</div>}
             {messages.map((m) => (
               <div key={m.id} className={`drv-bubble ${m.sender === "chauffeur" ? "me" : "client"}`}>
