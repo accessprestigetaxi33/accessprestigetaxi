@@ -1,4 +1,5 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowRight, MapPin } from "lucide-react";
@@ -6,13 +7,14 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DESTINATIONS } from "@/data/destinations";
 
 const SITE = "https://www.accessprestigetaxi.fr";
-const TITLE = "Destinations taxi Charente-Maritime — Access Prestige Taxi";
+const TITLE = "Destinations taxi Marennes, Oléron & Charente-Maritime";
 const DESC =
-  "Nos trajets taxi les plus réservés en Charente-Maritime : gare TGV d'Angoulême, aéroport de Bordeaux, île de Ré, Royan, vignobles de Cognac et transport conventionné.";
+  "Nos trajets taxi les plus réservés au départ de Marennes, de l'île d'Oléron et de toute la Charente-Maritime : gare TGV d'Angoulême, aéroport de Bordeaux, île de Ré, Royan, vignobles de Cognac et transport conventionné.";
 
 export const Route = createFileRoute("/destinations/")({
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["trajets taxi Marennes", "taxi Oléron gare", "taxi longue distance Charente-Maritime"]),
       { title: TITLE },
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },

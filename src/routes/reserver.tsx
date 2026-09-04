@@ -1,3 +1,4 @@
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute } from "@tanstack/react-router";
 import { BookingStudio } from "@/components/BookingStudio";
 import { SocialMetaSync } from "@/components/SocialMetaSync";
@@ -8,12 +9,12 @@ import { businessRef, localBusinessNode } from "@/lib/business";
 import ogReserverFr from "@/assets/apt-og-reserver-fr.jpg.asset.json";
 import ogReserverEn from "@/assets/apt-og-reserver-en.jpg.asset.json";
 
-const RESERVER_TITLE_FR = "Réserver un taxi en Charente-Maritime — Access Prestige Taxi";
+const RESERVER_TITLE_FR = "Réserver un taxi à Marennes, Oléron & Charente-Maritime";
 const RESERVER_DESC_FR =
-  "Réservez votre taxi en Charente-Maritime en 60 secondes : adresse, heure, passagers. Tarif calculé en direct, confirmation immédiate et suivi en temps réel.";
-const RESERVER_TITLE_EN = "Book a taxi in Charente-Maritime — Access Prestige Taxi";
+  "Réservez votre taxi à Marennes, sur l'île d'Oléron ou partout en Charente-Maritime en 60 secondes : adresse, heure, passagers. Tarif calculé en direct, confirmation immédiate et suivi en temps réel.";
+const RESERVER_TITLE_EN = "Book a taxi in Marennes, Oléron & Charente-Maritime";
 const RESERVER_DESC_EN =
-  "Book your taxi in Charente-Maritime in 60 seconds: address, time, passengers. Live fare calculation, instant confirmation and real-time tracking.";
+  "Book your taxi in Marennes, on Oléron island or anywhere in Charente-Maritime in 60 seconds: address, time, passengers. Live fare calculation, instant confirmation and real-time tracking.";
 const RESERVER_URL = `${SITE_URL}/reserver`;
 
 const OG_IMAGE_FR = ogImageUrl(ogReserverFr.url);
@@ -56,6 +57,7 @@ export const Route = createFileRoute("/reserver")({
 
     return {
       meta: [
+        keywordsMeta(["réserver taxi Marennes", "réservation taxi île d'Oléron", "taxi en ligne Charente-Maritime"]),
         { title },
         { name: "description", content: desc },
         { property: "og:site_name", content: "Access Prestige Taxi" },

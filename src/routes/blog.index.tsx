@@ -1,5 +1,6 @@
 import { socialImageMeta } from "@/lib/og";
 import { imgAt, imgSrcSet } from "@/lib/img";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import React, { useMemo, useState } from "react";
@@ -91,9 +92,9 @@ const COPY = {
   },
 } as const;
 
-const BLOG_TITLE = "Guide Charente-Maritime — Restaurants, hôtels, randos";
+const BLOG_TITLE = "Guide Marennes, Oléron & Charente-Maritime en taxi";
 const BLOG_DESC =
-  "Guide de la Charente-Maritime : restaurants, hôtels étoilés, randonnées et lieux à visiter, avec taxi 100 % électrique.";
+  "Guide de Marennes, de l'île d'Oléron et de la Charente-Maritime : restaurants, hôtels, randonnées et sites à visiter, desservis par notre taxi 100 % électrique.";
 const BLOG_OG_DESC =
   "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.";
 
@@ -101,6 +102,7 @@ export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["visiter Marennes en taxi", "excursion île d'Oléron taxi", "tourisme Charente-Maritime taxi"]),
       { title: BLOG_TITLE },
       { name: "description", content: BLOG_DESC },
       { property: "og:title", content: BLOG_TITLE },

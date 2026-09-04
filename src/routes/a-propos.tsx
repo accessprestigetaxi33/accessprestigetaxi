@@ -1,18 +1,20 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowLeft, Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
-const ABOUT_TITLE = "À propos – Access Prestige Taxi | Charente-Maritime";
+const ABOUT_TITLE = "À propos — taxi Marennes, Oléron & Charente-Maritime";
 const ABOUT_DESC =
-  "Access Prestige Taxi : deux chauffeurs, Patricia et Alain, un service de taxi premium 100 % électrique en Charente-Maritime.";
+  "Patricia et Alain, vos deux chauffeurs de taxi basés à Marennes : service premium électrique sur l'île d'Oléron et dans toute la Charente-Maritime.";
 const ABOUT_URL = "https://www.accessprestigetaxi.fr/a-propos";
 
 export const Route = createFileRoute("/a-propos")({
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["chauffeur taxi Marennes", "taxi privé île d'Oléron", "société de taxi Charente-Maritime"]),
       { title: ABOUT_TITLE },
       { name: "description", content: ABOUT_DESC },
       { property: "og:title", content: ABOUT_TITLE },

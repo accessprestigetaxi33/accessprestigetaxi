@@ -1,4 +1,5 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { Accessibility, ArrowLeft, Clock3, Mail, Phone, Users, Zap } from "lucide-react";
@@ -10,9 +11,9 @@ import { QuoteEstimator } from "@/components/QuoteEstimator";
 
 const SITE = "https://www.accessprestigetaxi.fr";
 const URL_DEVIS = `${SITE}/devis`;
-const TITLE = "Demander un devis taxi — Charente-Maritime | Access Prestige Taxi";
+const TITLE = "Devis taxi Marennes, île d'Oléron & Charente-Maritime";
 const DESC =
-  "Demandez un devis taxi gratuit en Charente-Maritime : trajet, date, véhicule électrique ou van 8 places, transport sanitaire conventionné et transport de groupe. Réponse rapide.";
+  "Demandez un devis taxi gratuit à Marennes, sur l'île d'Oléron et en Charente-Maritime : trajet, date, véhicule électrique ou van 8 places, transport sanitaire conventionné et transport de groupe. Réponse rapide.";
 const EMAIL = "accessprestigetaxi@gmail.com";
 
 export const Route = createFileRoute("/devis")({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/devis")({
   }),
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["devis taxi Marennes", "prix taxi île d'Oléron", "tarif taxi Charente-Maritime"]),
       { title: TITLE },
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },

@@ -1,17 +1,19 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.webp";
 
 const CARTE_URL = "https://www.accessprestigetaxi.fr/carte";
-const CARTE_TITLE = "Access Prestige Taxi — Contact rapide";
+const CARTE_TITLE = "Taxi Marennes & île d'Oléron — contact rapide";
 const CARTE_DESC =
-  "Appeler, WhatsApp, SMS, email, réservation en ligne — tous les contacts Access Prestige Taxi en un clic.";
+  "Appeler, WhatsApp, SMS, email, réservation en ligne : joignez votre taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime en un clic.";
 
 export const Route = createFileRoute("/carte")({
   head: ({ match }) => ({
     meta: [
+      keywordsMeta(["appeler taxi Marennes", "taxi Oléron rapide", "taxi Charente-Maritime immédiat"]),
       { title: CARTE_TITLE },
       { name: "description", content: CARTE_DESC },
       { property: "og:title", content: CARTE_TITLE },
