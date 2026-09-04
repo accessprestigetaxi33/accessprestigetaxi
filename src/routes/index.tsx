@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ogImageUrl, ogPageUrl } from "@/lib/og";
@@ -328,16 +329,17 @@ export const Route = createFileRoute("/")({
     const social = isEn ? HOME_SOCIAL_EN : HOME_SOCIAL_FR;
     return {
       meta: [
+        keywordsMeta(["taxi Rochefort", "taxi La Rochelle", "taxi Royan", "taxi conventionné Charente-Maritime", "taxi aéroport La Rochelle", "taxi gare Rochefort"]),
         {
           title: isEn
-            ? "Taxi in Marennes & Charente-Maritime | Access Prestige Taxi"
-            : "Taxi à Marennes et en Charente-Maritime | Access Prestige Taxi",
+            ? "Taxi Marennes, Oléron & Charente-Maritime | Access Prestige Taxi"
+            : "Taxi Marennes, île d'Oléron & Charente-Maritime | Access Prestige",
         },
         {
           name: "description",
           content: isEn
-            ? "Taxi based in Marennes, serving Oléron, Rochefort, La Rochelle and all of Charente-Maritime: electric premium vehicles, 8-seat van, covered medical transport."
-            : "Taxi basé à Marennes, au service de l'île d'Oléron, Rochefort, La Rochelle et toute la Charente-Maritime : véhicules électriques premium, van 8 places et transport sanitaire conventionné.",
+            ? "Taxi in Marennes, Oléron island and across Charente-Maritime: airport and station transfers, covered medical transport, electric cars and an 8-seat van. Booking 5 days a week, 8am-8pm."
+            : "Taxi à Marennes, sur l'île d'Oléron et dans toute la Charente-Maritime : gares, aéroports, transport sanitaire conventionné, véhicules électriques et van 8 places. 5j/7, 8h-20h.",
         },
 
         { property: "og:site_name", content: "Access Prestige Taxi" },
