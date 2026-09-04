@@ -3,7 +3,8 @@ import { imgAt, imgSrcSet } from "@/lib/img";
 import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { ArrowLeft, ArrowRight, MapPin, Phone, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
-import { GUIDE_ENTRIES, GUIDE_CATEGORIES, getGuideEntry, type GuideEntry } from "@/data/guide-charente";
+import { GUIDE_ENTRIES, GUIDE_CATEGORIES, getGuideEntry, guideName, type GuideEntry } from "@/data/guide-charente";
+import { Languages } from "lucide-react";
 
 const PHONE = "0650260015";
 const PHONE_DISPLAY = "06 50 26 00 15";
@@ -23,6 +24,7 @@ const COPY = {
     call: "Appeler un chauffeur",
     stars: "étoiles",
     homeLink: "Taxi à Marennes et en Charente-Maritime : découvrir notre service",
+    readEn: "Read in English",
   },
   en: {
     back: "Back to the guide",
@@ -38,6 +40,7 @@ const COPY = {
     call: "Call a driver",
     stars: "stars",
     homeLink: "Taxi in Marennes and Charente-Maritime: discover our service",
+    readEn: "Lire en français",
   },
 } as const;
 
@@ -51,8 +54,12 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ params, match }) => {
     const e = getGuideEntry(params.slug);
     if (!e) return {};
-    const title = `${e.name}, ${e.city} — Guide Charente-Maritime | Access Prestige Taxi`;
-    const desc = e.fr.teaser.slice(0, 155);
+    const isEn = (match.search as { lang?: string } | undefined)?.lang === "en";
+    const name = isEn ? (e.nameEn ?? e.name) : e.name;
+    const title = isEn
+      ? `${name}, ${e.city} — Charente-Maritime guide | Access Prestige Taxi`
+      : `${name}, ${e.city} — Guide Charente-Maritime | Access Prestige Taxi`;
+    const desc = (isEn ? e.en.teaser : e.fr.teaser).slice(0, 155);
     const url = `${SITE}/blog/${e.slug}`;
     return {
       meta: [
@@ -78,8 +85,8 @@ export const Route = createFileRoute("/blog/$slug")({
               {
                 "@type":
                   e.category === "hotel" ? "Hotel" : e.category === "restaurant" ? "Restaurant" : "TouristAttraction",
-                name: e.name,
-                description: e.fr.teaser,
+                name,
+                description: isEn ? e.en.teaser : e.fr.teaser,
                 image: e.photos,
                 address: {
                   "@type": "PostalAddress",
@@ -93,10 +100,10 @@ export const Route = createFileRoute("/blog/$slug")({
                 "@type": "Article",
                 "@id": `${url}#article`,
                 mainEntityOfPage: { "@type": "WebPage", "@id": url },
-                headline: e.name.slice(0, 110),
-                description: e.fr.teaser,
+                headline: name.slice(0, 110),
+                description: isEn ? e.en.teaser : e.fr.teaser,
                 image: e.photos,
-                inLanguage: "fr-FR",
+                inLanguage: isEn ? "en-GB" : "fr-FR",
                 // Dates éditoriales : contenu de guide publié puis relu par les chauffeurs.
                 datePublished: "2026-01-15",
                 dateModified: "2026-01-15",
@@ -123,7 +130,7 @@ export const Route = createFileRoute("/blog/$slug")({
                 itemListElement: [
                   { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE}/` },
                   { "@type": "ListItem", position: 2, name: "Guide", item: `${SITE}/blog` },
-                  { "@type": "ListItem", position: 3, name: e.name, item: url },
+                  { "@type": "ListItem", position: 3, name, item: url },
                 ],
               },
             ],
@@ -137,10 +144,11 @@ export const Route = createFileRoute("/blog/$slug")({
 function BlogArticle() {
   const { slug } = Route.useParams();
   const entry = getGuideEntry(slug) as GuideEntry;
-  const { lang } = useI18n();
+  const { lang, setLang } = useI18n();
   const isEn = lang === "en";
   const c = isEn ? COPY.en : COPY.fr;
   const txt = isEn ? entry.en : entry.fr;
+  const title = guideName(entry, isEn);
   const catLabel = GUIDE_CATEGORIES.find((g) => g.key === entry.category)!;
   const others = GUIDE_ENTRIES.filter((e) => e.slug !== entry.slug && e.dept === entry.dept).slice(0, 3);
 
@@ -154,7 +162,7 @@ function BlogArticle() {
               src={imgAt(entry.photos[0], 1280)}
               srcSet={imgSrcSet(entry.photos[0], [500, 1280, 1920])}
               sizes="100vw"
-              alt={`${entry.name}, ${entry.city}`}
+              alt={`${title}, ${entry.city}`}
               fetchPriority="high"
               decoding="async"
               width={1280}
@@ -174,6 +182,18 @@ function BlogArticle() {
             <ArrowLeft className="h-3.5 w-3.5" /> {c.back}
           </Link>
 
+          {/* Bascule de langue de l'article */}
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={() => setLang(isEn ? "fr" : "en")}
+              className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#e0b866]/60 px-4 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
+              aria-label={c.readEn}
+            >
+              <Languages className="h-4 w-4" aria-hidden="true" /> {c.readEn}
+            </button>
+          </div>
+
           <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-white/55">
             <span className="text-primary">{isEn ? catLabel.en : catLabel.fr}</span>
             <span className="inline-flex items-center gap-1.5">
@@ -182,7 +202,7 @@ function BlogArticle() {
           </p>
 
           <h1 className="mt-3 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-            {entry.name}
+            {title}
           </h1>
 
           {entry.stars ? (
@@ -212,9 +232,9 @@ function BlogArticle() {
             to="/reserver"
             search={{ to: `${entry.name}, ${entry.city}` }}
             className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold uppercase tracking-wider text-primary-foreground shadow-[var(--shadow-gold)] transition hover:opacity-90 sm:w-auto"
-            aria-label={`${c.bookHere} ${entry.name}`}
+            aria-label={`${c.bookHere} ${title}`}
           >
-            {c.bookHere} {entry.name} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            {c.bookHere} {title} <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
 
 
@@ -246,7 +266,7 @@ function BlogArticle() {
                   src={imgAt(src, 500)}
                   srcSet={imgSrcSet(src, [250, 330, 500, 1280])}
                   sizes="(min-width: 640px) 33vw, 100vw"
-                  alt={`${entry.name} — ${isEn ? "photo" : "photo"} ${i + 1}`}
+                  alt={`${title}, ${entry.city} — photo ${i + 1}`}
                   loading="lazy"
                   decoding="async"
                   width={800}
@@ -307,7 +327,7 @@ function BlogArticle() {
                   src={imgAt(o.photos[0], 500)}
                   srcSet={imgSrcSet(o.photos[0], [250, 330, 500])}
                   sizes="(min-width: 640px) 25vw, 100vw"
-                  alt={`${o.name}, ${o.city}`}
+                  alt={`${guideName(o, isEn)}, ${o.city}`}
                   loading="lazy"
                   decoding="async"
                   width={640}
@@ -316,7 +336,7 @@ function BlogArticle() {
                 />
                 <div className="p-4">
                   <p className="text-[10px] uppercase tracking-widest text-white/55">{o.city}</p>
-                  <p className="mt-1 font-display text-base font-semibold text-white">{o.name}</p>
+                  <p className="mt-1 font-display text-base font-semibold text-white">{guideName(o, isEn)}</p>
                 </div>
               </Link>
             ))}

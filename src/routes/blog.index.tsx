@@ -29,6 +29,7 @@ import {
   GUIDE_TAGS,
   GUIDE_CITY_STATS,
   guideTags,
+  guideName,
   normalize,
   type GuideCategory,
   type GuideTag,
@@ -379,7 +380,7 @@ function BlogIndex() {
 
                     <h2 className="mt-2 font-display text-lg font-semibold leading-snug text-white">
                       <Link to="/blog/$slug" params={{ slug: e.slug }} className="hover:text-primary">
-                        {e.name}
+                        {guideName(e, isEn)}
                       </Link>
                     </h2>
 
@@ -417,7 +418,7 @@ function BlogIndex() {
                       <Link
                         to="/blog/$slug"
                         params={{ slug: e.slug }}
-                        aria-label={`${c.read} — ${e.name}`}
+                        aria-label={`${c.read} — ${guideName(e, isEn)}`}
                         className="inline-flex min-h-[44px] w-full min-w-0 items-center justify-center gap-1.5 rounded-full border border-[#e0b866]/60 px-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
                       >
                         <span className="truncate sm:hidden">{c.readShort}</span>
