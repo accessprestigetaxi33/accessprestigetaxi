@@ -411,21 +411,24 @@ function BlogIndex() {
                       </div>
                     )}
 
-                    <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#e0b866]/15 pt-3">
+                    <div className="mt-4 grid grid-cols-2 items-stretch gap-2 border-t border-[#e0b866]/15 pt-3">
                       <Link
                         to="/blog/$slug"
                         params={{ slug: e.slug }}
-                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"
+                        aria-label={`${c.read} — ${e.name}`}
+                        className="inline-flex min-h-[44px] w-full min-w-0 items-center justify-center gap-1.5 rounded-full border border-[#e0b866]/60 px-3 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-black"
                       >
-                        {c.read} <ArrowRight className="h-4 w-4" />
+                        <span className="truncate sm:hidden">{c.readShort}</span>
+                        <span className="hidden truncate sm:inline">{c.read}</span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                       </Link>
                       <Link
                         to="/reserver"
                         search={{ to: `${e.name}, ${e.city}` }}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#e0b866] bg-[#e0b866] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-105"
+                        className="inline-flex min-h-[44px] w-full min-w-0 items-center justify-center gap-1.5 rounded-full border border-[#e0b866] bg-[#e0b866] px-3 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-105"
                       >
-                        <Car className="h-3.5 w-3.5" />
-                        {c.book}
+                        <Car className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{c.book}</span>
                       </Link>
                     </div>
                   </div>
