@@ -12460,6 +12460,223 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/CairnPlagedesHuttesOl%C3%A9ron.jpg/1280px-CairnPlagedesHuttesOl%C3%A9ron.jpg",
     ],
   },
+  {
+    slug: "guide-marennes-capitale-de-l-huitre",
+    category: "visite",
+    dept: "17",
+    name: "Guide de Marennes, capitale de l’huître",
+    city: "Marennes",
+    facts: [
+      { fr: "Clocher de 85 m, panorama sur le bassin", en: "85 m bell tower, view over the basin" },
+      { fr: "Port de La Cayenne et cabanes ostréicoles", en: "La Cayenne harbour and oyster huts" },
+      { fr: "Base d’Access Prestige Taxi", en: "Access Prestige Taxi home base" },
+    ],
+    fr: {
+      teaser:
+        "Notre ville. Entre marais, claires et chenaux, Marennes donne son nom à l’huître la plus connue de France — et c’est d’ici que partent nos courses.",
+      history:
+        "Marennes s’est construite sur le sel avant de vivre de l’huître. Quand les marais salants ont cessé d’être rentables au XIXᵉ siècle, les paludiers ont transformé leurs bassins en claires : ces bassins peu profonds où l’huître s’affine lentement et prend ce reflet vert dû à la navicule bleue. Le clocher gothique de Saint-Pierre-de-Sales, haut de 85 mètres, servait d’amer aux marins du pertuis de Maumusson ; on y monte encore pour embrasser d’un regard l’île d’Oléron, le viaduc et les kilomètres de chenaux. Au port de La Cayenne, les chalands et les cabanes colorées travaillent au rythme des marées, comme au premier jour.",
+      tips: "Le marché couvert le mardi et le vendredi matin, les dégustations en cabane l’après-midi. Prise en charge immédiate depuis Marennes : nous sommes basés ici, 5j/7 de 8h à 20h.",
+    },
+    en: {
+      teaser:
+        "Our home town. Between marshes, claires and channels, Marennes gives its name to France’s best-known oyster — and every ride of ours starts here.",
+      history:
+        "Marennes was built on salt before it lived on oysters. When the salt pans stopped paying in the 19th century, salt workers turned their basins into claires: shallow ponds where oysters refine slowly and take on the green sheen of the blue navicula. The 85-metre Gothic tower of Saint-Pierre-de-Sales was a landmark for sailors of the Maumusson strait; you can still climb it for a sweep over Oléron, the viaduct and miles of channels. At La Cayenne harbour, flat-bottomed boats and colourful huts still work to the rhythm of the tides.",
+      tips: "Covered market on Tuesday and Friday mornings, hut tastings in the afternoon. Immediate pick-up in Marennes: we are based here, 5 days a week, 8am to 8pm.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg/1280px-Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Marennes_17_Paysage_du_marais_2013.jpg/1280px-Marennes_17_Paysage_du_marais_2013.jpg",
+    ],
+  },
+  {
+    slug: "marennes-plage-et-le-port-de-la-cayenne",
+    category: "randonnee",
+    dept: "17",
+    name: "Marennes-Plage et le port de La Cayenne",
+    city: "Marennes",
+    facts: [
+      { fr: "Boucle plage / chenal : 6 km, très facile", en: "Beach & channel loop: 6 km, very easy" },
+      { fr: "Vue sur le viaduc de la Seudre", en: "Views of the Seudre viaduct" },
+      { fr: "Plage surveillée en juillet-août", en: "Lifeguarded in July and August" },
+    ],
+    fr: {
+      teaser:
+        "Une balade plate au ras de l’eau : la plage de Marennes, le chenal de La Cayenne et les cabanes, face au viaduc de la Seudre.",
+      history:
+        "Marennes-Plage est née au début du XXᵉ siècle, quand les Marennais ont aménagé une digue et une plage de sable au bout du chenal. En face, le viaduc de la Seudre, ouvert en 1972, a remplacé le bac qui reliait laborieusement les deux rives et désenclavé le pays de Marennes. Le sentier suit les digues des anciens marais salants : c’est le domaine des aigrettes, des avocettes et des cabanes ostréicoles, dont beaucoup ont été reconverties en ateliers d’artistes.",
+      tips: "Idéal en poussette ou à vélo, sans dénivelé. Vent d’ouest fréquent l’après-midi : coupe-vent conseillé. Dépose et reprise possibles au parking de la plage.",
+    },
+    en: {
+      teaser:
+        "A flat waterside walk: Marennes beach, the La Cayenne channel and the oyster huts, facing the Seudre viaduct.",
+      history:
+        "Marennes-Plage appeared in the early 20th century when the town built a dyke and a sandy beach at the end of the channel. Opposite, the Seudre viaduct, opened in 1972, replaced the slow ferry between the two banks and opened up the Marennes area. The path follows the dykes of the old salt pans, home to egrets, avocets and oyster huts, many now turned into artists' studios.",
+      tips: "Perfect with a pushchair or by bike, no climbs. Westerly wind is common in the afternoon. Drop-off and pick-up at the beach car park.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Site_de_Marennes-Plage.JPG/1280px-Site_de_Marennes-Plage.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Plage_et_viaduc_Seudre_%C3%A0_Marennes.JPG/1280px-Plage_et_viaduc_Seudre_%C3%A0_Marennes.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Marennes_17_Pont_sur_la_Seudre_2014.jpg/1280px-Marennes_17_Pont_sur_la_Seudre_2014.jpg",
+    ],
+  },
+  {
+    slug: "surf-autour-de-marennes",
+    category: "surf",
+    dept: "17",
+    name: "Surfer autour de Marennes",
+    city: "Marennes",
+    facts: [
+      { fr: "Vert-Bois à 20 min, Gatseau à 25 min", en: "Vert-Bois 20 min, Gatseau 25 min" },
+      { fr: "Ronce-les-Bains à 20 min", en: "Ronce-les-Bains 20 min" },
+      { fr: "Transport de planches dans le van", en: "Boards carried in the van" },
+    ],
+    fr: {
+      teaser:
+        "Marennes n’a pas de vague, mais elle est au centre du triangle : Vert-Bois, Gatseau et Ronce sont tous à moins de 30 minutes.",
+      history:
+        "Le bassin de Marennes-Oléron est abrité : la Seudre et les chenaux sont plats, réservés au kayak et au paddle. Les vagues, elles, sont sur la façade atlantique, à quelques kilomètres seulement — la côte ouest d’Oléron, ouverte plein océan, et la Côte Sauvage d’Arvert, de l’autre côté du pont de la Seudre. Cette position centrale a fait de Marennes le camp de base naturel des surfeurs de la région depuis les années 1970 : on dort au calme dans les terres et on choisit son spot le matin selon la houle et le vent.",
+      tips: "Houle d’ouest et vent d’est le matin : Vert-Bois. Grosse houle : repli sur Gatseau, plus abrité. Le van Mercedes prend les planches et jusqu’à 7 personnes, aller-retour dans la journée.",
+    },
+    en: {
+      teaser:
+        "Marennes has no waves of its own, but it sits at the centre of the triangle: Vert-Bois, Gatseau and Ronce are all under 30 minutes away.",
+      history:
+        "The Marennes-Oléron basin is sheltered: the Seudre and its channels are flat, best for kayaking and paddleboarding. The waves are on the Atlantic side, only a few kilometres away — Oléron's ocean-facing west coast, and the Arvert Wild Coast across the Seudre bridge. That central position has made Marennes the natural base camp for local surfers since the 1970s: sleep inland in the quiet, pick your spot in the morning according to swell and wind.",
+      tips: "West swell with morning offshore: Vert-Bois. Big swell: fall back on the more sheltered Gatseau. The Mercedes van takes boards and up to 7 people, there and back in the day.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Vert_bois_-_2016a.jpg/1280px-Vert_bois_-_2016a.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Plage_de_Gatseau.JPG/1280px-Plage_de_Gatseau.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Ronce-les-Bains.JPG/1280px-Ronce-les-Bains.JPG",
+    ],
+  },
+  {
+    slug: "guide-ile-d-oleron",
+    category: "visite",
+    dept: "17",
+    name: "Guide de l’île d’Oléron",
+    city: "Oléron",
+    facts: [
+      { fr: "30 km de long, 8 communes", en: "30 km long, 8 towns" },
+      { fr: "Viaduc gratuit depuis Bourcefranc", en: "Free viaduct from Bourcefranc" },
+      { fr: "15 min de Marennes au pont", en: "15 min from Marennes to the bridge" },
+    ],
+    fr: {
+      teaser:
+        "La deuxième plus grande île de France : côte ouest sauvage et surfable, côte est ostréicole et abritée, marais, phares et cabanes.",
+      history:
+        "Oléron, la « Lumineuse », vit du sel puis de la vigne avant de se tourner vers l’huître et le tourisme. Son viaduc de 3 027 mètres, inauguré en 1966 et gratuit depuis 1991, a mis fin à des siècles de bacs. L’île se lit en deux versants : à l’ouest, la Côte Sauvage, ses dunes fixées par les pins et ses plages ouvertes plein océan ; à l’est, les chenaux, les cabanes colorées du Château-d’Oléron et les parcs à huîtres face à Fort Boyard. Au nord, le phare de Chassiron, rayé de blanc et de noir depuis 1836, domine une pointe où l’estran découvre d’anciennes écluses à poissons.",
+      tips: "En été, passer le pont avant 10h ou après 19h. Nos deux véhicules desservent toute l’île, y compris les plages de la côte ouest ; le van accepte 7 passagers, bagages et planches.",
+    },
+    en: {
+      teaser:
+        "France's second-largest island: a wild, surfable west coast, a sheltered oyster-farming east coast, marshes, lighthouses and huts.",
+      history:
+        "Oléron, the 'Luminous', lived on salt then vines before turning to oysters and tourism. Its 3,027-metre viaduct, opened in 1966 and toll-free since 1991, ended centuries of ferries. The island has two faces: to the west, the Wild Coast with pine-fixed dunes and ocean-facing beaches; to the east, channels, the colourful huts of Le Château-d'Oléron and oyster beds facing Fort Boyard. In the north, the black-and-white Chassiron lighthouse, lit in 1836, overlooks a point where the tide reveals ancient fish locks.",
+      tips: "In summer, cross the bridge before 10am or after 7pm. Both our vehicles serve the whole island, including west-coast beaches; the van takes 7 passengers, luggage and boards.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Viaduc_d%27Ol%C3%A9ron_-_Vue_a%C3%A9rienne_Sud-Est.jpg/1280px-Viaduc_d%27Ol%C3%A9ron_-_Vue_a%C3%A9rienne_Sud-Est.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Oleron_island_%2815545524927%29.jpg/1280px-Oleron_island_%2815545524927%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Port_salines.JPG/1280px-Port_salines.JPG",
+    ],
+  },
+  {
+    slug: "surf-la-perroche-oleron",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf de La Perroche",
+    city: "Dolus-d’Oléron",
+    facts: [
+      { fr: "Beach-break doux, houle d’ouest filtrée", en: "Mellow beach break, filtered west swell" },
+      { fr: "Débutants et longboard à mi-marée", en: "Beginners and longboard at mid tide" },
+      { fr: "Couchers de soleil réputés", en: "Renowned sunsets" },
+    ],
+    fr: {
+      teaser:
+        "L’anse la plus douce de la côte ouest : des vagues plus courtes qu’à Vert-Bois, parfaites pour progresser et sortir le longboard.",
+      history:
+        "La Perroche ferme au sud la longue plage de Dolus, là où les dunes cèdent la place à une petite falaise de terre et aux pins. La rive est semée de cairns, ces empilements de pierres devenus la signature du lieu, et le platier découvre à marée basse d’anciennes écluses à poissons en pierre sèche que l’on répare encore par endroits. Longtemps simple accès de pêcheurs, l’anse est devenue l’un des rendez-vous du couchant sur l’île, face au pertuis.",
+      tips: "Mi-marée montante par houle d’un mètre : conditions idéales pour débuter. Attention aux rochers plats à marée basse. Dépose au parking de La Perroche, 10 min du bourg de Dolus.",
+    },
+    en: {
+      teaser:
+        "The gentlest cove on the west coast: shorter waves than Vert-Bois, ideal for progressing and for longboarding.",
+      history:
+        "La Perroche closes the long Dolus beach to the south, where the dunes give way to a low earth cliff and pines. The shore is dotted with cairns, the stacked stones that have become its signature, and at low tide the flats reveal dry-stone fish locks still repaired here and there. Long just a fishermen's access, the cove is now one of the island's sunset spots.",
+      tips: "Rising mid tide with a one-metre swell: perfect for beginners. Watch the flat rocks at low tide. Drop-off at the La Perroche car park, 10 min from Dolus village.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Vue_sur_la_Perroche_Ol%C3%A9ron.jpg/1280px-Vue_sur_la_Perroche_Ol%C3%A9ron.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Anse_de_la_Perroche.jpg/1280px-Anse_de_la_Perroche.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/C%C3%B4te_ouest_Ol%C3%A9ron_empilements_de_pierres2.jpg/1280px-C%C3%B4te_ouest_Ol%C3%A9ron_empilements_de_pierres2.jpg",
+    ],
+  },
+  {
+    slug: "surf-plage-du-grand-village-oleron",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf du Grand-Village",
+    city: "Le Grand-Village-Plage",
+    facts: [
+      { fr: "Beach-break exposé, bancs mobiles", en: "Exposed beach break, shifting banks" },
+      { fr: "Écoles de surf en saison", en: "Surf schools in season" },
+      { fr: "Parking et cabines à 200 m du sable", en: "Car park 200 m from the sand" },
+    ],
+    fr: {
+      teaser:
+        "La grande plage du sud-ouest d’Oléron : des pics multiples le long des dunes, entre Vert-Bois et Gatseau.",
+      history:
+        "Le Grand-Village est né de la mer et du sel : la plage n’a été aménagée qu’au XXᵉ siècle, quand le village de paludiers s’est ouvert au tourisme balnéaire. Derrière le cordon dunaire, la Maison paysanne oléronaise garde la mémoire de ces familles qui vivaient du sel, de la vigne et de la pêche à pied. Le front de mer, protégé par les plantations de pins, recule chaque hiver sous les tempêtes : les bancs de sable se redessinent, et avec eux les pics de surf, différents d’une année à l’autre.",
+      tips: "Chercher les pics le long des accès plage plutôt qu’en face du parking. Baignade et surf en zone surveillée l’été : baïnes fréquentes. Course directe depuis Marennes en 25 min.",
+    },
+    en: {
+      teaser:
+        "The big beach of south-west Oléron: multiple peaks along the dunes, between Vert-Bois and Gatseau.",
+      history:
+        "Le Grand-Village was born of sea and salt: the beach was only developed in the 20th century, when this salt workers' village opened to seaside tourism. Behind the dune ridge, the Oléron Farmhouse museum keeps the memory of families living from salt, vines and shore fishing. The seafront, protected by pine plantations, retreats each winter under storms: the sandbanks reshape, and with them the surf peaks, different every year.",
+      tips: "Look for peaks along the beach accesses rather than opposite the car park. Swim and surf in lifeguarded zones in summer: rip currents are common. Direct ride from Marennes in 25 min.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/LE_GRAND_VILLAGE_PLAGE_OLERON_ISLAND_%2815319809743%29.jpg/1280px-LE_GRAND_VILLAGE_PLAGE_OLERON_ISLAND_%2815319809743%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/LE_GRAND_VILLAGE_PLAGE_OLERON_ISLAND_%2815319810813%29.jpg/1280px-LE_GRAND_VILLAGE_PLAGE_OLERON_ISLAND_%2815319810813%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/LE_GRAND_VILLAGE_PLAGE_OLERON_ISLAND_%2815752149820%29.jpg/1280px-LE_GRAND_VILLAGE_PLAGE_OLERON_ISLAND_%2815752149820%29.jpg",
+    ],
+  },
+  {
+    slug: "surf-sables-vignier-saint-georges-oleron",
+    category: "surf",
+    dept: "17",
+    name: "Spot de surf des Sables Vignier",
+    city: "Saint-Georges-d’Oléron",
+    facts: [
+      { fr: "Beach-break de la côte ouest", en: "West-coast beach break" },
+      { fr: "Fonctionne mieux à marée descendante", en: "Best on a dropping tide" },
+      { fr: "Dunes classées, accès balisés", en: "Protected dunes, marked accesses" },
+    ],
+    fr: {
+      teaser:
+        "Entre Chaucre et Domino, une plage large adossée aux dunes : le spot le plus régulier du nord-ouest d’Oléron.",
+      history:
+        "Le nord-ouest de l’île a longtemps été un désert de sable mouvant : les dunes des Sables Vignier avançaient sur les terres agricoles avant d’être fixées, comme à la Coubre, par des plantations d’oyats et de pins maritimes au XIXᵉ siècle. Le secteur garde les traces du Mur de l’Atlantique et, plus loin vers la pointe, les vestiges des écluses à poissons. C’est aujourd’hui un espace protégé, où les accès à la plage sont balisés pour épargner le cordon dunaire.",
+      tips: "Marée descendante et houle d’ouest de 1 à 1,5 m : la meilleure fenêtre. Rester sur les caillebotis pour traverser les dunes. Dépose possible au plus près par le taxi.",
+    },
+    en: {
+      teaser:
+        "Between Chaucre and Domino, a wide dune-backed beach: the most consistent spot in north-west Oléron.",
+      history:
+        "The island's north-west was long a desert of shifting sand: the Sables Vignier dunes advanced over farmland before being fixed, as at La Coubre, by marram grass and maritime pines in the 19th century. The area still holds Atlantic Wall remains and, further towards the point, the ruins of fish locks. It is now a protected site, with marked beach accesses to spare the dune ridge.",
+      tips: "Dropping tide with a 1 to 1.5 m west swell is the best window. Stay on the boardwalks across the dunes. Taxi drop-off as close as possible.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/FR_17_Saint-Georges-d%27Ol%C3%A9ron_-_Les_Sables_Boisseau.jpg/1280px-FR_17_Saint-Georges-d%27Ol%C3%A9ron_-_Les_Sables_Boisseau.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Dunes_%C3%A0_Saint-Georges_d%27Ol%C3%A9ron.JPG/1280px-Dunes_%C3%A0_Saint-Georges_d%27Ol%C3%A9ron.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/CairnPlagedesHuttesOl%C3%A9ron.jpg/1280px-CairnPlagedesHuttesOl%C3%A9ron.jpg",
+    ],
+  },
 ];
 
 export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] = [
