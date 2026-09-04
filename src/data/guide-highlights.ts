@@ -21,8 +21,8 @@ export const GUIDE_HIGHLIGHTS: GuideHighlight[] = [
     city: "Marennes",
     photo:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
-    fr: "Gares, aéroports, rendez-vous médicaux, sorties : Alain et Patricia vous conduisent depuis Marennes dans toute la Charente-Maritime.",
-    en: "Stations, airports, medical appointments, evenings out: Alain and Patricia drive you from Marennes across Charente-Maritime.",
+    fr: "Gares, aéroports, rendez-vous médicaux, sorties : Alain et Patricia vous conduisent depuis Marennes dans toute la Charente-Maritime, en France et en Europe.",
+    en: "Stations, airports, medical appointments, evenings out: Alain and Patricia drive you from Marennes across Charente-Maritime, France and Europe.",
   },
   {
     slug: "rejoindre-l-ile-d-oleron-en-taxi",
