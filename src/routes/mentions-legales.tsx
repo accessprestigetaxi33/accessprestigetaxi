@@ -42,7 +42,7 @@ const COPY = {
       <><strong>Access Prestige Taxi</strong> — Patricia & Alain, artisans taxi indépendants</>,
       <>Zone d'activité&nbsp;: Charente-Maritime (17), France</>,
       <>Téléphone&nbsp;: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
-        <a href="tel:+33650321923" className="text-primary hover:underline">06 50 32 19 23</a> (Alain)</>,
+        <a href="tel:+33603444863" className="text-primary hover:underline">06 03 44 48 63</a> (Alain)</>,
       <>Email&nbsp;: <a href="mailto:accessprestigetaxi@gmail.com" className="text-primary hover:underline">accessprestigetaxi@gmail.com</a></>,
       <>Numéro ADS / Carte professionnelle&nbsp;: disponible sur demande</>,
     ],
@@ -78,7 +78,7 @@ const COPY = {
       <><strong>Access Prestige Taxi</strong> — Patricia & Alain, independent licensed taxi drivers</>,
       <>Service area: Charente-Maritime (17), France</>,
       <>Phone: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
-        <a href="tel:+33650321923" className="text-primary hover:underline">06 50 32 19 23</a> (Alain)</>,
+        <a href="tel:+33603444863" className="text-primary hover:underline">06 03 44 48 63</a> (Alain)</>,
       <>Email: <a href="mailto:accessprestigetaxi@gmail.com" className="text-primary hover:underline">accessprestigetaxi@gmail.com</a></>,
       <>Operating licence / professional card: available on request</>,
     ],
