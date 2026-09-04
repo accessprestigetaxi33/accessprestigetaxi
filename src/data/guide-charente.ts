@@ -12,6 +12,8 @@ export type GuideEntry = {
   category: GuideCategory;
   dept: Dept;
   name: string;
+  /** Titre anglais de l'article (fallback : `name`). */
+  nameEn?: string;
   city: string;
   /** Classement hôtelier officiel (étoiles) — hôtels uniquement. */
   stars?: 1 | 2 | 3 | 4 | 5;
@@ -12682,6 +12684,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "visite",
     dept: "17",
     name: "Taxi à Marennes : votre chauffeur privé pour tous vos trajets",
+    nameEn: "Taxi in Marennes: your private driver for every journey",
     city: "Marennes",
     facts: [
       { fr: "Basés à Marennes, 5j/7 de 8h à 20h", en: "Based in Marennes, 5 days a week, 8am-8pm" },
@@ -12713,6 +12716,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "visite",
     dept: "17",
     name: "Comment rejoindre l’île d’Oléron en taxi depuis Marennes, Rochefort ou La Rochelle",
+    nameEn: "How to reach the Île d'Oléron by taxi from Marennes, Rochefort or La Rochelle",
     city: "Oléron",
     facts: [
       { fr: "Marennes → Oléron : ~15 min", en: "Marennes → Oléron: ~15 min" },
@@ -12744,6 +12748,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "visite",
     dept: "17",
     name: "Visiter Brouage et le bassin de Marennes-Oléron en toute tranquillité",
+    nameEn: "Visiting Brouage and the Marennes-Oléron basin, stress-free",
     city: "Marennes",
     facts: [
       { fr: "Citadelle de Brouage à 10 min de Marennes", en: "Brouage citadel 10 min from Marennes" },
@@ -12861,4 +12866,9 @@ export function normalize(s: string): string {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
+}
+
+/** Titre de l'article dans la langue demandée (repli sur le titre français). */
+export function guideName(entry: GuideEntry, isEn: boolean): string {
+  return isEn ? (entry.nameEn ?? entry.name) : entry.name;
 }
