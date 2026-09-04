@@ -339,6 +339,14 @@ function Check2({
   return (
     <label className="group mt-2 flex min-h-[44px] cursor-pointer items-center gap-3 text-sm text-white">
       <span className="relative flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-[#d6a83d] bg-[#07101a] transition group-hover:border-[#e8bd5d]">
+        <input
+          type="checkbox"
+          name={name}
+          checked={onChange ? checked : undefined}
+          defaultChecked={onChange ? undefined : defaultChecked}
+          onChange={onChange ? (e) => onChange(e.target.checked) : undefined}
+          className="peer absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
+        />
         <span className="absolute inset-0 rounded-md bg-[#d6a83d] opacity-0 transition peer-checked:opacity-100" />
         <svg
           className="relative z-10 h-3.5 w-3.5 text-[#07101a] opacity-0 transition peer-checked:opacity-100"
@@ -351,15 +359,8 @@ function Check2({
         >
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        <input
-          type="checkbox"
-          name={name}
-          checked={onChange ? checked : undefined}
-          defaultChecked={onChange ? undefined : defaultChecked}
-          onChange={onChange ? (e) => onChange(e.target.checked) : undefined}
-          className="peer absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
-        />
       </span>
+
       <span className="leading-snug">{label}</span>
     </label>
   );
