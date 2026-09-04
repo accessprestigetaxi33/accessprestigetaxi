@@ -22,6 +22,7 @@ const COPY = {
     bookHere: "Réserver un taxi vers",
     call: "Appeler un chauffeur",
     stars: "étoiles",
+    homeLink: "Taxi à Marennes et en Charente-Maritime : découvrir notre service",
   },
   en: {
     back: "Back to the guide",
@@ -36,7 +37,7 @@ const COPY = {
     bookHere: "Book a taxi to",
     call: "Call a driver",
     stars: "stars",
-
+    homeLink: "Taxi in Marennes and Charente-Maritime: discover our service",
   },
 } as const;
 
@@ -261,6 +262,14 @@ function BlogArticle() {
           {/* CONSEILS */}
           <h2 className="mt-10 font-display text-xl font-semibold text-foreground sm:text-2xl">{c.tips}</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-white/55 sm:text-base">{txt.tips}</p>
+
+          {/* LIEN INTERNE — page d'accueil / service taxi Marennes */}
+          <p className="mt-4 text-[15px] leading-relaxed text-white/70">
+            <Link to="/" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+              {c.homeLink}
+            </Link>
+          </p>
+
 
           {/* CTA */}
           <section className="mt-10 rounded-2xl border border-[#e0b866]/25 bg-[#080b0d] p-5 sm:p-7">

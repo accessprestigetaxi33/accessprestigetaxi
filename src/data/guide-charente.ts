@@ -12677,6 +12677,99 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/CairnPlagedesHuttesOl%C3%A9ron.jpg/1280px-CairnPlagedesHuttesOl%C3%A9ron.jpg",
     ],
   },
+  {
+    slug: "taxi-a-marennes-chauffeur-prive",
+    category: "visite",
+    dept: "17",
+    name: "Taxi à Marennes : votre chauffeur privé pour tous vos trajets",
+    city: "Marennes",
+    facts: [
+      { fr: "Basés à Marennes, 5j/7 de 8h à 20h", en: "Based in Marennes, 5 days a week, 8am-8pm" },
+      { fr: "Transport médical conventionné", en: "Approved medical transport" },
+      { fr: "Jusqu’à 7 passagers avec le van", en: "Up to 7 passengers in the van" },
+    ],
+    fr: {
+      teaser:
+        "Alain et Patricia, vos deux chauffeurs de taxi basés à Marennes : gares, aéroports, rendez-vous médicaux, sorties et trajets longue distance en Charente-Maritime.",
+      history:
+        "Access Prestige Taxi est né à Marennes, au cœur du bassin de Marennes-Oléron. De là, tout est proche : le viaduc d’Oléron à un quart d’heure, Rochefort et sa gare à trente minutes, Royan de l’autre côté du pont de la Seudre, La Rochelle et son aéroport à moins d’une heure. Nos courses les plus fréquentes sont simples : une prise en charge à domicile pour un train à Rochefort ou Surgères, un vol au départ de La Rochelle ou de Bordeaux, un rendez-vous à l’hôpital de Rochefort ou à Saintes, une sortie au restaurant sans se soucier du retour. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V qui accueille jusqu’à 7 personnes avec les bagages. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
+      tips: "Réservez la veille pour les trains tôt le matin et les vols. Pour un groupe, une famille ou un vol avec bagages, demandez le van dès la réservation. Nous desservons toute la Charente-Maritime et assurons aussi les longues distances.",
+    },
+    en: {
+      teaser:
+        "Alain and Patricia, your two taxi drivers based in Marennes: stations, airports, medical appointments, evenings out and long-distance rides across Charente-Maritime.",
+      history:
+        "Access Prestige Taxi was born in Marennes, in the heart of the Marennes-Oléron basin. Everything is close by: the Oléron viaduct is fifteen minutes away, Rochefort and its station thirty, Royan across the Seudre bridge, La Rochelle and its airport under an hour. Our most frequent rides are simple ones: a door-to-door pick-up for an early train in Rochefort or Surgères, a flight from La Rochelle or Bordeaux, an appointment at Rochefort or Saintes hospital, dinner out without worrying about the drive home. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van seating up to 7 people with luggage. Child and baby seats are available on request, and seated medical transport is state-approved.",
+      tips: "Book the day before for early trains and flights. For a group, a family or a flight with luggage, ask for the van when booking. We cover the whole of Charente-Maritime and also handle long-distance journeys.",
+    },
+    photos: [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg/1280px-Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Marennes_17_Paysage_du_marais_2013.jpg/1280px-Marennes_17_Paysage_du_marais_2013.jpg",
+    ],
+  },
+  {
+    slug: "rejoindre-l-ile-d-oleron-en-taxi",
+    category: "visite",
+    dept: "17",
+    name: "Comment rejoindre l’île d’Oléron en taxi depuis Marennes, Rochefort ou La Rochelle",
+    city: "Oléron",
+    facts: [
+      { fr: "Marennes → Oléron : ~15 min", en: "Marennes → Oléron: ~15 min" },
+      { fr: "Rochefort → Oléron : ~45 min", en: "Rochefort → Oléron: ~45 min" },
+      { fr: "La Rochelle → Oléron : ~1h", en: "La Rochelle → Oléron: ~1 hr" },
+    ],
+    fr: {
+      teaser:
+        "Durées indicatives, points de dépose et bon sens local : tout ce qu’il faut savoir pour rejoindre l’île d’Oléron en taxi, sans voiture et sans attente.",
+      history:
+        "L’île d’Oléron se rejoint par le viaduc, gratuit, depuis Bourcefranc-le-Chapus. Depuis Marennes, comptez environ quinze minutes jusqu’au Château-d’Oléron, une trentaine jusqu’à Saint-Pierre et environ quarante-cinq minutes jusqu’à Saint-Denis, à la pointe nord. Depuis la gare de Rochefort, prévoyez environ trois quarts d’heure ; depuis La Rochelle, gare ou aéroport, environ une heure selon la saison. Ces durées sont indicatives : en juillet et en août, le pont et la départementale centrale se chargent en milieu de matinée et en fin d’après-midi. Une fois sur place, l’île est longue de trente kilomètres et les liaisons en bus restent espacées, surtout hors saison et le soir. Un chauffeur privé vous dépose au plus près de la plage, du restaurant ou de la location, gère les bagages, les planches et les vélos, et vient vous rechercher à l’heure convenue.",
+      tips: "Traversez le pont avant 10h ou après 19h en été. Donnez-nous l’adresse exacte de votre location : beaucoup d’accès de plage se terminent par un chemin sableux. Le van Mercedes prend 7 personnes avec bagages, l’aller-retour dans la journée est possible.",
+    },
+    en: {
+      teaser:
+        "Indicative journey times, drop-off points and local know-how: everything you need to reach the Île d'Oléron by taxi, without a car and without waiting.",
+      history:
+        "The Île d'Oléron is reached by a toll-free viaduct from Bourcefranc-le-Chapus. From Marennes, allow around fifteen minutes to Le Château-d'Oléron, about thirty to Saint-Pierre and roughly forty-five to Saint-Denis at the northern tip. From Rochefort station, allow about three quarters of an hour; from La Rochelle station or airport, around an hour depending on the season. These times are indicative: in July and August the bridge and the central road get busy mid-morning and late afternoon. Once there, the island is thirty kilometres long and bus services remain infrequent, especially off-season and in the evening. A private driver drops you as close as possible to the beach, the restaurant or your rental, handles luggage, boards and bikes, and comes back at the agreed time.",
+      tips: "Cross the bridge before 10am or after 7pm in summer. Give us the exact address of your rental: many beach accesses end in a sandy track. The Mercedes van takes 7 people with luggage, and a same-day return trip is possible.",
+    },
+    photos: [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pont%20d%27Ol%C3%A9ron.jpg?width=1280",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cabanes%20ostr%C3%A9icoles%20au%20Ch%C3%A2teau-d%27Ol%C3%A9ron.jpg?width=1280",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Vert_bois_-_2016a.jpg/1280px-Vert_bois_-_2016a.jpg",
+    ],
+  },
+  {
+    slug: "visiter-brouage-et-le-bassin-de-marennes-oleron",
+    category: "visite",
+    dept: "17",
+    name: "Visiter Brouage et le bassin de Marennes-Oléron en toute tranquillité",
+    city: "Marennes",
+    facts: [
+      { fr: "Citadelle de Brouage à 10 min de Marennes", en: "Brouage citadel 10 min from Marennes" },
+      { fr: "Remparts du XVIIᵉ siècle, entrée libre", en: "17th-century ramparts, free access" },
+      { fr: "Boucle conseillée : 3 à 4 heures", en: "Suggested loop: 3 to 4 hours" },
+    ],
+    fr: {
+      teaser:
+        "Une demi-journée entre la citadelle de Brouage, les marais et les cabanes ostréicoles du bassin de Marennes-Oléron, sans chercher de place de parking.",
+      history:
+        "Brouage fut un port de mer et la capitale européenne du sel avant que ses marais ne s’envasent et ne l’éloignent de l’océan. Ville natale de Samuel de Champlain, fondateur de Québec, elle a été fortifiée au XVIIᵉ siècle et conserve un rempart quasi complet, ses portes, ses poudrières et sa halle aux vivres, aujourd’hui posés au milieu des prés salés. Autour, le bassin de Marennes-Oléron vit toujours de l’huître : les claires, ces bassins peu profonds hérités des salines, affinent les fines et les spéciales dont la couleur verte vient d’une algue microscopique. Les chenaux de La Cayenne et du Château-d’Oléron alignent les cabanes de bois colorées où l’on déguste sur le pouce, face aux parcs découverts à marée basse.",
+      tips: "Parcours suggéré : remparts de Brouage en fin de matinée, déjeuner d’huîtres dans une cabane de La Cayenne, puis marais et viaduc de la Seudre en fin d’après-midi pour la lumière. Nous vous déposons à chaque étape et restons joignables entre deux.",
+    },
+    en: {
+      teaser:
+        "Half a day between the Brouage citadel, the marshes and the oyster huts of the Marennes-Oléron basin — with no parking to look for.",
+      history:
+        "Brouage was a seaport and Europe's salt capital before its marshes silted up and left it inland. Birthplace of Samuel de Champlain, founder of Quebec, it was fortified in the 17th century and still has an almost complete rampart, its gates, powder magazines and provisions hall, now set among salt meadows. Around it, the Marennes-Oléron basin still lives on oysters: the claires, shallow ponds inherited from the salt pans, refine the fines and spéciales whose green tint comes from a microscopic alga. The channels of La Cayenne and Le Château-d'Oléron are lined with colourful wooden huts where you can taste on the spot, facing beds uncovered at low tide.",
+      tips: "Suggested route: the Brouage ramparts late morning, an oyster lunch in a hut at La Cayenne, then the marshes and the Seudre viaduct late afternoon for the light. We drop you at each stop and stay reachable in between.",
+    },
+    photos: [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Brouage-Citadelle.jpg?width=1280",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Citadelle%20de%20Hiers-Brouage%20-%20vue%20Est.jpg?width=1280",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg/1280px-Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg",
+    ],
+  },
 ];
 
 export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] = [
