@@ -376,7 +376,14 @@ export const Route = createFileRoute("/")({
             email: "accessprestigetaxi@gmail.com",
             currenciesAccepted: "EUR",
             paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant (transport conventionné)",
-            address: { "@type": "PostalAddress", addressRegion: "Charente-Maritime", addressCountry: "FR" },
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Marennes-Hiers-Brouage",
+              postalCode: "17320",
+              addressRegion: "Charente-Maritime",
+              addressCountry: "FR",
+            },
+
             areaServed: [
               { "@type": "AdministrativeArea", name: "Charente-Maritime" },
               { "@type": "City", name: "Marennes-Hiers-Brouage" },
