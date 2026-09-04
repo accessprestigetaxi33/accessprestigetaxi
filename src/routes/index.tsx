@@ -800,13 +800,19 @@ function Index() {
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
           <div className="absolute inset-x-0 top-[10%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
             <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-4xl md:text-5xl lg:text-6xl">
-              {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
+              {lang === "en" ? "TAXI — EXCELLENCE ON EVERY JOURNEY" : "TAXI — L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
+            <p className="mt-2 max-w-3xl text-sm font-black text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-base md:text-lg">
+              {lang === "en"
+                ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
+                : "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime."}
+            </p>
             <p className="mt-3 max-w-3xl text-base font-black text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-lg md:text-xl lg:text-2xl">
               {lang === "en"
                 ? "Pro private transport · Covered medical transport · Chauffeur service"
                 : "Transport privé pro · Transport médical conventionné · Mise à disposition"}
             </p>
+
 
           </div>
 
