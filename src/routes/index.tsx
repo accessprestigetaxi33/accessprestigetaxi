@@ -379,12 +379,16 @@ export const Route = createFileRoute("/")({
             address: { "@type": "PostalAddress", addressRegion: "Charente-Maritime", addressCountry: "FR" },
             areaServed: [
               { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+              { "@type": "City", name: "Marennes-Hiers-Brouage" },
+              { "@type": "Place", name: "Île d'Oléron" },
+              { "@type": "City", name: "Bourcefranc-le-Chapus" },
               { "@type": "City", name: "La Rochelle" },
               { "@type": "City", name: "Rochefort" },
               { "@type": "City", name: "Saintes" },
               { "@type": "City", name: "Royan" },
               { "@type": "City", name: "Saint-Jean-d'Angély" },
             ],
+
             knowsLanguage: ["fr", "en"],
             telephone: DRIVERS.map((d) => d.intl),
             availableLanguage: ["fr", "en"],
