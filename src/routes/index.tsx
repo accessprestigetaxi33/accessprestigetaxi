@@ -330,15 +330,16 @@ export const Route = createFileRoute("/")({
       meta: [
         {
           title: isEn
-            ? "Electric taxi in Charente-Maritime | Access Prestige"
-            : "Taxi électrique Charente-Maritime | Access Prestige",
+            ? "Taxi in Marennes & Charente-Maritime | Access Prestige Taxi"
+            : "Taxi à Marennes et en Charente-Maritime | Access Prestige Taxi",
         },
         {
           name: "description",
           content: isEn
-            ? "Taxi in Charente-Maritime: electric premium vehicles, 8-seat van and covered medical transport."
-            : "Taxi en Charente-Maritime : véhicules électriques premium, van 8 places et transport sanitaire conventionné.",
+            ? "Taxi based in Marennes, serving Oléron, Rochefort, La Rochelle and all of Charente-Maritime: electric premium vehicles, 8-seat van, covered medical transport."
+            : "Taxi basé à Marennes, au service de l'île d'Oléron, Rochefort, La Rochelle et toute la Charente-Maritime : véhicules électriques premium, van 8 places et transport sanitaire conventionné.",
         },
+
         { property: "og:site_name", content: "Access Prestige Taxi" },
         { property: "og:title", content: social.title },
         { property: "og:description", content: social.description },
@@ -375,15 +376,26 @@ export const Route = createFileRoute("/")({
             email: "accessprestigetaxi@gmail.com",
             currenciesAccepted: "EUR",
             paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant (transport conventionné)",
-            address: { "@type": "PostalAddress", addressRegion: "Charente-Maritime", addressCountry: "FR" },
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Marennes-Hiers-Brouage",
+              postalCode: "17320",
+              addressRegion: "Charente-Maritime",
+              addressCountry: "FR",
+            },
+
             areaServed: [
               { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+              { "@type": "City", name: "Marennes-Hiers-Brouage" },
+              { "@type": "Place", name: "Île d'Oléron" },
+              { "@type": "City", name: "Bourcefranc-le-Chapus" },
               { "@type": "City", name: "La Rochelle" },
               { "@type": "City", name: "Rochefort" },
               { "@type": "City", name: "Saintes" },
               { "@type": "City", name: "Royan" },
               { "@type": "City", name: "Saint-Jean-d'Angély" },
             ],
+
             knowsLanguage: ["fr", "en"],
             telephone: DRIVERS.map((d) => d.intl),
             availableLanguage: ["fr", "en"],
@@ -877,6 +889,35 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {/* Zone d'intervention — ancrage local Marennes */}
+      <section className="bg-[#05090d] px-4 pt-7 sm:px-6 lg:px-8" aria-labelledby="zone-intervention">
+        <div className="mx-auto max-w-6xl rounded-[18px] border-2 border-[#e0b866] bg-[#07111f] px-5 py-6 sm:px-8">
+          <h2
+            id="zone-intervention"
+            className="font-display text-xl font-semibold uppercase text-[#e0b866] sm:text-2xl"
+          >
+            {lang === "en" ? "Our service area" : "Notre zone d'intervention"}
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-white/85 sm:text-base">
+            {lang === "en"
+              ? "Based in Marennes, we drive you daily across Charente-Maritime and beyond, for all distances."
+              : "Basés à Marennes, nous vous conduisons chaque jour partout en Charente-Maritime et au-delà, toutes distances."}
+          </p>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {["Marennes", "Île d'Oléron", "Bourcefranc-le-Chapus", "Rochefort", "La Rochelle"].map((city) => (
+              <li
+                key={city}
+                className="rounded-full border border-[#e0b866] px-3 py-1.5 text-xs font-semibold text-[#e0b866] sm:text-sm"
+              >
+                {city}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+
 
       {/* 2. VOTRE CONFORT — bandeau de référence */}
       <section className="bg-[#05090d] px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
