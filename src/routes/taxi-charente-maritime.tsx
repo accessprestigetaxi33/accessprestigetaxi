@@ -170,6 +170,13 @@ const COPY = {
       "Mercedes V-Class van (Alain) — up to 7 passengers",
       "Baby seats and boosters available on request",
     ],
+    oleronT: "Taxi in Oléron island villages",
+    oleronCommunes: [
+      { slug: "taxi-le-chateau-d-oleron", label: "Taxi Le Château-d'Oléron" },
+      { slug: "taxi-saint-trojan-les-bains", label: "Taxi Saint-Trojan-les-Bains" },
+      { slug: "taxi-dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
+      { slug: "taxi-saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
+    ],
     ctaT: "Book your taxi in Charente-Maritime",
     ctaP: "Online in under a minute, or by phone with one of our two drivers.",
   },
