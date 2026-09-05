@@ -22,6 +22,8 @@ export type Ville = {
   around: string[];
   /** Commune de l'île d'Oléron (maillage vers la page /taxi-oleron). */
   island?: boolean;
+  /** Commune du bassin de Marennes (maillage vers la page /taxi-marennes). */
+  marennes?: boolean;
   fr: VilleCopy;
   en: VilleCopy;
 };
@@ -933,6 +935,791 @@ export const VILLES: Ville[] = [
       ],
     },
   },
+,
+  {
+    "slug": "taxi-bourcefranc-le-chapus",
+    "name": "Bourcefranc-le-Chapus",
+    "postal": "17560",
+    "lat": 45.8478,
+    "lng": -1.1503,
+    "marennes": true,
+    "around": [
+      "Le Chapus",
+      "Marennes-Hiers-Brouage",
+      "Saint-Just-Luzac",
+      "Le Château-d'Oléron"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Bourcefranc-le-Chapus (17560) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Bourcefranc-le-Chapus, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Bourcefranc-le-Chapus",
+      "lead": "Access Prestige Taxi dessert Bourcefranc-le-Chapus et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 5 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Bourcefranc-le-Chapus",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour le port du Chapus, l'embarcadère de Fort Boyard et le viaduc d'Oléron que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Le Chapus, Marennes-Hiers-Brouage, Saint-Just-Luzac, Le Château-d'Oléron"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Bourcefranc-le-Chapus ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Bourcefranc-le-Chapus ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Bourcefranc-le-Chapus depuis Marennes ?",
+          "a": "Oui : comptez 5 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Bourcefranc-le-Chapus (17560) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Bourcefranc-le-Chapus, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Bourcefranc-le-Chapus",
+      "lead": "Access Prestige Taxi serves Bourcefranc-le-Chapus and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 5 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Bourcefranc-le-Chapus",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the Chapus harbour, the Fort Boyard boarding point and the Oléron viaduct or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Le Chapus, Marennes-Hiers-Brouage, Saint-Just-Luzac, Le Château-d'Oléron"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Bourcefranc-le-Chapus?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Bourcefranc-le-Chapus?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Bourcefranc-le-Chapus from Marennes?",
+          "a": "Yes: allow 5 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-hiers-brouage",
+    "name": "Hiers-Brouage",
+    "postal": "17320",
+    "lat": 45.8683,
+    "lng": -1.0642,
+    "marennes": true,
+    "around": [
+      "Marennes",
+      "Saint-Sornin",
+      "Saint-Just-Luzac",
+      "Moëze"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Hiers-Brouage (17320) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Hiers-Brouage, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Hiers-Brouage",
+      "lead": "Access Prestige Taxi dessert Hiers-Brouage et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 10 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Hiers-Brouage",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour la citadelle de Brouage, les marais et les cabanes ostréicoles que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Marennes, Saint-Sornin, Saint-Just-Luzac, Moëze"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Hiers-Brouage ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Hiers-Brouage ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Hiers-Brouage depuis Marennes ?",
+          "a": "Oui : comptez 10 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Hiers-Brouage (17320) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Hiers-Brouage, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Hiers-Brouage",
+      "lead": "Access Prestige Taxi serves Hiers-Brouage and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 10 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Hiers-Brouage",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the Brouage citadel, the marshes and the oyster huts or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Marennes, Saint-Sornin, Saint-Just-Luzac, Moëze"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Hiers-Brouage?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Hiers-Brouage?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Hiers-Brouage from Marennes?",
+          "a": "Yes: allow 10 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-saint-just-luzac",
+    "name": "Saint-Just-Luzac",
+    "postal": "17320",
+    "lat": 45.8069,
+    "lng": -1.0292,
+    "marennes": true,
+    "around": [
+      "Marennes",
+      "Nieulle-sur-Seudre",
+      "Bourcefranc-le-Chapus",
+      "Le Gua"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Saint-Just-Luzac (17320) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Saint-Just-Luzac, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Saint-Just-Luzac",
+      "lead": "Access Prestige Taxi dessert Saint-Just-Luzac et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 8 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Saint-Just-Luzac",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour le bourg, les campings et les marais de la Seudre que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Marennes, Nieulle-sur-Seudre, Bourcefranc-le-Chapus, Le Gua"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Saint-Just-Luzac ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Saint-Just-Luzac ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Saint-Just-Luzac depuis Marennes ?",
+          "a": "Oui : comptez 8 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Saint-Just-Luzac (17320) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Saint-Just-Luzac, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Saint-Just-Luzac",
+      "lead": "Access Prestige Taxi serves Saint-Just-Luzac and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 8 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Saint-Just-Luzac",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the village centre, the campsites and the Seudre marshes or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Marennes, Nieulle-sur-Seudre, Bourcefranc-le-Chapus, Le Gua"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Saint-Just-Luzac?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Saint-Just-Luzac?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Saint-Just-Luzac from Marennes?",
+          "a": "Yes: allow 8 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-nieulle-sur-seudre",
+    "name": "Nieulle-sur-Seudre",
+    "postal": "17600",
+    "lat": 45.7969,
+    "lng": -1.0181,
+    "marennes": true,
+    "around": [
+      "Marennes",
+      "Saint-Just-Luzac",
+      "Le Gua",
+      "Saint-Sornin"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Nieulle-sur-Seudre (17600) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Nieulle-sur-Seudre, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Nieulle-sur-Seudre",
+      "lead": "Access Prestige Taxi dessert Nieulle-sur-Seudre et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 10 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Nieulle-sur-Seudre",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour les cabanes de la Seudre et les villages ostréicoles que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Marennes, Saint-Just-Luzac, Le Gua, Saint-Sornin"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Nieulle-sur-Seudre ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Nieulle-sur-Seudre ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Nieulle-sur-Seudre depuis Marennes ?",
+          "a": "Oui : comptez 10 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Nieulle-sur-Seudre (17600) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Nieulle-sur-Seudre, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Nieulle-sur-Seudre",
+      "lead": "Access Prestige Taxi serves Nieulle-sur-Seudre and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 10 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Nieulle-sur-Seudre",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the Seudre oyster huts and the shellfish villages or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Marennes, Saint-Just-Luzac, Le Gua, Saint-Sornin"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Nieulle-sur-Seudre?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Nieulle-sur-Seudre?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Nieulle-sur-Seudre from Marennes?",
+          "a": "Yes: allow 10 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-le-gua",
+    "name": "Le Gua",
+    "postal": "17600",
+    "lat": 45.75,
+    "lng": -0.9942,
+    "marennes": true,
+    "around": [
+      "Marennes",
+      "Nieulle-sur-Seudre",
+      "Saint-Sornin",
+      "Sablonceaux"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Le Gua (17600) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Le Gua, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Le Gua",
+      "lead": "Access Prestige Taxi dessert Le Gua et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 15 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Le Gua",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour le bourg, la vallée de la Seudre et l'accès rapide vers Royan que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Marennes, Nieulle-sur-Seudre, Saint-Sornin, Sablonceaux"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Le Gua ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Le Gua ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Le Gua depuis Marennes ?",
+          "a": "Oui : comptez 15 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Le Gua (17600) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Le Gua, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Le Gua",
+      "lead": "Access Prestige Taxi serves Le Gua and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 15 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Le Gua",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the village, the Seudre valley and the quick link towards Royan or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Marennes, Nieulle-sur-Seudre, Saint-Sornin, Sablonceaux"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Le Gua?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Le Gua?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Le Gua from Marennes?",
+          "a": "Yes: allow 15 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-saint-sornin",
+    "name": "Saint-Sornin",
+    "postal": "17600",
+    "lat": 45.8072,
+    "lng": -0.9908,
+    "marennes": true,
+    "around": [
+      "Marennes",
+      "Hiers-Brouage",
+      "Le Gua",
+      "Nieulle-sur-Seudre"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Saint-Sornin (17600) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Saint-Sornin, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Saint-Sornin",
+      "lead": "Access Prestige Taxi dessert Saint-Sornin et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 15 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Saint-Sornin",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour la tour de Broue et les marais de Brouage que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Marennes, Hiers-Brouage, Le Gua, Nieulle-sur-Seudre"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Saint-Sornin ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Saint-Sornin ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Saint-Sornin depuis Marennes ?",
+          "a": "Oui : comptez 15 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Saint-Sornin (17600) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Saint-Sornin, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Saint-Sornin",
+      "lead": "Access Prestige Taxi serves Saint-Sornin and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 15 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Saint-Sornin",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the Broue tower and the Brouage marshes or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Marennes, Hiers-Brouage, Le Gua, Nieulle-sur-Seudre"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Saint-Sornin?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Saint-Sornin?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Saint-Sornin from Marennes?",
+          "a": "Yes: allow 15 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-saint-agnant",
+    "name": "Saint-Agnant",
+    "postal": "17620",
+    "lat": 45.8853,
+    "lng": -0.9647,
+    "marennes": true,
+    "around": [
+      "Marennes",
+      "Rochefort",
+      "Moëze",
+      "Échillais"
+    ],
+    "fr": {
+      "metaTitle": "Taxi Saint-Agnant (17620) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à Saint-Agnant, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à Saint-Agnant",
+      "lead": "Access Prestige Taxi dessert Saint-Agnant et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 20 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît Saint-Agnant",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour le bourg, la zone d'activités et la route de Rochefort que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Marennes, Rochefort, Moëze, Échillais"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à Saint-Agnant ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à Saint-Agnant ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à Saint-Agnant depuis Marennes ?",
+          "a": "Oui : comptez 20 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi Saint-Agnant (17620) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in Saint-Agnant, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in Saint-Agnant",
+      "lead": "Access Prestige Taxi serves Saint-Agnant and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 20 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows Saint-Agnant",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the village, the business park and the Rochefort road or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Marennes, Rochefort, Moëze, Échillais"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in Saint-Agnant?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in Saint-Agnant?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to Saint-Agnant from Marennes?",
+          "a": "Yes: allow 20 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  },
+  {
+    "slug": "taxi-la-tremblade",
+    "name": "La Tremblade",
+    "postal": "17390",
+    "lat": 45.7692,
+    "lng": -1.1417,
+    "marennes": true,
+    "around": [
+      "Ronce-les-Bains",
+      "Arvert",
+      "Marennes",
+      "Étaules"
+    ],
+    "fr": {
+      "metaTitle": "Taxi La Tremblade (17390) — horaires et tarifs | Access Prestige Taxi",
+      "metaDescription": "Taxi à La Tremblade, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "h1": "Taxi à La Tremblade",
+      "lead": "Access Prestige Taxi dessert La Tremblade et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 25 minutes depuis Marennes.",
+      "sections": [
+        {
+          "h": "Un taxi qui connaît La Tremblade",
+          "p": "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour Ronce-les-Bains, la forêt de la Coubre et les plages que pour un rendez-vous, un train ou un avion. Nos chauffeurs circulent ici toute l'année, saison estivale comprise."
+        },
+        {
+          "h": "Horaires et tarifs",
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+        },
+        {
+          "h": "Transferts, santé et groupes",
+          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+        }
+      ],
+      "bullets": [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Ronce-les-Bains, Arvert, Marennes, Étaules"
+      ],
+      "faq": [
+        {
+          "q": "Quels sont vos horaires à La Tremblade ?",
+          "a": "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous."
+        },
+        {
+          "q": "Combien coûte un taxi à La Tremblade ?",
+          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+        },
+        {
+          "q": "Venez-vous à La Tremblade depuis Marennes ?",
+          "a": "Oui : comptez 25 minutes depuis Marennes. Nous desservons aussi l'île d'Oléron, Rochefort, Royan et La Rochelle, ainsi que toutes les longues distances en France et en Europe."
+        }
+      ]
+    },
+    "en": {
+      "metaTitle": "Taxi La Tremblade (17390) — hours and fares | Access Prestige Taxi",
+      "metaDescription": "Taxi in La Tremblade, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "h1": "Taxi in La Tremblade",
+      "lead": "Access Prestige Taxi serves La Tremblade and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 25 minutes from Marennes.",
+      "sections": [
+        {
+          "h": "A driver who knows La Tremblade",
+          "p": "We pick you up at your address, hotel, campsite or harbour, whether you are heading to Ronce-les-Bains, the Coubre forest and the beaches or to an appointment, a train or a flight. Our drivers work here all year round, summer season included."
+        },
+        {
+          "h": "Opening hours and fares",
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+        },
+        {
+          "h": "Transfers, healthcare and groups",
+          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+        }
+      ],
+      "bullets": [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Ronce-les-Bains, Arvert, Marennes, Étaules"
+      ],
+      "faq": [
+        {
+          "q": "What are your opening hours in La Tremblade?",
+          "a": "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment."
+        },
+        {
+          "q": "How much does a taxi cost in La Tremblade?",
+          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+        },
+        {
+          "q": "Do you drive to La Tremblade from Marennes?",
+          "a": "Yes: allow 25 minutes from Marennes. We also serve Oléron island, Rochefort, Royan and La Rochelle, plus long-distance trips across France and Europe."
+        }
+      ]
+    }
+  }
 ];
 
 export function getVille(slug: string) {
