@@ -10,10 +10,10 @@ import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 const URL = `${SITE}/taxi-charente-maritime`;
 const TITLE_FR = "Taxi Charente-Maritime : Marennes, Oléron | Access Prestige Taxi";
 const DESC_FR =
-  "Taxi en Charente-Maritime : Marennes, île d'Oléron, Rochefort, La Rochelle, Royan, Saintes. 5j/7 de 8h à 20h, tarifs officiels. Réservation immédiate.";
+  "Taxi en Charente-Maritime : taxi Marennes, taxi île d'Oléron (Le Château, Saint-Trojan, Saint-Pierre), Rochefort, La Rochelle, Royan, Saintes. 5j/7 8h-20h, tarifs officiels.";
 const TITLE_EN = "Taxi Charente-Maritime: Marennes, Oléron | Access Prestige Taxi";
 const DESC_EN =
-  "Taxi in Charente-Maritime: Marennes, Oléron island, Rochefort, La Rochelle, Royan, Saintes. 5 days a week, 8am-8pm, official fares. Book in seconds.";
+  "Taxi in Charente-Maritime: taxi Marennes, taxi Oléron island (Le Château, Saint-Trojan, Saint-Pierre), Rochefort, La Rochelle, Royan. 5 days a week, 8am-8pm, official fares.";
 
 export const Route = createFileRoute("/taxi-charente-maritime")({
   head: ({ match }) => ({
