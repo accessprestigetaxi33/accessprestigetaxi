@@ -211,7 +211,14 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+            <Link
+              to="/faq"
+              className="mt-4 inline-block touch-manipulation text-sm font-semibold text-primary underline underline-offset-4 [-webkit-tap-highlight-color:transparent] hover:opacity-90"
+            >
+              FAQ
+            </Link>
           </div>
+
 
           {/* CONTACT */}
           <div>
