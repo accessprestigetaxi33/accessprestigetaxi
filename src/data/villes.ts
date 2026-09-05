@@ -935,7 +935,6 @@ export const VILLES: Ville[] = [
       ],
     },
   },
-,
   {
     "slug": "taxi-bourcefranc-le-chapus",
     "name": "Bourcefranc-le-Chapus",
