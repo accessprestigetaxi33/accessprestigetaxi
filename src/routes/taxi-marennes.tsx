@@ -17,7 +17,16 @@ const DESC_EN =
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["taxi Marennes horaires", "tarif taxi Marennes", "taxi Marennes Oléron"]),
+      keywordsMeta([
+        "taxi Marennes horaires",
+        "tarif taxi Marennes",
+        "taxi Marennes Oléron",
+        "réserver taxi Marennes",
+        "taxi Marennes Rochefort",
+        "taxi Marennes La Rochelle",
+        "taxi Marennes Brouage",
+        "chauffeur privé Charente-Maritime",
+      ]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
       { property: "og:title", content: TITLE_FR },
