@@ -7,17 +7,26 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
 const URL = `${SITE}/taxi-marennes`;
-const TITLE_FR = "Taxi à Marennes : horaires, tarifs et zone d'intervention | Access Prestige Taxi";
+const TITLE_FR = "Taxi Marennes : horaires, tarifs | Access Prestige Taxi";
 const DESC_FR =
-  "Taxi privé basé à Marennes : 5j/7 de 8h à 20h, tarifs officiels, île d'Oléron, Rochefort, La Rochelle. Réservation en ligne immédiate.";
-const TITLE_EN = "Taxi in Marennes: hours, fares and service area | Access Prestige Taxi";
+  "Taxi à Marennes (Charente-Maritime) : 5j/7 de 8h à 20h, tarifs officiels, île d'Oléron, Brouage, Rochefort, La Rochelle. Réservation immédiate.";
+const TITLE_EN = "Taxi Marennes: hours and fares | Access Prestige Taxi";
 const DESC_EN =
-  "Private taxi based in Marennes: 5 days a week, 8am-8pm, official fares, Oléron island, Rochefort, La Rochelle. Book online in seconds.";
+  "Taxi in Marennes (Charente-Maritime): 5 days a week, 8am-8pm, official fares, Oléron island, Brouage, Rochefort, La Rochelle. Book in seconds.";
 
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["taxi Marennes horaires", "tarif taxi Marennes", "taxi Marennes Oléron"]),
+      keywordsMeta([
+        "taxi Marennes horaires",
+        "tarif taxi Marennes",
+        "taxi Marennes Oléron",
+        "réserver taxi Marennes",
+        "taxi Marennes Rochefort",
+        "taxi Marennes La Rochelle",
+        "taxi Marennes Brouage",
+        "chauffeur privé Charente-Maritime",
+      ]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
       { property: "og:title", content: TITLE_FR },
@@ -185,6 +194,37 @@ function TaxiMarennesPage() {
           "La Rochelle",
           "Charente-Maritime",
         ].map((name) => ({ "@type": "City", name })),
+        openingHoursSpecification: [
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "20:00",
+          },
+        ],
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: isEn ? "Taxi services in Marennes" : "Prestations taxi à Marennes",
+          itemListElement: [
+            "Trajets locaux et toutes distances",
+            "Transport médical conventionné",
+            "Transferts gares et aéroports",
+            "Transport de groupe (jusqu'à 7 passagers)",
+          ].map((name) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name },
+          })),
+        },
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${URL}#page`,
+        url: URL,
+        name: isEn ? TITLE_EN : TITLE_FR,
+        description: isEn ? DESC_EN : DESC_FR,
+        inLanguage: isEn ? "en" : "fr",
+        isPartOf: { "@type": "WebSite", name: "Access Prestige Taxi", url: SITE },
+        about: { "@id": `${URL}#service` },
       },
       {
         "@type": "BreadcrumbList",
