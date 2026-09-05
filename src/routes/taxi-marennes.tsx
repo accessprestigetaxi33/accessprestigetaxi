@@ -7,12 +7,12 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
 const URL = `${SITE}/taxi-marennes`;
-const TITLE_FR = "Taxi à Marennes : horaires, tarifs et zone d'intervention | Access Prestige Taxi";
+const TITLE_FR = "Taxi Marennes : horaires, tarifs | Access Prestige Taxi";
 const DESC_FR =
-  "Taxi privé basé à Marennes : 5j/7 de 8h à 20h, tarifs officiels, île d'Oléron, Rochefort, La Rochelle. Réservation en ligne immédiate.";
-const TITLE_EN = "Taxi in Marennes: hours, fares and service area | Access Prestige Taxi";
+  "Taxi à Marennes (Charente-Maritime) : 5j/7 de 8h à 20h, tarifs officiels, île d'Oléron, Brouage, Rochefort, La Rochelle. Réservation immédiate.";
+const TITLE_EN = "Taxi Marennes: hours and fares | Access Prestige Taxi";
 const DESC_EN =
-  "Private taxi based in Marennes: 5 days a week, 8am-8pm, official fares, Oléron island, Rochefort, La Rochelle. Book online in seconds.";
+  "Taxi in Marennes (Charente-Maritime): 5 days a week, 8am-8pm, official fares, Oléron island, Brouage, Rochefort, La Rochelle. Book in seconds.";
 
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
