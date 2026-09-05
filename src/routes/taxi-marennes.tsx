@@ -352,6 +352,11 @@ function TaxiMarennesPage() {
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-sm">
+          <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            {isEn ? "Looking for a taxi on Oléron island?" : "Vous cherchez un taxi sur l'île d'Oléron ?"}
+          </Link>
+        </p>
       </section>
     </div>
   );
