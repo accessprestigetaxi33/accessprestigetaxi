@@ -10,10 +10,10 @@ import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 const URL = `${SITE}/taxi-charente-maritime`;
 const TITLE_FR = "Taxi Charente-Maritime : Marennes, Oléron | Access Prestige Taxi";
 const DESC_FR =
-  "Taxi en Charente-Maritime : Marennes, île d'Oléron, Rochefort, La Rochelle, Royan, Saintes. 5j/7 de 8h à 20h, tarifs officiels. Réservation immédiate.";
+  "Taxi en Charente-Maritime : taxi Marennes, taxi île d'Oléron (Le Château, Saint-Trojan, Saint-Pierre), Rochefort, La Rochelle, Royan, Saintes. 5j/7 8h-20h, tarifs officiels.";
 const TITLE_EN = "Taxi Charente-Maritime: Marennes, Oléron | Access Prestige Taxi";
 const DESC_EN =
-  "Taxi in Charente-Maritime: Marennes, Oléron island, Rochefort, La Rochelle, Royan, Saintes. 5 days a week, 8am-8pm, official fares. Book in seconds.";
+  "Taxi in Charente-Maritime: taxi Marennes, taxi Oléron island (Le Château, Saint-Trojan, Saint-Pierre), Rochefort, La Rochelle, Royan. 5 days a week, 8am-8pm, official fares.";
 
 export const Route = createFileRoute("/taxi-charente-maritime")({
   head: ({ match }) => ({
@@ -104,6 +104,13 @@ const COPY = {
       "Van Mercedes Classe V (Alain) — jusqu'à 7 passagers",
       "Sièges bébé et rehausseurs disponibles sur demande",
     ],
+    oleronT: "Taxi dans les communes de l'île d'Oléron",
+    oleronCommunes: [
+      { slug: "taxi-le-chateau-d-oleron", label: "Taxi Le Château-d'Oléron" },
+      { slug: "taxi-saint-trojan-les-bains", label: "Taxi Saint-Trojan-les-Bains" },
+      { slug: "taxi-dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
+      { slug: "taxi-saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
+    ],
     ctaT: "Réservez votre taxi en Charente-Maritime",
     ctaP: "En ligne en moins d'une minute, ou par téléphone auprès de l'un de nos deux chauffeurs.",
   },
@@ -162,6 +169,13 @@ const COPY = {
       "Fully electric Audi Q6 e-tron (Alain) — 4 passengers",
       "Mercedes V-Class van (Alain) — up to 7 passengers",
       "Baby seats and boosters available on request",
+    ],
+    oleronT: "Taxi in Oléron island villages",
+    oleronCommunes: [
+      { slug: "taxi-le-chateau-d-oleron", label: "Taxi Le Château-d'Oléron" },
+      { slug: "taxi-saint-trojan-les-bains", label: "Taxi Saint-Trojan-les-Bains" },
+      { slug: "taxi-dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
+      { slug: "taxi-saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
     ],
     ctaT: "Book your taxi in Charente-Maritime",
     ctaP: "Online in under a minute, or by phone with one of our two drivers.",
@@ -316,6 +330,25 @@ function TaxiCharenteMaritimePage() {
                 <ArrowRight className="h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-0.5" />
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{a.desc}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.oleronT}</h2>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {c.oleronCommunes.map((o) => (
+            <Link
+              key={o.slug}
+              to="/taxi/$ville"
+              params={{ ville: o.slug }}
+              className="group rounded-2xl border border-[#e0b866]/25 bg-card p-6 transition hover:border-primary"
+            >
+              <h3 className="flex items-center justify-between gap-2 font-display text-lg font-semibold">
+                {o.label}
+                <ArrowRight className="h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-0.5" />
+              </h3>
             </Link>
           ))}
         </div>

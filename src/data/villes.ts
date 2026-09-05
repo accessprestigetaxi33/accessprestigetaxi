@@ -556,10 +556,10 @@ export const VILLES: Ville[] = [
     island: true,
     around: ["Ors", "La Gaconnière", "Bourcefranc-le-Chapus", "Dolus-d'Oléron", "Saint-Trojan-les-Bains"],
     fr: {
-      metaTitle: "Taxi Le Château-d'Oléron (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaTitle: "Taxi Le Château-d'Oléron — horaires, tarifs | Access Prestige Taxi",
       metaDescription:
-        "Taxi à Le Château-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
-      h1: "Taxi à Le Château-d'Oléron",
+        "Taxi Le Château-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi Le Château-d'Oléron (île d'Oléron)",
       lead:
         "Access Prestige Taxi dessert Le Château-d'Oléron et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 15 minutes depuis Marennes par le viaduc.",
       sections: [
@@ -600,10 +600,10 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi Le Château-d'Oléron (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaTitle: "Taxi Le Château-d'Oléron — hours, fares | Access Prestige Taxi",
       metaDescription:
         "Taxi in Le Château-d'Oléron, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
-      h1: "Taxi in Le Château-d'Oléron",
+      h1: "Taxi Le Château-d'Oléron (Oléron island)",
       lead:
         "Access Prestige Taxi serves Le Château-d'Oléron and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 15 minutes from Marennes over the viaduct.",
       sections: [
@@ -653,10 +653,10 @@ export const VILLES: Ville[] = [
     island: true,
     around: ["Grand-Village-Plage", "Le Château-d'Oléron", "Dolus-d'Oléron", "La Giraudière"],
     fr: {
-      metaTitle: "Taxi Saint-Trojan-les-Bains (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaTitle: "Taxi Saint-Trojan-les-Bains — horaires, tarifs | Access Prestige Taxi",
       metaDescription:
-        "Taxi à Saint-Trojan-les-Bains, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
-      h1: "Taxi à Saint-Trojan-les-Bains",
+        "Taxi Saint-Trojan-les-Bains, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi Saint-Trojan-les-Bains (île d'Oléron)",
       lead:
         "Access Prestige Taxi dessert Saint-Trojan-les-Bains et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 25 minutes depuis Marennes.",
       sections: [
@@ -697,10 +697,10 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi Saint-Trojan-les-Bains (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaTitle: "Taxi Saint-Trojan-les-Bains — hours, fares | Access Prestige Taxi",
       metaDescription:
         "Taxi in Saint-Trojan-les-Bains, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
-      h1: "Taxi in Saint-Trojan-les-Bains",
+      h1: "Taxi Saint-Trojan-les-Bains (Oléron island)",
       lead:
         "Access Prestige Taxi serves Saint-Trojan-les-Bains and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 25 minutes from Marennes.",
       sections: [
@@ -750,10 +750,10 @@ export const VILLES: Ville[] = [
     island: true,
     around: ["La Rémigeasse", "Grand-Village-Plage", "Le Château-d'Oléron", "Saint-Pierre-d'Oléron"],
     fr: {
-      metaTitle: "Taxi Dolus-d'Oléron (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaTitle: "Taxi Dolus-d'Oléron — horaires, tarifs | Access Prestige Taxi",
       metaDescription:
-        "Taxi à Dolus-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
-      h1: "Taxi à Dolus-d'Oléron",
+        "Taxi Dolus-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi Dolus-d'Oléron (île d'Oléron)",
       lead:
         "Access Prestige Taxi dessert Dolus-d'Oléron et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 25 minutes depuis Marennes.",
       sections: [
@@ -794,10 +794,10 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi Dolus-d'Oléron (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaTitle: "Taxi Dolus-d'Oléron — hours, fares | Access Prestige Taxi",
       metaDescription:
         "Taxi in Dolus-d'Oléron, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
-      h1: "Taxi in Dolus-d'Oléron",
+      h1: "Taxi Dolus-d'Oléron (Oléron island)",
       lead:
         "Access Prestige Taxi serves Dolus-d'Oléron and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 25 minutes from Marennes.",
       sections: [
@@ -847,10 +847,10 @@ export const VILLES: Ville[] = [
     island: true,
     around: ["La Cotinière", "Sauzelle", "Dolus-d'Oléron", "Saint-Georges-d'Oléron"],
     fr: {
-      metaTitle: "Taxi Saint-Pierre-d'Oléron (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaTitle: "Taxi Saint-Pierre-d'Oléron — horaires, tarifs | Access Prestige Taxi",
       metaDescription:
-        "Taxi à Saint-Pierre-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
-      h1: "Taxi à Saint-Pierre-d'Oléron",
+        "Taxi Saint-Pierre-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi Saint-Pierre-d'Oléron (île d'Oléron)",
       lead:
         "Access Prestige Taxi dessert Saint-Pierre-d'Oléron et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 35 minutes depuis Marennes.",
       sections: [
@@ -891,10 +891,10 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi Saint-Pierre-d'Oléron (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaTitle: "Taxi Saint-Pierre-d'Oléron — hours, fares | Access Prestige Taxi",
       metaDescription:
         "Taxi in Saint-Pierre-d'Oléron, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
-      h1: "Taxi in Saint-Pierre-d'Oléron",
+      h1: "Taxi Saint-Pierre-d'Oléron (Oléron island)",
       lead:
         "Access Prestige Taxi serves Saint-Pierre-d'Oléron and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 35 minutes from Marennes.",
       sections: [
