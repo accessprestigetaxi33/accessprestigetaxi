@@ -194,6 +194,37 @@ function TaxiMarennesPage() {
           "La Rochelle",
           "Charente-Maritime",
         ].map((name) => ({ "@type": "City", name })),
+        openingHoursSpecification: [
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "20:00",
+          },
+        ],
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: isEn ? "Taxi services in Marennes" : "Prestations taxi à Marennes",
+          itemListElement: [
+            "Trajets locaux et toutes distances",
+            "Transport médical conventionné",
+            "Transferts gares et aéroports",
+            "Transport de groupe (jusqu'à 7 passagers)",
+          ].map((name) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name },
+          })),
+        },
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${URL}#page`,
+        url: URL,
+        name: isEn ? TITLE_EN : TITLE_FR,
+        description: isEn ? DESC_EN : DESC_FR,
+        inLanguage: isEn ? "en" : "fr",
+        isPartOf: { "@type": "WebSite", name: "Access Prestige Taxi", url: SITE },
+        about: { "@id": `${URL}#service` },
       },
       {
         "@type": "BreadcrumbList",
