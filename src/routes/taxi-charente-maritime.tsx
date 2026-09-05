@@ -104,6 +104,13 @@ const COPY = {
       "Van Mercedes Classe V (Alain) — jusqu'à 7 passagers",
       "Sièges bébé et rehausseurs disponibles sur demande",
     ],
+    oleronT: "Taxi dans les communes de l'île d'Oléron",
+    oleronCommunes: [
+      { slug: "taxi-le-chateau-d-oleron", label: "Taxi Le Château-d'Oléron" },
+      { slug: "taxi-saint-trojan-les-bains", label: "Taxi Saint-Trojan-les-Bains" },
+      { slug: "taxi-dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
+      { slug: "taxi-saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
+    ],
     ctaT: "Réservez votre taxi en Charente-Maritime",
     ctaP: "En ligne en moins d'une minute, ou par téléphone auprès de l'un de nos deux chauffeurs.",
   },
