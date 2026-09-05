@@ -335,6 +335,25 @@ function TaxiCharenteMaritimePage() {
         </div>
       </section>
 
+      <section className="mt-12">
+        <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.oleronT}</h2>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {c.oleronCommunes.map((o) => (
+            <Link
+              key={o.slug}
+              to="/taxi/$ville"
+              params={{ ville: o.slug }}
+              className="group rounded-2xl border border-[#e0b866]/25 bg-card p-6 transition hover:border-primary"
+            >
+              <h3 className="flex items-center justify-between gap-2 font-display text-lg font-semibold">
+                {o.label}
+                <ArrowRight className="h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-0.5" />
+              </h3>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <div className="mt-12 grid gap-5 sm:grid-cols-2">
         <section className="rounded-2xl border border-[#e0b866]/25 bg-card p-6">
           <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
