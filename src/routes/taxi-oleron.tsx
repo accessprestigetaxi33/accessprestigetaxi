@@ -6,26 +6,28 @@ import { socialImageMeta } from "@/lib/og";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
-const URL = `${SITE}/taxi-marennes`;
-const TITLE_FR = "Taxi Marennes : horaires, tarifs | Access Prestige Taxi";
+const URL = `${SITE}/taxi-oleron`;
+const TITLE_FR = "Taxi île d'Oléron : horaires, tarifs | Access Prestige Taxi";
 const DESC_FR =
-  "Taxi à Marennes (Charente-Maritime) : 5j/7 de 8h à 20h, tarifs officiels, île d'Oléron, Brouage, Rochefort, La Rochelle. Réservation immédiate.";
-const TITLE_EN = "Taxi Marennes: hours and fares | Access Prestige Taxi";
+  "Taxi sur l'île d'Oléron (Charente-Maritime) : 5j/7 de 8h à 20h, tarifs officiels, Le Château, Saint-Trojan, Dolus, Saint-Pierre. Réservation immédiate.";
+const TITLE_EN = "Taxi Oléron island: hours and fares | Access Prestige Taxi";
 const DESC_EN =
-  "Taxi in Marennes (Charente-Maritime): 5 days a week, 8am-8pm, official fares, Oléron island, Brouage, Rochefort, La Rochelle. Book in seconds.";
+  "Taxi on Oléron island (Charente-Maritime): 5 days a week, 8am-8pm, official fares, Le Château, Saint-Trojan, Dolus, Saint-Pierre. Book in seconds.";
 
-export const Route = createFileRoute("/taxi-marennes")({
+export const Route = createFileRoute("/taxi-oleron")({
   head: ({ match }) => ({
     meta: [
       keywordsMeta([
-        "taxi Marennes horaires",
-        "tarif taxi Marennes",
+        "taxi île d'Oléron",
+        "taxi Oléron",
+        "taxi Le Château-d'Oléron",
+        "taxi Saint-Trojan-les-Bains",
+        "taxi Dolus-d'Oléron",
+        "taxi Saint-Pierre-d'Oléron",
+        "taxi Saint-Georges-d'Oléron",
+        "réserver taxi Oléron",
+        "tarif taxi Oléron",
         "taxi Marennes Oléron",
-        "réserver taxi Marennes",
-        "taxi Marennes Rochefort",
-        "taxi Marennes La Rochelle",
-        "taxi Marennes Brouage",
-        "chauffeur privé Charente-Maritime",
       ]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
@@ -40,17 +42,17 @@ export const Route = createFileRoute("/taxi-marennes")({
       { name: "twitter:description", content: DESC_FR },
       ...socialImageMeta(TITLE_FR),
     ],
-    links: seoLinks("/taxi-marennes", match.search),
+    links: seoLinks("/taxi-oleron", match.search),
   }),
-  component: TaxiMarennesPage,
+  component: TaxiOleronPage,
 });
 
 const COPY = {
   fr: {
-    eyebrow: "Marennes · Charente-Maritime",
-    h1: "Taxi à Marennes",
+    eyebrow: "Île d'Oléron · Charente-Maritime",
+    h1: "Taxi sur l'île d'Oléron",
     lead:
-      "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime : île d'Oléron, Bourcefranc-le-Chapus, Rochefort, La Rochelle et toutes distances.",
+      "Votre chauffeur privé sur l'île d'Oléron, au départ de Marennes : Le Château-d'Oléron, Saint-Trojan-les-Bains, Dolus-d'Oléron, Saint-Pierre-d'Oléron, Saint-Georges-d'Oléron et toutes les communes de l'île.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -71,15 +73,15 @@ const COPY = {
     priceNote:
       "* Tarifs officiels taxi. L'estimation ne prend pas en compte bouchons et incidents : seul le compteur fait foi.",
     zoneT: "Zone d'intervention",
-    zoneLead: "Nous intervenons au départ de Marennes vers toute la Charente-Maritime :",
+    zoneLead: "Nous intervenons sur toute l'île d'Oléron et au départ de l'île :",
     zones: [
-      "Marennes-Hiers-Brouage",
-      "Île d'Oléron (Le Château, Saint-Pierre, Saint-Trojan, Dolus…)",
-      "Bourcefranc-le-Chapus",
-      "Rochefort",
-      "La Rochelle",
-      "Royan, Saintes, Saujon",
-      "Gares et aéroports : La Rochelle, Bordeaux, Nantes, Poitiers",
+      "Le Château-d'Oléron et son port ostréicole",
+      "Saint-Trojan-les-Bains",
+      "Dolus-d'Oléron et La Brée-les-Bains",
+      "Saint-Pierre-d'Oléron et La Cotinière",
+      "Saint-Georges-d'Oléron, Boyardville",
+      "Le Douhet, Saint-Denis-d'Oléron, phare de Chassiron",
+      "Viaduc de Martrou — liaison Marennes et continent",
     ],
     fleetT: "Nos véhicules",
     fleet: [
@@ -88,15 +90,16 @@ const COPY = {
       "Van Mercedes Classe V (Alain) — jusqu'à 7 passagers",
       "Sièges bébé et rehausseurs disponibles sur demande",
     ],
-    ctaT: "Réservez votre taxi à Marennes",
+    ctaT: "Réservez votre taxi sur l'île d'Oléron",
     ctaP: "En ligne en moins d'une minute, ou par téléphone auprès de l'un de nos deux chauffeurs.",
-    guides: "Nos guides Marennes & Oléron",
+    guides: "Nos guides Oléron & Marennes",
+    alsoTaxi: "Vous cherchez un taxi à Marennes ?",
   },
   en: {
-    eyebrow: "Marennes · Charente-Maritime",
-    h1: "Taxi in Marennes",
+    eyebrow: "Oléron island · Charente-Maritime",
+    h1: "Taxi on Oléron island",
     lead:
-      "Your private driver based in Marennes, serving the whole Charente-Maritime area: Oléron island, Bourcefranc-le-Chapus, Rochefort, La Rochelle and any distance.",
+      "Your private driver on Oléron island, departing from Marennes: Le Château-d'Oléron, Saint-Trojan-les-Bains, Dolus-d'Oléron, Saint-Pierre-d'Oléron, Saint-Georges-d'Oléron and every village on the island.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",
@@ -117,15 +120,15 @@ const COPY = {
     priceNote:
       "* Official taxi fares. Estimates exclude traffic jams and incidents: only the taximeter is binding.",
     zoneT: "Service area",
-    zoneLead: "We drive from Marennes across the whole Charente-Maritime:",
+    zoneLead: "We drive across the whole Oléron island and from the island:",
     zones: [
-      "Marennes-Hiers-Brouage",
-      "Oléron island (Le Château, Saint-Pierre, Saint-Trojan, Dolus…)",
-      "Bourcefranc-le-Chapus",
-      "Rochefort",
-      "La Rochelle",
-      "Royan, Saintes, Saujon",
-      "Stations and airports: La Rochelle, Bordeaux, Nantes, Poitiers",
+      "Le Château-d'Oléron and its oyster port",
+      "Saint-Trojan-les-Bains",
+      "Dolus-d'Oléron and La Brée-les-Bains",
+      "Saint-Pierre-d'Oléron and La Cotinière",
+      "Saint-Georges-d'Oléron, Boyardville",
+      "Le Douhet, Saint-Denis-d'Oléron, Chassiron lighthouse",
+      "Martrou viaduct — link to Marennes and the mainland",
     ],
     fleetT: "Our vehicles",
     fleet: [
@@ -134,19 +137,20 @@ const COPY = {
       "Mercedes V-Class van (Alain) — up to 7 passengers",
       "Baby seats and boosters available on request",
     ],
-    ctaT: "Book your taxi in Marennes",
+    ctaT: "Book your taxi on Oléron island",
     ctaP: "Online in under a minute, or by phone with one of our two drivers.",
-    guides: "Our Marennes & Oléron guides",
+    guides: "Our Oléron & Marennes guides",
+    alsoTaxi: "Looking for a taxi in Marennes?",
   },
 } as const;
 
 const GUIDE_LINKS = [
-  { slug: "taxi-a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
   { slug: "rejoindre-l-ile-d-oleron-en-taxi", fr: "Rejoindre l'île d'Oléron en taxi", en: "Reaching Oléron island by taxi" },
+  { slug: "taxi-a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
   { slug: "visiter-brouage-et-le-bassin-de-marennes-oleron", fr: "Visiter Brouage et le bassin de Marennes-Oléron", en: "Visiting Brouage and the Marennes-Oléron basin" },
 ] as const;
 
-function TaxiMarennesPage() {
+function TaxiOleronPage() {
   const { lang } = useI18n();
   const isEn = lang === "en";
   const c = COPY[isEn ? "en" : "fr"];
@@ -157,7 +161,7 @@ function TaxiMarennesPage() {
       {
         "@type": "TaxiService",
         "@id": `${URL}#service`,
-        name: "Access Prestige Taxi — Marennes",
+        name: "Access Prestige Taxi — Île d'Oléron",
         url: URL,
         description: isEn ? DESC_EN : DESC_FR,
         priceRange: "€€",
@@ -176,7 +180,7 @@ function TaxiMarennesPage() {
             addressRegion: "Charente-Maritime",
             addressCountry: "FR",
           },
-          geo: { "@type": "GeoCoordinates", latitude: 45.8231, longitude: -1.1055 },
+          geo: { "@type": "GeoCoordinates", latitude: 45.9, longitude: -1.2 },
           openingHoursSpecification: [
             {
               "@type": "OpeningHoursSpecification",
@@ -187,11 +191,13 @@ function TaxiMarennesPage() {
           ],
         },
         areaServed: [
-          "Marennes",
           "Île d'Oléron",
-          "Bourcefranc-le-Chapus",
-          "Rochefort",
-          "La Rochelle",
+          "Le Château-d'Oléron",
+          "Saint-Trojan-les-Bains",
+          "Dolus-d'Oléron",
+          "Saint-Pierre-d'Oléron",
+          "Saint-Georges-d'Oléron",
+          "Marennes",
           "Charente-Maritime",
         ].map((name) => ({ "@type": "City", name })),
         openingHoursSpecification: [
@@ -204,9 +210,9 @@ function TaxiMarennesPage() {
         ],
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          name: isEn ? "Taxi services in Marennes" : "Prestations taxi à Marennes",
+          name: isEn ? "Taxi services on Oléron island" : "Prestations taxi sur l'île d'Oléron",
           itemListElement: [
-            "Trajets locaux et toutes distances",
+            "Trajets sur l'île et toutes distances",
             "Transport médical conventionné",
             "Transferts gares et aéroports",
             "Transport de groupe (jusqu'à 7 passagers)",
@@ -353,8 +359,8 @@ function TaxiMarennesPage() {
           ))}
         </ul>
         <p className="mt-4 text-sm">
-          <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
-            {isEn ? "Looking for a taxi on Oléron island?" : "Vous cherchez un taxi sur l'île d'Oléron ?"}
+          <Link to="/taxi-marennes" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            {c.alsoTaxi}
           </Link>
         </p>
       </section>
