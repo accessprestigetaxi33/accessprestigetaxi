@@ -1,11 +1,12 @@
 import { socialImageMeta } from "@/lib/og";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { ArrowRight, Check, HelpCircle, MapPin, Phone } from "lucide-react";
+import { ArrowRight, Check, Clock, Euro, HelpCircle, MapPin, Phone } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { VILLES, getVille } from "@/data/villes";
 import { DRIVERS } from "@/data/drivers";
 import { LocalReviews } from "@/components/LocalReviews";
+import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const SITE = "https://www.accessprestigetaxi.fr";
 
@@ -60,6 +61,14 @@ const UI = {
     faq: "Questions fréquentes",
     around: "Communes desservies",
     other: "Autres villes",
+    hoursT: "Horaires",
+    hours: "5 jours sur 7, de 8h à 20h — réservation en ligne 24h/24, longues distances sur rendez-vous.",
+    pricesT: "Tarifs",
+    prices: "Prise en charge 2,83 € · 2,16 €/km en journée · 3,24 €/km la nuit, le dimanche et les jours fériés. Devis gratuit.",
+    priceNote: "* Tarif indicatif hors bouchons et incidents : seul le compteur du taxi fait foi.",
+    island: "Voir la page Taxi île d'Oléron",
+    dept: "Voir la page Taxi Charente-Maritime",
+    faqLink: "Tarifs, compteur et réservation : consultez notre FAQ",
   },
   en: {
     eyebrow: "Charente-Maritime",
@@ -70,6 +79,14 @@ const UI = {
     faq: "Frequently asked questions",
     around: "Towns and villages served",
     other: "Other towns",
+    hoursT: "Opening hours",
+    hours: "5 days a week, 8am to 8pm — online booking 24/7, long distances by appointment.",
+    pricesT: "Fares",
+    prices: "€2.83 pick-up · €2.16/km daytime · €3.24/km at night, on Sundays and public holidays. Free quote.",
+    priceNote: "* Indicative fare, excluding traffic and incidents: only the taximeter is binding.",
+    island: "See the Taxi Oléron island page",
+    dept: "See the Taxi Charente-Maritime page",
+    faqLink: "Fares, meter and booking: read our FAQ",
   },
 } as const;
 
@@ -119,6 +136,20 @@ function VillePage() {
             addressCountry: "FR",
           },
           geo: { "@type": "GeoCoordinates", latitude: ville.lat, longitude: ville.lng },
+          hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `Access Prestige Taxi ${ville.name} ${ville.postal}`,
+          )}`,
+          priceRange: "€€",
+          currenciesAccepted: "EUR",
+          paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant",
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              opens: "08:00",
+              closes: "20:00",
+            },
+          ],
         },
         areaServed: [
           { "@type": "City", name: ville.name },
@@ -193,6 +224,22 @@ function VillePage() {
         </ul>
       </section>
 
+      <div className="mt-12 grid gap-5 sm:grid-cols-2">
+        <section className="rounded-2xl border border-[#e0b866]/25 bg-card p-6">
+          <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
+            <Clock className="h-5 w-5 text-primary" /> {u.hoursT}
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{u.hours}</p>
+        </section>
+        <section className="rounded-2xl border border-[#e0b866]/25 bg-card p-6">
+          <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
+            <Euro className="h-5 w-5 text-primary" /> {u.pricesT}
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{u.prices}</p>
+          <p className="mt-3 text-xs leading-relaxed text-destructive">{u.priceNote}</p>
+        </section>
+      </div>
+
       <section className="mt-12">
         <h2 className="font-display text-xl font-semibold sm:text-2xl">{u.around}</h2>
         <p className="mt-3 text-sm text-muted-foreground">{[ville.name, ...ville.around].join(" · ")}</p>
@@ -210,6 +257,33 @@ function VillePage() {
             </details>
           ))}
         </div>
+      </section>
+
+      <LocalBusinessCard
+        locality={ville.name}
+        postalCode={ville.postal}
+        latitude={ville.lat}
+        longitude={ville.lng}
+      />
+
+      <section className="mt-10 space-y-2">
+        {ville.island ? (
+          <p className="text-sm">
+            <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+              {u.island}
+            </Link>
+          </p>
+        ) : null}
+        <p className="text-sm">
+          <Link to="/taxi-charente-maritime" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            {u.dept}
+          </Link>
+        </p>
+        <p className="text-sm">
+          <Link to="/faq" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            {u.faqLink}
+          </Link>
+        </p>
       </section>
 
       <LocalReviews villeName={ville.name} serviceId={`${url}#service`} />

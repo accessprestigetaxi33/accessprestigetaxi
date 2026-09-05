@@ -151,6 +151,13 @@ const GUIDE_LINKS = [
   { slug: "visiter-brouage-et-le-bassin-de-marennes-oleron", fr: "Visiter Brouage et le bassin de Marennes-Oléron", en: "Visiting Brouage and the Marennes-Oléron basin" },
 ] as const;
 
+const ISLAND_TOWNS = [
+  { slug: "taxi-le-chateau-d-oleron", name: "Le Château-d'Oléron" },
+  { slug: "taxi-saint-trojan-les-bains", name: "Saint-Trojan-les-Bains" },
+  { slug: "taxi-dolus-d-oleron", name: "Dolus-d'Oléron" },
+  { slug: "taxi-saint-pierre-d-oleron", name: "Saint-Pierre-d'Oléron" },
+] as const;
+
 function TaxiOleronPage() {
   const { lang } = useI18n();
   const isEn = lang === "en";
@@ -348,6 +355,24 @@ function TaxiOleronPage() {
         >
           {c.book} <ArrowRight className="h-4 w-4" />
         </Link>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="font-display text-xl font-semibold sm:text-2xl">
+          {isEn ? "Taxi by town on Oléron island" : "Taxi par commune sur l'île d'Oléron"}
+        </h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {ISLAND_TOWNS.map((t) => (
+            <Link
+              key={t.slug}
+              to="/taxi/$ville"
+              params={{ ville: t.slug }}
+              className="rounded-xl border border-[#e0b866]/25 bg-card px-4 py-3 text-sm font-semibold transition hover:border-primary"
+            >
+              {isEn ? `Taxi in ${t.name}` : `Taxi ${t.name}`}
+            </Link>
+          ))}
+        </div>
       </section>
 
       <LocalBusinessCard locality="Le Château-d'Oléron" postalCode="17480" latitude={45.8886} longitude={-1.1958} />

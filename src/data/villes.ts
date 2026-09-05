@@ -20,6 +20,8 @@ export type Ville = {
   lng: number;
   /** Communes desservies autour de la ville (maillage local). */
   around: string[];
+  /** Commune de l'île d'Oléron (maillage vers la page /taxi-oleron). */
+  island?: boolean;
   fr: VilleCopy;
   en: VilleCopy;
 };
@@ -539,6 +541,394 @@ export const VILLES: Ville[] = [
         {
           q: "Do you have a vehicle for a group?",
           a: "Yes, the 8-seat Mercedes V-Class van is available for families, groups and business trips with bulky luggage.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "taxi-le-chateau-d-oleron",
+    name: "Le Château-d'Oléron",
+    postal: "17480",
+    lat: 45.8869,
+    lng: -1.1969,
+    island: true,
+    around: ["Ors", "La Gaconnière", "Bourcefranc-le-Chapus", "Dolus-d'Oléron", "Saint-Trojan-les-Bains"],
+    fr: {
+      metaTitle: "Taxi Le Château-d'Oléron (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaDescription:
+        "Taxi à Le Château-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi à Le Château-d'Oléron",
+      lead:
+        "Access Prestige Taxi dessert Le Château-d'Oléron et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 15 minutes depuis Marennes par le viaduc.",
+      sections: [
+        {
+          h: "Un taxi qui connaît Le Château-d'Oléron",
+          p: "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour la citadelle et le port aux cabanes colorées que pour un rendez-vous, un train ou un avion. Nos chauffeurs vivent la circulation de l'île toute l'année, y compris en pleine saison.",
+        },
+        {
+          h: "Horaires et tarifs",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+        },
+        {
+          h: "Transferts, santé et groupes",
+          p: "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée sur l'île.",
+        },
+      ],
+      bullets: [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Ors, La Gaconnière, Bourcefranc-le-Chapus, Dolus-d'Oléron, Saint-Trojan-les-Bains",
+      ],
+      faq: [
+        {
+          q: "Quels sont vos horaires à Le Château-d'Oléron ?",
+          a: "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous.",
+        },
+        {
+          q: "Combien coûte un taxi à Le Château-d'Oléron ?",
+          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+        },
+        {
+          q: "Desservez-vous Le Château-d'Oléron depuis le continent ?",
+          a: "Oui : 15 minutes depuis Marennes par le viaduc, environ 45 minutes depuis Rochefort et 1 h 15 depuis La Rochelle. Le viaduc est gratuit, aucun péage n'est ajouté à votre course.",
+        },
+      ],
+    },
+    en: {
+      metaTitle: "Taxi Le Château-d'Oléron (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaDescription:
+        "Taxi in Le Château-d'Oléron, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      h1: "Taxi in Le Château-d'Oléron",
+      lead:
+        "Access Prestige Taxi serves Le Château-d'Oléron and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 15 minutes from Marennes over the viaduct.",
+      sections: [
+        {
+          h: "A driver who knows Le Château-d'Oléron",
+          p: "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the citadel and the colourful oyster huts harbour or to an appointment, a train or a flight. Our drivers deal with island traffic all year round, peak season included.",
+        },
+        {
+          h: "Opening hours and fares",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+        },
+        {
+          h: "Transfers, healthcare and groups",
+          p: "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire on the island.",
+        },
+      ],
+      bullets: [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Ors, La Gaconnière, Bourcefranc-le-Chapus, Dolus-d'Oléron, Saint-Trojan-les-Bains",
+      ],
+      faq: [
+        {
+          q: "What are your opening hours in Le Château-d'Oléron?",
+          a: "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment.",
+        },
+        {
+          q: "How much does a taxi cost in Le Château-d'Oléron?",
+          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+        },
+        {
+          q: "Do you drive to Le Château-d'Oléron from the mainland?",
+          a: "Yes: 15 minutes from Marennes over the viaduct, around 45 minutes from Rochefort and 1h15 from La Rochelle. The viaduct is free, so no toll is added to your fare.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "taxi-saint-trojan-les-bains",
+    name: "Saint-Trojan-les-Bains",
+    postal: "17370",
+    lat: 45.8383,
+    lng: -1.205,
+    island: true,
+    around: ["Grand-Village-Plage", "Le Château-d'Oléron", "Dolus-d'Oléron", "La Giraudière"],
+    fr: {
+      metaTitle: "Taxi Saint-Trojan-les-Bains (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaDescription:
+        "Taxi à Saint-Trojan-les-Bains, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi à Saint-Trojan-les-Bains",
+      lead:
+        "Access Prestige Taxi dessert Saint-Trojan-les-Bains et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 25 minutes depuis Marennes.",
+      sections: [
+        {
+          h: "Un taxi qui connaît Saint-Trojan-les-Bains",
+          p: "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour la forêt domaniale, la plage de Gatseau et le petit train que pour un rendez-vous, un train ou un avion. Nos chauffeurs vivent la circulation de l'île toute l'année, y compris en pleine saison.",
+        },
+        {
+          h: "Horaires et tarifs",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+        },
+        {
+          h: "Transferts, santé et groupes",
+          p: "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée sur l'île.",
+        },
+      ],
+      bullets: [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : Grand-Village-Plage, Le Château-d'Oléron, Dolus-d'Oléron, La Giraudière",
+      ],
+      faq: [
+        {
+          q: "Quels sont vos horaires à Saint-Trojan-les-Bains ?",
+          a: "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous.",
+        },
+        {
+          q: "Combien coûte un taxi à Saint-Trojan-les-Bains ?",
+          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+        },
+        {
+          q: "Desservez-vous Saint-Trojan-les-Bains depuis le continent ?",
+          a: "Oui : 25 minutes depuis Marennes, environ 45 minutes depuis Rochefort et 1 h 15 depuis La Rochelle. Le viaduc est gratuit, aucun péage n'est ajouté à votre course.",
+        },
+      ],
+    },
+    en: {
+      metaTitle: "Taxi Saint-Trojan-les-Bains (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaDescription:
+        "Taxi in Saint-Trojan-les-Bains, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      h1: "Taxi in Saint-Trojan-les-Bains",
+      lead:
+        "Access Prestige Taxi serves Saint-Trojan-les-Bains and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 25 minutes from Marennes.",
+      sections: [
+        {
+          h: "A driver who knows Saint-Trojan-les-Bains",
+          p: "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the state forest, Gatseau beach and the little tourist train or to an appointment, a train or a flight. Our drivers deal with island traffic all year round, peak season included.",
+        },
+        {
+          h: "Opening hours and fares",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+        },
+        {
+          h: "Transfers, healthcare and groups",
+          p: "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire on the island.",
+        },
+      ],
+      bullets: [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: Grand-Village-Plage, Le Château-d'Oléron, Dolus-d'Oléron, La Giraudière",
+      ],
+      faq: [
+        {
+          q: "What are your opening hours in Saint-Trojan-les-Bains?",
+          a: "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment.",
+        },
+        {
+          q: "How much does a taxi cost in Saint-Trojan-les-Bains?",
+          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+        },
+        {
+          q: "Do you drive to Saint-Trojan-les-Bains from the mainland?",
+          a: "Yes: 25 minutes from Marennes, around 45 minutes from Rochefort and 1h15 from La Rochelle. The viaduct is free, so no toll is added to your fare.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "taxi-dolus-d-oleron",
+    name: "Dolus-d'Oléron",
+    postal: "17550",
+    lat: 45.9036,
+    lng: -1.2622,
+    island: true,
+    around: ["La Rémigeasse", "Grand-Village-Plage", "Le Château-d'Oléron", "Saint-Pierre-d'Oléron"],
+    fr: {
+      metaTitle: "Taxi Dolus-d'Oléron (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaDescription:
+        "Taxi à Dolus-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi à Dolus-d'Oléron",
+      lead:
+        "Access Prestige Taxi dessert Dolus-d'Oléron et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 25 minutes depuis Marennes.",
+      sections: [
+        {
+          h: "Un taxi qui connaît Dolus-d'Oléron",
+          p: "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour le marais aux oiseaux, la plage de la Rémigeasse et les marchés que pour un rendez-vous, un train ou un avion. Nos chauffeurs vivent la circulation de l'île toute l'année, y compris en pleine saison.",
+        },
+        {
+          h: "Horaires et tarifs",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+        },
+        {
+          h: "Transferts, santé et groupes",
+          p: "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée sur l'île.",
+        },
+      ],
+      bullets: [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : La Rémigeasse, Grand-Village-Plage, Le Château-d'Oléron, Saint-Pierre-d'Oléron",
+      ],
+      faq: [
+        {
+          q: "Quels sont vos horaires à Dolus-d'Oléron ?",
+          a: "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous.",
+        },
+        {
+          q: "Combien coûte un taxi à Dolus-d'Oléron ?",
+          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+        },
+        {
+          q: "Desservez-vous Dolus-d'Oléron depuis le continent ?",
+          a: "Oui : 25 minutes depuis Marennes, environ 45 minutes depuis Rochefort et 1 h 15 depuis La Rochelle. Le viaduc est gratuit, aucun péage n'est ajouté à votre course.",
+        },
+      ],
+    },
+    en: {
+      metaTitle: "Taxi Dolus-d'Oléron (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaDescription:
+        "Taxi in Dolus-d'Oléron, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      h1: "Taxi in Dolus-d'Oléron",
+      lead:
+        "Access Prestige Taxi serves Dolus-d'Oléron and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 25 minutes from Marennes.",
+      sections: [
+        {
+          h: "A driver who knows Dolus-d'Oléron",
+          p: "We pick you up at your address, hotel, campsite or harbour, whether you are heading to the bird marsh, La Rémigeasse beach and the local markets or to an appointment, a train or a flight. Our drivers deal with island traffic all year round, peak season included.",
+        },
+        {
+          h: "Opening hours and fares",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+        },
+        {
+          h: "Transfers, healthcare and groups",
+          p: "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire on the island.",
+        },
+      ],
+      bullets: [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: La Rémigeasse, Grand-Village-Plage, Le Château-d'Oléron, Saint-Pierre-d'Oléron",
+      ],
+      faq: [
+        {
+          q: "What are your opening hours in Dolus-d'Oléron?",
+          a: "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment.",
+        },
+        {
+          q: "How much does a taxi cost in Dolus-d'Oléron?",
+          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+        },
+        {
+          q: "Do you drive to Dolus-d'Oléron from the mainland?",
+          a: "Yes: 25 minutes from Marennes, around 45 minutes from Rochefort and 1h15 from La Rochelle. The viaduct is free, so no toll is added to your fare.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "taxi-saint-pierre-d-oleron",
+    name: "Saint-Pierre-d'Oléron",
+    postal: "17310",
+    lat: 45.9459,
+    lng: -1.3086,
+    island: true,
+    around: ["La Cotinière", "Sauzelle", "Dolus-d'Oléron", "Saint-Georges-d'Oléron"],
+    fr: {
+      metaTitle: "Taxi Saint-Pierre-d'Oléron (île d'Oléron) — horaires et tarifs | Access Prestige Taxi",
+      metaDescription:
+        "Taxi à Saint-Pierre-d'Oléron, île d'Oléron : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      h1: "Taxi à Saint-Pierre-d'Oléron",
+      lead:
+        "Access Prestige Taxi dessert Saint-Pierre-d'Oléron et toute l'île d'Oléron avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 35 minutes depuis Marennes.",
+      sections: [
+        {
+          h: "Un taxi qui connaît Saint-Pierre-d'Oléron",
+          p: "Nous vous prenons en charge à votre adresse, à l'hôtel, au camping ou au port, aussi bien pour le port de La Cotinière, le marché couvert et la lanterne des Morts que pour un rendez-vous, un train ou un avion. Nos chauffeurs vivent la circulation de l'île toute l'année, y compris en pleine saison.",
+        },
+        {
+          h: "Horaires et tarifs",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+        },
+        {
+          h: "Transferts, santé et groupes",
+          p: "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée sur l'île.",
+        },
+      ],
+      bullets: [
+        "5j/7 de 8h à 20h, réservation en ligne 24h/24",
+        "Tarifs taxi officiels, devis gratuit",
+        "Transport médical conventionné, fauteuil roulant possible",
+        "Van Mercedes Classe V jusqu'à 7 passagers",
+        "Sièges bébé et rehausseurs sans supplément",
+        "Communes desservies : La Cotinière, Sauzelle, Dolus-d'Oléron, Saint-Georges-d'Oléron",
+      ],
+      faq: [
+        {
+          q: "Quels sont vos horaires à Saint-Pierre-d'Oléron ?",
+          a: "Nous assurons les courses 5 jours sur 7, de 8h à 20h. La réservation en ligne est possible 24h/24 et les longues distances s'organisent sur rendez-vous.",
+        },
+        {
+          q: "Combien coûte un taxi à Saint-Pierre-d'Oléron ?",
+          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+        },
+        {
+          q: "Desservez-vous Saint-Pierre-d'Oléron depuis le continent ?",
+          a: "Oui : 35 minutes depuis Marennes, environ 45 minutes depuis Rochefort et 1 h 15 depuis La Rochelle. Le viaduc est gratuit, aucun péage n'est ajouté à votre course.",
+        },
+      ],
+    },
+    en: {
+      metaTitle: "Taxi Saint-Pierre-d'Oléron (Oléron island) — hours and fares | Access Prestige Taxi",
+      metaDescription:
+        "Taxi in Saint-Pierre-d'Oléron, Oléron island: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      h1: "Taxi in Saint-Pierre-d'Oléron",
+      lead:
+        "Access Prestige Taxi serves Saint-Pierre-d'Oléron and the whole of Oléron island with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 35 minutes from Marennes.",
+      sections: [
+        {
+          h: "A driver who knows Saint-Pierre-d'Oléron",
+          p: "We pick you up at your address, hotel, campsite or harbour, whether you are heading to La Cotinière fishing harbour, the covered market and the Lantern of the Dead or to an appointment, a train or a flight. Our drivers deal with island traffic all year round, peak season included.",
+        },
+        {
+          h: "Opening hours and fares",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+        },
+        {
+          h: "Transfers, healthcare and groups",
+          p: "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire on the island.",
+        },
+      ],
+      bullets: [
+        "5 days a week, 8am–8pm, online booking 24/7",
+        "Official taxi fares, free quote",
+        "Approved medical transport, wheelchair possible",
+        "Mercedes V-Class van for up to 7 passengers",
+        "Baby and booster seats at no extra cost",
+        "Areas served: La Cotinière, Sauzelle, Dolus-d'Oléron, Saint-Georges-d'Oléron",
+      ],
+      faq: [
+        {
+          q: "What are your opening hours in Saint-Pierre-d'Oléron?",
+          a: "We drive 5 days a week, from 8am to 8pm. Online booking is open 24/7 and long-distance trips are arranged by appointment.",
+        },
+        {
+          q: "How much does a taxi cost in Saint-Pierre-d'Oléron?",
+          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+        },
+        {
+          q: "Do you drive to Saint-Pierre-d'Oléron from the mainland?",
+          a: "Yes: 35 minutes from Marennes, around 45 minutes from Rochefort and 1h15 from La Rochelle. The viaduct is free, so no toll is added to your fare.",
         },
       ],
     },
