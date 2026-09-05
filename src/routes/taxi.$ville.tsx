@@ -67,6 +67,7 @@ const UI = {
     prices: "Prise en charge 2,83 € · 2,16 €/km en journée · 3,24 €/km la nuit, le dimanche et les jours fériés. Devis gratuit.",
     priceNote: "* Tarif indicatif hors bouchons et incidents : seul le compteur du taxi fait foi.",
     island: "Voir la page Taxi île d'Oléron",
+    marennes: "Voir la page Taxi Marennes",
     dept: "Voir la page Taxi Charente-Maritime",
     faqLink: "Tarifs, compteur et réservation : consultez notre FAQ",
   },
@@ -85,6 +86,7 @@ const UI = {
     prices: "€2.83 pick-up · €2.16/km daytime · €3.24/km at night, on Sundays and public holidays. Free quote.",
     priceNote: "* Indicative fare, excluding traffic and incidents: only the taximeter is binding.",
     island: "See the Taxi Oléron island page",
+    marennes: "See the Taxi Marennes page",
     dept: "See the Taxi Charente-Maritime page",
     faqLink: "Fares, meter and booking: read our FAQ",
   },
@@ -271,6 +273,13 @@ function VillePage() {
           <p className="text-sm">
             <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
               {u.island}
+            </Link>
+          </p>
+        ) : null}
+        {ville.marennes ? (
+          <p className="text-sm">
+            <Link to="/taxi-marennes" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+              {u.marennes}
             </Link>
           </p>
         ) : null}
