@@ -18,6 +18,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DevisRouteImport } from './routes/devis'
 import { Route as DiagnosticRouteImport } from './routes/diagnostic'
 import { Route as DriverRouteImport } from './routes/driver'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
@@ -115,6 +116,11 @@ const DiagnosticRoute = DiagnosticRouteImport.update({
 const DriverRoute = DriverRouteImport.update({
   id: '/driver',
   path: '/driver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
@@ -400,6 +406,7 @@ export interface FileRoutesByFullPath {
   '/devis': typeof DevisRouteWithChildren
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
+  '/faq': typeof FaqRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
@@ -464,6 +471,7 @@ export interface FileRoutesByTo {
   '/devis': typeof DevisRouteWithChildren
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
+  '/faq': typeof FaqRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
@@ -529,6 +537,7 @@ export interface FileRoutesById {
   '/devis': typeof DevisRouteWithChildren
   '/diagnostic': typeof DiagnosticRoute
   '/driver': typeof DriverRoute
+  '/faq': typeof FaqRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
   '/qr-generator': typeof QrGeneratorRoute
@@ -595,6 +604,7 @@ export interface FileRouteTypes {
     | '/devis'
     | '/diagnostic'
     | '/driver'
+    | '/faq'
     | '/mentions-legales'
     | '/notifications'
     | '/qr-generator'
@@ -659,6 +669,7 @@ export interface FileRouteTypes {
     | '/devis'
     | '/diagnostic'
     | '/driver'
+    | '/faq'
     | '/mentions-legales'
     | '/notifications'
     | '/qr-generator'
@@ -723,6 +734,7 @@ export interface FileRouteTypes {
     | '/devis'
     | '/diagnostic'
     | '/driver'
+    | '/faq'
     | '/mentions-legales'
     | '/notifications'
     | '/qr-generator'
@@ -788,6 +800,7 @@ export interface RootRouteChildren {
   DevisRoute: typeof DevisRouteWithChildren
   DiagnosticRoute: typeof DiagnosticRoute
   DriverRoute: typeof DriverRoute
+  FaqRoute: typeof FaqRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   NotificationsRoute: typeof NotificationsRoute
   QrGeneratorRoute: typeof QrGeneratorRoute
@@ -903,6 +916,13 @@ declare module '@tanstack/react-router' {
       path: '/driver'
       fullPath: '/driver'
       preLoaderRoute: typeof DriverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentions-legales': {
@@ -1322,6 +1342,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevisRoute: DevisRouteWithChildren,
   DiagnosticRoute: DiagnosticRoute,
   DriverRoute: DriverRoute,
+  FaqRoute: FaqRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   NotificationsRoute: NotificationsRoute,
   QrGeneratorRoute: QrGeneratorRoute,

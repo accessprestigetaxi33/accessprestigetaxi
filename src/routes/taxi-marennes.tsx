@@ -5,6 +5,7 @@ import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { socialImageMeta } from "@/lib/og";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-marennes`;
 const TITLE_FR = "Taxi Marennes : horaires, tarifs | Access Prestige Taxi";
@@ -176,6 +177,12 @@ function TaxiMarennesPage() {
             addressRegion: "Charente-Maritime",
             addressCountry: "FR",
           },
+          hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            "Access Prestige Taxi Marennes-Hiers-Brouage 17320",
+          )}`,
+          sameAs: [`${SITE}/`, `${SITE}/faq`],
+          currenciesAccepted: "EUR",
+          paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant",
           geo: { "@type": "GeoCoordinates", latitude: 45.8231, longitude: -1.1055 },
           openingHoursSpecification: [
             {
@@ -337,6 +344,8 @@ function TaxiMarennesPage() {
         </Link>
       </section>
 
+      <LocalBusinessCard locality="Marennes-Hiers-Brouage" postalCode="17320" latitude={45.8231} longitude={-1.1055} />
+
       <section className="mt-12">
         <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.guides}</h2>
         <ul className="mt-4 space-y-2">
@@ -360,6 +369,11 @@ function TaxiMarennesPage() {
         <p className="mt-2 text-sm">
           <Link to="/taxi-charente-maritime" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
             {isEn ? "Taxi across Charente-Maritime" : "Taxi dans toute la Charente-Maritime"}
+          </Link>
+        </p>
+        <p className="mt-2 text-sm">
+          <Link to="/faq" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            {isEn ? "Fares, meter and booking: read our FAQ" : "Tarifs, compteur et réservation : consultez notre FAQ"}
           </Link>
         </p>
       </section>

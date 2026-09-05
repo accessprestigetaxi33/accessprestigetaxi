@@ -5,6 +5,7 @@ import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { socialImageMeta } from "@/lib/og";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-oleron`;
 const TITLE_FR = "Taxi île d'Oléron : horaires, tarifs | Access Prestige Taxi";
@@ -180,6 +181,12 @@ function TaxiOleronPage() {
             addressRegion: "Charente-Maritime",
             addressCountry: "FR",
           },
+          hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            "Access Prestige Taxi Le Château-d'Oléron 17480",
+          )}`,
+          sameAs: [`${SITE}/`, `${SITE}/faq`],
+          currenciesAccepted: "EUR",
+          paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant",
           geo: { "@type": "GeoCoordinates", latitude: 45.9, longitude: -1.2 },
           openingHoursSpecification: [
             {
@@ -343,6 +350,8 @@ function TaxiOleronPage() {
         </Link>
       </section>
 
+      <LocalBusinessCard locality="Le Château-d'Oléron" postalCode="17480" latitude={45.8886} longitude={-1.1958} />
+
       <section className="mt-12">
         <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.guides}</h2>
         <ul className="mt-4 space-y-2">
@@ -366,6 +375,11 @@ function TaxiOleronPage() {
         <p className="mt-2 text-sm">
           <Link to="/taxi-charente-maritime" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
             {isEn ? "Taxi across Charente-Maritime" : "Taxi dans toute la Charente-Maritime"}
+          </Link>
+        </p>
+        <p className="mt-2 text-sm">
+          <Link to="/faq" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
+            {isEn ? "Fares, meter and booking: read our FAQ" : "Tarifs, compteur et réservation : consultez notre FAQ"}
           </Link>
         </p>
       </section>

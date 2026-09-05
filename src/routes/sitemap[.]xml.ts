@@ -31,6 +31,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/taxi-oleron", changefreq: "monthly", priority: "0.9" },
           { path: "/taxi-charente-maritime", changefreq: "monthly", priority: "0.9" },
 
+          { path: "/faq", changefreq: "monthly", priority: "0.8" },
           { path: "/blog", changefreq: "weekly", priority: "0.9" },
           ...GUIDE_ENTRIES.map((e) => ({
             path: `/blog/${e.slug}`,
