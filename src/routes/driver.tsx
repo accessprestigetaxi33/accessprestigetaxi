@@ -2725,7 +2725,7 @@ function DriverIdentitySwitcher({
           style={{
             position: "absolute",
             top: "calc(100% + 6px)",
-            right: 0,
+            left: 0,
             background: "#FDFBF7",
             border: "1px solid #e2e8f0",
             borderRadius: 14,
