@@ -264,14 +264,9 @@ const css = `
     background: #03070d;
   }
   /* Tablette (iPad portrait et paysage) : colonne élargie, plus de cadre centré. */
-  @media (min-width: 700px) {
-    html, body { background: #01040a; }
-  }
+  
   /* Desktop / grand écran : colonne encore plus large, texte légèrement agrandi. */
-  @media (min-width: 1024px) {
-    .drv-body { padding: 20px 28px; }
-    .drv-card { padding: 16px; }
-  }
+  
   /* Souris/trackpad (pas d'écran tactile) : hover discret sur les éléments cliquables,
      la logique :active seule (pensée pour le tactile) ne suffit pas sur PC. */
   @media (hover: hover) and (pointer: fine) {
@@ -376,10 +371,7 @@ const css = `
   .drv-planning-time { font-size: 12px; color: #64748b; min-width: 40px; padding-top: 3px; }
   .drv-planning-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
   .drv-planning-card { flex: 1; background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 10px 12px; }
-  @media (max-width: 380px) {
-    .drv-time { font-size: 18px; }
-    .drv-stat-val { font-size: 20px; }
-  }
+  
   .drv-chat-thread { border: 1px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
   .drv-chat-thread:active { background: #f8fafc; }
   .drv-chat-thread.unread { border-color: #3b82f6; background: #eff6ff; }
@@ -409,9 +401,14 @@ const css = `
   }
 
   @media (max-width: 380px) {
+    .drv-time { font-size: 18px; }
+    .drv-stat-val { font-size: 20px; }
+  
+
     .drv-header-back span.drv-header-back-label { display:none; }
     .drv-header-back { width:34px; height:34px; padding:0; justify-content:center; }
-  }
+  
+}
   /* En-tête : pastille "EN LIGNE", date/heure et cloche de notifications,
      visibles sur toutes les pages (pas seulement le tableau de bord),
      à l'image de la maquette. */
@@ -421,7 +418,7 @@ const css = `
     color:rgba(246,240,229,.6); white-space:nowrap;
   }
   .drv-header-datetime strong { display:block; color:#f6f0e5; font-size:12px; font-weight:700; }
-  @media (min-width:700px) { .drv-header-datetime { display:block; } }
+  
   .drv-header-bell {
     position:relative; flex:0 0 auto; width:34px; height:34px; display:grid; place-items:center;
     background:#07101a; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; cursor:pointer;
@@ -481,10 +478,20 @@ const css = `
 
   /* Tablette : deux colonnes pour le tableau de bord. */
   @media (min-width:700px) {
+    html, body { background: #01040a; }
+  
+
+ .drv-header-datetime { display:block; } 
+
     .drv-dash-grid { grid-template-columns: 1.4fr 1fr; gap:14px; align-items:start; padding:0 14px; }
-  }
+  
+}
   /* Desktop / grand écran : sidebar de navigation fixe + contenu élargi. */
   @media (min-width:1024px) {
+    .drv-body { padding: 20px 28px; }
+    .drv-card { padding: 16px; }
+  
+
     .drv-tabs {
       position: fixed; top:74px; left:0; bottom:0; width:230px; z-index:5;
       flex-direction: column; align-items:stretch; overflow-y:auto; overflow-x:hidden;
@@ -512,7 +519,8 @@ const css = `
     .drv-dash-grid { grid-template-columns: 1.6fr 1fr; gap:18px; padding:0; }
     .drv-overview { padding:18px 0 4px; }
     .drv-body { padding:20px 28px; }
-  }
+  
+}
   .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
   .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
   .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
@@ -619,35 +627,16 @@ const css = `
   .shortcut-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; } .shortcut-grid button { border:0; background:transparent; color:#f1f3f2; cursor:pointer; min-width:0; } .shortcut-grid b { display:grid; place-items:center; width:46px; height:46px; margin:0 auto 8px; border-radius:10px; font-size:27px; background:#0965d8; color:#fff; } .shortcut-grid button:nth-child(2) b { background:#2d9b36; } .shortcut-grid button:nth-child(3) b { background:#9348b7; } .shortcut-grid button:nth-child(4) b { background:#087f82; } .shortcut-grid span { font-size:7px; font-weight:800; line-height:1.35; }
   .drv-mobile-stats { display:none; }
   .drv-mobile-nav { display:none; } .drv-body { overflow:visible !important; height:auto !important; min-height:0 !important; }
-  @media (max-width:1100px) and (min-width:701px) {
-    .drv-header-kpi { min-width:90px; padding:0 10px; } .drv-header-kpi strong { font-size:16px; }
-    .drv-content { margin-left:0; padding:0 12px 24px; } .drv-tabs { position:sticky !important; top:0 !important; left:auto !important; width:100% !important; height:58px !important; flex-direction:row !important; overflow-x:auto !important; z-index:20 !important; padding:0 6px !important; } .drv-side-logo { display:none; } .drv-tab { width:auto !important; min-width:95px !important; flex:0 0 auto !important; flex-direction:column !important; border-left:0 !important; border-bottom:3px solid transparent !important; border-radius:0 !important; } .drv-tab.active { border-left:0 !important; border-bottom-color:#e0b866 !important; } .drv-dashboard-grid-top { grid-template-columns:1fr 1fr; } .drv-revenue-card { grid-column:span 2; } .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:1fr 1fr; }
-  }
-  @media (max-width:700px) {
-    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50; height:auto !important; min-height:calc(58px + env(safe-area-inset-top, 0px)) !important; padding:calc(env(safe-area-inset-top, 0px) + 7px) 10px 7px !important; } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size:16px; } .drv-header-title strong { font-size:12px !important; } .drv-header-title span { font-size:8px !important; } .drv-header-live { margin-left:auto; font-size:7px !important; padding:4px 6px !important; } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell { width:31px !important; height:31px !important; border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content { margin:0 !important; padding:0 10px !important; min-height:0 !important; } .drv-dashboard { padding:9px 0 22px; } .drv-dashboard-grid-top { display:flex; flex-direction:column; gap:8px; } .drv-next-card { order:0; min-height:0; padding:11px !important; } .drv-next-layout { grid-template-columns:70px 1fr; gap:9px; padding-bottom:9px; } .drv-next-time strong { font-size:24px; } .drv-next-time span { font-size:8px; margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size:10px; } .drv-next-route small { font-size:7px; } .drv-next-meta { font-size:7px; padding:8px 0; gap:5px; } .drv-next-meta small { font-size:6.5px; } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size:7px; padding:6px; } .drv-card-head { font-size:9px; margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card { min-height:0; order:2; padding:10px !important; } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size:7.5px; } .drv-day-row em { font-size:6px; } .drv-mobile-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; order:1; } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size:12px; } .drv-mobile-stats span { display:block; color:#7e8993; font-size:6px; margin-top:3px; letter-spacing:.04em; }
-    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0; height:68px; padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:7px; font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size:7px; }
-    .drv-body { overflow:visible !important; -webkit-overflow-scrolling:auto !important; touch-action:auto !important; padding:8px 0 28px !important; } .drv-body * { touch-action:auto; }
-  }
+  
+  
 
   /* Mobile: the fifth action opens the complete navigation drawer. */
   .drv-mobile-drawer-backdrop { display:none; }
   .drv-mobile-drawer { display:none; }
-  @media (max-width:700px) {
-    .drv-mobile-drawer-backdrop { position:fixed; inset:0; z-index:110; display:block; background:rgba(0,0,0,.62); }
-    .drv-mobile-drawer { position:fixed; top:0; right:0; bottom:0; z-index:111; display:flex; width:min(86vw,340px); flex-direction:column; gap:5px; overflow-y:auto; padding:calc(env(safe-area-inset-top,0px) + 18px) 14px calc(env(safe-area-inset-bottom,0px) + 84px); background:#050a10; border-left:1px solid rgba(201,155,74,.45); box-shadow:-18px 0 40px rgba(0,0,0,.35); }
-    .drv-mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 14px; margin-bottom:4px; border-bottom:1px solid rgba(201,155,74,.25); color:#e0b866; font-size:13px; font-weight:800; }
-    .drv-mobile-drawer-close { width:34px; height:34px; border:1px solid rgba(201,155,74,.45); border-radius:7px; background:#07101a; color:#e0b866; font-size:20px; cursor:pointer; }
-    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 12px; border:1px solid transparent; border-radius:7px; background:transparent; color:#b9c1ca; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
-    .drv-mobile-drawer button.active { color:#fff; background:rgba(201,155,74,.14); border-color:rgba(201,155,74,.35); }
-    .drv-mobile-drawer svg { width:19px; height:19px; flex:0 0 auto; color:#e0b866; }
-    .drv-mobile-drawer .drv-tab-count { margin-left:auto; }
-  }
+  
 
   @media (min-width:701px) { .drv-header > .drv-brand-mark { display:none !important; } }
-  @media (max-width:700px) {
-    .drv-identity-switcher { display:block !important; flex:0 0 auto !important; }
-    .drv-identity-switcher > button { width:auto !important; height:32px !important; min-height:32px !important; padding:5px 9px !important; font-size:11px !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
-  }
+  
   /* Le menu déroulant Alain/Patricia doit toujours passer au-dessus du header
      sticky, de la sidebar/tabs et de tout le reste de l'UI, quel que soit le
      breakpoint (le header seul crée déjà son propre contexte d'empilement
@@ -659,8 +648,8 @@ const css = `
 
   #root { height:auto !important; min-height:100% !important; overflow:visible !important; }
   .drv-root, .drv-main, .drv-content, .drv-dashboard { touch-action:auto !important; }
-  @media (min-width:1101px) { .drv-header { margin-left:164px !important; } }
-  @media (max-width:700px) { #root { overflow:visible !important; } .drv-root { overflow:visible !important; } .drv-main,.drv-content { overflow:visible !important; } }
+  
+  
 
   /* ================================================================
      APT — ALIGNEMENT FINAL SUR LA MAQUETTE FOURNIE
@@ -670,7 +659,26 @@ const css = `
      ================================================================ */
 
   /* ---------- DESKTOP : >= 1101px ---------- */
+  
+
+  /* ---------- TABLETTE : 701–1100px ----------
+     Navigation horizontale + contenu en grille 2 colonnes. */
+  
+
+  /* ---------- MOBILE : <= 700px ----------
+     On colle au téléphone de la maquette : barre compacte,
+     carte prochaine course, 3 KPI, courses du jour et navigation basse. */
+  
+
+  /* ================================================================
+     APT — DASHBOARD FINAL / MAQUETTE
+     Priorité au rendu d'arrivée sur /driver.
+     On conserve volontairement le sélecteur Alain/Patricia et
+     « Retour au site ». Aucun comportement métier n'est modifié.
+     ================================================================ */
   @media (min-width:1101px) {
+ .drv-header { margin-left:164px !important; } 
+
     html, body { overflow-x:hidden !important; }
 
     .drv-header {
@@ -768,230 +776,8 @@ const css = `
       width:46px !important;
       height:46px !important;
     }
-  }
+  
 
-  /* ---------- TABLETTE : 701–1100px ----------
-     Navigation horizontale + contenu en grille 2 colonnes. */
-  @media (min-width:701px) and (max-width:1100px) {
-    html, body { overflow-x:hidden !important; }
-
-    .drv-header {
-      height:72px !important;
-      min-height:72px !important;
-      padding:0 16px !important;
-    }
-
-    .drv-header > .drv-brand-mark {
-      display:grid !important;
-      width:42px !important;
-      height:42px !important;
-      flex:0 0 42px !important;
-      font-size:17px !important;
-    }
-
-    .drv-header-title strong { font-size:16px !important; }
-    .drv-header-title span { font-size:10px !important; }
-
-    .drv-header-live {
-      margin-left:auto !important;
-    }
-
-    .drv-header-kpi {
-      min-width:84px !important;
-      padding:0 10px !important;
-    }
-
-    .drv-header-kpi small { font-size:8px !important; }
-    .drv-header-kpi strong { font-size:16px !important; }
-
-    .drv-header-datetime { display:block !important; font-size:9px !important; }
-    .drv-header-datetime strong { font-size:10px !important; }
-
-    .drv-tabs {
-      position:sticky !important;
-      top:0 !important;
-      width:100% !important;
-      height:56px !important;
-      min-height:56px !important;
-      padding:0 6px !important;
-      flex-direction:row !important;
-      align-items:stretch !important;
-      overflow-x:auto !important;
-      overflow-y:hidden !important;
-      z-index:20 !important;
-    }
-
-    .drv-side-logo { display:none !important; }
-
-    .drv-tab {
-      min-width:86px !important;
-      min-height:56px !important;
-      flex:0 0 auto !important;
-      padding:7px 8px !important;
-      flex-direction:column !important;
-      justify-content:center !important;
-      gap:3px !important;
-      border-left:0 !important;
-      border-bottom:3px solid transparent !important;
-      border-radius:0 !important;
-      font-size:9px !important;
-    }
-
-    .drv-tab.active {
-      border-left:0 !important;
-      border-bottom-color:#e0b866 !important;
-    }
-
-    .drv-tab-icon svg { width:17px !important; height:17px !important; }
-
-    .drv-content {
-      margin-left:0 !important;
-      padding:0 14px 26px !important;
-    }
-
-    .drv-dashboard {
-      max-width:none !important;
-      padding:12px 0 28px !important;
-    }
-
-    .drv-dashboard-grid-top {
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-      gap:10px !important;
-    }
-
-    .drv-next-card,
-    .drv-day-card {
-      min-height:315px !important;
-    }
-
-    .drv-revenue-card {
-      grid-column:1 / -1 !important;
-      min-height:270px !important;
-    }
-
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom {
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-      gap:10px !important;
-    }
-
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom { margin-top:10px !important; }
-
-    .drv-dashboard .drv-card {
-      min-width:0 !important;
-      overflow:hidden !important;
-    }
-  }
-
-  /* ---------- MOBILE : <= 700px ----------
-     On colle au téléphone de la maquette : barre compacte,
-     carte prochaine course, 3 KPI, courses du jour et navigation basse. */
-  @media (max-width:700px) {
-    .drv-header {
-      height:58px !important;
-      min-height:58px !important;
-      padding:7px 10px !important;
-      gap:7px !important;
-    }
-
-    .drv-header > .drv-brand-mark {
-      display:grid !important;
-      width:34px !important;
-      height:34px !important;
-      flex:0 0 34px !important;
-      font-size:15px !important;
-    }
-
-    /* Dans la maquette téléphone, le nom n'occupe pas la barre du haut :
-       le bouton hamburger reste juste à côté du logo. */
-    .drv-header-title { display:none !important; }
-
-    .drv-header-live {
-      margin-left:auto !important;
-      padding:4px 7px !important;
-      font-size:7px !important;
-    }
-
-    .drv-header-bell {
-      width:31px !important;
-      height:31px !important;
-    }
-
-    .drv-content {
-      margin:0 !important;
-      padding:0 10px !important;
-    }
-
-    .drv-dashboard {
-      width:100% !important;
-      padding:9px 0 22px !important;
-    }
-
-    .drv-dashboard-grid-top {
-      display:flex !important;
-      flex-direction:column !important;
-      gap:8px !important;
-    }
-
-    .drv-next-card {
-      order:0 !important;
-      min-height:0 !important;
-      padding:11px !important;
-    }
-
-    .drv-mobile-stats {
-      order:1 !important;
-      display:grid !important;
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      gap:6px !important;
-    }
-
-    .drv-day-card {
-      order:2 !important;
-      min-height:0 !important;
-      padding:10px !important;
-    }
-
-    .drv-revenue-card,
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom {
-      display:none !important;
-    }
-
-    .drv-next-layout {
-      grid-template-columns:70px minmax(0,1fr) !important;
-      gap:9px !important;
-    }
-
-    .drv-next-route { min-width:0 !important; }
-    .drv-next-route strong {
-      overflow:hidden !important;
-      text-overflow:ellipsis !important;
-      white-space:nowrap !important;
-    }
-
-    .drv-next-meta {
-      grid-template-columns:1.25fr 1fr .65fr !important;
-    }
-
-    .drv-btns {
-      gap:7px !important;
-    }
-
-    .drv-mobile-nav {
-      height:68px !important;
-    }
-  }
-
-
-  /* ================================================================
-     APT — DASHBOARD FINAL / MAQUETTE
-     Priorité au rendu d'arrivée sur /driver.
-     On conserve volontairement le sélecteur Alain/Patricia et
-     « Retour au site ». Aucun comportement métier n'est modifié.
-     ================================================================ */
-  @media (min-width:1101px) {
     html, body { overflow-x:hidden !important; }
 
     .drv-root {
@@ -1233,10 +1019,126 @@ const css = `
       gap:6px !important;
     }
     .shortcut-grid b { width:46px !important; height:46px !important; }
-  }
+  
+}
 
   /* Tablette : dashboard lisible sans supprimer les contrôles du header */
   @media (min-width:701px) and (max-width:1100px) {
+    .drv-header-kpi { min-width:90px; padding:0 10px; } .drv-header-kpi strong { font-size:16px; }
+    .drv-content { margin-left:0; padding:0 12px 24px; } .drv-tabs { position:sticky !important; top:0 !important; left:auto !important; width:100% !important; height:58px !important; flex-direction:row !important; overflow-x:auto !important; z-index:20 !important; padding:0 6px !important; } .drv-side-logo { display:none; } .drv-tab { width:auto !important; min-width:95px !important; flex:0 0 auto !important; flex-direction:column !important; border-left:0 !important; border-bottom:3px solid transparent !important; border-radius:0 !important; } .drv-tab.active { border-left:0 !important; border-bottom-color:#e0b866 !important; } .drv-dashboard-grid-top { grid-template-columns:1fr 1fr; } .drv-revenue-card { grid-column:span 2; } .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:1fr 1fr; }
+  
+
+    html, body { overflow-x:hidden !important; }
+
+    .drv-header {
+      height:72px !important;
+      min-height:72px !important;
+      padding:0 16px !important;
+    }
+
+    .drv-header > .drv-brand-mark {
+      display:grid !important;
+      width:42px !important;
+      height:42px !important;
+      flex:0 0 42px !important;
+      font-size:17px !important;
+    }
+
+    .drv-header-title strong { font-size:16px !important; }
+    .drv-header-title span { font-size:10px !important; }
+
+    .drv-header-live {
+      margin-left:auto !important;
+    }
+
+    .drv-header-kpi {
+      min-width:84px !important;
+      padding:0 10px !important;
+    }
+
+    .drv-header-kpi small { font-size:8px !important; }
+    .drv-header-kpi strong { font-size:16px !important; }
+
+    .drv-header-datetime { display:block !important; font-size:9px !important; }
+    .drv-header-datetime strong { font-size:10px !important; }
+
+    .drv-tabs {
+      position:sticky !important;
+      top:0 !important;
+      width:100% !important;
+      height:56px !important;
+      min-height:56px !important;
+      padding:0 6px !important;
+      flex-direction:row !important;
+      align-items:stretch !important;
+      overflow-x:auto !important;
+      overflow-y:hidden !important;
+      z-index:20 !important;
+    }
+
+    .drv-side-logo { display:none !important; }
+
+    .drv-tab {
+      min-width:86px !important;
+      min-height:56px !important;
+      flex:0 0 auto !important;
+      padding:7px 8px !important;
+      flex-direction:column !important;
+      justify-content:center !important;
+      gap:3px !important;
+      border-left:0 !important;
+      border-bottom:3px solid transparent !important;
+      border-radius:0 !important;
+      font-size:9px !important;
+    }
+
+    .drv-tab.active {
+      border-left:0 !important;
+      border-bottom-color:#e0b866 !important;
+    }
+
+    .drv-tab-icon svg { width:17px !important; height:17px !important; }
+
+    .drv-content {
+      margin-left:0 !important;
+      padding:0 14px 26px !important;
+    }
+
+    .drv-dashboard {
+      max-width:none !important;
+      padding:12px 0 28px !important;
+    }
+
+    .drv-dashboard-grid-top {
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:10px !important;
+    }
+
+    .drv-next-card,
+    .drv-day-card {
+      min-height:315px !important;
+    }
+
+    .drv-revenue-card {
+      grid-column:1 / -1 !important;
+      min-height:270px !important;
+    }
+
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom {
+      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      gap:10px !important;
+    }
+
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom { margin-top:10px !important; }
+
+    .drv-dashboard .drv-card {
+      min-width:0 !important;
+      overflow:hidden !important;
+    }
+  
+
     .drv-header-back { display:flex !important; }
     .drv-header > div[style*="position: relative"] { display:block !important; }
     .drv-header-kpi { min-width:78px !important; padding:0 7px !important; }
@@ -1244,38 +1146,15 @@ const css = `
     .drv-header-kpi strong { font-size:14px !important; }
     .drv-dashboard-grid-top { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
     .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
-  }
+  
+}
 
   /* ================================================================
      APT — PARITÉ MOBILE / TABLETTE / DESKTOP DU TABLEAU DE BORD
      Le mobile affiche exactement les mêmes cartes que le PC,
      empilées sur une colonne (aucune section masquée).
      ================================================================ */
-  @media (max-width:700px) {
-    .drv-mobile-stats { display:none !important; }
-    .drv-dashboard-grid-top,
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom {
-      display:grid !important;
-      grid-template-columns:minmax(0,1fr) !important;
-      gap:8px !important;
-    }
-    .drv-dashboard-grid-top > *,
-    .drv-dashboard-grid-mid > *,
-    .drv-dashboard-grid-bottom > * {
-      grid-column:auto !important;
-      min-width:0 !important;
-      min-height:0 !important;
-    }
-    .drv-revenue-card {
-      display:block !important;
-      order:3 !important;
-      min-height:0 !important;
-      padding:11px !important;
-    }
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom { margin-top:8px !important; }
-  }
+  
 
   /* Logo officiel du site dans l'espace chauffeur (header + sidebar). */
   .drv-brand-mark { border:0 !important; border-radius:8px !important; overflow:hidden; background:#03070d; }
@@ -1299,17 +1178,161 @@ const css = `
   .drv-quick-btn-notif.is-done { background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4); color:#16a34a; cursor:default; opacity:1; }
   .drv-quick-btn-back { border:1px solid rgba(148,163,184,.4); background:#0d1720; color:#cbd5e1; }
   .drv-quick-btn-back:hover { border-color:#c99b4a; color:#e0b866; }
-  @media (max-width:700px) {
-    .drv-quick-btn { height:33px; padding:0 11px; font-size:11.5px; }
-  }
+  
 
   /* Mobile : on conserve « Retour au site » et l'activation des notifications
      (uniquement l'icône pour tenir dans la barre). */
   @media (max-width:700px) {
+    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50; height:auto !important; min-height:calc(58px + env(safe-area-inset-top, 0px)) !important; padding:calc(env(safe-area-inset-top, 0px) + 7px) 10px 7px !important; } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size:16px; } .drv-header-title strong { font-size:12px !important; } .drv-header-title span { font-size:8px !important; } .drv-header-live { margin-left:auto; font-size:7px !important; padding:4px 6px !important; } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell { width:31px !important; height:31px !important; border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content { margin:0 !important; padding:0 10px !important; min-height:0 !important; } .drv-dashboard { padding:9px 0 22px; } .drv-dashboard-grid-top { display:flex; flex-direction:column; gap:8px; } .drv-next-card { order:0; min-height:0; padding:11px !important; } .drv-next-layout { grid-template-columns:70px 1fr; gap:9px; padding-bottom:9px; } .drv-next-time strong { font-size:24px; } .drv-next-time span { font-size:8px; margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size:10px; } .drv-next-route small { font-size:7px; } .drv-next-meta { font-size:7px; padding:8px 0; gap:5px; } .drv-next-meta small { font-size:6.5px; } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size:7px; padding:6px; } .drv-card-head { font-size:9px; margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card { min-height:0; order:2; padding:10px !important; } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size:7.5px; } .drv-day-row em { font-size:6px; } .drv-mobile-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; order:1; } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size:12px; } .drv-mobile-stats span { display:block; color:#7e8993; font-size:6px; margin-top:3px; letter-spacing:.04em; }
+    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0; height:68px; padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:7px; font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size:7px; }
+    .drv-body { overflow:visible !important; -webkit-overflow-scrolling:auto !important; touch-action:auto !important; padding:8px 0 28px !important; } .drv-body * { touch-action:auto; }
+  
+
+    .drv-mobile-drawer-backdrop { position:fixed; inset:0; z-index:110; display:block; background:rgba(0,0,0,.62); }
+    .drv-mobile-drawer { position:fixed; top:0; right:0; bottom:0; z-index:111; display:flex; width:min(86vw,340px); flex-direction:column; gap:5px; overflow-y:auto; padding:calc(env(safe-area-inset-top,0px) + 18px) 14px calc(env(safe-area-inset-bottom,0px) + 84px); background:#050a10; border-left:1px solid rgba(201,155,74,.45); box-shadow:-18px 0 40px rgba(0,0,0,.35); }
+    .drv-mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 14px; margin-bottom:4px; border-bottom:1px solid rgba(201,155,74,.25); color:#e0b866; font-size:13px; font-weight:800; }
+    .drv-mobile-drawer-close { width:34px; height:34px; border:1px solid rgba(201,155,74,.45); border-radius:7px; background:#07101a; color:#e0b866; font-size:20px; cursor:pointer; }
+    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 12px; border:1px solid transparent; border-radius:7px; background:transparent; color:#b9c1ca; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
+    .drv-mobile-drawer button.active { color:#fff; background:rgba(201,155,74,.14); border-color:rgba(201,155,74,.35); }
+    .drv-mobile-drawer svg { width:19px; height:19px; flex:0 0 auto; color:#e0b866; }
+    .drv-mobile-drawer .drv-tab-count { margin-left:auto; }
+  
+
+    .drv-identity-switcher { display:block !important; flex:0 0 auto !important; }
+    .drv-identity-switcher > button { width:auto !important; height:32px !important; min-height:32px !important; padding:5px 9px !important; font-size:11px !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
+  
+
+ #root { overflow:visible !important; } .drv-root { overflow:visible !important; } .drv-main,.drv-content { overflow:visible !important; } 
+
+    .drv-header {
+      height:58px !important;
+      min-height:58px !important;
+      padding:7px 10px !important;
+      gap:7px !important;
+    }
+
+    .drv-header > .drv-brand-mark {
+      display:grid !important;
+      width:34px !important;
+      height:34px !important;
+      flex:0 0 34px !important;
+      font-size:15px !important;
+    }
+
+    /* Dans la maquette téléphone, le nom n'occupe pas la barre du haut :
+       le bouton hamburger reste juste à côté du logo. */
+    .drv-header-title { display:none !important; }
+
+    .drv-header-live {
+      margin-left:auto !important;
+      padding:4px 7px !important;
+      font-size:7px !important;
+    }
+
+    .drv-header-bell {
+      width:31px !important;
+      height:31px !important;
+    }
+
+    .drv-content {
+      margin:0 !important;
+      padding:0 10px !important;
+    }
+
+    .drv-dashboard {
+      width:100% !important;
+      padding:9px 0 22px !important;
+    }
+
+    .drv-dashboard-grid-top {
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+    }
+
+    .drv-next-card {
+      order:0 !important;
+      min-height:0 !important;
+      padding:11px !important;
+    }
+
+    .drv-mobile-stats {
+      order:1 !important;
+      display:grid !important;
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      gap:6px !important;
+    }
+
+    .drv-day-card {
+      order:2 !important;
+      min-height:0 !important;
+      padding:10px !important;
+    }
+
+    .drv-revenue-card,
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom {
+      display:none !important;
+    }
+
+    .drv-next-layout {
+      grid-template-columns:70px minmax(0,1fr) !important;
+      gap:9px !important;
+    }
+
+    .drv-next-route { min-width:0 !important; }
+    .drv-next-route strong {
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+      white-space:nowrap !important;
+    }
+
+    .drv-next-meta {
+      grid-template-columns:1.25fr 1fr .65fr !important;
+    }
+
+    .drv-btns {
+      gap:7px !important;
+    }
+
+    .drv-mobile-nav {
+      height:68px !important;
+    }
+  
+
+    .drv-mobile-stats { display:none !important; }
+    .drv-dashboard-grid-top,
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom {
+      display:grid !important;
+      grid-template-columns:minmax(0,1fr) !important;
+      gap:8px !important;
+    }
+    .drv-dashboard-grid-top > *,
+    .drv-dashboard-grid-mid > *,
+    .drv-dashboard-grid-bottom > * {
+      grid-column:auto !important;
+      min-width:0 !important;
+      min-height:0 !important;
+    }
+    .drv-revenue-card {
+      display:block !important;
+      order:3 !important;
+      min-height:0 !important;
+      padding:11px !important;
+    }
+    .drv-dashboard-grid-mid,
+    .drv-dashboard-grid-bottom { margin-top:8px !important; }
+  
+
+    .drv-quick-btn { height:33px; padding:0 11px; font-size:11.5px; }
+  
+
     .drv-header-back { display:inline-flex !important; width:31px !important; height:31px !important; padding:0 !important; justify-content:center !important; }
     .drv-header-back .drv-header-back-label { display:none !important; }
     .drv-header-pushbtn { height:31px !important; padding:0 8px !important; font-size:10px !important; }
-  }
+  
+}
 
 
 `;
