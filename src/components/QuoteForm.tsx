@@ -29,15 +29,11 @@ const COPY = {
     prestation: "Type de prestation",
     prestations: [
       { v: "transfert", l: "Transfert gare ou aéroport" },
-      { v: "sanitaire", l: "Transport sanitaire conventionné" },
       { v: "groupe", l: "Transport de groupe" },
       { v: "mise-a-dispo", l: "Mise à disposition avec chauffeur" },
       { v: "longue-distance", l: "Longue distance" },
       { v: "autre", l: "Autre" },
     ],
-    sanitaireTitle: "Transport sanitaire",
-    sanitaire: "Transport sanitaire conventionné (sur prescription)",
-    fauteuil: "Transport avec fauteuil roulant",
     groupeTitle: "Transport de groupe",
     groupe: "Transport de groupe (jusqu'à 8 personnes)",
     bagagesVol: "Bagages volumineux (valises, matériel, poussettes)",
@@ -76,15 +72,11 @@ const COPY = {
     prestation: "Type of service",
     prestations: [
       { v: "transfert", l: "Station or airport transfer" },
-      { v: "sanitaire", l: "Covered medical transport" },
       { v: "groupe", l: "Group transport" },
       { v: "mise-a-dispo", l: "Chauffeur hire" },
       { v: "longue-distance", l: "Long distance" },
       { v: "autre", l: "Other" },
     ],
-    sanitaireTitle: "Medical transport",
-    sanitaire: "Covered medical transport (with prescription)",
-    fauteuil: "Wheelchair transport",
     groupeTitle: "Group transport",
     groupe: "Group transport (up to 8 people)",
     bagagesVol: "Bulky luggage (suitcases, equipment, pushchairs)",
@@ -121,11 +113,9 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
   const c = isEn ? COPY.en : COPY.fr;
   const submit = useServerFn(submitDevis);
   const [state, setState] = useState<"idle" | "sending" | "ok" | "error">("idle");
-  const [sanitaire, setSanitaire] = useState(false);
   const [groupe, setGroupe] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
-  const presetPrestation =
-    c.prestations.find((p) => p.v === prefill?.prestation)?.l ?? c.prestations[0].l;
+  const presetPrestation = c.prestations.find((p) => p.v === prefill?.prestation)?.l ?? c.prestations[0].l;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -153,8 +143,8 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
           bagages: Math.min(20, Math.round(num("bagages", 0))),
           vehicule: g("vehicule") || null,
           prestation: g("prestation") || null,
-          transport_sanitaire: !!fd.get("sanitaire"),
-          fauteuil_roulant: !!fd.get("fauteuil"),
+          transport_sanitaire: false,
+          fauteuil_roulant: false,
           transport_groupe: !!fd.get("groupe"),
           sieges_enfant: !!fd.get("sieges"),
           distance_km: prefill?.distanceKm ?? null,
@@ -166,7 +156,6 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
       setReference(res.reference);
       setState("ok");
       form.reset();
-      setSanitaire(false);
       setGroupe(false);
     } catch {
       setState("error");
@@ -199,7 +188,6 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
     );
   }
 
-
   return (
     <form
       ref={formRef}
@@ -208,7 +196,6 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
     >
       <h2 className="font-display text-xl font-semibold text-[#f4efe5] sm:text-2xl">{c.title}</h2>
       <p className="mt-1 text-sm text-white/70">{c.sub}</p>
-
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         <Field label={c.nom} className={labelCls}>
@@ -221,12 +208,7 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
           <input name="telephone" type="tel" required maxLength={30} className={inputCls} />
         </Field>
         <Field label={c.prestation} className={labelCls}>
-          <select
-            name="prestation"
-            className={inputCls}
-            key={`pr-${presetPrestation}`}
-            defaultValue={presetPrestation}
-          >
+          <select name="prestation" className={inputCls} key={`pr-${presetPrestation}`} defaultValue={presetPrestation}>
             {c.prestations.map((p) => (
               <option key={p.v} value={p.l}>
                 {p.l}
@@ -235,25 +217,66 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
           </select>
         </Field>
         <Field label={c.depart} className={labelCls}>
-          <input name="depart" required maxLength={160} defaultValue={prefill?.depart ?? ""} key={`dep-${prefill?.depart ?? ""}`} className={inputCls} />
+          <input
+            name="depart"
+            required
+            maxLength={160}
+            defaultValue={prefill?.depart ?? ""}
+            key={`dep-${prefill?.depart ?? ""}`}
+            className={inputCls}
+          />
         </Field>
         <Field label={c.arrivee} className={labelCls}>
-          <input name="arrivee" required maxLength={160} defaultValue={prefill?.arrivee ?? ""} key={`arr-${prefill?.arrivee ?? ""}`} className={inputCls} />
+          <input
+            name="arrivee"
+            required
+            maxLength={160}
+            defaultValue={prefill?.arrivee ?? ""}
+            key={`arr-${prefill?.arrivee ?? ""}`}
+            className={inputCls}
+          />
         </Field>
         <Field label={c.date} className={labelCls}>
-          <input name="date" type="date" required defaultValue={prefill?.date ?? ""} key={`d-${prefill?.date ?? ""}`} className={inputCls} />
+          <input
+            name="date"
+            type="date"
+            required
+            defaultValue={prefill?.date ?? ""}
+            key={`d-${prefill?.date ?? ""}`}
+            className={inputCls}
+          />
         </Field>
         <Field label={c.heure} className={labelCls}>
-          <input name="heure" type="time" required defaultValue={prefill?.heure ?? ""} key={`h-${prefill?.heure ?? ""}`} className={inputCls} />
+          <input
+            name="heure"
+            type="time"
+            required
+            defaultValue={prefill?.heure ?? ""}
+            key={`h-${prefill?.heure ?? ""}`}
+            className={inputCls}
+          />
         </Field>
         <Field label={c.passagers} className={labelCls}>
-          <input name="passagers" type="number" min={1} max={8} defaultValue={prefill?.passagers ?? 1} key={`p-${prefill?.passagers ?? 1}`} className={inputCls} />
+          <input
+            name="passagers"
+            type="number"
+            min={1}
+            max={8}
+            defaultValue={prefill?.passagers ?? 1}
+            key={`p-${prefill?.passagers ?? 1}`}
+            className={inputCls}
+          />
         </Field>
         <Field label={c.bagages} className={labelCls}>
           <input name="bagages" type="number" min={0} max={20} defaultValue={0} className={inputCls} />
         </Field>
         <Field label={c.vehicule} className={`${labelCls} sm:col-span-2`}>
-          <select name="vehicule" className={inputCls} key={`v-${prefill?.vehicule ?? ""}`} defaultValue={prefill?.vehicule ?? c.vehicules[0].l}>
+          <select
+            name="vehicule"
+            className={inputCls}
+            key={`v-${prefill?.vehicule ?? ""}`}
+            defaultValue={prefill?.vehicule ?? c.vehicules[0].l}
+          >
             {c.vehicules.map((v) => (
               <option key={v.v} value={v.l}>
                 {v.l}
@@ -265,20 +288,17 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
 
       <fieldset className="mt-6 rounded-xl border border-[#d6a83d]/45 p-4">
         <legend className="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
-          {c.sanitaireTitle}
-        </legend>
-        <Check2 name="sanitaire" label={c.sanitaire} checked={sanitaire} onChange={setSanitaire} />
-        {sanitaire && <Check2 name="fauteuil" label={c.fauteuil} />}
-      </fieldset>
-
-      <fieldset className="mt-4 rounded-xl border border-[#d6a83d]/45 p-4">
-        <legend className="px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
           {c.groupeTitle}
         </legend>
         <Check2 name="groupe" label={c.groupe} checked={groupe} onChange={setGroupe} />
         {groupe && <Check2 name="bagages_volumineux" label={c.bagagesVol} />}
         <Check2 name="sieges" label={c.sieges} />
-        <Check2 name="aller_retour" label={c.aller} key={`ar-${prefill?.allerRetour ? 1 : 0}`} defaultChecked={prefill?.allerRetour} />
+        <Check2
+          name="aller_retour"
+          label={c.aller}
+          key={`ar-${prefill?.allerRetour ? 1 : 0}`}
+          defaultChecked={prefill?.allerRetour}
+        />
       </fieldset>
 
       <label className="mt-4 block">
@@ -306,15 +326,7 @@ export function QuoteForm({ prefill, formRef }: { prefill?: QuotePrefill; formRe
   );
 }
 
-function Field({
-  label,
-  className,
-  children,
-}: {
-  label: string;
-  className?: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={className?.includes("col-span") ? "block sm:col-span-2" : "block"}>
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">{label}</span>
