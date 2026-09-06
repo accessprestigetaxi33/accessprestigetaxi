@@ -329,7 +329,14 @@ export const Route = createFileRoute("/")({
     const social = isEn ? HOME_SOCIAL_EN : HOME_SOCIAL_FR;
     return {
       meta: [
-        keywordsMeta(["taxi Rochefort", "taxi La Rochelle", "taxi Royan", "taxi conventionné Charente-Maritime", "taxi aéroport La Rochelle", "taxi gare Rochefort"]),
+        keywordsMeta([
+          "taxi Rochefort",
+          "taxi La Rochelle",
+          "taxi Royan",
+          "taxi conventionné Charente-Maritime",
+          "taxi aéroport La Rochelle",
+          "taxi gare Rochefort",
+        ]),
         {
           title: isEn
             ? "Taxi Marennes, Oléron & Charente-Maritime | Access Prestige Taxi"
@@ -799,8 +806,6 @@ function Index() {
           />
         </div>
         <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
-
-
           <img
             src={heroCars}
             alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
@@ -816,18 +821,16 @@ function Index() {
             <h1 className="font-display text-3xl font-semibold uppercase tracking-wide text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.55)] sm:text-4xl md:text-5xl lg:text-6xl">
               {lang === "en" ? "TAXI — EXCELLENCE ON EVERY JOURNEY" : "TAXI — L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
-            <p className="mt-2 max-w-3xl text-sm font-black text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-base md:text-lg">
+            <p className="mt-2 max-w-3xl text-sm font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-base md:text-lg">
               {lang === "en"
                 ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
                 : "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime."}
             </p>
-            <p className="mt-3 max-w-3xl text-base font-black text-black drop-shadow-[0_2px_6px_rgba(255,255,255,0.6)] sm:text-lg md:text-xl lg:text-2xl">
+            <p className="mt-3 max-w-3xl text-base font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-lg md:text-xl lg:text-2xl">
               {lang === "en"
                 ? "Pro private transport · Covered medical transport · Chauffeur service"
                 : "Transport privé pro · Transport médical conventionné · Mise à disposition"}
             </p>
-
-
           </div>
 
           {/* Boutons RÉSERVER + DEVIS dans le hero */}
@@ -918,8 +921,6 @@ function Index() {
           </ul>
         </div>
       </section>
-
-
 
       {/* 2. VOTRE CONFORT — bandeau de référence */}
       <section className="bg-[#05090d] px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
