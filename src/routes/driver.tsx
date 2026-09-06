@@ -15,7 +15,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
 import { useServerFn } from "@tanstack/react-start";
 import { notifyReservationStatus } from "@/lib/push.functions";
-import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
+import { estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
 import { broadcastDriverFeed, broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
 import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
 import { ChatPanel } from "@/components/ChatPanel";
@@ -4282,206 +4282,95 @@ function CourseCard({
     }
   };
 
-  // ── Swipe-to-delete (iOS) ──
-  const [swipeX, setSwipeX] = useState(0);
-  const swipeStart = useRef<{ x: number; y: number; base: number } | null>(null);
-  const swipeLock = useRef<"none" | "x" | "y">("none");
-  const SWIPE_MAX = 88;
-
-  const onSwipeStart = (e: React.TouchEvent) => {
-    const t = e.touches[0];
-    if (!t) return;
-    swipeStart.current = { x: t.clientX, y: t.clientY, base: swipeX };
-    swipeLock.current = "none";
-  };
-  const onSwipeMove = (e: React.TouchEvent) => {
-    const s = swipeStart.current;
-    const t = e.touches[0];
-    if (!s || !t) return;
-    const dx = t.clientX - s.x;
-    const dy = t.clientY - s.y;
-    if (swipeLock.current === "none") {
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-      swipeLock.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
-    }
-    if (swipeLock.current !== "x") return;
-    const next = Math.min(0, Math.max(-SWIPE_MAX - 24, s.base + dx));
-    setSwipeX(next);
-  };
-  const onSwipeEnd = () => {
-    if (swipeLock.current === "x") setSwipeX(swipeX < -SWIPE_MAX / 2 ? -SWIPE_MAX : 0);
-    swipeStart.current = null;
-    swipeLock.current = "none";
-  };
-
   return (
-    <div className="drv-swipe">
-      <button
-        type="button"
-        className="drv-swipe-action"
-        aria-label="Supprimer cette course"
-        onClick={handleDeleteResa}
-        disabled={deleting}
-      >
-        {deleting ? "…" : "🗑"}
-        <span>Suppr.</span>
-      </button>
-      <div
-        className={`drv-card drv-swipe-content${resa.status === "pending" ? " new" : ""}`}
-        style={{
-          transform: `translateX(${swipeX}px)`,
-          transition: swipeStart.current ? "none" : "transform .22s ease",
-        }}
-        onTouchStart={onSwipeStart}
-        onTouchMove={onSwipeMove}
-        onTouchEnd={onSwipeEnd}
-        onTouchCancel={onSwipeEnd}
-      >
-        {/* En-tête */}
-        <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
-          <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
-          <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
-        </div>
-        {resa.client_name && <div className="drv-name">{resa.client_name}</div>}
-        <div className="drv-route">
-          <span>📍 {resa.depart}</span>
-          <span>🏁 {resa.destination}</span>
-        </div>
+    <SwipeToDeleteCard
+      onDelete={handleDeleteResa}
+      deleting={deleting}
+      ariaLabel="Supprimer cette course"
+      cardClassName={resa.status === "pending" ? "new" : undefined}
+    >
+      {/* En-tête */}
+      <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
+        <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
+        <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
+      </div>
+      {resa.client_name && <div className="drv-name">{resa.client_name}</div>}
+      <div className="drv-route">
+        <span>📍 {resa.depart}</span>
+        <span>🏁 {resa.destination}</span>
+      </div>
 
-        {/* Véhicule sélectionné par le chauffeur */}
-        {cardVehicle && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              marginTop: 10,
-              padding: "7px 9px",
-              borderRadius: 10,
-              border: "1px solid #e0b866",
-              background: "#0b0b0b",
-              color: "#fff",
-            }}
-          >
-            <img
-              src={cardVehicle.photo}
-              alt={cardVehicle.name}
-              loading="lazy"
-              style={{ width: 46, height: 32, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
-            />
-            <div style={{ minWidth: 0 }}>
-              <strong style={{ display: "block", fontSize: 12, color: "#e0b866" }}>VÉHICULE</strong>
-              <span
-                style={{
-                  display: "block",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {cardVehicle.name}
-              </span>
-            </div>
+      {/* Véhicule sélectionné par le chauffeur */}
+      {cardVehicle && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            marginTop: 10,
+            padding: "7px 9px",
+            borderRadius: 10,
+            border: "1px solid #e0b866",
+            background: "#0b0b0b",
+            color: "#fff",
+          }}
+        >
+          <img
+            src={cardVehicle.photo}
+            alt={cardVehicle.name}
+            loading="lazy"
+            style={{ width: 46, height: 32, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
+          />
+          <div style={{ minWidth: 0 }}>
+            <strong style={{ display: "block", fontSize: 12, color: "#e0b866" }}>VÉHICULE</strong>
+            <span
+              style={{
+                display: "block",
+                fontSize: 12,
+                fontWeight: 700,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {cardVehicle.name}
+            </span>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
-        {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
-          (() => {
-            const qb: React.CSSProperties = {
-              flex: "1 1 auto",
-              minWidth: 120,
-              borderRadius: 12,
-              padding: "11px 10px",
-              fontSize: 13,
-              fontWeight: 800,
-              cursor: "pointer",
-              minHeight: 44,
-            };
-            return (
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
-                {resa.status === "pending" && (
-                  <>
-                    <button
-                      onClick={handleAccept}
-                      disabled={busy}
-                      style={{
-                        ...qb,
-                        background: "var(--background)",
-                        border: "2px solid var(--background)",
-                        color: "var(--gold)",
-                      }}
-                    >
-                      {busy ? "…" : "✅ Accepter"}
-                    </button>
-                    <button
-                      onClick={handleRefuse}
-                      disabled={busy}
-                      style={{
-                        ...qb,
-                        background: "#FDFBF7",
-                        border: "2px solid #fecaca",
-                        color: "#b91c1c",
-                      }}
-                    >
-                      ✖ Refuser
-                    </button>
-                  </>
-                )}
-                {resa.status === "accepted" && (
+      {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
+      {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
+        (() => {
+          const qb: React.CSSProperties = {
+            flex: "1 1 auto",
+            minWidth: 120,
+            borderRadius: 12,
+            padding: "11px 10px",
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: "pointer",
+            minHeight: 44,
+          };
+          return (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+              {resa.status === "pending" && (
+                <>
                   <button
-                    onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
-                    disabled={progressing}
+                    onClick={handleAccept}
+                    disabled={busy}
                     style={{
                       ...qb,
-                      background: "#eff6ff",
-                      border: "2px solid #2563eb",
-                      color: "#1d4ed8",
+                      background: "var(--background)",
+                      border: "2px solid var(--background)",
+                      color: "var(--gold)",
                     }}
                   >
-                    {progressing ? "…" : "🚕 Votre taxi arrive"}
+                    {busy ? "…" : "✅ Accepter"}
                   </button>
-                )}
-                {(resa.status === "accepted" || resa.status === "en_route") && (
                   <button
-                    onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
-                    disabled={progressing}
-                    style={{
-                      ...qb,
-                      background: "#f5f3ff",
-                      border: "2px solid #7c3aed",
-                      color: "#6d28d9",
-                    }}
-                  >
-                    {progressing ? "…" : "📍 Votre taxi est arrivé"}
-                  </button>
-                )}
-                {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-                  <button
-                    onClick={handleComplete}
-                    disabled={completing}
-                    style={{
-                      ...qb,
-                      background: "#f0fdf4",
-                      border: "2px solid #16a34a",
-                      color: "#15803d",
-                    }}
-                  >
-                    {completing ? "…" : "✓ Terminée"}
-                  </button>
-                )}
-                {/* Annulation disponible à TOUT moment (y compris en attente et
-                    après acceptation) tant que la course n'est ni terminée ni
-                    déjà annulée. Le client est prévenu en temps réel. */}
-                {(resa.status === "pending" ||
-                  resa.status === "accepted" ||
-                  resa.status === "en_route" ||
-                  resa.status === "arrived") && (
-                  <button
-                    onClick={handleCancel}
-                    disabled={cancelling}
+                    onClick={handleRefuse}
+                    disabled={busy}
                     style={{
                       ...qb,
                       background: "#FDFBF7",
@@ -4489,14 +4378,147 @@ function CourseCard({
                       color: "#b91c1c",
                     }}
                   >
-                    {cancelling ? "…" : "✖ Annuler la course"}
+                    ✖ Refuser
                   </button>
-                )}
-              </div>
-            );
-          })()}
+                </>
+              )}
+              {resa.status === "accepted" && (
+                <button
+                  onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
+                  disabled={progressing}
+                  style={{
+                    ...qb,
+                    background: "#eff6ff",
+                    border: "2px solid #2563eb",
+                    color: "#1d4ed8",
+                  }}
+                >
+                  {progressing ? "…" : "🚕 Votre taxi arrive"}
+                </button>
+              )}
+              {(resa.status === "accepted" || resa.status === "en_route") && (
+                <button
+                  onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
+                  disabled={progressing}
+                  style={{
+                    ...qb,
+                    background: "#f5f3ff",
+                    border: "2px solid #7c3aed",
+                    color: "#6d28d9",
+                  }}
+                >
+                  {progressing ? "…" : "📍 Votre taxi est arrivé"}
+                </button>
+              )}
+              {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+                <button
+                  onClick={handleComplete}
+                  disabled={completing}
+                  style={{
+                    ...qb,
+                    background: "#f0fdf4",
+                    border: "2px solid #16a34a",
+                    color: "#15803d",
+                  }}
+                >
+                  {completing ? "…" : "✓ Terminée"}
+                </button>
+              )}
+              {/* Annulation disponible à TOUT moment (y compris en attente et
+                    après acceptation) tant que la course n'est ni terminée ni
+                    déjà annulée. Le client est prévenu en temps réel. */}
+              {(resa.status === "pending" ||
+                resa.status === "accepted" ||
+                resa.status === "en_route" ||
+                resa.status === "arrived") && (
+                <button
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                  style={{
+                    ...qb,
+                    background: "#FDFBF7",
+                    border: "2px solid #fecaca",
+                    color: "#b91c1c",
+                  }}
+                >
+                  {cancelling ? "…" : "✖ Annuler la course"}
+                </button>
+              )}
+            </div>
+          );
+        })()}
 
-        {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+      {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+        <div
+          style={{
+            marginTop: 10,
+            marginBottom: 4,
+            padding: 12,
+            background: "#03070d",
+            border: "2px solid #c99b4a",
+            borderRadius: 12,
+          }}
+        >
+          <label
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#c99b4a",
+              display: "block",
+              marginBottom: 6,
+            }}
+          >
+            💶 Prix final au compteur
+          </label>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              type="text"
+              inputMode="decimal"
+              placeholder="Ex : 24,50"
+              value={finalPrix}
+              onChange={(e) => setFinalPrix(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSetFinalPrix();
+              }}
+              style={{
+                flex: 1,
+                padding: "10px 12px",
+                borderRadius: 10,
+                border: "1px solid rgba(201,155,74,.45)",
+                background: "#0b1220",
+                fontSize: 16,
+                fontWeight: 600,
+                color: "#FDFBF7",
+                outline: "none",
+              }}
+            />
+            <button
+              onClick={handleSetFinalPrix}
+              disabled={finalPrixSaving}
+              style={{
+                padding: "10px 16px",
+                borderRadius: 10,
+                border: "none",
+                background: "#c99b4a",
+                color: "#03070d",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: finalPrixSaving ? "not-allowed" : "pointer",
+                opacity: finalPrixSaving ? 0.6 : 1,
+              }}
+            >
+              {finalPrixSaving ? "…" : "Valider"}
+            </button>
+          </div>
+          <div style={{ fontSize: 11, color: "#FDFBF799", marginTop: 6 }}>
+            Facultatif ici : enregistré tout de suite si vous cliquez « Valider », sinon repris automatiquement au clic
+            sur « ✓ Terminée ».
+          </div>
+        </div>
+      )}
+
+      {(resa.status === "completed" || resa.status === "terminee") &&
+        (resa.final_price ?? resa.prix_estime) != null && (
           <div
             style={{
               marginTop: 10,
@@ -4507,760 +4529,671 @@ function CourseCard({
               borderRadius: 12,
             }}
           >
-            <label
-              style={{
-                fontSize: 12,
-                fontWeight: 700,
-                color: "#c99b4a",
-                display: "block",
-                marginBottom: 6,
-              }}
-            >
-              💶 Prix final au compteur
-            </label>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input
-                type="text"
-                inputMode="decimal"
-                placeholder="Ex : 24,50"
-                value={finalPrix}
-                onChange={(e) => setFinalPrix(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSetFinalPrix();
-                }}
-                style={{
-                  flex: 1,
-                  padding: "10px 12px",
-                  borderRadius: 10,
-                  border: "1px solid rgba(201,155,74,.45)",
-                  background: "#0b1220",
-                  fontSize: 16,
-                  fontWeight: 600,
-                  color: "#FDFBF7",
-                  outline: "none",
-                }}
-              />
-              <button
-                onClick={handleSetFinalPrix}
-                disabled={finalPrixSaving}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: 10,
-                  border: "none",
-                  background: "#c99b4a",
-                  color: "#03070d",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  cursor: finalPrixSaving ? "not-allowed" : "pointer",
-                  opacity: finalPrixSaving ? 0.6 : 1,
-                }}
-              >
-                {finalPrixSaving ? "…" : "Valider"}
-              </button>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
+              💶 Tarif final (compteur)
             </div>
-            <div style={{ fontSize: 11, color: "#FDFBF799", marginTop: 6 }}>
-              Facultatif ici : enregistré tout de suite si vous cliquez « Valider », sinon repris automatiquement au
-              clic sur « ✓ Terminée ».
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
+              {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
             </div>
           </div>
         )}
 
-        {(resa.status === "completed" || resa.status === "terminee") &&
-          (resa.final_price ?? resa.prix_estime) != null && (
-            <div
-              style={{
-                marginTop: 10,
-                marginBottom: 4,
-                padding: 12,
-                background: "#03070d",
-                border: "2px solid #c99b4a",
-                borderRadius: 12,
-              }}
-            >
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
-                💶 Tarif final (compteur)
-              </div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
-                {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
-              </div>
-            </div>
-          )}
-
-        {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
-        {resa.message && resa.message.trim().length > 0 && (
-          <div
-            style={{
-              marginTop: 10,
-              padding: "10px 12px",
-              background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
-              border: "1px solid #f59e0b",
-              borderRadius: 12,
-              fontSize: 13,
-              color: "#78350f",
-              lineHeight: 1.45,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 8,
-                marginBottom: 4,
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                color: "#b45309",
-              }}
-            >
-              <span>✨ Demande spéciale</span>
-            </div>
-            <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{resa.message}</div>
-            {unreadByClient > 0 && (
-              <div
-                style={{
-                  marginTop: 8,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "3px 8px",
-                  borderRadius: 999,
-                  background: "#fee2e2",
-                  color: "#991b1b",
-                  fontSize: 11,
-                  fontWeight: 700,
-                }}
-                title={`${unreadByClient} message(s) chauffeur non lu(s) par le client`}
-              >
-                ⏳ Réponse envoyée — non lue par le client ({unreadByClient})
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Chat client ↔ chauffeur — TOUJOURS visible, en haut de la carte,
-          reste affiché même quand "Voir détail" / "Itinéraire" est ouvert. */}
-        <div style={{ marginTop: 8 }}>
+      {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
+      {resa.message && resa.message.trim().length > 0 && (
+        <div
+          style={{
+            marginTop: 10,
+            padding: "10px 12px",
+            background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
+            border: "1px solid #f59e0b",
+            borderRadius: 12,
+            fontSize: 13,
+            color: "#78350f",
+            lineHeight: 1.45,
+          }}
+        >
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 8,
-              background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
-              border: "1px solid #334155",
-              borderRadius: "10px 10px 0 0",
-              color: "#E8C96D",
-              fontSize: 13,
+              marginBottom: 4,
+              fontSize: 11,
               fontWeight: 700,
-              padding: "8px 12px",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              color: "#b45309",
             }}
           >
-            <span>💬 Chat avec {resa.client_name || "le client"}</span>
-            {unreadCount > 0 ? (
-              <span
-                title={unreadTooltip}
-                aria-label={unreadTooltip}
-                style={{
-                  minWidth: 20,
-                  height: 20,
-                  padding: "0 6px",
-                  borderRadius: 10,
-                  background: "#ef4444",
-                  color: "#FDFBF7",
-                  fontSize: 11,
-                  fontWeight: 800,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {unreadCount}
+            <span>✨ Demande spéciale</span>
+          </div>
+          <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{resa.message}</div>
+          {unreadByClient > 0 && (
+            <div
+              style={{
+                marginTop: 8,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "3px 8px",
+                borderRadius: 999,
+                background: "#fee2e2",
+                color: "#991b1b",
+                fontSize: 11,
+                fontWeight: 700,
+              }}
+              title={`${unreadByClient} message(s) chauffeur non lu(s) par le client`}
+            >
+              ⏳ Réponse envoyée — non lue par le client ({unreadByClient})
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Chat client ↔ chauffeur — TOUJOURS visible, en haut de la carte,
+          reste affiché même quand "Voir détail" / "Itinéraire" est ouvert. */}
+      <div style={{ marginTop: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8,
+            background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
+            border: "1px solid #334155",
+            borderRadius: "10px 10px 0 0",
+            color: "#E8C96D",
+            fontSize: 13,
+            fontWeight: 700,
+            padding: "8px 12px",
+          }}
+        >
+          <span>💬 Chat avec {resa.client_name || "le client"}</span>
+          {unreadCount > 0 ? (
+            <span
+              title={unreadTooltip}
+              aria-label={unreadTooltip}
+              style={{
+                minWidth: 20,
+                height: 20,
+                padding: "0 6px",
+                borderRadius: 10,
+                background: "#ef4444",
+                color: "#FDFBF7",
+                fontSize: 11,
+                fontWeight: 800,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {unreadCount}
+            </span>
+          ) : (
+            <span
+              style={{
+                fontSize: 10,
+                color: "#E8C96D99",
+                fontWeight: 600,
+                letterSpacing: "0.02em",
+              }}
+            >
+              ✓ à jour
+            </span>
+          )}
+        </div>
+        <div
+          style={{
+            borderLeft: "1px solid #334155",
+            borderRight: "1px solid #334155",
+            borderBottom: "1px solid #334155",
+            borderRadius: "0 0 10px 10px",
+            padding: 8,
+            background: "#0b1220",
+          }}
+        >
+          <InlineDriverChat reservationId={resa.id} />
+        </div>
+      </div>
+
+      {/* Résumé km/prix — priorité à la route sélectionnée si chargée, sinon valeurs BDD */}
+
+      {(() => {
+        const previewPrix = (() => {
+          const v = parseFloat((customPrix || "").trim().replace(",", "."));
+          return !isNaN(v) && v > 0 ? v : null;
+        })();
+        const displayPrix = previewPrix ?? routes[selectedRoute]?.prix_estime ?? resa.prix_estime;
+        const displayKm = routes[selectedRoute]?.distanceKm ?? resa.distance_km;
+        if (!displayKm && displayPrix == null && routes.length === 0) return null;
+        return (
+          <div className="drv-meta">
+            {displayKm != null && <span>🛣 {displayKm} km</span>}
+            {displayPrix != null && (
+              <span style={previewPrix != null ? { color: "#b45309", fontWeight: 700 } : undefined}>
+                💶 {displayPrix.toFixed(2)} €{previewPrix != null ? " (perso)" : ""}
               </span>
-            ) : (
+            )}
+            {previewPrix == null && routes[selectedRoute]?.tarifLabel && (
               <span
                 style={{
-                  fontSize: 10,
-                  color: "#E8C96D99",
-                  fontWeight: 600,
-                  letterSpacing: "0.02em",
+                  color: routes[selectedRoute].tarifLabel.includes("nuit") ? "#1d4ed8" : "#15803d",
                 }}
               >
-                ✓ à jour
+                {routes[selectedRoute].tarifLabel}
               </span>
             )}
           </div>
-          <div
-            style={{
-              borderLeft: "1px solid #334155",
-              borderRight: "1px solid #334155",
-              borderBottom: "1px solid #334155",
-              borderRadius: "0 0 10px 10px",
-              padding: 8,
-              background: "#0b1220",
-            }}
-          >
-            <InlineDriverChat reservationId={resa.id} />
-          </div>
-        </div>
+        );
+      })()}
 
-        {/* Résumé km/prix — priorité à la route sélectionnée si chargée, sinon valeurs BDD */}
+      {/* Détail expandable */}
+      {expanded && (
+        <>
+          <hr className="drv-divider" />
 
-        {(() => {
-          const previewPrix = (() => {
-            const v = parseFloat((customPrix || "").trim().replace(",", "."));
-            return !isNaN(v) && v > 0 ? v : null;
-          })();
-          const displayPrix = previewPrix ?? routes[selectedRoute]?.prix_estime ?? resa.prix_estime;
-          const displayKm = routes[selectedRoute]?.distanceKm ?? resa.distance_km;
-          if (!displayKm && displayPrix == null && routes.length === 0) return null;
-          return (
-            <div className="drv-meta">
-              {displayKm != null && <span>🛣 {displayKm} km</span>}
-              {displayPrix != null && (
-                <span style={previewPrix != null ? { color: "#b45309", fontWeight: 700 } : undefined}>
-                  💶 {displayPrix.toFixed(2)} €{previewPrix != null ? " (perso)" : ""}
-                </span>
-              )}
-              {previewPrix == null && routes[selectedRoute]?.tarifLabel && (
-                <span
-                  style={{
-                    color: routes[selectedRoute].tarifLabel.includes("nuit") ? "#1d4ed8" : "#15803d",
+          {/* Carte Google Maps */}
+          <div className="drv-map" ref={mapRef} />
+
+          {/* Itinéraires */}
+          {loadingRoutes && (
+            <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "10px 0" }}>
+              Calcul des itinéraires…
+            </div>
+          )}
+
+          {routes.length > 0 && (
+            <>
+              <p className="drv-section">Choisir un itinéraire</p>
+              {routes.map((r, i) => (
+                <div
+                  key={i}
+                  className={`drv-route-opt${selectedRoute === i ? " selected" : ""}`}
+                  style={itinSaving ? { opacity: 0.5, pointerEvents: "none" } : undefined}
+                  onClick={async () => {
+                    // Verrou anti-double-tap : sans ça, deux itinéraires tapés
+                    // rapidement (fréquent sur mobile, écran qui bouge) partaient
+                    // en parallèle et pouvaient se résoudre dans le désordre,
+                    // laissant en base un prix/distance différent de celui
+                    // affiché en local (selectedRoute). On réutilise le même
+                    // verrou que le bouton "Mettre à jour l'itinéraire".
+                    if (itinSaving) return;
+                    setSelectedRoute(i);
+                    setItinSaving(true);
+                    try {
+                      window.localStorage.setItem(routeStorageKey, String(i));
+                    } catch {}
+                    try {
+                      await driverUpdateReservation({
+                        data: {
+                          token: getDriverToken(),
+                          reservation_id: resa.id,
+                          patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
+                        },
+                      });
+                      broadcastSuiviUpdate(resa.id, "route");
+                      toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
+                      onRefresh();
+                    } catch (e: any) {
+                      toast.error("Erreur mise à jour itinéraire : " + (e.message ?? e));
+                    } finally {
+                      setItinSaving(false);
+                    }
                   }}
                 >
-                  {routes[selectedRoute].tarifLabel}
-                </span>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* Détail expandable */}
-        {expanded && (
-          <>
-            <hr className="drv-divider" />
-
-            {/* Carte Google Maps */}
-            <div className="drv-map" ref={mapRef} />
-
-            {/* Itinéraires */}
-            {loadingRoutes && (
-              <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "10px 0" }}>
-                Calcul des itinéraires…
-              </div>
-            )}
-
-            {routes.length > 0 && (
-              <>
-                <p className="drv-section">Choisir un itinéraire</p>
-                {routes.map((r, i) => (
-                  <div
-                    key={i}
-                    className={`drv-route-opt${selectedRoute === i ? " selected" : ""}`}
-                    style={itinSaving ? { opacity: 0.5, pointerEvents: "none" } : undefined}
-                    onClick={async () => {
-                      // Verrou anti-double-tap : sans ça, deux itinéraires tapés
-                      // rapidement (fréquent sur mobile, écran qui bouge) partaient
-                      // en parallèle et pouvaient se résoudre dans le désordre,
-                      // laissant en base un prix/distance différent de celui
-                      // affiché en local (selectedRoute). On réutilise le même
-                      // verrou que le bouton "Mettre à jour l'itinéraire".
-                      if (itinSaving) return;
-                      setSelectedRoute(i);
-                      setItinSaving(true);
-                      try {
-                        window.localStorage.setItem(routeStorageKey, String(i));
-                      } catch {}
-                      try {
-                        await driverUpdateReservation({
-                          data: {
-                            token: getDriverToken(),
-                            reservation_id: resa.id,
-                            patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
-                          },
-                        });
-                        broadcastSuiviUpdate(resa.id, "route");
-                        toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
-                        onRefresh();
-                      } catch (e: any) {
-                        toast.error("Erreur mise à jour itinéraire : " + (e.message ?? e));
-                      } finally {
-                        setItinSaving(false);
-                      }
-                    }}
-                  >
-                    <div className="drv-route-opt-head">
-                      <span className="drv-route-label">
-                        {i === 0 ? "🏆 Recommandé" : i === 1 ? "🔀 Alternatif" : "⏱ Rapide"} — {r.summary}
-                      </span>
-                      <span className="drv-route-price">{r.prix_estime.toFixed(2)} €</span>
-                    </div>
-                    <div className="drv-route-meta">
-                      <span>🛣 {r.distanceKm} km</span>
-                      <span>⏱ {r.dureeMin} min</span>
-                      <span style={{ color: r.tarifLabel.includes("jour") ? "#15803d" : "#1d4ed8" }}>
-                        {r.tarifLabel}
-                      </span>
-                    </div>
+                  <div className="drv-route-opt-head">
+                    <span className="drv-route-label">
+                      {i === 0 ? "🏆 Recommandé" : i === 1 ? "🔀 Alternatif" : "⏱ Rapide"} — {r.summary}
+                    </span>
+                    <span className="drv-route-price">{r.prix_estime.toFixed(2)} €</span>
                   </div>
-                ))}
-              </>
-            )}
+                  <div className="drv-route-meta">
+                    <span>🛣 {r.distanceKm} km</span>
+                    <span>⏱ {r.dureeMin} min</span>
+                    <span style={{ color: r.tarifLabel.includes("jour") ? "#15803d" : "#1d4ed8" }}>{r.tarifLabel}</span>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
 
-            {/* Contact — tel / SMS / WhatsApp / Email, identique à l'admin */}
-            {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") &&
-              (() => {
-                const phone = resa.client_phone;
-                const mail = resa.client_email || resa.email;
-                const trackUrl =
-                  typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
-                const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
-                const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
-                const mailBody = trackUrl
-                  ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nAccess Prestige Taxi`
-                  : `Bonjour ${resa.client_name || ""},\n\nAccess Prestige Taxi`;
-                if (!phone && !mail) return null;
-                const contactBtn: React.CSSProperties = {
-                  flex: "1 1 auto",
-                  minWidth: 78,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 12,
-                  padding: "10px",
-                  fontWeight: 700,
-                  fontSize: 12.5,
-                  textDecoration: "none",
-                  color: "#0f172a",
-                };
-                return (
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                    {phone && (
-                      <>
-                        <a
-                          href={`tel:${phone}`}
-                          style={{
-                            ...contactBtn,
-                            background: "#eff6ff",
-                            borderColor: "#bfdbfe",
-                            color: "#0369a1",
-                          }}
-                        >
-                          📞 Appeler
-                        </a>
-                        <a
-                          href={`sms:${phone}?body=${encodeURIComponent(body)}`}
-                          style={{
-                            ...contactBtn,
-                            background: "#faf5ff",
-                            borderColor: "#e9d5ff",
-                            color: "#7e22ce",
-                          }}
-                        >
-                          💬 SMS
-                        </a>
-                        <a
-                          href={`https://wa.me/${phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}?text=${encodeURIComponent(body)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            ...contactBtn,
-                            background: "#f0fdf4",
-                            borderColor: "#bbf7d0",
-                            color: "#15803d",
-                          }}
-                        >
-                          🟢 WhatsApp
-                        </a>
-                      </>
-                    )}
-                    {mail && (
+          {/* Contact — tel / SMS / WhatsApp / Email, identique à l'admin */}
+          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") &&
+            (() => {
+              const phone = resa.client_phone;
+              const mail = resa.client_email || resa.email;
+              const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
+              const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
+              const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
+              const mailBody = trackUrl
+                ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nAccess Prestige Taxi`
+                : `Bonjour ${resa.client_name || ""},\n\nAccess Prestige Taxi`;
+              if (!phone && !mail) return null;
+              const contactBtn: React.CSSProperties = {
+                flex: "1 1 auto",
+                minWidth: 78,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                border: "1px solid #e2e8f0",
+                borderRadius: 12,
+                padding: "10px",
+                fontWeight: 700,
+                fontSize: 12.5,
+                textDecoration: "none",
+                color: "#0f172a",
+              };
+              return (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                  {phone && (
+                    <>
                       <a
-                        href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
+                        href={`tel:${phone}`}
                         style={{
                           ...contactBtn,
-                          background: "#FDFBF7beb",
-                          borderColor: "#fde68a",
-                          color: "#92400e",
+                          background: "#eff6ff",
+                          borderColor: "#bfdbfe",
+                          color: "#0369a1",
                         }}
                       >
-                        ✉️ Email
+                        📞 Appeler
                       </a>
-                    )}
-                  </div>
-                );
-              })()}
-
-            {/* Gestion avancée — visible une fois la course acceptée */}
-            {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-              <>
-                {/* Prix custom */}
-                <button
-                  onClick={() => setCustomPrixOpen((o) => !o)}
-                  style={{
-                    width: "100%",
-                    textAlign: "left",
-                    background: "#f8fafc",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: 12,
-                    padding: "10px 14px",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "#0f172a",
-                    cursor: "pointer",
-                    marginBottom: customPrixOpen ? 8 : 10,
-                  }}
-                >
-                  💶 {customPrixOpen ? "▲" : "▼"} Envoyer un prix personnalisé
-                </button>
-                {customPrixOpen && (
-                  <div style={{ marginBottom: 12 }}>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      placeholder="Prix en € (ex : 18,50)"
-                      value={customPrix}
-                      onChange={(e) => setCustomPrix(e.target.value)}
-                      onFocus={(e) => {
-                        e.currentTarget.style.borderColor = "#E8C96D";
-                        e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,109,0.25)";
-                      }}
-                      onBlur={(e) => {
-                        e.currentTarget.style.borderColor = "var(--border)";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
-                      className="drv-custom-prix-input"
-                      style={{
-                        width: "100%",
-                        padding: "12px 14px",
-                        borderRadius: 10,
-                        border: "1px solid var(--border)",
-                        fontSize: 16,
-                        marginBottom: 8,
-                        fontFamily: "'DM Sans', sans-serif",
-                        background: "#FDFBF7fff",
-                        color: "#0f172a",
-                        fontWeight: 600,
-                        outline: "none",
-                        transition: "border-color 120ms ease, box-shadow 120ms ease",
-                        WebkitAppearance: "none",
-                        appearance: "none",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      <button
-                        onClick={() => handleSendCustomPrix("sms")}
-                        disabled={customPrixSending}
+                      <a
+                        href={`sms:${phone}?body=${encodeURIComponent(body)}`}
                         style={{
-                          flex: 1,
-                          minWidth: 70,
+                          ...contactBtn,
                           background: "#faf5ff",
-                          border: "1px solid #e9d5ff",
+                          borderColor: "#e9d5ff",
                           color: "#7e22ce",
-                          borderRadius: 10,
-                          padding: "8px",
-                          fontSize: 12,
-                          fontWeight: 700,
-                          cursor: "pointer",
                         }}
                       >
                         💬 SMS
-                      </button>
-                      <button
-                        onClick={() => handleSendCustomPrix("whatsapp")}
-                        disabled={customPrixSending}
+                      </a>
+                      <a
+                        href={`https://wa.me/${phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}?text=${encodeURIComponent(body)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{
-                          flex: 1,
-                          minWidth: 70,
+                          ...contactBtn,
                           background: "#f0fdf4",
-                          border: "1px solid #bbf7d0",
+                          borderColor: "#bbf7d0",
                           color: "#15803d",
-                          borderRadius: 10,
-                          padding: "8px",
-                          fontSize: 12,
-                          fontWeight: 700,
-                          cursor: "pointer",
                         }}
                       >
                         🟢 WhatsApp
-                      </button>
-                      <button
-                        onClick={() => handleSendCustomPrix("email")}
-                        disabled={customPrixSending}
-                        style={{
-                          flex: 1,
-                          minWidth: 70,
-                          background: "#FDFBF7beb",
-                          border: "1px solid #fde68a",
-                          color: "#92400e",
-                          borderRadius: 10,
-                          padding: "8px",
-                          fontSize: 12,
-                          fontWeight: 700,
-                          cursor: "pointer",
-                        }}
-                      >
-                        {customPrixSending ? "…" : "✉️ Email"}
-                      </button>
-                    </div>
-                  </div>
-                )}
+                      </a>
+                    </>
+                  )}
+                  {mail && (
+                    <a
+                      href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
+                      style={{
+                        ...contactBtn,
+                        background: "#FDFBF7beb",
+                        borderColor: "#fde68a",
+                        color: "#92400e",
+                      }}
+                    >
+                      ✉️ Email
+                    </a>
+                  )}
+                </div>
+              );
+            })()}
 
-                {/* Reprogrammer l'heure */}
-                <button
-                  onClick={() => setChangeHeureOpen((o) => !o)}
-                  style={{
-                    width: "100%",
-                    textAlign: "left",
-                    background: "#f8fafc",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: 12,
-                    padding: "10px 14px",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "#0f172a",
-                    cursor: "pointer",
-                    marginBottom: changeHeureOpen ? 8 : 10,
-                  }}
-                >
-                  🕐 {changeHeureOpen ? "▲" : "▼"} Reprogrammer l'heure
-                </button>
-                {changeHeureOpen && (
-                  <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
-                    <input
-                      type="datetime-local"
-                      value={newDatetime}
-                      onChange={(e) => setNewDatetime(e.target.value)}
+          {/* Gestion avancée — visible une fois la course acceptée */}
+          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+            <>
+              {/* Prix custom */}
+              <button
+                onClick={() => setCustomPrixOpen((o) => !o)}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 12,
+                  padding: "10px 14px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#0f172a",
+                  cursor: "pointer",
+                  marginBottom: customPrixOpen ? 8 : 10,
+                }}
+              >
+                💶 {customPrixOpen ? "▲" : "▼"} Envoyer un prix personnalisé
+              </button>
+              {customPrixOpen && (
+                <div style={{ marginBottom: 12 }}>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Prix en € (ex : 18,50)"
+                    value={customPrix}
+                    onChange={(e) => setCustomPrix(e.target.value)}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = "#E8C96D";
+                      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,109,0.25)";
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                    className="drv-custom-prix-input"
+                    style={{
+                      width: "100%",
+                      padding: "12px 14px",
+                      borderRadius: 10,
+                      border: "1px solid var(--border)",
+                      fontSize: 16,
+                      marginBottom: 8,
+                      fontFamily: "'DM Sans', sans-serif",
+                      background: "#FDFBF7fff",
+                      color: "#0f172a",
+                      fontWeight: 600,
+                      outline: "none",
+                      transition: "border-color 120ms ease, box-shadow 120ms ease",
+                      WebkitAppearance: "none",
+                      appearance: "none",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      onClick={() => handleSendCustomPrix("sms")}
+                      disabled={customPrixSending}
                       style={{
                         flex: 1,
-                        padding: "10px 12px",
+                        minWidth: 70,
+                        background: "#faf5ff",
+                        border: "1px solid #e9d5ff",
+                        color: "#7e22ce",
                         borderRadius: 10,
-                        border: "1px solid #e2e8f0",
-                        fontSize: 16,
-                        fontFamily: "'DM Sans', sans-serif",
+                        padding: "8px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
                       }}
-                    />
-                    <button
-                      onClick={handleChangeHeure}
-                      disabled={changeHeureSending || !newDatetime}
-                      className="drv-btn-primary"
-                      style={{ flex: "0 0 auto", padding: "10px 16px" }}
                     >
-                      {changeHeureSending ? "…" : "OK"}
+                      💬 SMS
+                    </button>
+                    <button
+                      onClick={() => handleSendCustomPrix("whatsapp")}
+                      disabled={customPrixSending}
+                      style={{
+                        flex: 1,
+                        minWidth: 70,
+                        background: "#f0fdf4",
+                        border: "1px solid #bbf7d0",
+                        color: "#15803d",
+                        borderRadius: 10,
+                        padding: "8px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      🟢 WhatsApp
+                    </button>
+                    <button
+                      onClick={() => handleSendCustomPrix("email")}
+                      disabled={customPrixSending}
+                      style={{
+                        flex: 1,
+                        minWidth: 70,
+                        background: "#FDFBF7beb",
+                        border: "1px solid #fde68a",
+                        color: "#92400e",
+                        borderRadius: 10,
+                        padding: "8px",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {customPrixSending ? "…" : "✉️ Email"}
                     </button>
                   </div>
-                )}
-              </>
-            )}
+                </div>
+              )}
 
-            {/* Actions */}
-            {resa.status === "pending" && (
-              <div className="drv-btns">
-                <button className="drv-btn-danger" onClick={handleRefuse} disabled={busy}>
-                  Refuser
-                </button>
-                <button className="drv-btn-primary" onClick={handleAccept} disabled={busy}>
-                  {busy ? "…" : "Accepter"}
-                </button>
-              </div>
-            )}
-            {resa.status === "accepted" && (
-              <>
-                {(() => {
-                  // Utilise les coords géocodées si disponibles (plus précis que le texte brut)
-                  const chosen = routes[selectedRoute];
-                  const origCoord = chosen ? `${chosen.originLatLng.lat},${chosen.originLatLng.lng}` : resa.depart;
-                  const destCoord = chosen ? `${chosen.destLatLng.lat},${chosen.destLatLng.lng}` : resa.destination;
-                  // Waypoint milieu pour forcer le même itinéraire dans Maps
-                  const wp = chosen?.waypointLatLng;
-                  const waypointParam = wp ? `&waypoints=${wp.lat},${wp.lng}` : "";
-                  const waypointCoord = wp ? `${wp.lat},${wp.lng}` : null;
-                  // For web we percent-encode components; for native apps prefer encodeURI
-                  // so commas in lat,lng are preserved (Google Maps expects `lat,lng`).
-                  const originParam = encodeURIComponent(origCoord);
-                  const destinationParam = encodeURIComponent(destCoord);
-                  const originNative = encodeURI(origCoord);
-                  const destinationNative = encodeURI(destCoord);
-                  const googleMapsWeb = `https://www.google.com/maps/dir/?api=1&origin=${originParam}&destination=${destinationParam}${waypointParam}&travelmode=driving&dir_action=navigate`;
-                  return (
-                    <div style={{ marginBottom: 10 }}>
-                      <button
-                        onClick={() => {
-                          const ua = navigator.userAgent;
-                          const isIOS = /iPad|iPhone|iPod/.test(ua);
-                          const isAndroid = /Android/.test(ua);
-                          // Debug: log generated URLs to help testing
-                          const debug_googleMapsWeb = googleMapsWeb;
-                          const debug_wp = waypointParam || "";
-                          const debug_origin = originNative;
-                          const debug_destination = destinationNative;
-                          const debug_android_waypoint = waypointCoord ? `${waypointCoord}` : "";
-                          const debug_android_intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${debug_android_waypoint}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
-                          const debug_android_navigation = `google.navigation:q=${destinationNative}&mode=d`;
-                          console.debug("[Démarrer GPS] UA:", ua);
-                          console.debug("[Démarrer GPS] origin:", debug_origin);
-                          console.debug("[Démarrer GPS] destination:", debug_destination);
-                          console.debug("[Démarrer GPS] waypoint:", debug_wp);
-                          console.debug("[Démarrer GPS] android_intent:", debug_android_intent);
-                          console.debug("[Démarrer GPS] android_navigation:", debug_android_navigation);
-                          console.debug("[Démarrer GPS] web:", debug_googleMapsWeb);
-                          if (isIOS) {
-                            // iOS : open Google Maps app with explicit origin + waypoint + start navigation
-                            const gmaps = waypointCoord
-                              ? `comgooglemaps://?saddr=${originNative}&daddr=${waypointCoord}+to:${destinationNative}&directionsmode=driving&dir_action=navigate`
-                              : `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&directionsmode=driving&dir_action=navigate`;
-                            window.location.href = gmaps;
-                            setTimeout(() => {
-                              window.location.href = googleMapsWeb;
-                            }, 1200);
-                          } else if (isAndroid) {
-                            const androidNavigation = `google.navigation:q=${destinationNative}&mode=d`;
-                            const gmapsAndroid = waypointCoord
-                              ? `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&waypoints=${waypointCoord}&directionsmode=driving&dir_action=navigate`
-                              : androidNavigation;
-                            const intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${waypointCoord}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
-                            window.location.href = gmapsAndroid;
-                            setTimeout(() => {
-                              window.location.href = intent;
-                            }, 1200);
-                            setTimeout(() => {
-                              window.location.href = androidNavigation;
-                            }, 2400);
-                            setTimeout(() => {
-                              window.open(googleMapsWeb, "_blank");
-                            }, 3600);
-                          } else {
+              {/* Reprogrammer l'heure */}
+              <button
+                onClick={() => setChangeHeureOpen((o) => !o)}
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  background: "#f8fafc",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: 12,
+                  padding: "10px 14px",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#0f172a",
+                  cursor: "pointer",
+                  marginBottom: changeHeureOpen ? 8 : 10,
+                }}
+              >
+                🕐 {changeHeureOpen ? "▲" : "▼"} Reprogrammer l'heure
+              </button>
+              {changeHeureOpen && (
+                <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
+                  <input
+                    type="datetime-local"
+                    value={newDatetime}
+                    onChange={(e) => setNewDatetime(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: "10px 12px",
+                      borderRadius: 10,
+                      border: "1px solid #e2e8f0",
+                      fontSize: 16,
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  />
+                  <button
+                    onClick={handleChangeHeure}
+                    disabled={changeHeureSending || !newDatetime}
+                    className="drv-btn-primary"
+                    style={{ flex: "0 0 auto", padding: "10px 16px" }}
+                  >
+                    {changeHeureSending ? "…" : "OK"}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Actions */}
+          {resa.status === "pending" && (
+            <div className="drv-btns">
+              <button className="drv-btn-danger" onClick={handleRefuse} disabled={busy}>
+                Refuser
+              </button>
+              <button className="drv-btn-primary" onClick={handleAccept} disabled={busy}>
+                {busy ? "…" : "Accepter"}
+              </button>
+            </div>
+          )}
+          {resa.status === "accepted" && (
+            <>
+              {(() => {
+                // Utilise les coords géocodées si disponibles (plus précis que le texte brut)
+                const chosen = routes[selectedRoute];
+                const origCoord = chosen ? `${chosen.originLatLng.lat},${chosen.originLatLng.lng}` : resa.depart;
+                const destCoord = chosen ? `${chosen.destLatLng.lat},${chosen.destLatLng.lng}` : resa.destination;
+                // Waypoint milieu pour forcer le même itinéraire dans Maps
+                const wp = chosen?.waypointLatLng;
+                const waypointParam = wp ? `&waypoints=${wp.lat},${wp.lng}` : "";
+                const waypointCoord = wp ? `${wp.lat},${wp.lng}` : null;
+                // For web we percent-encode components; for native apps prefer encodeURI
+                // so commas in lat,lng are preserved (Google Maps expects `lat,lng`).
+                const originParam = encodeURIComponent(origCoord);
+                const destinationParam = encodeURIComponent(destCoord);
+                const originNative = encodeURI(origCoord);
+                const destinationNative = encodeURI(destCoord);
+                const googleMapsWeb = `https://www.google.com/maps/dir/?api=1&origin=${originParam}&destination=${destinationParam}${waypointParam}&travelmode=driving&dir_action=navigate`;
+                return (
+                  <div style={{ marginBottom: 10 }}>
+                    <button
+                      onClick={() => {
+                        const ua = navigator.userAgent;
+                        const isIOS = /iPad|iPhone|iPod/.test(ua);
+                        const isAndroid = /Android/.test(ua);
+                        if (isIOS) {
+                          // iOS : open Google Maps app with explicit origin + waypoint + start navigation
+                          const gmaps = waypointCoord
+                            ? `comgooglemaps://?saddr=${originNative}&daddr=${waypointCoord}+to:${destinationNative}&directionsmode=driving&dir_action=navigate`
+                            : `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&directionsmode=driving&dir_action=navigate`;
+                          window.location.href = gmaps;
+                          setTimeout(() => {
+                            window.location.href = googleMapsWeb;
+                          }, 1200);
+                        } else if (isAndroid) {
+                          const androidNavigation = `google.navigation:q=${destinationNative}&mode=d`;
+                          const gmapsAndroid = waypointCoord
+                            ? `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&waypoints=${waypointCoord}&directionsmode=driving&dir_action=navigate`
+                            : androidNavigation;
+                          const intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${waypointCoord}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
+                          window.location.href = gmapsAndroid;
+                          setTimeout(() => {
+                            window.location.href = intent;
+                          }, 1200);
+                          setTimeout(() => {
+                            window.location.href = androidNavigation;
+                          }, 2400);
+                          setTimeout(() => {
                             window.open(googleMapsWeb, "_blank");
-                          }
-                        }}
-                        style={{
-                          width: "100%",
-                          display: "block",
-                          textAlign: "center",
-                          background: "#0f172a",
-                          color: "#FDFBF7",
-                          border: "none",
-                          borderRadius: 12,
-                          padding: "13px 8px",
-                          fontSize: 14,
-                          fontWeight: 700,
-                          cursor: "pointer",
-                          fontFamily: "'DM Sans', sans-serif",
-                        }}
-                      >
-                        🗺 Lancer Google Maps
-                      </button>
-                    </div>
-                  );
-                })()}
-              </>
-            )}
+                          }, 3600);
+                        } else {
+                          window.open(googleMapsWeb, "_blank");
+                        }
+                      }}
+                      style={{
+                        width: "100%",
+                        display: "block",
+                        textAlign: "center",
+                        background: "#0f172a",
+                        color: "#FDFBF7",
+                        border: "none",
+                        borderRadius: 12,
+                        padding: "13px 8px",
+                        fontSize: 14,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        fontFamily: "'DM Sans', sans-serif",
+                      }}
+                    >
+                      🗺 Lancer Google Maps
+                    </button>
+                  </div>
+                );
+              })()}
+            </>
+          )}
 
-            {resa.status === "accepted" && (
-              <button
-                onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
-                disabled={progressing}
-                style={{
-                  width: "100%",
-                  background: "#eff6ff",
-                  border: "2px solid #2563eb",
-                  color: "#1d4ed8",
-                  borderRadius: 12,
-                  padding: "12px",
-                  fontSize: 14,
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  marginBottom: 10,
-                }}
-              >
-                {progressing ? "…" : "🚕 Votre taxi arrive"}
-              </button>
-            )}
-
-            {(resa.status === "accepted" || resa.status === "en_route") && (
-              <button
-                onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
-                disabled={progressing}
-                style={{
-                  width: "100%",
-                  background: "#f5f3ff",
-                  border: "2px solid #7c3aed",
-                  color: "#6d28d9",
-                  borderRadius: 12,
-                  padding: "12px",
-                  fontSize: 14,
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  marginBottom: 10,
-                }}
-              >
-                {progressing ? "…" : "📍 Votre taxi est arrivé"}
-              </button>
-            )}
-
-            {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-              <button
-                onClick={handleComplete}
-                disabled={completing}
-                style={{
-                  width: "100%",
-                  background: "#f0fdf4",
-                  border: "2px solid #16a34a",
-                  color: "#15803d",
-                  borderRadius: 12,
-                  padding: "12px",
-                  fontSize: 14,
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  marginBottom: 10,
-                }}
-              >
-                {completing ? "…" : "✓ Terminée"}
-              </button>
-            )}
-
-            {/* Supprimer définitivement */}
+          {resa.status === "accepted" && (
             <button
-              onClick={handleDeleteResa}
-              disabled={deleting}
+              onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
+              disabled={progressing}
               style={{
                 width: "100%",
-                marginTop: 4,
-                background: "none",
-                border: "none",
-                color: "#b91c1c",
-                fontSize: 11.5,
-                fontWeight: 600,
+                background: "#eff6ff",
+                border: "2px solid #2563eb",
+                color: "#1d4ed8",
+                borderRadius: 12,
+                padding: "12px",
+                fontSize: 14,
+                fontWeight: 800,
                 cursor: "pointer",
-                padding: "6px 0",
+                marginBottom: 10,
               }}
             >
-              {deleting ? "Suppression…" : "🗑 Supprimer cette course"}
+              {progressing ? "…" : "🚕 Votre taxi arrive"}
             </button>
-          </>
-        )}
+          )}
 
-        <button
-          onClick={onToggle}
-          style={{
-            width: "100%",
-            marginTop: 8,
-            background: "none",
-            border: "none",
-            color: "#94a3b8",
-            fontSize: 12,
-            cursor: "pointer",
-            padding: "4px 0",
-          }}
-        >
-          {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
-        </button>
-      </div>
-    </div>
+          {(resa.status === "accepted" || resa.status === "en_route") && (
+            <button
+              onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
+              disabled={progressing}
+              style={{
+                width: "100%",
+                background: "#f5f3ff",
+                border: "2px solid #7c3aed",
+                color: "#6d28d9",
+                borderRadius: 12,
+                padding: "12px",
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: "pointer",
+                marginBottom: 10,
+              }}
+            >
+              {progressing ? "…" : "📍 Votre taxi est arrivé"}
+            </button>
+          )}
+
+          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
+            <button
+              onClick={handleComplete}
+              disabled={completing}
+              style={{
+                width: "100%",
+                background: "#f0fdf4",
+                border: "2px solid #16a34a",
+                color: "#15803d",
+                borderRadius: 12,
+                padding: "12px",
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: "pointer",
+                marginBottom: 10,
+              }}
+            >
+              {completing ? "…" : "✓ Terminée"}
+            </button>
+          )}
+
+          {/* Supprimer définitivement */}
+          <button
+            onClick={handleDeleteResa}
+            disabled={deleting}
+            style={{
+              width: "100%",
+              marginTop: 4,
+              background: "none",
+              border: "none",
+              color: "#b91c1c",
+              fontSize: 11.5,
+              fontWeight: 600,
+              cursor: "pointer",
+              padding: "6px 0",
+            }}
+          >
+            {deleting ? "Suppression…" : "🗑 Supprimer cette course"}
+          </button>
+        </>
+      )}
+
+      <button
+        onClick={onToggle}
+        style={{
+          width: "100%",
+          marginTop: 8,
+          background: "none",
+          border: "none",
+          color: "#94a3b8",
+          fontSize: 12,
+          cursor: "pointer",
+          padding: "4px 0",
+        }}
+      >
+        {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
+      </button>
+    </SwipeToDeleteCard>
   );
 }
 
