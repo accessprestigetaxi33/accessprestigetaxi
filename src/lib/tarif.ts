@@ -1,7 +1,7 @@
-// Tarifs officiels taxi (mêmes bases que Start Fresh Here)
-export const PRISE_EN_CHARGE = 2.83;
-export const TARIF_JOUR = 2.16; // €/km — tarif A (7h–19h)
-export const TARIF_NUIT = 3.24; // €/km — tarif B (19h–7h, dimanche, jours fériés)
+// Tarifs officiels taxi — arrêté préfectoral 2026-01-DDPP/CCRF 17
+export const PRISE_EN_CHARGE = 2.7;
+export const TARIF_JOUR = 2.28; // €/km — tarif C, retour à vide (7h–19h)
+export const TARIF_NUIT = 3.22; // €/km — tarif D, retour à vide (19h–7h, dimanche, jours fériés)
 export const VITESSE_MOYENNE_KMH = 40; // vitesse moyenne estimée en ville
 
 export const TARIFS = {
@@ -188,11 +188,7 @@ export type DetailPrix = {
  * @param dureeMinOverride durée réelle du trajet (min) si connue (Google Routes),
  *                         sinon estimée avec VITESSE_MOYENNE_KMH.
  */
-export function detaillerPrix(
-  distanceKm: number,
-  pickupIso: string,
-  dureeMinOverride?: number,
-): DetailPrix {
+export function detaillerPrix(distanceKm: number, pickupIso: string, dureeMinOverride?: number): DetailPrix {
   const dist = Number.isFinite(distanceKm) && distanceKm > 0 ? distanceKm : 0;
   const dureeMin =
     dureeMinOverride && dureeMinOverride > 0
@@ -221,8 +217,7 @@ export function detaillerPrix(
 
   const prixJour = kmJour * TARIF_JOUR;
   const prixNuit = kmNuit * TARIF_NUIT;
-  const regime: DetailPrix["regime"] =
-    kmJour > 0.01 && kmNuit > 0.01 ? "mixte" : kmNuit > 0.01 ? "nuit" : "jour";
+  const regime: DetailPrix["regime"] = kmJour > 0.01 && kmNuit > 0.01 ? "mixte" : kmNuit > 0.01 ? "nuit" : "jour";
 
   return {
     distanceKm: dist,
