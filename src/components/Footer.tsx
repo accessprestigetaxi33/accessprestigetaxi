@@ -135,7 +135,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer aria-label={t("aria.footer")} className="bg-[#0b0b0d] text-[#c9c4b8]">
+    <footer aria-label={t("aria.footer")} className="bg-[#0b0b0d] text-[#c9c4b8] pb-[var(--mobile-action-bar-h,0px)]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         {/* Main grid — 1 col on mobile, 2 on tablet, 4 on desktop */}
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-10">
@@ -218,7 +218,6 @@ export function Footer() {
               FAQ
             </Link>
           </div>
-
 
           {/* CONTACT */}
           <div>
