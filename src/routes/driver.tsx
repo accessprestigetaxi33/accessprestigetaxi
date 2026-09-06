@@ -13,11 +13,8 @@ import { geocodeAddress } from "@/lib/googleGeocode";
 import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
-// ⚠️ TEMPORAIRE — panneau de diagnostic bas d'écran (bouton ▶ Lancer), à
-// retirer une fois le problème notifications résolu. Distinct de
-// PushDiagnosticsCard ci-dessus, qui est un composant permanent différent.
 import { useServerFn } from "@tanstack/react-start";
-import { listPushFailures, notifyReservationStatus } from "@/lib/push.functions";
+import { notifyReservationStatus } from "@/lib/push.functions";
 import { calculerPrixMixte, estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
 import { broadcastDriverFeed, broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
 import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
@@ -253,15 +250,15 @@ export const Route = createFileRoute("/driver")({
 const css = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
   html, body {
-    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    margin: 0; padding: 0;  overflow: hidden;
     overscroll-behavior-y: contain; background: #03070d;
     font-family: 'DM Sans', sans-serif;
   }
   input, textarea, select { font-size: 16px; }
   .drv-root {
-    position: fixed; inset: 0;
+     
     display: flex; flex-direction: column;
-    background: #03070d;
+    
   }
   /* Tablette (iPad portrait et paysage) : colonne élargie, plus de cadre centré. */
   
@@ -277,13 +274,13 @@ const css = `
     .drv-card:hover, .drv-route-opt:hover, .drv-chat-thread:hover { border-color: #c99b4a; }
   }
   .drv-header {
-    background: #0f172a; color: #FDFBF7; display: flex; align-items: center; gap: 10px;
-    padding: max(calc(env(safe-area-inset-top, 0px) + 14px), 54px) calc(env(safe-area-inset-right, 0px) + 16px) 10px calc(env(safe-area-inset-left, 0px) + 16px);
+     color: #FDFBF7; display: flex; align-items: center; gap: 10px;
+    
     flex-shrink: 0;
   }
   .drv-header h1 { margin: 0; font-size: 17px; font-weight: 700; flex: 1; font-family: 'DM Sans', sans-serif; }
   .drv-tabs {
-    display: flex; border-bottom: 1px solid rgba(201,155,74,.45); background: #FDFBF7;
+      
     padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
     flex-shrink: 0;
     /* Fix : avec 8 onglets + labels longs ("Course + chat client"), la
@@ -292,23 +289,23 @@ const css = `
        débordement était juste coupé et invisible (ex. l'onglet "Devis"
        disparaissait sans aucun moyen d'y accéder). On rend la barre
        scrollable horizontalement, scrollbar masquée pour rester discrète. */
-    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   .drv-tabs::-webkit-scrollbar { display: none; }
   .drv-tab {
-    flex: 0 0 auto; min-width: 66px; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 12px 8px 10px; min-height: 48px; border: none; background: none; color: #94a3b8;
-    font-size: 10px; font-family: 'DM Sans', sans-serif; cursor: pointer; border-bottom: 2px solid transparent;
+    flex: 0 0 auto; min-width: 66px; display: flex;  align-items: center; 
+       background: none; 
+     font-family: 'DM Sans', sans-serif; cursor: pointer; border-bottom: 2px solid transparent;
     transition: color 0.15s; -webkit-user-select: none; user-select: none;
     white-space: nowrap;
   }
-  .drv-tab:active { background: #f8fafc; }
-  .drv-tab.active { color: #0f172a; border-bottom-color: var(--gold, #c99b4a); }
+  .drv-tab:active {  }
+  .drv-tab.active {   }
   .drv-tab svg { width: 22px; height: 22px; }
   .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
   .drv-tab-count { display: none; }
   .drv-body {
-    flex: 1; min-height: 0; padding: 16px;
+    flex: 1;  
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
   }
@@ -337,25 +334,25 @@ const css = `
   .drv-meta { display: flex; gap: 12px; font-size: 12px; color: #64748b; margin: 8px 0 12px; flex-wrap: wrap; }
   .drv-meta span { display: flex; align-items: center; gap: 4px; }
   .drv-btns { display: flex; gap: 8px; }
-  .drv-btn-primary { flex: 1; min-height: 46px; background: #0f172a; color: #FDFBF7; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-primary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-primary:active { background: #1e293b; }
-  .drv-btn-secondary { flex: 1; min-height: 46px; background: #f1f5f9; color: #0f172a; border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-secondary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-secondary:active { background: #e2e8f0; }
-  .drv-btn-danger { flex: 1; min-height: 46px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-danger { flex: 1; min-height: 46px;   border: 1px solid #fecaca; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-danger:active { background: #fee2e2; }
   .drv-badge-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
-  .drv-badge-blue { background: #eff6ff; color: #1d4ed8; }
-  .drv-badge-green { background: #f0fdf4; color: #15803d; }
+  .drv-badge-blue {   }
+  .drv-badge-green {   }
   .drv-badge-amber { background: #FDFBF7beb; color: #92400e; }
   .drv-badge-red { background: #fef2f2; color: #b91c1c; }
-  .drv-badge-gray { background: #f1f5f9; color: #475569; }
+  .drv-badge-gray {   }
   .drv-stars { color: #f59e0b; font-size: 15px; letter-spacing: 1px; }
   .drv-stars-empty { color: var(--border); font-size: 15px; }
-  .drv-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .drv-stat { background: #f8fafc; border-radius: 14px; padding: 14px; }
-  .drv-stat-lbl { font-size: 11px; color: #64748b; margin-bottom: 4px; }
-  .drv-stat-val { font-size: 24px; font-weight: 800; color: #0f172a; }
-  .drv-stat-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+  .drv-stat-grid { display: grid;    }
+  .drv-stat {    }
+  .drv-stat-lbl {   margin-bottom: 4px; }
+  .drv-stat-val {  font-weight: 800;  }
+  .drv-stat-sub {   margin-top: 2px; }
   .drv-empty { text-align: center; padding: 50px 20px; color: #94a3b8; }
   .drv-empty svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.4; }
   .drv-route-opt { border: 1.5px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; min-height: 44px; }
@@ -374,23 +371,23 @@ const css = `
   
   .drv-chat-thread { border: 1px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
   .drv-chat-thread:active { background: #f8fafc; }
-  .drv-chat-thread.unread { border-color: #3b82f6; background: #eff6ff; }
+  .drv-chat-thread.unread {   }
   .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
   .drv-chat-bubble { max-width: 78%; border-radius: 14px; padding: 9px 12px; font-size: 13.5px; line-height: 1.45; }
-  .drv-chat-bubble.me { background: #0f172a; color: #FDFBF7; border-radius: 14px 14px 4px 14px; margin-left: auto; }
-  .drv-chat-bubble.them { background: #f1f5f9; color: #0f172a; border-radius: 14px 14px 14px 4px; }
+  .drv-chat-bubble.me {   border-radius: 14px 14px 4px 14px; margin-left: auto; }
+  .drv-chat-bubble.them {   border-radius: 14px 14px 14px 4px; }
   @keyframes drv-fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
   .drv-msg-in { animation: drv-fadein 0.25s ease both; }
   @keyframes drv-pulse { 0%, 100% { opacity:1; box-shadow: 0 0 0 3px rgba(34,197,94,0.3); } 50% { opacity:0.6; box-shadow: 0 0 0 6px rgba(34,197,94,0.1); } }
   .drv-visitor-dot-active { animation: drv-pulse 2s ease-in-out infinite; }
 
   /* ── Access Prestige mobile visual system ───────────────────────────── */
-  .drv-root { background:#03070d !important; color:#f6f0e5 !important; }
-  .drv-header { background:#050a10 !important; border-bottom:1px solid #c99b4a; min-height:74px; padding:calc(env(safe-area-inset-top, 0px) + 12px) 14px 10px !important; }
-  .drv-brand-mark { width:42px; height:42px; border:1px solid #c99b4a; border-radius:50%; display:grid; place-items:center; color:#e0b866; font-family:Georgia,serif; font-weight:800; letter-spacing:.08em; flex:0 0 42px; }
+  .drv-root {  color:#f6f0e5 !important; }
+  .drv-header {     }
+  .drv-brand-mark { width:42px; height:42px;   display:grid; place-items:center; color:#e0b866; font-family:Georgia,serif; font-weight:800; letter-spacing:.08em; flex:0 0 42px; }
   .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
-  .drv-header-title strong { color:#f6f0e5; font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; }
+  .drv-header-title strong { color:#f6f0e5;  font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .drv-header-title span { color:rgba(246,240,229,.55);  }
   .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size:11.5px; font-weight:700; white-space:nowrap; flex:0 0 auto; }
   .drv-header-back svg { flex-shrink:0; }
   .drv-header-notif { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #d6a83d; border-radius:8px; background:#d6a83d; color:#07101a; font-size:11.5px; font-weight:800; white-space:nowrap; flex:0 0 auto; cursor:pointer; }
@@ -452,7 +449,7 @@ const css = `
   @media (min-width:640px) { .drv-quick6 { grid-template-columns:repeat(6,1fr); } }
 
   /* ── Tableau de bord (grille responsive) ─────────────────────────────── */
-  .drv-main { display:flex; flex-direction:column; flex:1; min-height:0; }
+  .drv-main {  flex-direction:column; flex:1;  }
   .drv-section-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
   .drv-section-row .drv-section { margin:0; }
   .drv-link-btn { background:none; border:none; color:#e0b866; font-size:11px; font-weight:700; cursor:pointer; padding:2px 0; text-transform:uppercase; letter-spacing:.04em; }
@@ -488,7 +485,7 @@ const css = `
 }
   /* Desktop / grand écran : sidebar de navigation fixe + contenu élargi. */
   @media (min-width:1024px) {
-    .drv-body { padding: 20px 28px; }
+    .drv-body {  }
     .drv-card { padding: 16px; }
   
 
@@ -521,9 +518,9 @@ const css = `
     .drv-body { padding:20px 28px; }
   
 }
-  .drv-tabs { background:#050a10 !important; border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
-  .drv-tab { color:rgba(246,240,229,.48) !important; min-height:58px !important; padding:8px 9px !important; }
-  .drv-tab.active { color:#e0b866 !important; border-bottom-color:#e0b866 !important; }
+  .drv-tabs {  border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
+  .drv-tab {    }
+  .drv-tab.active {  border-bottom-color:#e0b866 !important; }
   .drv-tab:active { background:#0a1118 !important; }
   .drv-body { background:#03070d !important; padding:12px 12px calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
   .drv-card, .drv-route-opt, .drv-chat-thread, .drv-planning-card { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; color:#f6f0e5 !important; }
@@ -677,38 +674,38 @@ const css = `
      « Retour au site ». Aucun comportement métier n'est modifié.
      ================================================================ */
   @media (min-width:1101px) {
- .drv-header { margin-left:164px !important; } 
+ .drv-header {  } 
 
-    html, body { overflow-x:hidden !important; }
+    html, body {  }
 
     .drv-header {
-      margin-left:145px !important;
-      height:78px !important;
-      min-height:78px !important;
-      padding:0 18px !important;
-      gap:10px !important;
+      
+      
+      
+      
+      
     }
 
     .drv-tabs {
-      width:145px !important;
-      padding:0 9px 18px !important;
+      
+      
     }
 
     .drv-side-logo {
-      height:104px !important;
-      margin:0 -9px 12px !important;
+      
+      
     }
 
     .drv-content {
-      margin-left:145px !important;
-      padding:0 15px 26px !important;
-      min-width:0 !important;
+      
+      
+      
     }
 
     .drv-dashboard {
-      max-width:none !important;
-      width:100% !important;
-      padding:12px 0 30px !important;
+      
+      
+      
     }
 
     /* La maquette desktop utilise trois colonnes de même poids. */
@@ -720,61 +717,61 @@ const css = `
     .drv-dashboard-grid-mid {
       grid-template-columns:repeat(3,minmax(0,1fr)) !important;
       gap:10px !important;
-      margin-top:10px !important;
+      
     }
 
     /* 4 cartes du bas : véhicule / GPS / notifications / raccourcis. */
     .drv-dashboard-grid-bottom {
-      grid-template-columns:.83fr 1fr .86fr 1.39fr !important;
-      gap:10px !important;
-      margin-top:10px !important;
+      
+      
+      
     }
 
     .drv-dashboard .drv-card {
-      min-width:0 !important;
-      overflow:hidden !important;
+      
+      
     }
 
     .drv-next-card,
     .drv-day-card,
     .drv-revenue-card {
-      min-height:315px !important;
+      
     }
 
     .drv-next-card { padding:14px !important; }
     .drv-day-card,
     .drv-revenue-card { padding:14px !important; }
 
-    .drv-next-layout { grid-template-columns:100px minmax(0,1fr) !important; }
-    .drv-next-route { min-width:0 !important; }
+    .drv-next-layout {  }
+    .drv-next-route {  }
     .drv-next-route strong,
     .drv-day-row span,
     .drv-plan-row > span,
     .drv-message-row div:nth-child(2) span {
-      overflow:hidden !important;
-      text-overflow:ellipsis !important;
+      
+      
     }
 
     .drv-plan-row {
-      grid-template-columns:102px minmax(0,1fr) 40px 25px !important;
+      
     }
 
     .drv-message-row {
-      grid-template-columns:32px minmax(0,1fr) 38px !important;
+      
     }
 
     .drv-rating-bars {
-      margin-left:120px !important;
+      
     }
 
     .shortcut-grid {
-      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-      gap:6px !important;
+      
+      
     }
 
     .shortcut-grid b {
-      width:46px !important;
-      height:46px !important;
+      
+      
     }
   
 
@@ -1024,8 +1021,8 @@ const css = `
 
   /* Tablette : dashboard lisible sans supprimer les contrôles du header */
   @media (min-width:701px) and (max-width:1100px) {
-    .drv-header-kpi { min-width:90px; padding:0 10px; } .drv-header-kpi strong { font-size:16px; }
-    .drv-content { margin-left:0; padding:0 12px 24px; } .drv-tabs { position:sticky !important; top:0 !important; left:auto !important; width:100% !important; height:58px !important; flex-direction:row !important; overflow-x:auto !important; z-index:20 !important; padding:0 6px !important; } .drv-side-logo { display:none; } .drv-tab { width:auto !important; min-width:95px !important; flex:0 0 auto !important; flex-direction:column !important; border-left:0 !important; border-bottom:3px solid transparent !important; border-radius:0 !important; } .drv-tab.active { border-left:0 !important; border-bottom-color:#e0b866 !important; } .drv-dashboard-grid-top { grid-template-columns:1fr 1fr; } .drv-revenue-card { grid-column:span 2; } .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:1fr 1fr; }
+    .drv-header-kpi {   } .drv-header-kpi strong {  }
+    .drv-content {   } .drv-tabs {   left:auto !important;       } .drv-side-logo {  } .drv-tab { width:auto !important;       } .drv-tab.active {   } .drv-dashboard-grid-top {  } .drv-revenue-card {  } .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom {  }
   
 
     html, body { overflow-x:hidden !important; }
@@ -1052,12 +1049,12 @@ const css = `
     }
 
     .drv-header-kpi {
-      min-width:84px !important;
-      padding:0 10px !important;
+      
+      
     }
 
-    .drv-header-kpi small { font-size:8px !important; }
-    .drv-header-kpi strong { font-size:16px !important; }
+    .drv-header-kpi small {  }
+    .drv-header-kpi strong {  }
 
     .drv-header-datetime { display:block !important; font-size:9px !important; }
     .drv-header-datetime strong { font-size:10px !important; }
@@ -1110,7 +1107,7 @@ const css = `
     }
 
     .drv-dashboard-grid-top {
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      
       gap:10px !important;
     }
 
@@ -1183,8 +1180,8 @@ const css = `
   /* Mobile : on conserve « Retour au site » et l'activation des notifications
      (uniquement l'icône pour tenir dans la barre). */
   @media (max-width:700px) {
-    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50; height:auto !important; min-height:calc(58px + env(safe-area-inset-top, 0px)) !important; padding:calc(env(safe-area-inset-top, 0px) + 7px) 10px 7px !important; } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size:16px; } .drv-header-title strong { font-size:12px !important; } .drv-header-title span { font-size:8px !important; } .drv-header-live { margin-left:auto; font-size:7px !important; padding:4px 6px !important; } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell { width:31px !important; height:31px !important; border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content { margin:0 !important; padding:0 10px !important; min-height:0 !important; } .drv-dashboard { padding:9px 0 22px; } .drv-dashboard-grid-top { display:flex; flex-direction:column; gap:8px; } .drv-next-card { order:0; min-height:0; padding:11px !important; } .drv-next-layout { grid-template-columns:70px 1fr; gap:9px; padding-bottom:9px; } .drv-next-time strong { font-size:24px; } .drv-next-time span { font-size:8px; margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size:10px; } .drv-next-route small { font-size:7px; } .drv-next-meta { font-size:7px; padding:8px 0; gap:5px; } .drv-next-meta small { font-size:6.5px; } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size:7px; padding:6px; } .drv-card-head { font-size:9px; margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card { min-height:0; order:2; padding:10px !important; } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size:7.5px; } .drv-day-row em { font-size:6px; } .drv-mobile-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; order:1; } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size:12px; } .drv-mobile-stats span { display:block; color:#7e8993; font-size:6px; margin-top:3px; letter-spacing:.04em; }
-    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0; height:68px; padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:7px; font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size:7px; }
+    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50;    } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size:16px; } .drv-header-title strong { font-size:12px !important; } .drv-header-title span { font-size:8px !important; } .drv-header-live {    } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell {   border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content {   min-height:0 !important; } .drv-dashboard {  } .drv-dashboard-grid-top {    } .drv-next-card {    } .drv-next-layout {   padding-bottom:9px; } .drv-next-time strong { font-size:24px; } .drv-next-time span { font-size:8px; margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size:10px; } .drv-next-route small { font-size:7px; } .drv-next-meta { font-size:7px; padding:8px 0; gap:5px; } .drv-next-meta small { font-size:6.5px; } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size:7px; padding:6px; } .drv-card-head { font-size:9px; margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card {    } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size:7.5px; } .drv-day-row em { font-size:6px; } .drv-mobile-stats {     } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size:12px; } .drv-mobile-stats span { display:block; color:#7e8993; font-size:6px; margin-top:3px; letter-spacing:.04em; }
+    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0;  padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:7px; font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size:7px; }
     .drv-body { overflow:visible !important; -webkit-overflow-scrolling:auto !important; touch-action:auto !important; padding:8px 0 28px !important; } .drv-body * { touch-action:auto; }
   
 
@@ -1258,7 +1255,7 @@ const css = `
 
     .drv-mobile-stats {
       order:1 !important;
-      display:grid !important;
+      
       grid-template-columns:repeat(3,minmax(0,1fr)) !important;
       gap:6px !important;
     }
@@ -1333,6 +1330,7 @@ const css = `
     .drv-header-pushbtn { height:31px !important; padding:0 8px !important; font-size:10px !important; }
   
 }
+
 
 
 `;
@@ -7358,9 +7356,6 @@ function StatsTab() {
 
       {/* Analytics suivi */}
       <TrackingAnalytics />
-
-      {/* Diagnostic push */}
-      <PushDiagnostic />
     </>
   );
 }
@@ -7505,109 +7500,6 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
         </div>
       )}
     </>
-  );
-}
-
-// ── Mini diagnostic des échecs push (remplace l'ancien lien /admin/dashboard) ──
-function PushDiagnostic() {
-  const fetchFailures = useServerFn(listPushFailures);
-  const [open, setOpen] = useState(false);
-  const [rows, setRows] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      if (!getDriverToken()) {
-        setLoading(false);
-        return;
-      }
-      const res = await fetchFailures({
-        data: { pin: getDriverToken(), only_price_update: false, limit: 30 },
-      });
-      setRows((res as any)?.failures ?? []);
-    } catch {
-      setRows([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div style={{ marginTop: 16 }}>
-      <button
-        onClick={() => {
-          const next = !open;
-          setOpen(next);
-          if (next && rows.length === 0) load();
-        }}
-        style={{
-          width: "100%",
-          textAlign: "center",
-          background: "none",
-          border: "none",
-          color: "#94a3b8",
-          fontSize: 12,
-          cursor: "pointer",
-          padding: "8px 0",
-        }}
-      >
-        {open ? "▲ Masquer le diagnostic push" : "▼ Diagnostic notifications push"}
-      </button>
-      {open && (
-        <div className="drv-card">
-          {loading ? (
-            <div style={{ fontSize: 13, color: "#64748b", textAlign: "center" }}>Chargement…</div>
-          ) : rows.length === 0 ? (
-            <div style={{ fontSize: 13, color: "#64748b", textAlign: "center" }}>Aucun échec récent ✨</div>
-          ) : (
-            rows.map((r: any) => (
-              <div key={r.id} style={{ fontSize: 11.5, padding: "6px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    color: "#0f172a",
-                    fontWeight: 600,
-                  }}
-                >
-                  <span>
-                    {r.audience} · {r.http_status ?? "—"} {r.error_code ?? ""}
-                  </span>
-                  <span style={{ color: "#94a3b8" }}>
-                    {new Date(r.created_at).toLocaleString("fr-FR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-                <div style={{ color: "#64748b" }}>{r.title ?? ""}</div>
-              </div>
-            ))
-          )}
-          <button
-            onClick={load}
-            disabled={loading}
-            style={{
-              marginTop: 10,
-              width: "100%",
-              background: "#f1f5f9",
-              border: "1px solid #e2e8f0",
-              borderRadius: 10,
-              padding: "8px",
-              fontSize: 12,
-              fontWeight: 700,
-              color: "#0f172a",
-              cursor: "pointer",
-            }}
-          >
-            🔄 Rafraîchir
-          </button>
-        </div>
-      )}
-    </div>
   );
 }
 
