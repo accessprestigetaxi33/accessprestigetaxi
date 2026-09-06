@@ -21,8 +21,7 @@ const COPY = {
   fr: {
     eyebrow: "Tarifs estimés",
     title: "Calculez le prix de votre trajet",
-    lead:
-      "Tarifs officiels taxi : prise en charge 2,83 €, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. Distances calculées avec Google Maps.",
+    lead: "Tarifs officiels taxi : prise en charge 2,70 €, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. Distances calculées avec Google Maps.",
     depart: "Adresse de départ",
     arrivee: "Adresse d'arrivée",
     date: "Date",
@@ -52,8 +51,7 @@ const COPY = {
   en: {
     eyebrow: "Estimated fares",
     title: "Work out the price of your journey",
-    lead:
-      "Official taxi rates: €2.83 pickup, €2.16/km during the day and €3.24/km at night, on Sundays and public holidays. Distances computed with Google Maps.",
+    lead: "Official taxi rates: €2.70 pickup, €2.28/km during the day and €3.22/km at night, on Sundays and public holidays. Distances computed with Google Maps.",
     depart: "Pickup address",
     arrivee: "Drop-off address",
     date: "Date",
@@ -153,8 +151,14 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
     try {
       // Le géocodage peut rester bloqué (proxy lent, SDK restreint) : on borne l'attente.
       const [a, b] = await Promise.all([
-        withTimeout(searchAddress(depart, 1).catch(() => null), 9000),
-        withTimeout(searchAddress(arrivee, 1).catch(() => null), 9000),
+        withTimeout(
+          searchAddress(depart, 1).catch(() => null),
+          9000,
+        ),
+        withTimeout(
+          searchAddress(arrivee, 1).catch(() => null),
+          9000,
+        ),
       ]);
       if (!a?.length || !b?.length) {
         setError(c.errAddr);
@@ -163,7 +167,10 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
       }
       // Google Directions peut être indisponible (quota, restriction de domaine) :
       // on borne l'attente et on retombe sur une estimation à vol d'oiseau ×1,3.
-      const dd = await withTimeout(getDistanceAndDurationKm(a[0].coord, b[0].coord).catch(() => null), 8000);
+      const dd = await withTimeout(
+        getDistanceAndDurationKm(a[0].coord, b[0].coord).catch(() => null),
+        8000,
+      );
       if (dd && dd.distanceKm) {
         setRoute({ km: Math.round(dd.distanceKm * 10) / 10, min: Math.max(Math.round(dd.dureeS / 60), 1) });
       } else {
@@ -227,7 +234,12 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
         </label>
         <label className="block">
           <span className={labelCls}>{c.heure}</span>
-          <input type="time" value={heure} onChange={(e) => setHeure(e.target.value)} className={`${inputCls} mt-1.5`} />
+          <input
+            type="time"
+            value={heure}
+            onChange={(e) => setHeure(e.target.value)}
+            className={`${inputCls} mt-1.5`}
+          />
         </label>
         <label className="block">
           <span className={labelCls}>{c.passagers}</span>
