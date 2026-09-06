@@ -2,7 +2,7 @@ import { socialImageMeta } from "@/lib/og";
 import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
-import { Accessibility, ArrowLeft, Clock3, Mail, Phone, Users, Zap } from "lucide-react";
+import { ArrowLeft, Mail, Phone } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { useRef, useState } from "react";
@@ -75,13 +75,7 @@ const COPY = {
     back: "Retour au site",
     eyebrow: "Devis gratuit",
     h1: "Demander un devis",
-    lead: "Décrivez votre trajet en une minute : nous vous répondons avec un prix ferme, adapté à votre véhicule et à vos besoins (transport sanitaire conventionné, transport de groupe, longue distance).",
-    perks: [
-      { icon: Zap, t: "Véhicules électriques", d: "BMW iX1 et Audi Q6 e-tron, 5 places." },
-      { icon: Users, t: "Van 8 places", d: "Mercedes classe V pour les groupes et les bagages." },
-      { icon: Accessibility, t: "Transport sanitaire", d: "Conventionné, fauteuil roulant possible." },
-      { icon: Clock3, t: "Réponse rapide", d: "Un devis clair, sans engagement." },
-    ],
+    lead: "Décrivez votre trajet en une minute : nous vous répondons avec une estimation du prix qui ne prend pas en compte les bouchons, manifestations ou accidents, adaptée à votre véhicule et à vos besoins (transport pro et particulier, transport de groupe, longue distance).",
     estimTag: "Estimation rapide",
     estimTitle: "Estimez votre trajet",
     formTag: "Formulaire de devis",
@@ -94,13 +88,7 @@ const COPY = {
     back: "Back to website",
     eyebrow: "Free quote",
     h1: "Request a quote",
-    lead: "Describe your journey in a minute: we reply with a firm price matched to your vehicle and your needs (covered medical transport, group transport, long distance).",
-    perks: [
-      { icon: Zap, t: "Electric vehicles", d: "BMW iX1 and Audi Q6 e-tron, 5 seats." },
-      { icon: Users, t: "8-seat van", d: "Mercedes V-Class for groups and luggage." },
-      { icon: Accessibility, t: "Medical transport", d: "Covered, wheelchair available." },
-      { icon: Clock3, t: "Fast reply", d: "A clear quote, no commitment." },
-    ],
+    lead: "Describe your journey in a minute: we reply with a price estimate that does not account for traffic, events or accidents, matched to your vehicle and your needs (business and private transport, group transport, long distance).",
     estimTag: "Quick estimate",
     estimTitle: "Estimate your ride",
     formTag: "Quote form",
@@ -135,20 +123,6 @@ function DevisPage() {
             </span>
             <h1 className="mt-4 font-display text-[29px] leading-tight text-[#f4efe5]">{c.h1}</h1>
             <p className="mx-auto mt-3 max-w-[300px] text-[12px] leading-5 text-white/70">{c.lead}</p>
-          </div>
-
-          {/* Perks */}
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            {c.perks.map((p) => (
-              <article
-                key={p.t}
-                className="min-h-[118px] rounded-xl border border-[#d6a83d]/45 bg-[linear-gradient(145deg,#111b26,#07101a)] p-3"
-              >
-                <p.icon className="h-7 w-7 text-[#e8bd5d]" />
-                <h3 className="mt-2 font-display text-[14px] text-[#f4efe5]">{p.t}</h3>
-                <p className="mt-1 text-[9px] leading-4 text-white/60">{p.d}</p>
-              </article>
-            ))}
           </div>
 
           {/* Estimation rapide */}
