@@ -1722,5 +1722,7 @@ export const VILLES: Ville[] = [
 ];
 
 export function getVille(slug: string) {
-  return VILLES.find((v) => v.slug === slug);
+  // Tolère les anciennes adresses /taxi/taxi-<ville> encore partagées ou indexées.
+  const clean = slug.startsWith("taxi-") ? slug.slice(5) : slug;
+  return VILLES.find((v) => v.slug === slug) ?? VILLES.find((v) => v.slug === clean);
 }
