@@ -66,9 +66,9 @@ const COPY = {
     ],
     pricesT: "Tarifs",
     prices: [
-      "Prise en charge : 2,83 €",
-      "Tarif journée : 2,16 €/km",
-      "Tarif nuit, dimanche et jours fériés : 3,24 €/km",
+      "Prise en charge : 2,70 €",
+      "Tarif journée : 2,28 €/km",
+      "Tarif nuit, dimanche et jours fériés : 3,22 €/km",
       "Devis gratuit et prix annoncé avant le départ",
     ],
     priceNote:
@@ -113,9 +113,9 @@ const COPY = {
     ],
     pricesT: "Fares",
     prices: [
-      "Pick-up charge: €2.83",
-      "Daytime rate: €2.16/km",
-      "Night, Sunday and public holidays: €3.24/km",
+      "Pick-up charge: €2.70",
+      "Daytime rate: €2.28/km",
+      "Night, Sunday and public holidays: €3.22/km",
       "Free quote and price confirmed before departure",
     ],
     priceNote:
@@ -147,15 +147,15 @@ const COPY = {
 
 const GUIDE_LINKS = [
   { slug: "rejoindre-l-ile-d-oleron-en-taxi", fr: "Rejoindre l'île d'Oléron en taxi", en: "Reaching Oléron island by taxi" },
-  { slug: "taxi-a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
+  { slug: "a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
   { slug: "visiter-brouage-et-le-bassin-de-marennes-oleron", fr: "Visiter Brouage et le bassin de Marennes-Oléron", en: "Visiting Brouage and the Marennes-Oléron basin" },
 ] as const;
 
 const ISLAND_TOWNS = [
-  { slug: "taxi-le-chateau-d-oleron", name: "Le Château-d'Oléron" },
-  { slug: "taxi-saint-trojan-les-bains", name: "Saint-Trojan-les-Bains" },
-  { slug: "taxi-dolus-d-oleron", name: "Dolus-d'Oléron" },
-  { slug: "taxi-saint-pierre-d-oleron", name: "Saint-Pierre-d'Oléron" },
+  { slug: "le-chateau-d-oleron", name: "Le Château-d'Oléron" },
+  { slug: "saint-trojan-les-bains", name: "Saint-Trojan-les-Bains" },
+  { slug: "dolus-d-oleron", name: "Dolus-d'Oléron" },
+  { slug: "saint-pierre-d-oleron", name: "Saint-Pierre-d'Oléron" },
 ] as const;
 
 function TaxiOleronPage() {

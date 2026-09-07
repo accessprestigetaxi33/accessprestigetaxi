@@ -74,7 +74,7 @@ const COPY: Record<"fr" | "en", {
         items: [
           {
             q: "Quels sont vos tarifs de taxi en Charente-Maritime ?",
-            a: "Nous appliquons les tarifs taxi officiels du département : prise en charge 2,83 €, tarif journée 2,16 €/km, tarif nuit, dimanche et jours fériés 3,24 €/km. Le prix estimé vous est annoncé avant le départ et le devis est gratuit.",
+            a: "Nous appliquons les tarifs taxi officiels du département : prise en charge 2,70 €, tarif journée 2,28 €/km, tarif nuit, dimanche et jours fériés 3,22 €/km. Le prix estimé vous est annoncé avant le départ et le devis est gratuit.",
           },
           {
             q: "Le prix affiché lors de la réservation est-il définitif ?",
@@ -175,7 +175,7 @@ const COPY: Record<"fr" | "en", {
         items: [
           {
             q: "What are your taxi fares in Charente-Maritime?",
-            a: "We apply the official county taxi fares: €2.83 pick-up charge, €2.16/km daytime rate, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure and quotes are free.",
+            a: "We apply the official county taxi fares: €2.70 pick-up charge, €2.28/km daytime rate, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure and quotes are free.",
           },
           {
             q: "Is the price shown at booking final?",

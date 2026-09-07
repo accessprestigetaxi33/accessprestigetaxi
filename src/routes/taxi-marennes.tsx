@@ -64,9 +64,9 @@ const COPY = {
     ],
     pricesT: "Tarifs",
     prices: [
-      "Prise en charge : 2,83 €",
-      "Tarif journée : 2,16 €/km",
-      "Tarif nuit, dimanche et jours fériés : 3,24 €/km",
+      "Prise en charge : 2,70 €",
+      "Tarif journée : 2,28 €/km",
+      "Tarif nuit, dimanche et jours fériés : 3,22 €/km",
       "Devis gratuit et prix annoncé avant le départ",
     ],
     priceNote:
@@ -110,9 +110,9 @@ const COPY = {
     ],
     pricesT: "Fares",
     prices: [
-      "Pick-up charge: €2.83",
-      "Daytime rate: €2.16/km",
-      "Night, Sunday and public holidays: €3.24/km",
+      "Pick-up charge: €2.70",
+      "Daytime rate: €2.28/km",
+      "Night, Sunday and public holidays: €3.22/km",
       "Free quote and price confirmed before departure",
     ],
     priceNote:
