@@ -821,15 +821,15 @@ function Index() {
             <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-4xl md:text-5xl lg:text-6xl">
               {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
             </h1>
-            <p className="mt-2 max-w-3xl text-base font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-lg md:text-xl lg:text-2xl">
+            <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-xl md:text-2xl lg:text-3xl">
               {lang === "en"
                 ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
                 : "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime."}
             </p>
-            <p className="mt-3 max-w-3xl text-base font-black text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-lg md:text-xl lg:text-2xl">
+            <p className="mt-3 max-w-3xl text-lg font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-xl md:text-2xl lg:text-3xl">
               {lang === "en"
-                ? "Pro private transport · Covered medical transport · Chauffeur service"
-                : "Transport privé pro · Transport médical conventionné · Mise à disposition"}
+                ? "Private and professional transport · Covered medical transport · Chauffeur service"
+                : "Transport privé et professionnel · Transport médical conventionné · Mise à disposition"}
             </p>
           </div>
 
