@@ -587,26 +587,27 @@ select {
 /* Lumineux réels extraits de la référence : la photo du hero reste intacte. */
 .taxi-roof-sign {
   position: absolute;
-  width: clamp(43px, 5.1vw, 66px);
+  width: clamp(64px, 7.8vw, 108px);
   height: auto;
   object-fit: contain;
-  transform: translate(-50%, -92%);
+  transform: translate(-50%, -100%);
   filter: drop-shadow(0 2px 2px oklch(0 0 0 / 0.72));
 }
 
 .taxi-roof-sign-audi {
-  left: 20.1%;
-  top: 51.3%;
-  transform: translate(-50%, -92%) rotate(-1.5deg);
+  left: 21.3%;
+  top: 49.3%;
+  transform: translate(-50%, -100%) rotate(-2deg);
 }
 
 .taxi-roof-sign-bmw {
-  left: 50.7%;
-  top: 51.4%;
+  left: 50.8%;
+  top: 49.7%;
+  transform: translate(-50%, -100%) rotate(-0.5deg);
 }
 
 .taxi-roof-sign-van {
-  left: 81.4%;
-  top: 48.8%;
-  transform: translate(-50%, -92%) rotate(1deg);
+  left: 81.8%;
+  top: 47%;
+  transform: translate(-50%, -100%) rotate(1deg);
 }
