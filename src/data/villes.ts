@@ -936,7 +936,7 @@ export const VILLES: Ville[] = [
     },
   },
   {
-    "slug": "taxi-bourcefranc-le-chapus",
+    "slug": "bourcefranc-le-chapus",
     "name": "Bourcefranc-le-Chapus",
     "postal": "17560",
     "lat": 45.8478,
@@ -1034,7 +1034,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-hiers-brouage",
+    "slug": "hiers-brouage",
     "name": "Hiers-Brouage",
     "postal": "17320",
     "lat": 45.8683,
@@ -1132,7 +1132,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-saint-just-luzac",
+    "slug": "saint-just-luzac",
     "name": "Saint-Just-Luzac",
     "postal": "17320",
     "lat": 45.8069,
@@ -1230,7 +1230,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-nieulle-sur-seudre",
+    "slug": "nieulle-sur-seudre",
     "name": "Nieulle-sur-Seudre",
     "postal": "17600",
     "lat": 45.7969,
@@ -1328,7 +1328,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-le-gua",
+    "slug": "le-gua",
     "name": "Le Gua",
     "postal": "17600",
     "lat": 45.75,
@@ -1426,7 +1426,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-saint-sornin",
+    "slug": "saint-sornin",
     "name": "Saint-Sornin",
     "postal": "17600",
     "lat": 45.8072,
@@ -1524,7 +1524,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-saint-agnant",
+    "slug": "saint-agnant",
     "name": "Saint-Agnant",
     "postal": "17620",
     "lat": 45.8853,
@@ -1622,7 +1622,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-la-tremblade",
+    "slug": "la-tremblade",
     "name": "La Tremblade",
     "postal": "17390",
     "lat": 45.7692,
