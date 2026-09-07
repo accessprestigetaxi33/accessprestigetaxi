@@ -34,6 +34,7 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
+import taxiRoofLight from "@/assets/taxi-roof-light-real.png";
 import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
 import photoQ6Real from "@/assets/apt-q6-real.png";
@@ -816,11 +817,11 @@ function Index() {
             className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-contain"
           />
 
-          {/* Lumineux TAXI posés visuellement sur le toit de chaque véhicule. */}
+          {/* Lumineux réels extraits de la photo de référence, sans modifier le hero. */}
           <div className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
-            <span className="taxi-roof-sign taxi-roof-sign-audi">TAXI</span>
-            <span className="taxi-roof-sign taxi-roof-sign-bmw">TAXI</span>
-            <span className="taxi-roof-sign taxi-roof-sign-van">TAXI</span>
+            <img src={taxiRoofLight} alt="" className="taxi-roof-sign taxi-roof-sign-audi" />
+            <img src={taxiRoofLight} alt="" className="taxi-roof-sign taxi-roof-sign-bmw" />
+            <img src={taxiRoofLight} alt="" className="taxi-roof-sign taxi-roof-sign-van" />
           </div>
 
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
