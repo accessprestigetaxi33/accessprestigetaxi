@@ -861,23 +861,25 @@ function Index() {
                       <Link
                         to="/reserver"
                         onClick={() => setHeroMenuOpen(false)}
-                        className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                        className="flex min-h-[50px] min-w-0 items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase leading-snug tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
                       >
-                        {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
+                        <span className="min-w-0 break-words">
+                          {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
+                        </span>
                       </Link>
                       <a
                         href="tel:0603444863"
                         onClick={() => setHeroMenuOpen(false)}
-                        className="flex min-h-[50px] items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                        className="flex min-h-[50px] min-w-0 items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-[11px] font-semibold uppercase leading-snug tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black sm:text-xs"
                       >
-                        APPELER ALAIN – 06 03 44 48 63
+                        <span className="min-w-0 break-words">APPELER ALAIN – 06 03 44 48 63</span>
                       </a>
                       <a
                         href="tel:0650260015"
                         onClick={() => setHeroMenuOpen(false)}
-                        className="flex min-h-[50px] items-center justify-center px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
+                        className="flex min-h-[50px] min-w-0 items-center justify-center px-4 py-3 text-center text-[11px] font-semibold uppercase leading-snug tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black sm:text-xs"
                       >
-                        APPELER PATRICIA – 06 50 26 00 15
+                        <span className="min-w-0 break-words">APPELER PATRICIA – 06 50 26 00 15</span>
                       </a>
                     </motion.div>
                   )}
