@@ -380,7 +380,7 @@ export const Route = createFileRoute("/")({
             alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
             slogan: SLOGAN_FR,
             url: SITE_URL,
-            image: absoluteUrl(heroCars),
+            image: absoluteUrl(heroCars.url),
             logo: absoluteUrl("/favicon.png"),
             email: "accessprestigetaxi@gmail.com",
             currenciesAccepted: "EUR",
