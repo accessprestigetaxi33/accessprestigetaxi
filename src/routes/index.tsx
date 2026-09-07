@@ -33,8 +33,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-brouage-q6-bmw-vclass.webp";
-import taxiRoofLight from "@/assets/taxi-roof-light-real.png";
+import heroCars from "@/assets/hero-brouage-q6-bmw-vclass-2026.png.asset.json";
 import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
 import photoQ6Real from "@/assets/apt-q6-real.png";
@@ -808,7 +807,7 @@ function Index() {
         </div>
         <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1145/570] sm:min-h-0">
           <img
-            src={heroCars}
+            src={heroCars.url}
             alt="Access Prestige Taxi — Audi Q6, BMW iX1 et Mercedes V-Class avec logos Access Prestige"
             fetchPriority="high"
             loading="eager"
@@ -816,13 +815,6 @@ function Index() {
             height={570}
             className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-contain"
           />
-
-          {/* Lumineux réels extraits de la photo de référence, sans modifier le hero. */}
-          <div className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
-            <img src={taxiRoofLight} alt="" className="taxi-roof-sign taxi-roof-sign-audi" />
-            <img src={taxiRoofLight} alt="" className="taxi-roof-sign taxi-roof-sign-bmw" />
-            <img src={taxiRoofLight} alt="" className="taxi-roof-sign taxi-roof-sign-van" />
-          </div>
 
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
           <div className="absolute inset-x-0 top-[10%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
