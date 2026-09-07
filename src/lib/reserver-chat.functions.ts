@@ -52,7 +52,7 @@ FORMAT pickup_datetime OBLIGATOIRE : ISO 8601 en heure 24h, sans suffixe de fuse
 Puis confirm_reservation. Passagers=1, bagages=0 par défaut.
 
 Règles métier :
-• Tarifs : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit (19h-7h), le dimanche et les jours fériés. Tarif mixte automatique.
+• Tarifs : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit (19h-7h), le dimanche et les jours fériés. Tarif mixte automatique.
 • Flotte : BMW iX1 électrique (5 places), Audi Q6 e-tron électrique (5 places) et van Mercedes (8 places). Propose le van dès 6 passagers ou pour un groupe.
 • Sièges bébé et sièges enfant disponibles sur demande, sans supplément.
 • Zone SEO : Charente-Maritime (La Rochelle, Rochefort, Royan, Saintes, Île de Ré, Île d'Oléron, Châtelaillon-Plage…). Prestations toutes distances vers la France et l'Europe, toutes gares et tous aéroports.

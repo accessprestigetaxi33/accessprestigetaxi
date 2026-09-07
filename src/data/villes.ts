@@ -548,7 +548,7 @@ export const VILLES: Ville[] = [
     },
   },
   {
-    slug: "taxi-le-chateau-d-oleron",
+    slug: "le-chateau-d-oleron",
     name: "Le Château-d'Oléron",
     postal: "17480",
     lat: 45.8869,
@@ -569,7 +569,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Horaires et tarifs",
-          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
         },
         {
           h: "Transferts, santé et groupes",
@@ -591,7 +591,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "Combien coûte un taxi à Le Château-d'Oléron ?",
-          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+          a: "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
         },
         {
           q: "Desservez-vous Le Château-d'Oléron depuis le continent ?",
@@ -613,7 +613,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Opening hours and fares",
-          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
         },
         {
           h: "Transfers, healthcare and groups",
@@ -635,7 +635,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "How much does a taxi cost in Le Château-d'Oléron?",
-          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+          a: "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
         },
         {
           q: "Do you drive to Le Château-d'Oléron from the mainland?",
@@ -645,7 +645,7 @@ export const VILLES: Ville[] = [
     },
   },
   {
-    slug: "taxi-saint-trojan-les-bains",
+    slug: "saint-trojan-les-bains",
     name: "Saint-Trojan-les-Bains",
     postal: "17370",
     lat: 45.8383,
@@ -666,7 +666,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Horaires et tarifs",
-          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
         },
         {
           h: "Transferts, santé et groupes",
@@ -688,7 +688,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "Combien coûte un taxi à Saint-Trojan-les-Bains ?",
-          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+          a: "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
         },
         {
           q: "Desservez-vous Saint-Trojan-les-Bains depuis le continent ?",
@@ -710,7 +710,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Opening hours and fares",
-          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
         },
         {
           h: "Transfers, healthcare and groups",
@@ -732,7 +732,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "How much does a taxi cost in Saint-Trojan-les-Bains?",
-          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+          a: "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
         },
         {
           q: "Do you drive to Saint-Trojan-les-Bains from the mainland?",
@@ -742,7 +742,7 @@ export const VILLES: Ville[] = [
     },
   },
   {
-    slug: "taxi-dolus-d-oleron",
+    slug: "dolus-d-oleron",
     name: "Dolus-d'Oléron",
     postal: "17550",
     lat: 45.9036,
@@ -763,7 +763,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Horaires et tarifs",
-          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
         },
         {
           h: "Transferts, santé et groupes",
@@ -785,7 +785,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "Combien coûte un taxi à Dolus-d'Oléron ?",
-          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+          a: "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
         },
         {
           q: "Desservez-vous Dolus-d'Oléron depuis le continent ?",
@@ -807,7 +807,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Opening hours and fares",
-          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
         },
         {
           h: "Transfers, healthcare and groups",
@@ -829,7 +829,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "How much does a taxi cost in Dolus-d'Oléron?",
-          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+          a: "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
         },
         {
           q: "Do you drive to Dolus-d'Oléron from the mainland?",
@@ -839,7 +839,7 @@ export const VILLES: Ville[] = [
     },
   },
   {
-    slug: "taxi-saint-pierre-d-oleron",
+    slug: "saint-pierre-d-oleron",
     name: "Saint-Pierre-d'Oléron",
     postal: "17310",
     lat: 45.9459,
@@ -860,7 +860,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Horaires et tarifs",
-          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+          p: "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
         },
         {
           h: "Transferts, santé et groupes",
@@ -882,7 +882,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "Combien coûte un taxi à Saint-Pierre-d'Oléron ?",
-          a: "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
+          a: "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi.",
         },
         {
           q: "Desservez-vous Saint-Pierre-d'Oléron depuis le continent ?",
@@ -904,7 +904,7 @@ export const VILLES: Ville[] = [
         },
         {
           h: "Opening hours and fares",
-          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
+          p: "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride.",
         },
         {
           h: "Transfers, healthcare and groups",
@@ -926,7 +926,7 @@ export const VILLES: Ville[] = [
         },
         {
           q: "How much does a taxi cost in Saint-Pierre-d'Oléron?",
-          a: "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
+          a: "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding.",
         },
         {
           q: "Do you drive to Saint-Pierre-d'Oléron from the mainland?",
@@ -936,7 +936,7 @@ export const VILLES: Ville[] = [
     },
   },
   {
-    "slug": "taxi-bourcefranc-le-chapus",
+    "slug": "bourcefranc-le-chapus",
     "name": "Bourcefranc-le-Chapus",
     "postal": "17560",
     "lat": 45.8478,
@@ -960,7 +960,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -982,7 +982,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Bourcefranc-le-Chapus ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Bourcefranc-le-Chapus depuis Marennes ?",
@@ -1002,7 +1002,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1024,7 +1024,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Bourcefranc-le-Chapus?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Bourcefranc-le-Chapus from Marennes?",
@@ -1034,7 +1034,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-hiers-brouage",
+    "slug": "hiers-brouage",
     "name": "Hiers-Brouage",
     "postal": "17320",
     "lat": 45.8683,
@@ -1058,7 +1058,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1080,7 +1080,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Hiers-Brouage ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Hiers-Brouage depuis Marennes ?",
@@ -1100,7 +1100,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1122,7 +1122,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Hiers-Brouage?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Hiers-Brouage from Marennes?",
@@ -1132,7 +1132,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-saint-just-luzac",
+    "slug": "saint-just-luzac",
     "name": "Saint-Just-Luzac",
     "postal": "17320",
     "lat": 45.8069,
@@ -1156,7 +1156,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1178,7 +1178,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Saint-Just-Luzac ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Saint-Just-Luzac depuis Marennes ?",
@@ -1198,7 +1198,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1220,7 +1220,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Saint-Just-Luzac?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Saint-Just-Luzac from Marennes?",
@@ -1230,7 +1230,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-nieulle-sur-seudre",
+    "slug": "nieulle-sur-seudre",
     "name": "Nieulle-sur-Seudre",
     "postal": "17600",
     "lat": 45.7969,
@@ -1254,7 +1254,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1276,7 +1276,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Nieulle-sur-Seudre ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Nieulle-sur-Seudre depuis Marennes ?",
@@ -1296,7 +1296,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1318,7 +1318,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Nieulle-sur-Seudre?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Nieulle-sur-Seudre from Marennes?",
@@ -1328,7 +1328,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-le-gua",
+    "slug": "le-gua",
     "name": "Le Gua",
     "postal": "17600",
     "lat": 45.75,
@@ -1352,7 +1352,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1374,7 +1374,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Le Gua ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Le Gua depuis Marennes ?",
@@ -1394,7 +1394,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1416,7 +1416,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Le Gua?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Le Gua from Marennes?",
@@ -1426,7 +1426,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-saint-sornin",
+    "slug": "saint-sornin",
     "name": "Saint-Sornin",
     "postal": "17600",
     "lat": 45.8072,
@@ -1450,7 +1450,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1472,7 +1472,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Saint-Sornin ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Saint-Sornin depuis Marennes ?",
@@ -1492,7 +1492,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1514,7 +1514,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Saint-Sornin?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Saint-Sornin from Marennes?",
@@ -1524,7 +1524,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-saint-agnant",
+    "slug": "saint-agnant",
     "name": "Saint-Agnant",
     "postal": "17620",
     "lat": 45.8853,
@@ -1548,7 +1548,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1570,7 +1570,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à Saint-Agnant ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à Saint-Agnant depuis Marennes ?",
@@ -1590,7 +1590,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1612,7 +1612,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in Saint-Agnant?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to Saint-Agnant from Marennes?",
@@ -1622,7 +1622,7 @@ export const VILLES: Ville[] = [
     }
   },
   {
-    "slug": "taxi-la-tremblade",
+    "slug": "la-tremblade",
     "name": "La Tremblade",
     "postal": "17390",
     "lat": 45.7692,
@@ -1646,7 +1646,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Horaires et tarifs",
-          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,83 €, 2,16 €/km en journée, 3,24 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
+          "p": "Nous roulons 5 jours sur 7, de 8h à 20h, et la réservation en ligne reste ouverte 24h/24. Nous appliquons les tarifs taxi officiels : prise en charge 2,70 €, 2,28 €/km en journée, 3,22 €/km la nuit, le dimanche et les jours fériés. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course."
         },
         {
           "h": "Transferts, santé et groupes",
@@ -1668,7 +1668,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "Combien coûte un taxi à La Tremblade ?",
-          "a": "Nous appliquons les tarifs officiels : 2,83 € de prise en charge, 2,16 €/km en journée et 3,24 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
+          "a": "Nous appliquons les tarifs officiels : 2,70 € de prise en charge, 2,28 €/km en journée et 3,22 €/km la nuit, le dimanche et les jours fériés. L'estimation ne tient pas compte des bouchons : seul le compteur du taxi fait foi."
         },
         {
           "q": "Venez-vous à La Tremblade depuis Marennes ?",
@@ -1688,7 +1688,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Opening hours and fares",
-          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.83 pick-up charge, €2.16/km in the daytime, €3.24/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
+          "p": "We drive 5 days a week from 8am to 8pm, and online booking stays open 24/7. We apply the official taxi fares: €2.70 pick-up charge, €2.28/km in the daytime, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure; only the meter is binding at the end of the ride."
         },
         {
           "h": "Transfers, healthcare and groups",
@@ -1710,7 +1710,7 @@ export const VILLES: Ville[] = [
         },
         {
           "q": "How much does a taxi cost in La Tremblade?",
-          "a": "We apply official fares: €2.83 pick-up charge, €2.16/km in the daytime and €3.24/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
+          "a": "We apply official fares: €2.70 pick-up charge, €2.28/km in the daytime and €3.22/km at night, on Sundays and public holidays. Estimates exclude traffic: only the taximeter is binding."
         },
         {
           "q": "Do you drive to La Tremblade from Marennes?",
@@ -1722,5 +1722,7 @@ export const VILLES: Ville[] = [
 ];
 
 export function getVille(slug: string) {
-  return VILLES.find((v) => v.slug === slug);
+  // Tolère les anciennes adresses /taxi/taxi-<ville> encore partagées ou indexées.
+  const clean = slug.startsWith("taxi-") ? slug.slice(5) : slug;
+  return VILLES.find((v) => v.slug === slug) ?? VILLES.find((v) => v.slug === clean);
 }
