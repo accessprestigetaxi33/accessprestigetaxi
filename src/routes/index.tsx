@@ -816,11 +816,11 @@ function Index() {
             className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-contain"
           />
 
-          {/* Texte lumineux TAXI sur les voitures */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-[22%] z-10 flex justify-center sm:bottom-[18%]">
-            <span className="glow-taxi font-display text-5xl font-bold uppercase sm:text-7xl md:text-8xl">
-              TAXI
-            </span>
+          {/* Lumineux TAXI posés visuellement sur le toit de chaque véhicule. */}
+          <div className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
+            <span className="taxi-roof-sign taxi-roof-sign-audi">TAXI</span>
+            <span className="taxi-roof-sign taxi-roof-sign-bmw">TAXI</span>
+            <span className="taxi-roof-sign taxi-roof-sign-van">TAXI</span>
           </div>
 
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}

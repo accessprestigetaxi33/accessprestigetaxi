@@ -584,34 +584,72 @@ select {
   border-style: solid !important;
 }
 
-/* ===== TAXI neon glow overlay for hero fleet image ===== */
-.glow-taxi {
-  color: #fff;
-  letter-spacing: 0.18em;
-  text-shadow:
-    0 0 6px #e0b866,
-    0 0 12px #e0b866,
-    0 0 24px #e0b866,
-    0 0 48px rgba(224, 184, 102, 0.65);
-  animation: glow-pulse 2.4s ease-in-out infinite;
+/* Lumineux TAXI du hero : surimpression uniquement, la photo reste intacte. */
+.taxi-roof-sign {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: clamp(36px, 5.2vw, 72px);
+  height: clamp(15px, 2.1vw, 29px);
+  transform: translate(-50%, -100%) perspective(100px) rotateX(-5deg);
+  border: 2px solid color-mix(in oklab, var(--gold) 78%, white) !important;
+  border-radius: 5px 5px 2px 2px;
+  background: color-mix(in oklab, var(--gold) 88%, white);
+  color: oklch(0.2 0.02 70);
+  font-family: var(--font-sans);
+  font-size: clamp(8px, 1.1vw, 15px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+  box-shadow:
+    0 0 5px color-mix(in oklab, var(--gold) 90%, white),
+    0 0 14px color-mix(in oklab, var(--gold) 72%, transparent),
+    0 3px 5px oklch(0 0 0 / 0.65);
+  animation: taxi-sign-glow 2.4s ease-in-out infinite;
 }
 
-@keyframes glow-pulse {
+.taxi-roof-sign::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -5px;
+  height: 4px;
+  border-radius: 1px;
+  background: oklch(0.16 0.01 70);
+}
+
+.taxi-roof-sign-audi {
+  left: 20%;
+  top: 51%;
+}
+
+.taxi-roof-sign-bmw {
+  left: 50.5%;
+  top: 51%;
+  animation-delay: 0.25s;
+}
+
+.taxi-roof-sign-van {
+  left: 81.5%;
+  top: 48.5%;
+  animation-delay: 0.5s;
+}
+
+@keyframes taxi-sign-glow {
   0%,
   100% {
-    opacity: 1;
-    text-shadow:
-      0 0 6px #e0b866,
-      0 0 12px #e0b866,
-      0 0 24px #e0b866,
-      0 0 48px rgba(224, 184, 102, 0.65);
+    filter: brightness(1);
+    opacity: 0.96;
   }
   50% {
-    opacity: 0.92;
-    text-shadow:
-      0 0 8px #f0d48a,
-      0 0 18px #f0d48a,
-      0 0 36px #f0d48a,
-      0 0 72px rgba(240, 212, 138, 0.75);
+    filter: brightness(1.22);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .taxi-roof-sign {
+    animation: none;
   }
 }
