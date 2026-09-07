@@ -856,7 +856,7 @@ function Index() {
                       initial={{ opacity: 0, y: -8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
-                      className="absolute inset-x-0 mt-1 overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+                      className="absolute left-0 top-full z-30 mt-1 w-[calc(200%+0.5rem)] max-w-[88vw] overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm"
                     >
                       <Link
                         to="/reserver"
