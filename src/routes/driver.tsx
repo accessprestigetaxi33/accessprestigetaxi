@@ -4278,7 +4278,6 @@ function CourseCard({
       toast.error("Suppression impossible : " + (e.message ?? e));
     } finally {
       setDeleting(false);
-      setSwipeX(0);
     }
   };
 
