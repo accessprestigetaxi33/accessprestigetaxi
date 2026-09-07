@@ -583,3 +583,35 @@ textarea,
 select {
   border-style: solid !important;
 }
+
+/* ===== TAXI neon glow overlay for hero fleet image ===== */
+.glow-taxi {
+  color: #fff;
+  letter-spacing: 0.18em;
+  text-shadow:
+    0 0 6px #e0b866,
+    0 0 12px #e0b866,
+    0 0 24px #e0b866,
+    0 0 48px rgba(224, 184, 102, 0.65);
+  animation: glow-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow:
+      0 0 6px #e0b866,
+      0 0 12px #e0b866,
+      0 0 24px #e0b866,
+      0 0 48px rgba(224, 184, 102, 0.65);
+  }
+  50% {
+    opacity: 0.92;
+    text-shadow:
+      0 0 8px #f0d48a,
+      0 0 18px #f0d48a,
+      0 0 36px #f0d48a,
+      0 0 72px rgba(240, 212, 138, 0.75);
+  }
+}
