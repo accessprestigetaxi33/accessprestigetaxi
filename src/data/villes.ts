@@ -1047,10 +1047,10 @@ export const VILLES: Ville[] = [
       "Moëze"
     ],
     "fr": {
-      "metaTitle": "Taxi Hiers-Brouage (17320) — horaires et tarifs | Access Prestige Taxi",
-      "metaDescription": "Taxi à Hiers-Brouage, près de Marennes : 5j/7 de 8h à 20h, tarifs officiels, transferts gares et aéroports, transport médical conventionné, van 7 places. Réservation en ligne.",
+      "metaTitle": "Taxi Hiers-Brouage ☎ 06 03 44 48 63 · 5j/7 8h-20h",
+      "metaDescription": "Taxi à Hiers-Brouage et Brouage : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Citadelle, gares, aéroports, transport médical, van 7 places.",
       "h1": "Taxi à Hiers-Brouage",
-      "lead": "Access Prestige Taxi dessert Hiers-Brouage et tout le bassin de Marennes avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 10 minutes depuis Marennes.",
+      "lead": "Appelez le 06 03 44 48 63 ou réservez en ligne : Access Prestige Taxi dessert Hiers-Brouage et tout le bassin de Marennes 5 jours sur 7, de 8h à 20h, avec deux chauffeurs indépendants : BMW iX1 et Audi Q6 e-tron 100 % électriques, van Mercedes Classe V jusqu'à 7 passagers. Comptez 10 minutes depuis Marennes.",
       "sections": [
         {
           "h": "Un taxi qui connaît Hiers-Brouage",
@@ -1089,10 +1089,10 @@ export const VILLES: Ville[] = [
       ]
     },
     "en": {
-      "metaTitle": "Taxi Hiers-Brouage (17320) — hours and fares | Access Prestige Taxi",
-      "metaDescription": "Taxi in Hiers-Brouage, near Marennes: 5 days a week 8am-8pm, official fares, station and airport transfers, approved medical transport, 7-seat van. Book online.",
+      "metaTitle": "Taxi Hiers-Brouage ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
+      "metaDescription": "Taxi in Hiers-Brouage and Brouage: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Citadel, stations, airports, medical transport, 7-seat van.",
       "h1": "Taxi in Hiers-Brouage",
-      "lead": "Access Prestige Taxi serves Hiers-Brouage and the whole Marennes area with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 10 minutes from Marennes.",
+      "lead": "Call 06 03 44 48 63 or book online: Access Prestige Taxi serves Hiers-Brouage and the whole Marennes area 5 days a week, 8am to 8pm, with two independent drivers: fully electric BMW iX1 and Audi Q6 e-tron, plus a Mercedes V-Class van for up to 7 passengers. Allow 10 minutes from Marennes.",
       "sections": [
         {
           "h": "A driver who knows Hiers-Brouage",
