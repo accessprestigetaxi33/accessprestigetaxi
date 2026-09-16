@@ -147,7 +147,7 @@ const COPY = {
 
 const GUIDE_LINKS = [
   { slug: "rejoindre-l-ile-d-oleron-en-taxi", fr: "Rejoindre l'île d'Oléron en taxi", en: "Reaching Oléron island by taxi" },
-  { slug: "a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
+  { slug: "taxi-a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
   { slug: "visiter-brouage-et-le-bassin-de-marennes-oleron", fr: "Visiter Brouage et le bassin de Marennes-Oléron", en: "Visiting Brouage and the Marennes-Oléron basin" },
 ] as const;
 
