@@ -5,6 +5,7 @@ import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { socialImageMeta } from "@/lib/og";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { VILLES } from "@/data/villes";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-charente-maritime`;
