@@ -56,7 +56,7 @@ const COPY = {
     eyebrow: "Île d'Oléron · Charente-Maritime",
     h1: "Taxi sur l'île d'Oléron",
     lead:
-      "Votre chauffeur privé sur l'île d'Oléron, au départ de Marennes : Le Château-d'Oléron, Saint-Trojan-les-Bains, Dolus-d'Oléron, Saint-Pierre-d'Oléron, Saint-Georges-d'Oléron et toutes les communes de l'île.",
+      "Votre chauffeur privé sur l'île d'Oléron, joignable au 06 03 44 48 63, 5j/7 de 8h à 20h, au départ de Marennes : Le Château-d'Oléron, Saint-Trojan-les-Bains, Dolus-d'Oléron, Saint-Pierre-d'Oléron, Saint-Georges-d'Oléron et toutes les communes de l'île.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -103,7 +103,7 @@ const COPY = {
     eyebrow: "Oléron island · Charente-Maritime",
     h1: "Taxi on Oléron island",
     lead:
-      "Your private driver on Oléron island, departing from Marennes: Le Château-d'Oléron, Saint-Trojan-les-Bains, Dolus-d'Oléron, Saint-Pierre-d'Oléron, Saint-Georges-d'Oléron and every village on the island.",
+      "Your private driver on Oléron island, reachable on 06 03 44 48 63, 5 days a week from 8am to 8pm, departing from Marennes: Le Château-d'Oléron, Saint-Trojan-les-Bains, Dolus-d'Oléron, Saint-Pierre-d'Oléron, Saint-Georges-d'Oléron and every village on the island.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",
