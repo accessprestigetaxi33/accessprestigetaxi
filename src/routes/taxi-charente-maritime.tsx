@@ -365,6 +365,23 @@ function TaxiCharenteMaritimePage() {
         </div>
       </section>
 
+      <section className="mt-12">
+        <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.communesT}</h2>
+        <p className="mt-3 text-sm text-muted-foreground">{c.communesLead}</p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {VILLES.map((v) => (
+            <Link
+              key={v.slug}
+              to="/taxi/$ville"
+              params={{ ville: v.slug }}
+              className="rounded-xl border border-[#e0b866]/25 bg-card px-4 py-3 text-sm font-semibold transition hover:border-primary"
+            >
+              {isEn ? `Taxi in ${v.name}` : `Taxi ${v.name}`}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <div className="mt-12 grid gap-5 sm:grid-cols-2">
         <section className="rounded-2xl border border-[#e0b866]/25 bg-card p-6">
           <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
