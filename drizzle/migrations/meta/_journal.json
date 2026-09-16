@@ -15,6 +15,13 @@
       "when": 1788445948705,
       "tag": "0001_price_history_for_suivi",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789547947420,
+      "tag": "0002_revoke_public_execute_price_history",
+      "breakpoints": true
     }
   ]
 }

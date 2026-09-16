@@ -25,7 +25,7 @@ import {
   BellOff,
 } from "lucide-react";
 import { useI18n, useT } from "@/i18n/I18nProvider";
-import { getReservationForFinPublic } from "@/lib/reservation.functions";
+import { getReservationForFinPublic, getPriceHistoryPublic } from "@/lib/reservation.functions";
 import { logTrackingEvent, requestRecurringRide } from "@/lib/public-events.functions";
 import { recomputeReservationDuration } from "@/lib/reservation-recompute.functions";
 import { durationSecondsToMinutes, durationSecondsToMs } from "@/lib/duration";
@@ -1905,7 +1905,7 @@ function SuiviPage() {
     };
   }, [icsUrl]);
 
-  // ── Historique des changements de prix (RPC SECURITY DEFINER, lien public) ──
+  // ── Historique des changements de prix (via fonction serveur, lien public) ──
   const [priceHistory, setPriceHistory] = useState<
     Array<{
       id: string;
@@ -1915,14 +1915,13 @@ function SuiviPage() {
       created_at: string;
     }>
   >([]);
+  const fetchPriceHistory = useServerFn(getPriceHistoryPublic);
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
       try {
-        const { data, error } = await (supabase as any).rpc("get_price_history_for_suivi", {
-          p_key: id,
-        });
-        if (!cancelled && !error && Array.isArray(data)) setPriceHistory(data);
+        const rows = await fetchPriceHistory({ data: { key: id } });
+        if (!cancelled && Array.isArray(rows)) setPriceHistory(rows as any);
       } catch {
         /* silencieux */
       }
@@ -1931,7 +1930,7 @@ function SuiviPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, reservation?.prix_estime, reservation?.final_price, reservation?.id]);
+  }, [id, reservation?.prix_estime, reservation?.final_price, reservation?.id, fetchPriceHistory]);
 
   const fetchReservation = useServerFn(getReservationForFinPublic);
 

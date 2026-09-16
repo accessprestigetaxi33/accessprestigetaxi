@@ -88,3 +88,16 @@ export const getReservationForFinPublic = createServerFn({ method: "POST" })
       paiement: row.paiement ?? "especes",
     };
   });
+
+export const getPriceHistoryPublic = createServerFn({ method: "POST" })
+  .inputValidator((input) => z.object({ key: z.string().trim().min(3).max(80) }).parse(input))
+  .handler(async ({ data }) => {
+    const key = data.key.trim();
+    const { getTaxiSupabaseAdmin } = await import("@/lib/taxi-supabase.server");
+    const supabaseAdmin = getTaxiSupabaseAdmin();
+    const { data: rows, error } = await supabaseAdmin.rpc("get_price_history_for_suivi", {
+      p_key: key,
+    });
+    if (error) throw new Error(error.message);
+    return Array.isArray(rows) ? rows : [];
+  });
