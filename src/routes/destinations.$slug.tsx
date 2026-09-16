@@ -1,4 +1,5 @@
 import { socialImageMeta } from "@/lib/og";
+import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowRight, Check, Clock, MapPin, Phone, Route as RouteIcon } from "lucide-react";
@@ -24,6 +25,13 @@ export const Route = createFileRoute("/destinations/$slug")({
     const url = `${SITE}/destinations/${dest.slug}`;
     return {
       meta: [
+        keywordsMeta([
+          `taxi ${dest.from} ${dest.to}`,
+          `taxi ${dest.from} téléphone`,
+          `réserver taxi ${dest.from}`,
+          `tarif taxi ${dest.from} ${dest.to}`,
+          `transfert ${dest.to}`,
+        ]),
         { title: dest.fr.metaTitle },
         { name: "description", content: dest.fr.metaDescription },
         { property: "og:title", content: dest.fr.metaTitle },
