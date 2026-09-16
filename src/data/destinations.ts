@@ -33,11 +33,11 @@ export const DESTINATIONS: Destination[] = [
     fr: {
       title: "La Rochelle → Aéroport",
       h1: "Taxi La Rochelle – Aéroport La Rochelle-Île de Ré",
-      metaTitle: "Taxi aéroport La Rochelle-Île de Ré — Access Prestige Taxi",
+      metaTitle: "Taxi aéroport La Rochelle-Île de Ré ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Transfert taxi entre La Rochelle et l\u2019aéroport La Rochelle-Île de Ré : suivi des vols, prix annoncé, BMW iX1 électrique ou van 7 places..",
+        "Transfert taxi entre La Rochelle et l\u2019aéroport La Rochelle-Île de Ré : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Suivi des vols, prix annoncé, van 7 places.",
       lead:
-        "L\u2019aéroport La Rochelle-Île de Ré est à douze minutes du Vieux-Port. Nous suivons l\u2019horaire réel de votre vol et vous déposons devant le hall départ, bagages portés.",
+        "Appelez le 06 03 44 48 63 ou réservez en ligne, 5 jours sur 7 de 8h à 20h. L\u2019aéroport La Rochelle-Île de Ré est à douze minutes du Vieux-Port. Nous suivons l\u2019horaire réel de votre vol et vous déposons devant le hall départ, bagages portés.",
       sections: [
         {
           h: "Vols suivis en temps réel",
@@ -72,11 +72,11 @@ export const DESTINATIONS: Destination[] = [
     en: {
       title: "La Rochelle → Airport",
       h1: "Taxi La Rochelle – La Rochelle-Île de Ré airport",
-      metaTitle: "La Rochelle-Île de Ré airport taxi — Access Prestige Taxi",
+      metaTitle: "La Rochelle-Île de Ré airport taxi ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi transfer between La Rochelle and La Rochelle-Île de Ré airport: flight tracking, quoted price, electric BMW iX1 or 7-seat van..",
+        "Taxi transfer between La Rochelle and La Rochelle-Île de Ré airport: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Flight tracking, quoted price, 7-seat van.",
       lead:
-        "La Rochelle-Île de Ré airport is twelve minutes from the Old Port. We track your actual flight time and drop you at the departures hall, luggage carried.",
+        "Call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. La Rochelle-Île de Ré airport is twelve minutes from the Old Port. We track your actual flight time and drop you at the departures hall, luggage carried.",
       sections: [
         {
           h: "Flights tracked live",
@@ -120,7 +120,7 @@ export const DESTINATIONS: Destination[] = [
     fr: {
       title: "Rochefort → Gare de La Rochelle",
       h1: "Taxi Rochefort – Gare TGV de La Rochelle",
-      metaTitle: "Taxi Rochefort gare de La Rochelle — transfert TGV",
+      metaTitle: "Taxi gare de La Rochelle ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
         "Taxi entre Rochefort, Tonnay-Charente, Fouras et la gare TGV de La Rochelle. Suivi du train, prix ferme annoncé, van 7 places disponible..",
       lead:
@@ -159,7 +159,7 @@ export const DESTINATIONS: Destination[] = [
     en: {
       title: "Rochefort → La Rochelle station",
       h1: "Taxi Rochefort – La Rochelle TGV station",
-      metaTitle: "Rochefort to La Rochelle station taxi — TGV transfer",
+      metaTitle: "La Rochelle station taxi ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
         "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station. Train tracking, fixed quoted price, 7-seat van available..",
       lead:
@@ -207,7 +207,7 @@ export const DESTINATIONS: Destination[] = [
     fr: {
       title: "La Rochelle → Île de Ré",
       h1: "Taxi La Rochelle – Île de Ré (pont inclus)",
-      metaTitle: "Taxi La Rochelle Île de Ré — transfert électrique, pont inclus",
+      metaTitle: "Taxi La Rochelle Île de Ré ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
         "Taxi entre La Rochelle (gare, aéroport, Vieux-Port) et l'île de Ré : Saint-Martin, La Flotte, Ars-en-Ré. Véhicule 100 % électrique, péage du pont inclus.",
       lead:
@@ -246,7 +246,7 @@ export const DESTINATIONS: Destination[] = [
     en: {
       title: "La Rochelle → Île de Ré",
       h1: "Taxi La Rochelle – Île de Ré (bridge included)",
-      metaTitle: "Taxi La Rochelle to Île de Ré — electric transfer, bridge toll included",
+      metaTitle: "Taxi La Rochelle to Île de Ré ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
         "Taxi from La Rochelle (station, airport, Old Port) to Île de Ré: Saint-Martin, La Flotte, Ars-en-Ré. Fully electric vehicle, bridge toll included.",
       lead:
