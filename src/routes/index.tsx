@@ -330,6 +330,10 @@ export const Route = createFileRoute("/")({
     return {
       meta: [
         keywordsMeta([
+          "taxi Marennes",
+          "taxi Marennes-Hiers-Brouage",
+          "taxi île d'Oléron",
+          "taxi Charente-Maritime",
           "taxi Rochefort",
           "taxi La Rochelle",
           "taxi Royan",
@@ -819,8 +823,13 @@ function Index() {
           {/* Contenu texte : aucun texte n'est intégré dans l'image, sauf le logo présent dans la photo */}
           <div className="absolute inset-x-0 top-[10%] z-10 flex flex-col items-center px-4 text-center sm:top-[16%]">
             <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-4xl md:text-5xl lg:text-6xl">
-              {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
+              {lang === "en"
+                ? "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"
+                : "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"}
             </h1>
+            <p className="mt-2 max-w-3xl text-base font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-lg md:text-xl">
+              {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
+            </p>
             <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-xl md:text-2xl lg:text-3xl">
               {lang === "en"
                 ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
