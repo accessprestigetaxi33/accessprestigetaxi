@@ -8,12 +8,12 @@ import { DRIVERS } from "@/data/drivers";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-oleron`;
-const TITLE_FR = "Taxi île d'Oléron : horaires, tarifs | Access Prestige Taxi";
+const TITLE_FR = "Taxi île d'Oléron ☎ 06 03 44 48 63 · 5j/7 8h-20h";
 const DESC_FR =
-  "Taxi sur l'île d'Oléron (Charente-Maritime) : 5j/7 de 8h à 20h, tarifs officiels, Le Château, Saint-Trojan, Dolus, Saint-Pierre. Réservation immédiate.";
-const TITLE_EN = "Taxi Oléron island: hours and fares | Access Prestige Taxi";
+  "Taxi sur l'île d'Oléron : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Le Château, Saint-Trojan, Dolus, Saint-Pierre, Marennes. Tarifs officiels.";
+const TITLE_EN = "Taxi Oléron island ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm";
 const DESC_EN =
-  "Taxi on Oléron island (Charente-Maritime): 5 days a week, 8am-8pm, official fares, Le Château, Saint-Trojan, Dolus, Saint-Pierre. Book in seconds.";
+  "Taxi on Oléron island: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Le Château, Saint-Trojan, Dolus, Saint-Pierre, Marennes. Official fares.";
 
 export const Route = createFileRoute("/taxi-oleron")({
   head: ({ match }) => ({
@@ -29,6 +29,9 @@ export const Route = createFileRoute("/taxi-oleron")({
         "réserver taxi Oléron",
         "tarif taxi Oléron",
         "taxi Marennes Oléron",
+        "taxi Oléron téléphone",
+        "numéro taxi île d'Oléron",
+        "taxi Oléron horaires",
       ]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
