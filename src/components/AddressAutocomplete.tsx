@@ -159,17 +159,20 @@ export function AddressAutocomplete({
         placeholder={placeholder}
         disabled={disabled}
         autoFocus={autoFocus}
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
         className="pr-10"
       />
       <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
       </div>
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover p-1 shadow-md">
+        <ul className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#d6a83d]/40 bg-[#0b1520] p-1 text-white shadow-[0_18px_50px_rgba(0,0,0,.6)]">
           {suggestions.map((s, i) => (
             <li
               key={i}
-              className="cursor-pointer rounded-sm px-3 py-2 text-sm hover:bg-accent"
+              className="cursor-pointer rounded-sm px-3 py-2 text-sm text-white hover:bg-[#d6a83d]/15 hover:text-[#e8bd5d]"
               onMouseDown={(e) => {
                 e.preventDefault();
                 void pick(s);

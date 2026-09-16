@@ -584,3 +584,13 @@ select {
   border-style: solid !important;
 }
 
+
+/* Champs d'adresse : neutralise le fond bleu clair du remplissage automatique
+   Chrome/Android qui rendait le texte illisible sur fond sombre. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  transition: background-color 9999s ease-in-out 0s;
+}
