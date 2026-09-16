@@ -5,6 +5,7 @@ import { seoLinks, SITE_URL as SITE } from "@/lib/seo-hreflang";
 import { socialImageMeta } from "@/lib/og";
 import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
+import { VILLES } from "@/data/villes";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-charente-maritime`;
@@ -115,6 +116,9 @@ const COPY = {
       { slug: "dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
       { slug: "saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
     ],
+    communesT: "Communes desservies en Charente-Maritime",
+    communesLead:
+      "Une page dédiée pour chaque commune : horaires, tarifs, chauffeurs et réservation en ligne.",
     ctaT: "Réservez votre taxi en Charente-Maritime",
     ctaP: "En ligne en moins d'une minute, ou par téléphone auprès de l'un de nos deux chauffeurs.",
   },
@@ -181,6 +185,9 @@ const COPY = {
       { slug: "dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
       { slug: "saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
     ],
+    communesT: "Towns and villages served in Charente-Maritime",
+    communesLead:
+      "A dedicated page for each town: hours, fares, drivers and online booking.",
     ctaT: "Book your taxi in Charente-Maritime",
     ctaP: "Online in under a minute, or by phone with one of our two drivers.",
   },
@@ -236,10 +243,7 @@ function TaxiCharenteMaritimePage() {
           "Charente-Maritime",
           "Marennes",
           "Île d'Oléron",
-          "Rochefort",
-          "La Rochelle",
-          "Royan",
-          "Saintes",
+          ...VILLES.map((v) => v.name),
         ].map((name) => ({ "@type": "City", name })),
         openingHoursSpecification: [
           {
@@ -353,6 +357,23 @@ function TaxiCharenteMaritimePage() {
                 {o.label}
                 <ArrowRight className="h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-0.5" />
               </h3>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="font-display text-xl font-semibold sm:text-2xl">{c.communesT}</h2>
+        <p className="mt-3 text-sm text-muted-foreground">{c.communesLead}</p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {VILLES.map((v) => (
+            <Link
+              key={v.slug}
+              to="/taxi/$ville"
+              params={{ ville: v.slug }}
+              className="rounded-xl border border-[#e0b866]/25 bg-card px-4 py-3 text-sm font-semibold transition hover:border-primary"
+            >
+              {isEn ? `Taxi in ${v.name}` : `Taxi ${v.name}`}
             </Link>
           ))}
         </div>
