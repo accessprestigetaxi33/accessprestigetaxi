@@ -8,12 +8,12 @@ import { DRIVERS } from "@/data/drivers";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-charente-maritime`;
-const TITLE_FR = "Taxi Charente-Maritime : Marennes, Oléron | Access Prestige Taxi";
+const TITLE_FR = "Taxi Charente-Maritime ☎ 06 03 44 48 63 · 5j/7 8h-20h";
 const DESC_FR =
-  "Taxi en Charente-Maritime : taxi Marennes, taxi île d'Oléron (Le Château, Saint-Trojan, Saint-Pierre), Rochefort, La Rochelle, Royan, Saintes. 5j/7 8h-20h, tarifs officiels.";
-const TITLE_EN = "Taxi Charente-Maritime: Marennes, Oléron | Access Prestige Taxi";
+  "Taxi en Charente-Maritime : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Marennes, île d'Oléron, Rochefort, La Rochelle, Royan, Saintes. Tarifs officiels.";
+const TITLE_EN = "Taxi Charente-Maritime ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm";
 const DESC_EN =
-  "Taxi in Charente-Maritime: taxi Marennes, taxi Oléron island (Le Château, Saint-Trojan, Saint-Pierre), Rochefort, La Rochelle, Royan. 5 days a week, 8am-8pm, official fares.";
+  "Taxi in Charente-Maritime: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Marennes, Oléron island, Rochefort, La Rochelle, Royan, Saintes. Official fares.";
 
 export const Route = createFileRoute("/taxi-charente-maritime")({
   head: ({ match }) => ({
@@ -28,6 +28,10 @@ export const Route = createFileRoute("/taxi-charente-maritime")({
         "taxi Saintes",
         "chauffeur privé Charente-Maritime",
         "réserver taxi Charente-Maritime",
+        "taxi Charente-Maritime téléphone",
+        "numéro taxi Charente-Maritime",
+        "taxi Saint-Jean-d'Angély",
+        "taxi 17 horaires",
       ]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
@@ -52,7 +56,7 @@ const COPY = {
     eyebrow: "Charente-Maritime · Nouvelle-Aquitaine",
     h1: "Taxi en Charente-Maritime",
     lead:
-      "Access Prestige Taxi, basé à Marennes, couvre tout le département : île d'Oléron, Rochefort, La Rochelle, Royan, Saintes, Saujon et toutes distances, en France comme en Europe.",
+      "Access Prestige Taxi, basé à Marennes et joignable au 06 03 44 48 63 5j/7 de 8h à 20h, couvre tout le département : île d'Oléron, Rochefort, La Rochelle, Royan, Saintes, Saint-Jean-d'Angély, Saujon et toutes distances, en France comme en Europe.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -118,7 +122,7 @@ const COPY = {
     eyebrow: "Charente-Maritime · Nouvelle-Aquitaine",
     h1: "Taxi in Charente-Maritime",
     lead:
-      "Access Prestige Taxi, based in Marennes, covers the whole department: Oléron island, Rochefort, La Rochelle, Royan, Saintes, Saujon and any distance, in France and across Europe.",
+      "Access Prestige Taxi, based in Marennes and reachable on 06 03 44 48 63, 5 days a week from 8am to 8pm, covers the whole department: Oléron island, Rochefort, La Rochelle, Royan, Saintes, Saint-Jean-d'Angély, Saujon and any distance, in France and across Europe.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",

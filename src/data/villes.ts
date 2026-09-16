@@ -147,12 +147,12 @@ export const VILLES: Ville[] = [
     lng: -0.9611,
     around: ["Tonnay-Charente", "Échillais", "Fouras", "Saint-Agnant", "Soubise", "Port-des-Barques"],
     fr: {
-      metaTitle: "Taxi Rochefort (17) — conventionné & électrique | Access Prestige Taxi",
+      metaTitle: "Taxi Rochefort ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Taxi à Rochefort : gare, thermes, transport sanitaire conventionné avec fauteuil roulant, transferts aéroports, van 8 places, toutes distances. Devis rapide.",
+        "Taxi à Rochefort : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Gare, thermes, transport médical conventionné, aéroports, van 8 places. Tarifs officiels.",
       h1: "Taxi à Rochefort",
       lead:
-        "De la Corderie Royale aux thermes, Access Prestige Taxi assure vos déplacements à Rochefort et dans le pays rochefortais : cures, rendez-vous médicaux, gare, aéroports et trajets longue distance.",
+        "Taxi à Rochefort joignable au 06 03 44 48 63, 5j/7 de 8h à 20h. De la Corderie Royale aux thermes, Access Prestige Taxi assure vos déplacements à Rochefort et dans le pays rochefortais : cures, rendez-vous médicaux, gare, aéroports et trajets longue distance.",
       sections: [
         {
           h: "Cures thermales et rendez-vous médicaux",
@@ -194,12 +194,12 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi in Rochefort (17) — covered & electric | Access Prestige Taxi",
+      metaTitle: "Taxi in Rochefort ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi in Rochefort: station, spa treatments, covered medical transport with wheelchair, airport transfers, 8-seat van, all distances. Fast quote.",
+        "Taxi in Rochefort: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Station, thermal spa, approved medical transport, airports, 8-seat van. Official fares.",
       h1: "Taxi in Rochefort",
       lead:
-        "From the Corderie Royale to the thermal spa, Access Prestige Taxi handles your journeys in Rochefort and the surrounding area: spa courses, medical appointments, stations, airports and long-distance trips.",
+        "Taxi in Rochefort, reachable on 06 03 44 48 63, 5 days a week from 8am to 8pm. From the Corderie Royale to the thermal spa, Access Prestige Taxi handles your journeys in Rochefort and the surrounding area: spa courses, medical appointments, stations, airports and long-distance trips.",
       sections: [
         {
           h: "Spa courses and medical appointments",
@@ -249,12 +249,12 @@ export const VILLES: Ville[] = [
     lng: -1.0281,
     around: ["Saint-Palais-sur-Mer", "Vaux-sur-Mer", "Saint-Georges-de-Didonne", "Pontaillac", "Meschers-sur-Gironde", "La Palmyre"],
     fr: {
-      metaTitle: "Taxi Royan (17) — électrique, groupes & sanitaire | Access Prestige Taxi",
+      metaTitle: "Taxi Royan ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Taxi à Royan : plages, La Palmyre, transferts gares et aéroports, transport sanitaire conventionné, van 8 places pour les groupes. Toutes distances.",
+        "Taxi à Royan : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Plages, La Palmyre, gares et aéroports, transport médical conventionné, van 8 places.",
       h1: "Taxi à Royan",
       lead:
-        "Access Prestige Taxi vous conduit à Royan et sur toute la Côte de Beauté : plages de Pontaillac et Saint-Palais, zoo de La Palmyre, bac de Royan-Le Verdon, gares et aéroports, en électrique ou en van 8 places.",
+        "Taxi à Royan joignable au 06 03 44 48 63, 5j/7 de 8h à 20h. Access Prestige Taxi vous conduit à Royan et sur toute la Côte de Beauté : plages de Pontaillac et Saint-Palais, zoo de La Palmyre, bac de Royan-Le Verdon, gares et aéroports, en électrique ou en van 8 places.",
       sections: [
         {
           h: "Côte de Beauté et bac du Verdon",
@@ -296,12 +296,12 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi in Royan (17) — electric, groups & medical | Access Prestige Taxi",
+      metaTitle: "Taxi in Royan ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi in Royan: beaches, La Palmyre, station and airport transfers, covered medical transport, 8-seat van for groups. All distances.",
+        "Taxi in Royan: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Beaches, La Palmyre, stations and airports, approved medical transport, 8-seat van.",
       h1: "Taxi in Royan",
       lead:
-        "Access Prestige Taxi drives you around Royan and the whole Côte de Beauté: Pontaillac and Saint-Palais beaches, La Palmyre zoo, the Royan-Le Verdon ferry, stations and airports, electric or in an 8-seat van.",
+        "Taxi in Royan, reachable on 06 03 44 48 63, 5 days a week from 8am to 8pm. Access Prestige Taxi drives you around Royan and the whole Côte de Beauté: Pontaillac and Saint-Palais beaches, La Palmyre zoo, the Royan-Le Verdon ferry, stations and airports, electric or in an 8-seat van.",
       sections: [
         {
           h: "Côte de Beauté and Le Verdon ferry",
@@ -351,12 +351,12 @@ export const VILLES: Ville[] = [
     lng: -0.6337,
     around: ["Chaniers", "Fontcouverte", "Les Gonds", "Pons", "Burie", "Saint-Georges-des-Coteaux"],
     fr: {
-      metaTitle: "Taxi Saintes (17) — gare, hôpital, toutes distances | Access Prestige Taxi",
+      metaTitle: "Taxi Saintes ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Taxi à Saintes : gare TGV, hôpital de Saintonge, transport sanitaire conventionné avec fauteuil roulant, van 8 places, transferts aéroports et longues distances.",
+        "Taxi à Saintes : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Gare TGV, hôpital de Saintonge, transport conventionné, aéroports, toutes distances.",
       h1: "Taxi à Saintes",
       lead:
-        "Ville d'art et d'histoire au cœur de la Saintonge, Saintes est un carrefour ferroviaire et médical. Nous y assurons les transferts gare, les trajets vers l'hôpital de Saintonge et les prestations toutes distances.",
+        "Taxi à Saintes joignable au 06 03 44 48 63, 5j/7 de 8h à 20h. Ville d'art et d'histoire au cœur de la Saintonge, Saintes est un carrefour ferroviaire et médical. Nous y assurons les transferts gare, les trajets vers l'hôpital de Saintonge et les prestations toutes distances.",
       sections: [
         {
           h: "Gare de Saintes et correspondances",
@@ -398,12 +398,12 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi in Saintes (17) — station, hospital, all distances | Access Prestige Taxi",
+      metaTitle: "Taxi in Saintes ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi in Saintes: TGV station, Saintonge hospital, covered medical transport with wheelchair, 8-seat van, airport transfers and long distances.",
+        "Taxi in Saintes: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. TGV station, Saintonge hospital, approved medical transport, airports, all distances.",
       h1: "Taxi in Saintes",
       lead:
-        "A city of art and history at the heart of Saintonge, Saintes is both a rail and a medical hub. We handle station transfers, trips to Saintonge hospital and all-distance journeys.",
+        "Taxi in Saintes, reachable on 06 03 44 48 63, 5 days a week from 8am to 8pm. A city of art and history at the heart of Saintonge, Saintes is both a rail and a medical hub. We handle station transfers, trips to Saintonge hospital and all-distance journeys.",
       sections: [
         {
           h: "Saintes station and connections",
@@ -453,12 +453,12 @@ export const VILLES: Ville[] = [
     lng: -0.5222,
     around: ["Matha", "Aulnay", "Saint-Savinien", "Tonnay-Boutonne", "Loulay"],
     fr: {
-      metaTitle: "Taxi Saint-Jean-d'Angély (17) — conventionné | Access Prestige Taxi",
+      metaTitle: "Taxi Saint-Jean-d'Angély ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Taxi à Saint-Jean-d'Angély : transport sanitaire conventionné avec fauteuil roulant, gares, aéroports, van 8 places et prestations toutes distances.",
+        "Taxi à Saint-Jean-d'Angély : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Hôpital, gares, aéroports, van 8 places, transport conventionné.",
       h1: "Taxi à Saint-Jean-d'Angély",
       lead:
-        "Au cœur de la vallée de la Boutonne, Saint-Jean-d'Angély et ses communes voisines sont desservies pour les rendez-vous médicaux, les liaisons vers les gares et aéroports et les trajets longue distance.",
+        "Taxi à Saint-Jean-d'Angély joignable au 06 03 44 48 63, 5j/7 de 8h à 20h. Au cœur de la vallée de la Boutonne, Saint-Jean-d'Angély et ses communes voisines sont desservies pour les rendez-vous médicaux, les liaisons vers les gares et aéroports et les trajets longue distance.",
       sections: [
         {
           h: "Rendez-vous médicaux et transport conventionné",
@@ -500,12 +500,12 @@ export const VILLES: Ville[] = [
       ],
     },
     en: {
-      metaTitle: "Taxi in Saint-Jean-d'Angély (17) — covered | Access Prestige Taxi",
+      metaTitle: "Taxi in Saint-Jean-d'Angély ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi in Saint-Jean-d'Angély: covered medical transport with wheelchair, stations, airports, 8-seat van and all-distance journeys.",
+        "Taxi in Saint-Jean-d'Angély: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Hospital, stations, airports, 8-seat van, approved medical transport.",
       h1: "Taxi in Saint-Jean-d'Angély",
       lead:
-        "In the heart of the Boutonne valley, Saint-Jean-d'Angély and its neighbouring villages are served for medical appointments, station and airport links and long-distance trips.",
+        "Taxi in Saint-Jean-d'Angély, reachable on 06 03 44 48 63, 5 days a week from 8am to 8pm. In the heart of the Boutonne valley, Saint-Jean-d'Angély and its neighbouring villages are served for medical appointments, station and airport links and long-distance trips.",
       sections: [
         {
           h: "Medical appointments and covered transport",
