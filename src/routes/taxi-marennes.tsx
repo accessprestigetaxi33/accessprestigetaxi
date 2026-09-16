@@ -8,24 +8,28 @@ import { DRIVERS } from "@/data/drivers";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-marennes`;
-const TITLE_FR = "Taxi Marennes : horaires, tarifs | Access Prestige Taxi";
+const TITLE_FR = "Taxi Marennes ☎ 06 03 44 48 63 · 5j/7 8h-20h";
 const DESC_FR =
-  "Taxi à Marennes (Charente-Maritime) : 5j/7 de 8h à 20h, tarifs officiels, île d'Oléron, Brouage, Rochefort, La Rochelle. Réservation immédiate.";
-const TITLE_EN = "Taxi Marennes: hours and fares | Access Prestige Taxi";
+  "Taxi Marennes : réservez au 06 03 44 48 63 ou en ligne, 5j/7 de 8h à 20h. Île d'Oléron, Brouage, Rochefort, La Rochelle, gares et aéroports. Tarifs officiels.";
+const TITLE_EN = "Taxi Marennes ☎ +33 6 03 44 48 63 · 5 days, 8am-8pm";
 const DESC_EN =
-  "Taxi in Marennes (Charente-Maritime): 5 days a week, 8am-8pm, official fares, Oléron island, Brouage, Rochefort, La Rochelle. Book in seconds.";
+  "Taxi in Marennes: book on +33 6 03 44 48 63 or online, 5 days a week 8am-8pm. Oléron island, Brouage, Rochefort, La Rochelle, stations and airports.";
 
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
     meta: [
       keywordsMeta([
+        "taxi Marennes",
         "taxi Marennes horaires",
+        "taxi Marennes téléphone",
+        "numéro taxi Marennes",
         "tarif taxi Marennes",
         "taxi Marennes Oléron",
         "réserver taxi Marennes",
         "taxi Marennes Rochefort",
         "taxi Marennes La Rochelle",
         "taxi Marennes Brouage",
+        "taxi Marennes 17320",
         "chauffeur privé Charente-Maritime",
       ]),
       { title: TITLE_FR },
@@ -51,7 +55,7 @@ const COPY = {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi à Marennes",
     lead:
-      "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime : île d'Oléron, Bourcefranc-le-Chapus, Rochefort, La Rochelle et toutes distances.",
+      "Votre chauffeur privé basé à Marennes, joignable 5j/7 de 8h à 20h au 06 03 44 48 63, au service de toute la Charente-Maritime : île d'Oléron, Bourcefranc-le-Chapus, Rochefort, La Rochelle et toutes distances.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -97,7 +101,7 @@ const COPY = {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi in Marennes",
     lead:
-      "Your private driver based in Marennes, serving the whole Charente-Maritime area: Oléron island, Bourcefranc-le-Chapus, Rochefort, La Rochelle and any distance.",
+      "Your private driver based in Marennes, reachable 5 days a week, 8am-8pm, on +33 6 03 44 48 63, serving the whole Charente-Maritime area: Oléron island, Bourcefranc-le-Chapus, Rochefort, La Rochelle and any distance.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",
