@@ -122,9 +122,9 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi Rochefort – Gare TGV de La Rochelle",
       metaTitle: "Taxi gare de La Rochelle ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Taxi entre Rochefort, Tonnay-Charente, Fouras et la gare TGV de La Rochelle. Suivi du train, prix ferme annoncé, van 7 places disponible..",
+        "Taxi entre Rochefort, Tonnay-Charente, Fouras et la gare TGV de La Rochelle : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Suivi du train, prix ferme annoncé, van 7 places.",
       lead:
-        "Trente-cinq minutes séparent l\u2019arsenal de Rochefort du hall de la gare de La Rochelle, d\u2019où partent les TGV pour Poitiers, Paris et Nantes. Nous surveillons l\u2019horaire réel du train.",
+        "Appelez le 06 03 44 48 63 ou réservez en ligne, 5 jours sur 7 de 8h à 20h. Trente-cinq minutes séparent l\u2019arsenal de Rochefort du hall de la gare de La Rochelle, d\u2019où partent les TGV pour Poitiers, Paris et Nantes. Nous surveillons l\u2019horaire réel du train.",
       sections: [
         {
           h: "Départ à l\u2019heure, même à l\u2019heure de pointe",
@@ -161,9 +161,9 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi Rochefort – La Rochelle TGV station",
       metaTitle: "La Rochelle station taxi ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station. Train tracking, fixed quoted price, 7-seat van available..",
+        "Taxi between Rochefort, Tonnay-Charente, Fouras and La Rochelle TGV station: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Train tracking, fixed quoted price, 7-seat van.",
       lead:
-        "Thirty-five minutes separate the Rochefort arsenal from La Rochelle station, where TGV trains leave for Poitiers, Paris and Nantes. We track the real train time.",
+        "Call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Thirty-five minutes separate the Rochefort arsenal from La Rochelle station, where TGV trains leave for Poitiers, Paris and Nantes. We track the real train time.",
       sections: [
         {
           h: "On time, even at rush hour",
@@ -209,9 +209,9 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi La Rochelle – Île de Ré (pont inclus)",
       metaTitle: "Taxi La Rochelle Île de Ré ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       metaDescription:
-        "Taxi entre La Rochelle (gare, aéroport, Vieux-Port) et l'île de Ré : Saint-Martin, La Flotte, Ars-en-Ré. Véhicule 100 % électrique, péage du pont inclus.",
+        "Taxi entre La Rochelle (gare, aéroport, Vieux-Port) et l'île de Ré : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Saint-Martin, La Flotte, Ars-en-Ré, péage du pont inclus.",
       lead:
-        "De la gare de La Rochelle à Saint-Martin-de-Ré, comptez 35 minutes, pont compris. Nous desservons les dix villages de l'île, du Bois-Plage aux Portes-en-Ré.",
+        "Appelez le 06 03 44 48 63 ou réservez en ligne, 5 jours sur 7 de 8h à 20h. De la gare de La Rochelle à Saint-Martin-de-Ré, comptez 35 minutes, pont compris. Nous desservons les dix villages de l'île, du Bois-Plage aux Portes-en-Ré.",
       sections: [
         {
           h: "Tous les villages de l'île",
@@ -248,9 +248,9 @@ export const DESTINATIONS: Destination[] = [
       h1: "Taxi La Rochelle – Île de Ré (bridge included)",
       metaTitle: "Taxi La Rochelle to Île de Ré ☎ 06 03 44 48 63 · Mon-Fri 8am-8pm",
       metaDescription:
-        "Taxi from La Rochelle (station, airport, Old Port) to Île de Ré: Saint-Martin, La Flotte, Ars-en-Ré. Fully electric vehicle, bridge toll included.",
+        "Taxi from La Rochelle (station, airport, Old Port) to Île de Ré: call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. Saint-Martin, La Flotte, Ars-en-Ré, bridge toll included.",
       lead:
-        "From La Rochelle station to Saint-Martin-de-Ré is about 35 minutes, bridge included. We serve all ten villages, from Le Bois-Plage to Les Portes-en-Ré.",
+        "Call 06 03 44 48 63 or book online, 5 days a week 8am-8pm. From La Rochelle station to Saint-Martin-de-Ré is about 35 minutes, bridge included. We serve all ten villages, from Le Bois-Plage to Les Portes-en-Ré.",
       sections: [
         {
           h: "Every village on the island",
