@@ -116,6 +116,9 @@ const COPY = {
       { slug: "dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
       { slug: "saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
     ],
+    communesT: "Communes desservies en Charente-Maritime",
+    communesLead:
+      "Une page dédiée pour chaque commune : horaires, tarifs, chauffeurs et réservation en ligne.",
     ctaT: "Réservez votre taxi en Charente-Maritime",
     ctaP: "En ligne en moins d'une minute, ou par téléphone auprès de l'un de nos deux chauffeurs.",
   },
@@ -182,6 +185,9 @@ const COPY = {
       { slug: "dolus-d-oleron", label: "Taxi Dolus-d'Oléron" },
       { slug: "saint-pierre-d-oleron", label: "Taxi Saint-Pierre-d'Oléron" },
     ],
+    communesT: "Towns and villages served in Charente-Maritime",
+    communesLead:
+      "A dedicated page for each town: hours, fares, drivers and online booking.",
     ctaT: "Book your taxi in Charente-Maritime",
     ctaP: "Online in under a minute, or by phone with one of our two drivers.",
   },
