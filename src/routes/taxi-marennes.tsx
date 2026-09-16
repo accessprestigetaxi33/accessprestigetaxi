@@ -101,7 +101,7 @@ const COPY = {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi in Marennes",
     lead:
-      "Your private driver based in Marennes, serving the whole Charente-Maritime area: Oléron island, Bourcefranc-le-Chapus, Rochefort, La Rochelle and any distance.",
+      "Your private driver based in Marennes, reachable 5 days a week, 8am-8pm, on +33 6 03 44 48 63, serving the whole Charente-Maritime area: Oléron island, Bourcefranc-le-Chapus, Rochefort, La Rochelle and any distance.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",
