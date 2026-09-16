@@ -159,6 +159,9 @@ export function AddressAutocomplete({
         placeholder={placeholder}
         disabled={disabled}
         autoFocus={autoFocus}
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
         className="pr-10"
       />
       <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
