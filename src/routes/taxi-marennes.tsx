@@ -19,13 +19,17 @@ export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
     meta: [
       keywordsMeta([
+        "taxi Marennes",
         "taxi Marennes horaires",
+        "taxi Marennes téléphone",
+        "numéro taxi Marennes",
         "tarif taxi Marennes",
         "taxi Marennes Oléron",
         "réserver taxi Marennes",
         "taxi Marennes Rochefort",
         "taxi Marennes La Rochelle",
         "taxi Marennes Brouage",
+        "taxi Marennes 17320",
         "chauffeur privé Charente-Maritime",
       ]),
       { title: TITLE_FR },
@@ -51,7 +55,7 @@ const COPY = {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi à Marennes",
     lead:
-      "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime : île d'Oléron, Bourcefranc-le-Chapus, Rochefort, La Rochelle et toutes distances.",
+      "Votre chauffeur privé basé à Marennes, joignable 5j/7 de 8h à 20h au 06 03 44 48 63, au service de toute la Charente-Maritime : île d'Oléron, Bourcefranc-le-Chapus, Rochefort, La Rochelle et toutes distances.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
