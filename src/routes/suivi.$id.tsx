@@ -25,7 +25,7 @@ import {
   BellOff,
 } from "lucide-react";
 import { useI18n, useT } from "@/i18n/I18nProvider";
-import { getReservationForFinPublic } from "@/lib/reservation.functions";
+import { getReservationForFinPublic, getPriceHistoryPublic } from "@/lib/reservation.functions";
 import { logTrackingEvent, requestRecurringRide } from "@/lib/public-events.functions";
 import { recomputeReservationDuration } from "@/lib/reservation-recompute.functions";
 import { durationSecondsToMinutes, durationSecondsToMs } from "@/lib/duration";
