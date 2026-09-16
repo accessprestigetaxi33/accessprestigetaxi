@@ -243,10 +243,7 @@ function TaxiCharenteMaritimePage() {
           "Charente-Maritime",
           "Marennes",
           "Île d'Oléron",
-          "Rochefort",
-          "La Rochelle",
-          "Royan",
-          "Saintes",
+          ...VILLES.map((v) => v.name),
         ].map((name) => ({ "@type": "City", name })),
         openingHoursSpecification: [
           {
