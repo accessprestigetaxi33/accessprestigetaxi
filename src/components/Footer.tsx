@@ -55,6 +55,15 @@ const COPY = {
       { to: "/avis", label: "Avis clients" },
       { to: "/contact", label: "Contact" },
     ],
+    zonesTitle: "Nos zones",
+    zones: [
+      { to: "/taxi-marennes" as const, label: "Taxi Marennes" },
+      { to: "/taxi-oleron" as const, label: "Taxi île d'Oléron" },
+      { to: "/taxi-charente-maritime" as const, label: "Taxi Charente-Maritime" },
+      { to: "/taxi/$ville" as const, params: { ville: "rochefort" }, label: "Taxi Rochefort" },
+      { to: "/taxi/$ville" as const, params: { ville: "la-rochelle" }, label: "Taxi La Rochelle" },
+      { to: "/destinations" as const, label: "Toutes les destinations" },
+    ],
     servicesTitle: "Nos services",
     services: [
       { Icon: Plane, text: "Transferts Aéroports & Gares" },
@@ -99,6 +108,15 @@ const COPY = {
       { to: "/avis", label: "Reviews" },
       { to: "/contact", label: "Contact" },
     ],
+    zonesTitle: "Our areas",
+    zones: [
+      { to: "/taxi-marennes" as const, label: "Taxi Marennes" },
+      { to: "/taxi-oleron" as const, label: "Taxi Oléron island" },
+      { to: "/taxi-charente-maritime" as const, label: "Taxi Charente-Maritime" },
+      { to: "/taxi/$ville" as const, params: { ville: "rochefort" }, label: "Taxi Rochefort" },
+      { to: "/taxi/$ville" as const, params: { ville: "la-rochelle" }, label: "Taxi La Rochelle" },
+      { to: "/destinations" as const, label: "All destinations" },
+    ],
     servicesTitle: "Our services",
     services: [
       { Icon: Plane, text: "Airport & station transfers" },
@@ -138,7 +156,7 @@ export function Footer() {
     <footer aria-label={t("aria.footer")} className="bg-[#0b0b0d] text-[#c9c4b8] pb-[var(--mobile-action-bar-h,0px)]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         {/* Main grid — 1 col on mobile, 2 on tablet, 4 on desktop */}
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-10">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-[1.1fr_0.85fr_0.85fr_0.85fr_0.85fr] lg:gap-8">
           {/* BRAND */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link
@@ -181,6 +199,29 @@ export function Footer() {
                 <li key={l.label}>
                   <Link
                     to={l.to}
+                    className="group flex touch-manipulation items-center justify-between gap-2 py-1.5 text-sm text-[#c9c4b8] transition [-webkit-tap-highlight-color:transparent] hover:text-white"
+                  >
+                    {l.label}
+                    <ChevronRight
+                      className="h-4 w-4 shrink-0 text-primary/60 transition group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ZONES */}
+          <div>
+            <h3 className="font-display text-xs font-bold uppercase tracking-widest text-primary">{c.zonesTitle}</h3>
+            <span aria-hidden="true" className="mt-2 block h-px w-6 bg-primary/40" />
+            <ul className="mt-4 space-y-1">
+              {c.zones.map((l) => (
+                <li key={l.label}>
+                  <Link
+                    to={l.to}
+                    params={"params" in l ? l.params : undefined}
                     className="group flex touch-manipulation items-center justify-between gap-2 py-1.5 text-sm text-[#c9c4b8] transition [-webkit-tap-highlight-color:transparent] hover:text-white"
                   >
                     {l.label}
