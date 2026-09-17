@@ -117,15 +117,27 @@ const ENGAGEMENTS_EN = [
 const FLEET_VALUES_FR = [
   { icon: Clock, title: "Ponctualité", text: "Nous sommes là quand vous comptez sur nous." },
   { icon: Gem, title: "Discrétion", text: "Une présence professionnelle et respectueuse." },
-  { icon: ShieldCheck, title: "Confort", text: "Des voitures haut de gamme et parfaitement entretenues." },
-  { icon: HeartHandshake, title: "Attention", text: "Une écoute et un service personnalisé pour chaque trajet." },
+  {
+    icon: ShieldCheck,
+    title: "Confort",
+    text: "Des voitures haut de gamme et parfaitement entretenues.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Attention",
+    text: "Une écoute et un service personnalisé pour chaque trajet.",
+  },
 ] as const;
 
 const FLEET_VALUES_EN = [
   { icon: Clock, title: "Punctuality", text: "We're there when you count on us." },
   { icon: Gem, title: "Discretion", text: "A professional and respectful presence." },
   { icon: ShieldCheck, title: "Comfort", text: "Premium vehicles, perfectly maintained." },
-  { icon: HeartHandshake, title: "Attention", text: "Personalised care and service on every ride." },
+  {
+    icon: HeartHandshake,
+    title: "Attention",
+    text: "Personalised care and service on every ride.",
+  },
 ] as const;
 
 const HERO_VALUES_FR = ["Élégance", "Discrétion", "Exigence"] as const;
@@ -921,15 +933,45 @@ function Index() {
               : "Basés à Marennes, nous vous conduisons chaque jour partout en Charente-Maritime et au-delà, toutes distances."}
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">
-            {["Marennes", "Île d'Oléron", "Bourcefranc-le-Chapus", "Rochefort", "La Rochelle"].map((city) => (
-              <li
-                key={city}
-                className="rounded-full border border-[#e0b866] px-3 py-1.5 text-xs font-semibold text-[#e0b866] sm:text-sm"
-              >
-                {city}
-              </li>
-            ))}
+            {[
+              { label: "Marennes", to: "/taxi-marennes" as const },
+              { label: "Île d'Oléron", to: "/taxi-oleron" as const },
+              {
+                label: "Bourcefranc-le-Chapus",
+                to: "/taxi/$ville" as const,
+                ville: "bourcefranc-le-chapus",
+              },
+              { label: "Rochefort", to: "/taxi/$ville" as const, ville: "rochefort" },
+              { label: "La Rochelle", to: "/taxi/$ville" as const, ville: "la-rochelle" },
+            ].map((city) =>
+              "ville" in city ? (
+                <li key={city.label}>
+                  <Link
+                    to={city.to}
+                    params={{ ville: city.ville }}
+                    className="block rounded-full border border-[#e0b866] px-3 py-1.5 text-xs font-semibold text-[#e0b866] transition hover:bg-[#e0b866]/10 sm:text-sm"
+                  >
+                    {city.label}
+                  </Link>
+                </li>
+              ) : (
+                <li key={city.label}>
+                  <Link
+                    to={city.to}
+                    className="block rounded-full border border-[#e0b866] px-3 py-1.5 text-xs font-semibold text-[#e0b866] transition hover:bg-[#e0b866]/10 sm:text-sm"
+                  >
+                    {city.label}
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
+          <Link
+            to="/taxi-charente-maritime"
+            className="mt-4 inline-block text-sm font-semibold text-[#e0b866] underline underline-offset-4 hover:opacity-90"
+          >
+            {lang === "en" ? "See all areas we cover" : "Voir toutes nos zones desservies"}
+          </Link>
         </div>
       </section>
 
@@ -1242,7 +1284,10 @@ function Index() {
             { icon: Crown, label: lang === "en" ? "HIGH-END SERVICE" : "SERVICE HAUT DE GAMME" },
             { icon: ShieldCheck, label: lang === "en" ? "SAFETY & COMFORT" : "SÉCURITÉ & CONFORT" },
             { icon: User, label: lang === "en" ? "ABSOLUTE DISCRETION" : "DISCRÉTION ABSOLUE" },
-            { icon: Clock, label: lang === "en" ? "GUARANTEED PUNCTUALITY" : "PONCTUALITÉ GARANTIE" },
+            {
+              icon: Clock,
+              label: lang === "en" ? "GUARANTEED PUNCTUALITY" : "PONCTUALITÉ GARANTIE",
+            },
           ].map(({ icon: Icon, label }) => (
             <div
               key={label}
