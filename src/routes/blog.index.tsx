@@ -177,7 +177,7 @@ function BlogIndex() {
       .map((r) => r.e);
   }, [indexed, cat, city, tag, query]);
 
-  const visible = entries.slice(0, limit);
+  const visible = entries; // tous les articles sont rendus (liens réels dans le HTML) ; l'affichage est limité en CSS ci-dessous, pas en JS, pour rester crawlable
   const resetAll = () => {
     setCat("all");
     setCity("all");
@@ -343,7 +343,7 @@ function BlogIndex() {
               return (
                 <article
                   key={e.slug}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-[#e0b866]/20 bg-[#080b0d] shadow-[0_14px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-0.5 hover:border-[#e0b866]/60"
+                  className={`group flex flex-col overflow-hidden rounded-2xl border border-[#e0b866]/20 bg-[#080b0d] shadow-[0_14px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-0.5 hover:border-[#e0b866]/60 ${i >= limit ? "hidden" : ""}`}
                 >
                   <Link to="/blog/$slug" params={{ slug: e.slug }} className="block">
                     <div className="relative aspect-square overflow-hidden bg-[#0b0f12] sm:aspect-[4/3]">
@@ -441,14 +441,14 @@ function BlogIndex() {
           </div>
         )}
 
-        {visible.length < entries.length && (
+        {limit < entries.length && (
           <div className="mt-10 text-center">
             <button
               type="button"
               onClick={() => setLimit((n) => n + PAGE_SIZE)}
               className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-primary px-6 py-3 text-sm font-semibold text-primary transition hover:bg-primary hover:text-primary-foreground"
             >
-              {c.more} ({entries.length - visible.length})
+              {c.more} ({entries.length - limit})
             </button>
           </div>
         )}
@@ -493,7 +493,9 @@ function HeroStat({ icon, value, label }: { icon: React.ReactNode; value: string
   return (
     <div className="flex min-w-0 items-center gap-2 border-r border-[#e0b866]/15 pr-2 last:border-r-0">
       <span className="text-[#e0b866]">
-        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "h-4 w-4" })}
+        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
+          className: "h-4 w-4",
+        })}
       </span>
       <div className="min-w-0">
         <p className="font-display text-base font-semibold text-[#e8c96d]">{value}</p>
