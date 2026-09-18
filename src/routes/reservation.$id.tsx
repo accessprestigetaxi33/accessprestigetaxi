@@ -17,6 +17,7 @@ import { buildReservationMessage, whatsappLink } from "@/lib/whatsapp";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { getReservationPublic, cancelReservationPublic } from "@/lib/reservation.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { getClientSession } from "@/lib/client-session";
 
 export const Route = createFileRoute("/reservation/$id")({
   head: () => ({
@@ -78,11 +79,11 @@ function ConfirmationPage() {
         async (payload: any) => {
           const newStatus = payload.new?.status;
           if (newStatus === "completed" || newStatus === "terminee") {
-            const done = await fetchReservation({ data: { id } });
+            const done = await fetchReservation({ data: proofArgs() });
             if (done) setReservation(done as Reservation);
             return;
           }
-          const updated = await fetchReservation({ data: { id } });
+          const updated = await fetchReservation({ data: proofArgs() });
           if (updated) setReservation(updated as Reservation);
         },
       )
@@ -96,7 +97,7 @@ function ConfirmationPage() {
     let cancelled = false;
     (async () => {
       try {
-        const row = await fetchReservation({ data: { id } });
+        const row = await fetchReservation({ data: proofArgs() });
         if (cancelled) return;
         if (!row) setNotFound(true);
         else setReservation(row as Reservation);
@@ -114,7 +115,7 @@ function ConfirmationPage() {
   const handleCancel = async () => {
     setCancelling(true);
     try {
-      const res = await cancelReservation({ data: { id } });
+      const res = await cancelReservation({ data: proofArgs() });
       if (res?.ok) {
         setReservation((r) => (r ? { ...r, status: "cancelled" } : r));
         setConfirmCancel(false);
