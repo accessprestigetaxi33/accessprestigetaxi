@@ -196,38 +196,52 @@ export const bookRide = createServerFn({ method: "POST" })
     // au tarif calculé par `computeQuote`, qui reste basé sur le trajet réel.
     const serviceType = q.vehicule === "van" || data.vehicule_prefere === "van" ? "van" : "standard";
 
-    const { data: inserted, error } = await supabaseAdmin
-      .from("reservations")
-      .insert({
-        nom: data.nom,
-        telephone: data.telephone,
-        email,
-        client_name: data.nom,
-        client_phone: data.telephone,
-        client_email: email,
-        depart: q.depart.label,
-        arrivee: q.arrivee.label,
-        destination: q.arrivee.label,
-        pickup_datetime: data.pickup_datetime,
-        date_heure: data.pickup_datetime,
-        passagers: data.passagers,
-        nb_passagers: data.passagers,
-        bagages: data.bagages,
-        service_type: serviceType,
-        status: "pending",
-        suivi_id: suiviId,
-        distance_km: q.distanceKm,
-        duree_s: q.dureeS,
-        paiement: data.paiement,
-        tarif_jour: q.prix.departJour,
-        prix_estime: q.prix.total,
-        lang: data.lang,
-        message,
-        source: "form",
-        client_request_id: reqId,
-      } as any)
-      .select("id, suivi_id")
-      .single();
+    const insertPayload = {
+      nom: data.nom,
+      telephone: data.telephone,
+      email,
+      client_name: data.nom,
+      client_phone: data.telephone,
+      client_email: email,
+      depart: q.depart.label,
+      arrivee: q.arrivee.label,
+      destination: q.arrivee.label,
+      pickup_datetime: data.pickup_datetime,
+      date_heure: data.pickup_datetime,
+      passagers: data.passagers,
+      nb_passagers: data.passagers,
+      bagages: data.bagages,
+      service_type: serviceType,
+      status: "pending",
+      suivi_id: suiviId,
+      distance_km: q.distanceKm,
+      duree_s: q.dureeS,
+      paiement: data.paiement,
+      tarif_jour: q.prix.departJour,
+      prix_estime: q.prix.total,
+      lang: data.lang,
+      message,
+      source: "form",
+      client_request_id: reqId,
+    } as any;
+
+    // La base peut être momentanément injoignable (coupure REST/Postgres) :
+    // on retente avec un court backoff avant de déclarer l'échec, pour ne pas
+    // perdre une demande de course à cause d'une interruption de quelques secondes.
+    let inserted: { id: string; suivi_id: string | null } | null = null;
+    let error: any = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const res = await supabaseAdmin
+        .from("reservations")
+        .insert(insertPayload)
+        .select("id, suivi_id")
+        .single();
+      inserted = (res.data as any) ?? null;
+      error = res.error;
+      if (inserted && !error) break;
+      if ((error as any)?.code === "23505") break;
+      if (attempt < 2) await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+    }
 
     if (error || !inserted) {
       // Course déjà enregistrée par un clic précédent (index unique) → on renvoie l'existante.
@@ -244,6 +258,37 @@ export const bookRide = createServerFn({ method: "POST" })
         }
       }
       console.error("[bookRide] insert failed", error);
+      // Repli durable : la demande n'a pas pu être enregistrée en base, on
+      // prévient tout de même l'exploitant par e-mail afin qu'aucune course
+      // ne soit perdue sans trace pendant une panne de base de données.
+      try {
+        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+        const { TEMPLATES } = await import("@/lib/email-templates/registry");
+        const adminTemplate = TEMPLATES["new-reservation-admin"];
+        if (adminTemplate?.to) {
+          await withTimeout(
+            sendTemplateEmail("new-reservation-admin", adminTemplate.to, {
+              idempotencyKey: `admin-failed-${reqId ?? suiviId}`,
+              templateData: {
+                nom: `[À SAISIR MANUELLEMENT — enregistrement impossible] ${data.nom}`,
+                phone: data.telephone,
+                email,
+                depart: q.depart.label,
+                arrivee: q.arrivee.label,
+                pickup_datetime: data.pickup_datetime,
+                passagers: data.passagers,
+                bagages: data.bagages,
+                vehicule: vehiculeLabel ?? (serviceType === "van" ? "Van" : undefined),
+                admin_url: "https://accessprestigetaxi.fr/driver",
+              },
+            }),
+            8_000,
+            "admin-email-fallback",
+          );
+        }
+      } catch (err) {
+        console.error("[bookRide] fallback admin email failed", err);
+      }
       return { ok: false, error: "INSERT_FAILED" };
     }
 
