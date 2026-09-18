@@ -4050,7 +4050,7 @@ function CourseCard({
       try {
         const res = await fetch("/api/admin/send-course-email", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-Admin-Secret": "admin-pin-call" },
+          headers: { "Content-Type": "application/json", "X-Driver-Token": getDriverToken() },
           body: JSON.stringify({
             templateName: "custom-price",
             recipientEmail: email,
@@ -4105,7 +4105,7 @@ function CourseCard({
         try {
           await fetch("/api/admin/send-course-email", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "X-Admin-Secret": "admin-pin-call" },
+            headers: { "Content-Type": "application/json", "X-Driver-Token": getDriverToken() },
             body: JSON.stringify({
               templateName: "reschedule",
               recipientEmail: email,
