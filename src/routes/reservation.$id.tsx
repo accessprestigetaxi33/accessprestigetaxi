@@ -22,6 +22,11 @@ export const Route = createFileRoute("/reservation/$id")({
   head: () => ({
     meta: [{ title: "Confirmation – Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
   }),
+  // `k` = clé de suivi de la course : preuve d'appartenance exigée par le
+  // serveur pour afficher les coordonnées et autoriser l'annulation.
+  validateSearch: (search: Record<string, unknown>) => ({
+    k: typeof search.k === "string" ? search.k.slice(0, 80) : undefined,
+  }),
   component: ConfirmationPage,
 });
 
@@ -39,12 +44,14 @@ type Reservation = {
   message: string | null;
   status: string;
   created_at: string;
+  can_cancel?: boolean;
 };
 
 function ConfirmationPage() {
   const t = useT();
   const { lang } = useI18n();
   const { id } = Route.useParams();
+  const { k } = Route.useSearch();
   const navigate = useNavigate();
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,6 +61,11 @@ function ConfirmationPage() {
   // (push client supprimé)
   const fetchReservation = useServerFn(getReservationPublic);
   const cancelReservation = useServerFn(cancelReservationPublic);
+  /** Preuve d'appartenance envoyée au serveur (clé de suivi + session client). */
+  const proofArgs = () => {
+    const session = getClientSession();
+    return { id, proof: k ?? null, token: session?.token ?? null };
+  };
 
   // Écoute Realtime : si Patricia change le statut de la course, mettre à jour la page
   // et rediriger vers /fin/$id lorsque la course est terminée.
