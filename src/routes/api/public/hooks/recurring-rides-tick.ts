@@ -12,12 +12,10 @@ export const Route = createFileRoute("/api/public/hooks/recurring-rides-tick")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Require Supabase anon/publishable key (canonical /api/public cron auth).
-        const authHeader = request.headers.get("apikey") ?? request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-        const expected = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!authHeader || !expected || authHeader !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
-        }
+        // Secret privé `CRON_SECRET` : seul le planificateur peut déclencher.
+        const { requireCronSecret } = await import("@/lib/cron-auth.server");
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 

@@ -6,20 +6,15 @@ import { createFileRoute } from "@tanstack/react-router";
  * received a J-1 reminder, send a client push notification and mark
  * reminder_j1_sent_at = now() to prevent re-sending.
  *
- * Auth: Supabase anon/publishable key in `apikey` header (canonical
- * /api/public cron auth, same as recurring-rides-tick).
+ * Auth: secret privé `CRON_SECRET` (header `x-cron-secret`).
  */
 export const Route = createFileRoute("/api/public/hooks/ride-reminders-tick")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authHeader =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-        const expected = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!authHeader || !expected || authHeader !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
-        }
+        const { requireCronSecret } = await import("@/lib/cron-auth.server");
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { sendPushToAudience } = await import("@/lib/push.server");
