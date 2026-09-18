@@ -217,7 +217,7 @@ function ConfirmationPage() {
         />
         <Row icon={MapPin} label={t("conf.row.from")} value={reservation.depart} />
         <Row icon={MapPin} label={t("conf.row.to")} value={reservation.arrivee} />
-        <Row icon={Phone} label={t("conf.row.phone")} value={reservation.telephone} />
+        {reservation.telephone && <Row icon={Phone} label={t("conf.row.phone")} value={reservation.telephone} />}
         <div className="text-sm text-muted-foreground">
           {reservation.passagers} {t("conf.passengers")} • {reservation.bagages} {t("conf.luggage")} •{" "}
           {reservation.service_type}
@@ -250,7 +250,7 @@ function ConfirmationPage() {
 
       {/* Lien /suivi/$id supprimé. */}
 
-      {!isCancelled && (
+      {!isCancelled && reservation.can_cancel && (
         <div className="mt-6 rounded-xl border border-border bg-card/50 p-5">
           <h3 className="text-sm font-semibold">{t("conf.modify.title")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{t("conf.modify.desc")}</p>
