@@ -4025,7 +4025,7 @@ function CourseCard({
     const phone = (resa.client_phone || "").replace(/\s/g, "");
     const email = resa.client_email || resa.email || "";
     const trajet = `${resa.depart} → ${resa.destination || "—"}`;
-    const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
+    const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}` : "";
     const trackingLine = trackUrl ? `\nRetrouvez votre course ici : ${trackUrl}` : "";
     const msg = `Bonjour ${name}, le prix de votre course Access Prestige Taxi (${trajet}) est de ${val.toFixed(2)} €. Merci.${trackingLine}`;
 
@@ -4762,7 +4762,7 @@ function CourseCard({
             (() => {
               const phone = resa.client_phone;
               const mail = resa.client_email || resa.email;
-              const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}` : "";
+              const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}` : "";
               const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
               const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
               const mailBody = trackUrl
