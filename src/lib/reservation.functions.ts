@@ -2,13 +2,47 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const PUBLIC_COLUMNS =
-  "id, nom, telephone, email, pickup_datetime, depart, arrivee, passagers, bagages, service_type, message, status, created_at";
+  "id, nom, telephone, email, pickup_datetime, depart, arrivee, passagers, bagages, service_type, message, status, created_at, suivi_id, tracking_id, client_account_id";
 const FIN_PUBLIC_COLUMNS =
   "id,depart,destination,arrivee,status,prix_estime,distance_km,duree_s,nb_passagers,bagages,nom,client_name,email,client_email,telephone,client_phone,paiement,heure_course,pickup_datetime,suivi_id";
 const UUID_RE = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
+/**
+ * Preuve d'appartenance d'une réservation.
+ *
+ * L'identifiant de course (UUID en URL) ne suffit pas : il peut fuiter par
+ * lien partagé, historique de navigation, referer ou journaux serveur. Le
+ * porteur doit présenter soit la clé de suivi (`suivi_id` / `tracking_id`),
+ * soit un jeton de session client propriétaire de la course.
+ */
+const ProofSchema = z.object({
+  id: z.string().uuid(),
+  /** Clé de suivi (`suivi_id` / `tracking_id`) de la course. */
+  proof: z.string().trim().min(3).max(80).nullable().optional(),
+  /** Jeton de session client (auth maison). */
+  token: z.string().trim().min(32).max(128).nullable().optional(),
+});
+
+async function isOwner(row: any, proof?: string | null, token?: string | null): Promise<boolean> {
+  const key = (proof ?? "").trim().toLowerCase();
+  if (key) {
+    if (row.suivi_id && String(row.suivi_id).toLowerCase() === key) return true;
+    if (row.tracking_id && String(row.tracking_id).toLowerCase() === key) return true;
+  }
+  if (token) {
+    try {
+      const { requireClientSession } = await import("@/lib/client-session.server");
+      const identity = await requireClientSession(token);
+      if (row.client_account_id && row.client_account_id === identity.account_id) return true;
+    } catch {
+      /* jeton invalide : aucune preuve */
+    }
+  }
+  return false;
+}
+
 export const getReservationPublic = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .inputValidator((input) => ProofSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
@@ -17,13 +51,38 @@ export const getReservationPublic = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return row;
+    if (!row) return null;
+
+    const owner = await isOwner(row, data.proof, data.token);
+    const { suivi_id, tracking_id, client_account_id, ...rest } = row as any;
+    if (owner) return { ...rest, suivi_id, can_cancel: true };
+
+    // Sans preuve d'appartenance : aucune donnée de contact n'est renvoyée.
+    return {
+      ...rest,
+      nom: "",
+      telephone: "",
+      email: null,
+      message: null,
+      suivi_id: null,
+      can_cancel: false,
+    };
   });
 
 export const cancelReservationPublic = createServerFn({ method: "POST" })
-  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .inputValidator((input) => ProofSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: existing, error: readErr } = await supabaseAdmin
+      .from("reservations")
+      .select("id, suivi_id, tracking_id, client_account_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (readErr) throw new Error(readErr.message);
+    if (!existing) return { ok: false };
+    if (!(await isOwner(existing, data.proof, data.token))) throw new Error("UNAUTHORIZED");
+
     const { data: updated, error } = await supabaseAdmin
       .from("reservations")
       .update({ status: "annulee" })
@@ -56,6 +115,7 @@ export const cancelReservationPublic = createServerFn({ method: "POST" })
 
     return { ok: !!updated };
   });
+
 
 export const getReservationForFinPublic = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ key: z.string().trim().min(3).max(80) }).parse(input))

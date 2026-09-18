@@ -17,10 +17,16 @@ import { buildReservationMessage, whatsappLink } from "@/lib/whatsapp";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { getReservationPublic, cancelReservationPublic } from "@/lib/reservation.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { getClientSession } from "@/lib/client-session";
 
 export const Route = createFileRoute("/reservation/$id")({
   head: () => ({
     meta: [{ title: "Confirmation – Access Prestige Taxi" }, { name: "robots", content: "noindex, nofollow" }],
+  }),
+  // `k` = clé de suivi de la course : preuve d'appartenance exigée par le
+  // serveur pour afficher les coordonnées et autoriser l'annulation.
+  validateSearch: (search: Record<string, unknown>) => ({
+    k: typeof search.k === "string" ? search.k.slice(0, 80) : undefined,
   }),
   component: ConfirmationPage,
 });
@@ -39,12 +45,14 @@ type Reservation = {
   message: string | null;
   status: string;
   created_at: string;
+  can_cancel?: boolean;
 };
 
 function ConfirmationPage() {
   const t = useT();
   const { lang } = useI18n();
   const { id } = Route.useParams();
+  const { k } = Route.useSearch();
   const navigate = useNavigate();
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,6 +62,11 @@ function ConfirmationPage() {
   // (push client supprimé)
   const fetchReservation = useServerFn(getReservationPublic);
   const cancelReservation = useServerFn(cancelReservationPublic);
+  /** Preuve d'appartenance envoyée au serveur (clé de suivi + session client). */
+  const proofArgs = () => {
+    const session = getClientSession();
+    return { id, proof: k ?? null, token: session?.token ?? null };
+  };
 
   // Écoute Realtime : si Patricia change le statut de la course, mettre à jour la page
   // et rediriger vers /fin/$id lorsque la course est terminée.
@@ -66,11 +79,11 @@ function ConfirmationPage() {
         async (payload: any) => {
           const newStatus = payload.new?.status;
           if (newStatus === "completed" || newStatus === "terminee") {
-            const done = await fetchReservation({ data: { id } });
+            const done = await fetchReservation({ data: proofArgs() });
             if (done) setReservation(done as Reservation);
             return;
           }
-          const updated = await fetchReservation({ data: { id } });
+          const updated = await fetchReservation({ data: proofArgs() });
           if (updated) setReservation(updated as Reservation);
         },
       )
@@ -84,7 +97,7 @@ function ConfirmationPage() {
     let cancelled = false;
     (async () => {
       try {
-        const row = await fetchReservation({ data: { id } });
+        const row = await fetchReservation({ data: proofArgs() });
         if (cancelled) return;
         if (!row) setNotFound(true);
         else setReservation(row as Reservation);
@@ -102,7 +115,7 @@ function ConfirmationPage() {
   const handleCancel = async () => {
     setCancelling(true);
     try {
-      const res = await cancelReservation({ data: { id } });
+      const res = await cancelReservation({ data: proofArgs() });
       if (res?.ok) {
         setReservation((r) => (r ? { ...r, status: "cancelled" } : r));
         setConfirmCancel(false);
@@ -204,7 +217,7 @@ function ConfirmationPage() {
         />
         <Row icon={MapPin} label={t("conf.row.from")} value={reservation.depart} />
         <Row icon={MapPin} label={t("conf.row.to")} value={reservation.arrivee} />
-        <Row icon={Phone} label={t("conf.row.phone")} value={reservation.telephone} />
+        {reservation.telephone && <Row icon={Phone} label={t("conf.row.phone")} value={reservation.telephone} />}
         <div className="text-sm text-muted-foreground">
           {reservation.passagers} {t("conf.passengers")} • {reservation.bagages} {t("conf.luggage")} •{" "}
           {reservation.service_type}
@@ -237,7 +250,7 @@ function ConfirmationPage() {
 
       {/* Lien /suivi/$id supprimé. */}
 
-      {!isCancelled && (
+      {!isCancelled && reservation.can_cancel && (
         <div className="mt-6 rounded-xl border border-border bg-card/50 p-5">
           <h3 className="text-sm font-semibold">{t("conf.modify.title")}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{t("conf.modify.desc")}</p>

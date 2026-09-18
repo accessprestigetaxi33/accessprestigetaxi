@@ -7,13 +7,13 @@ import { createFileRoute } from "@tanstack/react-router";
  * Ce bridge tourne côté serveur et a accès à LOVABLE_API_KEY directement —
  * le secret n'est jamais exposé au navigateur.
  *
- * Auth : le client envoie X-Admin-Secret: "admin-pin-call" (sentinelle fixe,
- * sans valeur secrète). Le bridge valide que la requête vient bien de
- * l'origine du site (même domaine), puis appelle l'infra email avec
- * la service role key.
+ * Auth : le client envoie son code chauffeur/admin réel dans l'en-tête
+ * `X-Driver-Token`. Ce code est validé côté serveur contre les secrets
+ * DRIVER_CODE_* / DRIVER_PANEL_TOKEN (comparaison en temps constant) avant
+ * tout envoi d'e-mail. Aucune sentinelle publique n'est acceptée.
  *
  * Variables d'environnement requises (côté serveur) :
- *   LOVABLE_API_KEY           — utilisé pour signer les appels sortants
+ *   DRIVER_CODE_ALAIN / DRIVER_CODE_PATRICIA / DRIVER_PANEL_TOKEN
  *   SUPABASE_SERVICE_ROLE_KEY — clé service Supabase
  *   VITE_SUPABASE_URL         — URL Supabase
  */
@@ -29,11 +29,13 @@ export const Route = createFileRoute("/api/admin/send-course-email")({
           return Response.json({ error: "Server configuration error" }, { status: 500 });
         }
 
-        // Ce bridge est serveur-only — on vérifie juste que l'appelant
-        // est bien notre propre frontend (même origine) via le header sentinelle.
-        // Le vrai secret (LOVABLE_API_KEY) n'est jamais envoyé par le navigateur.
-        const adminSecretHeader = request.headers.get("X-Admin-Secret") ?? "";
-        if (adminSecretHeader !== "admin-pin-call") {
+        // Authentification réelle : code chauffeur/admin vérifié côté serveur.
+        const { resolveDriverIdentity } = await import("@/lib/driver-auth.server");
+        const driverToken =
+          request.headers.get("X-Driver-Token") ??
+          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
+          "";
+        if (!resolveDriverIdentity(driverToken)) {
           return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 

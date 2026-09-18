@@ -6,20 +6,15 @@ import { createFileRoute } from "@tanstack/react-router";
  * received a J-1 reminder, send a client push notification and mark
  * reminder_j1_sent_at = now() to prevent re-sending.
  *
- * Auth: Supabase anon/publishable key in `apikey` header (canonical
- * /api/public cron auth, same as recurring-rides-tick).
+ * Auth: secret privé `CRON_SECRET` (header `x-cron-secret`).
  */
 export const Route = createFileRoute("/api/public/hooks/ride-reminders-tick")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authHeader =
-          request.headers.get("apikey") ??
-          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-        const expected = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!authHeader || !expected || authHeader !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
-        }
+        const { requireCronSecret } = await import("@/lib/cron-auth.server");
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { sendPushToAudience } = await import("@/lib/push.server");
@@ -30,7 +25,7 @@ export const Route = createFileRoute("/api/public/hooks/ride-reminders-tick")({
 
         const { data: rides, error } = await supabaseAdmin
           .from("reservations")
-          .select("id, nom, client_name, depart, arrivee, destination, pickup_datetime")
+          .select("id, nom, client_name, depart, arrivee, destination, pickup_datetime, suivi_id")
           .in("status", ["accepted", "pending", "nouvelle"])
           .gte("pickup_datetime", windowStart.toISOString())
           .lte("pickup_datetime", windowEnd.toISOString())
@@ -60,7 +55,7 @@ export const Route = createFileRoute("/api/public/hooks/ride-reminders-tick")({
               {
                 title: "📅 Rappel : votre course est demain",
                 body: `${clientName}, votre taxi vers ${dest}${heure ? ` à ${heure}` : ""}.`,
-                url: `/reservation/${r.id}`,
+                url: `/reservation/${r.id}${r.suivi_id ? `?k=${encodeURIComponent(r.suivi_id)}` : ""}`,
                 tag: `client-j1-${r.id}`,
                 requireInteraction: false,
                 data: { reservation_id: r.id, kind: "j1_reminder" },

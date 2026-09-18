@@ -4,17 +4,15 @@ import { createFileRoute } from "@tanstack/react-router";
  * Cron tick (daily): supprime les abonnements push expirés (expires_at < now).
  * Retourne le nombre de lignes supprimées.
  *
- * Auth : clé Supabase anon/publishable (comme les autres cron /api/public).
+ * Auth : secret privé `CRON_SECRET` (header `x-cron-secret`).
  */
 export const Route = createFileRoute("/api/public/hooks/push-cleanup-tick")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authHeader = request.headers.get("apikey") ?? request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-        const expected = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!authHeader || !expected || authHeader !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
-        }
+        const { requireCronSecret } = await import("@/lib/cron-auth.server");
+        const denied = requireCronSecret(request);
+        if (denied) return denied;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const before = new Date().toISOString();

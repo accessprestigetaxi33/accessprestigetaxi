@@ -16,7 +16,7 @@ function CoursePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate({ to: "/reservation/$id", params: { id } });
+    navigate({ to: "/reservation/$id", params: { id }, search: { k: undefined } });
   }, [id, navigate]);
 
   return (
