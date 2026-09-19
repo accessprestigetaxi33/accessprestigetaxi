@@ -5,21 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ArrowLeftRight, CalendarClock, MapPin, Phone, RefreshCw, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
-import { verifyDriverToken, openDriverSession } from "@/lib/driver-auth.functions";
-import { getDriverToken, setDriverToken, clearDriverToken, setDriverName } from "@/lib/driver-token";
-import { gaEvent } from "@/lib/ga4";
-import { listDriverDevis } from "@/lib/driver-devis.functions";
-import {
-  AvisTab,
-  DevisTab,
-  ClientsTab,
-  StatsTab,
-  HistoriqueTab,
-  SimulateurTab,
-  AppareilsTab,
-  aptExtraCss,
-} from "@/components/AptExtraTabs";
+import { openDriverSession } from "@/lib/driver-auth.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -54,6 +40,8 @@ import {
   driverAcceptRide,
   driverUpdateRideRoute,
   driverClaimRide,
+  driverLogin,
+  driverLogout,
   driverRides,
   driverDeleteRide,
   driverSetStatus,
@@ -75,6 +63,7 @@ import {
   type DriverProfileEntry,
 } from "@/lib/driverProfile";
 
+const STORAGE_KEY = "apt_driver_token";
 const APT_LOGO = aptLogoAsset.url;
 
 // Visuels de partage localisés (page privée : noindex, mais le lien est partagé
@@ -236,7 +225,7 @@ export const Route = createFileRoute("/driver")({
   staticData: { sitemap: false },
   ssr: false,
   validateSearch: (search: Record<string, unknown>) => ({
-    token: typeof search["token"] === "string" ? (search["token"] as string) : undefined,
+    t: typeof search["t"] === "string" ? (search["t"] as string) : undefined,
     ride: typeof search["ride"] === "string" ? (search["ride"] as string) : undefined,
     act: search["act"] === "accept" || search["act"] === "refuse" ? (search["act"] as string) : undefined,
     tab: typeof search["tab"] === "string" ? (search["tab"] as string) : undefined,
@@ -440,20 +429,7 @@ const IconCalc = () => (
   </svg>
 );
 
-type Tab =
-  | "dashboard"
-  | "rides"
-  | "overflow"
-  | "planning"
-  | "messages"
-  | "avis"
-  | "devis"
-  | "clients"
-  | "stats"
-  | "historique"
-  | "simulateur"
-  | "accounting"
-  | "appareils";
+type Tab = "dashboard" | "rides" | "overflow" | "planning" | "messages" | "accounting";
 
 const IconGeneric = (d: string) => () => (
   <svg
@@ -477,120 +453,19 @@ const IconMapPin = IconGeneric(
   "M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
 );
 
-const IconStar = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
-const IconChart = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="18" y1="20" x2="18" y2="10" />
-    <line x1="12" y1="20" x2="12" y2="4" />
-    <line x1="6" y1="20" x2="6" y2="14" />
-  </svg>
-);
-const IconUsers = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-const IconDevice = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="7" y="2" width="10" height="20" rx="2" />
-    <line x1="11" y1="18" x2="13" y2="18" />
-  </svg>
-);
-const IconDevis = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="8" y1="13" x2="16" y2="13" />
-    <line x1="8" y1="17" x2="13" y2="17" />
-  </svg>
-);
-
-// Espace chauffeur : uniquement le strict nécessaire.
+// Espace chauffeur simplifié : uniquement le strict nécessaire.
 const TABS: { key: Tab; label: string; short: string; icon: () => React.ReactElement }[] = [
   { key: "dashboard", label: "TABLEAU DE BORD", short: "Accueil", icon: IconGrid },
   { key: "rides", label: "COURSES", short: "Courses", icon: IconCar },
   { key: "overflow", label: "DÉBORDEMENT", short: "Débord.", icon: IconSwap },
   { key: "planning", label: "PLANNING", short: "Planning", icon: IconCalendar },
   { key: "messages", label: "MESSAGES", short: "Messages", icon: IconMessage },
-  { key: "avis", label: "AVIS", short: "Avis", icon: IconStar },
-  { key: "devis", label: "DEVIS", short: "Devis", icon: IconDevis },
-  { key: "clients", label: "CLIENTS", short: "Clients", icon: IconUsers },
-  { key: "stats", label: "STATS", short: "Stats", icon: IconChart },
-  { key: "historique", label: "HISTORIQUE", short: "Histor.", icon: IconCalendar },
-  { key: "simulateur", label: "SIMULATEUR", short: "Simul.", icon: IconCalc },
   { key: "accounting", label: "COMPTABILITÉ", short: "Compta", icon: IconCalc },
-  { key: "appareils", label: "APPAREILS", short: "Appareils", icon: IconDevice },
 ];
-const TAB_KEYS: string[] = TABS.map((t) => t.key);
 
-function NotifButton({ className, driverId }: { className?: string; driverId?: string | null }) {
-  const { subscribe } = usePushNotifications({ autoAudience: "chauffeur", driverId: driverId ?? null });
-  const [permission, setPermission] = useState<NotificationPermission | "unsupported">(() =>
-    typeof window !== "undefined" && "Notification" in window ? Notification.permission : "unsupported",
-  );
-  const [busy, setBusy] = useState(false);
-
-  // Resynchronise la permission et reconfirme silencieusement l'abonnement à
-  // chaque retour sur l'app (aucun prompt système : la permission est déjà donnée).
-  useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) return;
-    const refresh = () => {
-      setPermission(Notification.permission);
-      if (document.visibilityState !== "visible" || Notification.permission !== "granted") return;
-      void subscribe("chauffeur", null, null).catch(() => {});
-    };
-    refresh();
-    document.addEventListener("visibilitychange", refresh);
-    window.addEventListener("focus", refresh);
-    return () => {
-      document.removeEventListener("visibilitychange", refresh);
-      window.removeEventListener("focus", refresh);
-    };
-  }, [subscribe]);
-
-  if (permission === "unsupported")
+function NotifButton({ className }: { className?: string }) {
+  const { status, lastError, subscribe } = usePushNotifications({ audience: "chauffeur" });
+  if (status === "unsupported")
     return (
       <button
         type="button"
@@ -606,7 +481,7 @@ function NotifButton({ className, driverId }: { className?: string; driverId?: s
         <span className="drv-header-notif-label">Notifications indisponibles</span>
       </button>
     );
-  if (permission === "granted")
+  if (status === "granted")
     return (
       <span className={className} style={{ opacity: 0.65 }}>
         <IconBell />
@@ -617,40 +492,34 @@ function NotifButton({ className, driverId }: { className?: string; driverId?: s
     <button
       type="button"
       className={className}
-      disabled={busy}
+      disabled={status === "loading"}
       onClick={async () => {
-        setBusy(true);
-        try {
-          await subscribe("chauffeur", null, null);
-          if (typeof window !== "undefined" && "Notification" in window) setPermission(Notification.permission);
-          toast.success("Notifications activées");
-        } catch (e) {
-          toast.error("Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""));
-        } finally {
-          setBusy(false);
-        }
+        const token = await subscribe();
+        if (token) toast.success("Notifications activées");
+        else toast.error(lastError ?? "Activation impossible");
       }}
     >
       <IconBell />
-      <span className="drv-header-notif-label">{busy ? "…" : "Activer les notifications"}</span>
+      <span className="drv-header-notif-label">{status === "loading" ? "…" : "Activer les notifications"}</span>
     </button>
   );
 }
 
-/** Écran d'accès sans email ni mot de passe : le chauffeur touche simplement son
- * prénom. Le lien `?token=` et la session mémorisée sur l'appareil restent
- * prioritaires et évitent même cet écran. */
+/** Écran de connexion sans mot de passe : le chauffeur touche simplement son
+ * prénom, le serveur ouvre une session pour ce profil (aucun email, aucun
+ * mot de passe). Le reste du flux (jeton en localStorage, vérification via
+ * driverLogin, déconnexion) est identique à Nova Taxi. */
 function DriverIdentityGate({
   profiles,
-  busy,
-  error,
-  onPick,
+  onLoggedIn,
 }: {
   profiles: DriverProfileEntry[];
-  busy: string | null;
-  error: string | null;
-  onPick: (slug: string) => void;
+  onLoggedIn: (token: string) => void;
 }) {
+  const openSession = useServerFn(openDriverSession);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const list =
     profiles.length > 0
       ? profiles
@@ -658,6 +527,21 @@ function DriverIdentityGate({
           { slug: "alain", name: "Alain" },
           { slug: "patricia", name: "Patricia" },
         ];
+
+  const onPick = async (slug: string) => {
+    setError(null);
+    setBusy(slug);
+    try {
+      const res: any = await openSession({ data: { driver: slug as "alain" | "patricia" } });
+      if (res?.ok && res.token) onLoggedIn(res.token);
+      else setError("Accès indisponible, réessayez.");
+    } catch {
+      setError("Accès indisponible, réessayez.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <div
       style={{
@@ -713,12 +597,7 @@ function DriverIdentityGate({
 
 function DriverApp() {
   const search = useSearch({ from: "/driver" });
-  const verify = useServerFn(verifyDriverToken);
-  const openSession = useServerFn(openDriverSession);
   const [token, setToken] = useState<string | null>(null);
-  const [checking, setChecking] = useState(true);
-  const [busy, setBusy] = useState<string | null>(null);
-  const [gateError, setGateError] = useState<string | null>(null);
   // Liste des profils (nombre illimité) : cache local pour un affichage
   // instantané, mise à jour dès que le serveur répond.
   const [profiles, setProfiles] = useState<DriverProfileEntry[]>(() => cachedDriverProfiles());
@@ -726,83 +605,22 @@ function DriverApp() {
     () => getProfile() ?? cachedDriverProfiles()[0]?.slug,
   );
   const [tab, setTab] = useState<Tab>("dashboard");
-  const [pendingAvis, setPendingAvis] = useState(0);
-  const [pendingDevis, setPendingDevis] = useState(0);
   const qc = useQueryClient();
 
-  // Vérifie un jeton côté serveur ; s'il est valide, la session est mémorisée
-  // sur l'appareil et le profil correspondant est sélectionné.
-  const tryToken = useCallback(
-    async (candidate: string): Promise<boolean> => {
-      if (!candidate) return false;
-      try {
-        const res: any = await verify({ data: { token: candidate } });
-        if (res?.ok) {
-          setDriverToken(candidate);
-          setDriverName(res.driver || "");
-          if (res.driverId) {
-            setProfile(res.driverId);
-            setProfileState(res.driverId);
-          }
-          setToken(candidate);
-          gaEvent("driver_login", { driver: res.driver || "inconnu" });
-          return true;
-        }
-      } catch {
-        /* réseau instable : on retombe sur l'écran d'accès */
-      }
-      return false;
-    },
-    [verify],
-  );
-
-  // Accès automatique : lien ?token= en priorité, sinon jeton déjà mémorisé.
+  // Accès uniquement par jeton de session obtenu après connexion : plus aucun
+  // accès par lien magique (?t=), le paramètre éventuel est ignoré et effacé.
   useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const candidates = [search.token, getDriverToken()].filter(Boolean) as string[];
-      for (const c of candidates) {
-        const ok = await tryToken(c);
-        if (cancelled) return;
-        if (ok) {
-          setChecking(false);
-          return;
-        }
-      }
-      if (!cancelled) {
-        clearDriverToken();
-        setChecking(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [search.token, tryToken]);
+    const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+    if (stored) setToken(stored);
+    // Simple par défaut : le premier profil tant que rien n'est enregistré,
+    // pas d'écran de choix imposé — le nom se change directement dans l'en-tête.
+    setProfileState(getProfile() ?? cachedDriverProfiles()[0]?.slug);
+    if (search.t) window.history.replaceState(null, "", "/driver");
+  }, [search.t]);
 
-  // Accès par simple choix du prénom : le serveur ouvre une session pour ce chauffeur.
-  const identify = useCallback(
-    async (slug: string): Promise<boolean> => {
-      setGateError(null);
-      setBusy(slug);
-      try {
-        const res: any = await openSession({ data: { driver: slug as "alain" | "patricia" } });
-        const ok = res?.ok && res.token ? await tryToken(res.token) : false;
-        if (!ok) setGateError("Accès indisponible, réessayez.");
-        else void qc.invalidateQueries();
-        return ok;
-      } catch {
-        setGateError("Accès indisponible, réessayez.");
-        return false;
-      } finally {
-        setBusy(null);
-      }
-    },
-    [openSession, tryToken, qc],
-  );
-
-  // Notification (message client, avis, devis…) : ouvre directement l'onglet demandé.
+  // Notification de message client : ouvre directement l'onglet Messages.
   useEffect(() => {
-    if (search.tab && TAB_KEYS.includes(search.tab)) setTab(search.tab as Tab);
+    if (search.tab === "messages") setTab("messages");
   }, [search.tab]);
 
   // Liste des profils toujours à jour : ajouter/retirer un chauffeur en base
@@ -819,22 +637,32 @@ function DriverApp() {
     };
   }, []);
 
-  // Changer de chauffeur dans l'en-tête = ouvrir la session de ce chauffeur.
   const chooseProfile = (p: DriverProfile) => {
-    if (p === profile) return;
-    void identify(p);
+    setProfile(p);
+    setProfileState(p);
+    qc.invalidateQueries();
   };
 
-  const logout = () => {
-    clearDriverToken();
-    setToken(null);
-    qc.clear();
-  };
+  const session = useQuery({
+    queryKey: ["driver-login", token],
+    enabled: !!token,
+    retry: false,
+    queryFn: () => driverLogin({ data: { as: getProfile(), token: token! } }),
+  });
+
+  // Jeton devenu invalide (session révoquée) : on l'oublie et on revient à
+  // l'écran de connexion au lieu de rejouer des appels refusés.
+  useEffect(() => {
+    if (session.isError && token) {
+      localStorage.removeItem(STORAGE_KEY);
+      setToken(null);
+    }
+  }, [session.isError, token]);
 
   // Compteur global de messages clients non lus (badge sur l'onglet Messages).
   const threadsQuery = useQuery({
     queryKey: ["driver-threads", token],
-    enabled: !!token,
+    enabled: !!token && !session.isError,
     queryFn: () => driverThreads({ data: { as: getProfile(), token: token! } }),
     refetchInterval: 10_000,
     refetchOnWindowFocus: true,
@@ -844,8 +672,7 @@ function DriverApp() {
   // Filet de sécurité mobile (iOS/Android) : au retour dans l'app (onglet
   // visible, focus fenêtre, retour depuis le cache bfcache ou reprise réseau),
   // les données affichées sont resynchronisées immédiatement — les minuteries
-  // sont gelées en arrière-plan sur iPhone. La session est aussi revérifiée :
-  // un appareil révoqué (onglet Appareils) est renvoyé à l'écran d'accès.
+  // sont gelées en arrière-plan sur iPhone.
   useEffect(() => {
     if (!token) return;
     let last = 0;
@@ -855,11 +682,6 @@ function DriverApp() {
       if (now - last < 2000) return;
       last = now;
       void qc.invalidateQueries();
-      void verify({ data: { token } })
-        .then((r: any) => {
-          if (r && r.ok === false) logout();
-        })
-        .catch(() => {});
     };
     document.addEventListener("visibilitychange", refresh);
     window.addEventListener("focus", refresh);
@@ -871,8 +693,7 @@ function DriverApp() {
       window.removeEventListener("pageshow", refresh);
       window.removeEventListener("online", refresh);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, qc, verify]);
+  }, [token, qc]);
 
   // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
   // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
@@ -900,106 +721,27 @@ function DriverApp() {
     };
   }, []);
 
-  // Badge avis en attente + toast in-app à chaque nouvel avis.
-  useEffect(() => {
-    if (!token) return;
-    const load = async () => {
-      try {
-        const tk = getDriverToken();
-        if (!tk) return;
-        const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(tk)}`);
-        if (!response.ok) return;
-        const result = await response.json();
-        setPendingAvis(result.pending.length);
-      } catch {
-        // Le badge se resynchronise au prochain passage/poll.
-      }
-    };
-    void load();
-    const ch = (supabase as any)
-      .channel("drv-avis-badge")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "avis" }, (payload: any) => {
-        const row = payload?.new ?? {};
-        const stars = "★".repeat(Math.max(0, Math.min(5, Number(row.note) || 0)));
-        const who = row.prenom || row.nom || "Client";
-        const extract = (row.commentaire || "").toString().slice(0, 60);
-        toast.success(`⭐ Nouvel avis de ${who} ${stars}`, {
-          description: extract ? `"${extract}${extract.length >= 60 ? "…" : ""}"` : undefined,
-          duration: 8000,
-        });
-        try {
-          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-            (navigator as any).vibrate?.([80, 40, 80]);
-          }
-        } catch {}
-        void load();
-      })
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "avis" }, load)
-      .on("postgres_changes", { event: "DELETE", schema: "public", table: "avis" }, load)
-      .subscribe();
-    // Filets de sécurité : Realtime peut être coupé en arrière-plan sur iOS.
-    const onVisible = () => {
-      if (!document.hidden) void load();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    const poll = setInterval(load, 15000);
-    return () => {
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-      supabase.removeChannel(ch);
-    };
-  }, [token]);
+  const logout = () => {
+    const current = token;
+    localStorage.removeItem(STORAGE_KEY);
+    setToken(null);
+    qc.clear();
+    // Le jeton est aussi détruit côté serveur : il devient inutilisable.
+    if (current) void driverLogout({ data: { as: getProfile(), token: current } }).catch(() => {});
+  };
 
-  // Badge devis en attente — indépendant de l'onglet actif.
-  useEffect(() => {
-    if (!token) return;
-    let cancelled = false;
-    const loadDevisBadge = async () => {
-      try {
-        const tk = getDriverToken();
-        if (!tk) return;
-        const res: any = await listDriverDevis({ data: { token: tk } });
-        if (!cancelled) setPendingDevis(res?.pending ?? 0);
-      } catch {
-        // Le badge se resynchronise au prochain passage/poll.
-      }
-    };
-    void loadDevisBadge();
-    const poll = setInterval(loadDevisBadge, 15000);
-    const onVisible = () => {
-      if (!document.hidden) void loadDevisBadge();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    return () => {
-      cancelled = true;
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-    };
-  }, [token]);
+  // Jeton invalide ou expiré : on nettoie et on redemande la connexion.
+  if (session.isError && typeof window !== "undefined") localStorage.removeItem(STORAGE_KEY);
 
-  if (checking) {
+  if (!token || session.isError) {
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100dvh",
-          background: "#03070d",
+      <DriverIdentityGate
+        profiles={profiles}
+        onLoggedIn={(t) => {
+          localStorage.setItem(STORAGE_KEY, t);
+          setToken(t);
         }}
-      >
-        <img src={APT_LOGO} alt="Access Prestige Taxi" style={{ width: "min(260px,70vw)", height: "auto" }} />
-      </div>
-    );
-  }
-
-  if (!token) {
-    return (
-      <DriverIdentityGate profiles={profiles} busy={busy} error={gateError} onPick={(slug) => void identify(slug)} />
+      />
     );
   }
 
@@ -1007,7 +749,6 @@ function DriverApp() {
     <>
       <style>{driverShellCss}</style>
       <style>{APT_SHELL_EXTRA}</style>
-      <style>{aptExtraCss}</style>
       <div className="drv-root">
         <header className="drv-header">
           <div className="drv-brand-mark" aria-label="Access Prestige Taxi">
@@ -1040,7 +781,7 @@ function DriverApp() {
             </strong>
             {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
           </span>
-          <NotifButton className="drv-header-notif" driverId={profile} />
+          <NotifButton className="drv-header-notif" />
           <Link className="drv-header-back" to="/" aria-label="Retour au site">
             <IconHome />
             <span className="drv-header-back-label">Retour au site</span>
@@ -1075,8 +816,6 @@ function DriverApp() {
                 </span>
                 <span className="drv-tab-label">{label}</span>
                 {key === "messages" && unreadTotal > 0 ? <span className="drv-tab-count">{unreadTotal}</span> : null}
-                {key === "avis" && pendingAvis > 0 ? <span className="drv-tab-count">{pendingAvis}</span> : null}
-                {key === "devis" && pendingDevis > 0 ? <span className="drv-tab-count">{pendingDevis}</span> : null}
               </button>
             ))}
           </aside>
@@ -1089,31 +828,12 @@ function DriverApp() {
                   <span>Tableau de bord</span>
                 </button>
               ) : null}
-              {tab === "dashboard" ? (
-                <DashboardTab
-                  token={token}
-                  unread={unreadTotal}
-                  pendingAvis={pendingAvis}
-                  pendingDevis={pendingDevis}
-                  onGo={setTab}
-                />
-              ) : null}
+              {tab === "dashboard" ? <DashboardTab token={token} unread={unreadTotal} onGo={setTab} /> : null}
               {tab === "rides" ? <RidesTab token={token} /> : null}
               {tab === "overflow" ? <OverflowTab token={token} /> : null}
               {tab === "planning" ? <PlanningTab token={token} /> : null}
               {tab === "messages" ? <MessagesTab token={token} /> : null}
               {tab === "accounting" ? <AccountingTab token={token} /> : null}
-              {["avis", "devis", "clients", "stats", "historique", "simulateur", "appareils"].includes(tab) ? (
-                <div className="apt-extra">
-                  {tab === "avis" ? <AvisTab onBadgeChange={setPendingAvis} /> : null}
-                  {tab === "devis" ? <DevisTab onBadgeChange={setPendingDevis} /> : null}
-                  {tab === "clients" ? <ClientsTab /> : null}
-                  {tab === "stats" ? <StatsTab /> : null}
-                  {tab === "historique" ? <HistoriqueTab driverId={profile} /> : null}
-                  {tab === "simulateur" ? <SimulateurTab /> : null}
-                  {tab === "appareils" ? <AppareilsTab /> : null}
-                </div>
-              ) : null}
             </div>
           </div>
         </div>
@@ -2178,19 +1898,7 @@ function IncomingRidePopup({
  * course en cours, calendrier, messages et carte de l'équipe, en une seule
  * page tactile.
  */
-function DashboardTab({
-  token,
-  unread,
-  pendingAvis,
-  pendingDevis,
-  onGo,
-}: {
-  token: string;
-  unread: number;
-  pendingAvis: number;
-  pendingDevis: number;
-  onGo: (t: Tab) => void;
-}) {
+function DashboardTab({ token, unread, onGo }: { token: string; unread: number; onGo: (t: Tab) => void }) {
   const qc = useQueryClient();
   const [mapOpen, setMapOpen] = useState(false);
   const [callsOpen, setCallsOpen] = useState(false);
@@ -2348,78 +2056,6 @@ function DashboardTab({
           </span>
           <span className="drv-dash-plus">›</span>
         </button>
-
-        {(
-          [
-            {
-              tab: "avis",
-              icon: IconStar,
-              color: "#f59e0b",
-              title: "Avis clients",
-              sub: pendingAvis > 0 ? `${pendingAvis} avis à modérer` : "Modérer et consulter les avis",
-              badge: pendingAvis,
-            },
-            {
-              tab: "devis",
-              icon: IconDevis,
-              color: "#14b8a6",
-              title: "Demandes de devis",
-              sub: pendingDevis > 0 ? `${pendingDevis} demande(s) en attente` : "Aucune demande en attente",
-              badge: pendingDevis,
-            },
-            {
-              tab: "clients",
-              icon: IconUsers,
-              color: "#6366f1",
-              title: "Clients",
-              sub: "Fichier clients et historique de dépenses",
-              badge: 0,
-            },
-            {
-              tab: "stats",
-              icon: IconChart,
-              color: "#f97316",
-              title: "Statistiques",
-              sub: "Activité, suivi et visiteurs en direct",
-              badge: 0,
-            },
-            {
-              tab: "historique",
-              icon: IconCalendar,
-              color: "#64748b",
-              title: "Historique",
-              sub: "Toutes les courses passées",
-              badge: 0,
-            },
-            {
-              tab: "simulateur",
-              icon: IconCalc,
-              color: "#84cc16",
-              title: "Simulateur",
-              sub: "Estimer le prix d'une course",
-              badge: 0,
-            },
-            {
-              tab: "appareils",
-              icon: IconDevice,
-              color: "#94a3b8",
-              title: "Appareils",
-              sub: "Sessions et notifications par appareil",
-              badge: 0,
-            },
-          ] as { tab: Tab; icon: () => React.ReactElement; color: string; title: string; sub: string; badge: number }[]
-        ).map((r) => (
-          <button key={r.tab} type="button" className="drv-dash-row" onClick={() => onGo(r.tab)}>
-            <span className="drv-dash-ico" style={{ background: r.color }}>
-              <r.icon />
-            </span>
-            <span className="drv-dash-txt">
-              <strong>{r.title}</strong>
-              <span>{r.sub}</span>
-            </span>
-            {r.badge > 0 ? <span className="drv-dash-badge">{r.badge}</span> : <span className="drv-dash-plus">›</span>}
-          </button>
-        ))}
 
         <button type="button" className="drv-dash-row" onClick={() => setMapOpen((v) => !v)}>
           <span className="drv-dash-ico" style={{ background: "#0ea5e9" }}>
