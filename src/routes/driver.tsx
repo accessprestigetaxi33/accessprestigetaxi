@@ -2218,354 +2218,146 @@ function DriverApp({
                     Retour au site
                   </Link>
                 </div>
-                <div className="drv-dashboard-grid-top">
-                  <section className="drv-card drv-next-card">
-                    <div className="drv-card-head">
-                      <span>PROCHAINE COURSE</span>
-                      {dashboardNext && <b>DANS {dashboardNextMinutes ?? 0} MIN</b>}
-                    </div>
-                    {dashboardNext ? (
-                      <div className="drv-next-layout">
-                        <div className="drv-next-time">
-                          <strong>{formatHeure(dashboardNext.pickup_datetime || dashboardNext.date_heure)}</strong>
-                          <span>{formatDate(dashboardNext.pickup_datetime || dashboardNext.date_heure)}</span>
-                        </div>
-                        <div className="drv-next-route">
-                          <div>
-                            <i className="dot green" />
-                            <strong>{dashboardNext.depart}</strong>
-                            <small>Départ</small>
-                          </div>
-                          <div>
-                            <i className="dot red" />
-                            <strong>{dashboardNext.destination}</strong>
-                            <small>Destination</small>
-                          </div>
-                        </div>
-                      </div>
+                <div className="drv-dash-list">
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("courses")}>
+                    <span className="drv-dash-ico" style={{ background: dashboardNext ? "#e0b866" : "#3f3f46" }}>
+                      <IconCar />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>{dashboardNext ? "Prochaine course" : "Aucune course à venir"}</strong>
+                      <span>
+                        {dashboardNext
+                          ? `${formatHeure(dashboardNext.pickup_datetime || dashboardNext.date_heure)} · ${dashboardNext.depart} → ${dashboardNext.destination}`
+                          : "Appuyez pour voir vos courses"}
+                      </span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="drv-dash-row"
+                    onClick={() => (gps.state === "on" ? gps.stop() : gps.start())}
+                  >
+                    <span className="drv-dash-ico" style={{ background: gps.state === "on" ? "#16a34a" : "#3f3f46" }}>
+                      <IconGps />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>{gps.state === "on" ? "Disponible · position partagée" : "Indisponible"}</strong>
+                      <span>{gps.addr || "Appuyez pour changer d'état"}</span>
+                    </span>
+                    <span className="drv-dash-plus">＋</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("courses")}>
+                    <span className="drv-dash-ico" style={{ background: "#2563eb" }}>
+                      <IconCalendar />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Aujourd'hui</strong>
+                      <span>
+                        {dashboardToday.length > 0
+                          ? `${dashboardToday.length} course(s) · ${dashboardRevenue.toFixed(0)} €`
+                          : "Aucune course aujourd'hui"}
+                      </span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("planning")}>
+                    <span className="drv-dash-ico" style={{ background: "#8b5cf6" }}>
+                      <IconCalendar />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Planning</strong>
+                      <span>
+                        {dashboardUpcoming.length > 0
+                          ? `${dashboardUpcoming.length} réservation(s) à venir`
+                          : "Rien de prévu"}
+                      </span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("messages")}>
+                    <span className="drv-dash-ico" style={{ background: "#db2777" }}>
+                      <IconMessage />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Messages</strong>
+                      <span>{unreadChat > 0 ? `${unreadChat} message(s) non lus` : "Aucun nouveau message"}</span>
+                    </span>
+                    {unreadChat > 0 ? (
+                      <span className="drv-dash-badge">{unreadChat}</span>
                     ) : (
-                      <div className="drv-empty">Aucune course à venir.</div>
+                      <span className="drv-dash-plus">›</span>
                     )}
-                    {dashboardNext && (
-                      <>
-                        <div className="drv-next-meta">
-                          <span>
-                            ♙ {dashboardNext.client_name || "Client"}
-                            <small>{dashboardNext.client_phone || "06 12 34 56 78"}</small>
-                          </span>
-                          <span>
-                            ▣ 2 bagages<small>Berline</small>
-                          </span>
-                          <span>
-                            € <b>{Number(dashboardNext.final_price ?? dashboardNext.prix_estime ?? 0).toFixed(0)} €</b>
-                          </span>
-                        </div>
-                        <div className="drv-btns">
-                          <button className="drv-btn-start" onClick={() => setTab("courses")}>
-                            ▷ DÉMARRER LA COURSE
-                          </button>
-                          <button className="drv-btn-detail" onClick={() => setTab("courses")}>
-                            VOIR LE DÉTAIL
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </section>
+                  </button>
 
-                  <div className="drv-mobile-stats">
-                    <div>
-                      <b>{dashboardToday.length}</b>
-                      <span>COURSES</span>
-                    </div>
-                    <div>
-                      <b>{dashboardRevenue.toFixed(0)} €</b>
-                      <span>CA AUJOURD'HUI</span>
-                    </div>
-                    <div>
-                      <b>4,9 /5</b>
-                      <span>SATISFACTION</span>
-                    </div>
-                  </div>
-
-                  <section className="drv-card drv-day-card">
-                    <div className="drv-card-head">
-                      <span>▣ &nbsp;COURSES DU JOUR</span>
-                      <b>{dashboardToday.length}</b>
-                    </div>
-                    <div className="drv-day-list">
-                      {dashboardTodaySorted.slice(0, 8).map((r) => (
-                        <button key={r.id} onClick={() => setTab("courses")} className="drv-day-row">
-                          <time>{formatHeure(r.pickup_datetime || r.date_heure)}</time>
-                          <span>
-                            {r.depart} → {r.destination}
-                          </span>
-                          <strong>{Number(r.final_price ?? r.prix_estime ?? 0).toFixed(0)} €</strong>
-                          <em className={r.status === "completed" ? "done" : "upcoming"}>
-                            {r.status === "completed" ? "TERMINÉE" : "À VENIR"}
-                          </em>
-                        </button>
-                      ))}
-                      {dashboardTodaySorted.length === 0 && <div className="drv-empty">Aucune course aujourd'hui.</div>}
-                    </div>
-                  </section>
-
-                  <section className="drv-card drv-revenue-card">
-                    <div className="drv-card-head">
-                      <span>REVENUS</span>
-                      <select aria-label="Période">
-                        <option>Aujourd'hui</option>
-                      </select>
-                    </div>
-                    <div className="drv-revenue-main">
-                      <strong>{dashboardRevenue.toFixed(0)} €</strong>
-                      <span>CA AUJOURD'HUI</span>
-                      <b>
-                        +18%<small>vs hier</small>
-                      </b>
-                    </div>
-                    <div className="drv-chart" aria-hidden="true">
-                      {[32, 55, 42, 72, 58, 91, 65, 79, 88, 108, 122, 96, 138, 155, 118].map((h, i) => (
-                        <i key={i} style={{ height: `${Math.min(100, h / 1.6)}%` }} />
-                      ))}
-                    </div>
-                    <div className="drv-revenue-footer">
-                      <span>
-                        <b>{dashboardToday.length}</b>COURSES
-                      </span>
-                      <span>
-                        <b>{dashboardToday.reduce((n, r) => n + (Number(r.distance_km) || 0), 0).toFixed(0)} km</b>
-                        DISTANCE
-                      </span>
-                      <span>
-                        <b>{dashboardToday.length ? (dashboardRevenue / dashboardToday.length).toFixed(0) : 0} €</b>
-                        PANIER MOYEN
-                      </span>
-                    </div>
-                  </section>
-                </div>
-
-                <div className="drv-dashboard-grid-mid">
-                  <section className="drv-card">
-                    <div className="drv-card-head">
-                      <span>
-                        PLANNING <b className="violet-pill">{dashboardUpcoming.length}</b>
-                      </span>
-                      <button onClick={() => setTab("planning")}>VOIR TOUT</button>
-                    </div>
-                    {dashboardUpcoming.slice(0, 3).map((r, i) => (
-                      <div className="drv-plan-row" key={r.id}>
-                        <strong>
-                          {formatDate(r.pickup_datetime || r.date_heure).replace(/\s+\w+$/, "")} ·{" "}
-                          {formatHeure(r.pickup_datetime || r.date_heure)}
-                        </strong>
-                        <span>
-                          {r.depart} → {r.destination}
-                        </span>
-                        <b>{Number(r.final_price ?? r.prix_estime ?? 0).toFixed(0)} €</b>
-                        <em>J-{i + 1}</em>
-                      </div>
-                    ))}
-                    {dashboardUpcoming.length > 3 && (
-                      <div className="drv-more">+ {dashboardUpcoming.length - 3} autres réservations</div>
-                    )}
-                  </section>
-                  <section className="drv-card">
-                    <div className="drv-card-head">
-                      <span>
-                        ▣ &nbsp;MESSAGES NON LUS <b className="red-pill">{unreadChat}</b>
-                      </span>
-                      <button onClick={() => setTab("messages")}>VOIR TOUS</button>
-                    </div>
-                    {dashboardThreads.length === 0 && <div className="drv-more">Aucun message client en attente.</div>}
-                    {dashboardThreads.slice(0, 3).map((t) => {
-                      const name = t.client_name || t.client_phone || "Client";
-                      const initials = name
-                        .split(/\s+/)
-                        .slice(0, 2)
-                        .map((w: string) => w[0]?.toUpperCase() ?? "")
-                        .join("");
-                      return (
-                        <button
-                          type="button"
-                          className="drv-message-row"
-                          key={t.thread_key}
-                          onClick={() => setTab("messages")}
-                        >
-                          <div className="avatar">{initials || "C"}</div>
-                          <div>
-                            <b>{name}</b>
-                            <span>{t.last_message_content}</span>
-                          </div>
-                          <small>
-                            {t.last_message_at
-                              ? new Date(t.last_message_at).toLocaleTimeString("fr-FR", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })
-                              : ""}
-                            <br />
-                            {t.unread_chauffeur > 0 && <i />}
-                          </small>
-                        </button>
-                      );
-                    })}
-                  </section>
-                  <section className="drv-card">
-                    <div className="drv-card-head">
-                      <span>
-                        AVIS RÉCENTS <b className="gold-pill">{pendingAvis}</b>
-                      </span>
-                      <button onClick={() => setTab("avis")}>VOIR TOUS</button>
-                    </div>
-                    <div className="drv-rating">
-                      <strong>
-                        {reviewStats && reviewStats.count > 0 ? reviewStats.avg.toFixed(1).replace(".", ",") : "—"}
-                      </strong>
-                      <span>/ 5</span>
-                      <div>
-                        {"★".repeat(Math.round(reviewStats?.avg ?? 0)) +
-                          "☆".repeat(5 - Math.round(reviewStats?.avg ?? 0))}
-                      </div>
-                      <small>
-                        {reviewStats
-                          ? `Basé sur ${reviewStats.count} avis publié${reviewStats.count > 1 ? "s" : ""}`
-                          : "Chargement des avis…"}
-                      </small>
-                    </div>
-                    <div className="drv-rating-bars">
-                      {[5, 4, 3, 2, 1].map((n) => {
-                        const total = reviewStats?.count ?? 0;
-                        const pct = total ? Math.round(((reviewStats?.dist[n] ?? 0) / total) * 100) : 0;
-                        return (
-                          <div key={n}>
-                            <b>{n} ★</b>
-                            <i>
-                              <span style={{ width: `${pct}%` }} />
-                            </i>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-                </div>
-
-                <div className="drv-dashboard-grid-bottom">
-                  <section className="drv-card drv-vehicle-card">
-                    <div className="drv-card-head">
-                      <span>▱ &nbsp;VÉHICULES</span>
-                      <b>{FLEET.length} · FLOTTE</b>
-                    </div>
-                    <ul className="drv-fleet">
-                      {FLEET.map((v) => (
-                        <li
-                          key={v.id}
-                          role="button"
-                          tabIndex={0}
-                          aria-pressed={dashboardVehicle?.id === v.id}
-                          onClick={() => setSelectedVehicleId(v.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              setSelectedVehicleId(v.id);
-                            }
-                          }}
-                          style={{
-                            cursor: "pointer",
-                            border: dashboardVehicle?.id === v.id ? "2px solid #e0b866" : "2px solid transparent",
-                            borderRadius: 10,
-                          }}
-                          className={v.driver === driverId ? "is-mine" : undefined}
-                        >
-                          <img src={v.photo} alt={v.name} loading="lazy" />
-                          <div>
-                            <strong>{v.name}</strong>
-                            <span>{v.desc}</span>
-                          </div>
-                          {dashboardVehicle?.id === v.id ? (
-                            <em>SÉLECTIONNÉ</em>
-                          ) : (
-                            v.driver === driverId && <em>MON VÉHICULE</em>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                    <footer>
-                      <i>●</i> Contrôle OK <i>●</i> Assurance OK
-                    </footer>
-                  </section>
-
-                  <section className="drv-card drv-gps-card">
-                    <div className="drv-card-head">
-                      <span>
-                        <i className="gps-dot" /> POSITION GPS
-                      </span>
-                      <b className={gps.state === "on" ? "live-small" : ""}>
-                        ● {gps.state === "on" ? "EN DIRECT" : "INACTIF"}
-                      </b>
-                    </div>
-                    <strong>{gps.addr || "Localisation en cours…"}</strong>
-                    <TeamMapCard driverId={driverId} gps={gps} />
-                  </section>
-                  <section className="drv-card">
-                    <div className="drv-card-head">
-                      <span>NOTIFICATIONS</span>
-                    </div>
-                    {dashboardNotifications.length === 0 ? (
-                      <div className="drv-notif-row">
-                        ◉ <span>Aucune notification</span>
-                        <small>À jour</small>
-                      </div>
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("devis")}>
+                    <span className="drv-dash-ico" style={{ background: "#0891b2" }}>
+                      <IconDevis />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Devis</strong>
+                      <span>{pendingDevis > 0 ? `${pendingDevis} devis en attente` : "Aucun devis en attente"}</span>
+                    </span>
+                    {pendingDevis > 0 ? (
+                      <span className="drv-dash-badge">{pendingDevis}</span>
                     ) : (
-                      dashboardNotifications.map((n) => (
-                        <div className="drv-notif-row" key={n.key}>
-                          ◉ <span>{n.label}</span>
-                          <small>{n.detail}</small>
-                        </div>
-                      ))
+                      <span className="drv-dash-plus">›</span>
                     )}
-                    <button className="drv-see-all" onClick={() => setTab("courses")}>
-                      VOIR TOUTES
-                    </button>
-                  </section>
-                  <section className="drv-card drv-shortcuts">
-                    <div className="drv-card-head">
-                      <span>RACCOURCIS</span>
-                    </div>
-                    <div className="shortcut-grid">
-                      <button onClick={() => setTab("courses")}>
-                        <b>＋</b>
-                        <span>
-                          NOUVELLE
-                          <br />
-                          COURSE
-                        </span>
-                      </button>
-                      <button onClick={() => setTab("devis")}>
-                        <b>▤</b>
-                        <span>
-                          DEVIS
-                          <br />
-                          RAPIDE
-                        </span>
-                      </button>
-                      <button onClick={() => setTab("courses")}>
-                        <b>▧</b>
-                        <span>
-                          ENVOYER
-                          <br />
-                          FACTURE
-                        </span>
-                      </button>
-                      <button onClick={() => setTab("gps")}>
-                        <b>◉</b>
-                        <span>
-                          POSITION
-                          <br />
-                          GPS
-                        </span>
-                      </button>
-                    </div>
-                  </section>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("avis")}>
+                    <span className="drv-dash-ico" style={{ background: "#f59e0b" }}>
+                      <IconStar />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Avis clients</strong>
+                      <span>
+                        {reviewStats && reviewStats.count > 0
+                          ? `${reviewStats.avg.toFixed(1).replace(".", ",")} / 5 · ${reviewStats.count} avis`
+                          : "Aucun avis pour le moment"}
+                      </span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <DashboardTeamMapRow driverId={driverId} gps={gps} />
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("clients")}>
+                    <span className="drv-dash-ico" style={{ background: "#64748b" }}>
+                      <IconUsers />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Clients</strong>
+                      <span>Historique et coordonnées</span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("stats")}>
+                    <span className="drv-dash-ico" style={{ background: "#0d9488" }}>
+                      <IconChart />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Statistiques</strong>
+                      <span>Courses, revenus, taux d'acceptation</span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("appareils")}>
+                    <span className="drv-dash-ico" style={{ background: "#475569" }}>
+                      <IconDevice />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Appareils</strong>
+                      <span>Notifications push</span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
                 </div>
               </main>
             )}
@@ -4025,7 +3817,10 @@ function CourseCard({
     const phone = (resa.client_phone || "").replace(/\s/g, "");
     const email = resa.client_email || resa.email || "";
     const trajet = `${resa.depart} → ${resa.destination || "—"}`;
-    const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}` : "";
+    const trackUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}`
+        : "";
     const trackingLine = trackUrl ? `\nRetrouvez votre course ici : ${trackUrl}` : "";
     const msg = `Bonjour ${name}, le prix de votre course Access Prestige Taxi (${trajet}) est de ${val.toFixed(2)} €. Merci.${trackingLine}`;
 
@@ -4762,7 +4557,10 @@ function CourseCard({
             (() => {
               const phone = resa.client_phone;
               const mail = resa.client_email || resa.email;
-              const trackUrl = typeof window !== "undefined" ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}` : "";
+              const trackUrl =
+                typeof window !== "undefined"
+                  ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}`
+                  : "";
               const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
               const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
               const mailBody = trackUrl
@@ -7452,6 +7250,29 @@ function fmtDate(v: string | null): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function DashboardTeamMapRow({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" className="drv-dash-row" onClick={() => setOpen((v) => !v)}>
+        <span className="drv-dash-ico" style={{ background: "#0ea5e9" }}>
+          <IconGps />
+        </span>
+        <span className="drv-dash-txt">
+          <strong>Carte équipe</strong>
+          <span>Position d'Alain et Patricia</span>
+        </span>
+        <span className="drv-dash-plus">{open ? "−" : "＋"}</span>
+      </button>
+      {open && (
+        <div className="drv-dash-map">
+          <TeamMapCard driverId={driverId} gps={gps} />
+        </div>
+      )}
+    </>
+  );
 }
 
 function AppareilsTab() {
