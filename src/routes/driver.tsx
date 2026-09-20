@@ -1195,8 +1195,8 @@ const css = `
     .drv-mobile-drawer .drv-tab-count { margin-left:auto; }
   
 
-    .drv-identity-switcher { display:block !important; flex:0 0 auto !important; }
-    .drv-identity-switcher > button { width:auto !important; height:32px !important; min-height:32px !important; padding:5px 9px !important; font-size:11px !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
+    .drv-identity-switcher { display:flex !important; flex:1 1 auto !important; max-width:260px !important; }
+    .drv-identity-switcher > button { width:100% !important; justify-content:center !important; height:40px !important; min-height:40px !important; padding:9px 16px !important; font-size:14px !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
   
 
  #root { overflow:visible !important; } .drv-root { overflow:visible !important; } .drv-main,.drv-content { overflow:visible !important; } 
