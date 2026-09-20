@@ -1331,7 +1331,36 @@ const css = `
   
 }
 
+/* ── Refonte navigation : plus d'onglets, tout passe par le tableau de bord
+     (rangées façon Nova Taxi). On neutralise l'ancienne sidebar + la barre
+     mobile + le tiroir « Plus », et on aligne le style des rangées et du
+     bouton retour sur la maquette Nova Taxi. ───────────────────────────── */
+.drv-tabs, .drv-mobile-nav, .drv-mobile-drawer, .drv-mobile-drawer-backdrop { display: none !important; }
+.drv-main { margin-left: 0 !important; display: block !important; }
+.drv-content { margin-left: 0 !important; padding: 0 18px 26px !important; }
+.drv-root { padding-bottom: 0 !important; }
 
+.drv-dash-back {
+  display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px;
+  color: #e0b866; background: none; border: 1px solid rgba(201,155,74,.5); border-radius: 999px;
+  padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.drv-dash-back svg { width: 15px; height: 15px; }
+
+.drv-dash-row {
+  width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer;
+  border: 1px solid rgba(246,240,229,.12); border-radius: 16px; background: rgba(255,255,255,.03);
+  padding: 14px 16px; min-height: 64px; color: inherit;
+}
+.drv-dash-row:active { background: rgba(255,255,255,.06); }
+.drv-dash-ico { flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0a1118; }
+.drv-dash-ico svg { width: 18px; height: 18px; }
+.drv-dash-txt { min-width: 0; flex: 1; }
+.drv-dash-txt strong { display: block; font-size: 14px; font-weight: 700; }
+.drv-dash-txt span { display: block; font-size: 12px; color: rgba(246,240,229,.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drv-dash-plus { font-size: 20px; color: rgba(246,240,229,.45); }
+.drv-dash-badge { min-width: 20px; height: 20px; border-radius: 10px; background: #e11d48; color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; }
+.drv-dash-map { margin-top: 14px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(246,240,229,.12); }
 
 `;
 
@@ -1457,6 +1486,19 @@ const IconDevice = () => (
   </svg>
 );
 
+const IconArrowLeft = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 12H5" />
+    <path d="M12 19l-7-7 7-7" />
+  </svg>
+);
 const IconHome = () => (
   <svg
     viewBox="0 0 24 24"
@@ -1681,7 +1723,6 @@ function DriverApp({
   const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; dist: Record<number, number> } | null>(
     null,
   );
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Notifications réelles du tableau de bord, dérivées des compteurs déjà
   // suivis (nouvelles courses, messages non lus, avis et devis en attente).
@@ -2096,90 +2137,6 @@ function DriverApp({
         </header>
 
         <div className="drv-main">
-          <aside className="drv-tabs" aria-label="Navigation chauffeur">
-            <div className="drv-side-logo">
-              <img src={APT_LOGO} alt="Access Prestige Taxi" />
-            </div>
-
-            {(
-              [
-                "dashboard",
-                "courses",
-                "planning",
-                "messages",
-                "devis",
-                "clients",
-                "avis",
-                "stats",
-                "historique",
-                "simulateur",
-                "gps",
-                "appareils",
-              ] as const
-            ).map((t) => {
-              const realTab = t;
-              const count =
-                t === "courses"
-                  ? newCount
-                  : t === "messages"
-                    ? unreadChat
-                    : t === "planning"
-                      ? dashboardUpcoming.length
-                      : t === "avis"
-                        ? pendingAvis
-                        : t === "devis"
-                          ? pendingDevis
-                          : 0;
-              return (
-                <button
-                  key={t}
-                  type="button"
-                  className={`drv-tab${tab === realTab ? " active" : ""}`}
-                  onClick={() => {
-                    setTab(realTab as Tab);
-                    gaEvent("driver_tab_view", { tab: realTab, driver: driverLabel });
-                  }}
-                >
-                  <span className="drv-tab-icon">
-                    {t === "dashboard" && <IconHome />}
-                    {t === "courses" && <IconCar />}
-                    {t === "planning" && <IconCalendar />}
-                    {t === "messages" && <IconMessage />}
-                    {t === "devis" && <IconDevis />}
-                    {t === "clients" && <IconUsers />}
-                    {t === "avis" && <IconStar />}
-                    {t === "stats" && <IconChart />}
-                    {t === "historique" && <IconCalendar />}
-                    {t === "simulateur" && <IconCalc />}
-                    {t === "gps" && <IconGps />}
-                    {t === "appareils" && <IconDevice />}
-                  </span>
-                  <span className="drv-tab-label">
-                    {
-                      (
-                        {
-                          dashboard: "TABLEAU DE BORD",
-                          courses: "COURSES",
-                          planning: "PLANNING",
-                          messages: "MESSAGES",
-                          devis: "DEVIS",
-                          clients: "CLIENTS",
-                          avis: "AVIS",
-                          stats: "STATISTIQUES",
-                          historique: "HISTORIQUE",
-                          simulateur: "SIMULATEUR",
-                          gps: "POSITION GPS",
-                          appareils: "APPAREILS",
-                        } as Record<string, string>
-                      )[t]
-                    }
-                  </span>
-                  {count > 0 && <span className="drv-tab-count">{count}</span>}
-                </button>
-              );
-            })}
-          </aside>
-
           <div className="drv-content">
             {tab === "dashboard" && (
               <main className="drv-dashboard" aria-label="Tableau de bord chauffeur">
@@ -2358,12 +2315,49 @@ function DriverApp({
                     </span>
                     <span className="drv-dash-plus">›</span>
                   </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("historique")}>
+                    <span className="drv-dash-ico" style={{ background: "#94a3b8" }}>
+                      <IconCalendar />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Historique</strong>
+                      <span>Courses passées</span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("simulateur")}>
+                    <span className="drv-dash-ico" style={{ background: "#8b5cf6" }}>
+                      <IconCalc />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Simulateur de tarif</strong>
+                      <span>Estimer le prix d'une course</span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
+
+                  <button type="button" className="drv-dash-row" onClick={() => setTab("gps")}>
+                    <span className="drv-dash-ico" style={{ background: "#0ea5e9" }}>
+                      <IconGps />
+                    </span>
+                    <span className="drv-dash-txt">
+                      <strong>Suivi GPS</strong>
+                      <span>Position détaillée et historique de trajet</span>
+                    </span>
+                    <span className="drv-dash-plus">›</span>
+                  </button>
                 </div>
               </main>
             )}
 
             {tab !== "dashboard" && (
               <div className="drv-body">
+                <button type="button" className="drv-dash-back" onClick={() => setTab("dashboard")}>
+                  <IconArrowLeft />
+                  <span>Retour au tableau de bord</span>
+                </button>
                 <>
                   {tab === "courses" && (
                     <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
@@ -2391,87 +2385,6 @@ function DriverApp({
             )}
           </div>
         </div>
-
-        <nav className="drv-mobile-nav" aria-label="Navigation mobile">
-          <button className={tab === "dashboard" ? "active" : ""} onClick={() => setTab("dashboard")}>
-            <IconHome />
-            <span>Accueil</span>
-          </button>
-          <button className={tab === "courses" ? "active" : ""} onClick={() => setTab("courses")}>
-            <IconCar />
-            {newCount > 0 && <b>{newCount}</b>}
-            <span>Courses</span>
-          </button>
-          <button className={tab === "planning" ? "active" : ""} onClick={() => setTab("planning")}>
-            <IconCalendar />
-            <span>Planning</span>
-          </button>
-          <button className={tab === "messages" ? "active" : ""} onClick={() => setTab("messages")}>
-            <IconMessage />
-            {unreadChat > 0 && <b>{unreadChat}</b>}
-            <span>Messages</span>
-          </button>
-          <button onClick={() => setMobileMenuOpen(true)}>
-            <IconDevice />
-            <span>Plus</span>
-          </button>
-        </nav>
-        {mobileMenuOpen && (
-          <>
-            <button
-              type="button"
-              className="drv-mobile-drawer-backdrop"
-              aria-label="Fermer le menu"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            <aside className="drv-mobile-drawer" aria-label="Toutes les rubriques chauffeur">
-              <div className="drv-mobile-drawer-head">
-                <span>MENU CHAUFFEUR</span>
-                <button
-                  type="button"
-                  className="drv-mobile-drawer-close"
-                  aria-label="Fermer le menu"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  ×
-                </button>
-              </div>
-              {(
-                [
-                  ["dashboard", "Tableau de bord", IconHome],
-                  ["courses", "Courses + chat", IconCar],
-                  ["planning", "Planning", IconCalendar],
-                  ["messages", "Messages", IconMessage],
-                  ["devis", "Devis", IconDevis],
-                  ["clients", "Clients", IconUsers],
-                  ["avis", "Avis", IconStar],
-                  ["stats", "Statistiques", IconChart],
-                  ["historique", "Historique", IconCalendar],
-                  ["simulateur", "Simulateur", IconCalc],
-                  ["gps", "Position GPS", IconGps],
-                  ["appareils", "Appareils", IconDevice],
-                ] as const
-              ).map(([key, label, Icon]) => (
-                <button
-                  key={key}
-                  type="button"
-                  className={tab === key ? "active" : ""}
-                  onClick={() => {
-                    setTab(key);
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <Icon />
-                  <span>{label}</span>
-                  {key === "courses" && newCount > 0 && <span className="drv-tab-count">{newCount}</span>}
-                  {key === "messages" && unreadChat > 0 && <span className="drv-tab-count">{unreadChat}</span>}
-                  {key === "avis" && pendingAvis > 0 && <span className="drv-tab-count">{pendingAvis}</span>}
-                  {key === "devis" && pendingDevis > 0 && <span className="drv-tab-count">{pendingDevis}</span>}
-                </button>
-              ))}
-            </aside>
-          </>
-        )}
       </div>
     </>
   );
