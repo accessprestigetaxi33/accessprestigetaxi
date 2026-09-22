@@ -11,6 +11,20 @@ export const TARIFS = {
   VITESSE_MOYENNE_KMH,
 } as const;
 
+/**
+ * Vitesse moyenne estimée (km/h) utilisée UNIQUEMENT quand aucune durée réelle
+ * (OSRM) n'est disponible. Barème par palier : plus le trajet est long, plus il
+ * est probable qu'une partie se fasse hors agglomération.
+ * ⚠️ Approximatif — la durée réelle OSRM est toujours préférée.
+ */
+export function estimerVitesseMoyenneKmh(distanceKm: number): number {
+  if (distanceKm <= 5) return 25;
+  if (distanceKm <= 12) return 35;
+  if (distanceKm <= 25) return 50;
+  return 65;
+}
+
+
 /** Frontière jour/nuit, heure de Paris : jour = [07:00, 19:00[, nuit sinon. */
 export const HEURE_DEBUT_JOUR = 7;
 export const HEURE_FIN_JOUR = 19;
