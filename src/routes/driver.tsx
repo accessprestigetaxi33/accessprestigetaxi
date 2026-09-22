@@ -8,7 +8,13 @@ import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/nova-supabase";
-import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
+import {
+  addOsmMarker,
+  createOsmMap,
+  drawOsmRoute,
+  fitOsmBounds,
+  loadOsmMapEngineWhenVisible,
+} from "@/lib/osmMap";
 import { geocodeAddress } from "@/lib/googleGeocode";
 import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
@@ -2683,49 +2689,39 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
     (async () => {
       try {
         if (!mapRef.current) return;
-        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current);
+        const api = await loadOsmMapEngineWhenVisible(mapRef.current);
         if (cancelled || !mapRef.current) return;
         if (!mapInst.current) {
-          mapInst.current = new mapsApi.maps.Map(mapRef.current, {
+          const created = await createOsmMap(mapRef.current, {
             // Centre par défaut (Charente-Maritime) tant qu'aucune position
             // n'est partagée : la carte reste toujours visible.
             center: { lat: 45.9, lng: -0.95 },
             zoom: 9,
-            disableDefaultUI: true,
-            gestureHandling: "cooperative",
-            styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
           });
+          mapInst.current = created.map;
         }
         setMapError(null);
         if (pts.length === 0) return;
-        const bounds = new mapsApi.maps.LatLngBounds();
         pts.forEach((p) => {
           const pos = { lat: p.lat as number, lng: p.lng as number };
-          bounds.extend(pos);
           const color = TEAM_COLORS[p.id] ?? "#0f172a";
           if (!markersRef.current[p.id]) {
-            markersRef.current[p.id] = new mapsApi.maps.Marker({
-              map: mapInst.current,
-              label: { text: (TEAM_NAMES[p.id] ?? p.id)[0], color: "#fff", fontWeight: "700" },
-              icon: {
-                path: mapsApi.maps.SymbolPath.CIRCLE,
-                scale: 11,
-                fillColor: color,
-                fillOpacity: 1,
-                strokeColor: "#fff",
-                strokeWeight: 2,
-              },
+            markersRef.current[p.id] = addOsmMarker(api, mapInst.current, pos, {
+              color,
+              label: TEAM_NAMES[p.id] ?? p.id,
+              size: 20,
             });
           }
-          markersRef.current[p.id].setPosition(pos);
-          markersRef.current[p.id].setOpacity(p.is_active ? 1 : 0.5);
+          markersRef.current[p.id].setLngLat([pos.lng, pos.lat]);
+          const el = markersRef.current[p.id].getElement() as HTMLElement;
+          el.style.opacity = p.is_active ? "1" : "0.5";
         });
-        if (pts.length === 1) {
-          mapInst.current.setCenter(bounds.getCenter());
-          mapInst.current.setZoom(14);
-        } else {
-          mapInst.current.fitBounds(bounds, 40);
-        }
+        fitOsmBounds(
+          api,
+          mapInst.current,
+          pts.map((p) => ({ lat: p.lat as number, lng: p.lng as number })),
+          40,
+        );
       } catch {
         if (!cancelled) setMapError("Carte indisponible pour le moment.");
       }
