@@ -9,7 +9,7 @@ const VCARD = [
   "ORG:Access Prestige Taxi",
   "TEL;TYPE=CELL,VOICE,PREF:+33650260015",
   "EMAIL;TYPE=INTERNET,PREF:accessprestigetaxi@gmail.com",
-  "URL:https://accessprestigetaxi.lovable.app",
+  "URL:https://www.accessprestigetaxi.fr",
   "END:VCARD",
   "",
 ].join("\r\n");
