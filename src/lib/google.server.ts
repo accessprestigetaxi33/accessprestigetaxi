@@ -3,10 +3,11 @@
 // (indépendante de Lovable) si elle est configurée, sinon passerelle connecteur.
 
 import { parseAsParisTime } from "@/lib/tarif";
-import { googleHeaders, googleUrl, hasGoogleAccess } from "@/lib/google-direct.server";
+import { osmGeocode, osmRoutes, trafficFactor } from "@/lib/osm.server";
 
+/** OpenStreetMap ne demande aucune clé : l'accès est toujours disponible. */
 function assertGoogleAccess() {
-  if (!hasGoogleAccess()) throw new Error("Missing Google Maps credentials");
+  /* no-op — conservé pour compat */
 }
 
 
@@ -720,61 +721,16 @@ function normalize(q: string): string[] {
 export type GoogleGeocode = { lng: number; lat: number; label: string; confidence: number };
 
 async function geocodeOnce(q: string): Promise<GoogleGeocode | null> {
-  assertGoogleAccess();
-  const bounds = `${CHARENTE_MARITIME_BBOX.south},${CHARENTE_MARITIME_BBOX.west}|${CHARENTE_MARITIME_BBOX.north},${CHARENTE_MARITIME_BBOX.east}`;
-  const url = googleUrl(
-    `/maps/api/geocode/json?address=${encodeURIComponent(q)}&region=fr&bounds=${encodeURIComponent(bounds)}`,
-  );
-  const d = await safeFetchJson("geocode", url, {
-    headers: googleHeaders(),
-  });
-
-  if (d?.status && d.status !== "OK" && d.status !== "ZERO_RESULTS") {
-    console.error("[geocode] google status", d.status, d.error_message ?? "", "for", q);
-  }
-  const res = d?.results?.[0];
-  if (!res?.geometry?.location) return null;
-  return {
-    lng: res.geometry.location.lng,
-    lat: res.geometry.location.lat,
-    label: res.formatted_address ?? q,
-    confidence: res.geometry.location_type === "ROOFTOP" ? 1 : 0.6,
-  };
+  const g = await osmGeocode(q, "fr");
+  if (!g) return null;
+  return { lat: g.lat, lng: g.lng, label: g.label, confidence: g.confidence ?? 0.8 };
 }
 
+/** Second passage : même source OSM, requête élargie (POI / établissements). */
 async function placesTextSearch(q: string): Promise<GoogleGeocode | null> {
-  assertGoogleAccess();
-
-  const body = {
-    textQuery: q,
-    languageCode: "fr",
-    regionCode: "fr",
-    maxResultCount: 1,
-    locationBias: {
-      rectangle: {
-        low: { latitude: CHARENTE_MARITIME_BBOX.south, longitude: CHARENTE_MARITIME_BBOX.west },
-        high: { latitude: CHARENTE_MARITIME_BBOX.north, longitude: CHARENTE_MARITIME_BBOX.east },
-      },
-    },
-  };
-  const d = await safeFetchJson("places", googleUrl("/places/v1/places:searchText"), {
-    method: "POST",
-    headers: googleHeaders({
-      "Content-Type": "application/json",
-      "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.location",
-    }),
-    body: JSON.stringify(body),
-  });
-
-  const p = d?.places?.[0];
-  const loc = p?.location;
-  if (!loc?.latitude || !loc?.longitude) return null;
-  return {
-    lat: loc.latitude,
-    lng: loc.longitude,
-    label: p.formattedAddress ?? p.displayName?.text ?? q,
-    confidence: 0.8,
-  };
+  const g = await osmGeocode(`${q}, Charente-Maritime, France`, "fr");
+  if (!g) return null;
+  return { lat: g.lat, lng: g.lng, label: g.label, confidence: 0.7 };
 }
 
 export async function geocodeGoogle(query: string): Promise<GoogleGeocode | null> {
@@ -841,52 +797,17 @@ export async function routeGoogle(
   to: { lng: number; lat: number },
   departureIso?: string,
 ): Promise<GoogleRoute | null> {
-  const key = routeKey(
-    { lat: from.lat, lng: from.lng },
-    { lat: to.lat, lng: to.lng },
-    departureIso,
-  );
+  const key = routeKey({ lat: from.lat, lng: from.lng }, { lat: to.lat, lng: to.lng }, departureIso);
   return routeCache.run(key, async () => {
-    assertGoogleAccess();
-    const requestedDeparture = departureIso ? parseAsParisTime(departureIso).getTime() : NaN;
-    const nowPlus5 = Date.now() + 5 * 60_000;
-    const useFutureDeparture =
-      Number.isFinite(requestedDeparture) && requestedDeparture >= nowPlus5;
-    const body: any = {
-      origin: { location: { latLng: { latitude: from.lat, longitude: from.lng } } },
-      destination: { location: { latLng: { latitude: to.lat, longitude: to.lng } } },
-      travelMode: "DRIVE",
-      routingPreference: "TRAFFIC_AWARE",
-      computeAlternativeRoutes: true,
-      routeModifiers: { avoidFerries: true, avoidTolls: false, avoidHighways: false },
-      languageCode: "fr",
-      regionCode: "fr",
-      units: "METRIC",
+    const routes = await osmRoutes([from.lng, from.lat], [to.lng, to.lat], true);
+    if (routes.length === 0) return null;
+    // Le trajet retenu est le plus rapide — ce qu'un GPS grand public propose.
+    const fastest = routes.reduce((a, b) => (b.durationS < a.durationS ? b : a));
+    const factor = trafficFactor(departureIso ? parseAsParisTime(departureIso) : new Date());
+    return {
+      distanceKm: Math.round((fastest.distanceM / 1000) * 100) / 100,
+      dureeS: Math.round(fastest.durationS * factor),
+      coords: decodePolyline(fastest.geometry, 6, MAX_POLYLINE_POINTS),
     };
-    if (useFutureDeparture) {
-      body.departureTime = new Date(requestedDeparture).toISOString();
-    }
-    const d = await safeFetchJson("routes", googleUrl("/routes/directions/v2:computeRoutes"), {
-      method: "POST",
-      headers: googleHeaders({
-        "Content-Type": "application/json",
-        "X-Goog-FieldMask":
-          "routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline.encodedPolyline",
-      }),
-      body: JSON.stringify(body),
-    });
-
-    const routes: any[] = d?.routes ?? [];
-    if (!routes.length) return null;
-    const parseSec = (s: unknown) => Number(String(s ?? "0s").replace("s", "")) || 0;
-    const best = routes.reduce((a, b) =>
-      (a.distanceMeters ?? Infinity) <= (b.distanceMeters ?? Infinity) ? a : b,
-    );
-    const distanceKm = (best.distanceMeters ?? 0) / 1000;
-    const dureeS = parseSec(best.duration);
-    const coords = best.polyline?.encodedPolyline
-      ? decodePolyline(best.polyline.encodedPolyline)
-      : [];
-    return { distanceKm, dureeS, coords };
   });
 }
