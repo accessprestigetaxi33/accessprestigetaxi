@@ -60,7 +60,7 @@ export const driverUpdateReservation = createServerFn({ method: "POST" })
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
     if (Object.keys(data.patch).length === 0) return { changed: false };
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     let query = supabaseAdmin
       .from("reservations")
@@ -85,7 +85,7 @@ export const driverListReservations = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     if (data.scope === "planning") {
       const start = new Date();
@@ -135,7 +135,7 @@ export const driverDeleteClient = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { error: resaError } = await supabaseAdmin.from("reservations").delete().eq("client_phone", data.phone);
     if (resaError) throw new Error(`client_reservations_delete_failed: ${resaError.message}`);

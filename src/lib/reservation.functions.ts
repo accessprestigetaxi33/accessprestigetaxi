@@ -44,7 +44,7 @@ async function isOwner(row: any, proof?: string | null, token?: string | null): 
 export const getReservationPublic = createServerFn({ method: "POST" })
   .inputValidator((input) => ProofSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: row, error } = await supabaseAdmin
       .from("reservations")
       .select(PUBLIC_COLUMNS)
@@ -72,7 +72,7 @@ export const getReservationPublic = createServerFn({ method: "POST" })
 export const cancelReservationPublic = createServerFn({ method: "POST" })
   .inputValidator((input) => ProofSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: existing, error: readErr } = await supabaseAdmin
       .from("reservations")

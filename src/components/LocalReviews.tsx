@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Star, Quote } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/i18n/I18nProvider";
 

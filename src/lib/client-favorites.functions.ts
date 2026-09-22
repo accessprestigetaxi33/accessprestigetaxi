@@ -29,7 +29,7 @@ export const listClientFavorites = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<ClientFavorite[]> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: rows, error } = await supabaseAdmin
       .from("client_favorites")
       .select("id, client_id, label, address, icon, sort_order")
@@ -45,7 +45,7 @@ export const upsertClientFavorite = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<ClientFavorite> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     if (data.id) {
       const { data: row, error } = await supabaseAdmin
         .from("client_favorites")
@@ -82,7 +82,7 @@ export const deleteClientFavorite = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("client_favorites")
       .delete()

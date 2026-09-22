@@ -40,7 +40,7 @@ export const listDriverDevices = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: subs, error } = await supabaseAdmin
       .from("push_subscriptions")
@@ -103,7 +103,7 @@ export const revokeDriverDevice = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin.from("push_subscriptions").delete().eq("id", data.device_id);
     if (error) throw new Error(`revoke_failed: ${error.message}`);
     return { ok: true };
@@ -120,7 +120,7 @@ export const driverPushLog = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     let q = supabaseAdmin
       .from("push_send_log" as any)
       .select(

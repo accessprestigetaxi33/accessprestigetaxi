@@ -59,7 +59,7 @@ export const recomputeReservationDuration = createServerFn({ method: "POST" })
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     if (!apiKey) return { ok: false, reason: "missing_api_key" as const };
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: row, error } = await supabaseAdmin
       .from("reservations")

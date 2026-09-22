@@ -10,7 +10,7 @@ import { getClientSession } from "@/lib/client-session";
 import type { ClientSession } from "@/lib/client-auth.functions";
 import { listClientReservations, type ClientReservation } from "@/lib/client-reservations.functions";
 import { useT } from "@/i18n/I18nProvider";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 
 export const Route = createFileRoute("/client/trajets")({
   head: () => ({

@@ -123,7 +123,7 @@ export const bookRide = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<BookResponse> => {
     const { computeQuote } = await import("@/lib/booking.server");
     const { newSuiviId } = await import("@/lib/suivi-id");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const reqId = data.client_request_id || null;
 

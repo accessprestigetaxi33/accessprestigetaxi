@@ -89,31 +89,20 @@ const json = (body: unknown, status = 200, cache = "no-store") =>
     headers: { "Content-Type": "application/json", "Cache-Control": cache },
   });
 
-function creds() {
-  const lovable = process.env["LOVABLE_API_KEY"];
-  const google =
-    process.env["GOOGLE_MAPS_API_KEY"] ||
-    process.env["GOOGLE_MAPS_API_KEY2"] ||
-    process.env["GOOGLE_API_KEY"];
-  if (!lovable || !google) return null;
-  return { lovable, google };
-}
 
 async function gw(path: string, init: RequestInit & { fieldMask?: string }) {
-  const c = creds();
-  if (!c) throw new Error("missing_google_credentials");
-  const headers = new Headers(init.headers);
-  headers.set("Authorization", `Bearer ${c.lovable}`);
-  headers.set("X-Connection-Api-Key", c.google);
+  const { googleHeaders, googleUrl, hasGoogleAccess } = await import("@/lib/google-direct.server");
+  if (!hasGoogleAccess()) throw new Error("missing_google_credentials");
+  const headers = googleHeaders(init.headers);
   if (init.fieldMask) headers.set("X-Goog-FieldMask", init.fieldMask);
   if (init.body) headers.set("Content-Type", "application/json");
   const ctrl = new AbortController();
   const to = setTimeout(() => ctrl.abort(), 8000);
   try {
-    const res = await fetch(`${GATEWAY}${path}`, { ...init, headers, signal: ctrl.signal });
+    const res = await fetch(googleUrl(path), { ...init, headers, signal: ctrl.signal });
     const text = await res.text();
     if (!res.ok) {
-      console.error(`[places] gateway ${res.status} ${path}`, text.slice(0, 500));
+      console.error(`[places] google ${res.status} ${path}`, text.slice(0, 500));
       return null;
     }
     try {
@@ -122,12 +111,13 @@ async function gw(path: string, init: RequestInit & { fieldMask?: string }) {
       return null;
     }
   } catch (err) {
-    console.error(`[places] gateway error ${path}`, err);
+    console.error(`[places] google error ${path}`, err);
     return null;
   } finally {
     clearTimeout(to);
   }
 }
+
 
 type Suggestion = { placeId: string | null; label: string; lat: number | null; lng: number | null };
 

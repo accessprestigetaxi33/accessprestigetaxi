@@ -27,7 +27,7 @@ export const getClientCompanyInfo = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<CompanyInfo> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: row } = await supabaseAdmin
       .from("client_accounts")
       .select("company_name,siret,tva_intracom,billing_address")
@@ -54,7 +54,7 @@ export const updateClientCompanyInfo = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("client_accounts")
       .update({
@@ -85,7 +85,7 @@ export const listCompletedForBilling = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<InvoiceRow[]> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const cols =
       "id, pickup_datetime, depart, arrivee, destination, status, prix_estime, paiement, tracking_id, client_account_id, client_phone, telephone, client_email, email";
 

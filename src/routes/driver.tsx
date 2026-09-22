@@ -7,7 +7,7 @@ import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
 import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import { loadGoogleMapsWhenVisible } from "@/lib/googleMaps";
 import { geocodeAddress } from "@/lib/googleGeocode";
 import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";

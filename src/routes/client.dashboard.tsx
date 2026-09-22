@@ -30,7 +30,7 @@ import { listClientReservations, type ClientReservation } from "@/lib/client-res
 import { useI18n, useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import logo from "@/assets/tcb-logo-badge.webp";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import photoVanReal from "@/assets/apt-van-real.webp.asset.json";
 
 const ACTIVE_STATUSES = new Set(["nouvelle", "pending", "accepted", "en_route", "arrived"]);

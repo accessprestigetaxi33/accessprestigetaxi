@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Star, Loader2, Check, CloudOff, RefreshCw, CloudUpload, CheckCircle2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import { useI18n } from "@/i18n/I18nProvider";
 import { toast } from "sonner";
 import { notifyNewReview } from "@/lib/push.functions";

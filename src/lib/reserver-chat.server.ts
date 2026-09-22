@@ -400,7 +400,7 @@ function buildTools(lang: string, state: ReservationStateType, _gateway: Lovable
           // production (contexte de requête non transmis à l'appel interne,
           // round-trip qui échoue) sans jamais faire remonter d'erreur
           // exploitable dans les logs.
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
           const { data: inserted, error } = await supabaseAdmin
             .from("reservations")
             .insert({

@@ -20,7 +20,7 @@ export const getActiveVisitorCount = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     // Purge des sessions périmées (>90 s sans battement) : côté serveur uniquement,
     // le navigateur n'a pas le droit de supprimer des lignes active_visitors.
     if (data.scope === "site") {

@@ -23,7 +23,7 @@ export const logSiteEvent = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: boolean }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin.rpc("log_site_event", {
       p_event: data.event,
       p_session_id: data.session_id,
@@ -45,7 +45,7 @@ export const logTrackingEvent = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: boolean }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin.rpc("log_tracking_event", {
       p_key: data.key,
       p_event_type: data.event_type,
@@ -67,7 +67,7 @@ export const requestRecurringRide = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: boolean; error?: string }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: ok, error } = await supabaseAdmin.rpc("request_recurring_ride", {
       p_key: data.key,
       p_frequency: data.frequency,

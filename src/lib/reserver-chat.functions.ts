@@ -204,7 +204,7 @@ async function computeQuote(
 }
 
 async function checkSlot(args: { pickup_datetime: string }) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const target = parseAsParisTime(args.pickup_datetime);
   if (Number.isNaN(target.getTime())) return { ok: false, error: "Date invalide" };
   if (target.getTime() < Date.now() - 2 * 60_000) {
@@ -302,7 +302,7 @@ async function confirmReservation(
   // à l'appel interne, round-trip qui échoue) sans jamais faire remonter
   // d'erreur exploitable — c'est ce qui empêchait le console.error d'avant
   // de jamais rien afficher alors que la réservation échouait à chaque fois.
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const payload = {
     nom: String(args.nom).slice(0, 200),
     telephone: String(args.telephone).slice(0, 30),
@@ -366,7 +366,7 @@ async function confirmReservation(
     const nowIso = new Date().toISOString();
     const expiresAtIso = new Date(Date.now() + 50 * 24 * 60 * 60 * 1000).toISOString();
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
       const endpoint = `fcm://${clientFcmToken}-client-reservation-${inserted.id}`;
       await supabaseAdmin.from("push_subscriptions").delete().eq("endpoint", endpoint);
       await supabaseAdmin.from("push_subscriptions").insert({

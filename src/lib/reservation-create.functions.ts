@@ -30,7 +30,7 @@ const CreateSchema = z.object({
 export const createReservationPublic = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => CreateSchema.parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const email = data.email || null;
     const payload: any = {
       nom: data.nom,
@@ -82,7 +82,7 @@ export const createReservationPublic = createServerFn({ method: "POST" })
 
 /** Indique si un taxi est disponible (aucune course active en cours). */
 export const getTaxiAvailability = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const { count, error } = await supabaseAdmin
     .from("reservations")
     .select("id", { count: "exact", head: true })

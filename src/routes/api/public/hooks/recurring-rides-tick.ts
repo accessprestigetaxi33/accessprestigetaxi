@@ -17,7 +17,7 @@ export const Route = createFileRoute("/api/public/hooks/recurring-rides-tick")({
         const denied = requireCronSecret(request);
         if (denied) return denied;
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
         const now = new Date();
         const windowEnd = new Date(now.getTime() + 25 * 3600 * 1000); // 25h lookahead

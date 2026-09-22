@@ -39,7 +39,7 @@ export async function sendDriverPush(
 
 /** Nombre d'appareils client abonnés au push pour cette réservation. */
 export async function countClientPushDevices(reservationId: string): Promise<number> {
-  const supabaseAdmin = (await import("@/integrations/supabase/client.server")).supabaseAdmin;
+  const supabaseAdmin = (await import("@/lib/nova-supabase.server")).supabaseAdmin;
   const { count } = await supabaseAdmin
     .from("push_subscriptions")
     .select("id", { count: "exact", head: true })
@@ -321,7 +321,7 @@ export async function logReservationEvent(
   depart?: string | null,
   destination?: string | null,
 ) {
-  const supabaseAdmin = (await import("@/integrations/supabase/client.server")).supabaseAdmin;
+  const supabaseAdmin = (await import("@/lib/nova-supabase.server")).supabaseAdmin;
   await supabaseAdmin.from("reservation_events").insert({
     reservation_id: reservationId,
     event_type: eventType,

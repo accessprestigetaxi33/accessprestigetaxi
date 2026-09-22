@@ -6,7 +6,7 @@
 // On redirige donc tous les appels serveur vers ce backend-là, ce qui garantit
 // que /suivi/$id, /fin/$id et les e-mails lisent bien les mêmes données que le
 // formulaire de réservation.
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabaseAdmin } from "@/lib/nova-supabase.server";
 
 export function getTaxiSupabaseConfig() {
   const supabaseUrl = process.env.SUPABASE_URL;
