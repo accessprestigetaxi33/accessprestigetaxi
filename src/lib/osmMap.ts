@@ -25,7 +25,7 @@ export function loadOsmMapEngine(): Promise<OsmMapApi> {
         document.head.appendChild(link);
       }
       const mod = await import("maplibre-gl");
-      return (mod.default ?? mod) as unknown as OsmMapApi;
+      return mod as unknown as OsmMapApi;
     })().catch((err) => {
       enginePromise = null;
       throw err;
