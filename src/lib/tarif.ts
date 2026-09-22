@@ -207,7 +207,7 @@ export function detaillerPrix(distanceKm: number, pickupIso: string, dureeMinOve
   const dureeMin =
     dureeMinOverride && dureeMinOverride > 0
       ? dureeMinOverride
-      : Math.max(Math.round((dist / VITESSE_MOYENNE_KMH) * 60), 1);
+      : Math.max(Math.round((dist / estimerVitesseMoyenneKmh(dist)) * 60), 1);
 
   const iso = pickupIso || new Date().toISOString();
   const departJour = estTarifJourParis(iso);
