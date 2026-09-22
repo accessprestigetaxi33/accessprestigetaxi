@@ -12,8 +12,8 @@ export const transcribeAudio = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
+    const { aiTranscriptionTarget } = await import("@/lib/ai-gateway.server");
+    const target = aiTranscriptionTarget();
 
     const bytes = Uint8Array.from(atob(data.base64), (c) => c.charCodeAt(0));
     const mime = data.mime || "audio/webm";
@@ -25,22 +25,23 @@ export const transcribeAudio = createServerFn({ method: "POST" })
       : "webm";
 
     const form = new FormData();
-    form.append("model", "openai/gpt-4o-mini-transcribe");
+    form.append("model", target.model);
     form.append("file", new Blob([bytes as BlobPart], { type: mime }), `recording.${ext}`);
     // Language optional — omit to let model auto-detect (safer for multi-lang site)
     if (data.lang && /^[a-z]{2}$/.test(data.lang)) form.append("language", data.lang);
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
+    const res = await fetch(target.url, {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: target.headers,
       body: form,
     });
 
     if (!res.ok) {
       const errText = await res.text().catch(() => "");
-      console.error("[stt] gateway error", res.status, errText);
+      console.error("[stt] provider error", res.status, errText);
       throw new Error(`stt_failed_${res.status}`);
     }
+
 
     const json = (await res.json()) as { text?: string };
     return { text: (json.text ?? "").trim() };

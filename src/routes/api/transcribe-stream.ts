@@ -9,8 +9,14 @@ export const Route = createFileRoute("/api/transcribe-stream")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apiKey = process.env["LOVABLE_API_KEY"];
-        if (!apiKey) return new Response("stt_unconfigured", { status: 500 });
+        const { aiTranscriptionTarget } = await import("@/lib/ai-gateway.server");
+        let target: ReturnType<typeof aiTranscriptionTarget>;
+        try {
+          target = aiTranscriptionTarget();
+        } catch {
+          return new Response("stt_unconfigured", { status: 500 });
+        }
+
 
         let payload: { base64?: string; mime?: string; lang?: string };
         try {
@@ -39,22 +45,23 @@ export const Route = createFileRoute("/api/transcribe-stream")({
           : "webm";
 
         const form = new FormData();
-        form.append("model", "openai/gpt-4o-mini-transcribe");
+        form.append("model", target.model);
         form.append("file", new Blob([bytes as BlobPart], { type: mime }), `recording.${ext}`);
         form.append("stream", "true");
         if (payload.lang && /^[a-z]{2}$/.test(payload.lang)) form.append("language", payload.lang);
 
-        const upstream = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
+        const upstream = await fetch(target.url, {
           method: "POST",
-          headers: { Authorization: `Bearer ${apiKey}` },
+          headers: target.headers,
           body: form,
         });
 
         if (!upstream.ok || !upstream.body) {
           const errText = await upstream.text().catch(() => "");
-          console.error("[stt-stream] gateway error", upstream.status, errText);
+          console.error("[stt-stream] provider error", upstream.status, errText);
           return new Response(errText || "stt_failed", { status: upstream.status || 502 });
         }
+
 
         return new Response(upstream.body, {
           headers: {
