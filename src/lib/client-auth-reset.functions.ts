@@ -19,7 +19,7 @@ async function sha256Hex(input: string): Promise<string> {
 const RequestSchema = z.object({ email: emailSchema });
 const ResetSchema = z.object({ token: z.string().min(16).max(128), password: passwordSchema });
 
-const APP_URL = "https://accessprestigetaxi.lovable.app";
+const APP_URL = "https://www.accessprestigetaxi.fr";
 
 /**
  * Requests a password reset.
@@ -67,7 +67,7 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
     const html = `<!doctype html><html><body style="font-family:Arial,sans-serif;background:#fff;color:#111;">
 <div style="max-width:560px;padding:24px;margin:0 auto;">
   <div style="text-align:center;margin-bottom:24px;">
-    <div style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,#1a1209 0%,#2d1f0a 100%);border-radius:10px;color:#E8C96D;font-weight:bold;font-size:18px;letter-spacing:0.05em;">TAXI CITY BORDEAUX</div>
+    <div style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,#1a1209 0%,#2d1f0a 100%);border-radius:10px;color:#E8C96D;font-weight:bold;font-size:18px;letter-spacing:0.05em;">ACCESS PRESTIGE TAXI</div>
   </div>
   <h1 style="font-size:22px;margin:0 0 12px;color:#1a1209;">Réinitialisation de votre mot de passe</h1>
   <p style="font-size:15px;line-height:1.6;color:#444;">Bonjour ${name},</p>
@@ -82,32 +82,23 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
 
     try {
       const messageId = `reset-${account.id}-${Date.now()}`;
-      // Mark in send log (best effort, ignore failure)
+      const { sendRawEmail } = await import("@/lib/email-templates/send-email");
+      const result = await sendRawEmail({
+        to: account.email,
+        subject,
+        html,
+        text,
+        replyTo: "accessprestigetaxi@gmail.com",
+        idempotencyKey: messageId,
+      });
       await supabaseAdmin.from("email_send_log").insert({
         message_id: messageId,
         template_name: "client-password-reset",
         recipient_email: account.email,
-        status: "pending",
-      });
-      await supabaseAdmin.rpc("enqueue_email" as any, {
-        queue_name: "transactional_emails",
-        payload: {
-          message_id: messageId,
-          to: account.email,
-          from: "Access Prestige Taxi <noreply@notify.accessprestigetaxi.lovable.app>",
-          reply_to: "accessprestigetaxi@gmail.com",
-          sender_domain: "notify.accessprestigetaxi.lovable.app",
-          subject,
-          html,
-          text,
-          purpose: "transactional",
-          label: "client-password-reset",
-          idempotency_key: messageId,
-          queued_at: new Date().toISOString(),
-        },
+        status: result.sent ? "sent" : "suppressed",
       });
     } catch (e) {
-      console.error("[reset] enqueue email failed", e);
+      console.error("[reset] send email failed", e);
     }
 
     return { ok: true };
