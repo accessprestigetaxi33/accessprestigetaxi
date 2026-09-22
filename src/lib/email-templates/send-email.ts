@@ -37,11 +37,6 @@ export async function sendTemplateEmail(
   to: string,
   options: SendTemplateEmailOptions = {}
 ): Promise<SendTemplateEmailResult> {
-  const apiKey = process.env['LOVABLE_API_KEY']
-  if (!apiKey) {
-    throw new Error('LOVABLE_API_KEY is not configured')
-  }
-
   const template = TEMPLATES[templateName]
   if (!template) {
     throw new Error(
@@ -65,11 +60,51 @@ export async function sendTemplateEmail(
       ? template.subject(templateData)
       : template.subject
 
+  const from = `${SITE_NAME} <noreply@${FROM_DOMAIN}>`
+
+  // 1) Chemin principal : Resend (compte du client, indépendant de Lovable).
+  const resendKey = process.env['RESEND_API_KEY']
+  if (resendKey) {
+    try {
+      const resp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${resendKey}`,
+          // Évite les doublons quand un tick réessaie le même envoi.
+          ...(options.idempotencyKey ? { 'Idempotency-Key': options.idempotencyKey } : {}),
+        },
+        body: JSON.stringify({
+          from,
+          to: [recipient],
+          subject,
+          html,
+          text,
+          reply_to: options.replyTo,
+        }),
+      })
+      if (resp.ok) return { sent: true }
+      const body = await resp.text().catch(() => '')
+      if (resp.status === 403 && /suppress/i.test(body)) {
+        return { sent: false, reason: 'recipient_suppressed' }
+      }
+      console.error(`[send-email] Resend failed [${resp.status}]: ${body}`)
+    } catch (error) {
+      console.error('[send-email] Resend error', error)
+    }
+  }
+
+  // 2) Repli : API e-mail managée Lovable (outil de développement uniquement).
+  const apiKey = process.env['LOVABLE_API_KEY']
+  if (!apiKey) {
+    throw new Error('Email delivery unavailable: RESEND_API_KEY failed and LOVABLE_API_KEY is not configured')
+  }
+
   try {
     await sendLovableEmail(
       {
         to: recipient,
-        from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+        from,
         sender_domain: SENDER_DOMAIN,
         subject,
         html,
@@ -85,32 +120,9 @@ export async function sendTemplateEmail(
     if (error instanceof EmailAPIError && error.code === 'recipient_suppressed') {
       return { sent: false, reason: 'recipient_suppressed' }
     }
-    // Repli Resend : si l'envoi managé échoue (domaine non vérifié, incident,
-    // quota), l'e-mail part quand même via la clé Resend du projet.
-    const resendKey = process.env['RESEND_API_KEY']
-    if (resendKey) {
-      const resp = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${resendKey}`,
-        },
-        body: JSON.stringify({
-          from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-          to: [recipient],
-          subject,
-          html,
-          text,
-          reply_to: options.replyTo,
-        }),
-      })
-      if (resp.ok) return { sent: true }
-      const body = await resp.text().catch(() => '')
-      console.error(`[send-email] Resend fallback failed [${resp.status}]: ${body}`)
-    }
     throw error
   }
 
-
   return { sent: true }
 }
+
