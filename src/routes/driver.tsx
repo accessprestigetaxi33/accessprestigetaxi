@@ -16,6 +16,12 @@ import {
   loadOsmMapEngineWhenVisible,
 } from "@/lib/osmMap";
 import { geocodeAddress } from "@/lib/googleGeocode";
+import {
+  decodePolyline,
+  getDistanceAndDurationKm,
+  osrmRoutesClient,
+  trafficFactor,
+} from "@/lib/googleRoute";
 import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";

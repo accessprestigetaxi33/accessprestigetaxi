@@ -23,7 +23,7 @@ export type RouteAlternative = {
   coords: [number, number][]; // [lat, lng][]
 };
 
-type OsrmRouteDTO = {
+export type OsrmRouteDTO = {
   index: number;
   distanceM: number;
   durationS: number;
@@ -109,6 +109,15 @@ async function osrm(from: LngLat, to: LngLat, alternatives: boolean): Promise<Os
   } catch {
     return [];
   }
+}
+
+/** Itinéraires bruts OSRM (jusqu'à 3 alternatives) entre deux points [lng, lat]. */
+export async function osrmRoutesClient(
+  from: LngLat,
+  to: LngLat,
+  alternatives = false,
+): Promise<OsrmRouteDTO[]> {
+  return osrm(from, to, alternatives);
 }
 
 /** Itinéraire complet (distance + tracé) entre deux points [lng, lat]. */
