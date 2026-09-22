@@ -84,6 +84,31 @@ export const Route = createFileRoute("/api/public/hooks/recurring-rides-tick")({
             })
             .eq("id", r.id);
 
+          // Alerte chauffeur/admin par Resend (le déclencheur base n'envoie plus rien).
+          try {
+            const { TEMPLATES } = await import("@/lib/email-templates/registry");
+            const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+            const adminTemplate = TEMPLATES["new-reservation-admin"];
+            if (adminTemplate?.to) {
+              await sendTemplateEmail("new-reservation-admin", adminTemplate.to, {
+                idempotencyKey: `admin-new-${inserted.id}`,
+                templateData: {
+                  nom: account.client_name || "Client VIP",
+                  phone: account.phone || "",
+                  email: account.email,
+                  depart: r.depart,
+                  arrivee: r.destination,
+                  pickup_datetime: pickupIso,
+                  passagers: r.passagers,
+                  bagages: r.bagages,
+                  admin_url: "https://www.accessprestigetaxi.fr/driver",
+                },
+              });
+            }
+          } catch (mailErr) {
+            console.error("[recurring] admin email failed", mailErr);
+          }
+
           created.push(inserted.id);
         }
 
