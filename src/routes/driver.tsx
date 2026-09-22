@@ -116,9 +116,8 @@ interface RouteOption {
   dureeMin: number;
   prix_estime: number;
   tarifLabel: string;
-  legs: any[];
+  coords: [number, number][];
   overview_polyline: string;
-  dirResult: any;
   originLatLng: { lat: number; lng: number };
   destLatLng: { lat: number; lng: number };
   waypointLatLng: { lat: number; lng: number } | null;
@@ -3448,32 +3447,26 @@ function CourseCard({
 
     (async () => {
       try {
-        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
         const [geoA, geoB] = await Promise.all([geocodeAddress(resa.depart), geocodeAddress(resa.destination)]);
         if (!geoA || !geoB) {
           setLoadingRoutes(false);
           return;
         }
 
-        const svc = new mapsApi.maps.DirectionsService();
-        const result: any = await new Promise((res, rej) =>
-          svc.route(
-            {
-              origin: { lat: geoA.lat, lng: geoA.lng },
-              destination: { lat: geoB.lat, lng: geoB.lng },
-              travelMode: mapsApi.maps.TravelMode.DRIVING,
-              provideRouteAlternatives: true,
-            },
-            (r: any, s: any) => (s === "OK" && r ? res(r) : rej(s)),
-          ),
-        );
+        // Itinéraires OpenStreetMap (OSRM) : jusqu'à 3 alternatives.
+        const alts = await osrmRoutesClient([geoA.lng, geoA.lat], [geoB.lng, geoB.lat], true);
+        if (alts.length === 0) {
+          setLoadingRoutes(false);
+          return;
+        }
+        const factor = trafficFactor();
 
-        const opts: RouteOption[] = result.routes.slice(0, 3).map((route: any, i: number) => {
-          const leg = route.legs[0];
-          const distKm = (leg.distance?.value ?? 0) / 1000;
-          const dureeMin = Math.round((leg.duration?.value ?? 0) / 60);
-          const dureeS = leg.duration?.value ?? 0;
-          // Tarifs Bordeaux — calcul mixte avec durée réelle Google Maps
+        const opts: RouteOption[] = alts.slice(0, 3).map((route, i) => {
+          const distKm = route.distanceM / 1000;
+          const dureeS = Math.round(route.durationS * factor);
+          const dureeMin = Math.max(1, Math.round(dureeS / 60));
+          const coords = decodePolyline(route.geometry);
+          // Tarifs — calcul mixte jour/nuit avec la durée estimée du trajet
           const pickupIso = resa.pickup_datetime ?? resa.date_heure ?? "";
           const pickupMs = pickupIso ? new Date(pickupIso).getTime() : Date.now();
           const stepsCount = Math.max(Math.round(dureeS / 60), 1);
@@ -3481,8 +3474,8 @@ function CourseCard({
           const frac = distKm / stepsCount;
           let jourKm = 0,
             nuitKm = 0;
-          for (let s = 0; s < stepsCount; s++) {
-            const t = new Date(pickupMs + s * stepMs).toISOString();
+          for (let st = 0; st < stepsCount; st++) {
+            const t = new Date(pickupMs + st * stepMs).toISOString();
             if (estTarifJourParis(t)) jourKm += frac;
             else nuitKm += frac;
           }
@@ -3492,26 +3485,20 @@ function CourseCard({
           const estJour = estTarifJourParis(pickupIso);
           const tarifLabel = jourKm > 0 && nuitKm > 0 ? "Tarif mixte 🌗" : estJour ? "Tarif jour ☀️" : "Tarif nuit 🌙";
 
-          // Extraire un waypoint au milieu du trajet pour forcer cet itinéraire dans Maps
-          const steps: any[] = route.legs.flatMap((l: any) => l.steps ?? []);
-          const midStep = steps.length > 2 ? steps[Math.floor(steps.length / 2)] : null;
-          const waypointLatLng = midStep?.start_location
-            ? { lat: midStep.start_location.lat(), lng: midStep.start_location.lng() }
-            : null;
+          // Point de passage au milieu du tracé : permet de rouvrir le même
+          // itinéraire dans l'application de navigation du téléphone.
+          const mid = coords.length > 2 ? coords[Math.floor(coords.length / 2)] : null;
+          const waypointLatLng = mid ? { lat: mid[0], lng: mid[1] } : null;
 
           return {
             index: i,
-            summary: route.summary || `Itinéraire ${i + 1}`,
+            summary: route.summary ? `Via ${route.summary}` : `Itinéraire ${i + 1}`,
             distanceKm: parseFloat(distKm.toFixed(1)),
             dureeMin,
             prix_estime,
             tarifLabel,
-            legs: route.legs,
-            overview_polyline:
-              (route.overview_polyline as unknown as { points?: string })?.points ??
-              (route.overview_polyline as unknown as string) ??
-              "",
-            dirResult: { ...result, routes: [route] },
+            coords,
+            overview_polyline: route.geometry,
             originLatLng: { lat: geoA.lat, lng: geoA.lng },
             destLatLng: { lat: geoB.lat, lng: geoB.lng },
             waypointLatLng,
@@ -3560,24 +3547,29 @@ function CourseCard({
     if (!expanded || routes.length === 0) return;
     (async () => {
       try {
-        const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
+        const api = await loadOsmMapEngineWhenVisible(mapRef.current!);
         if (!mapInst.current) {
-          mapInst.current = new mapsApi.maps.Map(mapRef.current!, {
-            zoom: 13,
-            disableDefaultUI: true,
-            gestureHandling: "cooperative",
-            styles: [{ featureType: "poi", stylers: [{ visibility: "off" }] }],
+          const created = await createOsmMap(mapRef.current!, { zoom: 13 });
+          mapInst.current = created.map;
+          await new Promise<void>((resolve) => {
+            if (mapInst.current.isStyleLoaded()) resolve();
+            else mapInst.current.once("load", () => resolve());
           });
-        }
-        if (!rendererRef.current) {
-          rendererRef.current = new mapsApi.maps.DirectionsRenderer({
-            suppressMarkers: false,
-            polylineOptions: { strokeColor: "#0f172a", strokeWeight: 5 },
-          });
-          rendererRef.current.setMap(mapInst.current);
         }
         const chosen = routes[selectedRoute];
-        if (chosen) rendererRef.current.setDirections(chosen.dirResult);
+        if (chosen && chosen.coords.length > 1) {
+          drawOsmRoute(mapInst.current, chosen.coords, { color: "#0f172a", width: 5 });
+          if (!rendererRef.current) {
+            rendererRef.current = {
+              start: addOsmMarker(api, mapInst.current, chosen.originLatLng, { color: "#16a34a", size: 18 }),
+              end: addOsmMarker(api, mapInst.current, chosen.destLatLng, { color: "#dc2626", size: 18 }),
+            };
+          } else {
+            rendererRef.current.start.setLngLat([chosen.originLatLng.lng, chosen.originLatLng.lat]);
+            rendererRef.current.end.setLngLat([chosen.destLatLng.lng, chosen.destLatLng.lat]);
+          }
+          fitOsmBounds(api, mapInst.current, [chosen.originLatLng, chosen.destLatLng], 40);
+        }
       } catch {}
     })();
   }, [expanded, routes, selectedRoute]);
@@ -6517,7 +6509,6 @@ function SimulateurTab() {
     setLoadingRoute(true);
     setRouteError(null);
     try {
-      const mapsApi = await loadGoogleMapsWhenVisible(mapRef.current!);
       const [geoA, geoB] = await Promise.all([
         geocodeAddress(normalizeAddress(depart)),
         geocodeAddress(normalizeAddress(arrivee)),
@@ -6527,24 +6518,16 @@ function SimulateurTab() {
         setLoadingRoute(false);
         return;
       }
-      const svc = new mapsApi.maps.DirectionsService();
-      const res: any = await new Promise((resolve, reject) =>
-        svc.route(
-          {
-            origin: { lat: geoA.lat, lng: geoA.lng },
-            destination: { lat: geoB.lat, lng: geoB.lng },
-            travelMode: mapsApi.maps.TravelMode.DRIVING,
-          },
-          (r: any, s: any) => (s === "OK" && r ? resolve(r) : reject(s)),
-        ),
-      );
-      const leg = res.routes[0].legs[0];
+      const route = await getDistanceAndDurationKm([geoA.lng, geoA.lat], [geoB.lng, geoB.lat]);
+      if (!route) {
+        setRouteError("Impossible de calculer l'itinéraire — vérifie les adresses.");
+        setLoadingRoute(false);
+        return;
+      }
       // Arrondi à 1 décimale AVANT le calcul du prix, pour que l'affichage
-      // ("5.2 km × 2.16 €") corresponde exactement au prix calculé et évite
-      // toute impression d'erreur de calcul (ex: 5.153 km affiché "5.2" mais
-      // facturé sur la valeur brute → 11.13 € au lieu de 11.23 € attendu).
-      const distKm = Math.round(((leg.distance?.value ?? 0) / 1000) * 10) / 10;
-      const stepMinutes = Math.max(Math.round((leg.duration?.value ?? distKm * 120) / 60), 1);
+      // ("5.2 km × 2.16 €") corresponde exactement au prix calculé.
+      const distKm = Math.round(route.distanceKm * 10) / 10;
+      const stepMinutes = Math.max(Math.round(route.dureeS / 60), 1);
       setResult(computeBreakdown(distKm, stepMinutes, pickupLocal));
     } catch (e) {
       console.error("[SimulateurTab] route:", e);
