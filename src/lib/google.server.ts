@@ -1,19 +1,14 @@
-// Server-side Google Maps helpers — Geocoding + Routes API via connector gateway.
-// Google Maps server helpers for reserver-chat.functions.ts.
+// Server-side Google Maps helpers — Geocoding + Places + Routes.
+// Chemin d'accès résolu par google-direct.server.ts : clé serveur Google propre
+// (indépendante de Lovable) si elle est configurée, sinon passerelle connecteur.
 
 import { parseAsParisTime } from "@/lib/tarif";
+import { googleHeaders, googleUrl, hasGoogleAccess } from "@/lib/google-direct.server";
 
-const GATEWAY = "https://connector-gateway.lovable.dev/google_maps";
-
-function creds() {
-  const lovable = process.env.LOVABLE_API_KEY;
-  const google =
-    process.env.GOOGLE_MAPS_API_KEY ||
-    process.env.GOOGLE_MAPS_API_KEY2 ||
-    process.env.GOOGLE_API_KEY;
-  if (!lovable || !google) throw new Error("Missing Google Maps connector credentials");
-  return { lovable, google };
+function assertGoogleAccess() {
+  if (!hasGoogleAccess()) throw new Error("Missing Google Maps credentials");
 }
+
 
 /* ------------------------------------------------------------------ */
 /* Cache serveur (in-memory) + dedupe + circuit breaker + garde-fous.  */
