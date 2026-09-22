@@ -71,13 +71,9 @@ export function aiTranscriptionTarget(modelId = "openai/gpt-4o-mini-transcribe")
       model: mapAiModelId(modelId),
     };
   }
-  const lovableKey = process.env["LOVABLE_API_KEY"];
-  if (!lovableKey) throw new Error("Missing OPENAI_API_KEY (or LOVABLE_API_KEY) for transcription");
-  return {
-    url: "https://ai.gateway.lovable.dev/v1/audio/transcriptions",
-    headers: { Authorization: `Bearer ${lovableKey}` } as Record<string, string>,
-    model: modelId,
-  };
+  // Production autonome : aucun repli Lovable. La dictée vocale reste inactive
+  // jusqu'à ce qu'une clé OPENAI_API_KEY soit configurée.
+  throw new Error("stt_unconfigured: OPENAI_API_KEY is not configured");
 }
 
 export function createLovableAiGatewayProvider(
@@ -96,16 +92,11 @@ export function createLovableAiGatewayProvider(
         headers: { Authorization: `Bearer ${openaiKey}` },
         fetch: runIdFetch.fetch,
       })
-    : createOpenAICompatible({
-        name: "lovable",
-        baseURL: "https://ai.gateway.lovable.dev/v1",
-        supportsStructuredOutputs: options?.structuredOutputs ?? false,
-        headers: {
-          "Lovable-API-Key": lovableApiKey,
-          "X-Lovable-AIG-SDK": "vercel-ai-sdk",
-        },
-        fetch: runIdFetch.fetch,
-      });
+    : (() => {
+        // Production autonome : pas de passerelle Lovable. L'assistant reste
+        // inactif jusqu'à configuration d'une clé OPENAI_API_KEY.
+        throw new Error("ai_unconfigured: OPENAI_API_KEY is not configured");
+      })();
 
   const provider = ((modelId: string, ...rest: unknown[]) =>
     (base as any)(mapAiModelId(modelId), ...rest)) as unknown as typeof base;

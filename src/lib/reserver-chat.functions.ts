@@ -455,8 +455,9 @@ export const aiChatReservation = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
+    // Assistant de réservation : nécessite une clé IA propre (OPENAI_API_KEY).
+    const apiKey = process.env["OPENAI_API_KEY"];
+    if (!apiKey) throw new Error("ai_unconfigured: OPENAI_API_KEY is not configured");
 
     const now = new Date().toLocaleString("fr-FR", {
       timeZone: "Europe/Paris",
