@@ -10,9 +10,9 @@ const SITE_NAME = "Access Prestige Taxi"
 // SENDER_DOMAIN is the verified sender subdomain FQDN (e.g., "notify.example.com").
 // It MUST match the subdomain delegated to Lovable's nameservers. NEVER use the root domain.
 const SENDER_DOMAIN = "notify.accessprestigetaxi.fr"
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// Can be the root domain when display_from_root is enabled — this is cosmetic only.
-const FROM_DOMAIN = "notify.accessprestigetaxi.fr"
+// FROM_DOMAIN is the domain shown in the From: header. Must match the domain
+// verified in Resend (accessprestigetaxi.fr) — subdomains are rejected.
+const FROM_DOMAIN = process.env["MAIL_FROM_DOMAIN"] ?? "accessprestigetaxi.fr"
 
 export type SendTemplateEmailResult =
   | { sent: true }
