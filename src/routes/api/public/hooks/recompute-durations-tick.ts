@@ -2,67 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import { roundSecondsToMinute } from "@/lib/duration";
 
 /**
- * Cron tick (toutes les 5 min) : recalcule `reservations.duree_s` à la minute
- * près pour les anciennes réservations, par petits lots (10 lignes/appel),
- * afin d'éviter les timeouts serveur et de respecter les quotas Google Maps.
+ * Cron tick : recalcule `reservations.duree_s` à la minute près pour les
+ * anciennes réservations, par petits lots (10 lignes/appel).
  *
- * Reprise garantie : chaque ligne traitée est marquée `duree_recomputed_at = now()`
- * (succès, skip ou erreur). L'appel suivant reprend automatiquement là où
- * l'appel précédent s'est arrêté, sans doublon ni perte.
- *
- * Auth : Supabase anon/publishable key en header `apikey` (même convention que
- * les autres hooks /api/public).
+ * Géocodage et itinéraires 100 % OpenStreetMap / OSRM — aucune clé requise.
+ * Auth : secret de cron (`x-cron-secret`).
  */
 
 const BATCH_SIZE = 10;
-const GOOG_GEOCODE = "https://maps.googleapis.com/maps/api/geocode/json";
-const GOOG_DIRECTIONS = "https://maps.googleapis.com/maps/api/directions/json";
-
-async function geocodeOnce(
-  query: string,
-  apiKey: string,
-): Promise<{ lat: number; lng: number } | null> {
-  const url = `${GOOG_GEOCODE}?address=${encodeURIComponent(query)}&region=fr&language=fr&key=${apiKey}`;
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const json = (await res.json()) as any;
-  const loc = json?.results?.[0]?.geometry?.location;
-  if (!loc || typeof loc.lat !== "number" || typeof loc.lng !== "number") return null;
-  return { lat: loc.lat, lng: loc.lng };
-}
 
 async function fastestDurationSec(
   from: { lat: number; lng: number },
   to: { lat: number; lng: number },
-  apiKey: string,
 ): Promise<number | null> {
-  const params = new URLSearchParams({
-    origin: `${from.lat},${from.lng}`,
-    destination: `${to.lat},${to.lng}`,
-    alternatives: "true",
-    mode: "driving",
-    region: "fr",
-    language: "fr",
-    departure_time: "now",
-    traffic_model: "best_guess",
-    key: apiKey,
-  });
-  const res = await fetch(`${GOOG_DIRECTIONS}?${params.toString()}`);
-  if (!res.ok) return null;
-  const json = (await res.json()) as any;
-  const routes = Array.isArray(json?.routes) ? json.routes : [];
+  const { osmRoutes, trafficFactor } = await import("@/lib/osm.server");
+  const routes = await osmRoutes([from.lng, from.lat], [to.lng, to.lat], true);
   if (!routes.length) return null;
   let best = Infinity;
-  for (const route of routes) {
-    const legs = route?.legs ?? [];
-    const s = legs.reduce(
-      (sum: number, l: any) =>
-        sum + (l?.duration_in_traffic?.value ?? l?.duration?.value ?? 0),
-      0,
-    );
-    if (s > 0 && s < best) best = s;
-  }
-  return Number.isFinite(best) ? best : null;
+  for (const r of routes) if (r.durationS > 0 && r.durationS < best) best = r.durationS;
+  if (!Number.isFinite(best)) return null;
+  return Math.round(best * trafficFactor());
 }
 
 export const Route = createFileRoute("/api/public/hooks/recompute-durations-tick")({
@@ -72,11 +31,6 @@ export const Route = createFileRoute("/api/public/hooks/recompute-durations-tick
         const { requireCronSecret } = await import("@/lib/cron-auth.server");
         const denied = requireCronSecret(request);
         if (denied) return denied;
-
-        const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-        if (!apiKey) {
-          return Response.json({ ok: false, reason: "missing_api_key" }, { status: 500 });
-        }
 
         const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
@@ -120,10 +74,8 @@ export const Route = createFileRoute("/api/public/hooks/recompute-durations-tick
               continue;
             }
 
-            const [from, to] = await Promise.all([
-              geocodeOnce(depart, apiKey),
-              geocodeOnce(arrivee, apiKey),
-            ]);
+            const { osmGeocode } = await import("@/lib/osm.server");
+            const [from, to] = await Promise.all([osmGeocode(depart), osmGeocode(arrivee)]);
             if (!from || !to) {
               await supabaseAdmin
                 .from("reservations")
@@ -139,7 +91,7 @@ export const Route = createFileRoute("/api/public/hooks/recompute-durations-tick
               continue;
             }
 
-            const rawSec = await fastestDurationSec(from, to, apiKey);
+            const rawSec = await fastestDurationSec(from, to);
             if (!rawSec) {
               await supabaseAdmin
                 .from("reservations")
@@ -202,7 +154,7 @@ export const Route = createFileRoute("/api/public/hooks/recompute-durations-tick
             });
           }
 
-          // Rate-limit léger pour respecter Google Maps.
+          // Rate-limit léger pour respecter les serveurs OSM publics.
           await new Promise((r) => setTimeout(r, 120));
         }
 
