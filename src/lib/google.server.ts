@@ -720,12 +720,15 @@ function normalize(q: string): string[] {
 export type GoogleGeocode = { lng: number; lat: number; label: string; confidence: number };
 
 async function geocodeOnce(q: string): Promise<GoogleGeocode | null> {
-  const { lovable, google } = creds();
+  assertGoogleAccess();
   const bounds = `${CHARENTE_MARITIME_BBOX.south},${CHARENTE_MARITIME_BBOX.west}|${CHARENTE_MARITIME_BBOX.north},${CHARENTE_MARITIME_BBOX.east}`;
-  const url = `${GATEWAY}/maps/api/geocode/json?address=${encodeURIComponent(q)}&region=fr&bounds=${encodeURIComponent(bounds)}`;
+  const url = googleUrl(
+    `/maps/api/geocode/json?address=${encodeURIComponent(q)}&region=fr&bounds=${encodeURIComponent(bounds)}`,
+  );
   const d = await safeFetchJson("geocode", url, {
-    headers: { Authorization: `Bearer ${lovable}`, "X-Connection-Api-Key": google },
+    headers: googleHeaders(),
   });
+
   if (d?.status && d.status !== "OK" && d.status !== "ZERO_RESULTS") {
     console.error("[geocode] google status", d.status, d.error_message ?? "", "for", q);
   }
@@ -740,7 +743,8 @@ async function geocodeOnce(q: string): Promise<GoogleGeocode | null> {
 }
 
 async function placesTextSearch(q: string): Promise<GoogleGeocode | null> {
-  const { lovable, google } = creds();
+  assertGoogleAccess();
+
   const body = {
     textQuery: q,
     languageCode: "fr",
@@ -753,16 +757,15 @@ async function placesTextSearch(q: string): Promise<GoogleGeocode | null> {
       },
     },
   };
-  const d = await safeFetchJson("places", `${GATEWAY}/places/v1/places:searchText`, {
+  const d = await safeFetchJson("places", googleUrl("/places/v1/places:searchText"), {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${lovable}`,
-      "X-Connection-Api-Key": google,
+    headers: googleHeaders({
       "Content-Type": "application/json",
       "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.location",
-    },
+    }),
     body: JSON.stringify(body),
   });
+
   const p = d?.places?.[0];
   const loc = p?.location;
   if (!loc?.latitude || !loc?.longitude) return null;
@@ -844,7 +847,7 @@ export async function routeGoogle(
     departureIso,
   );
   return routeCache.run(key, async () => {
-    const { lovable, google } = creds();
+    assertGoogleAccess();
     const requestedDeparture = departureIso ? parseAsParisTime(departureIso).getTime() : NaN;
     const nowPlus5 = Date.now() + 5 * 60_000;
     const useFutureDeparture =
@@ -863,17 +866,16 @@ export async function routeGoogle(
     if (useFutureDeparture) {
       body.departureTime = new Date(requestedDeparture).toISOString();
     }
-    const d = await safeFetchJson("routes", `${GATEWAY}/routes/directions/v2:computeRoutes`, {
+    const d = await safeFetchJson("routes", googleUrl("/routes/directions/v2:computeRoutes"), {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${lovable}`,
-        "X-Connection-Api-Key": google,
+      headers: googleHeaders({
         "Content-Type": "application/json",
         "X-Goog-FieldMask":
           "routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline.encodedPolyline",
-      },
+      }),
       body: JSON.stringify(body),
     });
+
     const routes: any[] = d?.routes ?? [];
     if (!routes.length) return null;
     const parseSec = (s: unknown) => Number(String(s ?? "0s").replace("s", "")) || 0;
