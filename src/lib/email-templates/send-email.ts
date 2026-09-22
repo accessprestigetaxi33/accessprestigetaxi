@@ -18,6 +18,48 @@ export type SendTemplateEmailResult =
   | { sent: true }
   | { sent: false; reason: 'recipient_suppressed' }
 
+export interface SendRawEmailInput {
+  to: string
+  subject: string
+  html: string
+  text?: string
+  replyTo?: string
+  idempotencyKey?: string
+}
+
+/**
+ * Envoi direct via Resend (compte du client), pour les e-mails dont le HTML
+ * est construit sur mesure. Aucune file d'attente, aucune dépendance Lovable.
+ */
+export async function sendRawEmail(input: SendRawEmailInput): Promise<SendTemplateEmailResult> {
+  const resendKey = process.env['RESEND_API_KEY']
+  if (!resendKey) throw new Error('Email delivery unavailable: RESEND_API_KEY is not configured')
+
+  const resp = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${resendKey}`,
+      ...(input.idempotencyKey ? { 'Idempotency-Key': input.idempotencyKey } : {}),
+    },
+    body: JSON.stringify({
+      from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+      to: [input.to],
+      subject: input.subject,
+      html: input.html,
+      text: input.text,
+      reply_to: input.replyTo,
+    }),
+  })
+  if (resp.ok) return { sent: true }
+  const body = await resp.text().catch(() => '')
+  if (resp.status === 403 && /suppress/i.test(body)) {
+    return { sent: false, reason: 'recipient_suppressed' }
+  }
+  throw new Error(`Resend failed [${resp.status}]: ${body}`)
+}
+
+
 export interface SendTemplateEmailOptions {
   templateData?: Record<string, any>
   /** Dedupes retries of the same logical send; defaults to a random UUID (no dedupe). */
