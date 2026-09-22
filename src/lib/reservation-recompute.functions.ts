@@ -7,57 +7,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { roundSecondsToMinute } from "@/lib/duration";
 
-const GOOG_GEOCODE = "https://maps.googleapis.com/maps/api/geocode/json";
-const GOOG_DIRECTIONS = "https://maps.googleapis.com/maps/api/directions/json";
-
-async function geocodeOnce(query: string, apiKey: string): Promise<{ lat: number; lng: number } | null> {
-  const url = `${GOOG_GEOCODE}?address=${encodeURIComponent(query)}&region=fr&language=fr&key=${apiKey}`;
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const json = (await res.json()) as any;
-  const loc = json?.results?.[0]?.geometry?.location;
-  if (!loc || typeof loc.lat !== "number" || typeof loc.lng !== "number") return null;
-  return { lat: loc.lat, lng: loc.lng };
-}
-
-async function fastestDurationSec(
-  from: { lat: number; lng: number },
-  to: { lat: number; lng: number },
-  apiKey: string,
-): Promise<number | null> {
-  const params = new URLSearchParams({
-    origin: `${from.lat},${from.lng}`,
-    destination: `${to.lat},${to.lng}`,
-    alternatives: "true",
-    mode: "driving",
-    region: "fr",
-    language: "fr",
-    departure_time: "now",
-    traffic_model: "best_guess",
-    key: apiKey,
-  });
-  const res = await fetch(`${GOOG_DIRECTIONS}?${params.toString()}`);
-  if (!res.ok) return null;
-  const json = (await res.json()) as any;
-  const routes = Array.isArray(json?.routes) ? json.routes : [];
-  if (!routes.length) return null;
-  let best = Infinity;
-  for (const route of routes) {
-    const legs = route?.legs ?? [];
-    const s = legs.reduce(
-      (sum: number, l: any) => sum + (l?.duration_in_traffic?.value ?? l?.duration?.value ?? 0),
-      0,
-    );
-    if (s > 0 && s < best) best = s;
-  }
-  return Number.isFinite(best) ? best : null;
-}
-
 export const recomputeReservationDuration = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data }) => {
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    if (!apiKey) return { ok: false, reason: "missing_api_key" as const };
+    const { osmGeocode, osmRoutes, trafficFactor } = await import("@/lib/osm.server");
 
     const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
@@ -76,10 +29,14 @@ export const recomputeReservationDuration = createServerFn({ method: "POST" })
     const arrivee = (row.arrivee ?? row.destination ?? "").trim();
     if (!depart || !arrivee) return { ok: false, reason: "missing_address" as const };
 
-    const [from, to] = await Promise.all([geocodeOnce(depart, apiKey), geocodeOnce(arrivee, apiKey)]);
+    const [from, to] = await Promise.all([osmGeocode(depart, "fr"), osmGeocode(arrivee, "fr")]);
     if (!from || !to) return { ok: false, reason: "geocode_failed" as const };
 
-    const rawSec = await fastestDurationSec(from, to, apiKey);
+    // Itinéraire OSRM : on retient le plus rapide, majoré du facteur trafic.
+    const routes = await osmRoutes([from.lng, from.lat], [to.lng, to.lat], true);
+    if (routes.length === 0) return { ok: false, reason: "directions_failed" as const };
+    const fastest = routes.reduce((a, b) => (b.durationS < a.durationS ? b : a));
+    const rawSec = Math.round(fastest.durationS * trafficFactor());
     if (!rawSec) return { ok: false, reason: "directions_failed" as const };
 
     const newDureeS = roundSecondsToMinute(rawSec);

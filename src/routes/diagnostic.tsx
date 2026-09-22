@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { loadGoogleMaps } from "@/lib/googleMaps";
+import { createOsmMap } from "@/lib/osmMap";
 import {
   locateUser,
   describePosition,
@@ -72,43 +72,42 @@ function DiagnosticPage() {
     setCfgDetail("");
     setMapDetail("");
     try {
-      const res = await fetch("/api/public/maps-config", { cache: "no-store" });
+      // Adresses et itinéraires : OpenStreetMap / OSRM via le proxy serveur.
+      const res = await fetch("/api/public/places", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "autocomplete", query: "Marennes", lang: L }),
+      });
       const cfg: any = await res.json().catch(() => null);
-      const key: string = cfg?.apiKey || cfg?.key || (Array.isArray(cfg?.keys) ? cfg.keys[0] : "") || "";
-      if (!key) {
+      const count = Array.isArray(cfg?.suggestions) ? cfg.suggestions.length : 0;
+      if (!res.ok || count === 0) {
         setCfgStatus("fail");
         setCfgDetail(
           L === "en"
-            ? "No browser Maps key served for this domain."
-            : "Aucune clé navigateur Maps servie pour ce domaine.",
+            ? "Address search (OpenStreetMap) returned no result."
+            : "La recherche d'adresses (OpenStreetMap) n'a renvoyé aucun résultat.",
         );
         setMapStatus("fail");
         return;
       }
       setCfgStatus("ok");
       setCfgDetail(
-        `${L === "en" ? "Key served" : "Clé servie"} : ${key.slice(0, 8)}…${key.slice(-4)}${
-          cfg?.source ? ` (${cfg.source})` : ""
-        }`,
+        L === "en"
+          ? `Address search OK — ${count} suggestions (OpenStreetMap, no API key).`
+          : `Recherche d'adresses OK — ${count} suggestions (OpenStreetMap, sans clé).`,
       );
 
-      await loadGoogleMaps();
-      const g = (window as any).google;
-      if (!g?.maps || !mapRef.current) throw new Error("maps unavailable");
-      const map = new g.maps.Map(mapRef.current, {
-        center: { lat: 45.746, lng: -0.6337 },
-        zoom: 11,
-        disableDefaultUI: true,
-      });
+      if (!mapRef.current) throw new Error("map container unavailable");
+      const { map } = await createOsmMap(mapRef.current, { center: { lat: 45.746, lng: -0.6337 }, zoom: 11 });
       const timeout = setTimeout(() => {
-        setMapStatus((s) => (s === "running" ? "warn" : s));
+        setMapStatus((st) => (st === "running" ? "warn" : st));
         setMapDetail(
           L === "en"
-            ? "Tiles did not load within 8s — check referrer restrictions for this domain."
-            : "Les tuiles n'ont pas chargé en 8 s — vérifiez les référents autorisés pour ce domaine.",
+            ? "Tiles did not load within 8s — check the network connection."
+            : "Les tuiles n'ont pas chargé en 8 s — vérifiez la connexion réseau.",
         );
       }, 8000);
-      g.maps.event.addListenerOnce(map, "tilesloaded", () => {
+      map.once("load", () => {
         clearTimeout(timeout);
         setMapStatus("ok");
         setMapDetail(
