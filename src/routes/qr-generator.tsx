@@ -45,11 +45,11 @@ type Form = {
 
 const DEFAULTS: Form = {
   mode: "url",
-  url: "https://accessprestigetaxi.lovable.app/carte",
+  url: "https://www.accessprestigetaxi.fr/carte",
   name: "Josè",
   phone: "0650260015",
   email: "accessprestigetaxi@gmail.com",
-  site: "https://accessprestigetaxi.lovable.app",
+  site: "https://www.accessprestigetaxi.fr",
   org: "Access Prestige Taxi",
 };
 

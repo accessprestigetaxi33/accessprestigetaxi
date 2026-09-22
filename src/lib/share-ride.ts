@@ -5,7 +5,7 @@ import { toast } from "sonner";
  * Prefers suivi_id (short opaque key), falls back to id.
  */
 export function buildSuiviUrl(opts: { suivi_id?: string | null; tracking_id?: string | null; id: string }): string {
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://accessprestigetaxi.lovable.app";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://www.accessprestigetaxi.fr";
   const key = opts.suivi_id || opts.tracking_id || opts.id;
   return `${origin}/suivi/${key}`;
 }

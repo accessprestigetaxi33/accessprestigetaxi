@@ -338,7 +338,7 @@ export const bookRide = createServerFn({ method: "POST" })
               arrivee: q.arrivee.label,
               priceEstimate: q.prix.total,
               trackingId: suiviId,
-              trackingLink: `https://accessprestigetaxi.lovable.app/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
+              trackingLink: `https://www.accessprestigetaxi.fr/suivi/${suiviId}${data.lang === "en" ? "?lang=en" : ""}`,
             },
           });
         })(),

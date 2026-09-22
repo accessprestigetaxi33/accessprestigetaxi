@@ -58,8 +58,6 @@ import { Route as ApiPublicContactRouteImport } from './routes/api/public/contac
 import { Route as ApiPublicDriverLocationRouteImport } from './routes/api/public/driver-location'
 import { Route as ApiPublicFirebaseConfigRouteImport } from './routes/api/public/firebase-config'
 import { Route as ApiPublicGeocodeRouteImport } from './routes/api/public/geocode'
-import { Route as ApiPublicNotifyReservationRouteImport } from './routes/api/public/notify-reservation'
-import { Route as ApiPublicNotifyReservationClientRouteImport } from './routes/api/public/notify-reservation-client'
 import { Route as ApiPublicPlacesRouteImport } from './routes/api/public/places'
 import { Route as ApiPublicPushDedupCheckRouteImport } from './routes/api/public/push-dedup-check'
 import { Route as ApiPublicReviewsRouteImport } from './routes/api/public/reviews'
@@ -317,18 +315,6 @@ const ApiPublicGeocodeRoute = ApiPublicGeocodeRouteImport.update({
   path: '/api/public/geocode',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicNotifyReservationRoute =
-  ApiPublicNotifyReservationRouteImport.update({
-    id: '/api/public/notify-reservation',
-    path: '/api/public/notify-reservation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicNotifyReservationClientRoute =
-  ApiPublicNotifyReservationClientRouteImport.update({
-    id: '/api/public/notify-reservation-client',
-    path: '/api/public/notify-reservation-client',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicPlacesRoute = ApiPublicPlacesRouteImport.update({
   id: '/api/public/places',
   path: '/api/public/places',
@@ -440,8 +426,6 @@ export interface FileRoutesByFullPath {
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
   '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
-  '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
-  '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
@@ -504,8 +488,6 @@ export interface FileRoutesByTo {
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
   '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
-  '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
-  '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
@@ -569,8 +551,6 @@ export interface FileRoutesById {
   '/api/public/driver-location': typeof ApiPublicDriverLocationRoute
   '/api/public/firebase-config': typeof ApiPublicFirebaseConfigRoute
   '/api/public/geocode': typeof ApiPublicGeocodeRoute
-  '/api/public/notify-reservation': typeof ApiPublicNotifyReservationRoute
-  '/api/public/notify-reservation-client': typeof ApiPublicNotifyReservationClientRoute
   '/api/public/places': typeof ApiPublicPlacesRoute
   '/api/public/push-dedup-check': typeof ApiPublicPushDedupCheckRoute
   '/api/public/reviews': typeof ApiPublicReviewsRoute
@@ -635,8 +615,6 @@ export interface FileRouteTypes {
     | '/api/public/driver-location'
     | '/api/public/firebase-config'
     | '/api/public/geocode'
-    | '/api/public/notify-reservation'
-    | '/api/public/notify-reservation-client'
     | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
@@ -699,8 +677,6 @@ export interface FileRouteTypes {
     | '/api/public/driver-location'
     | '/api/public/firebase-config'
     | '/api/public/geocode'
-    | '/api/public/notify-reservation'
-    | '/api/public/notify-reservation-client'
     | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
@@ -763,8 +739,6 @@ export interface FileRouteTypes {
     | '/api/public/driver-location'
     | '/api/public/firebase-config'
     | '/api/public/geocode'
-    | '/api/public/notify-reservation'
-    | '/api/public/notify-reservation-client'
     | '/api/public/places'
     | '/api/public/push-dedup-check'
     | '/api/public/reviews'
@@ -826,8 +800,6 @@ export interface RootRouteChildren {
   ApiPublicDriverLocationRoute: typeof ApiPublicDriverLocationRoute
   ApiPublicFirebaseConfigRoute: typeof ApiPublicFirebaseConfigRoute
   ApiPublicGeocodeRoute: typeof ApiPublicGeocodeRoute
-  ApiPublicNotifyReservationRoute: typeof ApiPublicNotifyReservationRoute
-  ApiPublicNotifyReservationClientRoute: typeof ApiPublicNotifyReservationClientRoute
   ApiPublicPlacesRoute: typeof ApiPublicPlacesRoute
   ApiPublicPushDedupCheckRoute: typeof ApiPublicPushDedupCheckRoute
   ApiPublicReviewsRoute: typeof ApiPublicReviewsRoute
@@ -1185,20 +1157,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicGeocodeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/notify-reservation': {
-      id: '/api/public/notify-reservation'
-      path: '/api/public/notify-reservation'
-      fullPath: '/api/public/notify-reservation'
-      preLoaderRoute: typeof ApiPublicNotifyReservationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/notify-reservation-client': {
-      id: '/api/public/notify-reservation-client'
-      path: '/api/public/notify-reservation-client'
-      fullPath: '/api/public/notify-reservation-client'
-      preLoaderRoute: typeof ApiPublicNotifyReservationClientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/places': {
       id: '/api/public/places'
       path: '/api/public/places'
@@ -1360,8 +1318,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDriverLocationRoute: ApiPublicDriverLocationRoute,
   ApiPublicFirebaseConfigRoute: ApiPublicFirebaseConfigRoute,
   ApiPublicGeocodeRoute: ApiPublicGeocodeRoute,
-  ApiPublicNotifyReservationRoute: ApiPublicNotifyReservationRoute,
-  ApiPublicNotifyReservationClientRoute: ApiPublicNotifyReservationClientRoute,
   ApiPublicPlacesRoute: ApiPublicPlacesRoute,
   ApiPublicPushDedupCheckRoute: ApiPublicPushDedupCheckRoute,
   ApiPublicReviewsRoute: ApiPublicReviewsRoute,

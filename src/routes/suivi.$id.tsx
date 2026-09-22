@@ -858,7 +858,7 @@ function generateICS(reservation: any, t: (k: string) => string): string {
     "VERSION:2.0",
     "PRODID:-//Access Prestige Taxi//FR",
     "BEGIN:VEVENT",
-    `UID:tcb-${reservation.id}@accessprestigetaxi.lovable.app`,
+    `UID:tcb-${reservation.id}@accessprestigetaxi.fr`,
     `DTSTAMP:${fmt(new Date())}`,
     `DTSTART:${fmt(start)}`,
     `DTEND:${fmt(end)}`,
@@ -991,7 +991,7 @@ function InvoiceBlock({
   .btn { display: inline-block; margin: 20px 8px 0; padding: 10px 24px; background: #09141f; color: #fff; border: 1px solid #e0b866; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 </style></head><body>
 <div class="header">
-  <div class="brand">🚕 Access Prestige Taxi<small>accessprestigetaxi.lovable.app · 06 50 26 00 15</small></div>
+  <div class="brand">🚕 Access Prestige Taxi<small>accessprestigetaxi.fr · 06 50 26 00 15</small></div>
   <div class="meta"><strong>${labelReceiptTitle}</strong>N° ${reservation.id.slice(-8).toUpperCase()}<br/>${dateStr}</div>
 </div>
 <h2>${labelDetailsTitle}</h2>

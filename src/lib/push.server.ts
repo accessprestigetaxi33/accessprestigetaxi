@@ -23,7 +23,7 @@ type ServiceAccount = {
   token_uri?: string;
 };
 
-const APP_URL = "https://accessprestigetaxi.lovable.app";
+const APP_URL = "https://www.accessprestigetaxi.fr";
 
 let cachedAccount: ServiceAccount | null = null;
 let cachedToken: { token: string; exp: number } | null = null;

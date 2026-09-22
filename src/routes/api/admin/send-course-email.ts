@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * Bridge : /api/admin/send-course-email
  *
  * L'admin utilise un PIN custom (pas de session Supabase Auth).
- * Ce bridge tourne côté serveur et a accès à LOVABLE_API_KEY directement —
+ * Ce bridge tourne côté serveur et a accès à RESEND_API_KEY directement —
  * le secret n'est jamais exposé au navigateur.
  *
  * Auth : le client envoie son code chauffeur/admin réel dans l'en-tête
@@ -47,19 +47,23 @@ export const Route = createFileRoute("/api/admin/send-course-email")({
           return Response.json({ error: "Invalid JSON" }, { status: 400 });
         }
 
-        // Appel vers la route email principale avec la service role key
-        const origin = new URL(request.url).origin;
-        const emailRes = await fetch(`${origin}/lovable/email/transactional/send`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${serviceKey}`,
-          },
-          body: JSON.stringify(body),
-        });
-
-        const data = await emailRes.json().catch(() => ({}));
-        return Response.json(data, { status: emailRes.status });
+        // Envoi direct via Resend (aucune passerelle externe).
+        const templateName = String(body["templateName"] ?? "");
+        const recipientEmail = String(body["recipientEmail"] ?? "");
+        if (!templateName || !recipientEmail) {
+          return Response.json({ error: "templateName and recipientEmail are required" }, { status: 400 });
+        }
+        try {
+          const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+          const result = await sendTemplateEmail(templateName, recipientEmail, {
+            idempotencyKey: body["idempotencyKey"] ? String(body["idempotencyKey"]) : undefined,
+            templateData: (body["templateData"] as Record<string, unknown>) ?? {},
+          });
+          return Response.json(result);
+        } catch (err) {
+          console.error("[send-course-email] send failed", err);
+          return Response.json({ error: "Send failed" }, { status: 502 });
+        }
       },
     },
   },

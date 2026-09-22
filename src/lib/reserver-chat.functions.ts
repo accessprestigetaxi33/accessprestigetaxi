@@ -11,7 +11,7 @@ import { calculerPrixMixte, estTarifJourParis, parseAsParisTime } from "@/lib/ta
 
 const MIN_SPACING_MIN = 20;
 const MODEL = "google/gemini-2.5-flash";
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const GATEWAY = "https://api.openai.com/v1/chat/completions";
 
 const BRAND = "Access Prestige Taxi";
 
@@ -359,7 +359,7 @@ async function confirmReservation(
     return { ok: false as const, error: error.message ?? "insert_failed" };
   }
 
-  const trackingLink = `https://accessprestigetaxi.lovable.app/suivi/${suiviId}`;
+  const trackingLink = `https://www.accessprestigetaxi.fr/suivi/${suiviId}`;
 
   // Lie le token push générique de /reserver à cette réservation précise.
   if (clientFcmToken && /^[A-Za-z0-9_\-:]{50,500}$/.test(clientFcmToken)) {
@@ -455,8 +455,9 @@ export const aiChatReservation = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
+    // Assistant de réservation : nécessite une clé IA propre (OPENAI_API_KEY).
+    const apiKey = process.env["OPENAI_API_KEY"];
+    if (!apiKey) throw new Error("ai_unconfigured: OPENAI_API_KEY is not configured");
 
     const now = new Date().toLocaleString("fr-FR", {
       timeZone: "Europe/Paris",
