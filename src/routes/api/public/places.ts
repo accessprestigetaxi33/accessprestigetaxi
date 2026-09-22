@@ -89,10 +89,6 @@ const json = (body: unknown, status = 200, cache = "no-store") =>
     headers: { "Content-Type": "application/json", "Cache-Control": cache },
   });
 
-function creds() {
-  const { hasGoogleAccess } = require("@/lib/google-direct.server");
-  return hasGoogleAccess() ? {} : null;
-}
 
 async function gw(path: string, init: RequestInit & { fieldMask?: string }) {
   const { googleHeaders, googleUrl, hasGoogleAccess } = await import("@/lib/google-direct.server");
