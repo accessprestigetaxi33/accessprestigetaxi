@@ -78,7 +78,7 @@ export const Route = createFileRoute("/api/public/hooks/recompute-durations-tick
           return Response.json({ ok: false, reason: "missing_api_key" }, { status: 500 });
         }
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
         const { data: rows, error } = await supabaseAdmin
           .from("reservations")

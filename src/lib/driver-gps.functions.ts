@@ -22,7 +22,7 @@ export const updateMyDriverPosition = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     const identity = assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const id = identity.id === "admin" ? "driver" : identity.id;
     const now = new Date().toISOString();
@@ -50,7 +50,7 @@ export const stopMyDriverPosition = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     const identity = assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const id = identity.id === "admin" ? "driver" : identity.id;
     await supabaseAdmin
       .from("driver_gps")
@@ -65,7 +65,7 @@ export const listDriverPositions = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     const identity = assertDriverToken(data.token); // valide le token → accès réservé aux 2 chauffeurs + admin
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: rows, error } = await supabaseAdmin
       .from("driver_gps")

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/public/hooks/ride-reminders-tick")({
         const denied = requireCronSecret(request);
         if (denied) return denied;
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
         const { sendPushToAudience } = await import("@/lib/push.server");
 
         const now = new Date();

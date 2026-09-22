@@ -32,7 +32,7 @@ export type ClientSession = {
 export const clientRegister = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => RegisterSchema.parse(input))
   .handler(async ({ data }): Promise<ClientSession> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: existing } = await supabaseAdmin
       .from("client_accounts")
@@ -79,7 +79,7 @@ export const clientRegister = createServerFn({ method: "POST" })
 export const clientLogin = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => LoginSchema.parse(input))
   .handler(async ({ data }): Promise<ClientSession> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: row } = await supabaseAdmin
       .from("client_accounts")

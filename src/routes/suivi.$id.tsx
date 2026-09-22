@@ -37,7 +37,7 @@ import {
   type ChatMessage,
 } from "@/lib/chat.functions";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 /** Opt-in notifications push pour un client anonyme suivant sa course. */

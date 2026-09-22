@@ -7,7 +7,7 @@ import ogHomeFr from "@/assets/apt-og-home-fr.jpg.asset.json";
 import ogHomeEn from "@/assets/apt-og-home-en.jpg.asset.json";
 import { ArrowLeft, BadgeCheck, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import { Reveal } from "@/components/motion-ui";
 
 // ── Styles partagés avec la home ────────────────────────────────────────────

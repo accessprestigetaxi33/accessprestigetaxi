@@ -16,7 +16,7 @@ import { buildReservationMessage, whatsappLink } from "@/lib/whatsapp";
 // Push client retiré — le client est notifié visuellement sur /reservation/$id (bandeau étapes).
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { getReservationPublic, cancelReservationPublic } from "@/lib/reservation.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import { getClientSession } from "@/lib/client-session";
 
 export const Route = createFileRoute("/reservation/$id")({

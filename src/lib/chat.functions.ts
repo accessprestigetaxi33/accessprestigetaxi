@@ -54,7 +54,7 @@ async function assertClientOwnsReservation(
   reservationId: string,
   identity: { account_id: string; phone?: string | null; email?: string | null },
 ) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const { data: r } = await supabaseAdmin
     .from("reservations")
     .select("id, client_account_id, client_phone, telephone, client_email, email")
@@ -85,7 +85,7 @@ export const sendClientMessage = createServerFn({ method: "POST" })
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
     await assertClientOwnsReservation(data.reservation_id, identity);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     // Récupère nom client pour le titre push
     const { data: r } = await supabaseAdmin
@@ -137,7 +137,7 @@ export const sendChauffeurMessage = createServerFn({ method: "POST" })
   .inputValidator((input) => sendSchema.extend({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     // Récupère suivi_id + compte client pour construire l'URL et cibler la push
     const { data: resa } = await supabaseAdmin
@@ -200,7 +200,7 @@ export const listReservationMessages = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     let q = supabaseAdmin
       .from("reservation_messages")
       .select("id,reservation_id,sender,content,read_by_client,read_by_chauffeur,created_at")
@@ -237,7 +237,7 @@ export const markReservationMessagesRead = createServerFn({ method: "POST" })
       const r = await resolveSuiviReservation(data.suivi_key);
       reservationId = r.id as string;
     }
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     // role='client' → marque tous les messages read_by_client=true (y compris
     // la demande spéciale envoyée par le client lui-même, insérée avec
     // read_by_client=false pour déclencher le badge sur /suivi/$id).
@@ -264,7 +264,7 @@ export const markReservationReadByChauffeur = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: count, error } = await supabaseAdmin.rpc("mark_reservation_read_by_chauffeur", {
       p_reservation_id: data.reservation_id,
     });
@@ -279,7 +279,7 @@ export const countUnreadForClient = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
     if (data.reservation_ids.length === 0) return {} as Record<string, number>;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: rows, error } = await supabaseAdmin
       .from("reservation_messages")
       .select("reservation_id")
@@ -298,7 +298,7 @@ export const listAdminChatThreads = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: msgs, error } = await supabaseAdmin
       .from("reservation_messages")
@@ -350,7 +350,7 @@ const suiviSendSchema = z.object({
 });
 
 async function resolveSuiviReservation(suiviKey: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const { data, error } = await supabaseAdmin.rpc("get_reservation_for_suivi", { p_key: suiviKey });
   if (error) throw new Error(error.message);
   const row = Array.isArray(data) ? data[0] : data;
@@ -370,7 +370,7 @@ export const listSuiviMessages = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const r = await resolveSuiviReservation(data.suivi_key);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     let q = supabaseAdmin
       .from("reservation_messages")
       .select("id,reservation_id,sender,content,read_by_client,read_by_chauffeur,created_at")
@@ -387,7 +387,7 @@ export const sendSuiviClientMessage = createServerFn({ method: "POST" })
   .inputValidator((input) => suiviSendSchema.parse(input))
   .handler(async ({ data }) => {
     const r = await resolveSuiviReservation(data.suivi_key);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const clientName = (r as any).client_name || (r as any).nom || "Client";
 
     const { data: row, error } = await supabaseAdmin
@@ -439,7 +439,7 @@ export const seedReservationSpecialRequest = createServerFn({ method: "POST" })
   .inputValidator((input) => seedSpecialSchema.parse(input))
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     // Anti-doublon : si un message client identique existe déjà pour cette
     // réservation, on ne réinsère pas (utile en cas de re-submit / retry).
     const { data: existing } = await supabaseAdmin
@@ -518,7 +518,7 @@ export const sendDirectClientMessage = createServerFn({ method: "POST" })
   .inputValidator((input) => directSendSchema.extend({ role: z.literal("client") }).parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     // Récupère nom client pour le titre push
     const { data: acct } = await supabaseAdmin
@@ -565,7 +565,7 @@ export const sendDirectChauffeurMessage = createServerFn({ method: "POST" })
     const { resolveDriverIdentity } = await import("@/lib/driver-auth.server");
     const identity = resolveDriverIdentity(data.token);
     const driverName = identity && identity.id !== "admin" ? identity.name : "Votre chauffeur";
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: row, error } = await supabaseAdmin
       .from("direct_messages")
       .insert({
@@ -613,7 +613,7 @@ export const listDirectMessages = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     let q = supabaseAdmin
       .from("direct_messages")
       .select("id,client_account_id,sender,content,read_by_client,read_by_chauffeur,created_at")
@@ -630,7 +630,7 @@ export const markDirectMessagesRead = createServerFn({ method: "POST" })
   .inputValidator((input) => directAuthSchema.parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const peer = data.role === "client" ? "chauffeur" : "client";
     const patch = data.role === "client" ? { read_by_client: true } : { read_by_chauffeur: true };
     const readCol = data.role === "client" ? "read_by_client" : "read_by_chauffeur";
@@ -648,7 +648,7 @@ export const listAdminDirectThreads = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: msgs, error } = await supabaseAdmin
       .from("direct_messages")
       .select("client_account_id,sender,content,read_by_chauffeur,created_at")
@@ -721,7 +721,7 @@ export const countUnreadChauffeurMessages = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const [dm, rm] = await Promise.all([
       supabaseAdmin
         .from("direct_messages")
@@ -747,7 +747,7 @@ export const countUnreadChauffeurForReservation = createServerFn({ method: "POST
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { count, error } = await supabaseAdmin
       .from("reservation_messages")
       .select("id", { count: "exact", head: true })
@@ -766,7 +766,7 @@ export const countUnreadClientForReservation = createServerFn({ method: "POST" }
   .inputValidator((input) => z.object({ suivi_key: z.string().trim().min(6).max(200) }).parse(input))
   .handler(async ({ data }) => {
     const r = await resolveSuiviReservation(data.suivi_key);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     // Compte tout message non lu côté client — inclut la "demande spéciale"
     // insérée à la création (sender=client, read_by_client=false) pour que le
     // badge s'incrémente immédiatement sur /suivi/$id.
@@ -786,7 +786,7 @@ export const listReservationsWithUnreadChauffeur = createServerFn({ method: "POS
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: rows, error } = await supabaseAdmin
       .from("reservation_messages")
       .select("reservation_id")
@@ -805,7 +805,7 @@ export const countUnreadClientForReservationById = createServerFn({ method: "POS
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { count, error } = await supabaseAdmin
       .from("reservation_messages")
       .select("id", { count: "exact", head: true })
@@ -827,7 +827,7 @@ export const getUnreadCountsForReservations = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<UnreadMap> => {
     await requireDriver(data.driver_token);
     if (data.reservation_ids.length === 0) return {};
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: rows, error } = await supabaseAdmin
       .from("reservation_messages")
       .select("reservation_id,sender,read_by_chauffeur,read_by_client")
@@ -870,7 +870,7 @@ export const listMergedChauffeurThreads = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ driver_token: driverTokenSchema }).parse(input))
   .handler(async ({ data }) => {
   await requireDriver(data.driver_token);
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
   // 1) Direct messages
   const { data: directs } = await supabaseAdmin
@@ -1153,7 +1153,7 @@ export const loadMergedConversation = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const lim = data.limit ?? 200;
     const out: MergedMessage[] = [];
 
@@ -1218,7 +1218,7 @@ export const markMergedConversationRead = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     if (data.client_account_id) {
       await supabaseAdmin
         .from("direct_messages")
@@ -1253,7 +1253,7 @@ export const deleteMergedThread = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     await requireDriver(data.driver_token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     let deleted = 0;
     if (data.client_account_id) {
       const { count } = await supabaseAdmin
@@ -1281,7 +1281,7 @@ export const countUnreadDirectForClient = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { count, error } = await supabaseAdmin
       .from("direct_messages")
       .select("id", { count: "exact", head: true })
@@ -1312,7 +1312,7 @@ export type ClientMergedMessage = {
 const clientAuthSchema = z.object({ role: z.literal("client"), token: z.string().min(8).max(200) });
 
 async function clientReservationIds(accountId: string): Promise<{ id: string; status: string | null; created_at: string }[]> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const { data } = await supabaseAdmin
     .from("reservations")
     .select("id,status,created_at")
@@ -1326,7 +1326,7 @@ export const listClientMergedMessages = createServerFn({ method: "POST" })
   .inputValidator((input) => clientAuthSchema.extend({ limit: z.number().int().min(1).max(300).optional() }).parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const lim = data.limit ?? 200;
     const out: ClientMergedMessage[] = [];
 
@@ -1384,7 +1384,7 @@ export const sendClientMergedMessage = createServerFn({ method: "POST" })
     const accountId = await resolveDirectAccount(data);
     const resas = await clientReservationIds(accountId);
     const active = resas.find((r) => !["completed", "cancelled", "terminee", "annulee"].includes((r.status ?? "").toLowerCase()));
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: acct } = await supabaseAdmin
       .from("client_accounts")
@@ -1441,7 +1441,7 @@ export const markClientMergedRead = createServerFn({ method: "POST" })
   .inputValidator((input) => clientAuthSchema.parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     await supabaseAdmin
       .from("direct_messages")
       .update({ read_by_client: true })
@@ -1466,7 +1466,7 @@ export const countUnreadMergedForClient = createServerFn({ method: "POST" })
   .inputValidator((input) => clientAuthSchema.parse(input))
   .handler(async ({ data }) => {
     const accountId = await resolveDirectAccount(data);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { count: direct } = await supabaseAdmin
       .from("direct_messages")
       .select("id", { count: "exact", head: true })

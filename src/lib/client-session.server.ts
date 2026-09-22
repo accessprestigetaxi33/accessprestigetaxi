@@ -24,7 +24,7 @@ export type ClientIdentity = {
 
 /** Crée une session serveur pour un compte client et renvoie le jeton en clair. */
 export async function createClientSession(accountId: string): Promise<string> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const token = genToken();
   const expires = new Date(Date.now() + SESSION_TTL_DAYS * 24 * 3600_000).toISOString();
   const { error } = await supabaseAdmin.from("client_sessions" as any).insert({
@@ -39,7 +39,7 @@ export async function createClientSession(accountId: string): Promise<string> {
 /** Vérifie un jeton de session et renvoie l'identité du compte. Lève UNAUTHORIZED sinon. */
 export async function requireClientSession(token: string): Promise<ClientIdentity> {
   if (!token || token.length < 32 || token.length > 128) throw new Error("UNAUTHORIZED");
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const { data: session } = await supabaseAdmin
     .from("client_sessions" as any)
     .select("client_account_id, expires_at")
@@ -66,7 +66,7 @@ export async function requireClientSession(token: string): Promise<ClientIdentit
 
 export async function revokeClientSession(token: string): Promise<void> {
   if (!token) return;
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   await supabaseAdmin
     .from("client_sessions" as any)
     .delete()

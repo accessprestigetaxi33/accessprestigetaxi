@@ -50,7 +50,7 @@ export const listDriverDevis = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: rows, error } = await supabaseAdmin
       .from("devis")
@@ -89,7 +89,7 @@ export const driverUpdateDevis = createServerFn({ method: "POST" })
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
     if (Object.keys(data.patch).length === 0) return { changed: false };
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: updated, error } = await supabaseAdmin
       .from("devis")
@@ -107,7 +107,7 @@ export const driverDeleteDevis = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin.from("devis").delete().eq("id", data.devis_id);
     if (error) throw new Error(`devis_delete_failed: ${error.message}`);
     return { ok: true };

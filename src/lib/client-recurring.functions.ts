@@ -65,7 +65,7 @@ export const listRecurringRides = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<RecurringRide[]> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: rows, error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .select("*")
@@ -81,7 +81,7 @@ export const createRecurringRide = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<RecurringRide> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const next = computeNextRun(data.day_of_week, data.hour, data.minute);
     const { data: row, error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
@@ -111,7 +111,7 @@ export const toggleRecurringRide = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .update({ active: data.active })
@@ -126,7 +126,7 @@ export const deleteRecurringRide = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("client_recurring_rides" as any)
       .delete()

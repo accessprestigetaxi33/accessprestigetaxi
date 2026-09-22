@@ -25,7 +25,7 @@ export const getSuiviDriverPosition = createServerFn({ method: "POST" })
     z.object({ suivi_key: z.string().trim().min(6).max(200) }).parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: boolean; position: DriverLivePosition | null }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: rows } = await supabaseAdmin.rpc("get_reservation_for_suivi", {
       p_key: data.suivi_key,

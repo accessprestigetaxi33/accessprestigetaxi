@@ -16,7 +16,7 @@ export const listDriverCourses = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     const identity = assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: active, error } = await supabaseAdmin
       .from("reservations")
@@ -57,7 +57,7 @@ export const setCourseDriver = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("reservations")
       .update({ assigned_driver: data.driver } as any)
@@ -77,7 +77,7 @@ export const driverSetReservationStatus = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: updated, error } = await supabaseAdmin
       .from("reservations")
       .update({ status: data.status } as any)
@@ -97,7 +97,7 @@ export const driverDeleteReservation = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     await supabaseAdmin
       .from("avis")
       .update({ reservation_id: null } as any)

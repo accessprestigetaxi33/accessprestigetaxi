@@ -1,6 +1,6 @@
 // Journal des envois de notifications (push + repli e-mail).
 // Écrit uniquement côté serveur avec le client service-role.
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabaseAdmin } from "@/lib/nova-supabase.server";
 
 export type PushLogEntry = {
   channel?: "push" | "email";

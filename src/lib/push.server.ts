@@ -1,6 +1,6 @@
 // FCM HTTP v1 sender — utilise FIREBASE_SERVICE_ACCOUNT_JSON
 // Cloudflare Workers compatible : signature JWT via Web Crypto API.
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { supabaseAdmin } from "@/lib/nova-supabase.server";
 
 export type PushPayload = {
   title: string;

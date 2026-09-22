@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/public/hooks/push-cleanup-tick")({
         const denied = requireCronSecret(request);
         if (denied) return denied;
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
         const before = new Date().toISOString();
         const { data, error } = await supabaseAdmin
           .from("push_subscriptions")

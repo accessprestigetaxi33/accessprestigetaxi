@@ -20,7 +20,7 @@ export const sendRideInvoice = createServerFn({ method: "POST" })
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { data: resa, error } = await supabaseAdmin
       .from("reservations")
       .select(

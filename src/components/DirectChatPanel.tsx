@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Send, X, Loader2, Check, CheckCheck, ChevronUp, Search, Download } from "lucide-react";
 import { getDriverToken } from "@/lib/driver-token";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 import {
   sendDirectClientMessage,
   sendDirectChauffeurMessage,

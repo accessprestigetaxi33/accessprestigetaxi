@@ -3,7 +3,7 @@
 // which bypasses RLS entirely — required because anon has no SELECT policy on
 // public.reservations (PII protection), so postgres_changes UPDATE events are
 // never delivered to the tracking page.
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/nova-supabase";
 
 export function broadcastSuiviUpdate(reservationId: string | null | undefined, kind: string = "update") {
   if (!reservationId) return;

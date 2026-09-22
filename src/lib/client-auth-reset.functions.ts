@@ -29,7 +29,7 @@ const APP_URL = "https://accessprestigetaxi.lovable.app";
 export const clientRequestPasswordReset = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => RequestSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const { data: account } = await supabaseAdmin
       .from("client_accounts")
@@ -119,7 +119,7 @@ export const clientRequestPasswordReset = createServerFn({ method: "POST" })
 export const clientPerformPasswordReset = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ResetSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const tokenHash = await sha256Hex(data.token);
     const { data: row } = await supabaseAdmin

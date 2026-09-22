@@ -37,7 +37,7 @@ export const listClientReservations = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<ClientReservation[]> => {
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const cols =
       "id, pickup_datetime, depart, arrivee, destination, status, prix_estime, final_price, nb_passagers, passagers, bagages, suivi_id, tracking_id, paiement, client_account_id, phone_cancel_requested_at, source, created_at, client_phone, telephone, client_email, email";
@@ -105,7 +105,7 @@ async function assertOwnership(
   reservationId: string,
   identity: { account_id: string; phone?: string | null; email?: string | null },
 ) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
   const { data: r } = await supabaseAdmin
     .from("reservations")
     .select("id, client_account_id, client_phone, telephone, client_email, email, status")
@@ -141,7 +141,7 @@ export const updateReservationTime = createServerFn({ method: "POST" })
       throw new Error("STATUS_LOCKED");
     }
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("reservations")
       .update({ pickup_datetime: new Date(data.pickup_datetime).toISOString() })
@@ -198,7 +198,7 @@ export const cancelClientReservation = createServerFn({ method: "POST" })
     if (!["nouvelle", "pending", "accepted"].includes(r.status)) {
       throw new Error("STATUS_LOCKED");
     }
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("reservations")
       .update({ status: "cancelled" })
@@ -265,7 +265,7 @@ export const requestPhoneCancellation = createServerFn({ method: "POST" })
     const { requireClientSession } = await import("@/lib/client-session.server");
     const identity = await requireClientSession(data.token);
     await assertOwnership(data.reservation_id, identity);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
     const { error } = await supabaseAdmin
       .from("reservations")
       .update({ phone_cancel_requested_at: new Date().toISOString() })

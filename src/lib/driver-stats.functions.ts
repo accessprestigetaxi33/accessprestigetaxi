@@ -30,7 +30,7 @@ export const getDriverStats = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const days = data.days ?? 30;
     const since = new Date(Date.now() - days * 86400000).toISOString();
@@ -167,7 +167,7 @@ export const listReservationEvents = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     let q = supabaseAdmin
       .from("reservation_events")
@@ -189,7 +189,7 @@ export const getTrackingAnalytics = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { assertDriverToken } = await import("@/lib/driver-auth.server");
     assertDriverToken(data.token);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
 
     const days = data.days ?? 30;
     const since = new Date(Date.now() - days * 86400000).toISOString();

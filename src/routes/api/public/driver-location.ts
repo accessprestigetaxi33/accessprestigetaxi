@@ -60,7 +60,7 @@ export const Route = createFileRoute("/api/public/driver-location")({
           return Response.json({ error: "unauthorized" }, { status: 401, headers: corsHeaders });
         }
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
         const now = new Date().toISOString();
         const { error } = await supabaseAdmin.from("driver_gps").upsert(
           {
