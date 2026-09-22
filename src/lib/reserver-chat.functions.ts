@@ -11,7 +11,7 @@ import { calculerPrixMixte, estTarifJourParis, parseAsParisTime } from "@/lib/ta
 
 const MIN_SPACING_MIN = 20;
 const MODEL = "google/gemini-2.5-flash";
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const GATEWAY = "https://api.openai.com/v1/chat/completions";
 
 const BRAND = "Access Prestige Taxi";
 

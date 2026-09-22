@@ -352,22 +352,14 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
         },
       };
 
-      console.log("[notifyNewReservation] sending email via bridge →", `${APP_URL}/lovable/email/transactional/send`);
-      const res = await fetch(`${APP_URL}/lovable/email/transactional/send`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(serviceKey ? { Authorization: `Bearer ${serviceKey}` } : {}),
-        },
-        body: JSON.stringify(emailPayload),
-      });
-      emailSent = res.ok;
-      if (!res.ok) {
-        const errBody = await res.text().catch(() => "");
-        console.error("[notifyNewReservation] email bridge failed", res.status, errBody);
-      } else {
-        console.log("[notifyNewReservation] email queued ok");
-      }
+      void serviceKey;
+      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+      const sendRes = await sendTemplateEmail(
+        emailPayload.templateName,
+        emailPayload.recipientEmail,
+        { idempotencyKey: emailPayload.idempotencyKey, templateData: emailPayload.templateData },
+      );
+      emailSent = sendRes.sent;
     } catch (e) {
       console.error("[notifyNewReservation] email fetch threw", e);
     }
@@ -396,25 +388,14 @@ export const notifyNewReservation = createServerFn({ method: "POST" })
           },
         };
 
-        console.log(
-          "[notifyNewReservation] sending client confirmation email via bridge →",
-          `${APP_URL}/lovable/email/transactional/send`,
+        void serviceKey;
+        const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+        const clientSend = await sendTemplateEmail(
+          clientEmailPayload.templateName,
+          clientEmailPayload.recipientEmail,
+          { idempotencyKey: clientEmailPayload.idempotencyKey, templateData: clientEmailPayload.templateData },
         );
-        const clientRes = await fetch(`${APP_URL}/lovable/email/transactional/send`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(serviceKey ? { Authorization: `Bearer ${serviceKey}` } : {}),
-          },
-          body: JSON.stringify(clientEmailPayload),
-        });
-        clientEmailSent = clientRes.ok;
-        if (!clientRes.ok) {
-          const errBody = await clientRes.text().catch(() => "");
-          console.error("[notifyNewReservation] client email bridge failed", clientRes.status, errBody);
-        } else {
-          console.log("[notifyNewReservation] client email queued ok");
-        }
+        clientEmailSent = clientSend.sent;
       } catch (e) {
         console.error("[notifyNewReservation] client email fetch threw", e);
       }
