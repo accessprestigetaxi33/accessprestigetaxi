@@ -256,7 +256,7 @@ async function photonSearch(query: string, lang: string): Promise<Suggestion[]> 
   return (data?.features ?? [])
     .filter((f) => Array.isArray(f.geometry?.coordinates))
     .map((f) => ({
-      placeId: null,
+      placeId: photonLabel(f.properties),
       label: photonLabel(f.properties),
       lng: f.geometry!.coordinates![0]!,
       lat: f.geometry!.coordinates![1]!,
@@ -270,7 +270,7 @@ async function nominatimSearch(query: string, lang: string): Promise<Suggestion[
       `&countrycodes=fr,es,pt,it,be,de,ch,lu,nl,gb&q=${encodeURIComponent(query)}`,
   );
   return (data ?? []).map((r) => ({
-    placeId: null,
+    placeId: compactLabel(r.display_name),
     label: compactLabel(r.display_name),
     lat: Number(r.lat),
     lng: Number(r.lon),
@@ -286,7 +286,7 @@ export async function osmAutocomplete(query: string, lang = "fr"): Promise<Sugge
       nominatimSearch(query, lang),
     ]);
     const pinned = CANONICAL.filter((c) => c.match.test(query)).map((c) => ({
-      placeId: null,
+      placeId: c.label,
       label: c.label,
       lat: c.lat,
       lng: c.lng,
