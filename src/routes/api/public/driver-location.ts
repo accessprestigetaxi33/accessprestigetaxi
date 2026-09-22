@@ -17,7 +17,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.accessprestigetaxi.lovable.app",
   "https://cloud-launchpad-hug.lovable.app",
 ]);
-const DEFAULT_ORIGIN = "https://accessprestigetaxi.lovable.app";
+const DEFAULT_ORIGIN = "https://www.accessprestigetaxi.fr";
 
 function corsFor(request: Request) {
   const origin = request.headers.get("origin") ?? "";

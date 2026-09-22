@@ -359,7 +359,7 @@ async function confirmReservation(
     return { ok: false as const, error: error.message ?? "insert_failed" };
   }
 
-  const trackingLink = `https://accessprestigetaxi.lovable.app/suivi/${suiviId}`;
+  const trackingLink = `https://www.accessprestigetaxi.fr/suivi/${suiviId}`;
 
   // Lie le token push générique de /reserver à cette réservation précise.
   if (clientFcmToken && /^[A-Za-z0-9_\-:]{50,500}$/.test(clientFcmToken)) {

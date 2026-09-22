@@ -106,7 +106,7 @@ function nextOpenSlot(): Date {
 }
 
 function buildTrackingLink(suiviId: string, lang: string) {
-  return `https://accessprestigetaxi.lovable.app/${lang === "en" ? "tracking" : "suivi"}?id=${encodeURIComponent(suiviId)}`;
+  return `https://www.accessprestigetaxi.fr/${lang === "en" ? "tracking" : "suivi"}?id=${encodeURIComponent(suiviId)}`;
 }
 
 const ReservationState = z.object({

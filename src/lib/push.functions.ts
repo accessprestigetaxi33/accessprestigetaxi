@@ -220,7 +220,7 @@ export const notifyNewReview = createServerFn({ method: "POST" })
   });
 
 // URL de prod hardcodée — process.env.APP_URL est vide en contexte serveur Lovable
-const APP_URL = "https://accessprestigetaxi.lovable.app";
+const APP_URL = "https://www.accessprestigetaxi.fr";
 
 // Appelée depuis reserver.tsx après l'insert d'une nouvelle réservation.
 // Envoie push FCM à admin + chauffeur ET email à Patricia via le bridge Lovable
