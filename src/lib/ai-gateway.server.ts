@@ -42,29 +42,80 @@ export function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
   };
 }
 
+/**
+ * Fournisseur IA indépendant (OpenAI direct) si `OPENAI_API_KEY` est configurée,
+ * sinon passerelle IA Lovable. Les identifiants de modèles « passerelle »
+ * (google/gemini-2.5-flash…) sont traduits vers leur équivalent OpenAI, pour que
+ * le code appelant reste inchangé.
+ */
+const OPENAI_MODEL_MAP: Record<string, string> = {
+  "google/gemini-2.5-flash": "gpt-4o-mini",
+  "google/gemini-2.5-pro": "gpt-4o",
+  "openai/gpt-4o-mini-transcribe": "gpt-4o-mini-transcribe",
+  "openai/gpt-4o-mini": "gpt-4o-mini",
+  "openai/gpt-4o": "gpt-4o",
+};
+
+export function mapAiModelId(modelId: string): string {
+  if (!process.env["OPENAI_API_KEY"]) return modelId;
+  return OPENAI_MODEL_MAP[modelId] ?? modelId.replace(/^openai\//, "");
+}
+
+/** Point d'accès transcription audio (Whisper/gpt-4o-transcribe). */
+export function aiTranscriptionTarget(modelId = "openai/gpt-4o-mini-transcribe") {
+  const openaiKey = process.env["OPENAI_API_KEY"];
+  if (openaiKey) {
+    return {
+      url: "https://api.openai.com/v1/audio/transcriptions",
+      headers: { Authorization: `Bearer ${openaiKey}` } as Record<string, string>,
+      model: mapAiModelId(modelId),
+    };
+  }
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  if (!lovableKey) throw new Error("Missing OPENAI_API_KEY (or LOVABLE_API_KEY) for transcription");
+  return {
+    url: "https://ai.gateway.lovable.dev/v1/audio/transcriptions",
+    headers: { Authorization: `Bearer ${lovableKey}` } as Record<string, string>,
+    model: modelId,
+  };
+}
+
 export function createLovableAiGatewayProvider(
   lovableApiKey: string,
   initialRunId?: string,
   options?: { structuredOutputs?: boolean },
 ) {
   const runIdFetch = createLovableAiGatewayRunIdFetch(initialRunId);
+  const openaiKey = process.env["OPENAI_API_KEY"];
 
-  const provider = createOpenAICompatible({
-    name: "lovable",
-    baseURL: "https://ai.gateway.lovable.dev/v1",
-    supportsStructuredOutputs: options?.structuredOutputs ?? false,
-    headers: {
-      "Lovable-API-Key": lovableApiKey,
-      "X-Lovable-AIG-SDK": "vercel-ai-sdk",
-    },
-    fetch: runIdFetch.fetch,
-  });
+  const base = openaiKey
+    ? createOpenAICompatible({
+        name: "openai",
+        baseURL: "https://api.openai.com/v1",
+        supportsStructuredOutputs: options?.structuredOutputs ?? false,
+        headers: { Authorization: `Bearer ${openaiKey}` },
+        fetch: runIdFetch.fetch,
+      })
+    : createOpenAICompatible({
+        name: "lovable",
+        baseURL: "https://ai.gateway.lovable.dev/v1",
+        supportsStructuredOutputs: options?.structuredOutputs ?? false,
+        headers: {
+          "Lovable-API-Key": lovableApiKey,
+          "X-Lovable-AIG-SDK": "vercel-ai-sdk",
+        },
+        fetch: runIdFetch.fetch,
+      });
+
+  const provider = ((modelId: string, ...rest: unknown[]) =>
+    (base as any)(mapAiModelId(modelId), ...rest)) as unknown as typeof base;
 
   return Object.assign(provider, {
     getRunId: runIdFetch.getRunId,
     waitForRunId: runIdFetch.waitForRunId,
   });
 }
+
 
 export function getLovableAiGatewayRunId(request: Request) {
   return request.headers.get(LOVABLE_AIG_RUN_ID_HEADER)?.trim() || undefined;
