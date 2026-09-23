@@ -293,6 +293,12 @@ export function usePushNotifications(opts: UsePushOptions = {}) {
         return true;
       } catch (err) {
         console.error("[push] subscribe error", err);
+        const raw = String((err as any)?.message ?? "");
+        if (raw.includes("subscribe_unavailable")) {
+          setLastError(
+            "Service momentanément indisponible : vos notifications n'ont pas pu être enregistrées. Réessayez dans quelques minutes.",
+          );
+        }
         setStatus(
           typeof window !== "undefined" && "Notification" in window && Notification.permission === "denied"
             ? "denied"

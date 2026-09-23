@@ -135,21 +135,47 @@ export const subscribePush = createServerFn({ method: "POST" })
     if (clientAccountId) insertPayload.client_account_id = clientAccountId;
     if (driverId) insertPayload.driver_id = driverId;
 
-    let { error: insErr } = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
-    if ((insErr as any)?.code === "23505") {
-      // Certaines bases anciennes ont encore un index unique global sur fcm_token.
-      // Dans ce cas on remplace la ligne du token pour ne pas bloquer Android/iOS.
-      await supabaseAdmin
-        .from("push_subscriptions")
-        .delete()
-        .eq("fcm_token", data.fcm_token)
-        .eq("audience", data.audience);
-      const retry = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
-      insErr = retry.error;
+    // ⚠️ CORRECTIF : une indisponibilité passagère de la base (erreur réseau /
+    // « error code: 1016 » / connection refused) faisait échouer l'inscription
+    // du premier coup, laissant l'appareil définitivement sans notifications.
+    // On retente donc jusqu'à 3 fois avec un backoff court avant d'abandonner.
+    const isTransient = (e: any): boolean => {
+      const code = String(e?.code ?? "");
+      if (code === "23505") return false;
+      const msg = `${e?.message ?? ""} ${e?.details ?? ""} ${code}`.toLowerCase();
+      return (
+        /1016|fetch failed|network|timeout|connection refused|connection reset|econn|unavailable|502|503|504|pgrst000|schema cache/.test(
+          msg,
+        ) || code === ""
+      );
+    };
+
+    let insErr: any = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) await new Promise((r) => setTimeout(r, 400 * attempt));
+      const res = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
+      insErr = res.error;
+      if (!insErr) break;
+
+      if ((insErr as any)?.code === "23505") {
+        // Certaines bases anciennes ont encore un index unique global sur fcm_token.
+        // Dans ce cas on remplace la ligne du token pour ne pas bloquer Android/iOS.
+        await supabaseAdmin
+          .from("push_subscriptions")
+          .delete()
+          .eq("fcm_token", data.fcm_token)
+          .eq("audience", data.audience);
+        const retry = await supabaseAdmin.from("push_subscriptions").insert(insertPayload);
+        insErr = retry.error;
+        if (!insErr) break;
+      }
+
+      if (!isTransient(insErr)) break;
+      console.warn(`[push] subscribe insert transient error (tentative ${attempt + 1}/3)`, insErr);
     }
     if (insErr) {
       console.error("[push] subscribe insert failed", insErr);
-      throw new Error("subscribe_failed");
+      throw new Error(isTransient(insErr) ? "subscribe_unavailable" : "subscribe_failed");
     }
 
     return { ok: true };
