@@ -16,7 +16,7 @@ const OPEN_HOUR = 8;
 const CLOSE_HOUR = 20;
 const OPEN_DAYS = [1, 2, 3, 4, 5]; // lundi-vendredi
 
-const BRAND = "Access Prestige Taxi";
+const BRAND = "Access Taxi PBR";
 const PHONE_PATRICIA = "+33650260015";
 const PHONE_ALAIN = "+33603444863";
 const WHATSAPP_PATRICIA = "https://wa.me/33650260015";
