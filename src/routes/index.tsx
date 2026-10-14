@@ -836,7 +836,7 @@ function Index() {
           />
 
           {/* Boutons RÉSERVER + DEVIS par-dessus le visuel hero */}
-          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 sm:justify-start sm:px-[4%]">
+          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:justify-start sm:bottom-[9%] sm:px-[4%]">
             <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
               <div className="relative h-full" ref={heroMenuRef}>
                 <button
