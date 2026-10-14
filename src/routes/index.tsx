@@ -840,11 +840,11 @@ function Index() {
             loading="eager"
             width={1170}
             height={771}
-            className="block w-full object-cover object-center max-sm:object-contain"
+            className="block h-auto w-full object-contain"
           />
 
           {/* Boutons RÉSERVER + DEVIS par-dessus le visuel hero */}
-          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:inset-x-auto sm:bottom-auto sm:left-[53.6%] sm:top-[79.2%] sm:w-[12.6%] sm:min-w-[146px] sm:justify-start sm:px-0">
+          <div className="relative z-20 flex justify-center bg-black px-4 py-4 sm:absolute sm:inset-x-auto sm:bottom-auto sm:left-[53.6%] sm:top-[79.2%] sm:w-[12.6%] sm:min-w-[146px] sm:justify-start sm:bg-transparent sm:p-0">
             <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0 sm:w-full sm:grid-cols-1 sm:gap-1.5">
               <div className="relative h-full" ref={heroMenuRef}>
                 <button
