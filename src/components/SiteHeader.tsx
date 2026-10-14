@@ -39,7 +39,7 @@ export function SiteHeader() {
       aria-label={t("aria.header")}
       className="sticky top-0 z-40 bg-[#030a13]/95 pt-[env(safe-area-inset-top)] backdrop-blur-xl border-b border-[#d6a83d]/25"
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-20 sm:gap-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-2 px-4 sm:h-24 sm:gap-3 sm:px-6 lg:h-28 lg:px-8">
         <Link
           to="/"
           className="min-w-0 flex-1 leading-none lg:flex-none lg:shrink-0"
@@ -53,7 +53,7 @@ export function SiteHeader() {
             height={1024}
             loading="eager"
             decoding="async"
-            className="block h-[44px] w-auto object-contain sm:h-[56px] lg:h-[64px]"
+            className="block h-[64px] w-auto object-contain sm:h-[80px] lg:h-[92px]"
           />
         </Link>
 
