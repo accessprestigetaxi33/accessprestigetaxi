@@ -314,7 +314,7 @@ const COPY = {
 } as const;
 
 const HOME_SOCIAL_FR = {
-  title: "Access Prestige Taxi — L'excellence à chaque trajet",
+  title: "Access Taxi PBR — Taxi & chauffeur privé à Marennes",
   description:
     "L'excellence à chaque trajet : réservation en ligne ou par téléphone, BMW iX1 et Audi Q6 e-tron électriques, van Mercedes 8 places en Charente-Maritime.",
   image: ogImageUrl(ogHomeFr.url),
@@ -323,7 +323,7 @@ const HOME_SOCIAL_FR = {
 };
 
 const HOME_SOCIAL_EN = {
-  title: "Access Prestige Taxi — Excellence on every journey",
+  title: "Access Taxi PBR — Taxi & private driver in Marennes",
   description:
     "Book online or by phone: electric BMW iX1 and Audi Q6 e-tron, plus an 8-seat Mercedes van across Charente-Maritime.",
   image: ogImageUrl(ogHomeEn.url),
@@ -352,20 +352,26 @@ export const Route = createFileRoute("/")({
           "taxi conventionné Charente-Maritime",
           "taxi aéroport La Rochelle",
           "taxi gare Rochefort",
+          "transport privé Marennes",
+          "chauffeur privé Marennes",
+          "chauffeur privé Charente-Maritime",
+          "transport médical conventionné Marennes",
+          "transport médical conventionné Charente-Maritime",
+          "Access Taxi PBR",
         ]),
         {
           title: isEn
-            ? "Taxi Marennes, Oléron & Charente-Maritime | Access Prestige Taxi"
-            : "Taxi Marennes, île d'Oléron & Charente-Maritime | Access Prestige",
+            ? "Taxi & Private Driver Marennes, Charente-Maritime | Access Taxi PBR"
+            : "Taxi Marennes, chauffeur privé & transport médical | Access Taxi PBR",
         },
         {
           name: "description",
           content: isEn
-            ? "Taxi in Marennes, Oléron island and across Charente-Maritime: airport and station transfers, covered medical transport, electric cars and an 8-seat van. Booking 5 days a week, 8am-8pm."
-            : "Taxi à Marennes, sur l'île d'Oléron et dans toute la Charente-Maritime : gares, aéroports, transport sanitaire conventionné, véhicules électriques et van 8 places. 5j/7, 8h-20h.",
+            ? "Access Taxi PBR, taxi and private driver in Marennes, Charente-Maritime: private transport, covered medical transport, airports and stations, Oléron. 5 days a week, 8am-8pm."
+            : "Access Taxi PBR, taxi et chauffeur privé à Marennes (Charente-Maritime) : transport privé, transport médical conventionné, gares, aéroports, Oléron. 5j/7, 8h-20h.",
         },
 
-        { property: "og:site_name", content: "Access Prestige Taxi" },
+        { property: "og:site_name", content: "Access Taxi PBR" },
         { property: "og:title", content: social.title },
         { property: "og:description", content: social.description },
         { property: "og:type", content: "website" },
@@ -392,8 +398,10 @@ export const Route = createFileRoute("/")({
             "@context": "https://schema.org",
             "@type": "TaxiService",
             "@id": `${SITE_URL}/#taxiservice`,
-            name: "Access Prestige Taxi",
-            alternateName: "Access Prestige Taxi — taxi conventionné Charente-Maritime",
+            name: "Access Taxi PBR",
+            alternateName: ["Access Prestige Taxi", "Access Taxi PBR — chauffeur privé et transport médical conventionné à Marennes"],
+            description: "Taxi, transport privé, chauffeur privé et transport médical conventionné à Marennes-Hiers-Brouage et dans toute la Charente-Maritime.",
+            knowsAbout: ["Transport privé", "Chauffeur privé", "Transport médical conventionné", "Transferts gares et aéroports"],
             slogan: SLOGAN_FR,
             url: SITE_URL,
             image: absoluteUrl(heroCars.url),
@@ -810,7 +818,7 @@ function Index() {
       {/* 1. HERO — logo sur bandeau sombre puis visuel Access' Taxi avec boutons par-dessus */}
       <section className="relative isolate overflow-hidden bg-black">
         <h1 className="sr-only">
-          Taxi Marennes · Oléron · Charente-Maritime — Access Prestige Taxi, transport privé et
+          Taxi Marennes · Oléron · Charente-Maritime — Access Taxi PBR, chauffeur privé, transport privé et
           professionnel, transport médical conventionné, mise à disposition
         </h1>
         <div className="flex w-full flex-col items-center justify-center bg-black px-4 py-5 sm:py-6">

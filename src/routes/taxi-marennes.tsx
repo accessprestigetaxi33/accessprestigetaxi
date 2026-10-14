@@ -8,9 +8,9 @@ import { DRIVERS } from "@/data/drivers";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-marennes`;
-const TITLE_FR = "Taxi Marennes ☎ 06 03 44 48 63 · 5j/7 8h-20h";
+const TITLE_FR = "Taxi Marennes, chauffeur privé ☎ 06 03 44 48 63 | Access Taxi PBR";
 const DESC_FR =
-  "Taxi Marennes : réservez au 06 03 44 48 63 ou en ligne, 5j/7 de 8h à 20h. Île d'Oléron, Brouage, Rochefort, La Rochelle, gares et aéroports. Tarifs officiels.";
+  "Access Taxi PBR, taxi Marennes : transport privé, chauffeur privé, transport médical conventionné. 06 03 44 48 63, 5j/7 8h-20h. Oléron, Rochefort, La Rochelle.";
 const TITLE_EN = "Taxi Marennes ☎ +33 6 03 44 48 63 · 5 days, 8am-8pm";
 const DESC_EN =
   "Taxi in Marennes: book on +33 6 03 44 48 63 or online, 5 days a week 8am-8pm. Oléron island, Brouage, Rochefort, La Rochelle, stations and airports.";
@@ -31,6 +31,10 @@ export const Route = createFileRoute("/taxi-marennes")({
         "taxi Marennes Brouage",
         "taxi Marennes 17320",
         "chauffeur privé Charente-Maritime",
+        "chauffeur privé Marennes",
+        "transport privé Marennes",
+        "transport médical conventionné Marennes",
+        "Access Taxi PBR",
       ]),
       { title: TITLE_FR },
       { name: "description", content: DESC_FR },
@@ -162,14 +166,14 @@ function TaxiMarennesPage() {
       {
         "@type": "TaxiService",
         "@id": `${URL}#service`,
-        name: "Access Prestige Taxi — Marennes",
+        name: "Access Taxi PBR — Marennes",
         url: URL,
         description: isEn ? DESC_EN : DESC_FR,
         priceRange: "€€",
         provider: {
           "@type": "LocalBusiness",
           additionalType: "https://schema.org/TaxiService",
-          name: "Access Prestige Taxi",
+          name: "Access Taxi PBR",
           url: SITE,
           telephone: DRIVERS.map((d) => d.intl),
           email: "accesstaxiap@gmail.com",
@@ -234,13 +238,13 @@ function TaxiMarennesPage() {
         name: isEn ? TITLE_EN : TITLE_FR,
         description: isEn ? DESC_EN : DESC_FR,
         inLanguage: isEn ? "en" : "fr",
-        isPartOf: { "@type": "WebSite", name: "Access Prestige Taxi", url: SITE },
+        isPartOf: { "@type": "WebSite", name: "Access Taxi PBR", url: SITE },
         about: { "@id": `${URL}#service` },
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Access Prestige Taxi", item: SITE },
+          { "@type": "ListItem", position: 1, name: "Access Taxi PBR", item: SITE },
           { "@type": "ListItem", position: 2, name: c.h1, item: URL },
         ],
       },
