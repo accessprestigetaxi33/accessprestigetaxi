@@ -136,7 +136,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 name: "Access Prestige Taxi",
                 url: "https://www.accessprestigetaxi.fr",
                 slogan: "L'excellence à chaque trajet",
-                logo: "https://www.accessprestigetaxi.fr/favicon.png",
+                logo: "https://www.accessprestigetaxi.fr/icon-512.png",
               },
               {
                 "@type": "WebSite",
