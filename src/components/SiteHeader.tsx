@@ -17,6 +17,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { Phone } from "lucide-react";
+import logoGold from "@/assets/logo-access-taxi-gold.png";
 
 export function SiteHeader() {
   const t = useT();
@@ -45,10 +46,16 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <span className="block whitespace-nowrap font-display text-[15px] font-extrabold uppercase tracking-[0.08em] text-[#e8bd5d] sm:text-lg sm:tracking-[0.18em] lg:text-xl">
-            Access Taxi
-          </span>
-          <span className="block whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.42em] text-[#e8bd5d]/80 sm:text-[10px]">
+          <img
+            src={logoGold}
+            alt="Access Taxi"
+            width={1116}
+            height={312}
+            loading="eager"
+            decoding="async"
+            className="block h-[30px] w-auto object-contain sm:h-[38px] lg:h-[44px]"
+          />
+          <span className="mt-1 block whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.42em] text-[#e8bd5d]/80 sm:text-[10px]">
             PBR
           </span>
         </Link>
