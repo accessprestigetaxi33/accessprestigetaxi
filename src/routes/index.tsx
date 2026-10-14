@@ -33,7 +33,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-access-taxi-flyer.png.asset.json";
+import heroCars from "@/assets/hero-access-taxi-flyer-clean.png.asset.json";
 import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
 import photoQ6Real from "@/assets/apt-q6-real.png";
@@ -836,8 +836,8 @@ function Index() {
           />
 
           {/* Boutons RÉSERVER + DEVIS par-dessus le visuel hero */}
-          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:justify-start sm:bottom-[9%] sm:px-[4%]">
-            <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
+          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:inset-x-auto sm:right-[33.5%] sm:bottom-[7.5%] sm:justify-start sm:px-0">
+            <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0 sm:w-[min(430px,46vw)]">
               <div className="relative h-full" ref={heroMenuRef}>
                 <button
                   type="button"

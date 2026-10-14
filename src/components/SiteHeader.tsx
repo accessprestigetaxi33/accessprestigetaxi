@@ -51,6 +51,9 @@ export function SiteHeader() {
           <span className="block text-[10px] font-semibold uppercase tracking-[0.34em] text-white/70 sm:text-xs">
             Taxi
           </span>
+          <span className="block text-[9px] font-semibold uppercase tracking-[0.42em] text-[#e8bd5d]/80 sm:text-[10px]">
+            PBR
+          </span>
         </Link>
 
 
