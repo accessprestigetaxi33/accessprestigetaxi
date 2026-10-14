@@ -398,7 +398,7 @@ export const Route = createFileRoute("/")({
             url: SITE_URL,
             image: absoluteUrl(heroCars.url),
             logo: absoluteUrl("/favicon.png"),
-            email: "accessprestigetaxi@gmail.com",
+            email: "accesstaxiap@gmail.com",
             currenciesAccepted: "EUR",
             paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant (transport conventionné)",
             address: {

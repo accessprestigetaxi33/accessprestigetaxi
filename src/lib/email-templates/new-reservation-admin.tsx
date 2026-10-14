@@ -83,7 +83,7 @@ export const template = {
   component: Email,
   subject: (d: Record<string, any>) => `Nouvelle réservation — ${d?.nom ?? "Client"}`,
   displayName: "Nouvelle réservation — chauffeurs",
-  to: "accessprestigetaxi@gmail.com",
+  to: "accesstaxiap@gmail.com",
   previewData: {
     nom: "Jean Dupont",
     phone: "06 12 34 56 78",

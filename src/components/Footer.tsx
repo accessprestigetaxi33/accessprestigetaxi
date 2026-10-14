@@ -25,7 +25,7 @@ import { useI18n, useT } from "@/i18n/I18nProvider";
 
 const PHONE = "0603444863";
 const PHONE_DISPLAY = "06 03 44 48 63";
-const EMAIL = "accessprestigetaxi@gmail.com";
+const EMAIL = "accesstaxiap@gmail.com";
 const WHATSAPP = `https://wa.me/33${PHONE.replace(/^0/, "")}`;
 
 // TODO: swap in the real social profile URLs once available.

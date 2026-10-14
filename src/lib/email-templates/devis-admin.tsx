@@ -69,7 +69,7 @@ export const template = {
   subject: (d: Record<string, any>) =>
     `Devis ${d?.reference ?? ''} — ${d?.depart ?? ''} → ${d?.arrivee ?? ''}`,
   displayName: 'Nouvelle demande de devis (chauffeurs)',
-  to: 'accessprestigetaxi@gmail.com',
+  to: 'accesstaxiap@gmail.com',
   previewData: {
     reference: 'APT-7F3K9Q',
     nom: 'Marie Dupont',

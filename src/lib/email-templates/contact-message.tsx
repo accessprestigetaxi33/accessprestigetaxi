@@ -52,7 +52,7 @@ export const template = {
   subject: (d: Record<string, any>) =>
     `Contact site — ${d?.sujet || 'message'} (${d?.nom ?? 'visiteur'})`,
   displayName: 'Message de contact',
-  to: 'accessprestigetaxi@gmail.com',
+  to: 'accesstaxiap@gmail.com',
   previewData: {
     nom: 'Marie Dupont',
     email: 'marie@example.com',

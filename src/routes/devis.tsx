@@ -14,7 +14,7 @@ const URL_DEVIS = `${SITE}/devis`;
 const TITLE = "Devis taxi Marennes, île d'Oléron & Charente-Maritime";
 const DESC =
   "Demandez un devis taxi gratuit à Marennes, sur l'île d'Oléron et en Charente-Maritime : trajet, date, véhicule électrique ou van 8 places, transport sanitaire conventionné et transport de groupe. Réponse rapide.";
-const EMAIL = "accessprestigetaxi@gmail.com";
+const EMAIL = "accesstaxiap@gmail.com";
 
 export const Route = createFileRoute("/devis")({
   validateSearch: (search: Record<string, unknown>): { lang?: string; prestation?: string } => ({

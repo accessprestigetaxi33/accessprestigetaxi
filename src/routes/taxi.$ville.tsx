@@ -138,7 +138,7 @@ function VillePage() {
           name: "Access Prestige Taxi",
           url: SITE,
           telephone: DRIVERS.map((d) => d.intl),
-          email: "accessprestigetaxi@gmail.com",
+          email: "accesstaxiap@gmail.com",
           address: {
             "@type": "PostalAddress",
             addressLocality: ville.name,

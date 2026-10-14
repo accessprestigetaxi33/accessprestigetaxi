@@ -89,7 +89,7 @@ export async function creerDevis(input: DevisInput) {
   const results = await Promise.allSettled([
     sendTemplateEmail("devis-confirmation", input.email, {
       idempotencyKey: `devis-client-${inserted.reference}`,
-      replyTo: "accessprestigetaxi@gmail.com",
+      replyTo: "accesstaxiap@gmail.com",
       templateData: {
         nom: input.nom,
         reference: inserted.reference,
@@ -103,7 +103,7 @@ export async function creerDevis(input: DevisInput) {
         lang: input.langue,
       },
     }),
-    sendTemplateEmail("devis-admin", "accessprestigetaxi@gmail.com", {
+    sendTemplateEmail("devis-admin", "accesstaxiap@gmail.com", {
       idempotencyKey: `devis-admin-${inserted.reference}`,
       replyTo: input.email,
       templateData: {

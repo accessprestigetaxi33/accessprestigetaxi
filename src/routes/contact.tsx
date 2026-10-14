@@ -9,10 +9,10 @@ import { ContactForm } from "@/components/ContactForm";
 import heroLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 const heroLogo = heroLogoAsset.url;
 
-const CONTACT_EMAIL = "accessprestigetaxi@gmail.com";
+const CONTACT_EMAIL = "accesstaxiap@gmail.com";
 const CONTACT_TITLE = "Contact taxi Marennes, Oléron & Charente-Maritime";
 const CONTACT_DESC =
-  "Contactez votre taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime : 06 03 44 48 63, accessprestigetaxi@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
+  "Contactez votre taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime : 06 03 44 48 63, accesstaxiap@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
 const CONTACT_URL = "https://www.accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
