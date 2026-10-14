@@ -824,7 +824,7 @@ function Index() {
             className="mx-auto h-auto w-[min(280px,72vw)] object-contain sm:w-[320px] lg:w-[360px]"
           />
         </div>
-        <div className="relative">
+        <div className="relative mx-auto max-w-6xl">
           <img
             src={heroCars.url}
             alt="Access' Taxi Marennes-Hiers-Brouage — Alain & Patricia, 06 03 44 48 63, Audi Q6, Mercedes Classe V et BMW iX1"
