@@ -807,10 +807,9 @@ function Index() {
       `}</style>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
-      {/* 1. HERO — visuel Access' Taxi Marennes-Hiers-Brouage */}
+      {/* 1. HERO — bandeau sombre (logo + texte + boutons) puis visuel Access' Taxi Marennes-Hiers-Brouage */}
       <section className="relative isolate overflow-hidden bg-black">
-        {/* Logo du site centré au-dessus de la photo (mobile / tablette / desktop) */}
-        <div className="flex w-full justify-center bg-black px-4 py-5 sm:py-6">
+        <div className="flex w-full flex-col items-center bg-black px-4 py-5 text-center sm:py-7">
           <img
             src={aptLogoAsset.url}
             alt="Access Prestige Taxi"
@@ -820,44 +819,27 @@ function Index() {
             fetchPriority="high"
             className="mx-auto h-auto w-[min(280px,72vw)] object-contain sm:w-[320px] lg:w-[360px]"
           />
-        </div>
-        <div className="relative w-full aspect-[2/3] min-h-[560px] sm:aspect-[1170/771] sm:min-h-0">
-          <img
-            src={heroCars.url}
-            alt="Access' Taxi Marennes-Hiers-Brouage — Alain & Patricia, 06 03 44 48 63, Audi Q6, Mercedes Classe V et BMW iX1"
-            fetchPriority="high"
-            loading="eager"
-            width={1170}
-            height={771}
-            className="absolute inset-0 h-full w-full object-cover object-center max-sm:object-contain"
-          />
-
-          {/* Contenu texte : panneau sombre translucide pour rester lisible sur le visuel clair */}
-          <div className="absolute inset-x-0 top-[6%] z-10 flex flex-col items-center px-4 text-center sm:top-[12%]">
-            <div className="max-w-3xl rounded-2xl border border-[#d6a83d]/40 bg-[#07111f]/75 px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-6 sm:py-4">
-              <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-4xl md:text-5xl lg:text-6xl">
-                {lang === "en"
-                  ? "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"
-                  : "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"}
-              </h1>
-              <p className="mt-2 max-w-3xl text-base font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-lg md:text-xl">
-                {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
-              </p>
-              <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-xl md:text-2xl lg:text-3xl">
-                {lang === "en"
-                  ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
-                  : "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime."}
-              </p>
-              <p className="mt-3 max-w-3xl text-lg font-black uppercase text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-xl md:text-2xl lg:text-3xl">
-                {lang === "en"
-                  ? "Private and professional transport · Covered medical transport · Chauffeur service"
-                  : "Transport privé et professionnel · Transport médical conventionné · Mise à disposition"}
-              </p>
-            </div>
-          </div>
+          <h1 className="mt-4 font-display text-3xl font-bold uppercase tracking-wide text-white sm:text-4xl md:text-5xl lg:text-6xl">
+            {lang === "en"
+              ? "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"
+              : "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"}
+          </h1>
+          <p className="mt-2 max-w-3xl text-base font-black uppercase text-white sm:text-lg md:text-xl">
+            {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
+          </p>
+          <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white sm:text-xl md:text-2xl lg:text-3xl">
+            {lang === "en"
+              ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
+              : "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime."}
+          </p>
+          <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white sm:text-xl md:text-2xl lg:text-3xl">
+            {lang === "en"
+              ? "Private and professional transport · Covered medical transport · Chauffeur service"
+              : "Transport privé et professionnel · Transport médical conventionné · Mise à disposition"}
+          </p>
 
           {/* Boutons RÉSERVER + DEVIS dans le hero */}
-          <div className="absolute left-1/2 top-[65%] z-20 w-[min(380px,88vw)] -translate-x-1/2 sm:top-[70%]">
+          <div className="relative z-20 mt-5 w-[min(380px,88vw)]">
             <div className="grid grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
               <div className="relative h-full" ref={heroMenuRef}>
                 <button
@@ -918,6 +900,17 @@ function Index() {
             </div>
           </div>
         </div>
+
+        {/* Visuel Access' Taxi Marennes-Hiers-Brouage affiché en entier */}
+        <img
+          src={heroCars.url}
+          alt="Access' Taxi Marennes-Hiers-Brouage — Alain & Patricia, 06 03 44 48 63, Audi Q6, Mercedes Classe V et BMW iX1"
+          fetchPriority="high"
+          loading="eager"
+          width={1170}
+          height={771}
+          className="block w-full object-cover object-center max-sm:object-contain"
+        />
       </section>
 
       {/* Zone d'intervention — ancrage local Marennes */}
