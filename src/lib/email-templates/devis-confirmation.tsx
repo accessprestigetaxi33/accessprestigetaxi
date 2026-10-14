@@ -61,7 +61,7 @@ const DevisConfirmationEmail = (p: Props) => {
       <Preview>{t.preview(ref)}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={brand}>ACCESS PRESTIGE TAXI</Text>
+          <Text style={brand}>ACCESS TAXI PBR</Text>
           <Heading style={h1}>{t.h1}</Heading>
           <Text style={lead}>{t.lead(p.nom ?? '')}</Text>
 

@@ -39,7 +39,7 @@ const UI: Record<Lang, Record<string, string>> = {
     ref: "N° de course",
     cta: "Voir ma course et ma facture",
     link: "Lien :",
-    foot: "Access Prestige Taxi — Charente-Maritime · Transport sanitaire · Toutes distances",
+    foot: "Access Taxi PBR — Charente-Maritime · Transport sanitaire · Toutes distances",
   },
   en: {
     title: "Your ride invoice",
@@ -53,7 +53,7 @@ const UI: Record<Lang, Record<string, string>> = {
     ref: "Ride number",
     cta: "View my ride and invoice",
     link: "Link:",
-    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · All distances",
+    foot: "Access Taxi PBR — Charente-Maritime · Medical transport · All distances",
   },
 };
 
@@ -89,7 +89,7 @@ const Email = (p: Props) => {
       <Preview>{u.title}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={brand}>ACCESS PRESTIGE TAXI</Text>
+          <Text style={brand}>ACCESS TAXI PBR</Text>
           <Heading style={h1}>{u.title}</Heading>
           <Text style={lead}>
             {u.hi} {p.nom ?? ""},
@@ -156,7 +156,7 @@ const footer = { color: "rgba(255,255,255,0.4)", fontSize: 11, marginTop: 22, te
 export const template = {
   component: Email,
   subject: (d: Record<string, any>) =>
-    d?.lang === "en" ? "Your ride invoice — Access Prestige Taxi" : "Votre facture de course — Access Prestige Taxi",
+    d?.lang === "en" ? "Your ride invoice — Access Taxi PBR" : "Votre facture de course — Access Taxi PBR",
   displayName: "Facture de course",
   previewData: {
     lang: "fr",

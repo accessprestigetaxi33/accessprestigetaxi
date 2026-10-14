@@ -38,8 +38,8 @@ const STR: Record<Lang, Record<string, string>> = {
     ref: "N° de réservation",
     reason: "Motif",
     cta: "Réserver un nouveau trajet",
-    foot: "Access Prestige Taxi — Charente-Maritime · Transport sanitaire · Toutes distances",
-    subj: "Annulation de votre réservation — Access Prestige Taxi",
+    foot: "Access Taxi PBR — Charente-Maritime · Transport sanitaire · Toutes distances",
+    subj: "Annulation de votre réservation — Access Taxi PBR",
   },
   en: {
     preview: "Your booking has been cancelled",
@@ -53,8 +53,8 @@ const STR: Record<Lang, Record<string, string>> = {
     ref: "Booking number",
     reason: "Reason",
     cta: "Book a new ride",
-    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · All distances",
-    subj: "Your booking has been cancelled — Access Prestige Taxi",
+    foot: "Access Taxi PBR — Charente-Maritime · Medical transport · All distances",
+    subj: "Your booking has been cancelled — Access Taxi PBR",
   },
 };
 
@@ -95,7 +95,7 @@ const Email = (p: Props) => {
       <Preview>{s.preview}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={brand}>ACCESS PRESTIGE TAXI</Text>
+          <Text style={brand}>ACCESS TAXI PBR</Text>
           <Heading style={h1}>{s.title}</Heading>
           <Text style={lead}>
             {s.hi} {p.nom ?? ""},

@@ -4,9 +4,9 @@ import { createHash } from "crypto";
 const VCARD = [
   "BEGIN:VCARD",
   "VERSION:3.0",
-  "FN:Patricia — Access Prestige Taxi",
-  "N:Patricia;Access Prestige Taxi;;;",
-  "ORG:Access Prestige Taxi",
+  "FN:Patricia — Access Taxi PBR",
+  "N:Patricia;Access Taxi PBR;;;",
+  "ORG:Access Taxi PBR",
   "TEL;TYPE=CELL,VOICE,PREF:+33650260015",
   "EMAIL;TYPE=INTERNET,PREF:accesstaxiap@gmail.com",
   "URL:https://www.accessprestigetaxi.fr",
