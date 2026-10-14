@@ -821,7 +821,7 @@ function Index() {
           Taxi Marennes · Oléron · Charente-Maritime — Access Taxi PBR, chauffeur privé, transport privé et
           professionnel, transport médical conventionné, mise à disposition
         </h1>
-        <div className="flex w-full flex-col items-center justify-center bg-black px-4 py-5 sm:py-6">
+        <div className="flex w-full flex-col items-center justify-center bg-black px-4 py-2 sm:py-6">
           <img
             src={heroLogoGold}
             alt="Access Taxi PBR"
@@ -829,7 +829,7 @@ function Index() {
             height={1024}
             loading="eager"
             fetchPriority="high"
-            className="mx-auto h-auto w-[min(240px,60vw)] object-contain sm:w-[280px] lg:w-[320px]"
+            className="mx-auto h-auto w-[150px] object-contain sm:w-[280px] lg:w-[320px]"
           />
         </div>
         <div className="relative mx-auto max-w-6xl">
