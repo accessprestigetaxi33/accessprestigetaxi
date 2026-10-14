@@ -41,15 +41,18 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-4 sm:h-20 sm:gap-3 sm:px-6 lg:px-8">
         <Link
           to="/"
-          className="site-header-logo min-w-0 flex-1 leading-none lg:flex-none lg:shrink-0"
+          className="min-w-0 flex-1 leading-none lg:flex-none lg:shrink-0"
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <span className="block font-display text-base font-extrabold uppercase tracking-[0.18em] text-[#e8bd5d] sm:text-lg">
+          <span className="block whitespace-nowrap font-display text-[13px] font-extrabold uppercase tracking-[0.06em] text-[#e8bd5d] sm:text-base sm:tracking-[0.18em] lg:text-lg">
             Access Prestige
           </span>
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.34em] text-white/70 sm:text-xs">
+          <span className="block whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.34em] text-white/70 sm:text-xs">
             Taxi
+          </span>
+          <span className="block whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.42em] text-[#e8bd5d]/80 sm:text-[10px]">
+            PBR
           </span>
         </Link>
 

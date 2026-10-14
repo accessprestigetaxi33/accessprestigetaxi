@@ -33,7 +33,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-access-taxi-flyer.png.asset.json";
+import heroCars from "@/assets/hero-access-taxi-flyer-clean.png.asset.json";
 import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
 import photoQ6Real from "@/assets/apt-q6-real.png";
@@ -836,14 +836,14 @@ function Index() {
           />
 
           {/* Boutons RÉSERVER + DEVIS par-dessus le visuel hero */}
-          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:justify-start sm:bottom-[9%] sm:px-[4%]">
-            <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
+          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:inset-x-auto sm:bottom-auto sm:left-[53.6%] sm:top-[79.2%] sm:w-[12.6%] sm:min-w-[146px] sm:justify-start sm:px-0">
+            <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0 sm:w-full sm:grid-cols-1 sm:gap-1.5">
               <div className="relative h-full" ref={heroMenuRef}>
                 <button
                   type="button"
                   onClick={() => setHeroMenuOpen((open) => !open)}
                   aria-expanded={heroMenuOpen}
-                  className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center gap-2 truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
+                  className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center gap-2 truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:min-h-[46px] sm:px-2 sm:text-[11px]"
                 >
                   {lang === "en" ? "BOOK" : "RÉSERVER"}
                   <ChevronDown
@@ -858,7 +858,7 @@ function Index() {
                       initial={{ opacity: 0, y: -8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
-                      className="absolute left-0 top-full z-30 mt-1 w-[calc(200%+0.5rem)] max-w-[88vw] overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+                      className="absolute left-0 top-full z-30 mt-1 w-[calc(200%+0.5rem)] max-w-[88vw] overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:top-auto sm:bottom-full sm:left-auto sm:right-0 sm:mt-0 sm:mb-1"
                     >
                       <Link
                         to="/reserver"
@@ -890,7 +890,7 @@ function Index() {
 
               <Link
                 to="/devis"
-                className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:text-sm"
+                className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:min-h-[46px] sm:px-2 sm:text-[11px]"
               >
                 {lang === "en" ? "QUOTE" : "DEVIS"}
               </Link>
