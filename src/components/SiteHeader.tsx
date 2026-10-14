@@ -45,11 +45,8 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label={t("aria.logo_home")}
         >
-          <span className="block whitespace-nowrap font-display text-[13px] font-extrabold uppercase tracking-[0.06em] text-[#e8bd5d] sm:text-base sm:tracking-[0.18em] lg:text-lg">
-            Access Prestige
-          </span>
-          <span className="block whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.34em] text-white/70 sm:text-xs">
-            Taxi
+          <span className="block whitespace-nowrap font-display text-[15px] font-extrabold uppercase tracking-[0.08em] text-[#e8bd5d] sm:text-lg sm:tracking-[0.18em] lg:text-xl">
+            Access Taxi
           </span>
           <span className="block whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.42em] text-[#e8bd5d]/80 sm:text-[10px]">
             PBR
