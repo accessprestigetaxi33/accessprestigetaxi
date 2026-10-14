@@ -116,7 +116,7 @@ export async function downloadReceiptPDF(
   doc.setFontSize(8);
   doc.setTextColor("#888");
   doc.text(
-    "Access Prestige Taxi — accesstaxiap@gmail.com — 06 50 26 00 15",
+    "Access Taxi PBR — accesstaxiap@gmail.com — 06 50 26 00 15",
     W / 2,
     800,
     { align: "center" },

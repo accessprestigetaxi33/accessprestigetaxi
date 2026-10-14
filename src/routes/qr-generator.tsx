@@ -9,7 +9,7 @@ import logoSrc from "@/assets/tcb-logo-badge.webp";
 export const Route = createFileRoute("/qr-generator")({
   head: () => ({
     meta: [
-      { title: "Générateur QR — Access Prestige Taxi" },
+      { title: "Générateur QR — Access Taxi PBR" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -50,7 +50,7 @@ const DEFAULTS: Form = {
   phone: "0650260015",
   email: "accesstaxiap@gmail.com",
   site: "https://www.accessprestigetaxi.fr",
-  org: "Access Prestige Taxi",
+  org: "Access Taxi PBR",
 };
 
 function buildPayload(f: Form): string {
@@ -310,7 +310,7 @@ function QrGeneratorPage() {
           Outil interne
         </p>
         <h1 style={{ fontFamily: "'Syne','Playfair Display',serif", fontSize: 32, margin: "6px 0 24px" }}>
-          Générateur QR — Access Prestige Taxi
+          Générateur QR — Access Taxi PBR
         </h1>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start" }}>

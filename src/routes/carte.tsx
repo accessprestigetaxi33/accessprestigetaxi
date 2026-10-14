@@ -32,8 +32,8 @@ export const Route = createFileRoute("/carte")({
 
 // Contact unique — modifie ici pour changer partout
 const CONTACT = {
-  name: "Access Prestige Taxi",
-  org: "Access Prestige Taxi",
+  name: "Access Taxi PBR",
+  org: "Access Taxi PBR",
   tel: "+33650260015",
   telDisplay: "06\u00A050\u00A026\u00A000\u00A015",
   email: "accesstaxiap@gmail.com",
@@ -73,7 +73,7 @@ type Dict = {
 
 const T: Record<Lang, Dict> = {
   fr: {
-    tag: "Access Prestige Taxi",
+    tag: "Access Taxi PBR",
     call: "Appeler",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -86,7 +86,7 @@ const T: Record<Lang, Dict> = {
     languageLabel: "Langue",
   },
   en: {
-    tag: "Access Prestige Taxi",
+    tag: "Access Taxi PBR",
     call: "Call",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -112,7 +112,7 @@ const T: Record<Lang, Dict> = {
     languageLabel: "Idioma",
   },
   de: {
-    tag: "Access Prestige Taxi",
+    tag: "Access Taxi PBR",
     call: "Anrufen",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -125,7 +125,7 @@ const T: Record<Lang, Dict> = {
     languageLabel: "Sprache",
   },
   it: {
-    tag: "Access Prestige Taxi",
+    tag: "Access Taxi PBR",
     call: "Chiama",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -151,7 +151,7 @@ const T: Record<Lang, Dict> = {
     languageLabel: "Idioma",
   },
   nl: {
-    tag: "Access Prestige Taxi",
+    tag: "Access Taxi PBR",
     call: "Bellen",
     whatsapp: "WhatsApp",
     sms: "SMS",
@@ -301,7 +301,7 @@ function CartePage() {
 
         <img
           src={logoSrc}
-          alt="Access Prestige Taxi"
+          alt="Access Taxi PBR"
           style={{
             width: 240,
             maxWidth: "80%",

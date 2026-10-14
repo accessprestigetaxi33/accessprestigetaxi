@@ -53,7 +53,7 @@ const L = {
     final: "Prix final au compteur",
     est: "Prix estimé",
     footer:
-      "Access Prestige Taxi — accesstaxiap@gmail.com — 06 50 26 00 15 — Charente-Maritime",
+      "Access Taxi PBR — accesstaxiap@gmail.com — 06 50 26 00 15 — Charente-Maritime",
     file: "facture-course",
   },
   en: {
@@ -76,7 +76,7 @@ const L = {
     final: "Final metered fare",
     est: "Estimated fare",
     footer:
-      "Access Prestige Taxi — accesstaxiap@gmail.com — +33 6 50 26 00 15 — Charente-Maritime",
+      "Access Taxi PBR — accesstaxiap@gmail.com — +33 6 50 26 00 15 — Charente-Maritime",
     file: "ride-invoice",
   },
 } as const;
@@ -110,7 +110,7 @@ export async function downloadRideInvoicePDF(r: RideLike, lang: string = "fr") {
   doc.setTextColor(GOLD);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.text("ACCESS PRESTIGE TAXI", 40, 45);
+  doc.text("ACCESS TAXI PBR", 40, 45);
   doc.setFontSize(10);
   doc.setTextColor("#E8C96D");
   doc.text(l.sub, 40, 65);

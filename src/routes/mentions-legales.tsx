@@ -5,9 +5,9 @@ import { useI18n } from "@/i18n/I18nProvider";
 
 const SITE = "https://www.accessprestigetaxi.fr";
 const URL = `${SITE}/mentions-legales`;
-const TITLE_FR = "Mentions légales — Access Prestige Taxi";
+const TITLE_FR = "Mentions légales — Access Taxi PBR";
 const DESC_FR =
-  "Mentions légales d'Access Prestige Taxi : éditeur du site, hébergement, propriété intellectuelle et contact.";
+  "Mentions légales d'Access Taxi PBR : éditeur du site, hébergement, propriété intellectuelle et contact.";
 
 export const Route = createFileRoute("/mentions-legales")({
   head: ({ match }) => ({
@@ -39,7 +39,7 @@ const COPY = {
       <>Le site <strong>accessprestigetaxi.fr</strong> est édité par&nbsp;:</>
     ),
     publisherItems: [
-      <><strong>Access Prestige Taxi</strong> — Patricia & Alain, artisans taxi indépendants</>,
+      <><strong>Access Taxi PBR</strong> — Patricia & Alain, artisans taxi indépendants</>,
       <>Zone d'activité&nbsp;: Charente-Maritime (17), France</>,
       <>Téléphone&nbsp;: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
         <a href="tel:+33603444863" className="text-primary hover:underline">06 03 44 48 63</a> (Alain)</>,
@@ -47,7 +47,7 @@ const COPY = {
       <>Numéro ADS / Carte professionnelle&nbsp;: disponible sur demande</>,
     ],
     publisherDirTitle: "Directeur de la publication",
-    publisherDirText: "Le responsable de la publication est l'exploitant d'Access Prestige Taxi.",
+    publisherDirText: "Le responsable de la publication est l'exploitant d'Access Taxi PBR.",
     hostingTitle: "Hébergement",
     hostingText: (
       <>Le site est hébergé par <strong>Cloudflare, Inc.</strong> — 101 Townsend Street, San Francisco, CA 94107, USA.</>
@@ -75,7 +75,7 @@ const COPY = {
       <>The website <strong>accessprestigetaxi.fr</strong> is published by:</>
     ),
     publisherItems: [
-      <><strong>Access Prestige Taxi</strong> — Patricia & Alain, independent licensed taxi drivers</>,
+      <><strong>Access Taxi PBR</strong> — Patricia & Alain, independent licensed taxi drivers</>,
       <>Service area: Charente-Maritime (17), France</>,
       <>Phone: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
         <a href="tel:+33603444863" className="text-primary hover:underline">06 03 44 48 63</a> (Alain)</>,
@@ -83,7 +83,7 @@ const COPY = {
       <>Operating licence / professional card: available on request</>,
     ],
     publisherDirTitle: "Publication director",
-    publisherDirText: "The person responsible for publication is the operator of Access Prestige Taxi.",
+    publisherDirText: "The person responsible for publication is the operator of Access Taxi PBR.",
     hostingTitle: "Hosting",
     hostingText: (
       <>The website is hosted by <strong>Cloudflare, Inc.</strong> — 101 Townsend Street, San Francisco, CA 94107, USA.</>

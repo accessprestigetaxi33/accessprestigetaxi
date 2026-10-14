@@ -86,7 +86,7 @@ const UI: Record<Lang, Record<string, string>> = {
     ref: "N° de réservation",
     cta: "Suivre ma course en temps réel",
     link: "Lien de suivi :",
-    foot: "Access Prestige Taxi — Charente-Maritime · Transport sanitaire · Toutes distances",
+    foot: "Access Taxi PBR — Charente-Maritime · Transport sanitaire · Toutes distances",
     min: "min",
   },
   en: {
@@ -99,7 +99,7 @@ const UI: Record<Lang, Record<string, string>> = {
     ref: "Booking number",
     cta: "Track my ride in real time",
     link: "Tracking link:",
-    foot: "Access Prestige Taxi — Charente-Maritime · Medical transport · All distances",
+    foot: "Access Taxi PBR — Charente-Maritime · Medical transport · All distances",
     min: "min",
   },
 };
@@ -145,7 +145,7 @@ const Email = (p: Props) => {
       <Preview>{s.title}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Text style={brand}>ACCESS PRESTIGE TAXI</Text>
+          <Text style={brand}>ACCESS TAXI PBR</Text>
           <Heading style={h1}>{s.title}</Heading>
           <Text style={lead}>
             {u.hi} {p.nom ?? ""},
@@ -188,7 +188,7 @@ export const template = {
     const st: Stage = ["accepted", "en_route", "arrived", "completed"].includes(d?.stage)
       ? (d.stage as Stage)
       : "en_route";
-    return `${(l === "en" ? STAGE_EN : STAGE_FR)[st].subj} — Access Prestige Taxi`;
+    return `${(l === "en" ? STAGE_EN : STAGE_FR)[st].subj} — Access Taxi PBR`;
   },
   displayName: "Suivi de course (FR/EN)",
   previewData: {
