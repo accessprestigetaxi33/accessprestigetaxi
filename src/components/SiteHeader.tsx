@@ -17,7 +17,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useT } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 import { Phone } from "lucide-react";
-import logoGold from "@/assets/logo-access-taxi-gold.png";
+import logoGold from "@/assets/logo-access-taxi-premium.png";
 
 export function SiteHeader() {
   const t = useT();
@@ -49,15 +49,12 @@ export function SiteHeader() {
           <img
             src={logoGold}
             alt="Access Taxi"
-            width={1116}
-            height={312}
+            width={1024}
+            height={1024}
             loading="eager"
             decoding="async"
-            className="block h-[30px] w-auto object-contain sm:h-[38px] lg:h-[44px]"
+            className="block h-[44px] w-auto object-contain sm:h-[56px] lg:h-[64px]"
           />
-          <span className="mt-1 block whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.42em] text-[#e8bd5d]/80 sm:text-[10px]">
-            PBR
-          </span>
         </Link>
 
 
