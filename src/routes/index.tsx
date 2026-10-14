@@ -807,9 +807,13 @@ function Index() {
       `}</style>
       <SocialMetaSync lang={lang === "en" ? "en" : "fr"} fr={HOME_SOCIAL_FR} en={HOME_SOCIAL_EN} />
 
-      {/* 1. HERO — bandeau sombre (logo + texte + boutons) puis visuel Access' Taxi Marennes-Hiers-Brouage */}
+      {/* 1. HERO — logo sur bandeau sombre puis visuel Access' Taxi avec boutons par-dessus */}
       <section className="relative isolate overflow-hidden bg-black">
-        <div className="flex w-full flex-col items-center bg-black px-4 py-5 text-center sm:py-7">
+        <h1 className="sr-only">
+          Taxi Marennes · Oléron · Charente-Maritime — Access Prestige Taxi, transport privé et
+          professionnel, transport médical conventionné, mise à disposition
+        </h1>
+        <div className="flex w-full justify-center bg-black px-4 py-5 sm:py-6">
           <img
             src={aptLogoAsset.url}
             alt="Access Prestige Taxi"
@@ -819,28 +823,21 @@ function Index() {
             fetchPriority="high"
             className="mx-auto h-auto w-[min(280px,72vw)] object-contain sm:w-[320px] lg:w-[360px]"
           />
-          <h1 className="mt-4 font-display text-3xl font-bold uppercase tracking-wide text-white sm:text-4xl md:text-5xl lg:text-6xl">
-            {lang === "en"
-              ? "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"
-              : "TAXI MARENNES · OLÉRON · CHARENTE-MARITIME"}
-          </h1>
-          <p className="mt-2 max-w-3xl text-base font-black uppercase text-white sm:text-lg md:text-xl">
-            {lang === "en" ? "EXCELLENCE ON EVERY JOURNEY" : "L’EXCELLENCE À CHAQUE TRAJET"}
-          </p>
-          <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white sm:text-xl md:text-2xl lg:text-3xl">
-            {lang === "en"
-              ? "Your private driver based in Marennes, serving the whole of Charente-Maritime."
-              : "Votre chauffeur privé basé à Marennes, au service de toute la Charente-Maritime."}
-          </p>
-          <p className="mt-2 max-w-3xl text-lg font-black uppercase text-white sm:text-xl md:text-2xl lg:text-3xl">
-            {lang === "en"
-              ? "Private and professional transport · Covered medical transport · Chauffeur service"
-              : "Transport privé et professionnel · Transport médical conventionné · Mise à disposition"}
-          </p>
+        </div>
+        <div className="relative">
+          <img
+            src={heroCars.url}
+            alt="Access' Taxi Marennes-Hiers-Brouage — Alain & Patricia, 06 03 44 48 63, Audi Q6, Mercedes Classe V et BMW iX1"
+            fetchPriority="high"
+            loading="eager"
+            width={1170}
+            height={771}
+            className="block w-full object-cover object-center max-sm:object-contain"
+          />
 
-          {/* Boutons RÉSERVER + DEVIS dans le hero */}
-          <div className="relative z-20 mt-5 w-[min(380px,88vw)]">
-            <div className="grid grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
+          {/* Boutons RÉSERVER + DEVIS par-dessus le visuel hero */}
+          <div className="absolute inset-x-0 bottom-[3%] z-20 flex justify-center px-4 max-sm:bottom-[3.5%] sm:justify-start sm:bottom-[9%] sm:px-[4%]">
+            <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0">
               <div className="relative h-full" ref={heroMenuRef}>
                 <button
                   type="button"
@@ -900,17 +897,6 @@ function Index() {
             </div>
           </div>
         </div>
-
-        {/* Visuel Access' Taxi Marennes-Hiers-Brouage affiché en entier */}
-        <img
-          src={heroCars.url}
-          alt="Access' Taxi Marennes-Hiers-Brouage — Alain & Patricia, 06 03 44 48 63, Audi Q6, Mercedes Classe V et BMW iX1"
-          fetchPriority="high"
-          loading="eager"
-          width={1170}
-          height={771}
-          className="block w-full object-cover object-center max-sm:object-contain"
-        />
       </section>
 
       {/* Zone d'intervention — ancrage local Marennes */}
