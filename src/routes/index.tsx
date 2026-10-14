@@ -33,7 +33,7 @@ import { ReviewForm } from "@/components/ReviewForm";
 import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
-import heroCars from "@/assets/hero-brouage-q6-bmw-vclass-2026.png.asset.json";
+import heroCars from "@/assets/hero-access-taxi-flyer.png.asset.json";
 import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 
 import photoQ6Real from "@/assets/apt-q6-real.png";
