@@ -36,7 +36,7 @@ const CONTACT = {
   org: "Access Prestige Taxi",
   tel: "+33650260015",
   telDisplay: "06\u00A050\u00A026\u00A000\u00A015",
-  email: "accessprestigetaxi@gmail.com",
+  email: "accesstaxiap@gmail.com",
   site: "https://www.accessprestigetaxi.fr",
   reserve: "/reserver",
 };

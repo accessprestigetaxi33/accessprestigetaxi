@@ -72,7 +72,7 @@ const COPY = {
     legalRows: [
       ["Service", "Access Prestige Taxi — taxi de tourisme, deux chauffeurs indépendants"],
       ["Zone", "Charente-Maritime (17), longue distance toute France"],
-      ["Contact", "accessprestigetaxi@gmail.com"],
+      ["Contact", "accesstaxiap@gmail.com"],
       ["Tarifs", "Tarifs préfectoraux affichés au compteur, estimation ferme communiquée avant la course"],
       ["Réclamation", "Par e-mail ou téléphone, réponse sous 48 h ouvrées"],
     ],
@@ -122,7 +122,7 @@ const COPY = {
     legalRows: [
       ["Service", "Access Prestige Taxi — licensed taxi, two independent drivers"],
       ["Area", "Charente-Maritime (17), long distance nationwide"],
-      ["Contact", "accessprestigetaxi@gmail.com"],
+      ["Contact", "accesstaxiap@gmail.com"],
       ["Fares", "Prefecture-regulated meter fares; a firm estimate is given before the ride"],
       ["Complaints", "By email or phone, answered within 48 working hours"],
     ],

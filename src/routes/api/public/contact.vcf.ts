@@ -8,7 +8,7 @@ const VCARD = [
   "N:Patricia;Access Prestige Taxi;;;",
   "ORG:Access Prestige Taxi",
   "TEL;TYPE=CELL,VOICE,PREF:+33650260015",
-  "EMAIL;TYPE=INTERNET,PREF:accessprestigetaxi@gmail.com",
+  "EMAIL;TYPE=INTERNET,PREF:accesstaxiap@gmail.com",
   "URL:https://www.accessprestigetaxi.fr",
   "END:VCARD",
   "",

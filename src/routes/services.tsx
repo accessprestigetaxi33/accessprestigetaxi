@@ -106,7 +106,7 @@ export const Route = createFileRoute("/services")({
                 "@id": "https://www.accessprestigetaxi.fr/#business",
                 name: "Access Prestige Taxi",
                 url: "https://www.accessprestigetaxi.fr",
-                email: "accessprestigetaxi@gmail.com",
+                email: "accesstaxiap@gmail.com",
                 areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
                 hasOfferCatalog: {
                   "@type": "OfferCatalog",

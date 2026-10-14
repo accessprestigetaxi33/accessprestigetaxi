@@ -48,7 +48,7 @@ const DEFAULTS: Form = {
   url: "https://www.accessprestigetaxi.fr/carte",
   name: "Josè",
   phone: "0650260015",
-  email: "accessprestigetaxi@gmail.com",
+  email: "accesstaxiap@gmail.com",
   site: "https://www.accessprestigetaxi.fr",
   org: "Access Prestige Taxi",
 };
