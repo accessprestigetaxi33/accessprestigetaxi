@@ -34,7 +34,7 @@ import { ClientTrust } from "@/components/ClientTrust";
 import { Reveal } from "@/components/motion-ui";
 import { GUIDE_HIGHLIGHTS } from "@/data/guide-highlights";
 import heroCars from "@/assets/hero-access-taxi-flyer-clean.png.asset.json";
-import heroLogoGold from "@/assets/logo-access-taxi-gold.png";
+import heroLogoGold from "@/assets/logo-access-taxi-premium.png";
 
 import photoQ6Real from "@/assets/apt-q6-real.png";
 import photoBmwReal from "@/assets/apt-bmw-real.png";
@@ -825,15 +825,12 @@ function Index() {
           <img
             src={heroLogoGold}
             alt="Access Taxi PBR"
-            width={1103}
-            height={312}
+            width={1024}
+            height={1024}
             loading="eager"
             fetchPriority="high"
-            className="mx-auto h-auto w-[min(360px,82vw)] object-contain sm:w-[440px] lg:w-[500px]"
+            className="mx-auto h-auto w-[min(240px,60vw)] object-contain sm:w-[280px] lg:w-[320px]"
           />
-          <span className="mt-2 text-xs font-semibold uppercase tracking-[0.5em] text-[#c9a24d] sm:text-sm">
-            PBR
-          </span>
         </div>
         <div className="relative mx-auto max-w-6xl">
           <img
