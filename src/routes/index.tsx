@@ -399,9 +399,18 @@ export const Route = createFileRoute("/")({
             "@type": "TaxiService",
             "@id": `${SITE_URL}/#taxiservice`,
             name: "Access Taxi PBR",
-            alternateName: ["Access Prestige Taxi", "Access Taxi PBR — chauffeur privé et transport médical conventionné à Marennes"],
-            description: "Taxi, transport privé, chauffeur privé et transport médical conventionné à Marennes-Hiers-Brouage et dans toute la Charente-Maritime.",
-            knowsAbout: ["Transport privé", "Chauffeur privé", "Transport médical conventionné", "Transferts gares et aéroports"],
+            alternateName: [
+              "Access Prestige Taxi",
+              "Access Taxi PBR — chauffeur privé et transport médical conventionné à Marennes",
+            ],
+            description:
+              "Taxi, transport privé, chauffeur privé et transport médical conventionné à Marennes-Hiers-Brouage et dans toute la Charente-Maritime.",
+            knowsAbout: [
+              "Transport privé",
+              "Chauffeur privé",
+              "Transport médical conventionné",
+              "Transferts gares et aéroports",
+            ],
             slogan: SLOGAN_FR,
             url: SITE_URL,
             image: absoluteUrl(heroCars.url),
@@ -1203,19 +1212,17 @@ function Index() {
                 : "Découvrez les retours de nos clients et partagez vous aussi votre expérience."
             }
           >
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link
-                to="/avis"
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-[#e0b866] bg-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black transition hover:brightness-110"
-              >
-                {lang === "en" ? "See all reviews" : "Voir tous les avis"}
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </Link>
+            {/* Tout ce qui concerne l'avis reste ici : étoiles + avis écrit, dans la carte */}
+            <div id="laisser-un-avis" className="dark">
+              <ReviewForm compact />
+            </div>
+            <div className="mt-4">
               <Link
                 to="/avis"
                 className="inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-[#e0b866] px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#e0b866] transition hover:bg-[#e0b866] hover:text-[#07111f]"
               >
-                {lang === "en" ? "Leave a review" : "Laisser un avis"}
+                {lang === "en" ? "See all reviews" : "Voir tous les avis"}
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
               </Link>
             </div>
           </SplitPhotoCard>
