@@ -8,10 +8,14 @@ const submitSchema = z.object({
   commentaire: z.string().trim().max(900).optional().nullable(),
 });
 
-const moderateSchema = z.object({
-  id: z.string().uuid(),
-  status: z.enum(["approved", "refused", "flagged", "pending"]),
-});
+// Modération : changement de statut et/ou de la date de l'avis (au moins un des deux).
+const moderateSchema = z
+  .object({
+    id: z.string().uuid(),
+    status: z.enum(["approved", "refused", "flagged", "pending"]).optional(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+  })
+  .refine((v) => v.status !== undefined || v.created_at !== undefined, { message: "Nothing to update" });
 
 const deleteSchema = z.object({
   id: z.string().uuid(),
@@ -52,16 +56,17 @@ export const Route = createFileRoute("/api/public/reviews")({
         if (!(await assertDriver(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
         const columns = "id,author_name,note,commentaire,created_at,status,reservation_id,chauffeur_id";
-        const [{ data: pending, error: pendingError }, { data: published, error: publishedError }, { data: flagged }] = await Promise.all([
-          supabase.from("avis").select(columns).eq("status", "pending").order("created_at", { ascending: false }),
-          supabase
-            .from("avis")
-            .select(columns)
-            .eq("status", "approved")
-            .order("created_at", { ascending: false })
-            .limit(20),
-          supabase.from("avis").select(columns).eq("status", "flagged").order("created_at", { ascending: false }),
-        ]);
+        const [{ data: pending, error: pendingError }, { data: published, error: publishedError }, { data: flagged }] =
+          await Promise.all([
+            supabase.from("avis").select(columns).eq("status", "pending").order("created_at", { ascending: false }),
+            supabase
+              .from("avis")
+              .select(columns)
+              .eq("status", "approved")
+              .order("created_at", { ascending: false })
+              .limit(20),
+            supabase.from("avis").select(columns).eq("status", "flagged").order("created_at", { ascending: false }),
+          ]);
 
         if (pendingError) return Response.json({ error: pendingError.message }, { status: 500 });
         if (publishedError) return Response.json({ error: publishedError.message }, { status: 500 });
@@ -89,7 +94,8 @@ export const Route = createFileRoute("/api/public/reviews")({
             .limit(1)
             .maybeSingle();
           if (existingError) return Response.json({ error: existingError.message }, { status: 500 });
-          if (existing) return Response.json({ ok: true, alreadySubmitted: true, id: existing.id, status: existing.status });
+          if (existing)
+            return Response.json({ ok: true, alreadySubmitted: true, id: existing.id, status: existing.status });
         }
 
         let authorName = data.author_name?.trim() || "";
@@ -121,7 +127,9 @@ export const Route = createFileRoute("/api/public/reviews")({
           const excerpt = (data.commentaire ?? "").trim().slice(0, 90);
           await sendPushToAudience("chauffeur", {
             title: `⭐ Nouvel avis ${stars}`,
-            body: excerpt ? `${authorName} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »` : `${authorName} vient de laisser un avis.`,
+            body: excerpt
+              ? `${authorName} : « ${excerpt}${excerpt.length >= 90 ? "…" : ""} »`
+              : `${authorName} vient de laisser un avis.`,
             url: "/driver",
             tag: `new-review-${inserted.id}`,
           });
@@ -143,7 +151,10 @@ export const Route = createFileRoute("/api/public/reviews")({
         }
         const parsed = moderateSchema.safeParse(raw);
         if (!parsed.success) return Response.json({ error: "Invalid payload" }, { status: 400 });
-        const { error } = await getTaxiSupabaseAdmin().from("avis").update({ status: parsed.data.status }).eq("id", parsed.data.id);
+        const changes: { status?: string; created_at?: string } = {};
+        if (parsed.data.status !== undefined) changes.status = parsed.data.status;
+        if (parsed.data.created_at !== undefined) changes.created_at = new Date(parsed.data.created_at).toISOString();
+        const { error } = await getTaxiSupabaseAdmin().from("avis").update(changes).eq("id", parsed.data.id);
         if (error) return Response.json({ error: error.message }, { status: 500 });
         return Response.json({ ok: true });
       },
