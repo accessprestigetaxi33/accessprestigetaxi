@@ -8,20 +8,9 @@ import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/nova-supabase";
-import {
-  addOsmMarker,
-  createOsmMap,
-  drawOsmRoute,
-  fitOsmBounds,
-  loadOsmMapEngineWhenVisible,
-} from "@/lib/osmMap";
+import { addOsmMarker, createOsmMap, drawOsmRoute, fitOsmBounds, loadOsmMapEngineWhenVisible } from "@/lib/osmMap";
 import { geocodeAddress } from "@/lib/googleGeocode";
-import {
-  decodePolyline,
-  getDistanceAndDurationKm,
-  osrmRoutesClient,
-  trafficFactor,
-} from "@/lib/googleRoute";
+import { decodePolyline, getDistanceAndDurationKm, osrmRoutesClient, trafficFactor } from "@/lib/googleRoute";
 import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
@@ -259,6 +248,9 @@ export const Route = createFileRoute("/driver")({
 
 // ── Styles globaux ─────────────────────────────────────────────────────────
 const css = `
+  /* Écritures plus grandes sur mobile : un seul réglage (--drv-fs) */
+  :root { --drv-fs: 1; }
+  @media (max-width: 700px) { :root { --drv-fs: 1.2; } }
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
   html, body {
     margin: 0; padding: 0;  overflow: hidden;
@@ -289,7 +281,7 @@ const css = `
     
     flex-shrink: 0;
   }
-  .drv-header h1 { margin: 0; font-size: 17px; font-weight: 700; flex: 1; font-family: 'DM Sans', sans-serif; }
+  .drv-header h1 { margin: 0; font-size: calc(17px * var(--drv-fs, 1)); font-weight: 700; flex: 1; font-family: 'DM Sans', sans-serif; }
   .drv-tabs {
       
     padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
@@ -313,14 +305,14 @@ const css = `
   .drv-tab:active {  }
   .drv-tab.active {   }
   .drv-tab svg { width: 22px; height: 22px; }
-  .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: 10px; font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
+  .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: calc(10px * var(--drv-fs, 1)); font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
   .drv-tab-count { display: none; }
   .drv-body {
     flex: 1;  
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
   }
-  .drv-section { font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
+  .drv-section { font-size: calc(10px * var(--drv-fs, 1)); font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
   .drv-card { background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
   .drv-swipe { position: relative; margin-bottom: 10px; border-radius: 16px; overflow: hidden; }
   .drv-swipe .drv-card { margin-bottom: 0; }
@@ -328,37 +320,37 @@ const css = `
   .drv-swipe-action {
     position: absolute; top: 0; right: 0; bottom: 0; width: 96px; z-index: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-    background: #dc2626; color: #fff; border: none; font-size: 20px; font-weight: 700; cursor: pointer;
+    background: #dc2626; color: #fff; border: none; font-size: calc(20px * var(--drv-fs, 1)); font-weight: 700; cursor: pointer;
   }
-  .drv-swipe-action span { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+  .drv-swipe-action span { font-size: calc(11px * var(--drv-fs, 1)); font-weight: 700; letter-spacing: .04em; }
   .drv-card.pending { border-color: #f59e0b; }
   .drv-card.new { border-color: #3b82f6; box-shadow: 0 0 0 3px #3b82f620; }
   .drv-card.done { opacity: 0.5; }
   .drv-card.accepted { border-color: #22c55e; }
   .drv-card.refused { border-color: #ef4444; opacity: 0.6; }
   .drv-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .drv-time { font-size: 22px; font-weight: 800; color: #0f172a; }
-  .drv-name { font-size: 14px; font-weight: 600; color: #0f172a; }
-  .drv-sub { font-size: 12px; color: #64748b; }
+  .drv-time { font-size: calc(22px * var(--drv-fs, 1)); font-weight: 800; color: #0f172a; }
+  .drv-name { font-size: calc(14px * var(--drv-fs, 1)); font-weight: 600; color: #0f172a; }
+  .drv-sub { font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; }
   .drv-route { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
-  .drv-route span { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; color: #334155; line-height: 1.4; }
-  .drv-meta { display: flex; gap: 12px; font-size: 12px; color: #64748b; margin: 8px 0 12px; flex-wrap: wrap; }
+  .drv-route span { display: flex; align-items: flex-start; gap: 6px; font-size: calc(13px * var(--drv-fs, 1)); color: #334155; line-height: 1.4; }
+  .drv-meta { display: flex; gap: 12px; font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; margin: 8px 0 12px; flex-wrap: wrap; }
   .drv-meta span { display: flex; align-items: center; gap: 4px; }
   .drv-btns { display: flex; gap: 8px; }
-  .drv-btn-primary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-primary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-primary:active { background: #1e293b; }
-  .drv-btn-secondary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-secondary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-secondary:active { background: #e2e8f0; }
-  .drv-btn-danger { flex: 1; min-height: 46px;   border: 1px solid #fecaca; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .drv-btn-danger { flex: 1; min-height: 46px;   border: 1px solid #fecaca; border-radius: 12px; padding: 12px; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .drv-btn-danger:active { background: #fee2e2; }
-  .drv-badge-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
+  .drv-badge-pill { font-size: calc(11px * var(--drv-fs, 1)); font-weight: 600; padding: 3px 9px; border-radius: 99px; }
   .drv-badge-blue {   }
   .drv-badge-green {   }
   .drv-badge-amber { background: #FDFBF7beb; color: #92400e; }
   .drv-badge-red { background: #fef2f2; color: #b91c1c; }
   .drv-badge-gray {   }
-  .drv-stars { color: #f59e0b; font-size: 15px; letter-spacing: 1px; }
-  .drv-stars-empty { color: var(--border); font-size: 15px; }
+  .drv-stars { color: #f59e0b; font-size: calc(15px * var(--drv-fs, 1)); letter-spacing: 1px; }
+  .drv-stars-empty { color: var(--border); font-size: calc(15px * var(--drv-fs, 1)); }
   .drv-stat-grid { display: grid;    }
   .drv-stat {    }
   .drv-stat-lbl {   margin-bottom: 4px; }
@@ -370,21 +362,21 @@ const css = `
   .drv-route-opt:active { background: #f8fafc; }
   .drv-route-opt.selected { border-color: #c99b4a; background: #f8fafc; }
   .drv-route-opt-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .drv-route-label { font-size: 13px; font-weight: 700; color: #0f172a; }
-  .drv-route-price { font-size: 16px; font-weight: 800; color: #0f172a; }
-  .drv-route-meta { display: flex; gap: 10px; font-size: 12px; color: #64748b; }
+  .drv-route-label { font-size: calc(13px * var(--drv-fs, 1)); font-weight: 700; color: #0f172a; }
+  .drv-route-price { font-size: calc(16px * var(--drv-fs, 1)); font-weight: 800; color: #0f172a; }
+  .drv-route-meta { display: flex; gap: 10px; font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; }
   .drv-map { width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 14px; border: 1px solid rgba(201,155,74,.45); touch-action: pan-x pan-y; }
   .drv-divider { border: none; border-top: 1px solid rgba(201,155,74,.25); margin: 16px 0; }
   .drv-planning-slot { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
-  .drv-planning-time { font-size: 12px; color: #64748b; min-width: 40px; padding-top: 3px; }
+  .drv-planning-time { font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; min-width: 40px; padding-top: 3px; }
   .drv-planning-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
   .drv-planning-card { flex: 1; background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 10px 12px; }
   
   .drv-chat-thread { border: 1px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
   .drv-chat-thread:active { background: #f8fafc; }
   .drv-chat-thread.unread {   }
-  .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
-  .drv-chat-bubble { max-width: 78%; border-radius: 14px; padding: 9px 12px; font-size: 13.5px; line-height: 1.45; }
+  .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: calc(15px * var(--drv-fs, 1)); font-weight: 700; flex-shrink: 0; }
+  .drv-chat-bubble { max-width: 78%; border-radius: 14px; padding: 9px 12px; font-size: calc(13.5px * var(--drv-fs, 1)); line-height: 1.45; }
   .drv-chat-bubble.me {   border-radius: 14px 14px 4px 14px; margin-left: auto; }
   .drv-chat-bubble.them {   border-radius: 14px 14px 14px 4px; }
   @keyframes drv-fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
@@ -399,9 +391,9 @@ const css = `
   .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
   .drv-header-title strong { color:#f6f0e5;  font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .drv-header-title span { color:rgba(246,240,229,.55);  }
-  .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size:11.5px; font-weight:700; white-space:nowrap; flex:0 0 auto; }
+  .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size: calc(11.5px * var(--drv-fs, 1)); font-weight:700; white-space:nowrap; flex:0 0 auto; }
   .drv-header-back svg { flex-shrink:0; }
-  .drv-header-notif { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #d6a83d; border-radius:8px; background:#d6a83d; color:#07101a; font-size:11.5px; font-weight:800; white-space:nowrap; flex:0 0 auto; cursor:pointer; }
+  .drv-header-notif { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #d6a83d; border-radius:8px; background:#d6a83d; color:#07101a; font-size: calc(11.5px * var(--drv-fs, 1)); font-weight:800; white-space:nowrap; flex:0 0 auto; cursor:pointer; }
   .drv-header-notif svg { flex-shrink:0; }
   @media (max-width: 900px) {
     .drv-header-notif .drv-header-notif-label { display:none; }
@@ -409,8 +401,8 @@ const css = `
   }
 
   @media (max-width: 380px) {
-    .drv-time { font-size: 18px; }
-    .drv-stat-val { font-size: 20px; }
+    .drv-time { font-size: calc(18px * var(--drv-fs, 1)); }
+    .drv-stat-val { font-size: calc(20px * var(--drv-fs, 1)); }
   
 
     .drv-header-back span.drv-header-back-label { display:none; }
@@ -422,10 +414,10 @@ const css = `
      à l'image de la maquette. */
   .drv-header-live { flex:0 0 auto; }
   .drv-header-datetime {
-    display:none; flex:0 0 auto; text-align:right; font-size:10.5px; line-height:1.35;
+    display:none; flex:0 0 auto; text-align:right; font-size: calc(10.5px * var(--drv-fs, 1)); line-height:1.35;
     color:rgba(246,240,229,.6); white-space:nowrap;
   }
-  .drv-header-datetime strong { display:block; color:#f6f0e5; font-size:12px; font-weight:700; }
+  .drv-header-datetime strong { display:block; color:#f6f0e5; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; }
   
   .drv-header-bell {
     position:relative; flex:0 0 auto; width:34px; height:34px; display:grid; place-items:center;
@@ -438,23 +430,23 @@ const css = `
     display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
     border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 12px 14px; background:#050a10;
   }
-  .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size:9px; letter-spacing:.12em; font-weight:800; }
-  .drv-overview-head h2 { margin:0; color:#f6f0e5; font-family:Georgia,serif; font-size:19px; }
-  .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size:9px; font-weight:800; }
+  .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size: calc(9px * var(--drv-fs, 1)); letter-spacing:.12em; font-weight:800; }
+  .drv-overview-head h2 { margin:0; color:#f6f0e5; font-family:Georgia,serif; font-size: calc(19px * var(--drv-fs, 1)); }
+  .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size: calc(9px * var(--drv-fs, 1)); font-weight:800; }
   .drv-live-pill i { width:6px; height:6px; border-radius:50%; background:#5fd08a; display:block; }
   .drv-stat-grid { grid-template-columns:repeat(2,1fr) !important; gap:8px !important; margin-bottom:10px !important; }
   .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border:1px solid rgba(201,155,74,.45); border-radius:9px !important; padding:11px !important;
     display:grid !important; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:8px; }
-  .drv-stat-lbl { grid-column:1; grid-row:1; margin:0 !important; color:rgba(246,240,229,.55) !important; font-size:8.5px !important; letter-spacing:.08em; font-weight:800; line-height:1.25; }
-  .drv-stat-val { grid-column:2; grid-row:1 / span 2; justify-self:end; text-align:right; white-space:nowrap; color:#e0b866 !important; font-size:22px !important; line-height:1.1; }
-  .drv-stat-sub { grid-column:1; grid-row:2; margin:0 !important; color:rgba(246,240,229,.45) !important; font-size:9px !important; line-height:1.2; }
-  @media (max-width:340px) { .drv-stat-val { font-size:18px !important; } }
+  .drv-stat-lbl { grid-column:1; grid-row:1; margin:0 !important; color:rgba(246,240,229,.55) !important; font-size: calc(8.5px * var(--drv-fs, 1)) !important; letter-spacing:.08em; font-weight:800; line-height:1.25; }
+  .drv-stat-val { grid-column:2; grid-row:1 / span 2; justify-self:end; text-align:right; white-space:nowrap; color:#e0b866 !important; font-size: calc(22px * var(--drv-fs, 1)) !important; line-height:1.1; }
+  .drv-stat-sub { grid-column:1; grid-row:2; margin:0 !important; color:rgba(246,240,229,.45) !important; font-size: calc(9px * var(--drv-fs, 1)) !important; line-height:1.2; }
+  @media (max-width:340px) { .drv-stat-val { font-size: calc(18px * var(--drv-fs, 1)) !important; } }
   .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(201,155,74,.45); border-radius:9px; overflow:hidden; margin-bottom:10px; background:#050a10; }
-  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.45); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size:8px; cursor:pointer; }
+  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.45); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size: calc(8px * var(--drv-fs, 1)); cursor:pointer; }
   .drv-overview-actions button:last-child { border-right:0; }
   .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
   .drv-quick6 { grid-template-columns:repeat(3,1fr); gap:8px; background:transparent; border:0; }
-  .drv-quick6 button { position:relative; background:#050a10; border:1px solid rgba(201,155,74,.45) !important; border-radius:9px; min-height:70px; font-size:9.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
+  .drv-quick6 button { position:relative; background:#050a10; border:1px solid rgba(201,155,74,.45) !important; border-radius:9px; min-height:70px; font-size: calc(9.5px * var(--drv-fs, 1)); font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
   .drv-quick6 button:active { background:#0a1118; }
   .drv-quick6 .drv-badge { position:absolute; top:6px; right:10px; }
   @media (min-width:640px) { .drv-quick6 { grid-template-columns:repeat(6,1fr); } }
@@ -463,8 +455,8 @@ const css = `
   .drv-main {  flex-direction:column; flex:1;  }
   .drv-section-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
   .drv-section-row .drv-section { margin:0; }
-  .drv-link-btn { background:none; border:none; color:#e0b866; font-size:11px; font-weight:700; cursor:pointer; padding:2px 0; text-transform:uppercase; letter-spacing:.04em; }
-  .drv-live-pill-sm { font-size:8px; padding:3px 7px; }
+  .drv-link-btn { background:none; border:none; color:#e0b866; font-size: calc(11px * var(--drv-fs, 1)); font-weight:700; cursor:pointer; padding:2px 0; text-transform:uppercase; letter-spacing:.04em; }
+  .drv-live-pill-sm { font-size: calc(8px * var(--drv-fs, 1)); padding:3px 7px; }
   .drv-dash-grid { display:grid; grid-template-columns:1fr; gap:0; padding:0 14px; }
   .drv-dash-col { display:flex; flex-direction:column; min-width:0; }
   .drv-dash-next .drv-empty { padding:24px 10px; }
@@ -473,16 +465,16 @@ const css = `
     border: 1px solid rgba(201,155,74,.45); border-radius: 10px; margin-bottom: 8px;
   }
   .drv-dash-row:last-child { margin-bottom: 0; }
-  .drv-dash-row-time { flex:0 0 48px; font-size:12px; font-weight:700; color:#e0b866; }
-  .drv-dash-row-route { flex:1; min-width:0; font-size:13px; color:#f6f0e5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .drv-dash-row-price { flex:0 0 auto; font-size:12px; font-weight:700; color:#f6f0e5; }
+  .drv-dash-row-time { flex:0 0 48px; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; color:#e0b866; }
+  .drv-dash-row-route { flex:1; min-width:0; font-size: calc(13px * var(--drv-fs, 1)); color:#f6f0e5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .drv-dash-row-price { flex:0 0 auto; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; color:#f6f0e5; }
   .drv-dash-notif {
     display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; cursor:pointer;
     border: 1px solid rgba(201,155,74,.45); border-radius: 10px; margin-bottom: 8px;
-    font-size:12.5px; color:rgba(246,240,229,.75);
+    font-size: calc(12.5px * var(--drv-fs, 1)); color:rgba(246,240,229,.75);
   }
   .drv-dash-notif:last-child { margin-bottom: 0; }
-  .drv-dash-notif strong { color:#e0b866; font-size:14px; }
+  .drv-dash-notif strong { color:#e0b866; font-size: calc(14px * var(--drv-fs, 1)); }
 
   /* Tablette : deux colonnes pour le tableau de bord. */
   @media (min-width:700px) {
@@ -508,19 +500,19 @@ const css = `
     }
     .drv-tabs::before {
       content:'ACCESS PRESTIGE TAXI'; display:block; padding:18px 18px 14px;
-      font-family:Georgia,serif; font-weight:800; color:#e0b866; font-size:12px;
+      font-family:Georgia,serif; font-weight:800; color:#e0b866; font-size: calc(12px * var(--drv-fs, 1));
       letter-spacing:.1em; border-bottom:1px solid rgba(201,155,74,.25); margin-bottom:6px;
     }
     .drv-tab {
       flex-direction:row; justify-content:flex-start; align-items:center; gap:12px;
-      min-height:44px; padding:10px 18px; font-size:13px; font-weight:600;
+      min-height:44px; padding:10px 18px; font-size: calc(13px * var(--drv-fs, 1)); font-weight:600;
       border-bottom:0; border-left:3px solid transparent; text-align:left; white-space:normal;
     }
     .drv-tab svg { width:18px; height:18px; flex-shrink:0; }
     .drv-tab.active { color:#f6f0e5; border-left-color:#c99b4a; background:rgba(201,155,74,.12); }
     .drv-tab-count {
       margin-left:auto; flex:0 0 auto; background:rgba(201,155,74,.16); color:#e0b866;
-      font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px;
+      font-size: calc(11px * var(--drv-fs, 1)); font-weight:800; padding:2px 8px; border-radius:999px;
     }
     .drv-tab.active .drv-tab-count { background:rgba(201,155,74,.32); color:#f6f0e5; }
     .drv-main { margin-left:230px; }
@@ -589,50 +581,50 @@ const css = `
   body { overscroll-behavior-y:auto !important; }
   .drv-root { position:relative !important; inset:auto !important; min-height:100dvh; height:auto !important; overflow:visible !important; background:#02070d !important; }
   .drv-header { height:78px !important; min-height:78px !important; padding:0 18px !important; background:linear-gradient(180deg,#07111a,#03080e) !important; border-bottom:1px solid rgba(201,155,74,.16) !important; }
-  .drv-header-title strong { font-size:18px !important; } .drv-header-title span { font-size:12px !important; }
+  .drv-header-title strong { font-size: calc(18px * var(--drv-fs, 1)) !important; } .drv-header-title span { font-size: calc(12px * var(--drv-fs, 1)) !important; }
   .drv-header-live { margin-left:20px; }
   .drv-header-kpi { display:flex; flex-direction:column; min-width:120px; padding:0 22px; border-left:1px solid rgba(255,255,255,.07); }
-  .drv-header-kpi small { color:#7f8b98; font-size:9px; letter-spacing:.04em; } .drv-header-kpi strong { color:#f6f0e5; font-size:20px; margin-top:4px; } .drv-header-kpi strong span { color:#e0b866; }
+  .drv-header-kpi small { color:#7f8b98; font-size: calc(9px * var(--drv-fs, 1)); letter-spacing:.04em; } .drv-header-kpi strong { color:#f6f0e5; font-size: calc(20px * var(--drv-fs, 1)); margin-top:4px; } .drv-header-kpi strong span { color:#e0b866; }
   .drv-header-datetime { margin-left:auto; }
   .drv-main { display:block !important; margin-left:0 !important; min-height:calc(100dvh - 78px) !important; overflow:visible !important; }
   .drv-tabs { position:fixed !important; top:0 !important; left:0 !important; bottom:0 !important; width:164px !important; height:100dvh !important; padding:0 10px 20px !important; display:flex !important; flex-direction:column !important; background:#040a11 !important; border:0 !important; border-right:1px solid rgba(201,155,74,.18) !important; z-index:30 !important; overflow-y:auto !important; overflow-x:hidden !important; }
   .drv-side-logo { height:104px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,.06); margin:0 -10px 12px; }
   .drv-side-logo span { color:#e0b866; font:32px Georgia,serif; line-height:.8; } .drv-side-logo b { color:#fff; font:20px Georgia,serif; } .drv-side-logo em { color:#e0b866; font:700 7px Arial,sans-serif; letter-spacing:.15em; font-style:normal; }
-  .drv-tab { width:100% !important; min-height:42px !important; padding:9px 10px !important; flex-direction:row !important; justify-content:flex-start !important; gap:11px !important; border:0 !important; border-left:3px solid transparent !important; border-radius:6px !important; color:#b9c1ca !important; font-size:10px !important; font-weight:700 !important; }
+  .drv-tab { width:100% !important; min-height:42px !important; padding:9px 10px !important; flex-direction:row !important; justify-content:flex-start !important; gap:11px !important; border:0 !important; border-left:3px solid transparent !important; border-radius:6px !important; color:#b9c1ca !important; font-size: calc(10px * var(--drv-fs, 1)) !important; font-weight:700 !important; }
   .drv-tab.active { background:linear-gradient(90deg,rgba(201,155,74,.22),rgba(201,155,74,.04)) !important; color:#fff !important; border-left-color:#e0b866 !important; }
   .drv-tab-icon { display:grid; place-items:center; width:20px; flex:0 0 20px; } .drv-tab-icon svg { width:18px !important; height:18px !important; }
-  .drv-tab-count { margin-left:auto !important; background:#14304e !important; color:#9ec8ff !important; padding:3px 7px !important; border-radius:5px !important; font-size:9px !important; }
+  .drv-tab-count { margin-left:auto !important; background:#14304e !important; color:#9ec8ff !important; padding:3px 7px !important; border-radius:5px !important; font-size: calc(9px * var(--drv-fs, 1)) !important; }
   .drv-content { min-height:calc(100dvh - 78px); margin-left:164px; padding:0 18px 26px; overflow:visible; }
   .drv-dashboard { width:100%; max-width:1500px; margin:0 auto; padding:14px 0 30px; }
   .drv-dashboard-grid-top { display:grid; grid-template-columns:minmax(330px,1.15fr) minmax(320px,1fr) minmax(260px,.86fr); gap:10px; }
   .drv-dashboard-grid-mid { display:grid; grid-template-columns:1.15fr 1fr .9fr; gap:10px; margin-top:10px; }
   .drv-dashboard-grid-bottom { display:grid; grid-template-columns:1fr 1.15fr .95fr 1.35fr; gap:10px; margin-top:10px; }
   .drv-dashboard .drv-card { background:linear-gradient(145deg,#08131d,#050b12) !important; border:1px solid rgba(116,146,169,.22) !important; border-radius:9px !important; color:#f7f7f4 !important; margin:0 !important; box-shadow:inset 0 1px rgba(255,255,255,.025); }
-  .drv-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:13px; color:#f5f5f3; font-size:12px; font-weight:800; }
-  .drv-card-head > span { letter-spacing:.01em; } .drv-card-head > b { background:#123050; color:#b7dcff; border-radius:5px; padding:3px 7px; font-size:9px; } .drv-card-head > button { background:none; border:0; color:#cbd2d8; font-size:9px; font-weight:800; cursor:pointer; }
+  .drv-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:13px; color:#f5f5f3; font-size: calc(12px * var(--drv-fs, 1)); font-weight:800; }
+  .drv-card-head > span { letter-spacing:.01em; } .drv-card-head > b { background:#123050; color:#b7dcff; border-radius:5px; padding:3px 7px; font-size: calc(9px * var(--drv-fs, 1)); } .drv-card-head > button { background:none; border:0; color:#cbd2d8; font-size: calc(9px * var(--drv-fs, 1)); font-weight:800; cursor:pointer; }
   .drv-next-card { min-height:315px; } .drv-next-layout { display:grid; grid-template-columns:100px 1fr; gap:14px; padding:2px 0 15px; border-bottom:1px solid rgba(255,255,255,.07); }
-  .drv-next-time strong { display:block; color:#fff; font-size:32px; line-height:1; } .drv-next-time span { display:block; margin-top:8px; color:#aab4bf; font-size:11px; }
-  .drv-next-route { border-left:1px solid rgba(255,255,255,.08); padding-left:15px; display:grid; gap:13px; } .drv-next-route > div { position:relative; padding-left:15px; } .drv-next-route strong { display:block; font-size:14px; } .drv-next-route small { display:block; color:#8995a1; font-size:10px; margin-top:3px; }
+  .drv-next-time strong { display:block; color:#fff; font-size: calc(32px * var(--drv-fs, 1)); line-height:1; } .drv-next-time span { display:block; margin-top:8px; color:#aab4bf; font-size: calc(11px * var(--drv-fs, 1)); }
+  .drv-next-route { border-left:1px solid rgba(255,255,255,.08); padding-left:15px; display:grid; gap:13px; } .drv-next-route > div { position:relative; padding-left:15px; } .drv-next-route strong { display:block; font-size: calc(14px * var(--drv-fs, 1)); } .drv-next-route small { display:block; color:#8995a1; font-size: calc(10px * var(--drv-fs, 1)); margin-top:3px; }
   .dot { position:absolute; left:0; top:4px; width:8px; height:8px; border-radius:50%; } .dot.green { background:#58cf39; } .dot.red { background:#ff4350; }
-  .drv-next-meta { display:grid; grid-template-columns:1.3fr 1fr .65fr; gap:10px; padding:12px 0; color:#d9dee2; font-size:10px; } .drv-next-meta span { display:flex; flex-direction:column; gap:3px; border-right:1px solid rgba(255,255,255,.07); } .drv-next-meta span:last-child { border:0; } .drv-next-meta small { color:#8995a1; }
-  .drv-btn-start,.drv-btn-detail { min-height:40px; border-radius:5px; padding:9px 10px; font-size:10px; font-weight:800; cursor:pointer; } .drv-btn-start { flex:1.4; background:#43b51f; color:#fff; border:1px solid #5bdc35; } .drv-btn-detail { flex:1; background:#07101a; color:#f2f2ef; border:1px solid #50606e; }
+  .drv-next-meta { display:grid; grid-template-columns:1.3fr 1fr .65fr; gap:10px; padding:12px 0; color:#d9dee2; font-size: calc(10px * var(--drv-fs, 1)); } .drv-next-meta span { display:flex; flex-direction:column; gap:3px; border-right:1px solid rgba(255,255,255,.07); } .drv-next-meta span:last-child { border:0; } .drv-next-meta small { color:#8995a1; }
+  .drv-btn-start,.drv-btn-detail { min-height:40px; border-radius:5px; padding:9px 10px; font-size: calc(10px * var(--drv-fs, 1)); font-weight:800; cursor:pointer; } .drv-btn-start { flex:1.4; background:#43b51f; color:#fff; border:1px solid #5bdc35; } .drv-btn-detail { flex:1; background:#07101a; color:#f2f2ef; border:1px solid #50606e; }
   .drv-day-card,.drv-revenue-card { min-height:315px; } .drv-day-list { display:flex; flex-direction:column; }
-  .drv-day-row { display:grid; grid-template-columns:45px minmax(0,1fr) 42px 58px; gap:5px; align-items:center; padding:8px 0; border:0; border-top:1px solid rgba(255,255,255,.055); background:transparent; color:#dce1e5; text-align:left; font-size:10px; cursor:pointer; } .drv-day-row:first-child { border-top:0; } .drv-day-row time { color:#fff; font-weight:700; } .drv-day-row span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; } .drv-day-row strong { text-align:right; } .drv-day-row em { font-style:normal; text-align:center; border-radius:10px; padding:3px 2px; background:#17351e; color:#57d63d; font-size:7px; font-weight:800; } .drv-day-row em.upcoming { background:#17304a; color:#55b5ff; }
-  .drv-revenue-main { display:grid; grid-template-columns:1fr auto; align-items:start; } .drv-revenue-main strong { color:#52d638; font-size:32px; line-height:1; } .drv-revenue-main span { grid-column:1; color:#59d93e; font-size:9px; margin-top:5px; } .drv-revenue-main b { color:#54db3b; font-size:14px; text-align:right; } .drv-revenue-main b small { display:block; color:#9ca7b0; font-size:8px; font-weight:400; margin-top:4px; }
-  .drv-revenue-card .drv-card-head select { background:#09131d; color:#e5e9eb; border:1px solid #3b4c5a; border-radius:5px; padding:5px 8px; font-size:9px; }
+  .drv-day-row { display:grid; grid-template-columns:45px minmax(0,1fr) 42px 58px; gap:5px; align-items:center; padding:8px 0; border:0; border-top:1px solid rgba(255,255,255,.055); background:transparent; color:#dce1e5; text-align:left; font-size: calc(10px * var(--drv-fs, 1)); cursor:pointer; } .drv-day-row:first-child { border-top:0; } .drv-day-row time { color:#fff; font-weight:700; } .drv-day-row span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; } .drv-day-row strong { text-align:right; } .drv-day-row em { font-style:normal; text-align:center; border-radius:10px; padding:3px 2px; background:#17351e; color:#57d63d; font-size: calc(7px * var(--drv-fs, 1)); font-weight:800; } .drv-day-row em.upcoming { background:#17304a; color:#55b5ff; }
+  .drv-revenue-main { display:grid; grid-template-columns:1fr auto; align-items:start; } .drv-revenue-main strong { color:#52d638; font-size: calc(32px * var(--drv-fs, 1)); line-height:1; } .drv-revenue-main span { grid-column:1; color:#59d93e; font-size: calc(9px * var(--drv-fs, 1)); margin-top:5px; } .drv-revenue-main b { color:#54db3b; font-size: calc(14px * var(--drv-fs, 1)); text-align:right; } .drv-revenue-main b small { display:block; color:#9ca7b0; font-size: calc(8px * var(--drv-fs, 1)); font-weight:400; margin-top:4px; }
+  .drv-revenue-card .drv-card-head select { background:#09131d; color:#e5e9eb; border:1px solid #3b4c5a; border-radius:5px; padding:5px 8px; font-size: calc(9px * var(--drv-fs, 1)); }
   .drv-chart { height:112px; margin:10px 0; display:flex; align-items:flex-end; gap:4px; padding:0 3px; border-bottom:1px solid rgba(255,255,255,.08); background:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,rgba(255,255,255,.045) 28px); } .drv-chart i { flex:1; background:#49c933; border-radius:1px 1px 0 0; opacity:.9; }
-  .drv-revenue-footer { display:grid; grid-template-columns:repeat(3,1fr); text-align:center; border-top:1px solid rgba(255,255,255,.06); padding-top:10px; } .drv-revenue-footer span { font-size:8px; color:#a5afb8; border-right:1px solid rgba(255,255,255,.06); } .drv-revenue-footer span:last-child { border:0; } .drv-revenue-footer b { display:block; color:#eef0f0; font-size:15px; margin-bottom:3px; }
-  .drv-plan-row { display:grid; grid-template-columns:102px minmax(0,1fr) 40px 25px; gap:7px; align-items:center; padding:11px 0; border-top:1px solid rgba(255,255,255,.06); font-size:10px; } .drv-plan-row:first-of-type { border-top:0; } .drv-plan-row > span { color:#bbc3c9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-plan-row > b { text-align:right; } .drv-plan-row > em { color:#be6eff; font-style:normal; }
+  .drv-revenue-footer { display:grid; grid-template-columns:repeat(3,1fr); text-align:center; border-top:1px solid rgba(255,255,255,.06); padding-top:10px; } .drv-revenue-footer span { font-size: calc(8px * var(--drv-fs, 1)); color:#a5afb8; border-right:1px solid rgba(255,255,255,.06); } .drv-revenue-footer span:last-child { border:0; } .drv-revenue-footer b { display:block; color:#eef0f0; font-size: calc(15px * var(--drv-fs, 1)); margin-bottom:3px; }
+  .drv-plan-row { display:grid; grid-template-columns:102px minmax(0,1fr) 40px 25px; gap:7px; align-items:center; padding:11px 0; border-top:1px solid rgba(255,255,255,.06); font-size: calc(10px * var(--drv-fs, 1)); } .drv-plan-row:first-of-type { border-top:0; } .drv-plan-row > span { color:#bbc3c9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-plan-row > b { text-align:right; } .drv-plan-row > em { color:#be6eff; font-style:normal; }
   .violet-pill { background:#32225b !important; color:#c69bff !important; } .red-pill { background:#54232c !important; color:#ff8c98 !important; } .gold-pill { background:#58440d !important; color:#ffd449 !important; }
   button.drv-message-row { width:100%; background:transparent; border:0; text-align:left; color:inherit; cursor:pointer; font:inherit; }
-  .drv-message-row { display:grid; grid-template-columns:32px 1fr 38px; gap:8px; align-items:center; padding:9px 0; border-top:1px solid rgba(255,255,255,.06); } .avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#d9b49a; color:#16202a; font-size:8px; font-weight:900; } .drv-message-row div:nth-child(2) b { display:block; font-size:10px; } .drv-message-row div:nth-child(2) span { display:block; color:#9ba5ae; font-size:9px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-message-row > small { color:#7e8993; text-align:right; font-size:8px; } .drv-message-row > small i { display:inline-block; width:5px; height:5px; border-radius:50%; background:#ff4b55; }
-  .drv-rating strong { font-size:42px; color:#f4f4f1; } .drv-rating > span { color:#9aa5ae; font-size:14px; } .drv-rating div { color:#ffc928; font-size:17px; letter-spacing:2px; margin-top:8px; } .drv-rating small { display:block; color:#9aa5ae; font-size:9px; margin-top:5px; } .drv-rating-bars { margin-top:-50px; margin-left:120px; } .drv-rating-bars > div { display:flex; align-items:center; gap:5px; margin:5px 0; } .drv-rating-bars b { width:28px; font-size:8px; } .drv-rating-bars i { height:5px; flex:1; background:#25313a; border-radius:5px; overflow:hidden; } .drv-rating-bars i span { display:block; height:100%; background:#f5bb18; }
-  .drv-fleet { list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:8px; } .drv-fleet li { display:grid; grid-template-columns:64px minmax(0,1fr) auto; align-items:center; gap:9px; padding:7px; border:1px solid rgba(201,155,74,.35); border-radius:9px; background:rgba(255,255,255,.02); } .drv-fleet li.is-mine { border-color:rgba(201,155,74,.85); box-shadow:inset 0 0 0 1px rgba(201,155,74,.25); } .drv-fleet img { width:64px; height:44px; object-fit:cover; border-radius:7px; flex-shrink:0; } .drv-fleet strong { display:block; font-size:11px; line-height:1.25; } .drv-fleet span { display:block; color:#9aa5ae; font-size:9px; } .drv-fleet em { font-style:normal; font-size:7px; font-weight:800; letter-spacing:.06em; color:#e7bd5d; border:1px solid rgba(201,155,74,.6); border-radius:999px; padding:3px 6px; white-space:nowrap; } @media(max-width:420px){ .drv-fleet li { grid-template-columns:52px minmax(0,1fr); } .drv-fleet img { width:52px; height:38px; } .drv-fleet em { grid-column:1 / -1; justify-self:start; } }
-  .drv-vehicle-card > strong { display:block; font-size:14px; margin-bottom:3px; } .drv-vehicle-card > span { color:#9aa5ae; font-size:10px; } .drv-car-placeholder { height:70px; margin:10px 0 5px; display:grid; place-items:end center; color:#687580; font-size:28px; font-weight:900; font-style:italic; background:radial-gradient(ellipse at center,#1a2731 0,transparent 55%); } .drv-vehicle-card footer { display:flex; gap:10px; border-top:1px solid rgba(255,255,255,.06); padding-top:8px; color:#b8c1c8; font-size:8px; } .drv-vehicle-card footer i { color:#44cc39; font-style:normal; }
-  .drv-gps-card > strong { display:block; font-size:10px; } .drv-gps-card > span { color:#a4adb4; font-size:9px; display:block; margin-top:2px; } .gps-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#4ed239; margin-right:5px; } .live-small { background:#15371c !important; color:#5cdb44 !important; }
+  .drv-message-row { display:grid; grid-template-columns:32px 1fr 38px; gap:8px; align-items:center; padding:9px 0; border-top:1px solid rgba(255,255,255,.06); } .avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#d9b49a; color:#16202a; font-size: calc(8px * var(--drv-fs, 1)); font-weight:900; } .drv-message-row div:nth-child(2) b { display:block; font-size: calc(10px * var(--drv-fs, 1)); } .drv-message-row div:nth-child(2) span { display:block; color:#9ba5ae; font-size: calc(9px * var(--drv-fs, 1)); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-message-row > small { color:#7e8993; text-align:right; font-size: calc(8px * var(--drv-fs, 1)); } .drv-message-row > small i { display:inline-block; width:5px; height:5px; border-radius:50%; background:#ff4b55; }
+  .drv-rating strong { font-size: calc(42px * var(--drv-fs, 1)); color:#f4f4f1; } .drv-rating > span { color:#9aa5ae; font-size: calc(14px * var(--drv-fs, 1)); } .drv-rating div { color:#ffc928; font-size: calc(17px * var(--drv-fs, 1)); letter-spacing:2px; margin-top:8px; } .drv-rating small { display:block; color:#9aa5ae; font-size: calc(9px * var(--drv-fs, 1)); margin-top:5px; } .drv-rating-bars { margin-top:-50px; margin-left:120px; } .drv-rating-bars > div { display:flex; align-items:center; gap:5px; margin:5px 0; } .drv-rating-bars b { width:28px; font-size: calc(8px * var(--drv-fs, 1)); } .drv-rating-bars i { height:5px; flex:1; background:#25313a; border-radius:5px; overflow:hidden; } .drv-rating-bars i span { display:block; height:100%; background:#f5bb18; }
+  .drv-fleet { list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:8px; } .drv-fleet li { display:grid; grid-template-columns:64px minmax(0,1fr) auto; align-items:center; gap:9px; padding:7px; border:1px solid rgba(201,155,74,.35); border-radius:9px; background:rgba(255,255,255,.02); } .drv-fleet li.is-mine { border-color:rgba(201,155,74,.85); box-shadow:inset 0 0 0 1px rgba(201,155,74,.25); } .drv-fleet img { width:64px; height:44px; object-fit:cover; border-radius:7px; flex-shrink:0; } .drv-fleet strong { display:block; font-size: calc(11px * var(--drv-fs, 1)); line-height:1.25; } .drv-fleet span { display:block; color:#9aa5ae; font-size: calc(9px * var(--drv-fs, 1)); } .drv-fleet em { font-style:normal; font-size: calc(7px * var(--drv-fs, 1)); font-weight:800; letter-spacing:.06em; color:#e7bd5d; border:1px solid rgba(201,155,74,.6); border-radius:999px; padding:3px 6px; white-space:nowrap; } @media(max-width:420px){ .drv-fleet li { grid-template-columns:52px minmax(0,1fr); } .drv-fleet img { width:52px; height:38px; } .drv-fleet em { grid-column:1 / -1; justify-self:start; } }
+  .drv-vehicle-card > strong { display:block; font-size: calc(14px * var(--drv-fs, 1)); margin-bottom:3px; } .drv-vehicle-card > span { color:#9aa5ae; font-size: calc(10px * var(--drv-fs, 1)); } .drv-car-placeholder { height:70px; margin:10px 0 5px; display:grid; place-items:end center; color:#687580; font-size: calc(28px * var(--drv-fs, 1)); font-weight:900; font-style:italic; background:radial-gradient(ellipse at center,#1a2731 0,transparent 55%); } .drv-vehicle-card footer { display:flex; gap:10px; border-top:1px solid rgba(255,255,255,.06); padding-top:8px; color:#b8c1c8; font-size: calc(8px * var(--drv-fs, 1)); } .drv-vehicle-card footer i { color:#44cc39; font-style:normal; }
+  .drv-gps-card > strong { display:block; font-size: calc(10px * var(--drv-fs, 1)); } .drv-gps-card > span { color:#a4adb4; font-size: calc(9px * var(--drv-fs, 1)); display:block; margin-top:2px; } .gps-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#4ed239; margin-right:5px; } .live-small { background:#15371c !important; color:#5cdb44 !important; }
   .gps-map { height:97px; margin-top:8px; border-radius:6px; position:relative; overflow:hidden; background-color:#6f6c60; background-image:linear-gradient(25deg,transparent 45%,rgba(255,255,255,.5) 46%,rgba(255,255,255,.5) 48%,transparent 49%),linear-gradient(120deg,transparent 40%,rgba(53,54,47,.65) 41%,rgba(53,54,47,.65) 44%,transparent 45%),repeating-linear-gradient(12deg,rgba(180,177,160,.35) 0 2px,transparent 2px 15px); } .gps-map > span { position:absolute; z-index:2; left:50%; top:52%; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:#2387ed; border:3px solid #d9efff; color:transparent; }
-  .drv-notif-row { display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:6px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); color:#dce1e4; font-size:9px; } .drv-notif-row small { color:#7d8891; font-size:7px; } .drv-see-all { display:block; margin:9px auto 0; background:none; border:0; color:#d0d5d9; font-size:8px; cursor:pointer; }
-  .shortcut-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; } .shortcut-grid button { border:0; background:transparent; color:#f1f3f2; cursor:pointer; min-width:0; } .shortcut-grid b { display:grid; place-items:center; width:46px; height:46px; margin:0 auto 8px; border-radius:10px; font-size:27px; background:#0965d8; color:#fff; } .shortcut-grid button:nth-child(2) b { background:#2d9b36; } .shortcut-grid button:nth-child(3) b { background:#9348b7; } .shortcut-grid button:nth-child(4) b { background:#087f82; } .shortcut-grid span { font-size:7px; font-weight:800; line-height:1.35; }
+  .drv-notif-row { display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:6px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); color:#dce1e4; font-size: calc(9px * var(--drv-fs, 1)); } .drv-notif-row small { color:#7d8891; font-size: calc(7px * var(--drv-fs, 1)); } .drv-see-all { display:block; margin:9px auto 0; background:none; border:0; color:#d0d5d9; font-size: calc(8px * var(--drv-fs, 1)); cursor:pointer; }
+  .shortcut-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; } .shortcut-grid button { border:0; background:transparent; color:#f1f3f2; cursor:pointer; min-width:0; } .shortcut-grid b { display:grid; place-items:center; width:46px; height:46px; margin:0 auto 8px; border-radius:10px; font-size: calc(27px * var(--drv-fs, 1)); background:#0965d8; color:#fff; } .shortcut-grid button:nth-child(2) b { background:#2d9b36; } .shortcut-grid button:nth-child(3) b { background:#9348b7; } .shortcut-grid button:nth-child(4) b { background:#087f82; } .shortcut-grid span { font-size: calc(7px * var(--drv-fs, 1)); font-weight:800; line-height:1.35; }
   .drv-mobile-stats { display:none; }
   .drv-mobile-nav { display:none; } .drv-body { overflow:visible !important; height:auto !important; min-height:0 !important; }
   
@@ -831,7 +823,7 @@ const css = `
       border-left:3px solid transparent !important;
       border-radius:6px !important;
       color:#b9c1ca !important;
-      font-size:10px !important;
+      font-size: calc(10px * var(--drv-fs, 1)) !important;
       font-weight:700 !important;
     }
 
@@ -870,8 +862,8 @@ const css = `
       flex-direction:column !important;
       gap:2px !important;
     }
-    .drv-header-title strong { font-size:17px !important; color:#f6f0e5 !important; }
-    .drv-header-title span { font-size:11px !important; color:rgba(246,240,229,.55) !important; }
+    .drv-header-title strong { font-size: calc(17px * var(--drv-fs, 1)) !important; color:#f6f0e5 !important; }
+    .drv-header-title span { font-size: calc(11px * var(--drv-fs, 1)) !important; color:rgba(246,240,229,.55) !important; }
 
     /* Conservation explicite du sélecteur */
     .drv-header > div[style*="position: relative"] {
@@ -892,18 +884,18 @@ const css = `
       min-width:105px !important;
       padding:0 15px !important;
     }
-    .drv-header-kpi small { font-size:8px !important; }
-    .drv-header-kpi strong { font-size:18px !important; }
+    .drv-header-kpi small { font-size: calc(8px * var(--drv-fs, 1)) !important; }
+    .drv-header-kpi strong { font-size: calc(18px * var(--drv-fs, 1)) !important; }
 
     .drv-header-datetime {
       display:block !important;
       flex:0 0 auto !important;
       margin-left:auto !important;
       min-width:96px !important;
-      font-size:10px !important;
+      font-size: calc(10px * var(--drv-fs, 1)) !important;
       text-align:right !important;
     }
-    .drv-header-datetime strong { font-size:11px !important; }
+    .drv-header-datetime strong { font-size: calc(11px * var(--drv-fs, 1)) !important; }
 
     .drv-header-bell {
       flex:0 0 34px !important;
@@ -922,7 +914,7 @@ const css = `
       border-radius:8px !important;
       background:#07101a !important;
       color:#e0b866 !important;
-      font-size:10px !important;
+      font-size: calc(10px * var(--drv-fs, 1)) !important;
       font-weight:700 !important;
       white-space:nowrap !important;
     }
@@ -986,7 +978,7 @@ const css = `
     .drv-card-head {
       min-height:22px !important;
       margin-bottom:8px !important;
-      font-size:11px !important;
+      font-size: calc(11px * var(--drv-fs, 1)) !important;
     }
     .drv-card-head > span { min-width:0 !important; }
 
@@ -994,7 +986,7 @@ const css = `
       grid-template-columns:100px minmax(0,1fr) !important;
       gap:14px !important;
     }
-    .drv-next-time strong { font-size:31px !important; }
+    .drv-next-time strong { font-size: calc(31px * var(--drv-fs, 1)) !important; }
     .drv-next-route { min-width:0 !important; }
     .drv-next-route strong,
     .drv-day-row span,
@@ -1049,11 +1041,11 @@ const css = `
       width:42px !important;
       height:42px !important;
       flex:0 0 42px !important;
-      font-size:17px !important;
+      font-size: calc(17px * var(--drv-fs, 1)) !important;
     }
 
-    .drv-header-title strong { font-size:16px !important; }
-    .drv-header-title span { font-size:10px !important; }
+    .drv-header-title strong { font-size: calc(16px * var(--drv-fs, 1)) !important; }
+    .drv-header-title span { font-size: calc(10px * var(--drv-fs, 1)) !important; }
 
     .drv-header-live {
       margin-left:auto !important;
@@ -1067,8 +1059,8 @@ const css = `
     .drv-header-kpi small {  }
     .drv-header-kpi strong {  }
 
-    .drv-header-datetime { display:block !important; font-size:9px !important; }
-    .drv-header-datetime strong { font-size:10px !important; }
+    .drv-header-datetime { display:block !important; font-size: calc(9px * var(--drv-fs, 1)) !important; }
+    .drv-header-datetime strong { font-size: calc(10px * var(--drv-fs, 1)) !important; }
 
     .drv-tabs {
       position:sticky !important;
@@ -1097,7 +1089,7 @@ const css = `
       border-left:0 !important;
       border-bottom:3px solid transparent !important;
       border-radius:0 !important;
-      font-size:9px !important;
+      font-size: calc(9px * var(--drv-fs, 1)) !important;
     }
 
     .drv-tab.active {
@@ -1150,8 +1142,8 @@ const css = `
     .drv-header-back { display:flex !important; }
     .drv-header > div[style*="position: relative"] { display:block !important; }
     .drv-header-kpi { min-width:78px !important; padding:0 7px !important; }
-    .drv-header-kpi small { font-size:7px !important; }
-    .drv-header-kpi strong { font-size:14px !important; }
+    .drv-header-kpi small { font-size: calc(7px * var(--drv-fs, 1)) !important; }
+    .drv-header-kpi strong { font-size: calc(14px * var(--drv-fs, 1)) !important; }
     .drv-dashboard-grid-top { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
     .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
   
@@ -1171,7 +1163,7 @@ const css = `
 
   /* Bouton "activer les notifications" du header (visible tant que la
      permission n'est pas accordée). */
-  .drv-header-pushbtn { display:inline-flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; font-size:11.5px; font-weight:800; white-space:nowrap; cursor:pointer; flex:0 0 auto; }
+  .drv-header-pushbtn { display:inline-flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; font-size: calc(11.5px * var(--drv-fs, 1)); font-weight:800; white-space:nowrap; cursor:pointer; flex:0 0 auto; }
   .drv-header-pushbtn:disabled { opacity:.6; cursor:progress; }
 
   /* Rangée d'actions rapides ("Activer les notifications" / "Retour au
@@ -1179,7 +1171,7 @@ const css = `
      "Prochaine course" — indépendante du header pour ne pas hériter de ses
      règles responsive (qui masquent certains éléments sur mobile). */
   .drv-quick-actions { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
-  .drv-quick-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 14px; border-radius:9px; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; text-decoration:none; }
+  .drv-quick-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 14px; border-radius:9px; font-size: calc(12.5px * var(--drv-fs, 1)); font-weight:700; white-space:nowrap; cursor:pointer; text-decoration:none; }
   .drv-quick-btn svg { width:15px; height:15px; flex-shrink:0; }
   .drv-quick-btn-notif { border:1px solid #c99b4a; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; }
   .drv-quick-btn-notif:disabled { cursor:progress; opacity:.7; }
@@ -1191,23 +1183,23 @@ const css = `
   /* Mobile : on conserve « Retour au site » et l'activation des notifications
      (uniquement l'icône pour tenir dans la barre). */
   @media (max-width:700px) {
-    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50;    } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size:16px; } .drv-header-title strong { font-size:12px !important; } .drv-header-title span { font-size:8px !important; } .drv-header-live {    } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell {   border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content {   min-height:0 !important; } .drv-dashboard {  } .drv-dashboard-grid-top {    } .drv-next-card {    } .drv-next-layout {   padding-bottom:9px; } .drv-next-time strong { font-size:24px; } .drv-next-time span { font-size:8px; margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size:10px; } .drv-next-route small { font-size:7px; } .drv-next-meta { font-size:7px; padding:8px 0; gap:5px; } .drv-next-meta small { font-size:6.5px; } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size:7px; padding:6px; } .drv-card-head { font-size:9px; margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card {    } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size:7.5px; } .drv-day-row em { font-size:6px; } .drv-mobile-stats {     } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size:12px; } .drv-mobile-stats span { display:block; color:#7e8993; font-size:6px; margin-top:3px; letter-spacing:.04em; }
-    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0;  padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:7px; font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size:7px; }
+    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50;    } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size: calc(16px * var(--drv-fs, 1)); } .drv-header-title strong { font-size: calc(12px * var(--drv-fs, 1)) !important; } .drv-header-title span { font-size: calc(8px * var(--drv-fs, 1)) !important; } .drv-header-live {    } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell {   border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content {   min-height:0 !important; } .drv-dashboard {  } .drv-dashboard-grid-top {    } .drv-next-card {    } .drv-next-layout {   padding-bottom:9px; } .drv-next-time strong { font-size: calc(24px * var(--drv-fs, 1)); } .drv-next-time span { font-size: calc(8px * var(--drv-fs, 1)); margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size: calc(10px * var(--drv-fs, 1)); } .drv-next-route small { font-size: calc(7px * var(--drv-fs, 1)); } .drv-next-meta { font-size: calc(7px * var(--drv-fs, 1)); padding:8px 0; gap:5px; } .drv-next-meta small { font-size: calc(6.5px * var(--drv-fs, 1)); } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size: calc(7px * var(--drv-fs, 1)); padding:6px; } .drv-card-head { font-size: calc(9px * var(--drv-fs, 1)); margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card {    } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size: calc(7.5px * var(--drv-fs, 1)); } .drv-day-row em { font-size: calc(6px * var(--drv-fs, 1)); } .drv-mobile-stats {     } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size: calc(12px * var(--drv-fs, 1)); } .drv-mobile-stats span { display:block; color:#7e8993; font-size: calc(6px * var(--drv-fs, 1)); margin-top:3px; letter-spacing:.04em; }
+    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0;  padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size: calc(7px * var(--drv-fs, 1)); font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size: calc(7px * var(--drv-fs, 1)); }
     .drv-body { overflow:visible !important; -webkit-overflow-scrolling:auto !important; touch-action:auto !important; padding:8px 0 28px !important; } .drv-body * { touch-action:auto; }
   
 
     .drv-mobile-drawer-backdrop { position:fixed; inset:0; z-index:110; display:block; background:rgba(0,0,0,.62); }
     .drv-mobile-drawer { position:fixed; top:0; right:0; bottom:0; z-index:111; display:flex; width:min(86vw,340px); flex-direction:column; gap:5px; overflow-y:auto; padding:calc(env(safe-area-inset-top,0px) + 18px) 14px calc(env(safe-area-inset-bottom,0px) + 84px); background:#050a10; border-left:1px solid rgba(201,155,74,.45); box-shadow:-18px 0 40px rgba(0,0,0,.35); }
-    .drv-mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 14px; margin-bottom:4px; border-bottom:1px solid rgba(201,155,74,.25); color:#e0b866; font-size:13px; font-weight:800; }
-    .drv-mobile-drawer-close { width:34px; height:34px; border:1px solid rgba(201,155,74,.45); border-radius:7px; background:#07101a; color:#e0b866; font-size:20px; cursor:pointer; }
-    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 12px; border:1px solid transparent; border-radius:7px; background:transparent; color:#b9c1ca; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
+    .drv-mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 14px; margin-bottom:4px; border-bottom:1px solid rgba(201,155,74,.25); color:#e0b866; font-size: calc(13px * var(--drv-fs, 1)); font-weight:800; }
+    .drv-mobile-drawer-close { width:34px; height:34px; border:1px solid rgba(201,155,74,.45); border-radius:7px; background:#07101a; color:#e0b866; font-size: calc(20px * var(--drv-fs, 1)); cursor:pointer; }
+    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 12px; border:1px solid transparent; border-radius:7px; background:transparent; color:#b9c1ca; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; text-align:left; cursor:pointer; }
     .drv-mobile-drawer button.active { color:#fff; background:rgba(201,155,74,.14); border-color:rgba(201,155,74,.35); }
     .drv-mobile-drawer svg { width:19px; height:19px; flex:0 0 auto; color:#e0b866; }
     .drv-mobile-drawer .drv-tab-count { margin-left:auto; }
   
 
     .drv-identity-switcher { display:flex !important; flex:1 1 auto !important; max-width:260px !important; }
-    .drv-identity-switcher > button { width:100% !important; justify-content:center !important; height:40px !important; min-height:40px !important; padding:9px 16px !important; font-size:14px !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
+    .drv-identity-switcher > button { width:100% !important; justify-content:center !important; height:40px !important; min-height:40px !important; padding:9px 16px !important; font-size: calc(14px * var(--drv-fs, 1)) !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
   
 
  #root { overflow:visible !important; } .drv-root { overflow:visible !important; } .drv-main,.drv-content { overflow:visible !important; } 
@@ -1224,7 +1216,7 @@ const css = `
       width:34px !important;
       height:34px !important;
       flex:0 0 34px !important;
-      font-size:15px !important;
+      font-size: calc(15px * var(--drv-fs, 1)) !important;
     }
 
     /* Dans la maquette téléphone, le nom n'occupe pas la barre du haut :
@@ -1234,7 +1226,7 @@ const css = `
     .drv-header-live {
       margin-left:auto !important;
       padding:4px 7px !important;
-      font-size:7px !important;
+      font-size: calc(7px * var(--drv-fs, 1)) !important;
     }
 
     .drv-header-bell {
@@ -1333,12 +1325,12 @@ const css = `
     .drv-dashboard-grid-bottom { margin-top:8px !important; }
   
 
-    .drv-quick-btn { height:33px; padding:0 11px; font-size:11.5px; }
+    .drv-quick-btn { height:33px; padding:0 11px; font-size: calc(11.5px * var(--drv-fs, 1)); }
   
 
     .drv-header-back { display:inline-flex !important; width:31px !important; height:31px !important; padding:0 !important; justify-content:center !important; }
     .drv-header-back .drv-header-back-label { display:none !important; }
-    .drv-header-pushbtn { height:31px !important; padding:0 8px !important; font-size:10px !important; }
+    .drv-header-pushbtn { height:31px !important; padding:0 8px !important; font-size: calc(10px * var(--drv-fs, 1)) !important; }
   
 }
 
@@ -1354,7 +1346,7 @@ const css = `
 .drv-dash-back {
   display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px;
   color: #e0b866; background: none; border: 1px solid rgba(201,155,74,.5); border-radius: 999px;
-  padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+  padding: 8px 14px; font-size: calc(12px * var(--drv-fs, 1)); font-weight: 700; cursor: pointer;
 }
 .drv-dash-back svg { width: 15px; height: 15px; }
 
@@ -1367,10 +1359,10 @@ const css = `
 .drv-dash-ico { flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0a1118; }
 .drv-dash-ico svg { width: 18px; height: 18px; }
 .drv-dash-txt { min-width: 0; flex: 1; }
-.drv-dash-txt strong { display: block; font-size: 14px; font-weight: 700; }
-.drv-dash-txt span { display: block; font-size: 12px; color: rgba(246,240,229,.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.drv-dash-plus { font-size: 20px; color: rgba(246,240,229,.45); }
-.drv-dash-badge { min-width: 20px; height: 20px; border-radius: 10px; background: #e11d48; color: #fff; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; }
+.drv-dash-txt strong { display: block; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 700; }
+.drv-dash-txt span { display: block; font-size: calc(12px * var(--drv-fs, 1)); color: rgba(246,240,229,.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drv-dash-plus { font-size: calc(20px * var(--drv-fs, 1)); color: rgba(246,240,229,.45); }
+.drv-dash-badge { min-width: 20px; height: 20px; border-radius: 10px; background: #e11d48; color: #fff; font-size: calc(11px * var(--drv-fs, 1)); font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; }
 .drv-dash-map { margin-top: 14px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(246,240,229,.12); }
 
 `;
@@ -2447,14 +2439,14 @@ function DriverIdentitySwitcher({
           borderRadius: 999,
           padding: "5px 11px 5px 9px",
           color: "#FDFBF7",
-          fontSize: 12,
+          fontSize: "calc(12px * var(--drv-fs, 1))",
           fontWeight: 700,
           cursor: "pointer",
           minHeight: 32,
         }}
       >
         👤 {driverId === "patricia" ? "Patricia" : driverId === "alain" ? "Alain" : "Choisir"}
-        <span style={{ fontSize: 9, opacity: 0.8 }}>▾</span>
+        <span style={{ fontSize: "calc(9px * var(--drv-fs, 1))", opacity: 0.8 }}>▾</span>
       </button>
       {open && (
         <div
@@ -2496,7 +2488,7 @@ function DriverIdentitySwitcher({
                 background: driverId === d.id ? "#f1f5f9" : "#FDFBF7",
                 color: "#0f172a",
                 fontWeight: 700,
-                fontSize: 14,
+                fontSize: "calc(14px * var(--drv-fs, 1))",
                 cursor: busy ? "wait" : "pointer",
                 minHeight: 40,
               }}
@@ -2505,7 +2497,9 @@ function DriverIdentitySwitcher({
               {driverId === d.id ? " ✓" : ""}
             </button>
           ))}
-          {error && <div style={{ color: "#dc2626", fontSize: 12, padding: "0 2px" }}>{error}</div>}
+          {error && (
+            <div style={{ color: "#dc2626", fontSize: "calc(12px * var(--drv-fs, 1))", padding: "0 2px" }}>{error}</div>
+          )}
         </div>
       )}
     </div>
@@ -2773,9 +2767,11 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
           textAlign: "left",
         }}
       >
-        <span style={{ fontSize: 15 }}>🗺️</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#f6f0e5" }}>Équipe</span>
-        <span style={{ marginLeft: "auto", fontSize: 11.5, color: "rgba(246,240,229,.55)" }}>
+        <span style={{ fontSize: "calc(15px * var(--drv-fs, 1))" }}>🗺️</span>
+        <span style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 700, color: "#f6f0e5" }}>Équipe</span>
+        <span
+          style={{ marginLeft: "auto", fontSize: "calc(11.5px * var(--drv-fs, 1))", color: "rgba(246,240,229,.55)" }}
+        >
           {distKm != null ? `${distKm.toFixed(1)} km entre vous` : `${pts.length}/2 en ligne`} {open ? "▲" : "▼"}
         </span>
       </button>
@@ -2793,7 +2789,9 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
             <div ref={mapRef} style={{ width: "100%", height: 220, background: "#0b1520" }} />
           </div>
           {(pts.length === 0 || mapError) && (
-            <div style={{ fontSize: 12.5, color: "rgba(246,240,229,.55)", marginBottom: 10 }}>
+            <div
+              style={{ fontSize: "calc(12.5px * var(--drv-fs, 1))", color: "rgba(246,240,229,.55)", marginBottom: 10 }}
+            >
               {mapError ?? "Aucune position partagée pour l'instant — activez le GPS."}
             </div>
           )}
@@ -2815,7 +2813,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
-                  fontSize: 12.5,
+                  fontSize: "calc(12.5px * var(--drv-fs, 1))",
                   color: "#f6f0e5",
                   padding: "6px 10px",
                   marginBottom: 6,
@@ -2862,7 +2860,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
                       border: gps.state === "on" ? "1px solid #8b3a3a" : "none",
                       borderRadius: 8,
                       padding: "5px 10px",
-                      fontSize: 11.5,
+                      fontSize: "calc(11.5px * var(--drv-fs, 1))",
                       fontWeight: 700,
                       cursor: "pointer",
                       whiteSpace: "nowrap",
@@ -2876,7 +2874,7 @@ function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTrack
           })}
 
           {distKm != null && (
-            <div style={{ fontSize: 12, color: "rgba(246,240,229,.55)", marginTop: 8 }}>
+            <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "rgba(246,240,229,.55)", marginTop: 8 }}>
               📏 ≈ {distKm.toFixed(1)} km à vol d'oiseau entre vous — trop loin pour une course ? Passez-la depuis
               l'onglet Courses.
             </div>
@@ -3122,7 +3120,7 @@ function CoursesTab({
   if (loading)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14 }}>Chargement…</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
       </div>
     );
 
@@ -3178,7 +3176,7 @@ function CoursesTab({
     border: "1px solid " + (active ? "var(--background)" : "var(--border)"),
     background: active ? "var(--background)" : "#FDFBF7",
     color: active ? "var(--gold)" : "#334155",
-    fontSize: 12,
+    fontSize: "calc(12px * var(--drv-fs, 1))",
     fontWeight: 700,
     cursor: "pointer",
     minHeight: 36,
@@ -3216,7 +3214,7 @@ function CoursesTab({
             border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "9px 12px",
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             minHeight: 40,
           }}
         />
@@ -3228,7 +3226,7 @@ function CoursesTab({
             border: "1px solid var(--border)",
             borderRadius: 12,
             padding: "9px 10px",
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             minHeight: 40,
           }}
         />
@@ -3280,7 +3278,7 @@ function CoursesTab({
         >
           <span
             style={{
-              fontSize: 11.5,
+              fontSize: "calc(11.5px * var(--drv-fs, 1))",
               fontWeight: 800,
               letterSpacing: 0.3,
               padding: "3px 9px",
@@ -3300,7 +3298,7 @@ function CoursesTab({
                 border: "1px solid var(--border)",
                 borderRadius: 8,
                 padding: "4px 9px",
-                fontSize: 11.5,
+                fontSize: "calc(11.5px * var(--drv-fs, 1))",
                 fontWeight: 700,
                 color: "#334155",
                 cursor: "pointer",
@@ -3331,8 +3329,8 @@ function CoursesTab({
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <polyline points="22 4 12 14.01 9 11.01" />
           </svg>
-          <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune course en attente</div>
-          <div style={{ fontSize: 12, marginTop: 4 }}>
+          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucune course en attente</div>
+          <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", marginTop: 4 }}>
             {onlyMine && otherCount > 0 ? `${otherCount} course(s) pour l'autre chauffeur` : "Tout est à jour ✓"}
           </div>
         </div>
@@ -4023,11 +4021,13 @@ function CourseCard({
             style={{ width: 46, height: 32, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
           />
           <div style={{ minWidth: 0 }}>
-            <strong style={{ display: "block", fontSize: 12, color: "#e0b866" }}>VÉHICULE</strong>
+            <strong style={{ display: "block", fontSize: "calc(12px * var(--drv-fs, 1))", color: "#e0b866" }}>
+              VÉHICULE
+            </strong>
             <span
               style={{
                 display: "block",
-                fontSize: 12,
+                fontSize: "calc(12px * var(--drv-fs, 1))",
                 fontWeight: 700,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -4048,7 +4048,7 @@ function CourseCard({
             minWidth: 120,
             borderRadius: 12,
             padding: "11px 10px",
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             fontWeight: 800,
             cursor: "pointer",
             minHeight: 44,
@@ -4162,7 +4162,7 @@ function CourseCard({
         >
           <label
             style={{
-              fontSize: 12,
+              fontSize: "calc(12px * var(--drv-fs, 1))",
               fontWeight: 700,
               color: "#c99b4a",
               display: "block",
@@ -4187,7 +4187,7 @@ function CourseCard({
                 borderRadius: 10,
                 border: "1px solid rgba(201,155,74,.45)",
                 background: "#0b1220",
-                fontSize: 16,
+                fontSize: "calc(16px * var(--drv-fs, 1))",
                 fontWeight: 600,
                 color: "#FDFBF7",
                 outline: "none",
@@ -4203,7 +4203,7 @@ function CourseCard({
                 background: "#c99b4a",
                 color: "#03070d",
                 fontWeight: 700,
-                fontSize: 13,
+                fontSize: "calc(13px * var(--drv-fs, 1))",
                 cursor: finalPrixSaving ? "not-allowed" : "pointer",
                 opacity: finalPrixSaving ? 0.6 : 1,
               }}
@@ -4211,7 +4211,7 @@ function CourseCard({
               {finalPrixSaving ? "…" : "Valider"}
             </button>
           </div>
-          <div style={{ fontSize: 11, color: "#FDFBF799", marginTop: 6 }}>
+          <div style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#FDFBF799", marginTop: 6 }}>
             Facultatif ici : enregistré tout de suite si vous cliquez « Valider », sinon repris automatiquement au clic
             sur « ✓ Terminée ».
           </div>
@@ -4230,10 +4230,12 @@ function CourseCard({
               borderRadius: 12,
             }}
           >
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}>
+            <div
+              style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}
+            >
               💶 Tarif final (compteur)
             </div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#FDFBF7" }}>
+            <div style={{ fontSize: "calc(20px * var(--drv-fs, 1))", fontWeight: 800, color: "#FDFBF7" }}>
               {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
             </div>
           </div>
@@ -4248,7 +4250,7 @@ function CourseCard({
             background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
             border: "1px solid #f59e0b",
             borderRadius: 12,
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             color: "#78350f",
             lineHeight: 1.45,
           }}
@@ -4260,7 +4262,7 @@ function CourseCard({
               justifyContent: "space-between",
               gap: 8,
               marginBottom: 4,
-              fontSize: 11,
+              fontSize: "calc(11px * var(--drv-fs, 1))",
               fontWeight: 700,
               letterSpacing: "0.05em",
               textTransform: "uppercase",
@@ -4281,7 +4283,7 @@ function CourseCard({
                 borderRadius: 999,
                 background: "#fee2e2",
                 color: "#991b1b",
-                fontSize: 11,
+                fontSize: "calc(11px * var(--drv-fs, 1))",
                 fontWeight: 700,
               }}
               title={`${unreadByClient} message(s) chauffeur non lu(s) par le client`}
@@ -4305,7 +4307,7 @@ function CourseCard({
             border: "1px solid #334155",
             borderRadius: "10px 10px 0 0",
             color: "#E8C96D",
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             fontWeight: 700,
             padding: "8px 12px",
           }}
@@ -4322,7 +4324,7 @@ function CourseCard({
                 borderRadius: 10,
                 background: "#ef4444",
                 color: "#FDFBF7",
-                fontSize: 11,
+                fontSize: "calc(11px * var(--drv-fs, 1))",
                 fontWeight: 800,
                 display: "inline-flex",
                 alignItems: "center",
@@ -4334,7 +4336,7 @@ function CourseCard({
           ) : (
             <span
               style={{
-                fontSize: 10,
+                fontSize: "calc(10px * var(--drv-fs, 1))",
                 color: "#E8C96D99",
                 fontWeight: 600,
                 letterSpacing: "0.02em",
@@ -4399,7 +4401,14 @@ function CourseCard({
 
           {/* Itinéraires */}
           {loadingRoutes && (
-            <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "10px 0" }}>
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "calc(13px * var(--drv-fs, 1))",
+                color: "#64748b",
+                padding: "10px 0",
+              }}
+            >
               Calcul des itinéraires…
             </div>
           )}
@@ -4485,7 +4494,7 @@ function CourseCard({
                 borderRadius: 12,
                 padding: "10px",
                 fontWeight: 700,
-                fontSize: 12.5,
+                fontSize: "calc(12.5px * var(--drv-fs, 1))",
                 textDecoration: "none",
                 color: "#0f172a",
               };
@@ -4560,7 +4569,7 @@ function CourseCard({
                   border: "1px solid #e2e8f0",
                   borderRadius: 12,
                   padding: "10px 14px",
-                  fontSize: 13,
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
                   fontWeight: 600,
                   color: "#0f172a",
                   cursor: "pointer",
@@ -4591,7 +4600,7 @@ function CourseCard({
                       padding: "12px 14px",
                       borderRadius: 10,
                       border: "1px solid var(--border)",
-                      fontSize: 16,
+                      fontSize: "calc(16px * var(--drv-fs, 1))",
                       marginBottom: 8,
                       fontFamily: "'DM Sans', sans-serif",
                       background: "#FDFBF7fff",
@@ -4616,7 +4625,7 @@ function CourseCard({
                         color: "#7e22ce",
                         borderRadius: 10,
                         padding: "8px",
-                        fontSize: 12,
+                        fontSize: "calc(12px * var(--drv-fs, 1))",
                         fontWeight: 700,
                         cursor: "pointer",
                       }}
@@ -4634,7 +4643,7 @@ function CourseCard({
                         color: "#15803d",
                         borderRadius: 10,
                         padding: "8px",
-                        fontSize: 12,
+                        fontSize: "calc(12px * var(--drv-fs, 1))",
                         fontWeight: 700,
                         cursor: "pointer",
                       }}
@@ -4652,7 +4661,7 @@ function CourseCard({
                         color: "#92400e",
                         borderRadius: 10,
                         padding: "8px",
-                        fontSize: 12,
+                        fontSize: "calc(12px * var(--drv-fs, 1))",
                         fontWeight: 700,
                         cursor: "pointer",
                       }}
@@ -4673,7 +4682,7 @@ function CourseCard({
                   border: "1px solid #e2e8f0",
                   borderRadius: 12,
                   padding: "10px 14px",
-                  fontSize: 13,
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
                   fontWeight: 600,
                   color: "#0f172a",
                   cursor: "pointer",
@@ -4693,7 +4702,7 @@ function CourseCard({
                       padding: "10px 12px",
                       borderRadius: 10,
                       border: "1px solid #e2e8f0",
-                      fontSize: 16,
+                      fontSize: "calc(16px * var(--drv-fs, 1))",
                       fontFamily: "'DM Sans', sans-serif",
                     }}
                   />
@@ -4784,7 +4793,7 @@ function CourseCard({
                         border: "none",
                         borderRadius: 12,
                         padding: "13px 8px",
-                        fontSize: 14,
+                        fontSize: "calc(14px * var(--drv-fs, 1))",
                         fontWeight: 700,
                         cursor: "pointer",
                         fontFamily: "'DM Sans', sans-serif",
@@ -4809,7 +4818,7 @@ function CourseCard({
                 color: "#1d4ed8",
                 borderRadius: 12,
                 padding: "12px",
-                fontSize: 14,
+                fontSize: "calc(14px * var(--drv-fs, 1))",
                 fontWeight: 800,
                 cursor: "pointer",
                 marginBottom: 10,
@@ -4830,7 +4839,7 @@ function CourseCard({
                 color: "#6d28d9",
                 borderRadius: 12,
                 padding: "12px",
-                fontSize: 14,
+                fontSize: "calc(14px * var(--drv-fs, 1))",
                 fontWeight: 800,
                 cursor: "pointer",
                 marginBottom: 10,
@@ -4851,7 +4860,7 @@ function CourseCard({
                 color: "#15803d",
                 borderRadius: 12,
                 padding: "12px",
-                fontSize: 14,
+                fontSize: "calc(14px * var(--drv-fs, 1))",
                 fontWeight: 800,
                 cursor: "pointer",
                 marginBottom: 10,
@@ -4871,7 +4880,7 @@ function CourseCard({
               background: "none",
               border: "none",
               color: "#b91c1c",
-              fontSize: 11.5,
+              fontSize: "calc(11.5px * var(--drv-fs, 1))",
               fontWeight: 600,
               cursor: "pointer",
               padding: "6px 0",
@@ -4890,7 +4899,7 @@ function CourseCard({
           background: "none",
           border: "none",
           color: "#94a3b8",
-          fontSize: 12,
+          fontSize: "calc(12px * var(--drv-fs, 1))",
           cursor: "pointer",
           padding: "4px 0",
         }}
@@ -4941,7 +4950,7 @@ function PlanningTab() {
   if (loading)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14 }}>Chargement…</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
       </div>
     );
 
@@ -4961,7 +4970,7 @@ function PlanningTab() {
       </p>
       {courses.length === 0 ? (
         <div className="drv-empty">
-          <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune course aujourd'hui</div>
+          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucune course aujourd'hui</div>
         </div>
       ) : (
         courses.map((r) => (
@@ -4972,11 +4981,11 @@ function PlanningTab() {
               className={`drv-planning-card${["terminee", "completed"].includes(r.status) ? " done" : ""}`}
               style={{ opacity: ["terminee", "completed"].includes(r.status) ? 0.5 : 1 }}
             >
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a" }}>
+              <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 600, color: "#0f172a" }}>
                 <div>📍 {r.depart}</div>
                 <div style={{ color: "#16a34a" }}>🏁 {r.destination}</div>
               </div>
-              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
                 {r.distance_km ? `${r.distance_km} km · ` : ""}
                 {((r as any).final_price ?? r.prix_estime)
                   ? `${Number((r as any).final_price ?? r.prix_estime).toFixed(2)} €`
@@ -5069,6 +5078,59 @@ function SwipeToDeleteCard({
 }
 
 // ── Onglet Avis ────────────────────────────────────────────────────────────
+/** Date/heure ISO -> valeur pour <input type="datetime-local"> (heure locale). */
+function toLocalInput(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+/**
+ * Sous chaque avis (nouveau ou ancien) : date affichée + champ date/heure + bouton
+ * « Changer la date ». Pas de popup : l'enregistrement est direct.
+ */
+function AvisDateRow({ avis, busy, onSave }: { avis: Avis; busy: boolean; onSave: (value: string) => void }) {
+  const [value, setValue] = useState(() => toLocalInput(avis.created_at));
+  useEffect(() => {
+    setValue(toLocalInput(avis.created_at));
+  }, [avis.created_at]);
+  const invalid = !value || Number.isNaN(new Date(value).getTime());
+  const unchanged = value === toLocalInput(avis.created_at);
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 6 }}>
+        Date de l'avis :{" "}
+        {new Date(avis.created_at).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" })}
+      </div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <input
+          type="datetime-local"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          aria-label="Nouvelle date de l'avis"
+          style={{
+            flex: "1 1 190px",
+            minHeight: 42,
+            borderRadius: 10,
+            border: "1px solid #cbd5e1",
+            padding: "8px 10px",
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        />
+        <button
+          type="button"
+          className="drv-btn-secondary"
+          style={{ flex: "1 1 150px", minHeight: 42, borderRadius: 10, fontWeight: 700, cursor: "pointer" }}
+          disabled={busy || invalid || unchanged}
+          onClick={() => onSave(value)}
+        >
+          {busy ? "…" : "📅 Changer la date"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   const [pending, setPending] = useState<Avis[]>([]);
   const [published, setPublished] = useState<Avis[]>([]);
@@ -5161,6 +5223,29 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
     }
   };
 
+  // Change la date d'un avis (statut inchangé). Envoie created_at à l'API des avis.
+  const changeDate = async (a: Avis, status: "pending" | "approved" | "flagged", value: string) => {
+    const when = new Date(value);
+    if (Number.isNaN(when.getTime())) return;
+    setBusy(a.id);
+    try {
+      const response = await fetch("/api/public/reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-driver-token": getDriverToken() },
+        body: JSON.stringify({ id: a.id, status, created_at: when.toISOString() }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "modification de la date impossible");
+      toast.success("Date de l'avis modifiée");
+      load();
+      broadcastDriverFeed("review-moderated");
+    } catch (e: any) {
+      toast.error("Erreur : " + (e.message ?? e));
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const avgNote =
     published.length > 0 ? (published.reduce((s, a) => s + a.note, 0) / published.length).toFixed(1) : null;
 
@@ -5184,7 +5269,16 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
               <div style={{ marginBottom: 6 }}>
                 <Stars n={a.note} />
               </div>
-              <p style={{ fontSize: 13, color: "#334155", margin: "0 0 12px", lineHeight: 1.5 }}>"{a.commentaire}"</p>
+              <p
+                style={{
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
+                  color: "#334155",
+                  margin: "0 0 12px",
+                  lineHeight: 1.5,
+                }}
+              >
+                "{a.commentaire}"
+              </p>
               <div className="drv-btns">
                 <button className="drv-btn-danger" disabled={!!busy} onClick={() => moderate(a.id, "refused")}>
                   {busy === a.id ? "…" : "Refuser"}
@@ -5201,6 +5295,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                   {busy === a.id ? "…" : "⚑ Signaler"}
                 </button>
               </div>
+              <AvisDateRow avis={a} busy={busy === a.id} onSave={(v) => changeDate(a, "pending", v)} />
             </SwipeToDeleteCard>
           ))}
           <hr className="drv-divider" />
@@ -5224,7 +5319,16 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
               <div style={{ marginBottom: 6 }}>
                 <Stars n={a.note} />
               </div>
-              <p style={{ fontSize: 13, color: "#334155", margin: "0 0 12px", lineHeight: 1.5 }}>"{a.commentaire}"</p>
+              <p
+                style={{
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
+                  color: "#334155",
+                  margin: "0 0 12px",
+                  lineHeight: 1.5,
+                }}
+              >
+                "{a.commentaire}"
+              </p>
               <div className="drv-btns">
                 <button className="drv-btn-danger" disabled={!!busy} onClick={() => removeAvis(a.id)}>
                   {busy === a.id ? "…" : "Supprimer"}
@@ -5233,6 +5337,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                   {busy === a.id ? "…" : "Remettre en attente"}
                 </button>
               </div>
+              <AvisDateRow avis={a} busy={busy === a.id} onSave={(v) => changeDate(a, "flagged", v)} />
             </SwipeToDeleteCard>
           ))}
           <hr className="drv-divider" />
@@ -5242,7 +5347,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
       <p className="drv-section">Avis publiés</p>
       {published.length === 0 ? (
         <div className="drv-empty">
-          <div style={{ fontSize: 13 }}>Aucun avis publié</div>
+          <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))" }}>Aucun avis publié</div>
         </div>
       ) : (
         <>
@@ -5261,7 +5366,16 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 <div style={{ marginBottom: 4 }}>
                   <Stars n={a.note} />
                 </div>
-                <p style={{ fontSize: 13, color: "#475569", margin: "0 0 8px", lineHeight: 1.5 }}>"{a.commentaire}"</p>
+                <p
+                  style={{
+                    fontSize: "calc(13px * var(--drv-fs, 1))",
+                    color: "#475569",
+                    margin: "0 0 8px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  "{a.commentaire}"
+                </p>
                 <button
                   onClick={() => removeAvis(a.id)}
                   disabled={busy === a.id}
@@ -5269,7 +5383,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                     background: "none",
                     border: "none",
                     color: "#b91c1c",
-                    fontSize: 11.5,
+                    fontSize: "calc(11.5px * var(--drv-fs, 1))",
                     fontWeight: 600,
                     cursor: "pointer",
                     padding: 0,
@@ -5284,7 +5398,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                     background: "none",
                     border: "none",
                     color: "#b45309",
-                    fontSize: 11.5,
+                    fontSize: "calc(11.5px * var(--drv-fs, 1))",
                     fontWeight: 600,
                     cursor: "pointer",
                     padding: 0,
@@ -5293,6 +5407,7 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 >
                   {busy === a.id ? "…" : "⚑ Signaler"}
                 </button>
+                <AvisDateRow avis={a} busy={busy === a.id} onSave={(v) => changeDate(a, "approved", v)} />
               </div>
             </SwipeToDeleteCard>
           ))}
@@ -5305,9 +5420,13 @@ function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 borderTop: "1px solid #f1f5f9",
               }}
             >
-              <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 4 }}>Note moyenne publiée</div>
-              <div style={{ fontSize: 36, fontWeight: 800, color: "#0f172a" }}>{avgNote}</div>
-              <div style={{ fontSize: 22, color: "#f59e0b" }}>★★★★★</div>
+              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#94a3b8", marginBottom: 4 }}>
+                Note moyenne publiée
+              </div>
+              <div style={{ fontSize: "calc(36px * var(--drv-fs, 1))", fontWeight: 800, color: "#0f172a" }}>
+                {avgNote}
+              </div>
+              <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", color: "#f59e0b" }}>★★★★★</div>
             </div>
           )}
         </>
@@ -5423,7 +5542,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   if (loading)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14 }}>Chargement…</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
       </div>
     );
 
@@ -5437,7 +5556,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
   if (items.length === 0)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14, fontWeight: 600 }}>Aucune demande de devis</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucune demande de devis</div>
       </div>
     );
 
@@ -5475,7 +5594,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 <span>📍 {d.depart}</span>
                 <span>🏁 {d.arrivee}</span>
               </div>
-              <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>
+              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", marginTop: 4 }}>
                 {d.date_souhaitee ? `${d.date_souhaitee} ` : ""}
                 {d.heure_souhaitee ?? ""}
                 {d.aller_retour ? " · aller-retour" : ""}
@@ -5483,7 +5602,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 {d.passagers} pers.{d.bagages ? ` · ${d.bagages} bagage(s)` : ""}
               </div>
               {(d.transport_sanitaire || d.fauteuil_roulant || d.transport_groupe || d.sieges_enfant) && (
-                <div style={{ fontSize: 12, color: "#b45309", marginTop: 4 }}>
+                <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#b45309", marginTop: 4 }}>
                   {[
                     d.transport_sanitaire && "Transport sanitaire",
                     d.fauteuil_roulant && "Fauteuil roulant",
@@ -5495,9 +5614,18 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                 </div>
               )}
               {d.precisions && (
-                <p style={{ fontSize: 13, color: "#334155", margin: "8px 0 0", lineHeight: 1.5 }}>{d.precisions}</p>
+                <p
+                  style={{
+                    fontSize: "calc(13px * var(--drv-fs, 1))",
+                    color: "#334155",
+                    margin: "8px 0 0",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {d.precisions}
+                </p>
               )}
-              <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 6 }}>
+              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#94a3b8", marginTop: 6 }}>
                 ✉️ {d.email}
                 {d.telephone ? ` · ☎ ${d.telephone}` : ""}
               </div>
@@ -5517,7 +5645,9 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
             {isOpen && (
               <>
                 <hr className="drv-divider" />
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#475569" }}>Prix proposé (€)</label>
+                <label style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 700, color: "#475569" }}>
+                  Prix proposé (€)
+                </label>
                 <input
                   type="text"
                   inputMode="decimal"
@@ -5531,10 +5661,12 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                     padding: "10px 12px",
                     borderRadius: 10,
                     border: "1px solid #e2e8f0",
-                    fontSize: 14,
+                    fontSize: "calc(14px * var(--drv-fs, 1))",
                   }}
                 />
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#475569" }}>Réponse au client</label>
+                <label style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 700, color: "#475569" }}>
+                  Réponse au client
+                </label>
                 <textarea
                   value={draft.reponse}
                   onChange={(e) => setDraft(d, { reponse: e.target.value })}
@@ -5547,7 +5679,7 @@ function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
                     padding: "10px 12px",
                     borderRadius: 10,
                     border: "1px solid #e2e8f0",
-                    fontSize: 14,
+                    fontSize: "calc(14px * var(--drv-fs, 1))",
                     fontFamily: "inherit",
                     resize: "vertical",
                   }}
@@ -5706,7 +5838,7 @@ function ClientsTab() {
   if (loading)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14 }}>Chargement…</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
       </div>
     );
 
@@ -5731,7 +5863,7 @@ function ClientsTab() {
           padding: "10px 14px",
           borderRadius: 12,
           border: "1px solid #e2e8f0",
-          fontSize: 16,
+          fontSize: "calc(16px * var(--drv-fs, 1))",
           fontFamily: "'DM Sans', sans-serif",
           marginBottom: 14,
           outline: "none",
@@ -5740,7 +5872,7 @@ function ClientsTab() {
 
       {filtered.length === 0 ? (
         <div className="drv-empty">
-          <div style={{ fontSize: 14, fontWeight: 600 }}>Aucun client trouvé</div>
+          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucun client trouvé</div>
         </div>
       ) : (
         filtered.map((c) => (
@@ -5786,7 +5918,7 @@ function ClientsTab() {
                   padding: "10px",
                   color: "#15803d",
                   fontWeight: 700,
-                  fontSize: 13,
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
                   textDecoration: "none",
                 }}
               >
@@ -5806,7 +5938,7 @@ function ClientsTab() {
                   padding: "10px",
                   color: "#1d4ed8",
                   fontWeight: 700,
-                  fontSize: 13,
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
                   textDecoration: "none",
                 }}
               >
@@ -5828,7 +5960,7 @@ function ClientsTab() {
                   padding: "10px",
                   color: "#15803d",
                   fontWeight: 700,
-                  fontSize: 13,
+                  fontSize: "calc(13px * var(--drv-fs, 1))",
                   textDecoration: "none",
                 }}
               >
@@ -5850,7 +5982,7 @@ function ClientsTab() {
                 padding: "10px",
                 color: "#1e40af",
                 fontWeight: 700,
-                fontSize: 13,
+                fontSize: "calc(13px * var(--drv-fs, 1))",
                 textDecoration: "none",
                 marginTop: 8,
               }}
@@ -5866,7 +5998,7 @@ function ClientsTab() {
                 background: "none",
                 border: "none",
                 color: "#b91c1c",
-                fontSize: 11.5,
+                fontSize: "calc(11.5px * var(--drv-fs, 1))",
                 fontWeight: 600,
                 cursor: "pointer",
                 padding: "4px 0",
@@ -6002,7 +6134,7 @@ function TrackingAnalytics() {
           border: `1px solid ${open ? "#0f172a" : "#e2e8f0"}`,
           borderRadius: 14,
           padding: "12px 16px",
-          fontSize: 13,
+          fontSize: "calc(13px * var(--drv-fs, 1))",
           fontWeight: 700,
           color: open ? "#FDFBF7" : "#0f172a",
           cursor: "pointer",
@@ -6011,15 +6143,35 @@ function TrackingAnalytics() {
         }}
       >
         <span>📈 Analytics — Suivi client</span>
-        <span style={{ fontSize: 11, fontWeight: 400, opacity: 0.7 }}>30 derniers jours {open ? "▲" : "▼"}</span>
+        <span style={{ fontSize: "calc(11px * var(--drv-fs, 1))", fontWeight: 400, opacity: 0.7 }}>
+          30 derniers jours {open ? "▲" : "▼"}
+        </span>
       </button>
 
       {open && (
         <div className="drv-card" style={{ borderRadius: 14, padding: 16 }}>
           {loading ? (
-            <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "20px 0" }}>Chargement…</div>
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "calc(13px * var(--drv-fs, 1))",
+                color: "#64748b",
+                padding: "20px 0",
+              }}
+            >
+              Chargement…
+            </div>
           ) : !data ? (
-            <div style={{ textAlign: "center", fontSize: 13, color: "#64748b", padding: "20px 0" }}>Aucune donnée</div>
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "calc(13px * var(--drv-fs, 1))",
+                color: "#64748b",
+                padding: "20px 0",
+              }}
+            >
+              Aucune donnée
+            </div>
           ) : (
             <>
               {/* KPIs */}
@@ -6039,8 +6191,12 @@ function TrackingAnalytics() {
                     textAlign: "center",
                   }}
                 >
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#0f172a" }}>{data.totalOuvertures}</div>
-                  <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Ouvertures</div>
+                  <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#0f172a" }}>
+                    {data.totalOuvertures}
+                  </div>
+                  <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
+                    Ouvertures
+                  </div>
                 </div>
                 <div
                   style={{
@@ -6050,8 +6206,12 @@ function TrackingAnalytics() {
                     textAlign: "center",
                   }}
                 >
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#15803d" }}>{data.tauxOuverture}%</div>
-                  <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Taux suivi</div>
+                  <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#15803d" }}>
+                    {data.tauxOuverture}%
+                  </div>
+                  <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
+                    Taux suivi
+                  </div>
                 </div>
                 <div
                   style={{
@@ -6061,17 +6221,19 @@ function TrackingAnalytics() {
                     textAlign: "center",
                   }}
                 >
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#1d4ed8" }}>
+                  <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#1d4ed8" }}>
                     {data.coursesAvecSuivi}/{data.totalCourses}
                   </div>
-                  <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Courses</div>
+                  <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
+                    Courses
+                  </div>
                 </div>
               </div>
 
               {/* Graphique 7 jours */}
               <div
                 style={{
-                  fontSize: 11,
+                  fontSize: "calc(11px * var(--drv-fs, 1))",
                   fontWeight: 700,
                   color: "#94a3b8",
                   letterSpacing: "0.06em",
@@ -6117,7 +6279,7 @@ function TrackingAnalytics() {
                             top: -16,
                             left: "50%",
                             transform: "translateX(-50%)",
-                            fontSize: 9,
+                            fontSize: "calc(9px * var(--drv-fs, 1))",
                             fontWeight: 700,
                             color: "#0f172a",
                             whiteSpace: "nowrap",
@@ -6137,7 +6299,7 @@ function TrackingAnalytics() {
                     style={{
                       flex: 1,
                       textAlign: "center",
-                      fontSize: 9,
+                      fontSize: "calc(9px * var(--drv-fs, 1))",
                       color: i === data.parJour.length - 1 ? "#0f172a" : "#94a3b8",
                       fontWeight: i === data.parJour.length - 1 ? 700 : 400,
                       overflow: "hidden",
@@ -6155,7 +6317,7 @@ function TrackingAnalytics() {
                 <>
                   <div
                     style={{
-                      fontSize: 11,
+                      fontSize: "calc(11px * var(--drv-fs, 1))",
                       fontWeight: 700,
                       color: "#94a3b8",
                       letterSpacing: "0.06em",
@@ -6174,7 +6336,7 @@ function TrackingAnalytics() {
                           <span
                             style={{
                               width: 70,
-                              fontSize: 12,
+                              fontSize: "calc(12px * var(--drv-fs, 1))",
                               color: "#334155",
                               display: "flex",
                               alignItems: "center",
@@ -6204,7 +6366,7 @@ function TrackingAnalytics() {
                           </div>
                           <span
                             style={{
-                              fontSize: 11,
+                              fontSize: "calc(11px * var(--drv-fs, 1))",
                               fontWeight: 700,
                               color: "#0f172a",
                               width: 32,
@@ -6225,7 +6387,7 @@ function TrackingAnalytics() {
                 <>
                   <div
                     style={{
-                      fontSize: 11,
+                      fontSize: "calc(11px * var(--drv-fs, 1))",
                       fontWeight: 700,
                       color: "#94a3b8",
                       letterSpacing: "0.06em",
@@ -6247,15 +6409,15 @@ function TrackingAnalytics() {
                       }}
                     >
                       <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: "#0f172a" }}>
+                        <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 600, color: "#0f172a" }}>
                           {e.client_name ?? "Client"}
                         </div>
-                        <div style={{ fontSize: 10, color: "#94a3b8" }}>
+                        <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#94a3b8" }}>
                           {sourceEmoji[e.source ?? "direct"] ?? "🔗"} {e.source ?? "direct"} · #
                           {e.reservation_id.slice(0, 6)}
                         </div>
                       </div>
-                      <div style={{ fontSize: 10, color: "#94a3b8", textAlign: "right" }}>
+                      <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#94a3b8", textAlign: "right" }}>
                         {new Date(e.created_at).toLocaleString("fr-FR", {
                           day: "2-digit",
                           month: "2-digit",
@@ -6269,10 +6431,17 @@ function TrackingAnalytics() {
               )}
 
               {data.totalOuvertures === 0 && (
-                <div style={{ textAlign: "center", padding: "16px 0", color: "#94a3b8", fontSize: 12 }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "16px 0",
+                    color: "#94a3b8",
+                    fontSize: "calc(12px * var(--drv-fs, 1))",
+                  }}
+                >
                   Aucune ouverture enregistrée sur cette période.
                   <br />
-                  <span style={{ fontSize: 11 }}>
+                  <span style={{ fontSize: "calc(11px * var(--drv-fs, 1))" }}>
                     Assure-toi que <code>suivi.$id.tsx</code> insère bien dans <code>tracking_events</code>.
                   </span>
                 </div>
@@ -6288,7 +6457,7 @@ function TrackingAnalytics() {
                   border: "1px solid #e2e8f0",
                   borderRadius: 10,
                   padding: "8px",
-                  fontSize: 12,
+                  fontSize: "calc(12px * var(--drv-fs, 1))",
                   fontWeight: 700,
                   color: "#0f172a",
                   cursor: "pointer",
@@ -6375,14 +6544,14 @@ function VisitorCounter({
         }}
       />
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
+        <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 700, color: "#0f172a" }}>
           {count === null ? "…" : count === 0 ? emptyLabel : count === 1 ? singleLabel : pluralLabel(count)}
         </div>
-        <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 1 }}>
+        <div style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#94a3b8", marginTop: 1 }}>
           {title} · {subtitle}
         </div>
       </div>
-      {isActive && <span style={{ fontSize: 20 }}>{emoji}</span>}
+      {isActive && <span style={{ fontSize: "calc(20px * var(--drv-fs, 1))" }}>{emoji}</span>}
     </div>
   );
 }
@@ -6548,14 +6717,14 @@ function SimulateurTab() {
     padding: "10px 12px",
     borderRadius: 10,
     border: "1px solid #e2e8f0",
-    fontSize: 16,
+    fontSize: "calc(16px * var(--drv-fs, 1))",
     fontFamily: "'DM Sans', sans-serif",
     color: "#0f172a",
     background: "#FDFBF7",
     colorScheme: "light",
   };
   const labelStyle: React.CSSProperties = {
-    fontSize: 12,
+    fontSize: "calc(12px * var(--drv-fs, 1))",
     fontWeight: 700,
     color: "#475569",
     display: "block",
@@ -6575,7 +6744,7 @@ function SimulateurTab() {
             minHeight: 44,
             borderRadius: 10,
             fontWeight: 700,
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             cursor: "pointer",
             border: mode === "manuel" ? "2px solid #2563eb" : "1px solid #e2e8f0",
             background: mode === "manuel" ? "#eff6ff" : "#FDFBF7",
@@ -6592,7 +6761,7 @@ function SimulateurTab() {
             minHeight: 44,
             borderRadius: 10,
             fontWeight: 700,
-            fontSize: 13,
+            fontSize: "calc(13px * var(--drv-fs, 1))",
             cursor: "pointer",
             border: mode === "adresses" ? "2px solid #2563eb" : "1px solid #e2e8f0",
             background: mode === "adresses" ? "#eff6ff" : "#FDFBF7",
@@ -6636,7 +6805,7 @@ function SimulateurTab() {
               borderRadius: 12,
               padding: "13px",
               minHeight: 46,
-              fontSize: 14,
+              fontSize: "calc(14px * var(--drv-fs, 1))",
               fontWeight: 800,
               cursor: "pointer",
               marginBottom: 14,
@@ -6680,7 +6849,7 @@ function SimulateurTab() {
               borderRadius: 12,
               padding: "13px",
               minHeight: 46,
-              fontSize: 14,
+              fontSize: "calc(14px * var(--drv-fs, 1))",
               fontWeight: 800,
               cursor: loadingRoute ? "default" : "pointer",
               marginBottom: 14,
@@ -6689,7 +6858,11 @@ function SimulateurTab() {
           >
             {loadingRoute ? "…" : "🗺 Calculer l'itinéraire et le prix"}
           </button>
-          {routeError && <div style={{ color: "#b91c1c", fontSize: 13, marginBottom: 12 }}>{routeError}</div>}
+          {routeError && (
+            <div style={{ color: "#b91c1c", fontSize: "calc(13px * var(--drv-fs, 1))", marginBottom: 12 }}>
+              {routeError}
+            </div>
+          )}
         </>
       )}
 
@@ -6710,7 +6883,9 @@ function SimulateurTab() {
               marginBottom: 10,
             }}
           >
-            <span style={{ fontSize: 13, color: "#64748b" }}>🛣 {result.distanceKm.toFixed(1)} km</span>
+            <span style={{ fontSize: "calc(13px * var(--drv-fs, 1))", color: "#64748b" }}>
+              🛣 {result.distanceKm.toFixed(1)} km
+            </span>
 
             <span
               className="drv-badge-pill"
@@ -6731,7 +6906,7 @@ function SimulateurTab() {
             </span>
           </div>
 
-          <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.9 }}>
+          <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))", color: "#475569", lineHeight: 1.9 }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Prise en charge</span>
               <span>{result.priseEnCharge.toFixed(2)} €</span>
@@ -6757,8 +6932,12 @@ function SimulateurTab() {
           <hr className="drv-divider" style={{ margin: "10px 0" }} />
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 15, fontWeight: 800, color: "#0b1224" }}>Total estimé</span>
-            <span style={{ fontSize: 22, fontWeight: 800, color: "#0b1224" }}>{result.total.toFixed(2)} €</span>
+            <span style={{ fontSize: "calc(15px * var(--drv-fs, 1))", fontWeight: 800, color: "#0b1224" }}>
+              Total estimé
+            </span>
+            <span style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#0b1224" }}>
+              {result.total.toFixed(2)} €
+            </span>
           </div>
         </div>
       )}
@@ -6814,14 +6993,14 @@ function StatsTab() {
   if (loading)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14 }}>Chargement…</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
       </div>
     );
 
   if (!data)
     return (
       <div className="drv-empty">
-        <div style={{ fontSize: 14 }}>Statistiques indisponibles</div>
+        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Statistiques indisponibles</div>
       </div>
     );
 
@@ -6841,7 +7020,7 @@ function StatsTab() {
               border: "1px solid " + (days === d ? "var(--background)" : "var(--border)"),
               background: days === d ? "var(--background)" : "#FDFBF7",
               color: days === d ? "var(--gold)" : "#334155",
-              fontSize: 12,
+              fontSize: "calc(12px * var(--drv-fs, 1))",
               fontWeight: 700,
               cursor: "pointer",
               minHeight: 36,
@@ -6850,7 +7029,16 @@ function StatsTab() {
             {d} jours
           </button>
         ))}
-        <span style={{ marginLeft: "auto", alignSelf: "center", fontSize: 11, color: "#94a3b8" }}>⏱ temps réel</span>
+        <span
+          style={{
+            marginLeft: "auto",
+            alignSelf: "center",
+            fontSize: "calc(11px * var(--drv-fs, 1))",
+            color: "#94a3b8",
+          }}
+        >
+          ⏱ temps réel
+        </span>
       </div>
 
       <p className="drv-section">Vue d'ensemble</p>
@@ -6894,7 +7082,7 @@ function StatsTab() {
             >
               <span
                 style={{
-                  fontSize: 12.5,
+                  fontSize: "calc(12.5px * var(--drv-fs, 1))",
                   fontWeight: 800,
                   padding: "4px 10px",
                   borderRadius: 999,
@@ -6904,7 +7092,9 @@ function StatsTab() {
               >
                 👤 {DRIVER_LABEL[d.driver]}
               </span>
-              <span style={{ fontSize: 12, color: "#64748b", fontWeight: 700 }}>{d.total} demande(s)</span>
+              <span style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", fontWeight: 700 }}>
+                {d.total} demande(s)
+              </span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
               {[
@@ -6918,7 +7108,7 @@ function StatsTab() {
                 <div key={c.l} style={{ background: "#f8fafc", borderRadius: 10, padding: "8px 10px" }}>
                   <div
                     style={{
-                      fontSize: 10.5,
+                      fontSize: "calc(10.5px * var(--drv-fs, 1))",
                       color: "#64748b",
                       fontWeight: 700,
                       textTransform: "uppercase",
@@ -6926,7 +7116,9 @@ function StatsTab() {
                   >
                     {c.l}
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: "#0f172a" }}>{c.v}</div>
+                  <div style={{ fontSize: "calc(16px * var(--drv-fs, 1))", fontWeight: 800, color: "#0f172a" }}>
+                    {c.v}
+                  </div>
                 </div>
               ))}
             </div>
@@ -6957,7 +7149,16 @@ function StatsTab() {
                 justifyContent: "flex-end",
               }}
             >
-              <div style={{ textAlign: "center", fontSize: 10.5, color: "#0f172a", fontWeight: 700 }}>{d.count}</div>
+              <div
+                style={{
+                  textAlign: "center",
+                  fontSize: "calc(10.5px * var(--drv-fs, 1))",
+                  color: "#0f172a",
+                  fontWeight: 700,
+                }}
+              >
+                {d.count}
+              </div>
               <div
                 style={{
                   width: "100%",
@@ -6971,7 +7172,10 @@ function StatsTab() {
         </div>
         <div style={{ display: "flex", gap: 6 }}>
           {data.byDay.map((d: any) => (
-            <div key={d.date} style={{ flex: 1, textAlign: "center", fontSize: 10.5, color: "#94a3b8" }}>
+            <div
+              key={d.date}
+              style={{ flex: 1, textAlign: "center", fontSize: "calc(10.5px * var(--drv-fs, 1))", color: "#94a3b8" }}
+            >
               {new Date(d.date).toLocaleDateString("fr-FR", { weekday: "short" }).slice(0, 3)}
             </div>
           ))}
@@ -7069,7 +7273,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
               border: "1px solid " + (filter === o.k ? "var(--background)" : "var(--border)"),
               background: filter === o.k ? "var(--background)" : "#FDFBF7",
               color: filter === o.k ? "var(--gold)" : "#334155",
-              fontSize: 12.5,
+              fontSize: "calc(12.5px * var(--drv-fs, 1))",
               fontWeight: 700,
               cursor: "pointer",
               minHeight: 38,
@@ -7082,19 +7286,21 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
 
       {loading ? (
         <div className="drv-empty">
-          <div style={{ fontSize: 14 }}>Chargement…</div>
+          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
         </div>
       ) : rows.length === 0 ? (
         <div className="drv-empty">
-          <div style={{ fontSize: 14 }}>Aucun évènement pour le moment</div>
+          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Aucun évènement pour le moment</div>
         </div>
       ) : (
         <div className="drv-card">
           {rows.map((e) => (
             <div key={e.id} style={{ padding: "9px 0", borderBottom: "1px solid #f1f5f9" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{eventLabel(e)}</span>
-                <span style={{ fontSize: 11, color: "#94a3b8", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 700, color: "#0f172a" }}>
+                  {eventLabel(e)}
+                </span>
+                <span style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#94a3b8", whiteSpace: "nowrap" }}>
                   {new Date(e.created_at).toLocaleString("fr-FR", {
                     day: "2-digit",
                     month: "2-digit",
@@ -7103,7 +7309,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
                   })}
                 </span>
               </div>
-              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
                 {e.client_name ? `${e.client_name} · ` : ""}
                 {e.depart ?? "—"} → {e.destination ?? "—"}
               </div>
@@ -7112,7 +7318,7 @@ function HistoriqueTab({ driverId }: { driverId?: string }) {
                   style={{
                     display: "inline-block",
                     marginTop: 4,
-                    fontSize: 11,
+                    fontSize: "calc(11px * var(--drv-fs, 1))",
                     fontWeight: 700,
                     padding: "2px 8px",
                     borderRadius: 999,
@@ -7234,7 +7440,7 @@ function AppareilsTab() {
   return (
     <div style={{ display: "grid", gap: 16 }}>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <span style={{ fontSize: 12, color: "#64748b" }}>
+        <span style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b" }}>
           Permission navigateur :{" "}
           <b>{perm === "granted" ? "accordée" : perm === "denied" ? "refusée" : "non demandée"}</b>
         </span>
@@ -7247,7 +7453,7 @@ function AppareilsTab() {
             border: "none",
             borderRadius: 8,
             padding: "6px 12px",
-            fontSize: 12,
+            fontSize: "calc(12px * var(--drv-fs, 1))",
             fontWeight: 700,
             cursor: "pointer",
           }}
@@ -7257,7 +7463,9 @@ function AppareilsTab() {
       </div>
 
       {groups.length === 0 && (
-        <div style={{ color: "#64748b", fontSize: 14 }}>Aucun appareil inscrit pour le moment.</div>
+        <div style={{ color: "#64748b", fontSize: "calc(14px * var(--drv-fs, 1))" }}>
+          Aucun appareil inscrit pour le moment.
+        </div>
       )}
 
       {groups.map(([driver, list]) => (
@@ -7268,7 +7476,7 @@ function AppareilsTab() {
               color: "var(--gold)",
               padding: "10px 14px",
               fontWeight: 800,
-              fontSize: 14,
+              fontSize: "calc(14px * var(--drv-fs, 1))",
             }}
           >
             {DRIVER_LABELS[driver] ?? "Chauffeur inconnu"} — {list.length} appareil
@@ -7278,10 +7486,10 @@ function AppareilsTab() {
             {list.map((d) => (
               <div key={d.id} style={{ padding: 12, borderTop: "1px solid #f1f5f9", display: "grid", gap: 4 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <b style={{ fontSize: 14 }}>{d.platform}</b>
+                  <b style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>{d.platform}</b>
                   <span
                     style={{
-                      fontSize: 11,
+                      fontSize: "calc(11px * var(--drv-fs, 1))",
                       fontWeight: 700,
                       padding: "2px 8px",
                       borderRadius: 999,
@@ -7291,7 +7499,9 @@ function AppareilsTab() {
                   >
                     {d.active ? "actif" : "inactif"}
                   </span>
-                  <code style={{ fontSize: 11, color: "#64748b" }}>…{d.fcm_suffix ?? "—"}</code>
+                  <code style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#64748b" }}>
+                    …{d.fcm_suffix ?? "—"}
+                  </code>
                   <button
                     onClick={() => revoke(d.id, `${DRIVER_LABELS[driver] ?? driver} · ${d.platform}`)}
                     disabled={busy === d.id}
@@ -7302,7 +7512,7 @@ function AppareilsTab() {
                       border: "none",
                       borderRadius: 8,
                       padding: "5px 10px",
-                      fontSize: 12,
+                      fontSize: "calc(12px * var(--drv-fs, 1))",
                       fontWeight: 700,
                       cursor: "pointer",
                     }}
@@ -7310,21 +7520,25 @@ function AppareilsTab() {
                     {busy === d.id ? "…" : "Désinscrire"}
                   </button>
                 </div>
-                <div style={{ fontSize: 12, color: "#475569" }}>
+                <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#475569" }}>
                   Dernière activité : {fmtDate(d.last_seen_at)} · Inscrit le {fmtDate(d.created_at)}
                 </div>
-                <div style={{ fontSize: 12, color: "#475569" }}>
+                <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#475569" }}>
                   Dernier envoi : {fmtDate(d.last_sent_at)}
                   {d.last_sent_title ? ` — ${d.last_sent_title}` : ""}
                 </div>
-                <div style={{ fontSize: 12, color: d.last_error_at ? "#b91c1c" : "#94a3b8" }}>
+                <div
+                  style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: d.last_error_at ? "#b91c1c" : "#94a3b8" }}
+                >
                   Dernière erreur :{" "}
                   {d.last_error_at
                     ? `${fmtDate(d.last_error_at)} — ${d.last_error_code ?? "erreur"}${d.last_error_status ? ` (HTTP ${d.last_error_status})` : ""}`
                     : "aucune"}
                 </div>
                 {d.user_agent && (
-                  <div style={{ fontSize: 11, color: "#94a3b8", wordBreak: "break-all" }}>{d.user_agent}</div>
+                  <div style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#94a3b8", wordBreak: "break-all" }}>
+                    {d.user_agent}
+                  </div>
                 )}
               </div>
             ))}
@@ -7333,12 +7547,21 @@ function AppareilsTab() {
       ))}
 
       <div style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
-        <div style={{ background: "#f8fafc", padding: "10px 14px", fontWeight: 800, fontSize: 14 }}>
+        <div
+          style={{
+            background: "#f8fafc",
+            padding: "10px 14px",
+            fontWeight: 800,
+            fontSize: "calc(14px * var(--drv-fs, 1))",
+          }}
+        >
           Journal des notifications — {stats.sent} envoyées · {stats.failed} en échec · {stats.email} repli e-mail
         </div>
         <div style={{ maxHeight: 320, overflowY: "auto" }}>
           {log.length === 0 && (
-            <div style={{ padding: 12, color: "#64748b", fontSize: 13 }}>Aucun envoi enregistré.</div>
+            <div style={{ padding: 12, color: "#64748b", fontSize: "calc(13px * var(--drv-fs, 1))" }}>
+              Aucun envoi enregistré.
+            </div>
           )}
           {log.map((e) => (
             <div
@@ -7346,7 +7569,7 @@ function AppareilsTab() {
               style={{
                 padding: "8px 12px",
                 borderTop: "1px solid #f1f5f9",
-                fontSize: 12,
+                fontSize: "calc(12px * var(--drv-fs, 1))",
                 display: "flex",
                 gap: 8,
                 flexWrap: "wrap",
