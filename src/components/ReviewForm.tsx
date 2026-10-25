@@ -72,7 +72,7 @@ function Stars({
   size?: "lg" | "sm";
 }) {
   const [hover, setHover] = useState(0);
-  const cls = size === "lg" ? "h-8 w-8" : "h-5 w-5";
+  const cls = size === "lg" ? "h-9 w-9 sm:h-8 sm:w-8" : "h-5 w-5";
   return (
     <div className="flex items-center gap-1" role="radiogroup" aria-label={label}>
       {[1, 2, 3, 4, 5].map((i) => {
@@ -87,7 +87,7 @@ function Stars({
             onClick={() => onChange(i)}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(0)}
-            className="p-0.5 transition hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+            className="rounded p-1.5 transition hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-0.5"
           >
             <Star
               className={`${cls} transition ${active ? "fill-primary text-primary" : "text-muted-foreground/40"}`}
@@ -214,7 +214,7 @@ export function ReviewForm({ onSubmitted, compact = false }: { onSubmitted?: () 
   }
 
   const field =
-    "w-full min-w-0 rounded-xl border border-border bg-background px-4 py-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+    "w-full min-w-0 rounded-xl border border-border bg-background px-4 py-3 text-base shadow-sm sm:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
   return (
     <form
@@ -270,7 +270,7 @@ export function ReviewForm({ onSubmitted, compact = false }: { onSubmitted?: () 
       <Button
         type="submit"
         disabled={loading}
-        className="mt-5 h-auto w-full rounded-xl px-6 py-3 shadow-[var(--shadow-gold)] sm:w-auto"
+        className="mt-5 h-auto min-h-12 w-full rounded-xl px-6 py-3 text-base shadow-[var(--shadow-gold)] sm:w-auto sm:text-sm"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         {c.submit}
