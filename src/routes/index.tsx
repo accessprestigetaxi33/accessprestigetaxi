@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { keywordsMeta } from "@/lib/seo-keywords";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
@@ -791,24 +791,6 @@ function Index() {
   const engagements = lang === "en" ? ENGAGEMENTS_EN : ENGAGEMENTS_FR;
   const fleetValues = lang === "en" ? FLEET_VALUES_EN : FLEET_VALUES_FR;
   const heroValues = lang === "en" ? HERO_VALUES_EN : HERO_VALUES_FR;
-  const [heroMenuOpen, setHeroMenuOpen] = useState(false);
-  const heroMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!heroMenuOpen) return;
-    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
-      if (heroMenuRef.current && !heroMenuRef.current.contains(e.target as Node)) {
-        setHeroMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [heroMenuOpen]);
-
   return (
     <main className="homepage-gold-borders">
       <style>{`
@@ -855,55 +837,12 @@ function Index() {
           {/* Boutons RÉSERVER + DEVIS par-dessus le visuel hero */}
           <div className="relative z-20 flex justify-center bg-black px-4 py-4 sm:absolute sm:inset-x-auto sm:bottom-auto sm:left-[53.6%] sm:top-[79.2%] sm:w-[12.6%] sm:min-w-[146px] sm:justify-start sm:bg-transparent sm:p-0">
             <div className="grid w-[min(380px,88vw)] grid-cols-2 items-stretch gap-2 [&>*]:min-w-0 sm:w-full sm:grid-cols-1 sm:gap-1.5">
-              <div className="relative h-full" ref={heroMenuRef}>
-                <button
-                  type="button"
-                  onClick={() => setHeroMenuOpen((open) => !open)}
-                  aria-expanded={heroMenuOpen}
-                  className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center gap-2 truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:min-h-[46px] sm:px-2 sm:text-[11px]"
-                >
-                  {lang === "en" ? "BOOK" : "RÉSERVER"}
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${heroMenuOpen ? "rotate-180" : ""}`}
-                    aria-hidden="true"
-                  />
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {heroMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="absolute left-0 top-full z-30 mt-1 w-[calc(200%+0.5rem)] max-w-[88vw] overflow-hidden rounded-xl border-2 border-[#e0b866] bg-[#07111f]/95 shadow-[0_16px_45px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:top-auto sm:bottom-full sm:left-auto sm:right-0 sm:mt-0 sm:mb-1"
-                    >
-                      <Link
-                        to="/reserver"
-                        onClick={() => setHeroMenuOpen(false)}
-                        className="flex min-h-[50px] min-w-0 items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-xs font-semibold uppercase leading-snug tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black"
-                      >
-                        <span className="min-w-0 break-words">
-                          {lang === "en" ? "RÉSERVER EN LIGNE" : "RÉSERVER EN LIGNE"}
-                        </span>
-                      </Link>
-                      <a
-                        href="tel:0603444863"
-                        onClick={() => setHeroMenuOpen(false)}
-                        className="flex min-h-[50px] min-w-0 items-center justify-center border-b border-[#e0b866]/50 px-4 py-3 text-center text-[11px] font-semibold uppercase leading-snug tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black sm:text-xs"
-                      >
-                        <span className="min-w-0 break-words">APPELER ALAIN – 06 03 44 48 63</span>
-                      </a>
-                      <a
-                        href="tel:0650260015"
-                        onClick={() => setHeroMenuOpen(false)}
-                        className="flex min-h-[50px] min-w-0 items-center justify-center px-4 py-3 text-center text-[11px] font-semibold uppercase leading-snug tracking-wider text-white transition hover:bg-[#e0b866] hover:text-black sm:text-xs"
-                      >
-                        <span className="min-w-0 break-words">APPELER PATRICIA – 06 50 26 00 15</span>
-                      </a>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <Link
+                to="/reserver"
+                className="btn-gold flex h-full min-h-[48px] w-full min-w-0 items-center justify-center truncate rounded-xl border-2 border-[#e0b866] px-4 text-xs font-semibold uppercase tracking-wider text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] sm:min-h-[46px] sm:px-2 sm:text-[11px]"
+              >
+                {lang === "en" ? "BOOK" : "RÉSERVER"}
+              </Link>
 
               <Link
                 to="/devis"
