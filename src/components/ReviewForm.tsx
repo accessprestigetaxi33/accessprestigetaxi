@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Star, Loader2, Check, CloudOff, RefreshCw, CloudUpload, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Star, Loader2, CloudOff, RefreshCw, CloudUpload, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/lib/nova-supabase";
 import { useI18n } from "@/i18n/I18nProvider";
 import { toast } from "sonner";
@@ -14,44 +14,21 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-/** Questionnaire professionnel : note globale + critères détaillés + avis écrit. */
-const CRITERIA = [
-  { id: "ponctualite", fr: "Ponctualité", en: "Punctuality" },
-  { id: "proprete", fr: "Propreté du véhicule", en: "Vehicle cleanliness" },
-  { id: "conduite", fr: "Confort de conduite", en: "Driving comfort" },
-  { id: "accueil", fr: "Accueil et courtoisie", en: "Welcome and courtesy" },
-  { id: "prix", fr: "Rapport qualité / prix", en: "Value for money" },
-] as const;
-
+/** Formulaire simplifié : note en étoiles + prénom (facultatif) + avis écrit en bas. */
 const COPY = {
   fr: {
-    title: "Votre avis sur la course",
-    intro:
-      "Quelques secondes suffisent : notez votre course, détaillez chaque critère puis laissez un commentaire. Chaque avis est relu avant publication.",
-    global: "Note globale",
-    details: "Notez chaque critère",
-    driver: "Quel chauffeur ?",
-    driverAny: "Je ne sais plus / les deux",
-    service: "Type de prestation",
-    services: [
-      "Course simple",
-      "Toutes gares / tous aéroports",
-      "Transport sanitaire / fauteuil roulant",
-      "Groupe / van 8 places",
-      "Toutes distances",
-    ],
-    recommend: "Recommanderiez-vous Access Prestige Taxi ?",
-    yes: "Oui",
-    no: "Non",
-    name: "Votre prénom ou nom",
+    title: "Laissez votre avis",
+    intro: "Notez votre course en étoiles puis écrivez votre avis. Chaque avis est relu avant publication.",
+    global: "Votre note",
+    name: "Votre prénom (facultatif)",
+    anonymous: "Client",
     text: "Votre avis (ce qui vous a plu, ce que l'on peut améliorer)",
     submit: "Envoyer mon avis",
-    errFields: "Merci d'indiquer votre nom, une note globale et un commentaire.",
+    errFields: "Merci de donner une note en étoiles et d'écrire votre avis.",
     errSubmit: "Envoi impossible pour le moment, réessayez.",
     success: "Merci ! Votre avis a bien été envoyé et sera publié après relecture.",
     queued:
       "Vous êtes hors ligne. Votre avis est enregistré sur cet appareil et sera envoyé automatiquement dès le retour du réseau.",
-    optional: "facultatif",
     outOf: "sur 5",
     syncQueued: "avis en attente d'envoi sur cet appareil",
     syncSending: "Envoi en cours…",
@@ -61,34 +38,18 @@ const COPY = {
     syncProgress: "envoyé(s)",
   },
   en: {
-    title: "Your review of the ride",
-
-    intro:
-      "It only takes seconds: rate your ride, score each criterion and leave a comment. Every review is checked before publication.",
-    global: "Overall rating",
-    details: "Rate each criterion",
-    driver: "Which driver?",
-    driverAny: "Not sure / both",
-    service: "Type of service",
-    services: [
-      "Standard ride",
-      "All stations / airports",
-      "Medical / wheelchair transport",
-      "Group / 8-seat van",
-      "All distances",
-    ],
-    recommend: "Would you recommend Access Prestige Taxi?",
-    yes: "Yes",
-    no: "No",
-    name: "Your first or last name",
+    title: "Leave your review",
+    intro: "Rate your ride with stars, then write your review. Every review is checked before publication.",
+    global: "Your rating",
+    name: "Your first name (optional)",
+    anonymous: "Client",
     text: "Your review (what you liked, what we can improve)",
     submit: "Send my review",
-    errFields: "Please provide your name, an overall rating and a comment.",
+    errFields: "Please give a star rating and write your review.",
     errSubmit: "Could not send right now, please try again.",
     success: "Thank you! Your review was sent and will be published after review.",
     queued:
       "You are offline. Your review is saved on this device and will be sent automatically when the connection returns.",
-    optional: "optional",
     outOf: "out of 5",
     syncQueued: "review(s) waiting to be sent from this device",
     syncSending: "Sending…",
@@ -197,50 +158,27 @@ function ReviewSyncStatus({ c }: { c: (typeof COPY)["fr"] | (typeof COPY)["en"] 
   );
 }
 
-export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
+export function ReviewForm({ onSubmitted, compact = false }: { onSubmitted?: () => void; compact?: boolean }) {
   const { lang } = useI18n();
   const c = COPY[lang === "en" ? "en" : "fr"];
-  const isEn = lang === "en";
 
   const [name, setName] = useState("");
   const [text, setText] = useState("");
   const [rating, setRating] = useState(0);
-  const [scores, setScores] = useState<Record<string, number>>({});
-  const [driver, setDriver] = useState("");
-  const [service, setService] = useState("");
-  const [recommend, setRecommend] = useState<"yes" | "no" | "">("");
   const [loading, setLoading] = useState(false);
-
-  const average = useMemo(() => {
-    const values = Object.values(scores).filter((v) => v > 0);
-    if (!values.length) return 0;
-    return Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10;
-  }, [scores]);
-
-  function buildComment(): string {
-    const lines: string[] = [text.trim()];
-    const detail = CRITERIA.filter((cr) => scores[cr.id])
-      .map((cr) => `${isEn ? cr.en : cr.fr} ${scores[cr.id]}/5`)
-      .join(" · ");
-    if (detail) lines.push(detail);
-    if (service) lines.push(`${c.service}: ${service}`);
-    if (driver) lines.push(`${c.driver} ${driver}`);
-    if (recommend) lines.push(`${c.recommend} ${recommend === "yes" ? c.yes : c.no}`);
-    return lines.filter(Boolean).join("\n").slice(0, 900);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !text.trim() || rating < 1) {
+    if (!text.trim() || rating < 1) {
       toast.error(c.errFields);
       return;
     }
     setLoading(true);
-    const commentaire = buildComment();
+    const commentaire = text.trim().slice(0, 900);
     // Table "avis" — colonnes : author_name, note, commentaire, status…
     const review: QueuedReview = {
       id: crypto.randomUUID(),
-      author_name: name.trim().slice(0, 80),
+      author_name: (name.trim() || c.anonymous).slice(0, 80),
       note: rating,
       commentaire,
       status: "pending",
@@ -272,10 +210,6 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
     setName("");
     setText("");
     setRating(0);
-    setScores({});
-    setDriver("");
-    setService("");
-    setRecommend("");
     onSubmitted?.();
   }
 
@@ -285,13 +219,21 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto mt-12 w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-background p-6 md:p-8"
+      className={
+        compact
+          ? "mt-5 w-full min-w-0 text-foreground"
+          : "mx-auto mt-12 w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-background p-6 md:p-8"
+      }
     >
-      <h3 className="font-display text-2xl font-semibold">{c.title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{c.intro}</p>
+      {!compact && (
+        <>
+          <h3 className="font-display text-2xl font-semibold">{c.title}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{c.intro}</p>
+        </>
+      )}
       <ReviewSyncStatus c={c} />
 
-      <fieldset className="mt-6">
+      <fieldset className={compact ? "mt-2" : "mt-6"}>
         <legend className="text-sm font-semibold text-foreground">{c.global}</legend>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <Stars value={rating} onChange={setRating} label={c.global} />
@@ -303,84 +245,12 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         </div>
       </fieldset>
 
-      <fieldset className="mt-6">
-        <legend className="text-sm font-semibold text-foreground">
-          {c.details} <span className="font-normal text-muted-foreground">({c.optional})</span>
-        </legend>
-        <div className="mt-3 grid gap-3">
-          {CRITERIA.map((cr) => (
-            <div
-              key={cr.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 px-4 py-2.5"
-            >
-              <span className="text-sm text-foreground">{isEn ? cr.en : cr.fr}</span>
-              <Stars
-                size="sm"
-                value={scores[cr.id] ?? 0}
-                onChange={(v) => setScores((s) => ({ ...s, [cr.id]: v }))}
-                label={isEn ? cr.en : cr.fr}
-              />
-            </div>
-          ))}
-        </div>
-        {average > 0 && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {isEn ? "Detailed average" : "Moyenne détaillée"} : {average}/5
-          </p>
-        )}
-      </fieldset>
-
-      <div className="mt-6 grid min-w-0 gap-3 sm:grid-cols-2">
-        <label className="grid min-w-0 gap-1.5 text-sm">
-          <span className="font-semibold text-foreground">{c.driver}</span>
-          <select value={driver} onChange={(e) => setDriver(e.target.value)} className={field}>
-            <option value="">{c.driverAny}</option>
-            <option value="Alain">Alain</option>
-            <option value="Patricia">Patricia</option>
-          </select>
-        </label>
-        <label className="grid min-w-0 gap-1.5 text-sm">
-          <span className="font-semibold text-foreground">{c.service}</span>
-          <select value={service} onChange={(e) => setService(e.target.value)} className={field}>
-            <option value="">—</option>
-            {c.services.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <fieldset className="mt-6">
-        <legend className="text-sm font-semibold text-foreground">{c.recommend}</legend>
-        <div className="mt-2 flex gap-3">
-          {(["yes", "no"] as const).map((v) => (
-            <button
-              key={v}
-              type="button"
-              aria-pressed={recommend === v}
-              onClick={() => setRecommend(v)}
-              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition ${
-                recommend === v
-                  ? "border-primary bg-primary/10 text-foreground"
-                  : "border-border text-muted-foreground hover:border-primary/50"
-              }`}
-            >
-              {recommend === v && <Check className="h-4 w-4 text-primary" />}
-              {v === "yes" ? c.yes : c.no}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <div className="mt-6 grid min-w-0 gap-3">
+      <div className={`grid min-w-0 gap-3 ${compact ? "mt-4" : "mt-6"}`}>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={80}
-          required
           placeholder={c.name}
           aria-label={c.name}
           className={field}
@@ -388,16 +258,20 @@ export function ReviewForm({ onSubmitted }: { onSubmitted?: () => void }) {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          maxLength={1000}
+          maxLength={900}
           required
-          rows={4}
+          rows={compact ? 3 : 5}
           placeholder={c.text}
           aria-label={c.text}
           className={field}
         />
       </div>
 
-      <Button type="submit" disabled={loading} className="mt-5 h-auto rounded-xl px-6 py-3 shadow-[var(--shadow-gold)]">
+      <Button
+        type="submit"
+        disabled={loading}
+        className="mt-5 h-auto w-full rounded-xl px-6 py-3 shadow-[var(--shadow-gold)] sm:w-auto"
+      >
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         {c.submit}
       </Button>
