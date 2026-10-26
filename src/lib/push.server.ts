@@ -330,6 +330,8 @@ export async function sendPushToAudience(
     reservationId?: string;
     accountId?: string;
     driverId?: string | null;
+    /** Cible un seul appareil enregistré (id de push_subscriptions). */
+    subscriptionId?: string | null;
     /** Fenêtre d'idempotence du tag (minutes). Défaut : 60. */
     dedupTtlMinutes?: number;
   } = {},
@@ -343,6 +345,7 @@ export async function sendPushToAudience(
       .gt("expires_at", new Date().toISOString());
 
   let q = baseQuery();
+  if (opts.subscriptionId) q = q.eq("id", opts.subscriptionId);
   if (audience === "client" && opts.reservationId && opts.accountId) {
     // Un appareil client peut etre inscrit au compte sans reservation_id
     // (espace client), ou a une reservation pour un parcours invite.
