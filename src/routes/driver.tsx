@@ -38,7 +38,7 @@ import {
   driverTeamChatSend,
 } from "@/lib/driver-extra.functions";
 import { TeamMap } from "@/components/driver/TeamMap";
-import logoHero from "@/assets/logo-hero.png.asset.json";
+import logoHero from "@/assets/logo-access-taxi-medallion.png";
 import { useLiveGps, startLiveGps, stopLiveGps } from "@/hooks/useLiveGps";
 import { useAutoStatus } from "@/hooks/useAutoStatus";
 import { getRouteAlternatives, getDistanceAndDurationKm, type RouteAlternative } from "@/lib/osrm";
@@ -93,7 +93,7 @@ function isTransientError(error: unknown): boolean {
     "fetch",
   ].some((k) => msg.includes(k));
 }
-const NOVA_LOGO = logoHero.url;
+const NOVA_LOGO = logoHero;
 
 const NOVA_SHELL_EXTRA = `
   .drv-brand-mark img { height:34px; width:auto; display:block; }
@@ -369,14 +369,14 @@ export const Route = createFileRoute("/driver")({
   }),
   head: () => ({
     meta: [
-      { title: "Espace chauffeur — Nova Prestige Ride" },
+      { title: "Espace chauffeur — Access Taxi PBR" },
       {
         name: "description",
-        content: "Courses du jour, statuts et comptabilité des chauffeurs Nova.",
+        content: "Courses du jour, statuts et comptabilité des chauffeurs Access Taxi PBR.",
       },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Espace chauffeur — Nova Prestige Ride" },
-      { property: "og:description", content: "Accès réservé aux chauffeurs Nova." },
+      { property: "og:title", content: "Espace chauffeur — Access Taxi PBR" },
+      { property: "og:description", content: "Accès réservé aux chauffeurs Access Taxi PBR." },
       {
         name: "viewport",
         content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
@@ -385,7 +385,7 @@ export const Route = createFileRoute("/driver")({
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "Nova Chauffeur" },
+      { name: "apple-mobile-web-app-title", content: "Access Taxi" },
       { name: "format-detection", content: "telephone=yes" },
     ],
     links: [{ rel: "manifest", href: "/manifest-chauffeur.webmanifest", id: "app-manifest" }],
@@ -630,7 +630,7 @@ const TABS: { key: Tab; label: string; short: string; icon: () => React.ReactEle
 ];
 
 function NotifButton({ className }: { className?: string }) {
-  const { status, lastError, subscribe } = usePushNotifications({ audience: "chauffeur" });
+  const { status, lastError, subscribe } = usePushNotifications();
   if (status === "unsupported")
     return (
       <button
@@ -660,7 +660,7 @@ function NotifButton({ className }: { className?: string }) {
       className={className}
       disabled={status === "loading"}
       onClick={async () => {
-        const token = await subscribe();
+        const token = await subscribe("chauffeur");
         if (token) toast.success("Notifications activées");
         else toast.error(lastError ?? "Activation impossible");
       }}
@@ -704,7 +704,7 @@ function DriverLoginForm({ onLoggedIn }: { onLoggedIn: (token: string) => void }
 
   return (
     <Section className="max-w-md">
-      <p className="eyebrow">Nova Prestige Ride</p>
+      <p className="eyebrow">Access Taxi PBR</p>
       <h1 className="mt-3 text-2xl font-semibold">Espace chauffeur</h1>
       <p className="mt-2 text-sm text-muted-foreground">Connectez-vous avec l'email et le mot de passe de l'équipe.</p>
       <form
@@ -971,8 +971,8 @@ function DriverApp() {
       />
       <div className="drv-root">
         <header className="drv-header">
-          <div className="drv-brand-mark" aria-label="Nova Prestige Ride">
-            <img src={NOVA_LOGO} alt="Nova Prestige Ride" />
+          <div className="drv-brand-mark" aria-label="Access Taxi PBR">
+            <img src={NOVA_LOGO} alt="Access Taxi PBR" />
           </div>
           <div className="drv-header-title">
             <strong>Bonjour {profiles.map((p) => p.name).join(" et ") || "l'équipe"}</strong>
@@ -1176,7 +1176,7 @@ function DriverBackgroundTasks({ token }: { token: string }) {
               label: "Ouvrir le suivi",
               onClick: () => {
                 void startLiveGps();
-                navigate({ to: "/suivi/$ref", params: { ref: trackingRef }, search: {} });
+                navigate({ to: "/suivi/$id", params: { id: trackingRef }, search: {} });
               },
             },
           });
@@ -1495,7 +1495,7 @@ function RidesTab({ token }: { token: string }) {
                   setStatus.mutate({ id: r.id, status: "in_progress" });
                   // « En route » ramène le taxi sur la page de suivi.
                   if (r.tracking_id) {
-                    navigate({ to: "/suivi/$ref", params: { ref: r.tracking_id as string }, search: {} });
+                    navigate({ to: "/suivi/$id", params: { id: r.tracking_id as string }, search: {} });
                   }
                 }}
                 onPause={() => {
@@ -1583,7 +1583,7 @@ function buildRideSmsMessage({
     `Bonjour${prenom ? " " + prenom : ""}, votre course est confirmée pour le ${heure}.`,
     lien ? `Suivez votre chauffeur en direct : ${lien}` : null,
     "Merci de votre confiance.",
-    "L'équipe Nova Prestige Ride",
+    "L'équipe Access Taxi PBR",
   ]
     .filter(Boolean)
     .join("\n");
@@ -3107,7 +3107,7 @@ function DashboardTab({ token, unread, onGo }: { token: string; unread: number; 
   const [planningMode, setPlanningMode] = useState<"calendar" | "absences">("calendar");
   const [notifDebugOpen, setNotifDebugOpen] = useState(false);
   const [diag, setDiag] = useState<NotifDiag | null>(null);
-  const notifPush = usePushNotifications({ audience: "chauffeur" });
+  const notifPush = usePushNotifications();
 
   const refreshDiag = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -3558,7 +3558,7 @@ function DashboardTab({ token, unread, onGo }: { token: string; unread: number; 
                 <Button
                   size="sm"
                   onClick={async () => {
-                    await notifPush.subscribe();
+                    await notifPush.subscribe("chauffeur");
                     refreshDiag();
                   }}
                 >
