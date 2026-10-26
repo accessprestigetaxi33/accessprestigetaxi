@@ -1,10 +1,11 @@
-# Feuille de route — Espace chauffeur identique à Nova Taxi Prestige
+# Feuille de route — Espace chauffeur
 
-- [x] Inventaire des dépendances de la page chauffeur Nova Taxi
-- [x] Base externe : créer les tables manquantes (driver_accounts, driver_sessions, driver_expenses, accounting_settings, driver_chat, driver_unavailability) + colonnes reservations (driver_slug, overflow_*, started_at, completed_at, distance_reelle_km, duree_reelle_s, prix_final) + fonction verify_driver_password + buckets storage receipts/backups
-- [x] Base externe : créer les comptes Alain et Patricia (jetons = codes existants)
-- [x] Porter les modules serveur Nova (driver.functions, driver-ops, driver-extra, driver-accounting, ops.server, driver-session) en pointant sur le backend externe (@/lib/nova-supabase.server)
-- [x] Porter les composants (driver/tabs, ClientCardsPage, OpsPages, SoundDebugPage, TeamMap) + hooks (useLiveGps, useAutoStatus, useReservationsRealtime) + lib leaflet/osrm/places/quote.functions/driverProfile/driver-shell-css
-- [x] Remplacer src/routes/driver.tsx par la version Nova adaptée (logo Access Taxi PBR, tarifs du projet, noms)
-- [x] NE PAS toucher : config notifications push (usePushNotifications, push.functions, firebase)
-- [x] Vérifier le build + test navigateur de /driver (connexion Alain)
+## Terminé
+- [x] Port complet de l'espace chauffeur Nova Taxi Prestige (7 onglets, même ordre) sur la base externe
+- [x] Base externe : tables chauffeur + colonnes reservations + verify_driver_password + buckets receipts/backups
+- [x] Comptes Alain / Patricia / admin créés (codes existants comme mots de passe initiaux)
+- [x] Espace chauffeur unique sans mot de passe ni choix de prénom : ouverture automatique sur le compte partagé « equipe » (driverAutoEnter), écran de connexion, dialogue « Bonjour Alain ? » et sélecteur de prénom supprimés
+- [x] Texte plus gros sur mobile dans tout l'espace chauffeur (bloc CSS final dans driver-shell-css.ts)
+- [x] Formulaire de résa : numéros de rue conservés (viewbox Nominatim Charente-Maritime + le texte tapé est gardé si la suggestion ne contient pas le numéro)
+- [x] Types régénérés : tables chauffeur + colonnes reservations réintégrées dans src/integrations/supabase/types.ts (fusion depuis /tmp/types-external.ts)
+- [x] Build OK + tests navigateur : ouverture directe /driver sur mobile et desktop, 7 onglets, formulaire avec « 12 rue de Verdun Marennes »

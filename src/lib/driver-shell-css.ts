@@ -1082,6 +1082,87 @@ export const driverShellCss = `
   
 }
 
+  /* ================================================================
+     LISIBILITÉ MOBILE — textes nettement plus gros sur téléphone.
+     Placé en tout dernier (avec !important) pour l'emporter sur tous
+     les réglages précédents. Aucune logique métier modifiée.
+     ================================================================ */
+  @media (max-width:700px) {
+    .drv-root { font-size:16px !important; }
+    .drv-header { height:64px !important; min-height:64px !important; }
+    .drv-card, .drv-planning-card, .drv-chat-thread { font-size:15px !important; }
+    .drv-card-head { font-size:13px !important; }
+    .drv-card-head > b { font-size:11px !important; }
+    .drv-card-head > button { font-size:11.5px !important; }
+    .drv-time { font-size:26px !important; }
+    .drv-name { font-size:16px !important; }
+    .drv-sub, .drv-meta, .drv-route-meta, .drv-planning-time { font-size:13px !important; }
+    .drv-route span { font-size:14.5px !important; }
+    .drv-section { font-size:12px !important; }
+    .drv-link-btn { font-size:13px !important; }
+    .drv-btn-primary, .drv-btn-secondary, .drv-btn-danger { min-height:52px !important; font-size:16px !important; padding:14px !important; }
+    .drv-btn-start, .drv-btn-detail { min-height:46px !important; font-size:13px !important; padding:10px !important; }
+    .drv-badge-pill { font-size:12.5px !important; padding:4px 11px !important; }
+    .drv-next-time strong { font-size:30px !important; }
+    .drv-next-time span { font-size:11px !important; }
+    .drv-next-route strong { font-size:14px !important; }
+    .drv-next-route small { font-size:11px !important; }
+    .drv-next-meta { font-size:11px !important; }
+    .drv-next-meta small { font-size:10px !important; }
+    .drv-day-row { font-size:12.5px !important; padding:9px 0 !important; grid-template-columns:44px minmax(0,1fr) 40px 52px !important; }
+    .drv-day-row em { font-size:10px !important; }
+    .drv-plan-row { font-size:12.5px !important; }
+    .drv-message-row div:nth-child(2) b { font-size:13px !important; }
+    .drv-message-row div:nth-child(2) span { font-size:11.5px !important; }
+    .drv-message-row > small { font-size:10px !important; }
+    .drv-notif-row { font-size:12px !important; }
+    .drv-notif-row small { font-size:10px !important; }
+    .drv-see-all { font-size:11.5px !important; }
+    .drv-stat-lbl { font-size:10.5px !important; }
+    .drv-stat-val { font-size:24px !important; }
+    .drv-stat-sub { font-size:11px !important; }
+    .drv-mobile-stats b { font-size:16px !important; }
+    .drv-mobile-stats span { font-size:10px !important; }
+    .drv-mobile-nav { height:76px !important; }
+    .drv-mobile-nav button { font-size:10px !important; gap:4px !important; }
+    .drv-mobile-nav svg { width:22px !important; height:22px !important; }
+    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { font-size:14px !important; min-height:52px !important; }
+    .drv-mobile-drawer-head { font-size:15px !important; }
+    .drv-quick-btn { height:42px !important; font-size:13.5px !important; padding:0 16px !important; }
+    .drv-quick6 button { font-size:11px !important; min-height:78px !important; }
+    .drv-overview-actions button { font-size:10.5px !important; min-height:70px !important; }
+    .drv-chat-bubble { font-size:15px !important; }
+    .drv-dash-row-time { font-size:14px !important; }
+    .drv-dash-row-route { font-size:14.5px !important; }
+    .drv-dash-row-price { font-size:14px !important; }
+    .drv-dash-notif { font-size:14px !important; }
+    .drv-root input, .drv-root select, .drv-root textarea { font-size:16px !important; padding:12px 14px !important; }
+    .drv-addr-item { font-size:15px !important; padding:13px 14px !important; }
+    .drv-addr-empty { font-size:13.5px !important; }
+    .drv-header-pushbtn { font-size:11.5px !important; height:34px !important; }
+    .drv-revenue-main strong { font-size:36px !important; }
+    .drv-revenue-footer b { font-size:17px !important; }
+    .drv-revenue-footer span { font-size:10px !important; }
+    .drv-rides-sec-title { font-size:12.5px !important; }
+    .drv-rides-sec-empty { font-size:14px !important; }
+    .drv-rides-btn { font-size:13.5px !important; padding:11px 12px !important; }
+    .drv-call-txt strong { font-size:14.5px !important; }
+    .drv-call-txt span { font-size:12.5px !important; }
+    .drv-real-title { font-size:12px !important; }
+    .drv-real-grid label { font-size:13px !important; }
+    .drv-real-hint { font-size:12px !important; }
+    .drv-popup-when { font-size:16px !important; }
+    .drv-popup-route { font-size:15px !important; }
+    .drv-popup-meta { font-size:14px !important; }
+    .drv-popup-actions button { font-size:15px !important; min-height:52px !important; }
+    .drv-tile-label { font-size:12.5px !important; }
+    .drv-btns button { font-size:14px !important; padding:13px 14px !important; }
+    .drv-quick-notif { font-size:13.5px !important; }
+  }
+  @media (min-width:701px) and (max-width:1100px) {
+    .drv-tab { font-size:11px !important; }
+  }
+
 
 
 `;

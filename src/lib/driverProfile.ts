@@ -43,10 +43,11 @@ export function getProfile(): DriverProfile | undefined {
   const stored = localStorage.getItem(KEY);
   if (stored) return stored;
   // Rien en storage (première connexion, storage vidé…) : on retombe sur le
-  // premier profil connu plutôt que de renvoyer undefined, sinon les appels
-  // serveur partent sans "as" et l'identité retombe sur le compte partagé
-  // "equipe", qui ne matche jamais aucune course assignée à un chauffeur.
-  return cachedDriverProfiles()[0]?.slug;
+  // profil partagé « equipe » (espace commun sans choix de prénom), puis sur
+  // le premier profil connu, plutôt que de renvoyer undefined — sinon les
+  // appels serveur partent sans "as".
+  const cached = cachedDriverProfiles();
+  return cached.find((d) => d.slug === "equipe")?.slug ?? cached[0]?.slug ?? "equipe";
 }
 
 export function setProfile(p: DriverProfile) {

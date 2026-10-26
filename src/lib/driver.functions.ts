@@ -182,6 +182,55 @@ export const driverPasswordLogin = createServerFn({ method: "POST" })
     return { token, name: row.name, slug: row.slug };
   });
 
+/* ------------------------------------------------------------------ */
+/* Espace commun sans mot de passe : un seul compte partagé « equipe » */
+/* ------------------------------------------------------------------ */
+
+const SHARED_SLUG = "equipe";
+const SHARED_NAME = "Équipe";
+
+/**
+ * Ouverture automatique de l'espace chauffeur, sans email ni mot de passe :
+ * le compte partagé « equipe » est créé une seule fois (puis réactivé si
+ * besoin) et une session y est ouverte à chaque premier accès d'un appareil.
+ * Toutes les courses et actions tombent sur ce profil unique — plus de
+ * distinction Alain / Patricia dans l'interface.
+ */
+export const driverAutoEnter = createServerFn({ method: "POST" }).handler(
+  async (): Promise<{ token: string; name: string; slug: string }> => {
+    const db = await admin();
+    const { data: existing, error: lookupError } = await db
+      .from("driver_accounts")
+      .select("slug, active")
+      .eq("slug", SHARED_SLUG)
+      .maybeSingle();
+    if (lookupError) {
+      console.error("[driver] shared account lookup failed", lookupError);
+      throw new Error("lookup_failed");
+    }
+    if (!existing) {
+      // La colonne `token` (jeton permanent du compte) est obligatoire en base :
+      // on en génère un aléatoire, jamais utilisé pour l'accès (sessions uniquement).
+      const bytes = new Uint8Array(32);
+      crypto.getRandomValues(bytes);
+      const accountToken = Array.from(bytes)
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      const { error } = await db
+        .from("driver_accounts")
+        .insert({ slug: SHARED_SLUG, name: SHARED_NAME, active: true, token: accountToken } as never);
+      if (error) {
+        console.error("[driver] shared account create failed", error);
+        throw new Error("lookup_failed");
+      }
+    } else if (!(existing as { active: boolean }).active) {
+      await db.from("driver_accounts").update({ active: true } as never).eq("slug", SHARED_SLUG);
+    }
+    const token = await createSession(SHARED_SLUG);
+    return { token, name: SHARED_NAME, slug: SHARED_SLUG };
+  },
+);
+
 /**
  * Liste des profils chauffeur actifs (noms uniquement, aucun jeton exposé).
  * Exclut le compte de secours "admin" : seuls les profils
