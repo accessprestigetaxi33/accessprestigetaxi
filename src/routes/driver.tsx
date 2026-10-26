@@ -691,7 +691,7 @@ function DriverApp() {
   // a été perdu ou révoqué), le serveur ouvre une session sur le compte
   // commun — aucun écran de connexion, aucun choix de prénom.
   useEffect(() => {
-    if (token || entering) return;
+    if (token || entering || enterError) return;
     const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
     if (stored) {
       setToken(stored);
@@ -703,8 +703,11 @@ function DriverApp() {
         localStorage.setItem(STORAGE_KEY, res.token);
         setToken(res.token);
       })
-      .catch(() => setEntering(false));
-  }, [token, entering]);
+      .catch(() => {
+        setEntering(false);
+        setEnterError(true);
+      });
+  }, [token, entering, enterError]);
 
   // Notification de message client : ouvre directement l'onglet Messages.
   useEffect(() => {
@@ -789,7 +792,26 @@ function DriverApp() {
       <Section className="max-w-md">
         <p className="eyebrow">Access Taxi PBR</p>
         <h1 className="mt-3 text-2xl font-semibold">Espace chauffeur</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Ouverture de l'espace chauffeur…</p>
+        {enterError ? (
+          <>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Ouverture impossible — vérifiez votre réseau et réessayez.
+            </p>
+            <Button
+              variant="gold"
+              size="lg"
+              className="mt-5 w-full"
+              onClick={() => {
+                localStorage.removeItem(STORAGE_KEY);
+                setEnterError(false);
+              }}
+            >
+              Réessayer
+            </Button>
+          </>
+        ) : (
+          <p className="mt-2 text-sm text-muted-foreground">Ouverture de l'espace chauffeur…</p>
+        )}
       </Section>
     );
   }
