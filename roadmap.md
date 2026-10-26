@@ -9,3 +9,5 @@
 - [x] Formulaire de résa : numéros de rue conservés (viewbox Nominatim Charente-Maritime + le texte tapé est gardé si la suggestion ne contient pas le numéro)
 - [x] Types régénérés : tables chauffeur + colonnes reservations réintégrées dans src/integrations/supabase/types.ts (fusion depuis /tmp/types-external.ts)
 - [x] Build OK + tests navigateur : ouverture directe /driver sur mobile et desktop, 7 onglets, formulaire avec « 12 rue de Verdun Marennes »
+- [x] Formulaire de résa CLIENT : numéros de rue conservés aussi (AddressAutocomplete partagé : le texte tapé est gardé si la suggestion ne contient pas le numéro) — couvre /reserver, devis et simulateur
+- [x] Types base externe déplacés dans src/integrations/supabase/types-external.ts (types.ts est régénéré par Lovable Cloud et écrasait les ajouts) ; nova-supabase*.ts pointent dessus ; tsgo propre
