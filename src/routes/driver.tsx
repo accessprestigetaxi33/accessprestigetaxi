@@ -1,1373 +1,538 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import bmwIx1Photo from "@/assets/bmw-ix1.webp";
-import audiQ6EtronPhoto from "@/assets/audi-q6-etron.webp";
-import mercedesVClassPhoto from "@/assets/mercedes-v-class.webp";
-import { ogImageUrl, ogPageUrl } from "@/lib/og";
-import ogDriverFr from "@/assets/apt-og-driver-fr.jpg.asset.json";
-import ogDriverEn from "@/assets/apt-og-driver-en.jpg.asset.json";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
-import { supabase } from "@/lib/nova-supabase";
-import { addOsmMarker, createOsmMap, drawOsmRoute, fitOsmBounds, loadOsmMapEngineWhenVisible } from "@/lib/osmMap";
-import { geocodeAddress } from "@/lib/googleGeocode";
-import { decodePolyline, getDistanceAndDurationKm, osrmRoutesClient, trafficFactor } from "@/lib/googleRoute";
-import { PushUnsupportedNotice } from "@/components/PushUnsupportedNotice";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
-import PushDiagnosticsCard from "@/components/PushDiagnosticsCard";
-import { useServerFn } from "@tanstack/react-start";
-import { notifyReservationStatus } from "@/lib/push.functions";
-import { estTarifJourParis, parseAsParisTime, TARIFS } from "@/lib/tarif";
-import { broadcastDriverFeed, broadcastSuiviUpdate } from "@/lib/suivi-broadcast";
-import { subscribeChatBadgeEvents, type ChatBadgeEvent } from "@/lib/chat-badge-sync";
-import { ChatPanel } from "@/components/ChatPanel";
-import { InlineDriverChat } from "@/components/InlineDriverChat";
-import { verifyDriverToken, getActiveVisitorCount, openDriverSession } from "@/lib/driver-auth.functions";
-import { gaEvent } from "@/lib/ga4";
-import { listDriverCourses, setCourseDriver, driverDeleteReservation } from "@/lib/driver-courses.functions";
-import { driverUpdateReservation, driverListReservations, driverDeleteClient } from "@/lib/driver-data.functions";
-import { sendRideInvoice } from "@/lib/ride-invoice.functions";
-import { getDriverStats, listReservationEvents, getTrackingAnalytics } from "@/lib/driver-stats.functions";
-import { listDriverDevices, revokeDriverDevice, driverPushLog } from "@/lib/driver-devices.functions";
-import { listDriverDevis, driverUpdateDevis, driverDeleteDevis, type Devis } from "@/lib/driver-devis.functions";
-import { updateMyDriverPosition, stopMyDriverPosition, listDriverPositions } from "@/lib/driver-gps.functions";
-import { reverseGeocode } from "@/lib/googleGeocode";
-import aptLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
-const APT_LOGO = aptLogoAsset.url;
-
-import DriverMessagesTab from "@/components/DriverMessagesTab";
-import { getDriverToken, setDriverToken, clearDriverToken, getDriverName, setDriverName } from "@/lib/driver-token";
+import { Textarea } from "@/components/ui/textarea";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createFileRoute, useSearch, useNavigate, Link } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  listReservationsWithUnreadChauffeur,
-  getUnreadCountsForReservations,
-  countUnreadChauffeurMessages,
-  listMergedChauffeurThreads,
-  type UnreadMap,
-} from "@/lib/chat.functions";
+  ArrowLeft,
+  ArrowLeftRight,
+  CalendarClock,
+  Contact,
+  Eye,
+  EyeOff,
+  MapPin,
+  MessageSquarePlus,
+  Phone,
+  RefreshCw,
+  Settings2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Section } from "@/components/sections";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { getLastFcmFailure, isFirebaseConfigured } from "@/lib/firebase";
+import { useReservationsRealtime } from "@/hooks/useReservationsRealtime";
+import { ClientCardsPage } from "@/components/driver/ClientCardsPage";
+import { SoundDebugPage } from "@/components/driver/SoundDebugPage";
+import { StatsPage, PlanningPage, BackupsPage } from "@/components/driver/OpsPages";
+import { driverUnavailList } from "@/lib/driver-ops.functions";
+import { driverShellCss } from "@/lib/driver-shell-css";
+import { MessagesTab, PlanningTab } from "@/components/driver/tabs";
+import {
+  driverThreads,
+  driverGpsState,
+  driverGpsPush,
+  driverTeamChat,
+  driverTeamChatSend,
+} from "@/lib/driver-extra.functions";
+import { TeamMap } from "@/components/driver/TeamMap";
+import logoHero from "@/assets/logo-hero.png.asset.json";
+import { useLiveGps, startLiveGps, stopLiveGps } from "@/hooks/useLiveGps";
+import { useAutoStatus } from "@/hooks/useAutoStatus";
+import { getRouteAlternatives, getDistanceAndDurationKm, type RouteAlternative } from "@/lib/osrm";
+import { placesGeocode } from "@/lib/places";
+import { detaillerPrix } from "@/lib/tarif";
+import {
+  driverAcceptRide,
+  driverUpdateRideRoute,
+  driverClaimRide,
+  driverCreateManualReservation,
+  driverLogin,
+  driverLogout,
+  driverPasswordLogin,
+  driverRides,
+  driverCompletedRides,
+  driverDeleteRide,
+  driverRescheduleRide,
+  driverSetStatus,
+  driverTransferRide,
+  driverOverflowRide,
+  driverOverflowRides,
+  driverTakeOverflowRide,
+  driverReclaimOverflowRide,
+  type DriverRide,
+} from "@/lib/driver.functions";
+import { driverMonthAccounting, driverUpdateAccountingSettings } from "@/lib/driver-accounting.functions";
+import {
+  getProfile,
+  setProfile,
+  profileName,
+  fetchDriverProfiles,
+  cachedDriverProfiles,
+  type DriverProfile,
+  type DriverProfileEntry,
+} from "@/lib/driverProfile";
 
-// ── Token guard ────────────────────────────────────────────────────────────
-// Aucun secret en dur : le jeton saisi (ou passé en ?token=) est validé côté
-// serveur, puis conservé localement pour authentifier les appels du panneau.
+const STORAGE_KEY = "nova_driver_token";
 
-// ── Types ─────────────────────────────────────────────────────────────────
-type Tab =
-  | "dashboard"
-  | "courses"
-  | "planning"
-  | "messages"
-  | "avis"
-  | "clients"
-  | "stats"
-  | "historique"
-  | "simulateur"
-  | "devis"
-  | "appareils"
-  | "gps";
-
-// (ChatRealtimeStatusPill retiré : plus de canal Realtime global à surveiller.)
-
-interface Resa {
-  id: string;
-  depart: string;
-  destination: string;
-  date_heure: string;
-  pickup_datetime: string;
-  status: string;
-  prix_estime?: number | null;
-  final_price?: number | null;
-  distance_km?: number | null;
-  client_name?: string | null;
-  client_phone?: string | null;
-  client_email?: string | null;
-  email?: string | null;
-  suivi_id?: string | null;
-  message?: string | null;
+/** Erreur passagère (réseau coupé, serveur injoignable) : ne doit JAMAIS déconnecter
+ * le chauffeur. Seul un vrai refus du serveur (jeton révoqué/invalide) le fait. */
+function isTransientError(error: unknown): boolean {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return true;
+  const msg = (error instanceof Error ? error.message : String(error ?? "")).toLowerCase();
+  return [
+    "lookup_failed",
+    "failed to fetch",
+    "load failed",
+    "networkerror",
+    "network",
+    "timeout",
+    "timed out",
+    "fetch",
+  ].some((k) => msg.includes(k));
 }
+const NOVA_LOGO = logoHero.url;
 
-interface Avis {
-  id: string;
-  author_name: string;
-  note: number;
-  commentaire: string | null;
-  created_at: string;
-  status: string;
-}
-
-interface ClientAgg {
-  id?: string;
-  phone: string;
-  email?: string | null;
-  name: string;
-  nbCourses: number;
-  totalDepense: number;
-  derniereCourse: string;
-  derniereDepart: string;
-  derniereDestination: string;
-}
-
-interface RouteOption {
-  index: number;
-  summary: string;
-  distanceKm: number;
-  dureeMin: number;
-  prix_estime: number;
-  tarifLabel: string;
-  coords: [number, number][];
-  overview_polyline: string;
-  originLatLng: { lat: number; lng: number };
-  destLatLng: { lat: number; lng: number };
-  waypointLatLng: { lat: number; lng: number } | null;
-}
-
-// Visuels de partage localisés de l'espace chauffeur (page privée : noindex,
-// mais le lien est partagé par SMS/WhatsApp à Alain et Patricia).
-// Flotte Access Prestige Taxi affichée sur la carte "Véhicules" du dashboard.
-const FLEET = [
-  {
-    id: "q6",
-    name: "Audi Q6 e-tron — 100 % électrique",
-    desc: "Berline électrique · sièges enfant/bébé",
-    photo: audiQ6EtronPhoto,
-    driver: "alain",
-  },
-  {
-    id: "ix1",
-    name: "BMW iX1 — 100 % électrique",
-    desc: "SUV électrique · confort & silence",
-    photo: bmwIx1Photo,
-    driver: "patricia",
-  },
-  {
-    id: "vclass",
-    name: "Mercedes Classe V — Van",
-    desc: "Jusqu'à 7 passagers · groupes & bagages",
-    photo: mercedesVClassPhoto,
-    driver: "alain",
-  },
-] as const;
-
-// Véhicule sélectionné par le chauffeur : partagé entre la carte "Véhicules"
-// du tableau de bord et les cartes de course (localStorage + événements).
-const SELECTED_VEHICLE_KEY = "drv-selected-vehicle";
-const SELECTED_VEHICLE_EVENT = "drv-selected-vehicle-change";
-
-function readSelectedVehicleId(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(SELECTED_VEHICLE_KEY);
-}
-
-function setSelectedVehicleId(id: string) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(SELECTED_VEHICLE_KEY, id);
-  window.dispatchEvent(new CustomEvent(SELECTED_VEHICLE_EVENT, { detail: id }));
-}
-
-function useSelectedVehicle(driverId?: string) {
-  const [id, setId] = useState<string | null>(null);
-  useEffect(() => {
-    const apply = () => setId(readSelectedVehicleId());
-    apply();
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === SELECTED_VEHICLE_KEY) apply();
-    };
-    window.addEventListener("storage", onStorage);
-    window.addEventListener(SELECTED_VEHICLE_EVENT, apply as EventListener);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener(SELECTED_VEHICLE_EVENT, apply as EventListener);
-    };
-  }, []);
-  const fallback = driverId ? FLEET.find((v) => v.driver === driverId) : undefined;
-  const vehicle = FLEET.find((v) => v.id === id) ?? fallback ?? null;
-  return { vehicleId: id, vehicle };
-}
-
-const DRIVER_SOCIAL_FR = {
-  title: "Espace Chauffeur — Access Prestige Taxi",
-  description: "Application privée d'Alain et Patricia : courses, GPS, messagerie et notifications.",
-  image: ogImageUrl(ogDriverFr.url),
-  alt: "Espace Chauffeur Access Prestige Taxi — application privée Alain & Patricia",
-  url: ogPageUrl("/driver", "fr"),
-};
-const DRIVER_SOCIAL_EN = {
-  title: "Driver App — Access Prestige Taxi",
-  description: "Private app for Alain and Patricia: rides, GPS, messaging and notifications.",
-  image: ogImageUrl(ogDriverEn.url),
-  alt: "Access Prestige Taxi Driver App — private app for Alain & Patricia",
-  url: ogPageUrl("/driver", "en"),
-};
-
-// ── Route definition ───────────────────────────────────────────────────────
-export const Route = createFileRoute("/driver")({
-  // ?lang=en / ?lang=fr : choisit la langue du visuel et des textes de partage.
-  validateSearch: (s: Record<string, unknown>): { token: string; lang?: "en" | "fr" } => ({
-    token: String(s.token ?? ""),
-    lang: s["lang"] === "en" ? ("en" as const) : s["lang"] === "fr" ? ("fr" as const) : undefined,
-  }),
-  head: (ctx: { match?: { search?: { lang?: "en" | "fr" } } }) => {
-    const isEn = ctx?.match?.search?.lang === "en";
-    const social = isEn ? DRIVER_SOCIAL_EN : DRIVER_SOCIAL_FR;
-    return {
-      meta: [
-        { title: social.title },
-        { name: "description", content: social.description },
-        { name: "robots", content: "noindex, nofollow" },
-        { property: "og:site_name", content: "Access Prestige Taxi" },
-        { property: "og:title", content: social.title },
-        { property: "og:description", content: social.description },
-        { property: "og:type", content: "website" },
-        { property: "og:url", content: social.url },
-        { property: "og:image", content: social.image },
-        { property: "og:image:secure_url", content: social.image },
-        { property: "og:image:type", content: "image/png" },
-        { property: "og:image:width", content: "1200" },
-        { property: "og:image:height", content: "630" },
-        { property: "og:image:alt", content: social.alt },
-        { property: "og:locale", content: isEn ? "en_GB" : "fr_FR" },
-        { property: "og:locale:alternate", content: isEn ? "fr_FR" : "en_GB" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: social.title },
-        { name: "twitter:description", content: social.description },
-        { name: "twitter:image", content: social.image },
-        { name: "twitter:image:alt", content: social.alt },
-        {
-          name: "viewport",
-          content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
-        },
-        { name: "theme-color", content: "#03070d" },
-        { name: "apple-mobile-web-app-capable", content: "yes" },
-        { name: "mobile-web-app-capable", content: "yes" },
-        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-        { name: "apple-mobile-web-app-title", content: "APT Chauffeur" },
-      ],
-      links: [{ rel: "manifest", href: "/api/manifest?role=driver", id: "app-manifest" }],
-    };
-  },
-
-  component: DriverPage,
-});
-
-// ── Styles globaux ─────────────────────────────────────────────────────────
-const css = `
-  /* Écritures plus grandes sur mobile : un seul réglage (--drv-fs) */
-  :root { --drv-fs: 1; }
-  @media (max-width: 700px) { :root { --drv-fs: 1.2; } }
-  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation; }
-  html, body {
-    margin: 0; padding: 0;  overflow: hidden;
-    overscroll-behavior-y: contain; background: #03070d;
-    font-family: 'DM Sans', sans-serif;
+const NOVA_SHELL_EXTRA = `
+  .drv-brand-mark img { height:34px; width:auto; display:block; }
+  .drv-header-title { display:flex; flex-direction:column; min-width:0; flex:1; }
+  .drv-header-title strong { color:#f6f0e5; font-size:14px; font-weight:700; line-height:1.2; }
+  .drv-header-title span { color:rgba(246,240,229,.55); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
+  .drv-header-notif {
+    display:inline-flex; align-items:center; gap:7px; flex:0 0 auto;
+    border:1px solid #c99b4a; border-radius:999px; padding:7px 12px;
+    background:linear-gradient(180deg,#0a1118,#050a10); color:#e0b866;
+    font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;
   }
-  input, textarea, select { font-size: 16px; }
-  .drv-root {
-     
-    display: flex; flex-direction: column;
-    
+  .drv-header-notif svg { width:15px; height:15px; }
+  .drv-header-notif:disabled { opacity:.6; }
+  .drv-header-back { display:inline-flex; align-items:center; gap:6px; color:#e0b866; text-decoration:none;
+    border:1px solid rgba(201,155,74,.5); border-radius:999px; padding:7px 12px; font-size:11px; font-weight:700; }
+  .drv-header-back svg { width:15px; height:15px; }
+  @media (max-width:1023px) { .drv-tabs { display:none !important; } }
+  .drv-body { padding-bottom:24px !important; }
+  .drv-dash-back {
+    display:inline-flex; align-items:center; gap:6px; margin-bottom:14px;
+    color:#e0b866; background:none; border:1px solid rgba(201,155,74,.5); border-radius:999px;
+    padding:8px 14px; font-size:12px; font-weight:700; cursor:pointer;
   }
-  /* Tablette (iPad portrait et paysage) : colonne élargie, plus de cadre centré. */
-  
-  /* Desktop / grand écran : colonne encore plus large, texte légèrement agrandi. */
-  
-  /* Souris/trackpad (pas d'écran tactile) : hover discret sur les éléments cliquables,
-     la logique :active seule (pensée pour le tactile) ne suffit pas sur PC. */
-  @media (hover: hover) and (pointer: fine) {
-    .drv-tab:hover { color: #0f172a; }
-    .drv-btn-primary:hover { background: #1e293b; }
-    .drv-btn-secondary:hover { background: #e2e8f0; }
-    .drv-btn-danger:hover { background: #fee2e2; }
-    .drv-card:hover, .drv-route-opt:hover, .drv-chat-thread:hover { border-color: #c99b4a; }
-  }
-  .drv-header {
-     color: #FDFBF7; display: flex; align-items: center; gap: 10px;
-    
-    flex-shrink: 0;
-  }
-  .drv-header h1 { margin: 0; font-size: calc(17px * var(--drv-fs, 1)); font-weight: 700; flex: 1; font-family: 'DM Sans', sans-serif; }
-  .drv-tabs {
-      
-    padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
-    flex-shrink: 0;
-    /* Fix : avec 8 onglets + labels longs ("Course + chat client"), la
-       rangée peut dépasser la largeur de l'écran sur mobile étroit. Comme
-       html/body ont overflow:hidden (plus haut), sans scroll ICI le
-       débordement était juste coupé et invisible (ex. l'onglet "Devis"
-       disparaissait sans aucun moyen d'y accéder). On rend la barre
-       scrollable horizontalement, scrollbar masquée pour rester discrète. */
-     -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  .drv-tabs::-webkit-scrollbar { display: none; }
-  .drv-tab {
-    flex: 0 0 auto; min-width: 66px; display: flex;  align-items: center; 
-       background: none; 
-     font-family: 'DM Sans', sans-serif; cursor: pointer; border-bottom: 2px solid transparent;
-    transition: color 0.15s; -webkit-user-select: none; user-select: none;
-    white-space: nowrap;
-  }
-  .drv-tab:active {  }
-  .drv-tab.active {   }
-  .drv-tab svg { width: 22px; height: 22px; }
-  .drv-badge { background: #ef4444; color: #FDFBF7; border-radius: 99px; font-size: calc(10px * var(--drv-fs, 1)); font-weight: 700; padding: 1px 5px; position: absolute; top: -3px; right: -5px; }
-  .drv-tab-count { display: none; }
-  .drv-body {
-    flex: 1;  
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
-    overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
-  }
-  .drv-section { font-size: calc(10px * var(--drv-fs, 1)); font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px; }
-  .drv-card { background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
-  .drv-swipe { position: relative; margin-bottom: 10px; border-radius: 16px; overflow: hidden; }
-  .drv-swipe .drv-card { margin-bottom: 0; }
-  .drv-swipe-content { position: relative; z-index: 1; touch-action: pan-y; will-change: transform; }
-  .drv-swipe-action {
-    position: absolute; top: 0; right: 0; bottom: 0; width: 96px; z-index: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-    background: #dc2626; color: #fff; border: none; font-size: calc(20px * var(--drv-fs, 1)); font-weight: 700; cursor: pointer;
-  }
-  .drv-swipe-action span { font-size: calc(11px * var(--drv-fs, 1)); font-weight: 700; letter-spacing: .04em; }
-  .drv-card.pending { border-color: #f59e0b; }
-  .drv-card.new { border-color: #3b82f6; box-shadow: 0 0 0 3px #3b82f620; }
-  .drv-card.done { opacity: 0.5; }
-  .drv-card.accepted { border-color: #22c55e; }
-  .drv-card.refused { border-color: #ef4444; opacity: 0.6; }
-  .drv-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .drv-time { font-size: calc(22px * var(--drv-fs, 1)); font-weight: 800; color: #0f172a; }
-  .drv-name { font-size: calc(14px * var(--drv-fs, 1)); font-weight: 600; color: #0f172a; }
-  .drv-sub { font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; }
-  .drv-route { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
-  .drv-route span { display: flex; align-items: flex-start; gap: 6px; font-size: calc(13px * var(--drv-fs, 1)); color: #334155; line-height: 1.4; }
-  .drv-meta { display: flex; gap: 12px; font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; margin: 8px 0 12px; flex-wrap: wrap; }
-  .drv-meta span { display: flex; align-items: center; gap: 4px; }
-  .drv-btns { display: flex; gap: 8px; }
-  .drv-btn-primary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; }
-  .drv-btn-primary:active { background: #1e293b; }
-  .drv-btn-secondary { flex: 1; min-height: 46px;    border-radius: 12px; padding: 12px; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
-  .drv-btn-secondary:active { background: #e2e8f0; }
-  .drv-btn-danger { flex: 1; min-height: 46px;   border: 1px solid #fecaca; border-radius: 12px; padding: 12px; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
-  .drv-btn-danger:active { background: #fee2e2; }
-  .drv-badge-pill { font-size: calc(11px * var(--drv-fs, 1)); font-weight: 600; padding: 3px 9px; border-radius: 99px; }
-  .drv-badge-blue {   }
-  .drv-badge-green {   }
-  .drv-badge-amber { background: #FDFBF7beb; color: #92400e; }
-  .drv-badge-red { background: #fef2f2; color: #b91c1c; }
-  .drv-badge-gray {   }
-  .drv-stars { color: #f59e0b; font-size: calc(15px * var(--drv-fs, 1)); letter-spacing: 1px; }
-  .drv-stars-empty { color: var(--border); font-size: calc(15px * var(--drv-fs, 1)); }
-  .drv-stat-grid { display: grid;    }
-  .drv-stat {    }
-  .drv-stat-lbl {   margin-bottom: 4px; }
-  .drv-stat-val {  font-weight: 800;  }
-  .drv-stat-sub {   margin-top: 2px; }
-  .drv-empty { text-align: center; padding: 50px 20px; color: #94a3b8; }
-  .drv-empty svg { width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.4; }
-  .drv-route-opt { border: 1.5px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s; min-height: 44px; }
-  .drv-route-opt:active { background: #f8fafc; }
-  .drv-route-opt.selected { border-color: #c99b4a; background: #f8fafc; }
-  .drv-route-opt-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .drv-route-label { font-size: calc(13px * var(--drv-fs, 1)); font-weight: 700; color: #0f172a; }
-  .drv-route-price { font-size: calc(16px * var(--drv-fs, 1)); font-weight: 800; color: #0f172a; }
-  .drv-route-meta { display: flex; gap: 10px; font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; }
-  .drv-map { width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 14px; border: 1px solid rgba(201,155,74,.45); touch-action: pan-x pan-y; }
-  .drv-divider { border: none; border-top: 1px solid rgba(201,155,74,.25); margin: 16px 0; }
-  .drv-planning-slot { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
-  .drv-planning-time { font-size: calc(12px * var(--drv-fs, 1)); color: #64748b; min-width: 40px; padding-top: 3px; }
-  .drv-planning-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
-  .drv-planning-card { flex: 1; background: #FDFBF7; border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 10px 12px; }
-  
-  .drv-chat-thread { border: 1px solid rgba(201,155,74,.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; background: #FDFBF7; display: flex; align-items: center; gap: 10px; }
-  .drv-chat-thread:active { background: #f8fafc; }
-  .drv-chat-thread.unread {   }
-  .drv-chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0f172a; color: #FDFBF7; display: flex; align-items: center; justify-content: center; font-size: calc(15px * var(--drv-fs, 1)); font-weight: 700; flex-shrink: 0; }
-  .drv-chat-bubble { max-width: 78%; border-radius: 14px; padding: 9px 12px; font-size: calc(13.5px * var(--drv-fs, 1)); line-height: 1.45; }
-  .drv-chat-bubble.me {   border-radius: 14px 14px 4px 14px; margin-left: auto; }
-  .drv-chat-bubble.them {   border-radius: 14px 14px 14px 4px; }
-  @keyframes drv-fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
-  .drv-msg-in { animation: drv-fadein 0.25s ease both; }
-  @keyframes drv-pulse { 0%, 100% { opacity:1; box-shadow: 0 0 0 3px rgba(34,197,94,0.3); } 50% { opacity:0.6; box-shadow: 0 0 0 6px rgba(34,197,94,0.1); } }
-  .drv-visitor-dot-active { animation: drv-pulse 2s ease-in-out infinite; }
-
-  /* ── Access Prestige mobile visual system ───────────────────────────── */
-  .drv-root {  color:#f6f0e5 !important; }
-  .drv-header {     }
-  .drv-brand-mark { width:42px; height:42px;   display:grid; place-items:center; color:#e0b866; font-family:Georgia,serif; font-weight:800; letter-spacing:.08em; flex:0 0 42px; }
-  .drv-header-title { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
-  .drv-header-title strong { color:#f6f0e5;  font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .drv-header-title span { color:rgba(246,240,229,.55);  }
-  .drv-header-back { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:#07101a; color:#e0b866; text-decoration:none; font-size: calc(11.5px * var(--drv-fs, 1)); font-weight:700; white-space:nowrap; flex:0 0 auto; }
-  .drv-header-back svg { flex-shrink:0; }
-  .drv-header-notif { display:flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #d6a83d; border-radius:8px; background:#d6a83d; color:#07101a; font-size: calc(11.5px * var(--drv-fs, 1)); font-weight:800; white-space:nowrap; flex:0 0 auto; cursor:pointer; }
-  .drv-header-notif svg { flex-shrink:0; }
-  @media (max-width: 900px) {
-    .drv-header-notif .drv-header-notif-label { display:none; }
-    .drv-header-notif { width:34px; padding:0; justify-content:center; }
-  }
-
-  @media (max-width: 380px) {
-    .drv-time { font-size: calc(18px * var(--drv-fs, 1)); }
-    .drv-stat-val { font-size: calc(20px * var(--drv-fs, 1)); }
-  
-
-    .drv-header-back span.drv-header-back-label { display:none; }
-    .drv-header-back { width:34px; height:34px; padding:0; justify-content:center; }
-  
-}
-  /* En-tête : pastille "EN LIGNE", date/heure et cloche de notifications,
-     visibles sur toutes les pages (pas seulement le tableau de bord),
-     à l'image de la maquette. */
-  .drv-header-live { flex:0 0 auto; }
-  .drv-header-datetime {
-    display:none; flex:0 0 auto; text-align:right; font-size: calc(10.5px * var(--drv-fs, 1)); line-height:1.35;
-    color:rgba(246,240,229,.6); white-space:nowrap;
-  }
-  .drv-header-datetime strong { display:block; color:#f6f0e5; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; }
-  
-  .drv-header-bell {
-    position:relative; flex:0 0 auto; width:34px; height:34px; display:grid; place-items:center;
-    background:#07101a; border:1px solid #c99b4a; border-radius:8px; color:#e0b866; cursor:pointer;
-  }
-  .drv-header-bell svg { width:16px; height:16px; }
-  .drv-header-bell .drv-badge { top:-5px; right:-5px; }
-  .drv-overview { padding:14px 14px 4px; background:#03070d; }
-  .drv-overview-head {
-    display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;
-    border: 1px solid rgba(201,155,74,.45); border-radius: 12px; padding: 12px 14px; background:#050a10;
-  }
-  .drv-overview-head p { margin:0 0 2px; color:#e0b866; font-size: calc(9px * var(--drv-fs, 1)); letter-spacing:.12em; font-weight:800; }
-  .drv-overview-head h2 { margin:0; color:#f6f0e5; font-family:Georgia,serif; font-size: calc(19px * var(--drv-fs, 1)); }
-  .drv-live-pill { display:inline-flex; align-items:center; gap:6px; border:1px solid rgba(95,208,138,.45); color:#8ee39f; border-radius:999px; padding:5px 8px; font-size: calc(9px * var(--drv-fs, 1)); font-weight:800; }
-  .drv-live-pill i { width:6px; height:6px; border-radius:50%; background:#5fd08a; display:block; }
-  .drv-stat-grid { grid-template-columns:repeat(2,1fr) !important; gap:8px !important; margin-bottom:10px !important; }
-  .drv-stat { background:linear-gradient(180deg,#0a1118,#050a10) !important; border:1px solid rgba(201,155,74,.45); border-radius:9px !important; padding:11px !important;
-    display:grid !important; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:8px; }
-  .drv-stat-lbl { grid-column:1; grid-row:1; margin:0 !important; color:rgba(246,240,229,.55) !important; font-size: calc(8.5px * var(--drv-fs, 1)) !important; letter-spacing:.08em; font-weight:800; line-height:1.25; }
-  .drv-stat-val { grid-column:2; grid-row:1 / span 2; justify-self:end; text-align:right; white-space:nowrap; color:#e0b866 !important; font-size: calc(22px * var(--drv-fs, 1)) !important; line-height:1.1; }
-  .drv-stat-sub { grid-column:1; grid-row:2; margin:0 !important; color:rgba(246,240,229,.45) !important; font-size: calc(9px * var(--drv-fs, 1)) !important; line-height:1.2; }
-  @media (max-width:340px) { .drv-stat-val { font-size: calc(18px * var(--drv-fs, 1)) !important; } }
-  .drv-overview-actions { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid rgba(201,155,74,.45); border-radius:9px; overflow:hidden; margin-bottom:10px; background:#050a10; }
-  .drv-overview-actions button { min-height:64px; border:0; border-right:1px solid rgba(201,155,74,.45); background:transparent; color:#f6f0e5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; font-size: calc(8px * var(--drv-fs, 1)); cursor:pointer; }
-  .drv-overview-actions button:last-child { border-right:0; }
-  .drv-overview-actions svg { width:20px; height:20px; color:#e0b866; }
-  .drv-quick6 { grid-template-columns:repeat(3,1fr); gap:8px; background:transparent; border:0; }
-  .drv-quick6 button { position:relative; background:#050a10; border:1px solid rgba(201,155,74,.45) !important; border-radius:9px; min-height:70px; font-size: calc(9.5px * var(--drv-fs, 1)); font-weight:700; letter-spacing:.02em; text-transform:uppercase; }
-  .drv-quick6 button:active { background:#0a1118; }
-  .drv-quick6 .drv-badge { position:absolute; top:6px; right:10px; }
-  @media (min-width:640px) { .drv-quick6 { grid-template-columns:repeat(6,1fr); } }
-
-  /* ── Tableau de bord (grille responsive) ─────────────────────────────── */
-  .drv-main {  flex-direction:column; flex:1;  }
-  .drv-section-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
-  .drv-section-row .drv-section { margin:0; }
-  .drv-link-btn { background:none; border:none; color:#e0b866; font-size: calc(11px * var(--drv-fs, 1)); font-weight:700; cursor:pointer; padding:2px 0; text-transform:uppercase; letter-spacing:.04em; }
-  .drv-live-pill-sm { font-size: calc(8px * var(--drv-fs, 1)); padding:3px 7px; }
-  .drv-dash-grid { display:grid; grid-template-columns:1fr; gap:0; padding:0 14px; }
-  .drv-dash-col { display:flex; flex-direction:column; min-width:0; }
-  .drv-dash-next .drv-empty { padding:24px 10px; }
-  .drv-dash-row {
-    display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer;
-    border: 1px solid rgba(201,155,74,.45); border-radius: 10px; margin-bottom: 8px;
-  }
-  .drv-dash-row:last-child { margin-bottom: 0; }
-  .drv-dash-row-time { flex:0 0 48px; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; color:#e0b866; }
-  .drv-dash-row-route { flex:1; min-width:0; font-size: calc(13px * var(--drv-fs, 1)); color:#f6f0e5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .drv-dash-row-price { flex:0 0 auto; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; color:#f6f0e5; }
-  .drv-dash-notif {
-    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; cursor:pointer;
-    border: 1px solid rgba(201,155,74,.45); border-radius: 10px; margin-bottom: 8px;
-    font-size: calc(12.5px * var(--drv-fs, 1)); color:rgba(246,240,229,.75);
-  }
-  .drv-dash-notif:last-child { margin-bottom: 0; }
-  .drv-dash-notif strong { color:#e0b866; font-size: calc(14px * var(--drv-fs, 1)); }
-
-  /* Tablette : deux colonnes pour le tableau de bord. */
-  @media (min-width:700px) {
-    html, body { background: #01040a; }
-  
-
- .drv-header-datetime { display:block; } 
-
-    .drv-dash-grid { grid-template-columns: 1.4fr 1fr; gap:14px; align-items:start; padding:0 14px; }
-  
-}
-  /* Desktop / grand écran : sidebar de navigation fixe + contenu élargi. */
-  @media (min-width:1024px) {
-    .drv-body {  }
-    .drv-card { padding: 16px; }
-  
-
-    .drv-tabs {
-      position: fixed; top:74px; left:0; bottom:0; width:230px; z-index:5;
-      flex-direction: column; align-items:stretch; overflow-y:auto; overflow-x:hidden;
-      background:#050a10; border-bottom:0; border-right:1px solid rgba(201,155,74,.3);
-      padding:0 0 16px;
-    }
-    .drv-tabs::before {
-      content:'ACCESS PRESTIGE TAXI'; display:block; padding:18px 18px 14px;
-      font-family:Georgia,serif; font-weight:800; color:#e0b866; font-size: calc(12px * var(--drv-fs, 1));
-      letter-spacing:.1em; border-bottom:1px solid rgba(201,155,74,.25); margin-bottom:6px;
-    }
-    .drv-tab {
-      flex-direction:row; justify-content:flex-start; align-items:center; gap:12px;
-      min-height:44px; padding:10px 18px; font-size: calc(13px * var(--drv-fs, 1)); font-weight:600;
-      border-bottom:0; border-left:3px solid transparent; text-align:left; white-space:normal;
-    }
-    .drv-tab svg { width:18px; height:18px; flex-shrink:0; }
-    .drv-tab.active { color:#f6f0e5; border-left-color:#c99b4a; background:rgba(201,155,74,.12); }
-    .drv-tab-count {
-      margin-left:auto; flex:0 0 auto; background:rgba(201,155,74,.16); color:#e0b866;
-      font-size: calc(11px * var(--drv-fs, 1)); font-weight:800; padding:2px 8px; border-radius:999px;
-    }
-    .drv-tab.active .drv-tab-count { background:rgba(201,155,74,.32); color:#f6f0e5; }
-    .drv-main { margin-left:230px; }
-    .drv-dash-grid { grid-template-columns: 1.6fr 1fr; gap:18px; padding:0; }
-    .drv-overview { padding:18px 0 4px; }
-    .drv-body { padding:20px 28px; }
-  
-}
-  .drv-tabs {  border-top:1px solid rgba(201,155,74,.35) !important; border-bottom:1px solid rgba(201,155,74,.35) !important; }
-  .drv-tab {    }
-  .drv-tab.active {  border-bottom-color:#e0b866 !important; }
-  .drv-tab:active { background:#0a1118 !important; }
-  .drv-body { background:#03070d !important; padding:12px 12px calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
-  .drv-card, .drv-route-opt, .drv-chat-thread, .drv-planning-card { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; color:#f6f0e5 !important; }
-  .drv-time, .drv-name, .drv-route-label, .drv-planning-card, .drv-route span, .drv-section { color:#f6f0e5 !important; }
-  .drv-sub, .drv-meta, .drv-route-meta, .drv-planning-time { color:rgba(246,240,229,.55) !important; }
-  .drv-btn-primary { background:#050a10 !important; color:#fff !important; border:1px solid #e0b866 !important; }
-  .drv-btn-secondary { background:#050a10 !important; color:#e0b866 !important; border:1px solid #c99b4a !important; }
-  .drv-btn-danger { background:#1b0c0c !important; color:#f0a0a0 !important; border-color:#8b3a3a !important; }
-  .drv-badge-blue { background:#17243a !important; color:#9fc2ff !important; }
-  .drv-badge-green { background:#10271b !important; color:#8ee39f !important; }
-  .drv-badge-gray { background:#111820 !important; color:#c8c0b2 !important; }
-  .drv-chat-bubble.me { background:#101820 !important; color:#fff !important; border:1px solid #e0b866 !important; }
-  .drv-chat-bubble.them { background:#101820 !important; color:#f6f0e5 !important; }
-  .drv-chat-thread.unread { background:#101d28 !important; border-color:#c99b4a !important; }
-  .drv-team-map { background:#050a10 !important; border-color:rgba(201,155,74,.45) !important; }
-  /* Recolor legacy inline light surfaces without touching their behaviour.
-     IMPORTANT : les navigateurs réécrivent les couleurs hex des styles inline
-     en rgb(...) dans l'attribut style réellement posé sur le DOM — les
-     sélecteurs [style*="#hex"] ci-dessous ne matchent donc quasiment jamais
-     en pratique (c'est ce qui rendait des textes/bordures "trop sombres" un
-     peu partout, écran + onglets, malgré ces règles). On ajoute donc pour
-     chaque couleur son équivalent rgb() en plus du hex. */
-  [style*="#FDFBF7"], [style*="#f8fafc"], [style*="#f1f5f9"],
-  [style*="rgb(253, 251, 247)"], [style*="rgb(248, 250, 252)"], [style*="rgb(241, 245, 249)"] {
-    background-color:#050a10 !important;
-  }
-  [style*="#0f172a"], [style*="rgb(15, 23, 42)"] { color:#f6f0e5 !important; background-color:#0b1118 !important; }
-  [style*="#e2e8f0"], [style*="rgb(226, 232, 240)"] { border-color:rgba(201,155,74,.45) !important; }
-  [style*="#f1f5f9"], [style*="rgb(241, 245, 249)"] { border-color:rgba(201,155,74,.22) !important; }
-  [style*="rgba(255,255,255,0.2)"], [style*="rgba(255, 255, 255, 0.2)"] { border-color:rgba(201,155,74,.45) !important; }
-  [style*="#64748b"], [style*="#94a3b8"], [style*="#475569"], [style*="#334155"], [style*="#cbd5e1"],
-  [style*="rgb(100, 116, 139)"], [style*="rgb(148, 163, 184)"], [style*="rgb(71, 85, 105)"],
-  [style*="rgb(51, 65, 85)"], [style*="rgb(203, 213, 225)"] {
-    color:rgba(246,240,229,.6) !important;
-  }
-  [style*="#fef2f2"], [style*="#fff7ed"], [style*="#F4EFE4"], [style*="#fffbeb"], [style*="#eff6ff"], [style*="#f0fdf4"], [style*="#fff"],
-  [style*="rgb(254, 242, 242)"], [style*="rgb(255, 247, 237)"], [style*="rgb(244, 239, 228)"], [style*="rgb(255, 251, 235)"],
-  [style*="rgb(239, 246, 255)"], [style*="rgb(240, 253, 244)"], [style*="rgb(255, 255, 255)"] {
-    background-color:#0b1118 !important;
-  }
-  .drv-root input, .drv-root select, .drv-root textarea {
-    background:#050a10 !important; color:#f6f0e5 !important;
-    border:1px solid rgba(201,155,74,.45) !important; border-radius:10px !important;
-  }
-  .drv-root input::placeholder, .drv-root textarea::placeholder { color:rgba(246,240,229,.4) !important; }
-  .drv-root select option { background:#050a10; color:#f6f0e5; }
-  .drv-root input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(1) sepia(1) saturate(4) hue-rotate(5deg); }
+  .drv-dash-back svg { width:15px; height:15px; }
+  @media (min-width:1024px) { .drv-dash-back { display:none !important; } }
   @media (max-width:600px) {
-    .drv-root { max-width:100%; border:0; }
-    .drv-overview-actions button { min-height:58px; }
-    .drv-team-map { margin:8px 0 10px !important; }
+    .drv-header-datetime { display:none !important; }
   }
-  /* MAQUETTE APT */
-  html, body { overflow-x:hidden !important; overflow-y:auto !important; height:auto !important; min-height:100%; }
-  body { overscroll-behavior-y:auto !important; }
-  .drv-root { position:relative !important; inset:auto !important; min-height:100dvh; height:auto !important; overflow:visible !important; background:#02070d !important; }
-  .drv-header { height:78px !important; min-height:78px !important; padding:0 18px !important; background:linear-gradient(180deg,#07111a,#03080e) !important; border-bottom:1px solid rgba(201,155,74,.16) !important; }
-  .drv-header-title strong { font-size: calc(18px * var(--drv-fs, 1)) !important; } .drv-header-title span { font-size: calc(12px * var(--drv-fs, 1)) !important; }
-  .drv-header-live { margin-left:20px; }
-  .drv-header-kpi { display:flex; flex-direction:column; min-width:120px; padding:0 22px; border-left:1px solid rgba(255,255,255,.07); }
-  .drv-header-kpi small { color:#7f8b98; font-size: calc(9px * var(--drv-fs, 1)); letter-spacing:.04em; } .drv-header-kpi strong { color:#f6f0e5; font-size: calc(20px * var(--drv-fs, 1)); margin-top:4px; } .drv-header-kpi strong span { color:#e0b866; }
-  .drv-header-datetime { margin-left:auto; }
-  .drv-main { display:block !important; margin-left:0 !important; min-height:calc(100dvh - 78px) !important; overflow:visible !important; }
-  .drv-tabs { position:fixed !important; top:0 !important; left:0 !important; bottom:0 !important; width:164px !important; height:100dvh !important; padding:0 10px 20px !important; display:flex !important; flex-direction:column !important; background:#040a11 !important; border:0 !important; border-right:1px solid rgba(201,155,74,.18) !important; z-index:30 !important; overflow-y:auto !important; overflow-x:hidden !important; }
-  .drv-side-logo { height:104px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,.06); margin:0 -10px 12px; }
-  .drv-side-logo span { color:#e0b866; font:32px Georgia,serif; line-height:.8; } .drv-side-logo b { color:#fff; font:20px Georgia,serif; } .drv-side-logo em { color:#e0b866; font:700 7px Arial,sans-serif; letter-spacing:.15em; font-style:normal; }
-  .drv-tab { width:100% !important; min-height:42px !important; padding:9px 10px !important; flex-direction:row !important; justify-content:flex-start !important; gap:11px !important; border:0 !important; border-left:3px solid transparent !important; border-radius:6px !important; color:#b9c1ca !important; font-size: calc(10px * var(--drv-fs, 1)) !important; font-weight:700 !important; }
-  .drv-tab.active { background:linear-gradient(90deg,rgba(201,155,74,.22),rgba(201,155,74,.04)) !important; color:#fff !important; border-left-color:#e0b866 !important; }
-  .drv-tab-icon { display:grid; place-items:center; width:20px; flex:0 0 20px; } .drv-tab-icon svg { width:18px !important; height:18px !important; }
-  .drv-tab-count { margin-left:auto !important; background:#14304e !important; color:#9ec8ff !important; padding:3px 7px !important; border-radius:5px !important; font-size: calc(9px * var(--drv-fs, 1)) !important; }
-  .drv-content { min-height:calc(100dvh - 78px); margin-left:164px; padding:0 18px 26px; overflow:visible; }
-  .drv-dashboard { width:100%; max-width:1500px; margin:0 auto; padding:14px 0 30px; }
-  .drv-dashboard-grid-top { display:grid; grid-template-columns:minmax(330px,1.15fr) minmax(320px,1fr) minmax(260px,.86fr); gap:10px; }
-  .drv-dashboard-grid-mid { display:grid; grid-template-columns:1.15fr 1fr .9fr; gap:10px; margin-top:10px; }
-  .drv-dashboard-grid-bottom { display:grid; grid-template-columns:1fr 1.15fr .95fr 1.35fr; gap:10px; margin-top:10px; }
-  .drv-dashboard .drv-card { background:linear-gradient(145deg,#08131d,#050b12) !important; border:1px solid rgba(116,146,169,.22) !important; border-radius:9px !important; color:#f7f7f4 !important; margin:0 !important; box-shadow:inset 0 1px rgba(255,255,255,.025); }
-  .drv-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:13px; color:#f5f5f3; font-size: calc(12px * var(--drv-fs, 1)); font-weight:800; }
-  .drv-card-head > span { letter-spacing:.01em; } .drv-card-head > b { background:#123050; color:#b7dcff; border-radius:5px; padding:3px 7px; font-size: calc(9px * var(--drv-fs, 1)); } .drv-card-head > button { background:none; border:0; color:#cbd2d8; font-size: calc(9px * var(--drv-fs, 1)); font-weight:800; cursor:pointer; }
-  .drv-next-card { min-height:315px; } .drv-next-layout { display:grid; grid-template-columns:100px 1fr; gap:14px; padding:2px 0 15px; border-bottom:1px solid rgba(255,255,255,.07); }
-  .drv-next-time strong { display:block; color:#fff; font-size: calc(32px * var(--drv-fs, 1)); line-height:1; } .drv-next-time span { display:block; margin-top:8px; color:#aab4bf; font-size: calc(11px * var(--drv-fs, 1)); }
-  .drv-next-route { border-left:1px solid rgba(255,255,255,.08); padding-left:15px; display:grid; gap:13px; } .drv-next-route > div { position:relative; padding-left:15px; } .drv-next-route strong { display:block; font-size: calc(14px * var(--drv-fs, 1)); } .drv-next-route small { display:block; color:#8995a1; font-size: calc(10px * var(--drv-fs, 1)); margin-top:3px; }
-  .dot { position:absolute; left:0; top:4px; width:8px; height:8px; border-radius:50%; } .dot.green { background:#58cf39; } .dot.red { background:#ff4350; }
-  .drv-next-meta { display:grid; grid-template-columns:1.3fr 1fr .65fr; gap:10px; padding:12px 0; color:#d9dee2; font-size: calc(10px * var(--drv-fs, 1)); } .drv-next-meta span { display:flex; flex-direction:column; gap:3px; border-right:1px solid rgba(255,255,255,.07); } .drv-next-meta span:last-child { border:0; } .drv-next-meta small { color:#8995a1; }
-  .drv-btn-start,.drv-btn-detail { min-height:40px; border-radius:5px; padding:9px 10px; font-size: calc(10px * var(--drv-fs, 1)); font-weight:800; cursor:pointer; } .drv-btn-start { flex:1.4; background:#43b51f; color:#fff; border:1px solid #5bdc35; } .drv-btn-detail { flex:1; background:#07101a; color:#f2f2ef; border:1px solid #50606e; }
-  .drv-day-card,.drv-revenue-card { min-height:315px; } .drv-day-list { display:flex; flex-direction:column; }
-  .drv-day-row { display:grid; grid-template-columns:45px minmax(0,1fr) 42px 58px; gap:5px; align-items:center; padding:8px 0; border:0; border-top:1px solid rgba(255,255,255,.055); background:transparent; color:#dce1e5; text-align:left; font-size: calc(10px * var(--drv-fs, 1)); cursor:pointer; } .drv-day-row:first-child { border-top:0; } .drv-day-row time { color:#fff; font-weight:700; } .drv-day-row span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; } .drv-day-row strong { text-align:right; } .drv-day-row em { font-style:normal; text-align:center; border-radius:10px; padding:3px 2px; background:#17351e; color:#57d63d; font-size: calc(7px * var(--drv-fs, 1)); font-weight:800; } .drv-day-row em.upcoming { background:#17304a; color:#55b5ff; }
-  .drv-revenue-main { display:grid; grid-template-columns:1fr auto; align-items:start; } .drv-revenue-main strong { color:#52d638; font-size: calc(32px * var(--drv-fs, 1)); line-height:1; } .drv-revenue-main span { grid-column:1; color:#59d93e; font-size: calc(9px * var(--drv-fs, 1)); margin-top:5px; } .drv-revenue-main b { color:#54db3b; font-size: calc(14px * var(--drv-fs, 1)); text-align:right; } .drv-revenue-main b small { display:block; color:#9ca7b0; font-size: calc(8px * var(--drv-fs, 1)); font-weight:400; margin-top:4px; }
-  .drv-revenue-card .drv-card-head select { background:#09131d; color:#e5e9eb; border:1px solid #3b4c5a; border-radius:5px; padding:5px 8px; font-size: calc(9px * var(--drv-fs, 1)); }
-  .drv-chart { height:112px; margin:10px 0; display:flex; align-items:flex-end; gap:4px; padding:0 3px; border-bottom:1px solid rgba(255,255,255,.08); background:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,rgba(255,255,255,.045) 28px); } .drv-chart i { flex:1; background:#49c933; border-radius:1px 1px 0 0; opacity:.9; }
-  .drv-revenue-footer { display:grid; grid-template-columns:repeat(3,1fr); text-align:center; border-top:1px solid rgba(255,255,255,.06); padding-top:10px; } .drv-revenue-footer span { font-size: calc(8px * var(--drv-fs, 1)); color:#a5afb8; border-right:1px solid rgba(255,255,255,.06); } .drv-revenue-footer span:last-child { border:0; } .drv-revenue-footer b { display:block; color:#eef0f0; font-size: calc(15px * var(--drv-fs, 1)); margin-bottom:3px; }
-  .drv-plan-row { display:grid; grid-template-columns:102px minmax(0,1fr) 40px 25px; gap:7px; align-items:center; padding:11px 0; border-top:1px solid rgba(255,255,255,.06); font-size: calc(10px * var(--drv-fs, 1)); } .drv-plan-row:first-of-type { border-top:0; } .drv-plan-row > span { color:#bbc3c9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-plan-row > b { text-align:right; } .drv-plan-row > em { color:#be6eff; font-style:normal; }
-  .violet-pill { background:#32225b !important; color:#c69bff !important; } .red-pill { background:#54232c !important; color:#ff8c98 !important; } .gold-pill { background:#58440d !important; color:#ffd449 !important; }
-  button.drv-message-row { width:100%; background:transparent; border:0; text-align:left; color:inherit; cursor:pointer; font:inherit; }
-  .drv-message-row { display:grid; grid-template-columns:32px 1fr 38px; gap:8px; align-items:center; padding:9px 0; border-top:1px solid rgba(255,255,255,.06); } .avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#d9b49a; color:#16202a; font-size: calc(8px * var(--drv-fs, 1)); font-weight:900; } .drv-message-row div:nth-child(2) b { display:block; font-size: calc(10px * var(--drv-fs, 1)); } .drv-message-row div:nth-child(2) span { display:block; color:#9ba5ae; font-size: calc(9px * var(--drv-fs, 1)); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .drv-message-row > small { color:#7e8993; text-align:right; font-size: calc(8px * var(--drv-fs, 1)); } .drv-message-row > small i { display:inline-block; width:5px; height:5px; border-radius:50%; background:#ff4b55; }
-  .drv-rating strong { font-size: calc(42px * var(--drv-fs, 1)); color:#f4f4f1; } .drv-rating > span { color:#9aa5ae; font-size: calc(14px * var(--drv-fs, 1)); } .drv-rating div { color:#ffc928; font-size: calc(17px * var(--drv-fs, 1)); letter-spacing:2px; margin-top:8px; } .drv-rating small { display:block; color:#9aa5ae; font-size: calc(9px * var(--drv-fs, 1)); margin-top:5px; } .drv-rating-bars { margin-top:-50px; margin-left:120px; } .drv-rating-bars > div { display:flex; align-items:center; gap:5px; margin:5px 0; } .drv-rating-bars b { width:28px; font-size: calc(8px * var(--drv-fs, 1)); } .drv-rating-bars i { height:5px; flex:1; background:#25313a; border-radius:5px; overflow:hidden; } .drv-rating-bars i span { display:block; height:100%; background:#f5bb18; }
-  .drv-fleet { list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:8px; } .drv-fleet li { display:grid; grid-template-columns:64px minmax(0,1fr) auto; align-items:center; gap:9px; padding:7px; border:1px solid rgba(201,155,74,.35); border-radius:9px; background:rgba(255,255,255,.02); } .drv-fleet li.is-mine { border-color:rgba(201,155,74,.85); box-shadow:inset 0 0 0 1px rgba(201,155,74,.25); } .drv-fleet img { width:64px; height:44px; object-fit:cover; border-radius:7px; flex-shrink:0; } .drv-fleet strong { display:block; font-size: calc(11px * var(--drv-fs, 1)); line-height:1.25; } .drv-fleet span { display:block; color:#9aa5ae; font-size: calc(9px * var(--drv-fs, 1)); } .drv-fleet em { font-style:normal; font-size: calc(7px * var(--drv-fs, 1)); font-weight:800; letter-spacing:.06em; color:#e7bd5d; border:1px solid rgba(201,155,74,.6); border-radius:999px; padding:3px 6px; white-space:nowrap; } @media(max-width:420px){ .drv-fleet li { grid-template-columns:52px minmax(0,1fr); } .drv-fleet img { width:52px; height:38px; } .drv-fleet em { grid-column:1 / -1; justify-self:start; } }
-  .drv-vehicle-card > strong { display:block; font-size: calc(14px * var(--drv-fs, 1)); margin-bottom:3px; } .drv-vehicle-card > span { color:#9aa5ae; font-size: calc(10px * var(--drv-fs, 1)); } .drv-car-placeholder { height:70px; margin:10px 0 5px; display:grid; place-items:end center; color:#687580; font-size: calc(28px * var(--drv-fs, 1)); font-weight:900; font-style:italic; background:radial-gradient(ellipse at center,#1a2731 0,transparent 55%); } .drv-vehicle-card footer { display:flex; gap:10px; border-top:1px solid rgba(255,255,255,.06); padding-top:8px; color:#b8c1c8; font-size: calc(8px * var(--drv-fs, 1)); } .drv-vehicle-card footer i { color:#44cc39; font-style:normal; }
-  .drv-gps-card > strong { display:block; font-size: calc(10px * var(--drv-fs, 1)); } .drv-gps-card > span { color:#a4adb4; font-size: calc(9px * var(--drv-fs, 1)); display:block; margin-top:2px; } .gps-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#4ed239; margin-right:5px; } .live-small { background:#15371c !important; color:#5cdb44 !important; }
-  .gps-map { height:97px; margin-top:8px; border-radius:6px; position:relative; overflow:hidden; background-color:#6f6c60; background-image:linear-gradient(25deg,transparent 45%,rgba(255,255,255,.5) 46%,rgba(255,255,255,.5) 48%,transparent 49%),linear-gradient(120deg,transparent 40%,rgba(53,54,47,.65) 41%,rgba(53,54,47,.65) 44%,transparent 45%),repeating-linear-gradient(12deg,rgba(180,177,160,.35) 0 2px,transparent 2px 15px); } .gps-map > span { position:absolute; z-index:2; left:50%; top:52%; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:#2387ed; border:3px solid #d9efff; color:transparent; }
-  .drv-notif-row { display:grid; grid-template-columns:18px 1fr auto; align-items:center; gap:6px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); color:#dce1e4; font-size: calc(9px * var(--drv-fs, 1)); } .drv-notif-row small { color:#7d8891; font-size: calc(7px * var(--drv-fs, 1)); } .drv-see-all { display:block; margin:9px auto 0; background:none; border:0; color:#d0d5d9; font-size: calc(8px * var(--drv-fs, 1)); cursor:pointer; }
-  .shortcut-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; } .shortcut-grid button { border:0; background:transparent; color:#f1f3f2; cursor:pointer; min-width:0; } .shortcut-grid b { display:grid; place-items:center; width:46px; height:46px; margin:0 auto 8px; border-radius:10px; font-size: calc(27px * var(--drv-fs, 1)); background:#0965d8; color:#fff; } .shortcut-grid button:nth-child(2) b { background:#2d9b36; } .shortcut-grid button:nth-child(3) b { background:#9348b7; } .shortcut-grid button:nth-child(4) b { background:#087f82; } .shortcut-grid span { font-size: calc(7px * var(--drv-fs, 1)); font-weight:800; line-height:1.35; }
-  .drv-mobile-stats { display:none; }
-  .drv-mobile-nav { display:none; } .drv-body { overflow:visible !important; height:auto !important; min-height:0 !important; }
-  
-  
+  @media (max-width:520px) {
+    .drv-header-notif span.drv-header-notif-label { display:none; }
+    .drv-header-notif { padding:7px; }
+    .drv-header-back span.drv-header-back-label { display:none; }
+    .drv-header-back { padding:7px; }
+    .drv-header-live span.drv-header-live-label { display:none; }
+    .drv-header-live { padding:6px 8px; }
+  }
+  .drv-card + .drv-card { margin-top:12px; }
+  .drv-btns { display:flex; flex-wrap:wrap; gap:8px; }
+  /* iPhone : la barre d'état est translucide (black-translucent). Sans ça, l'en-tête de 78 px
+     fixe écrasait son contenu sous l'heure / l'îlot dynamique, et au défilement la page
+     passait dessous. L'en-tête grandit de la zone sûre et reste collé en haut. */
+  .drv-root .drv-header {
+    position:sticky !important; top:0 !important; z-index:45;
+    height:auto !important;
+    min-height:calc(78px + env(safe-area-inset-top,0px)) !important;
+    padding-top:calc(10px + env(safe-area-inset-top,0px)) !important;
+    padding-left:calc(env(safe-area-inset-left,0px)) !important;
+    padding-right:calc(env(safe-area-inset-right,0px)) !important;
+    flex-wrap:wrap !important; row-gap:8px;
+  }
+  /* Sélecteur Ayoub / Adam : bouton lisible dans l'en-tête (l'ancien style « pastille live »
+     était réduit à 7 px sur mobile, donc introuvable). */
+  .drv-root .drv-header .drv-header-who {
+    display:inline-block !important; flex:0 0 auto !important; margin-left:auto !important;
+    max-width:128px; min-height:34px; padding:6px 12px !important;
+    border:1px solid rgba(224,184,102,.65) !important; border-radius:999px !important;
+    background:rgba(224,184,102,.14) !important; color:#f6f0e5 !important;
+    font-size:13px !important; font-weight:700 !important; line-height:1.2; cursor:pointer;
+    text-overflow:ellipsis;
+  }
+  .drv-root .drv-header-who option { color:#111; background:#fff; }
+  .drv-root .drv-header-back { display:inline-flex !important; }
+  .drv-root .drv-header-title { display:flex !important; }
+  @media (max-width:460px) { .drv-root .drv-header-title { display:none !important; } }
+  .drv-btns button { flex:1 1 140px; border-radius:10px; padding:11px 14px; font-size:12px; font-weight:800; cursor:pointer; }
+  .drv-quick-notif { width:100%; display:flex; align-items:center; justify-content:center; gap:7px; border-radius:10px; padding:11px 14px; font-size:12px; font-weight:800; cursor:pointer; }
+  .drv-quick-notif svg { width:15px; height:15px; }
+  /* Grille d'icônes carrées (accueil chauffeur), optimisée toutes tailles mobile. */
+  .drv-dash-grid {
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:18px;
+  }
+  @media (min-width:640px) { .drv-dash-grid { grid-template-columns:repeat(3, 1fr); gap:12px; } }
+  @media (min-width:1024px) { .drv-dash-grid { grid-template-columns:repeat(5, 1fr); gap:14px; } }
+  .drv-tile {
+    position:relative; aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:8px; text-align:center; cursor:pointer; color:inherit;
+    border:1px solid rgba(246,240,229,.12); border-radius:16px; background:rgba(255,255,255,.03);
+    padding:8px; min-height:0;
+  }
+  .drv-tile:active { background:rgba(255,255,255,.07); }
+  .drv-tile-ico {
+    flex:0 0 auto; width:42px; height:42px; border-radius:13px; display:flex; align-items:center;
+    justify-content:center; color:#0a1118;
+  }
+  .drv-tile-ico svg { width:19px; height:19px; }
+  @media (max-width:359px) {
+    .drv-tile { border-radius:13px; gap:6px; padding:6px; }
+    .drv-tile-ico { width:34px; height:34px; border-radius:10px; }
+    .drv-tile-ico svg { width:16px; height:16px; }
+  }
+  @media (min-width:1024px) {
+    .drv-tile-ico { width:48px; height:48px; border-radius:14px; }
+    .drv-tile-ico svg { width:21px; height:21px; }
+  }
+  .drv-tile-label {
+    font-size:11.5px; font-weight:700; line-height:1.2; display:-webkit-box;
+    -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; word-break:break-word;
+  }
+  .drv-tile-badge {
+    position:absolute; top:6px; right:6px; min-width:18px; height:18px; border-radius:9px;
+    background:#e11d48; color:#fff; font-size:10px; font-weight:800; display:flex;
+    align-items:center; justify-content:center; padding:0 5px;
+  }
+  .drv-tile-dot {
+    position:absolute; top:8px; right:8px; width:9px; height:9px; border-radius:50%;
+    background:#16a34a; box-shadow:0 0 0 2px #0a1118;
+  }
+  .drv-dash-map { margin-top:14px; border-radius:16px; overflow:hidden; border:1px solid rgba(246,240,229,.12); }
+  /* Page des courses : plein écran. */
+  .drv-rides-page {
+    position:fixed; inset:0; z-index:80; overflow-y:auto; overscroll-behavior:contain;
+    background:#0a1118; color:inherit;
+    padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(24px + env(safe-area-inset-bottom,0px));
+  }
+  /* En-tête collant : il couvre aussi la zone sûre du haut (encoche / barre d'état iPhone),
+     sinon le titre passe sous l'heure et l'îlot dynamique quand on fait défiler. */
+  .drv-rides-head {
+    position:sticky; top:0; z-index:2; display:flex; align-items:center; gap:10px;
+    background:#0a1118;
+    margin-top:calc(-14px - env(safe-area-inset-top,0px));
+    padding:calc(20px + env(safe-area-inset-top,0px)) 0 12px;
+  }
+  /* Bloc collant « en-tête + onglets » : les deux restent ensemble, sans chevauchement. */
+  .drv-rides-stick {
+    position:sticky; top:0; z-index:2; background:#0a1118;
+    margin-top:calc(-14px - env(safe-area-inset-top,0px));
+    padding-top:calc(20px + env(safe-area-inset-top,0px));
+  }
+  .drv-rides-stick .drv-rides-head { position:static; margin:0; padding:0 0 12px; }
+  .drv-rides-back {
+    display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;
+    border-radius:11px; border:1px solid rgba(246,240,229,.16); background:rgba(255,255,255,.05);
+    color:inherit; cursor:pointer;
+  }
+  .drv-rides-back svg { width:16px; height:16px; }
+  .drv-rides-head h2 { margin:0; font-size:17px; font-weight:800; }
+  .drv-rides-sec { margin-top:16px; }
+  .drv-rides-sec-title {
+    display:flex; align-items:center; gap:8px; margin:0; font-size:11px; font-weight:800;
+    letter-spacing:.12em; text-transform:uppercase; color:#c99b4a;
+  }
+  .drv-rides-sec-count {
+    min-width:20px; height:20px; border-radius:10px; padding:0 6px; display:inline-flex;
+    align-items:center; justify-content:center; background:rgba(224,184,102,.16);
+    color:#c99b4a; font-size:11px; font-weight:800; letter-spacing:0;
+  }
+  .drv-rides-sec-empty {
+    margin:8px 0 0; border:1px dashed rgba(246,240,229,.16); border-radius:14px;
+    padding:14px 12px; font-size:12.5px; color:rgba(246,240,229,.55);
+  }
+  .drv-rides-item {
+    margin-top:8px; cursor:pointer; border-radius:14px; padding:12px;
+    border:1px solid rgba(246,240,229,.12); background:rgba(255,255,255,.03);
+  }
+  .drv-rides-item:active { background:rgba(255,255,255,.07); }
+  .drv-rides-actions { display:flex; gap:8px; margin-top:8px; }
+  .drv-rides-btn {
+    flex:1; padding:8px 10px; border-radius:10px; font-size:12px; font-weight:600;
+    border:1px solid rgba(246,240,229,.16); background:rgba(255,255,255,.05); color:inherit;
+    display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none;
+  }
+  .drv-rides-btn:active { transform:scale(.97); }
+  .drv-rides-btn:disabled { opacity:.5; }
+  .drv-rides-btn-done { border-color:rgba(74,222,128,.4); color:#4ade80; }
+  .drv-rides-btn-spill { border-color:rgba(201,155,74,.45); color:#c99b4a; }
+  .drv-rides-btn-sms { border-color:rgba(14,165,233,.45); color:#38bdf8; }
+  .drv-rides-btn-cancel { border-color:rgba(248,113,113,.5); color:#f87171; }
+  .drv-call-row {
+    width:100%; display:flex; align-items:center; gap:12px; text-align:left; text-decoration:none;
+    border-bottom:1px solid rgba(246,240,229,.08); padding:10px 4px; color:inherit;
+  }
+  .drv-call-row:last-child { border-bottom:none; }
+  .drv-call-ico {
+    flex:0 0 34px; height:34px; border-radius:10px; display:flex; align-items:center;
+    justify-content:center; background:#16a34a; color:#0a1118; text-decoration:none;
+  }
+  .drv-call-ico-sms { background:#0ea5e9; }
+  .drv-call-txt {
+    flex:1 1 auto; min-width:0; text-decoration:none; color:inherit; cursor:pointer;
+    background:none; border:none; padding:0; margin:0; text-align:left; font:inherit;
+  }
+  .drv-call-txt strong { display:block; font-size:13px; font-weight:700; }
+  .drv-call-txt span { display:block; font-size:11.5px; color:rgba(246,240,229,.6); }
+  .drv-real-box { margin-top:16px; border:1px solid rgba(224,184,102,.35); border-radius:14px; padding:14px; background:rgba(224,184,102,.06); }
+  .drv-real-title { font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#c99b4a; }
+  .drv-real-grid { margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .drv-real-grid label { display:flex; flex-direction:column; gap:6px; font-size:12px; color:rgba(246,240,229,.7); }
+  .drv-real-grid input {
+    border-radius:10px; border:1px solid rgba(246,240,229,.2); background:rgba(0,0,0,.25);
+    padding:10px 12px; font-size:16px; color:inherit; min-height:44px;
+  }
+  .drv-real-hint { margin-top:8px; font-size:11px; color:rgba(246,240,229,.55); }
+  .drv-addr-wrap { position:relative; }
+  .drv-addr-list {
+    position:absolute; z-index:70; top:calc(100% + 4px); left:0; right:0;
+    background:#0a1118; border:1px solid rgba(201,155,74,.4); border-radius:10px;
+    max-height:220px; overflow-y:auto; box-shadow:0 12px 30px rgba(0,0,0,.5);
+  }
+  .drv-addr-item {
+    padding:10px 12px; font-size:13px; color:#f6f0e5; cursor:pointer;
+    border-bottom:1px solid rgba(246,240,229,.08);
+  }
+  .drv-addr-item:last-child { border-bottom:none; }
+  .drv-addr-item:hover, .drv-addr-item:active { background:rgba(224,184,102,.12); }
+  .drv-addr-empty { padding:10px 12px; font-size:12px; color:rgba(246,240,229,.55); }
+  .drv-real-done { margin-top:6px; font-size:15px; font-weight:700; }
+  .drv-popup-backdrop {
+    position:fixed; inset:0; z-index:60; background:rgba(3,7,13,.82);
+    display:flex; align-items:center; justify-content:center; padding:18px;
+    padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  }
+  .drv-popup {
+    width:100%; max-width:380px; background:#0a1118; border:1px solid #c99b4a; border-radius:18px;
+    padding:20px; box-shadow:0 20px 60px rgba(0,0,0,.6); color:#f6f0e5;
+  }
+  .drv-popup-kicker { color:#e0b866; font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+  .drv-popup-when { margin-top:8px; font-size:15px; font-weight:700; }
+  .drv-popup-route { margin-top:12px; display:flex; flex-direction:column; gap:4px; font-size:14px; }
+  .drv-popup-meta { margin-top:12px; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:rgba(246,240,229,.7); }
+  .drv-popup-meta b { color:#e0b866; font-size:15px; }
+  .drv-popup-actions { margin-top:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .drv-popup-actions button { border-radius:12px; padding:14px; font-size:14px; font-weight:800; cursor:pointer; min-height:48px; }
+  .drv-popup-refuse { background:transparent; border:1px solid rgba(246,240,229,.3); color:rgba(246,240,229,.8); }
+  .drv-popup-accept { background:linear-gradient(180deg,#e0b866,#c99b4a); border:0; color:#0a1118; }
+  .drv-popup-accept:disabled { opacity:.6; }
 
-  /* Mobile: the fifth action opens the complete navigation drawer. */
-  .drv-mobile-drawer-backdrop { display:none; }
-  .drv-mobile-drawer { display:none; }
-  
-
-  @media (min-width:701px) { .drv-header > .drv-brand-mark { display:none !important; } }
-  
-  /* Le menu déroulant Alain/Patricia doit toujours passer au-dessus du header
-     sticky, de la sidebar/tabs et de tout le reste de l'UI, quel que soit le
-     breakpoint (le header seul crée déjà son propre contexte d'empilement
-     via position:sticky + z-index, donc le switcher doit dépasser TOUTES
-     les valeurs de z-index utilisées ailleurs dans ce fichier, y compris
-     .drv-tabs et .drv-mobile-drawer). */
-  .drv-identity-switcher,
-  .drv-identity-menu { z-index: 300 !important; }
-
-  #root { height:auto !important; min-height:100% !important; overflow:visible !important; }
-  .drv-root, .drv-main, .drv-content, .drv-dashboard { touch-action:auto !important; }
-  
-  
-
-  /* ================================================================
-     APT — ALIGNEMENT FINAL SUR LA MAQUETTE FOURNIE
-     Breakpoints: mobile / tablette / desktop.
-     Ces règles restent uniquement visuelles et ne modifient aucune
-     logique métier, donnée, navigation ou appel serveur.
-     ================================================================ */
-
-  /* ---------- DESKTOP : >= 1101px ---------- */
-  
-
-  /* ---------- TABLETTE : 701–1100px ----------
-     Navigation horizontale + contenu en grille 2 colonnes. */
-  
-
-  /* ---------- MOBILE : <= 700px ----------
-     On colle au téléphone de la maquette : barre compacte,
-     carte prochaine course, 3 KPI, courses du jour et navigation basse. */
-  
-
-  /* ================================================================
-     APT — DASHBOARD FINAL / MAQUETTE
-     Priorité au rendu d'arrivée sur /driver.
-     On conserve volontairement le sélecteur Alain/Patricia et
-     « Retour au site ». Aucun comportement métier n'est modifié.
-     ================================================================ */
-  @media (min-width:1101px) {
- .drv-header {  } 
-
-    html, body {  }
-
-    .drv-header {
-      
-      
-      
-      
-      
-    }
-
-    .drv-tabs {
-      
-      
-    }
-
-    .drv-side-logo {
-      
-      
-    }
-
+  /* ===== Anti-débordement iPhone (Dynamic Island / Pro Max), Android & tablette ===== */
+  html, body {
+    background:#03070d;
+    overflow-x:hidden;
+    overscroll-behavior-y:none; /* empêche le "rebond" élastique qui révèle un bord blanc/gris en haut ou en bas */
+  }
+  .drv-root {
+    min-height:100vh;
+    min-height:100dvh; /* hauteur réelle sur mobile, indépendante de la barre d'adresse */
+    width:100%;
+    max-width:100vw;
+    overflow-x:hidden;
+    background:#03070d;
+    overscroll-behavior-y:contain;
+    box-sizing:border-box;
+  }
+  .drv-root *, .drv-root *::before, .drv-root *::after { box-sizing:border-box; }
+  .drv-main, .drv-content, .drv-body { max-width:100%; overflow-x:hidden; }
+  /* Espace garanti sous le contenu pour respecter l'encoche du bas (home indicator) */
+  @media (max-width:1023px) {
     .drv-content {
-      
-      
-      
-    }
-
-    .drv-dashboard {
-      
-      
-      
-    }
-
-    /* La maquette desktop utilise trois colonnes de même poids. */
-    .drv-dashboard-grid-top {
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      gap:10px !important;
-    }
-
-    .drv-dashboard-grid-mid {
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      gap:10px !important;
-      
-    }
-
-    /* 4 cartes du bas : véhicule / GPS / notifications / raccourcis. */
-    .drv-dashboard-grid-bottom {
-      
-      
-      
-    }
-
-    .drv-dashboard .drv-card {
-      
-      
-    }
-
-    .drv-next-card,
-    .drv-day-card,
-    .drv-revenue-card {
-      
-    }
-
-    .drv-next-card { padding:14px !important; }
-    .drv-day-card,
-    .drv-revenue-card { padding:14px !important; }
-
-    .drv-next-layout {  }
-    .drv-next-route {  }
-    .drv-next-route strong,
-    .drv-day-row span,
-    .drv-plan-row > span,
-    .drv-message-row div:nth-child(2) span {
-      
-      
-    }
-
-    .drv-plan-row {
-      
-    }
-
-    .drv-message-row {
-      
-    }
-
-    .drv-rating-bars {
-      
-    }
-
-    .shortcut-grid {
-      
-      
-    }
-
-    .shortcut-grid b {
-      
-      
-    }
-  
-
-    html, body { overflow-x:hidden !important; }
-
-    .drv-root {
-      min-height:100dvh !important;
-      background:#02070d !important;
-    }
-
-    /* Sidebar = colonne fixe de la maquette */
-    .drv-tabs {
-      position:fixed !important;
-      inset:0 auto 0 0 !important;
-      width:145px !important;
-      height:100dvh !important;
-      padding:0 9px 18px !important;
-      display:flex !important;
-      flex-direction:column !important;
-      background:#040a11 !important;
-      border:0 !important;
-      border-right:1px solid rgba(201,155,74,.18) !important;
-      overflow-y:auto !important;
-      overflow-x:hidden !important;
-      z-index:40 !important;
-    }
-
-    .drv-side-logo {
-      width:auto !important;
-      height:104px !important;
-      margin:0 -9px 12px !important;
-      flex:0 0 104px !important;
-    }
-
-    .drv-tab {
-      width:100% !important;
-      min-height:42px !important;
-      flex:0 0 42px !important;
-      padding:9px 8px !important;
-      display:flex !important;
-      flex-direction:row !important;
-      justify-content:flex-start !important;
-      align-items:center !important;
-      gap:10px !important;
-      border:0 !important;
-      border-left:3px solid transparent !important;
-      border-radius:6px !important;
-      color:#b9c1ca !important;
-      font-size: calc(10px * var(--drv-fs, 1)) !important;
-      font-weight:700 !important;
-    }
-
-    .drv-tab.active {
-      color:#fff !important;
-      border-left-color:#e0b866 !important;
-      background:linear-gradient(90deg,rgba(201,155,74,.22),rgba(201,155,74,.04)) !important;
-    }
-
-    .drv-tab-icon { width:20px !important; flex:0 0 20px !important; display:grid !important; place-items:center !important; }
-    .drv-tab-icon svg { width:18px !important; height:18px !important; }
-    .drv-tab-label { min-width:0 !important; overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important; }
-    .drv-tab-count { display:inline-flex !important; margin-left:auto !important; flex:0 0 auto !important; }
-
-    /* Header aligné sur le bord droit de la sidebar */
-    .drv-header {
-      position:relative !important;
-      z-index:35 !important;
-      margin-left:145px !important;
-      width:calc(100% - 145px) !important;
-      height:78px !important;
-      min-height:78px !important;
-      padding:0 18px !important;
-      gap:10px !important;
-      background:linear-gradient(180deg,#07111a,#03080e) !important;
-      border-bottom:1px solid rgba(201,155,74,.16) !important;
-      overflow:visible !important;
-    }
-
-    .drv-brand-mark { display:none !important; }
-
-    .drv-header-title {
-      min-width:180px !important;
-      flex:1 1 auto !important;
-      display:flex !important;
-      flex-direction:column !important;
-      gap:2px !important;
-    }
-    .drv-header-title strong { font-size: calc(17px * var(--drv-fs, 1)) !important; color:#f6f0e5 !important; }
-    .drv-header-title span { font-size: calc(11px * var(--drv-fs, 1)) !important; color:rgba(246,240,229,.55) !important; }
-
-    /* Conservation explicite du sélecteur */
-    .drv-header > div[style*="position: relative"] {
-      display:block !important;
-      flex:0 0 auto !important;
-    }
-    .drv-header > div[style*="position: relative"] > button {
-      min-height:32px !important;
-      white-space:nowrap !important;
-    }
-
-    .drv-header-live {
-      flex:0 0 auto !important;
-      margin-left:0 !important;
-    }
-
-    .drv-header-kpi {
-      min-width:105px !important;
-      padding:0 15px !important;
-    }
-    .drv-header-kpi small { font-size: calc(8px * var(--drv-fs, 1)) !important; }
-    .drv-header-kpi strong { font-size: calc(18px * var(--drv-fs, 1)) !important; }
-
-    .drv-header-datetime {
-      display:block !important;
-      flex:0 0 auto !important;
-      margin-left:auto !important;
-      min-width:96px !important;
-      font-size: calc(10px * var(--drv-fs, 1)) !important;
-      text-align:right !important;
-    }
-    .drv-header-datetime strong { font-size: calc(11px * var(--drv-fs, 1)) !important; }
-
-    .drv-header-bell {
-      flex:0 0 34px !important;
-      width:34px !important;
-      height:34px !important;
-    }
-
-    /* Conservation explicite de « Retour au site » */
-    .drv-header-back {
-      display:flex !important;
-      flex:0 0 auto !important;
-      align-items:center !important;
-      height:34px !important;
-      padding:0 10px !important;
-      border:1px solid rgba(201,155,74,.65) !important;
-      border-radius:8px !important;
-      background:#07101a !important;
-      color:#e0b866 !important;
-      font-size: calc(10px * var(--drv-fs, 1)) !important;
-      font-weight:700 !important;
-      white-space:nowrap !important;
-    }
-
-    .drv-main {
-      margin-left:0 !important;
-      min-height:calc(100dvh - 78px) !important;
-      display:block !important;
-      overflow:visible !important;
-    }
-
-    .drv-content {
-      margin-left:145px !important;
-      width:calc(100% - 145px) !important;
-      min-width:0 !important;
-      padding:0 15px 26px !important;
-      overflow:visible !important;
-    }
-
-    .drv-dashboard {
-      width:100% !important;
-      max-width:none !important;
-      margin:0 !important;
-      padding:12px 0 30px !important;
-    }
-
-    /* Trois colonnes égales, comme la maquette */
-    .drv-dashboard-grid-top,
-    .drv-dashboard-grid-mid {
-      width:100% !important;
-      display:grid !important;
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      gap:10px !important;
-    }
-    .drv-dashboard-grid-mid { margin-top:10px !important; }
-
-    /* Quatre blocs en bas avec le poids visuel de la maquette */
-    .drv-dashboard-grid-bottom {
-      width:100% !important;
-      display:grid !important;
-      grid-template-columns:.83fr .96fr .87fr 1.39fr !important;
-      gap:10px !important;
-      margin-top:10px !important;
-    }
-
-    .drv-dashboard .drv-card {
-      min-width:0 !important;
-      margin:0 !important;
-      padding:14px !important;
-      border-radius:9px !important;
-      background:linear-gradient(145deg,#08131d,#050b12) !important;
-      border:1px solid rgba(116,146,169,.22) !important;
-      box-shadow:inset 0 1px rgba(255,255,255,.025) !important;
-      overflow:hidden !important;
-    }
-
-    .drv-next-card,
-    .drv-day-card,
-    .drv-revenue-card { min-height:315px !important; }
-
-    .drv-card-head {
-      min-height:22px !important;
-      margin-bottom:8px !important;
-      font-size: calc(11px * var(--drv-fs, 1)) !important;
-    }
-    .drv-card-head > span { min-width:0 !important; }
-
-    .drv-next-layout {
-      grid-template-columns:100px minmax(0,1fr) !important;
-      gap:14px !important;
-    }
-    .drv-next-time strong { font-size: calc(31px * var(--drv-fs, 1)) !important; }
-    .drv-next-route { min-width:0 !important; }
-    .drv-next-route strong,
-    .drv-day-row span,
-    .drv-plan-row > span,
-    .drv-message-row div:nth-child(2) span {
-      overflow:hidden !important;
-      text-overflow:ellipsis !important;
-    }
-
-    .drv-day-list { min-width:0 !important; }
-    .drv-day-row {
-      grid-template-columns:40px minmax(0,1fr) 38px 54px !important;
-      min-width:0 !important;
-      padding:7px 0 !important;
-    }
-
-    .drv-plan-row {
-      grid-template-columns:102px minmax(0,1fr) 40px 25px !important;
-      min-width:0 !important;
-    }
-
-    .drv-message-row {
-      grid-template-columns:32px minmax(0,1fr) 38px !important;
-    }
-
-    .drv-rating-bars { margin-left:120px !important; }
-
-    .shortcut-grid {
-      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-      gap:6px !important;
-    }
-    .shortcut-grid b { width:46px !important; height:46px !important; }
-  
-}
-
-  /* Tablette : dashboard lisible sans supprimer les contrôles du header */
-  @media (min-width:701px) and (max-width:1100px) {
-    .drv-header-kpi {   } .drv-header-kpi strong {  }
-    .drv-content {   } .drv-tabs {   left:auto !important;       } .drv-side-logo {  } .drv-tab { width:auto !important;       } .drv-tab.active {   } .drv-dashboard-grid-top {  } .drv-revenue-card {  } .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom {  }
-  
-
-    html, body { overflow-x:hidden !important; }
-
-    .drv-header {
-      height:72px !important;
-      min-height:72px !important;
-      padding:0 16px !important;
-    }
-
-    .drv-header > .drv-brand-mark {
-      display:grid !important;
-      width:42px !important;
-      height:42px !important;
-      flex:0 0 42px !important;
-      font-size: calc(17px * var(--drv-fs, 1)) !important;
-    }
-
-    .drv-header-title strong { font-size: calc(16px * var(--drv-fs, 1)) !important; }
-    .drv-header-title span { font-size: calc(10px * var(--drv-fs, 1)) !important; }
-
-    .drv-header-live {
-      margin-left:auto !important;
-    }
-
-    .drv-header-kpi {
-      
-      
-    }
-
-    .drv-header-kpi small {  }
-    .drv-header-kpi strong {  }
-
-    .drv-header-datetime { display:block !important; font-size: calc(9px * var(--drv-fs, 1)) !important; }
-    .drv-header-datetime strong { font-size: calc(10px * var(--drv-fs, 1)) !important; }
-
-    .drv-tabs {
-      position:sticky !important;
-      top:0 !important;
-      width:100% !important;
-      height:56px !important;
-      min-height:56px !important;
-      padding:0 6px !important;
-      flex-direction:row !important;
-      align-items:stretch !important;
-      overflow-x:auto !important;
-      overflow-y:hidden !important;
-      z-index:20 !important;
-    }
-
-    .drv-side-logo { display:none !important; }
-
-    .drv-tab {
-      min-width:86px !important;
-      min-height:56px !important;
-      flex:0 0 auto !important;
-      padding:7px 8px !important;
-      flex-direction:column !important;
-      justify-content:center !important;
-      gap:3px !important;
-      border-left:0 !important;
-      border-bottom:3px solid transparent !important;
-      border-radius:0 !important;
-      font-size: calc(9px * var(--drv-fs, 1)) !important;
-    }
-
-    .drv-tab.active {
-      border-left:0 !important;
-      border-bottom-color:#e0b866 !important;
-    }
-
-    .drv-tab-icon svg { width:17px !important; height:17px !important; }
-
-    .drv-content {
-      margin-left:0 !important;
-      padding:0 14px 26px !important;
-    }
-
-    .drv-dashboard {
-      max-width:none !important;
-      padding:12px 0 28px !important;
-    }
-
-    .drv-dashboard-grid-top {
-      
-      gap:10px !important;
-    }
-
-    .drv-next-card,
-    .drv-day-card {
-      min-height:315px !important;
-    }
-
-    .drv-revenue-card {
-      grid-column:1 / -1 !important;
-      min-height:270px !important;
-    }
-
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom {
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-      gap:10px !important;
-    }
-
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom { margin-top:10px !important; }
-
-    .drv-dashboard .drv-card {
-      min-width:0 !important;
-      overflow:hidden !important;
-    }
-  
-
-    .drv-header-back { display:flex !important; }
-    .drv-header > div[style*="position: relative"] { display:block !important; }
-    .drv-header-kpi { min-width:78px !important; padding:0 7px !important; }
-    .drv-header-kpi small { font-size: calc(7px * var(--drv-fs, 1)) !important; }
-    .drv-header-kpi strong { font-size: calc(14px * var(--drv-fs, 1)) !important; }
-    .drv-dashboard-grid-top { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
-    .drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
-  
-}
-
-  /* ================================================================
-     APT — PARITÉ MOBILE / TABLETTE / DESKTOP DU TABLEAU DE BORD
-     Le mobile affiche exactement les mêmes cartes que le PC,
-     empilées sur une colonne (aucune section masquée).
-     ================================================================ */
-  
-
-  /* Logo officiel du site dans l'espace chauffeur (header + sidebar). */
-  .drv-brand-mark { border:0 !important; border-radius:8px !important; overflow:hidden; background:#03070d; }
-  .drv-brand-mark img { width:100%; height:100%; object-fit:contain; }
-  .drv-side-logo img { max-width:100%; height:auto; object-fit:contain; padding:0 6px; }
-
-  /* Bouton "activer les notifications" du header (visible tant que la
-     permission n'est pas accordée). */
-  .drv-header-pushbtn { display:inline-flex; align-items:center; gap:5px; height:34px; padding:0 10px; border:1px solid #c99b4a; border-radius:8px; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; font-size: calc(11.5px * var(--drv-fs, 1)); font-weight:800; white-space:nowrap; cursor:pointer; flex:0 0 auto; }
-  .drv-header-pushbtn:disabled { opacity:.6; cursor:progress; }
-
-  /* Rangée d'actions rapides ("Activer les notifications" / "Retour au
-     site") affichée en haut du tableau de bord, juste avant la carte
-     "Prochaine course" — indépendante du header pour ne pas hériter de ses
-     règles responsive (qui masquent certains éléments sur mobile). */
-  .drv-quick-actions { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
-  .drv-quick-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 14px; border-radius:9px; font-size: calc(12.5px * var(--drv-fs, 1)); font-weight:700; white-space:nowrap; cursor:pointer; text-decoration:none; }
-  .drv-quick-btn svg { width:15px; height:15px; flex-shrink:0; }
-  .drv-quick-btn-notif { border:1px solid #c99b4a; background:linear-gradient(135deg,#C9A84C,#E8C96D); color:#07101a; }
-  .drv-quick-btn-notif:disabled { cursor:progress; opacity:.7; }
-  .drv-quick-btn-notif.is-done { background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.4); color:#16a34a; cursor:default; opacity:1; }
-  .drv-quick-btn-back { border:1px solid rgba(148,163,184,.4); background:#0d1720; color:#cbd5e1; }
-  .drv-quick-btn-back:hover { border-color:#c99b4a; color:#e0b866; }
-  
-
-  /* Mobile : on conserve « Retour au site » et l'activation des notifications
-     (uniquement l'icône pour tenir dans la barre). */
-  @media (max-width:700px) {
-    html,body { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; touch-action:pan-y !important; } .drv-root { min-height:100svh !important; padding-bottom:68px !important; } .drv-header { position:sticky !important; top:0 !important; z-index:50;    } .drv-brand-mark { width:34px !important; height:34px !important; flex-basis:34px !important; font-size: calc(16px * var(--drv-fs, 1)); } .drv-header-title strong { font-size: calc(12px * var(--drv-fs, 1)) !important; } .drv-header-title span { font-size: calc(8px * var(--drv-fs, 1)) !important; } .drv-header-live {    } .drv-header-kpi,.drv-header-datetime,.drv-header-back { display:none !important; } .drv-header-bell {   border:0 !important; background:transparent !important; } .drv-tabs { display:none !important; } .drv-main { min-height:0 !important; } .drv-content {   min-height:0 !important; } .drv-dashboard {  } .drv-dashboard-grid-top {    } .drv-next-card {    } .drv-next-layout {   padding-bottom:9px; } .drv-next-time strong { font-size: calc(24px * var(--drv-fs, 1)); } .drv-next-time span { font-size: calc(8px * var(--drv-fs, 1)); margin-top:5px; } .drv-next-route { padding-left:10px; gap:8px; } .drv-next-route strong { font-size: calc(10px * var(--drv-fs, 1)); } .drv-next-route small { font-size: calc(7px * var(--drv-fs, 1)); } .drv-next-meta { font-size: calc(7px * var(--drv-fs, 1)); padding:8px 0; gap:5px; } .drv-next-meta small { font-size: calc(6.5px * var(--drv-fs, 1)); } .drv-btn-start,.drv-btn-detail { min-height:31px; font-size: calc(7px * var(--drv-fs, 1)); padding:6px; } .drv-card-head { font-size: calc(9px * var(--drv-fs, 1)); margin-bottom:8px; } .drv-revenue-card,.drv-dashboard-grid-mid,.drv-dashboard-grid-bottom { display:none !important; } .drv-day-card {    } .drv-day-row { grid-template-columns:38px minmax(0,1fr) 34px 45px; padding:6px 0; font-size: calc(7.5px * var(--drv-fs, 1)); } .drv-day-row em { font-size: calc(6px * var(--drv-fs, 1)); } .drv-mobile-stats {     } .drv-mobile-stats div { background:#07121b; border:1px solid rgba(116,146,169,.2); border-radius:8px; padding:8px 4px; text-align:center; } .drv-mobile-stats b { display:block; color:#f4f5f3; font-size: calc(12px * var(--drv-fs, 1)); } .drv-mobile-stats span { display:block; color:#7e8993; font-size: calc(6px * var(--drv-fs, 1)); margin-top:3px; letter-spacing:.04em; }
-    .drv-mobile-nav { position:fixed; display:grid; grid-template-columns:repeat(5,1fr); left:0; right:0; bottom:0;  padding-bottom:env(safe-area-inset-bottom,0); background:#050a10; border-top:1px solid rgba(201,155,74,.22); z-index:100; } .drv-mobile-nav button { position:relative; border:0; background:transparent; color:#88939e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size: calc(7px * var(--drv-fs, 1)); font-weight:700; } .drv-mobile-nav button.active { color:#e0b866; } .drv-mobile-nav svg { width:18px; height:18px; } .drv-mobile-nav b { position:absolute; top:8px; margin-left:17px; min-width:13px; height:13px; display:grid; place-items:center; border-radius:8px; background:#164b88; color:#fff; font-size: calc(7px * var(--drv-fs, 1)); }
-    .drv-body { overflow:visible !important; -webkit-overflow-scrolling:auto !important; touch-action:auto !important; padding:8px 0 28px !important; } .drv-body * { touch-action:auto; }
-  
-
-    .drv-mobile-drawer-backdrop { position:fixed; inset:0; z-index:110; display:block; background:rgba(0,0,0,.62); }
-    .drv-mobile-drawer { position:fixed; top:0; right:0; bottom:0; z-index:111; display:flex; width:min(86vw,340px); flex-direction:column; gap:5px; overflow-y:auto; padding:calc(env(safe-area-inset-top,0px) + 18px) 14px calc(env(safe-area-inset-bottom,0px) + 84px); background:#050a10; border-left:1px solid rgba(201,155,74,.45); box-shadow:-18px 0 40px rgba(0,0,0,.35); }
-    .drv-mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 14px; margin-bottom:4px; border-bottom:1px solid rgba(201,155,74,.25); color:#e0b866; font-size: calc(13px * var(--drv-fs, 1)); font-weight:800; }
-    .drv-mobile-drawer-close { width:34px; height:34px; border:1px solid rgba(201,155,74,.45); border-radius:7px; background:#07101a; color:#e0b866; font-size: calc(20px * var(--drv-fs, 1)); cursor:pointer; }
-    .drv-mobile-drawer button:not(.drv-mobile-drawer-close) { display:flex; align-items:center; gap:12px; min-height:48px; padding:10px 12px; border:1px solid transparent; border-radius:7px; background:transparent; color:#b9c1ca; font-size: calc(12px * var(--drv-fs, 1)); font-weight:700; text-align:left; cursor:pointer; }
-    .drv-mobile-drawer button.active { color:#fff; background:rgba(201,155,74,.14); border-color:rgba(201,155,74,.35); }
-    .drv-mobile-drawer svg { width:19px; height:19px; flex:0 0 auto; color:#e0b866; }
-    .drv-mobile-drawer .drv-tab-count { margin-left:auto; }
-  
-
-    .drv-identity-switcher { display:flex !important; flex:1 1 auto !important; max-width:260px !important; }
-    .drv-identity-switcher > button { width:100% !important; justify-content:center !important; height:40px !important; min-height:40px !important; padding:9px 16px !important; font-size: calc(14px * var(--drv-fs, 1)) !important; border:1px solid #c99b4a !important; background:#07101a !important; color:#e0b866 !important; }
-  
-
- #root { overflow:visible !important; } .drv-root { overflow:visible !important; } .drv-main,.drv-content { overflow:visible !important; } 
-
-    .drv-header {
-      height:58px !important;
-      min-height:58px !important;
-      padding:7px 10px !important;
-      gap:7px !important;
-    }
-
-    .drv-header > .drv-brand-mark {
-      display:grid !important;
-      width:34px !important;
-      height:34px !important;
-      flex:0 0 34px !important;
-      font-size: calc(15px * var(--drv-fs, 1)) !important;
-    }
-
-    /* Dans la maquette téléphone, le nom n'occupe pas la barre du haut :
-       le bouton hamburger reste juste à côté du logo. */
-    .drv-header-title { display:none !important; }
-
-    .drv-header-live {
-      margin-left:auto !important;
-      padding:4px 7px !important;
-      font-size: calc(7px * var(--drv-fs, 1)) !important;
-    }
-
-    .drv-header-bell {
-      width:31px !important;
-      height:31px !important;
-    }
-
-    .drv-content {
-      margin:0 !important;
-      padding:0 10px !important;
-    }
-
-    .drv-dashboard {
-      width:100% !important;
-      padding:9px 0 22px !important;
-    }
-
-    .drv-dashboard-grid-top {
-      display:flex !important;
-      flex-direction:column !important;
-      gap:8px !important;
-    }
-
-    .drv-next-card {
-      order:0 !important;
-      min-height:0 !important;
-      padding:11px !important;
-    }
-
-    .drv-mobile-stats {
-      order:1 !important;
-      
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      gap:6px !important;
-    }
-
-    .drv-day-card {
-      order:2 !important;
-      min-height:0 !important;
-      padding:10px !important;
-    }
-
-    .drv-revenue-card,
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom {
-      display:none !important;
-    }
-
-    .drv-next-layout {
-      grid-template-columns:70px minmax(0,1fr) !important;
-      gap:9px !important;
-    }
-
-    .drv-next-route { min-width:0 !important; }
-    .drv-next-route strong {
-      overflow:hidden !important;
-      text-overflow:ellipsis !important;
-      white-space:nowrap !important;
-    }
-
-    .drv-next-meta {
-      grid-template-columns:1.25fr 1fr .65fr !important;
-    }
-
-    .drv-btns {
-      gap:7px !important;
-    }
-
-    .drv-mobile-nav {
-      height:68px !important;
-    }
-  
-
-    .drv-mobile-stats { display:none !important; }
-    .drv-dashboard-grid-top,
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom {
-      display:grid !important;
-      grid-template-columns:minmax(0,1fr) !important;
-      gap:8px !important;
-    }
-    .drv-dashboard-grid-top > *,
-    .drv-dashboard-grid-mid > *,
-    .drv-dashboard-grid-bottom > * {
-      grid-column:auto !important;
-      min-width:0 !important;
-      min-height:0 !important;
-    }
-    .drv-revenue-card {
-      display:block !important;
-      order:3 !important;
-      min-height:0 !important;
-      padding:11px !important;
-    }
-    .drv-dashboard-grid-mid,
-    .drv-dashboard-grid-bottom { margin-top:8px !important; }
-  
-
-    .drv-quick-btn { height:33px; padding:0 11px; font-size: calc(11.5px * var(--drv-fs, 1)); }
-  
-
-    .drv-header-back { display:inline-flex !important; width:31px !important; height:31px !important; padding:0 !important; justify-content:center !important; }
-    .drv-header-back .drv-header-back-label { display:none !important; }
-    .drv-header-pushbtn { height:31px !important; padding:0 8px !important; font-size: calc(10px * var(--drv-fs, 1)) !important; }
-  
-}
-
-/* ── Refonte navigation : plus d'onglets, tout passe par le tableau de bord
-     (rangées façon Nova Taxi). On neutralise l'ancienne sidebar + la barre
-     mobile + le tiroir « Plus », et on aligne le style des rangées et du
-     bouton retour sur la maquette Nova Taxi. ───────────────────────────── */
-.drv-tabs, .drv-mobile-nav, .drv-mobile-drawer, .drv-mobile-drawer-backdrop { display: none !important; }
-.drv-main { margin-left: 0 !important; display: block !important; }
-.drv-content { margin-left: 0 !important; padding: 0 18px 26px !important; }
-.drv-root { padding-bottom: 0 !important; }
-
-.drv-dash-back {
-  display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px;
-  color: #e0b866; background: none; border: 1px solid rgba(201,155,74,.5); border-radius: 999px;
-  padding: 8px 14px; font-size: calc(12px * var(--drv-fs, 1)); font-weight: 700; cursor: pointer;
-}
-.drv-dash-back svg { width: 15px; height: 15px; }
-
-.drv-dash-row {
-  width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer;
-  border: 1px solid rgba(246,240,229,.12); border-radius: 16px; background: rgba(255,255,255,.03);
-  padding: 14px 16px; min-height: 64px; color: inherit;
-}
-.drv-dash-row:active { background: rgba(255,255,255,.06); }
-.drv-dash-ico { flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0a1118; }
-.drv-dash-ico svg { width: 18px; height: 18px; }
-.drv-dash-txt { min-width: 0; flex: 1; }
-.drv-dash-txt strong { display: block; font-size: calc(14px * var(--drv-fs, 1)); font-weight: 700; }
-.drv-dash-txt span { display: block; font-size: calc(12px * var(--drv-fs, 1)); color: rgba(246,240,229,.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.drv-dash-plus { font-size: calc(20px * var(--drv-fs, 1)); color: rgba(246,240,229,.45); }
-.drv-dash-badge { min-width: 20px; height: 20px; border-radius: 10px; background: #e11d48; color: #fff; font-size: calc(11px * var(--drv-fs, 1)); font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; }
-.drv-dash-map { margin-top: 14px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(246,240,229,.12); }
-
+      padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important;
+    }
+  }
+  @media (min-width:1024px) {
+    .drv-root { overscroll-behavior-y:auto; }
+  }
+  /* Sécurise la zone du haut (encoche / île dynamique) pour tout élément plein écran */
+  .drv-popup-backdrop {
+    padding-top:calc(18px + env(safe-area-inset-top,0px));
+  }
+  /* Grands écrans (iPhone Pro Max, ~430–440px de large) : header sur une seule ligne propre */
+  @media (min-width:431px) and (max-width:600px) {
+    .drv-root .drv-header-title { display:flex !important; }
+  }
 `;
 
-// ── Icons ──────────────────────────────────────────────────────────────────
+export const Route = createFileRoute("/driver")({
+  staticData: { sitemap: false },
+  ssr: false,
+  validateSearch: (search: Record<string, unknown>) => ({
+    t: typeof search["t"] === "string" ? (search["t"] as string) : undefined,
+    ride: typeof search["ride"] === "string" ? (search["ride"] as string) : undefined,
+    act: search["act"] === "accept" || search["act"] === "refuse" ? (search["act"] as string) : undefined,
+    tab: typeof search["tab"] === "string" ? (search["tab"] as string) : undefined,
+  }),
+  head: () => ({
+    meta: [
+      { title: "Espace chauffeur — Nova Prestige Ride" },
+      {
+        name: "description",
+        content: "Courses du jour, statuts et comptabilité des chauffeurs Nova.",
+      },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Espace chauffeur — Nova Prestige Ride" },
+      { property: "og:description", content: "Accès réservé aux chauffeurs Nova." },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
+      },
+      { name: "theme-color", content: "#03070d" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Nova Chauffeur" },
+      { name: "format-detection", content: "telephone=yes" },
+    ],
+    links: [{ rel: "manifest", href: "/manifest-chauffeur.webmanifest", id: "app-manifest" }],
+  }),
+  component: DriverApp,
+});
+
+/**
+ * Glisser vers la gauche OU vers la droite pour supprimer.
+ * Geste pur : aucun bouton "Supprimer" ne s'affiche. Une fois le seuil franchi
+ * (et relâché), une confirmation est demandée puis la carte glisse hors écran.
+ * En dessous du seuil, la carte revient simplement à sa place.
+ */
+function SwipeRow({
+  children,
+  onDelete,
+  label,
+  as = "li",
+}: {
+  children: React.ReactNode;
+  onDelete: () => void;
+  label?: string;
+  /** Balise racine : "li" dans une <ul> (comportement par défaut, inchangé), "div" ailleurs. */
+  as?: "li" | "div";
+}) {
+  const [dx, setDx] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const locked = useRef(false);
+  // Distance à parcourir (dans un sens ou l'autre) pour déclencher la suppression.
+  const THRESHOLD = 88;
+  // Résistance : la carte ne suit pas le doigt au-delà de cette distance.
+  const MAX = 140;
+
+  const onStart = (x: number, y: number) => {
+    if (leaving) return;
+    start.current = { x, y };
+    locked.current = false;
+  };
+  const onMove = (x: number, y: number) => {
+    if (!start.current || leaving) return;
+    const mx = x - start.current.x;
+    const my = y - start.current.y;
+    if (!locked.current) {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      if (Math.abs(my) > Math.abs(mx)) {
+        start.current = null;
+        return;
+      }
+      locked.current = true;
+      setDragging(true);
+    }
+    setDx(Math.max(-MAX, Math.min(MAX, mx)));
+  };
+  const onEnd = () => {
+    if (!start.current) return;
+    start.current = null;
+    setDragging(false);
+    const wasDragging = locked.current;
+    locked.current = false;
+    if (!wasDragging) return;
+
+    if (Math.abs(dx) >= THRESHOLD) {
+      if (window.confirm(`Supprimer définitivement ${label ?? "cet élément"} ?`)) {
+        // Seuil franchi et confirmé : la carte termine sa course hors écran puis
+        // la suppression s'exécute une fois l'animation jouée.
+        setLeaving(true);
+        setDx(dx > 0 ? 600 : -600);
+        window.setTimeout(() => onDelete(), 200);
+        return;
+      }
+    }
+    // Sous le seuil, ou suppression annulée : retour à la position initiale.
+    setDx(0);
+  };
+
+  const progress = Math.min(1, Math.abs(dx) / THRESHOLD);
+  const Root = as;
+  return (
+    <Root
+      className="drv-swipe"
+      style={{
+        background: `rgba(225,29,72,${(progress * 0.22).toFixed(2)})`,
+        borderRadius: 14,
+        overflow: "hidden",
+        transition: dragging ? "none" : "background .18s ease",
+      }}
+    >
+      <div
+        className="drv-swipe-content"
+        style={{
+          transform: `translateX(${dx}px)`,
+          opacity: leaving ? 0 : 1,
+          transition: dragging ? "none" : "transform .22s ease, opacity .18s ease",
+          touchAction: "pan-y",
+        }}
+        onTouchStart={(e) => onStart(e.touches[0]!.clientX, e.touches[0]!.clientY)}
+        onTouchMove={(e) => onMove(e.touches[0]!.clientX, e.touches[0]!.clientY)}
+        onTouchEnd={onEnd}
+        onMouseDown={(e) => onStart(e.clientX, e.clientY)}
+        onMouseMove={(e) => {
+          if (e.buttons === 1) onMove(e.clientX, e.clientY);
+        }}
+        onMouseUp={onEnd}
+        onMouseLeave={onEnd}
+      >
+        {children}
+      </div>
+    </Root>
+  );
+}
+
+/** Une ligne du panneau de diagnostic notif/son : libellé, valeur, pastille ok/ko. */
+function DiagRow({ label, value, ok }: { label: string; value: string; ok: boolean }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+      <span style={{ opacity: 0.75 }}>{label}</span>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 700 }}>
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            background: ok ? "#22c55e" : "#f87171",
+            flex: "0 0 auto",
+          }}
+        />
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function eur(n: number) {
+  return `${n.toFixed(2).replace(".", ",")} €`;
+}
+
+function monthLabel(m: string) {
+  const [y, mo] = m.split("-").map(Number) as [number, number];
+  return new Date(Date.UTC(y, mo - 1, 1)).toLocaleDateString("fr-FR", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 const IconBell = () => (
   <svg
     viewBox="0 0 24 24"
@@ -1381,7 +546,7 @@ const IconBell = () => (
     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
   </svg>
 );
-const IconMessage = () => (
+const IconHome = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -1390,11 +555,11 @@ const IconMessage = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-3.2-.6L4 20l1.6-4A7.5 7.5 0 1 1 20 11.5Z" />
-    <path d="M8 11h.01M12 11h.01M16 11h.01" />
+    <path d="M3 9.5 12 3l9 6.5" />
+    <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
   </svg>
 );
-const IconCalendar = () => (
+const IconCar = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -1403,54 +568,11 @@ const IconCalendar = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-    <line x1="16" y1="2" x2="16" y2="6" />
-    <line x1="8" y1="2" x2="8" y2="6" />
-    <line x1="3" y1="10" x2="21" y2="10" />
+    <path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
+    <path d="M3 17V11l2-5h14l2 5v6" />
+    <path d="M5 11h14" />
   </svg>
 );
-const IconStar = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
-const IconChart = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="18" y1="20" x2="18" y2="10" />
-    <line x1="12" y1="20" x2="12" y2="4" />
-    <line x1="6" y1="20" x2="6" y2="14" />
-  </svg>
-);
-const IconUsers = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
 const IconCalc = () => (
   <svg
     viewBox="0 0 24 24"
@@ -1468,14 +590,12 @@ const IconCalc = () => (
     <line x1="8" y1="15" x2="8" y2="15.01" />
     <line x1="12" y1="15" x2="12" y2="15.01" />
     <line x1="16" y1="15" x2="16" y2="15.01" />
-    <line x1="8" y1="19" x2="8" y2="19.01" />
-    <line x1="12" y1="19" x2="12" y2="19.01" />
-    <line x1="16" y1="19" x2="16" y2="19.01" />
   </svg>
 );
 
-// Icône onglet "Appareils" (notifications push par appareil).
-const IconDevice = () => (
+type Tab = "dashboard" | "rides" | "completed" | "overflow" | "planning" | "messages" | "accounting";
+
+const IconGeneric = (d: string) => () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -1484,6113 +604,3819 @@ const IconDevice = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect x="7" y="2" width="10" height="20" rx="2" />
-    <line x1="11" y1="18" x2="13" y2="18" />
+    <path d={d} />
   </svg>
 );
+const IconCalendar = IconGeneric(
+  "M7 3v4M17 3v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z",
+);
+const IconMessage = IconGeneric("M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z");
+const IconSwap = IconGeneric("M7 4 3 8l4 4M3 8h13M17 20l4-4-4-4M21 16H8");
+const IconGrid = IconGeneric("M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z");
+const IconMapPin = IconGeneric(
+  "M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+);
+const IconCheck = IconGeneric("M20 6 9 17l-5-5");
 
-const IconArrowLeft = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 12H5" />
-    <path d="M12 19l-7-7 7-7" />
-  </svg>
-);
-const IconHome = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 9.5 12 3l9 6.5" />
-    <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
-  </svg>
-);
+// Espace chauffeur simplifié : uniquement le strict nécessaire.
+const TABS: { key: Tab; label: string; short: string; icon: () => React.ReactElement }[] = [
+  { key: "dashboard", label: "TABLEAU DE BORD", short: "Accueil", icon: IconGrid },
+  { key: "rides", label: "COURSES", short: "Courses", icon: IconCar },
+  { key: "completed", label: "TERMINÉES", short: "Terminées", icon: IconCheck },
+  { key: "overflow", label: "DÉBORDEMENT", short: "Débord.", icon: IconSwap },
+  { key: "planning", label: "PLANNING", short: "Planning", icon: IconCalendar },
+  { key: "messages", label: "MESSAGES", short: "Messages", icon: IconMessage },
+  { key: "accounting", label: "COMPTABILITÉ", short: "Compta", icon: IconCalc },
+];
 
-const IconCar = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
-    <path d="M3 17V11l2-5h14l2 5v6" />
-    <path d="M5 11h14" />
-  </svg>
-);
-
-const IconDevis = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="8" y1="13" x2="16" y2="13" />
-    <line x1="8" y1="17" x2="13" y2="17" />
-  </svg>
-);
-
-const IconGps = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="10" />
-    <circle cx="12" cy="12" r="3" />
-    <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-  </svg>
-);
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-function Stars({ n }: { n: number }) {
+function NotifButton({ className }: { className?: string }) {
+  const { status, lastError, subscribe } = usePushNotifications({ audience: "chauffeur" });
+  if (status === "unsupported")
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={() =>
+          toast.error(
+            "Notifications indisponibles dans ce navigateur. Si vous avez ouvert ce lien depuis WhatsApp, Messenger ou SMS, appuyez sur « ⋮ » puis « Ouvrir dans Chrome ».",
+            { duration: 9000 },
+          )
+        }
+      >
+        <IconBell />
+        <span className="drv-header-notif-label">Notifications indisponibles</span>
+      </button>
+    );
+  if (status === "granted")
+    return (
+      <span className={className} style={{ opacity: 0.65 }}>
+        <IconBell />
+        <span className="drv-header-notif-label">Notifications activées</span>
+      </span>
+    );
   return (
-    <span>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={i <= n ? "drv-stars" : "drv-stars-empty"}>
-          ★
-        </span>
-      ))}
-    </span>
+    <button
+      type="button"
+      className={className}
+      disabled={status === "loading"}
+      onClick={async () => {
+        const token = await subscribe();
+        if (token) toast.success("Notifications activées");
+        else toast.error(lastError ?? "Activation impossible");
+      }}
+    >
+      <IconBell />
+      <span className="drv-header-notif-label">{status === "loading" ? "…" : "Activer les notifications"}</span>
+    </button>
   );
 }
 
-function formatHeure(iso: string) {
-  return new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
-}
-
-// ── Main component ─────────────────────────────────────────────────────────
-function DriverPage() {
-  const { token } = Route.useSearch();
-  const verify = useServerFn(verifyDriverToken);
-  const openSession = useServerFn(openDriverSession);
-  const [status, setStatus] = useState<"checking" | "denied" | "granted">("checking");
-  const [busy, setBusy] = useState<string | null>(null);
+/** Écran de connexion : email + mot de passe du compte commun. Le lien
+ * magique (?t=) reste supporté en repli pour les anciens favoris/raccourcis
+ * déjà enregistrés sur les téléphones. */
+function DriverLoginForm({ onLoggedIn }: { onLoggedIn: (token: string) => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [driverLabel, setDriverLabel] = useState("");
-  const [driverId, setDriverId] = useState<string>("");
 
+  const login = useMutation({
+    mutationFn: () => driverPasswordLogin({ data: { email: email.trim().toLowerCase(), password } }),
+    // Un chauffeur en voiture a souvent un réseau instable au démarrage de
+    // l'app : sans ça, une simple coupure réseau (erreur "lookup_failed")
+    // s'affichait exactement comme un mauvais mot de passe. On ne réessaie
+    // jamais sur un vrai refus (identifiants faux), seulement sur le reste.
+    retry: (failureCount, error) => {
+      const code = error instanceof Error ? error.message : "";
+      return code !== "invalid_credentials" && failureCount < 2;
+    },
+    retryDelay: 800,
+    onSuccess: (res) => onLoggedIn(res.token),
+    onError: (error) => {
+      const code = error instanceof Error ? error.message : "";
+      setError(
+        code === "invalid_credentials"
+          ? "Email ou mot de passe incorrect — vérifiez qu'aucun ancien mot de passe n'a été suggéré automatiquement (👁 pour l'afficher)."
+          : "Connexion impossible — vérifiez votre réseau et réessayez.",
+      );
+    },
+  });
+
+  return (
+    <Section className="max-w-md">
+      <p className="eyebrow">Nova Prestige Ride</p>
+      <h1 className="mt-3 text-2xl font-semibold">Espace chauffeur</h1>
+      <p className="mt-2 text-sm text-muted-foreground">Connectez-vous avec l'email et le mot de passe de l'équipe.</p>
+      <form
+        className="mt-6 space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setError(null);
+          login.mutate();
+        }}
+      >
+        <label className="block text-sm">
+          <span className="text-xs text-muted-foreground">Email</span>
+          <Input
+            className="mt-2"
+            type="email"
+            inputMode="email"
+            autoComplete="username"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="text-xs text-muted-foreground">Mot de passe</span>
+          <div className="relative mt-2">
+            <Input
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              className="pr-10"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
+              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
+            </button>
+          </div>
+        </label>
+        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        <Button type="submit" variant="gold" size="lg" className="w-full" disabled={login.isPending}>
+          {login.isPending ? "Connexion…" : "Se connecter"}
+        </Button>
+      </form>
+      <Link to="/" className="mt-6 inline-flex items-center gap-2 text-sm text-muted-foreground">
+        <ArrowLeft className="size-4" aria-hidden /> Retour au site
+      </Link>
+    </Section>
+  );
+}
+
+/** À l'arrivée sur l'espace chauffeur, on PROPOSE le nom (dernier profil
+ * utilisé) au lieu d'obliger à le choisir : un toucher pour confirmer,
+ * ou un autre nom si ce n'est pas la bonne personne. Une fois par ouverture. */
+function WhoIsDrivingPrompt({
+  profiles,
+  current,
+  onChoose,
+}: {
+  profiles: DriverProfileEntry[];
+  current: DriverProfile | undefined;
+  onChoose: (p: DriverProfile) => void;
+}) {
+  const [open, setOpen] = useState(false);
   useEffect(() => {
-    setDriverLabel(getDriverName());
+    if (sessionStorage.getItem("nova-who-confirmed")) return;
+    setOpen(true);
+  }, []);
+  if (profiles.length < 2) return null;
+  // Le changement de chauffeur se fait depuis le sélecteur de l'en-tête (plus de bouton flottant).
+  if (!open) return null;
+  const proposed = profiles.find((p) => p.slug === current) ?? profiles[0];
+  const others = profiles.filter((p) => p.slug !== proposed?.slug);
+  const pick = (p: DriverProfile) => {
+    sessionStorage.setItem("nova-who-confirmed", "1");
+    onChoose(p);
+    setOpen(false);
+  };
+  return (
+    <div className="fixed inset-0 z-[100] grid place-items-center bg-background/80 p-5 backdrop-blur-sm">
+      <div className="surface-card w-full max-w-sm p-6 text-center">
+        <p className="text-sm text-muted-foreground">Bonjour</p>
+        <p className="mt-1 text-2xl font-semibold">{proposed?.name} ?</p>
+        <Button variant="gold" size="lg" className="mt-5 w-full" onClick={() => proposed && pick(proposed.slug)}>
+          Oui, c'est moi
+        </Button>
+        {others.map((p) => (
+          <Button key={p.slug} variant="outline" className="mt-3 w-full" onClick={() => pick(p.slug)}>
+            Non, je suis {p.name}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DriverApp() {
+  const search = useSearch({ from: "/driver" });
+  const [token, setToken] = useState<string | null>(null);
+  // Liste des profils (nombre illimité) : cache local pour un affichage
+  // instantané, mise à jour dès que le serveur répond.
+  const [profiles, setProfiles] = useState<DriverProfileEntry[]>(() => cachedDriverProfiles());
+  const [profile, setProfileState] = useState<DriverProfile | undefined>(
+    () => getProfile() ?? cachedDriverProfiles()[0]?.slug,
+  );
+  const [tab, setTab] = useState<Tab>("dashboard");
+  const qc = useQueryClient();
+  // Horloge de l'en-tête : mise à jour automatique (toutes les 30 s).
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(t);
   }, []);
 
-  const tryToken = useCallback(
-    async (candidate: string): Promise<boolean> => {
-      if (!candidate) return false;
-      try {
-        const res = await verify({ data: { token: candidate } });
-        if (res?.ok) {
-          setDriverToken(candidate);
-          setDriverName(res.driver || "");
-          setDriverLabel(res.driver || "");
-          setDriverId(res.driverId || "");
-          setStatus("granted");
-          gaEvent("driver_login", { driver: res.driver || "inconnu" });
-          return true;
-        }
-      } catch {
-        /* ignore */
-      }
-      return false;
-    },
-    [verify],
-  );
+  // Accès uniquement par jeton de session obtenu après connexion : plus aucun
+  // accès par lien magique (?t=), le paramètre éventuel est ignoré et effacé.
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+    if (stored) setToken(stored);
+    // Simple par défaut : le premier profil tant que rien n'est enregistré,
+    // pas d'écran de choix imposé — le nom se change directement dans l'en-tête.
+    setProfileState(getProfile() ?? cachedDriverProfiles()[0]?.slug);
+    if (search.t) window.history.replaceState(null, "", "/driver");
+  }, [search.t]);
 
+  // Notification de message client : ouvre directement l'onglet Messages.
+  useEffect(() => {
+    if (search.tab === "messages") setTab("messages");
+  }, [search.tab]);
+
+  // Liste des profils toujours à jour : ajouter/retirer un chauffeur en base
+  // se répercute sans changement de code ni redéploiement.
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const candidates = [token, getDriverToken()].filter(Boolean) as string[];
-      for (const c of candidates) {
-        const ok = await tryToken(c);
-        if (cancelled) return;
-        if (ok) return;
-      }
-      if (!cancelled) {
-        clearDriverToken();
-        setStatus("denied");
-      }
-    })();
+    void fetchDriverProfiles().then((list) => {
+      if (cancelled || list.length === 0) return;
+      setProfiles(list);
+      setProfileState((cur) => cur ?? list[0]?.slug);
+    });
     return () => {
       cancelled = true;
     };
-  }, [token, tryToken]);
+  }, []);
 
-  // Chargement initial très bref (vérif du token en cache) : seul cet état
-  // bloque l'écran. Dès qu'on sait qu'il n'y a pas de session valide, on
-  // n'affiche plus de mur de connexion — on entre directement dans l'appli ;
-  // le choix "Alain / Patricia" devient un simple bouton dans le header,
-  // utile pour le suivi GPS et les notifications, jamais bloquant.
-  if (status === "checking") {
+  const chooseProfile = (p: DriverProfile) => {
+    setProfile(p);
+    setProfileState(p);
+    qc.invalidateQueries();
+  };
+
+  const session = useQuery({
+    queryKey: ["driver-login", token],
+    enabled: !!token,
+    // Coupure réseau : on réessaie au lieu de déconnecter. Un vrai refus n'est pas rejoué.
+    retry: (failureCount, error) => isTransientError(error) && failureCount < 3,
+    retryDelay: 1000,
+    queryFn: () => driverLogin({ data: { as: getProfile(), token: token! } }),
+  });
+
+  // Jeton réellement refusé par le serveur (session révoquée) : on l'oublie et on revient
+  // à l'écran de connexion. Une erreur réseau passagère ne déconnecte plus personne.
+  const authFailed = session.isError && !isTransientError(session.error);
+  useEffect(() => {
+    if (authFailed && token) {
+      localStorage.removeItem(STORAGE_KEY);
+      setToken(null);
+    }
+  }, [authFailed, token]);
+
+  // Compteur global de messages clients non lus (badge sur l'onglet Messages).
+  const threadsQuery = useQuery({
+    queryKey: ["driver-threads", token],
+    enabled: !!token && !authFailed,
+    queryFn: () => driverThreads({ data: { as: getProfile(), token: token! } }),
+    refetchInterval: 10_000,
+    refetchOnWindowFocus: true,
+  });
+  const unreadTotal = (threadsQuery.data?.threads ?? []).reduce((s, t) => s + (t.unread || 0), 0);
+
+  // Temps réel : toute création ou changement de statut d'une course en base
+  // rafraîchit immédiatement les écrans chauffeur, sans attendre le sondage.
+  useReservationsRealtime({
+    enabled: !!token && !authFailed,
+    channel: "driver",
+    queryKeys: [
+      ["driver-rides", token],
+      ["driver-completed-rides", token],
+      ["driver-overflow", token],
+      ["driver-threads", token],
+      ["driver-accounting", token],
+    ],
+  });
+
+  // Filet de sécurité mobile (iOS/Android) : au retour dans l'app (onglet
+  // visible, focus fenêtre, retour depuis le cache bfcache ou reprise réseau),
+  // les données affichées sont resynchronisées immédiatement — les minuteries
+  // sont gelées en arrière-plan sur iPhone.
+  useEffect(() => {
+    if (!token) return;
+    let last = 0;
+    const refresh = () => {
+      if (document.hidden) return;
+      const now = Date.now();
+      if (now - last < 2000) return;
+      last = now;
+      // La vérification de session est exclue : inutile de la rejouer à chaque retour
+      // dans l'app, et une coupure réseau à cet instant ne doit pas la faire échouer.
+      void qc.invalidateQueries({ predicate: (q) => q.queryKey[0] !== "driver-login" });
+    };
+    document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("focus", refresh);
+    window.addEventListener("pageshow", refresh);
+    window.addEventListener("online", refresh);
+    return () => {
+      document.removeEventListener("visibilitychange", refresh);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("pageshow", refresh);
+      window.removeEventListener("online", refresh);
+    };
+  }, [token, qc]);
+
+  const logout = () => {
+    const current = token;
+    localStorage.removeItem(STORAGE_KEY);
+    setToken(null);
+    qc.clear();
+    // Le jeton est aussi détruit côté serveur : il devient inutilisable.
+    if (current) void driverLogout({ data: { as: getProfile(), token: current } }).catch(() => {});
+  };
+
+  // Jeton invalide ou expiré : l'effet ci-dessus nettoie, on redemande la connexion.
+  if (!token || authFailed) {
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100dvh",
-          background: "#03070d",
-          fontFamily: "DM Sans,sans-serif",
-          color: "#e0b866",
+      <DriverLoginForm
+        onLoggedIn={(t) => {
+          localStorage.setItem(STORAGE_KEY, t);
+          setToken(t);
         }}
-      >
-        <img src={APT_LOGO} alt="Access Prestige Taxi" style={{ width: "min(260px,70vw)", height: "auto" }} />
-      </div>
+      />
     );
   }
 
-  const identify = async (id: "alain" | "patricia"): Promise<boolean> => {
-    setError(null);
-    setBusy(id);
-    try {
-      const res: any = await openSession({ data: { driver: id } });
-      const ok = res?.ok && res.token ? await tryToken(res.token) : false;
-      if (!ok) setError("Accès indisponible, réessayez.");
-      return ok;
-    } catch {
-      setError("Accès indisponible, réessayez.");
-      return false;
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  return (
-    <DriverApp
-      driverLabel={driverLabel}
-      driverId={driverId}
-      onIdentify={identify}
-      identifyBusy={busy}
-      identifyError={error}
-    />
-  );
-}
-
-function DriverApp({
-  driverLabel,
-  driverId,
-  onIdentify,
-  identifyBusy,
-  identifyError,
-}: {
-  driverLabel?: string;
-  driverId?: string;
-  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
-  identifyBusy: string | null;
-  identifyError: string | null;
-}) {
-  const listCoursesFn = useServerFn(listDriverCourses);
-  const [tab, setTab] = useState<Tab>("dashboard");
-  const [dashboardCourses, setDashboardCourses] = useState<Resa[]>([]);
-
-  // Suivi GPS en continu, indépendant de l'onglet affiché (démarre seul dès
-  // l'identification, comme avant) — seul l'affichage vit désormais dans
-  // l'onglet "GPS".
-  const gps = useDriverGpsTracking(driverId);
-  const { vehicle: dashboardVehicle } = useSelectedVehicle(driverId);
-
-  const [newCount, setNewCount] = useState(0);
-  const [unreadChat, setUnreadChat] = useState(0);
-  const [dashboardThreads, setDashboardThreads] = useState<any[]>([]);
-  const [pendingAvis, setPendingAvis] = useState(0);
-  const [pendingDevis, setPendingDevis] = useState(0);
-  // Statistiques d'avis réelles (note moyenne + répartition) pour l'en-tête
-  // et la carte "Avis récents" du tableau de bord.
-  const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; dist: Record<number, number> } | null>(
-    null,
-  );
-
-  // Notifications réelles du tableau de bord, dérivées des compteurs déjà
-  // suivis (nouvelles courses, messages non lus, avis et devis en attente).
-  const dashboardNotifications = useMemo(() => {
-    const list: { key: string; label: string; detail: string }[] = [];
-    if (newCount > 0)
-      list.push({
-        key: "courses",
-        label: `${newCount} nouvelle${newCount > 1 ? "s" : ""} réservation${newCount > 1 ? "s" : ""}`,
-        detail: "À accepter",
-      });
-    if (unreadChat > 0)
-      list.push({
-        key: "chat",
-        label: `${unreadChat} message${unreadChat > 1 ? "s" : ""} client`,
-        detail: "Non lu" + (unreadChat > 1 ? "s" : ""),
-      });
-    if (pendingDevis > 0)
-      list.push({
-        key: "devis",
-        label: `${pendingDevis} demande${pendingDevis > 1 ? "s" : ""} de devis`,
-        detail: "En attente",
-      });
-    if (pendingAvis > 0)
-      list.push({
-        key: "avis",
-        label: `${pendingAvis} avis à modérer`,
-        detail: "En attente",
-      });
-    return list;
-  }, [newCount, unreadChat, pendingAvis, pendingDevis]);
-
-  // Compteur global de messages clients non lus (indépendant de l'onglet
-  // affiché : le badge reste juste depuis le tableau de bord).
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      const token = getDriverToken();
-      if (!token) return;
-      try {
-        const [n, threads] = await Promise.all([
-          countUnreadChauffeurMessages({ data: { driver_token: token } }),
-          listMergedChauffeurThreads({ data: { driver_token: token } }).catch(() => [] as any[]),
-        ]);
-        if (cancelled) return;
-        setUnreadChat(n ?? 0);
-        setDashboardThreads((threads ?? []) as any[]);
-      } catch {
-        /* réseau indisponible : on garde la dernière valeur */
-      }
-    };
-    load();
-    const timer = setInterval(load, 20000);
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, [driverId]);
-
-  // Charge les avis publiés une fois le chauffeur identifié, puis toutes les
-  // 2 min (les avis évoluent lentement : inutile de solliciter la base plus).
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      const token = getDriverToken();
-      if (!token) return;
-      try {
-        const res = await fetch(`/api/public/reviews?token=${encodeURIComponent(token)}`);
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok || cancelled) return;
-        const published: Avis[] = json.published ?? [];
-        const dist: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        let sum = 0;
-        for (const a of published) {
-          const n = Math.min(5, Math.max(1, Math.round(Number(a.note) || 0)));
-          dist[n] = (dist[n] ?? 0) + 1;
-          sum += n;
-        }
-        setReviewStats({
-          avg: published.length ? sum / published.length : 0,
-          count: published.length,
-          dist,
-        });
-      } catch {
-        /* réseau indisponible : on garde la dernière valeur connue */
-      }
-    };
-    load();
-    const timer = setInterval(load, 120000);
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, [driverId]);
-
-  const [pushBusy, setPushBusy] = useState(false);
-  // Reflète l'état réel de Notification.permission pour piloter l'affichage
-  // du bouton "Activer les notifications" (masqué/changé dès que la
-  // permission est déjà accordée), sans devoir relire window.Notification à
-  // chaque rendu — utile aussi pour refléter une activation faite depuis les
-  // réglages du navigateur/OS pendant que l'app est ouverte.
-  const [notifPermission, setNotifPermission] = useState<"granted" | "denied" | "default" | "unsupported">(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
-    return Notification.permission;
-  });
-  useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) return;
-    const sync = () => setNotifPermission(Notification.permission);
-    document.addEventListener("visibilitychange", sync);
-    window.addEventListener("focus", sync);
-    return () => {
-      document.removeEventListener("visibilitychange", sync);
-      window.removeEventListener("focus", sync);
-    };
-  }, []);
-  // Busy state dédié aux boutons "🔔 Alain" / "🔔 Patricia" du bandeau, qui
-  // fusionnent identification + activation en un seul clic (distinct de
-  // pushBusy, utilisé une fois l'identité déjà connue).
-  const [identifyPushBusy, setIdentifyPushBusy] = useState<"alain" | "patricia" | null>(null);
-  const {
-    status: pushStatus,
-    subscribe: subscribePush,
-    lastError: pushError,
-  } = usePushNotifications({
-    autoAudience: "chauffeur",
-    driverId: driverId ?? null,
-  });
-
-  // Reconfirme silencieusement l'abonnement côté serveur à chaque retour sur
-  // l'app (la permission étant déjà accordée, aucun prompt système n'apparaît).
-  // Corrige le cas d'une ligne push_subscriptions supprimée après un échec FCM.
-  useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) return;
-    const refresh = () => {
-      if (document.visibilityState !== "visible") return;
-      if (Notification.permission !== "granted") return;
-      void subscribePush("chauffeur", null, null).catch(() => {});
-    };
-    document.addEventListener("visibilitychange", refresh);
-    return () => document.removeEventListener("visibilitychange", refresh);
-  }, [subscribePush]);
-
-  // Force le manifest driver au runtime : iOS ne lit qu'UN seul <link
-  // rel="manifest">, on s'assure qu'il pointe bien sur ?role=driver et
-  // qu'aucun manifest client ne subsiste tant qu'on est sur /driver.
-  useEffect(() => {
-    const links = Array.from(document.querySelectorAll('link[rel="manifest"]')) as HTMLLinkElement[];
-    if (links.length === 0) {
-      const link = document.createElement("link");
-      link.rel = "manifest";
-      link.href = "/api/manifest?role=driver";
-      document.head.appendChild(link);
-    } else {
-      links.forEach((l, i) => {
-        if (i === 0) l.setAttribute("href", "/api/manifest?role=driver");
-        else l.remove();
-      });
-    }
-    // Titre iOS de l'icône sur l'écran d'accueil (Safari ignore le manifest).
-    const titleTag = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-    if (titleTag) titleTag.setAttribute("content", "APT Chauffeur");
-    return () => {
-      const el = document.querySelector('link[rel="manifest"]');
-      if (el) el.setAttribute("href", "/api/manifest");
-      const t = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-      if (t) t.setAttribute("content", "Access Taxi");
-    };
-  }, []);
-
-  // Rafraîchissement badge courses (via serveur : anon n'a aucun accès en
-  // lecture aux réservations — RLS PII).
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const tok = getDriverToken();
-        if (!tok) return;
-        const res: any = await listCoursesFn({ data: { token: tok } });
-
-        if (cancelled) return;
-        const list = (res?.courses ?? []) as Resa[];
-        setDashboardCourses(list);
-        const mine = list.filter(
-          (c: any) => c.status === "pending" && (!driverId || driverId === "admin" || c.assigned_driver === driverId),
-        );
-        setNewCount(mine.length);
-      } catch {
-        /* réessai au prochain tick */
-      }
-    };
-    load();
-    const poll = setInterval(load, 12000);
-    const onVis = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      cancelled = true;
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [listCoursesFn, driverId]);
-
-  // Badge avis en attente + toast in-app à chaque nouvel avis
-  useEffect(() => {
-    const load = async () => {
-      try {
-        if (!getDriverToken()) {
-          return;
-        }
-        const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
-        if (!response.ok) return;
-        const result = await response.json();
-        setPendingAvis(result.pending.length);
-      } catch {
-        // Le badge se resynchronise au prochain passage/poll.
-      }
-    };
-    load();
-    const ch = (supabase as any)
-      .channel("drv-avis-badge")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "avis" }, (payload: any) => {
-        const row = payload?.new ?? {};
-        const stars = "★".repeat(Math.max(0, Math.min(5, Number(row.note) || 0)));
-        const who = row.prenom || row.nom || "Client";
-        const extract = (row.commentaire || "").toString().slice(0, 60);
-        toast.success(`⭐ Nouvel avis de ${who} ${stars}`, {
-          description: extract ? `"${extract}${extract.length >= 60 ? "…" : ""}"` : undefined,
-          duration: 8000,
-        });
-        try {
-          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-            (navigator as any).vibrate?.([80, 40, 80]);
-          }
-        } catch {}
-        load();
-      })
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "avis" }, load)
-      .on("postgres_changes", { event: "DELETE", schema: "public", table: "avis" }, load)
-      .subscribe();
-    // Filets de sécurité : rafraîchir le compteur au retour d'onglet et
-    // au focus fenêtre (Realtime peut être coupé en arrière-plan sur iOS).
-    const onVisible = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    // Refresh périodique de secours : les avis en attente ne sont pas lisibles publiquement en Realtime.
-    const poll = setInterval(load, 15000);
-    return () => {
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-      supabase.removeChannel(ch);
-    };
-  }, []);
-
-  // Badge devis en attente — indépendant de l'onglet actif, sur le même
-  // principe que le badge avis ci-dessus. Avant ce correctif, pendingDevis
-  // n'était mis à jour que par DevisTab.load(), qui n'existe dans le DOM
-  // que quand l'onglet "Devis" est déjà ouvert : une nouvelle demande de
-  // devis arrivée pendant qu'on est sur un autre onglet ne faisait donc
-  // jamais apparaître le badge/l'icône tant qu'on n'avait pas cliqué dessus.
-  useEffect(() => {
-    let cancelled = false;
-    const loadDevisBadge = async () => {
-      try {
-        if (!getDriverToken()) {
-          return;
-        }
-        const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
-        if (!cancelled) setPendingDevis(res?.pending ?? 0);
-      } catch {
-        // Le badge se resynchronise au prochain passage/poll.
-      }
-    };
-    loadDevisBadge();
-    const poll = setInterval(loadDevisBadge, 15000);
-    const onVisible = () => {
-      if (!document.hidden) loadDevisBadge();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    return () => {
-      cancelled = true;
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-    };
-  }, []);
-
-  // (Badge global d'unread chat retiré : le compteur par course est géré
-  // localement par CoursesTab via getUnreadCountsForReservations.)
-  const dashboardTodayKey = new Date().toLocaleDateString("fr-FR");
-  const dashboardToday = dashboardCourses.filter((r) => {
-    const d = new Date(r.pickup_datetime || r.date_heure);
-    return (
-      !Number.isNaN(d.getTime()) && d.toLocaleDateString("fr-FR") === dashboardTodayKey && r.status !== "cancelled"
-    );
-  });
-  const dashboardInProgress = dashboardCourses.filter((r) => ["en_route", "arrived"].includes(r.status));
-  const dashboardUpcoming = dashboardCourses.filter((r) => {
-    const d = new Date(r.pickup_datetime || r.date_heure);
-    return !Number.isNaN(d.getTime()) && d.getTime() > Date.now() && !["completed", "cancelled"].includes(r.status);
-  });
-  const dashboardRevenue = dashboardToday.reduce((sum, r) => sum + (Number(r.final_price ?? r.prix_estime) || 0), 0);
-  const dashboardNext = [...dashboardUpcoming].sort(
-    (a, b) =>
-      new Date(a.pickup_datetime || a.date_heure).getTime() - new Date(b.pickup_datetime || b.date_heure).getTime(),
-  )[0];
-  const dashboardNextMinutes = dashboardNext
-    ? Math.max(
-        0,
-        Math.round(
-          (new Date(dashboardNext.pickup_datetime || dashboardNext.date_heure).getTime() - Date.now()) / 60000,
-        ),
-      )
-    : null;
-  const dashboardTodaySorted = [...dashboardToday].sort(
-    (a, b) =>
-      new Date(a.pickup_datetime || a.date_heure).getTime() - new Date(b.pickup_datetime || b.date_heure).getTime(),
-  );
-
   return (
     <>
-      <style>{css}</style>
+      <style>{driverShellCss}</style>
+      <style>{NOVA_SHELL_EXTRA}</style>
+      <WhoIsDrivingPrompt
+        profiles={profiles}
+        current={profile}
+        onChoose={(p) => {
+          if (p !== profile) chooseProfile(p);
+        }}
+      />
       <div className="drv-root">
         <header className="drv-header">
-          <div className="drv-brand-mark" aria-label="Access Prestige Taxi">
-            <img src={APT_LOGO} alt="Access Prestige Taxi" />
+          <div className="drv-brand-mark" aria-label="Nova Prestige Ride">
+            <img src={NOVA_LOGO} alt="Nova Prestige Ride" />
           </div>
-
           <div className="drv-header-title">
-            <strong>Bonjour {(driverLabel || "Alain").split(" & ")[0]} 👋</strong>
-            <span>Espace Chauffeur</span>
+            <strong>Bonjour {profiles.map((p) => p.name).join(" et ") || "l'équipe"}</strong>
+            <span>Espace chauffeur · {profileName(profile, profiles)}</span>
           </div>
-          <DriverIdentitySwitcher
-            driverId={driverId}
-            onIdentify={onIdentify}
-            busy={identifyBusy}
-            error={identifyError}
-          />
-          <span className="drv-live-pill drv-header-live">
-            <i /> EN LIGNE
-          </span>
-          <div className="drv-header-kpi">
-            <small>COURSES AUJOURD'HUI</small>
-            <strong>{dashboardToday.length}</strong>
-          </div>
-          <div className="drv-header-kpi">
-            <small>CA AUJOURD'HUI</small>
-            <strong>{dashboardRevenue.toFixed(0)} €</strong>
-          </div>
-          <div className="drv-header-kpi">
-            <small>SATISFACTION</small>
-            <strong>
-              {reviewStats && reviewStats.count > 0 ? reviewStats.avg.toFixed(1).replace(".", ",") : "—"} /5{" "}
-              <span>★</span>
-            </strong>
-          </div>
+          <select
+            className="drv-header-who"
+            aria-label="Changer de chauffeur"
+            value={profile ?? ""}
+            onChange={(e) => chooseProfile(e.target.value)}
+            title="Changer de chauffeur"
+            style={{ cursor: "pointer" }}
+          >
+            {profiles.map((p) => (
+              <option key={p.slug} value={p.slug}>
+                {p.name}
+              </option>
+            ))}
+          </select>
           <span className="drv-header-datetime">
             <strong>
-              {new Date().toLocaleDateString("fr-FR", {
+              {now.toLocaleDateString("fr-FR", {
                 weekday: "long",
                 day: "numeric",
                 month: "long",
               })}
             </strong>
-            {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+            {now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
           </span>
-          <button
-            type="button"
-            className="drv-header-bell"
-            aria-label="Notifications"
-            onClick={() => setTab("courses")}
-          >
-            <IconBell />
-            {newCount + unreadChat + pendingAvis + pendingDevis > 0 && (
-              <span className="drv-badge">{newCount + unreadChat + pendingAvis + pendingDevis}</span>
-            )}
-          </button>
-          {notifPermission !== "granted" && notifPermission !== "unsupported" && (
-            <button
-              type="button"
-              className="drv-header-notif"
-              disabled={pushBusy}
-              aria-label="Activer les notifications"
-              onClick={async () => {
-                setPushBusy(true);
-                try {
-                  await subscribePush("chauffeur", null, null);
-                  if (typeof window !== "undefined" && "Notification" in window) {
-                    setNotifPermission(Notification.permission);
-                  }
-                } catch (e) {
-                  toast.error(
-                    "Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""),
-                  );
-                } finally {
-                  setPushBusy(false);
-                }
-              }}
-            >
-              <IconBell />
-              <span className="drv-header-notif-label">{pushBusy ? "…" : "Activer les notifications"}</span>
-            </button>
-          )}
+          <NotifButton className="drv-header-notif" />
           <Link className="drv-header-back" to="/" aria-label="Retour au site">
             <IconHome />
             <span className="drv-header-back-label">Retour au site</span>
           </Link>
+          <button type="button" className="drv-header-bell" aria-label="Quitter" onClick={logout}>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ width: 16, height: 16 }}
+            >
+              <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+              <line x1="12" y1="2" x2="12" y2="12" />
+            </svg>
+          </button>
         </header>
 
         <div className="drv-main">
-          <div className="drv-content">
-            {tab === "dashboard" && (
-              <main className="drv-dashboard" aria-label="Tableau de bord chauffeur">
-                <div className="drv-quick-actions">
-                  {notifPermission === "granted" ? (
-                    <button type="button" className="drv-quick-btn drv-quick-btn-notif is-done" disabled>
-                      <IconBell />
-                      Notifications activées
-                    </button>
-                  ) : notifPermission !== "unsupported" ? (
-                    <button
-                      type="button"
-                      className="drv-quick-btn drv-quick-btn-notif"
-                      disabled={pushBusy}
-                      onClick={async () => {
-                        setPushBusy(true);
-                        try {
-                          await subscribePush("chauffeur", null, null);
-                          if (typeof window !== "undefined" && "Notification" in window) {
-                            setNotifPermission(Notification.permission);
-                          }
-                        } catch (e) {
-                          toast.error(
-                            "Activation des notifications impossible" + (e instanceof Error ? ` : ${e.message}` : ""),
-                          );
-                        } finally {
-                          setPushBusy(false);
-                        }
-                      }}
-                    >
-                      <IconBell />
-                      {pushBusy ? "…" : "Activer les notifications"}
-                    </button>
-                  ) : null}
-                  <Link className="drv-quick-btn drv-quick-btn-back" to="/">
-                    Retour au site
-                  </Link>
-                </div>
-                <div className="drv-dash-list">
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("courses")}>
-                    <span className="drv-dash-ico" style={{ background: dashboardNext ? "#e0b866" : "#3f3f46" }}>
-                      <IconCar />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>{dashboardNext ? "Prochaine course" : "Aucune course à venir"}</strong>
-                      <span>
-                        {dashboardNext
-                          ? `${formatHeure(dashboardNext.pickup_datetime || dashboardNext.date_heure)} · ${dashboardNext.depart} → ${dashboardNext.destination}`
-                          : "Appuyez pour voir vos courses"}
-                      </span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="drv-dash-row"
-                    onClick={() => (gps.state === "on" ? gps.stop() : gps.start())}
-                  >
-                    <span className="drv-dash-ico" style={{ background: gps.state === "on" ? "#16a34a" : "#3f3f46" }}>
-                      <IconGps />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>{gps.state === "on" ? "Disponible · position partagée" : "Indisponible"}</strong>
-                      <span>{gps.addr || "Appuyez pour changer d'état"}</span>
-                    </span>
-                    <span className="drv-dash-plus">＋</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("courses")}>
-                    <span className="drv-dash-ico" style={{ background: "#2563eb" }}>
-                      <IconCalendar />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Aujourd'hui</strong>
-                      <span>
-                        {dashboardToday.length > 0
-                          ? `${dashboardToday.length} course(s) · ${dashboardRevenue.toFixed(0)} €`
-                          : "Aucune course aujourd'hui"}
-                      </span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("planning")}>
-                    <span className="drv-dash-ico" style={{ background: "#8b5cf6" }}>
-                      <IconCalendar />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Planning</strong>
-                      <span>
-                        {dashboardUpcoming.length > 0
-                          ? `${dashboardUpcoming.length} réservation(s) à venir`
-                          : "Rien de prévu"}
-                      </span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("messages")}>
-                    <span className="drv-dash-ico" style={{ background: "#db2777" }}>
-                      <IconMessage />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Messages</strong>
-                      <span>{unreadChat > 0 ? `${unreadChat} message(s) non lus` : "Aucun nouveau message"}</span>
-                    </span>
-                    {unreadChat > 0 ? (
-                      <span className="drv-dash-badge">{unreadChat}</span>
-                    ) : (
-                      <span className="drv-dash-plus">›</span>
-                    )}
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("devis")}>
-                    <span className="drv-dash-ico" style={{ background: "#0891b2" }}>
-                      <IconDevis />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Devis</strong>
-                      <span>{pendingDevis > 0 ? `${pendingDevis} devis en attente` : "Aucun devis en attente"}</span>
-                    </span>
-                    {pendingDevis > 0 ? (
-                      <span className="drv-dash-badge">{pendingDevis}</span>
-                    ) : (
-                      <span className="drv-dash-plus">›</span>
-                    )}
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("avis")}>
-                    <span className="drv-dash-ico" style={{ background: "#f59e0b" }}>
-                      <IconStar />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Avis clients</strong>
-                      <span>
-                        {reviewStats && reviewStats.count > 0
-                          ? `${reviewStats.avg.toFixed(1).replace(".", ",")} / 5 · ${reviewStats.count} avis`
-                          : "Aucun avis pour le moment"}
-                      </span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <DashboardTeamMapRow driverId={driverId} gps={gps} />
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("clients")}>
-                    <span className="drv-dash-ico" style={{ background: "#64748b" }}>
-                      <IconUsers />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Clients</strong>
-                      <span>Historique et coordonnées</span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("stats")}>
-                    <span className="drv-dash-ico" style={{ background: "#0d9488" }}>
-                      <IconChart />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Statistiques</strong>
-                      <span>Courses, revenus, taux d'acceptation</span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("appareils")}>
-                    <span className="drv-dash-ico" style={{ background: "#475569" }}>
-                      <IconDevice />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Appareils</strong>
-                      <span>Notifications push</span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("historique")}>
-                    <span className="drv-dash-ico" style={{ background: "#94a3b8" }}>
-                      <IconCalendar />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Historique</strong>
-                      <span>Courses passées</span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("simulateur")}>
-                    <span className="drv-dash-ico" style={{ background: "#8b5cf6" }}>
-                      <IconCalc />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Simulateur de tarif</strong>
-                      <span>Estimer le prix d'une course</span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-
-                  <button type="button" className="drv-dash-row" onClick={() => setTab("gps")}>
-                    <span className="drv-dash-ico" style={{ background: "#0ea5e9" }}>
-                      <IconGps />
-                    </span>
-                    <span className="drv-dash-txt">
-                      <strong>Suivi GPS</strong>
-                      <span>Position détaillée et historique de trajet</span>
-                    </span>
-                    <span className="drv-dash-plus">›</span>
-                  </button>
-                </div>
-              </main>
-            )}
-
-            {tab !== "dashboard" && (
-              <div className="drv-body">
-                <button type="button" className="drv-dash-back" onClick={() => setTab("dashboard")}>
-                  <IconArrowLeft />
-                  <span>Retour au tableau de bord</span>
-                </button>
-                <>
-                  {tab === "courses" && (
-                    <CoursesTab onBadgeChange={setNewCount} onChatBadge={setUnreadChat} driverId={driverId} />
-                  )}
-                  {tab === "planning" && <PlanningTab />}
-                  {tab === "messages" && (
-                    <DriverMessagesTab
-                      onBadgeChange={setUnreadChat}
-                      contacts={dashboardCourses.slice(0, 40).map((c) => ({
-                        reservation_id: c.id,
-                        label: `${c.client_name || c.client_phone || "Client"} — ${c.depart} → ${c.destination || "—"}`,
-                      }))}
-                    />
-                  )}
-                  {tab === "avis" && <AvisTab onBadgeChange={setPendingAvis} />}
-                  {tab === "clients" && <ClientsTab />}
-                  {tab === "stats" && <StatsTab />}
-                  {tab === "historique" && <HistoriqueTab driverId={driverId} />}
-                  {tab === "simulateur" && <SimulateurTab />}
-                  {tab === "devis" && <DevisTab onBadgeChange={setPendingDevis} />}
-                  {tab === "appareils" && <AppareilsTab />}
-                  {tab === "gps" && <GpsTab driverId={driverId} gps={gps} />}
-                </>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-// ── Sélecteur d'identité (Alain / Patricia) ─────────────────────────────────
-// Remplace l'ancien mur de connexion : un simple bouton dans le header,
-// jamais bloquant. Utile pour attribuer correctement le suivi GPS et les
-// notifications push à la bonne personne — pas une obligation pour utiliser
-// le reste de l'appli (courses, chat, stats… déjà accessibles sans identité).
-function DriverIdentitySwitcher({
-  driverId,
-  onIdentify,
-  busy,
-  error,
-}: {
-  driverId?: string;
-  onIdentify: (id: "alain" | "patricia") => Promise<boolean>;
-  busy: string | null;
-  error: string | null;
-}) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDocClick = (e: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("click", onDocClick);
-    return () => document.removeEventListener("click", onDocClick);
-  }, [open]);
-
-  return (
-    <div
-      ref={rootRef}
-      className="drv-identity-switcher"
-      style={{ position: "relative", flexShrink: 0, isolation: "isolate", zIndex: 300 }}
-    >
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
-          background: "rgba(255,255,255,0.1)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          borderRadius: 999,
-          padding: "5px 11px 5px 9px",
-          color: "#FDFBF7",
-          fontSize: "calc(12px * var(--drv-fs, 1))",
-          fontWeight: 700,
-          cursor: "pointer",
-          minHeight: 32,
-        }}
-      >
-        👤 {driverId === "patricia" ? "Patricia" : driverId === "alain" ? "Alain" : "Choisir"}
-        <span style={{ fontSize: "calc(9px * var(--drv-fs, 1))", opacity: 0.8 }}>▾</span>
-      </button>
-      {open && (
-        <div
-          className="drv-identity-menu"
-          style={{
-            position: "absolute",
-            top: "calc(100% + 6px)",
-            left: 0,
-            background: "#FDFBF7",
-            border: "1px solid #e2e8f0",
-            borderRadius: 14,
-            boxShadow: "0 10px 30px -8px rgba(15,23,42,0.35)",
-            padding: 8,
-            display: "grid",
-            gap: 6,
-            minWidth: 160,
-            zIndex: 300,
-          }}
-        >
-          {(
-            [
-              { id: "alain", name: "Alain" },
-              { id: "patricia", name: "Patricia" },
-            ] as const
-          ).map((d) => (
-            <button
-              key={d.id}
-              type="button"
-              disabled={busy !== null}
-              onClick={async () => {
-                const ok = await onIdentify(d.id);
-                if (ok) setOpen(false);
-              }}
-              style={{
-                textAlign: "left",
-                padding: "10px 12px",
-                borderRadius: 10,
-                border: "1px solid " + (driverId === d.id ? "#c99b4a" : "#e2e8f0"),
-                background: driverId === d.id ? "#f1f5f9" : "#FDFBF7",
-                color: "#0f172a",
-                fontWeight: 700,
-                fontSize: "calc(14px * var(--drv-fs, 1))",
-                cursor: busy ? "wait" : "pointer",
-                minHeight: 40,
-              }}
-            >
-              {busy === d.id ? "Connexion…" : d.name}
-              {driverId === d.id ? " ✓" : ""}
-            </button>
-          ))}
-          {error && (
-            <div style={{ color: "#dc2626", fontSize: "calc(12px * var(--drv-fs, 1))", padding: "0 2px" }}>{error}</div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Suivi GPS en continu (headless, indépendant de l'onglet affiché) ────────
-function useDriverGpsTracking(driverId?: string) {
-  const identified = driverId === "alain" || driverId === "patricia";
-  const pushPos = useServerFn(updateMyDriverPosition);
-  const stopPos = useServerFn(stopMyDriverPosition);
-
-  const [pos, setPos] = useState<{
-    lat: number;
-    lng: number;
-    acc: number | null;
-    speed: number | null;
-  } | null>(null);
-  const [addr, setAddr] = useState<string | null>(null);
-  const [state, setState] = useState<"idle" | "on" | "denied" | "error" | "off">("idle");
-  const [lastSync, setLastSync] = useState<Date | null>(null);
-
-  const watchRef = useRef<number | null>(null);
-  const lastSentRef = useRef<{ t: number; lat: number; lng: number } | null>(null);
-  const addrRef = useRef<{ lat: number; lng: number } | null>(null);
-
-  const start = useCallback(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setState("error");
-      return;
-    }
-    if (watchRef.current != null) return;
-    const handlePosition = (p: GeolocationPosition) => {
-      const lat = p.coords.latitude;
-      const lng = p.coords.longitude;
-      setState("on");
-      setPos({
-        lat,
-        lng,
-        acc: Number.isFinite(p.coords.accuracy) ? Math.round(p.coords.accuracy) : null,
-        speed: p.coords.speed != null && Number.isFinite(p.coords.speed) ? Math.max(0, p.coords.speed) : null,
-      });
-
-      // Envoi throttlé : 15 s minimum, ou déplacement > ~30 m.
-      const prev = lastSentRef.current;
-      const dist = prev
-        ? Math.hypot((lat - prev.lat) * 111320, (lng - prev.lng) * 111320 * Math.cos((lat * Math.PI) / 180))
-        : Infinity;
-      if (!prev || Date.now() - prev.t > 15000 || dist > 30) {
-        lastSentRef.current = { t: Date.now(), lat, lng };
-        pushPos({
-          data: {
-            token: getDriverToken() ?? "",
-            latitude: lat,
-            longitude: lng,
-            accuracy: p.coords.accuracy ?? null,
-            speed: p.coords.speed != null && p.coords.speed >= 0 ? Math.min(500, p.coords.speed) : null,
-            heading:
-              p.coords.heading != null && Number.isFinite(p.coords.heading)
-                ? ((p.coords.heading % 360) + 360) % 360
-                : null,
-            is_active: true,
-          },
-        })
-          .then(() => setLastSync(new Date()))
-          .catch(() => {});
-      }
-
-      // Adresse lisible, rafraîchie seulement si on a bougé de > 100 m.
-      const a = addrRef.current;
-      const moved = !a || Math.hypot((lat - a.lat) * 111320, (lng - a.lng) * 111320) > 100;
-      if (moved) {
-        addrRef.current = { lat, lng };
-        reverseGeocode(lat, lng)
-          .then((r) => r && setAddr(r))
-          .catch(() => {});
-      }
-    };
-
-    watchRef.current = navigator.geolocation.watchPosition(
-      handlePosition,
-      (err) => {
-        if (err.code === err.PERMISSION_DENIED) {
-          setState("denied");
-          return;
-        }
-        // Sur ordinateur (et en intérieur) le GPS haute précision expire
-        // souvent : on retente une position basse précision avant d'afficher
-        // une erreur, sinon le chauffeur n'a plus aucune localisation.
-        navigator.geolocation.getCurrentPosition(handlePosition, () => setState("error"), {
-          enableHighAccuracy: false,
-          maximumAge: 120000,
-          timeout: 15000,
-        });
-      },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 },
-    );
-  }, [pushPos]);
-
-  const stop = useCallback(() => {
-    if (watchRef.current != null && typeof navigator !== "undefined") {
-      navigator.geolocation.clearWatch(watchRef.current);
-      watchRef.current = null;
-    }
-    setState("off");
-    const tok = getDriverToken();
-    if (tok) stopPos({ data: { token: tok } }).catch(() => {});
-  }, [stopPos]);
-
-  // Activation automatique dès l'identité (Alain/Patricia) connue, sinon deux
-  // appareils écraseraient la même position côté serveur. Reste actif tant
-  // que le panneau est ouvert, quel que soit l'onglet affiché.
-  useEffect(() => {
-    if (!identified) return;
-    start();
-    return () => {
-      if (watchRef.current != null && typeof navigator !== "undefined") {
-        navigator.geolocation.clearWatch(watchRef.current);
-        watchRef.current = null;
-      }
-    };
-  }, [start, identified]);
-
-  return { pos, addr, state, lastSync, start, stop, identified };
-}
-
-type DriverGpsTracking = ReturnType<typeof useDriverGpsTracking>;
-
-// ── Onglet GPS ─────────────────────────────────────────────────────────────
-function GpsTab({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
-  return (
-    <div className="drv-tab-panel">
-      <div className="drv-card-head">
-        <span>POSITION GPS ÉQUIPE</span>
-        <b className={gps.state === "on" ? "live-small" : ""}>● {gps.state === "on" ? "EN DIRECT" : "INACTIF"}</b>
-      </div>
-      <TeamMapCard driverId={driverId} gps={gps} />
-    </div>
-  );
-}
-
-// ── Carte équipe (positions Alain / Patricia) ────────────────────────────
-const TEAM_COLORS: Record<string, string> = { alain: "#2563eb", patricia: "#db2777" };
-const TEAM_NAMES: Record<string, string> = { alain: "Alain", patricia: "Patricia" };
-
-function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
-  const R = 6371;
-  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
-}
-
-function TeamMapCard({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
-  const listPos = useServerFn(listDriverPositions);
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInst = useRef<any>(null);
-  const markersRef = useRef<Record<string, any>>({});
-  const [rows, setRows] = useState<
-    { id: string; lat: number | null; lng: number | null; is_active: boolean; age_s: number }[]
-  >([]);
-  const [open, setOpen] = useState(false);
-  const [mapError, setMapError] = useState<string | null>(null);
-
-  const refresh = useCallback(async () => {
-    const token = getDriverToken();
-    if (!token) return;
-    try {
-      const res: any = await listPos({ data: { token } });
-      setRows((res?.positions ?? []).filter((p: any) => p.id === "alain" || p.id === "patricia"));
-    } catch {}
-  }, [listPos]);
-
-  useEffect(() => {
-    refresh();
-    const t = setInterval(refresh, 15000);
-    return () => clearInterval(t);
-  }, [refresh]);
-
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    const pts = rows.filter((r) => r.lat != null && r.lng != null);
-    (async () => {
-      try {
-        if (!mapRef.current) return;
-        const api = await loadOsmMapEngineWhenVisible(mapRef.current);
-        if (cancelled || !mapRef.current) return;
-        if (!mapInst.current) {
-          const created = await createOsmMap(mapRef.current, {
-            // Centre par défaut (Charente-Maritime) tant qu'aucune position
-            // n'est partagée : la carte reste toujours visible.
-            center: { lat: 45.9, lng: -0.95 },
-            zoom: 9,
-          });
-          mapInst.current = created.map;
-        }
-        setMapError(null);
-        if (pts.length === 0) return;
-        pts.forEach((p) => {
-          const pos = { lat: p.lat as number, lng: p.lng as number };
-          const color = TEAM_COLORS[p.id] ?? "#0f172a";
-          if (!markersRef.current[p.id]) {
-            markersRef.current[p.id] = addOsmMarker(api, mapInst.current, pos, {
-              color,
-              label: TEAM_NAMES[p.id] ?? p.id,
-              size: 20,
-            });
-          }
-          markersRef.current[p.id].setLngLat([pos.lng, pos.lat]);
-          const el = markersRef.current[p.id].getElement() as HTMLElement;
-          el.style.opacity = p.is_active ? "1" : "0.5";
-        });
-        fitOsmBounds(
-          api,
-          mapInst.current,
-          pts.map((p) => ({ lat: p.lat as number, lng: p.lng as number })),
-          40,
-        );
-      } catch {
-        if (!cancelled) setMapError("Carte indisponible pour le moment.");
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [open, rows]);
-
-  const mine = rows.find((r) => r.id === driverId);
-  const other = rows.find((r) => r.id !== driverId && (r.id === "alain" || r.id === "patricia"));
-  const pts = rows.filter((r) => r.lat != null && r.lng != null);
-  const distKm =
-    mine?.lat != null && mine?.lng != null && other?.lat != null && other?.lng != null
-      ? haversineKm({ lat: mine.lat, lng: mine.lng }, { lat: other.lat, lng: other.lng })
-      : null;
-
-  const fmtAge = (s: number) =>
-    s < 60 ? `il y a ${s}s` : s < 3600 ? `il y a ${Math.round(s / 60)} min` : "position ancienne";
-
-  return (
-    <div
-      className="drv-team-map"
-      style={{
-        margin: "10px 16px 0",
-        border: "1px solid rgba(201,155,74,.45)",
-        borderRadius: 14,
-        background: "#050a10",
-        overflow: "hidden",
-        fontFamily: "'DM Sans', sans-serif",
-      }}
-    >
-      <button
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          background: "transparent",
-          border: "none",
-          padding: "11px 14px",
-          cursor: "pointer",
-          textAlign: "left",
-        }}
-      >
-        <span style={{ fontSize: "calc(15px * var(--drv-fs, 1))" }}>🗺️</span>
-        <span style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 700, color: "#f6f0e5" }}>Équipe</span>
-        <span
-          style={{ marginLeft: "auto", fontSize: "calc(11.5px * var(--drv-fs, 1))", color: "rgba(246,240,229,.55)" }}
-        >
-          {distKm != null ? `${distKm.toFixed(1)} km entre vous` : `${pts.length}/2 en ligne`} {open ? "▲" : "▼"}
-        </span>
-      </button>
-
-      {open && (
-        <div style={{ padding: "0 14px 14px" }}>
-          <div
-            style={{
-              borderRadius: 12,
-              overflow: "hidden",
-              border: "1px solid rgba(201,155,74,.45)",
-              marginBottom: 10,
-            }}
-          >
-            <div ref={mapRef} style={{ width: "100%", height: 220, background: "#0b1520" }} />
-          </div>
-          {(pts.length === 0 || mapError) && (
-            <div
-              style={{ fontSize: "calc(12.5px * var(--drv-fs, 1))", color: "rgba(246,240,229,.55)", marginBottom: 10 }}
-            >
-              {mapError ?? "Aucune position partagée pour l'instant — activez le GPS."}
-            </div>
-          )}
-
-          {(["alain", "patricia"] as const).map((id) => {
-            const r = rows.find((x) => x.id === id);
-            const isMe = id === driverId;
-            const myLastSync = gps.lastSync
-              ? gps.lastSync.toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                })
-              : null;
-            return (
-              <div
-                key={id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  fontSize: "calc(12.5px * var(--drv-fs, 1))",
-                  color: "#f6f0e5",
-                  padding: "6px 10px",
-                  marginBottom: 6,
-                  border: "1px solid rgba(201,155,74,.3)",
-                  borderRadius: 10,
-                  background: "rgba(224,184,102,.04)",
-                }}
+          <aside className="drv-tabs" aria-label="Navigation chauffeur">
+            {TABS.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                type="button"
+                className={`drv-tab${tab === key ? " active" : ""}`}
+                onClick={() => setTab(key)}
               >
-                <span
-                  style={{
-                    width: 9,
-                    height: 9,
-                    borderRadius: "50%",
-                    background: (isMe ? gps.state === "on" : r?.is_active) ? TEAM_COLORS[id] : "rgba(246,240,229,.3)",
-                    flexShrink: 0,
-                  }}
-                />
-                <b style={{ minWidth: 60 }}>{TEAM_NAMES[id]}</b>
-                <span style={{ color: "rgba(246,240,229,.6)" }}>
-                  {isMe
-                    ? gps.state === "on"
-                      ? myLastSync
-                        ? `actif · ${myLastSync}`
-                        : "actif"
-                      : gps.state === "denied"
-                        ? "refusé — autorise la localisation"
-                        : gps.state === "error"
-                          ? "indisponible"
-                          : "en pause"
-                    : r
-                      ? r.is_active
-                        ? fmtAge(r.age_s)
-                        : "hors ligne"
-                      : "jamais connecté"}
-                  {isMe ? " · vous" : ""}
+                <span className="drv-tab-icon">
+                  <Icon />
                 </span>
-                {isMe && (
-                  <button
-                    onClick={gps.state === "on" ? gps.stop : gps.start}
-                    style={{
-                      marginLeft: "auto",
-                      background: gps.state === "on" ? "#1b0c0c" : "#e0b866",
-                      color: gps.state === "on" ? "#f0a0a0" : "#050a10",
-                      border: gps.state === "on" ? "1px solid #8b3a3a" : "none",
-                      borderRadius: 8,
-                      padding: "5px 10px",
-                      fontSize: "calc(11.5px * var(--drv-fs, 1))",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {gps.state === "on" ? "⏸ Pause" : "▶ Activer"}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+                <span className="drv-tab-label">{label}</span>
+                {key === "messages" && unreadTotal > 0 ? <span className="drv-tab-count">{unreadTotal}</span> : null}
+              </button>
+            ))}
+          </aside>
 
-          {distKm != null && (
-            <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "rgba(246,240,229,.55)", marginTop: 8 }}>
-              📏 ≈ {distKm.toFixed(1)} km à vol d'oiseau entre vous — trop loin pour une course ? Passez-la depuis
-              l'onglet Courses.
+          <div className="drv-content">
+            <div className="drv-body">
+              {tab !== "dashboard" ? (
+                <button type="button" className="drv-dash-back" onClick={() => setTab("dashboard")}>
+                  <ArrowLeft />
+                  <span>Tableau de bord</span>
+                </button>
+              ) : null}
+              {tab === "dashboard" ? <DashboardTab token={token} unread={unreadTotal} onGo={setTab} /> : null}
+              {tab === "rides" ? <RidesTab token={token} /> : null}
+              {tab === "completed" ? <CompletedRidesTab token={token} /> : null}
+              {tab === "overflow" ? <OverflowTab token={token} /> : null}
+              {tab === "planning" ? <PlanningTab token={token} /> : null}
+              {tab === "messages" ? <MessagesTab token={token} /> : null}
+              {tab === "accounting" ? <AccountingTab token={token} /> : null}
             </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Onglet Courses ─────────────────────────────────────────────────────────
-function CoursesTab({
-  onBadgeChange,
-  onChatBadge,
-  driverId,
-}: {
-  onBadgeChange: (n: number) => void;
-  onChatBadge?: (n: number) => void;
-  driverId?: string;
-}) {
-  const [courses, setCourses] = useState<Resa[]>([]);
-  const [unreadMap, setUnreadMap] = useState<UnreadMap>({});
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [onlyMine, setOnlyMine] = useState(false);
-  const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "accepted" | "en_route" | "arrived" | "done">(
-    "all",
-  );
-  const [dateFilter, setDateFilter] = useState("");
-  const listUnreadResasFn = useServerFn(listReservationsWithUnreadChauffeur);
-  const getUnreadFn = useServerFn(getUnreadCountsForReservations);
-  const listCoursesFn = useServerFn(listDriverCourses);
-  const setCourseDriverFn = useServerFn(setCourseDriver);
-  // Ids déjà vus : sert à ne notifier que les VRAIES nouvelles demandes.
-  const seenPendingRef = useRef<Set<string> | null>(null);
-
-  const isAdmin = !driverId || driverId === "admin";
-  const mineOf = useCallback((r: Resa) => isAdmin || (r as any).assigned_driver === driverId, [isAdmin, driverId]);
-
-  const load = useCallback(async () => {
-    const tok = getDriverToken();
-    if (!tok || tok.length < 8) {
-      setLoading(false);
-      return;
-    }
-    const unreadIds = await listUnreadResasFn({ data: { driver_token: tok } }).catch(() => [] as string[]);
-
-    let res: any;
-    try {
-      res = await listCoursesFn({
-        data: { token: getDriverToken(), extra_ids: (unreadIds as string[]).slice(0, 50) },
-      });
-    } catch {
-      setLoading(false);
-      return;
-    }
-    const list: Resa[] = (res?.courses ?? []) as Resa[];
-    setCourses(list);
-    setLoading(false);
-
-    // Notification in-app des nouvelles demandes qui me sont attribuées.
-    const pendingMine = list.filter((r) => r.status === "pending" && mineOf(r));
-    if (seenPendingRef.current === null) {
-      seenPendingRef.current = new Set(pendingMine.map((r) => r.id));
-    } else {
-      for (const r of pendingMine) {
-        if (seenPendingRef.current.has(r.id)) continue;
-        seenPendingRef.current.add(r.id);
-        toast.success(`🚕 Nouvelle course${isAdmin ? "" : " pour toi"}`, {
-          description: `${r.client_name || "Client"} — ${r.depart} → ${r.destination || "—"}`,
-          duration: 10000,
-        });
-        try {
-          (navigator as any)?.vibrate?.([120, 60, 120]);
-        } catch {}
-      }
-    }
-    onBadgeChange(pendingMine.length);
-
-    // COUNT SQL agrégé pour prioriser les cartes + indicateurs
-    try {
-      const ids = list.map((r) => r.id);
-      const map = await getUnreadFn({
-        data: { reservation_ids: ids, driver_token: getDriverToken() },
-      });
-      setUnreadMap(map);
-      const totalUnread = Object.values(map).reduce((sum: number, v: any) => sum + (v?.unread_chauffeur ?? 0), 0);
-      onChatBadge?.(totalUnread);
-    } catch {
-      // pas bloquant : les cartes gardent leur ordre par défaut
-    }
-  }, [onBadgeChange, onChatBadge, listUnreadResasFn, getUnreadFn, listCoursesFn, mineOf, isAdmin]);
-
-  const reassign = useCallback(
-    async (id: string, driver: "patricia" | "alain") => {
-      try {
-        await setCourseDriverFn({ data: { token: getDriverToken(), reservation_id: id, driver } });
-        broadcastSuiviUpdate(id, "driver");
-        gaEvent("driver_course_assigned", { driver, reservation_id: id });
-        toast.success(`Course transférée à ${driver === "patricia" ? "Patricia" : "Alain"}`);
-        load();
-      } catch {
-        toast.error("Transfert impossible");
-      }
-    },
-    [setCourseDriverFn, load],
-  );
-
-  // Refresh debouncé : coalesce les bursts Realtime (INSERT + UPDATE
-  // read_by_*) en un seul appel batch après 300 ms d'inactivité. Immédiat
-  // au premier appel, immédiat aussi au retour d'onglet.
-  const loadRef = useRef(load);
-  loadRef.current = load;
-  const scheduleRef = useRef<{ timer: any; last: number }>({ timer: null, last: 0 });
-  const scheduleLoad = useCallback((immediate = false) => {
-    const s = scheduleRef.current;
-    if (s.timer) {
-      clearTimeout(s.timer);
-      s.timer = null;
-    }
-    const run = () => {
-      s.last = Date.now();
-      s.timer = null;
-      loadRef.current();
-    };
-    // Immédiat si demandé OU si dernière exécution > 2s (throttle plancher).
-    // Sinon, on coalesce les bursts Realtime sur 600 ms d'inactivité.
-    if (immediate || Date.now() - s.last > 2000) {
-      run();
-    } else {
-      s.timer = setTimeout(run, 600);
-    }
-  }, []);
-
-  // Realtime filtré : on ne s'abonne qu'aux réservations actuellement
-  // visibles (max 50) au lieu de recevoir tous les INSERT globaux. On
-  // (dés)abonne dynamiquement quand la liste change (nouvelle course,
-  // completed, etc.).
-  const visibleIds = courses.map((r) => r.id).slice(0, 50);
-  const visibleKey = visibleIds.join(",");
-
-  // Recalcul incrémental : appliquer les deltas d'unread localement au lieu
-  // de refaire tourner getUnreadCountsForReservations à chaque event.
-  const applyDelta = useCallback(
-    (reservationId: string, delta: number, reset?: boolean) => {
-      setUnreadMap((prev) => {
-        const cur = prev[reservationId] ?? { unread_chauffeur: 0, unread_client: 0 };
-        const nextUnread = reset ? 0 : Math.max(0, (cur.unread_chauffeur ?? 0) + delta);
-        const next = { ...prev, [reservationId]: { ...cur, unread_chauffeur: nextUnread } };
-        const total = Object.values(next).reduce((sum: number, v: any) => sum + (v?.unread_chauffeur ?? 0), 0);
-        onChatBadge?.(total);
-        return next;
-      });
-    },
-    [onChatBadge],
-  );
-
-  useEffect(() => {
-    scheduleLoad(true);
-
-    // BroadcastChannel : un autre onglet a marqué une conversation comme lue
-    // → on remet unread_chauffeur=0 pour cette réservation, sans requête.
-    const unsubBc = subscribeChatBadgeEvents((e: ChatBadgeEvent) => {
-      if (e.type === "read") applyDelta(e.reservationId, 0, true);
-      else if (e.type === "delta") applyDelta(e.reservationId, e.delta);
-    });
-
-    const onVis = () => {
-      if (!document.hidden) scheduleLoad(true);
-    };
-    document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("focus", onVis);
-    // Fallback storage pour navigateurs sans BroadcastChannel.
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "drv-chat-read-bump") scheduleLoad(true);
-    };
-    window.addEventListener("storage", onStorage);
-    // Temps réel : les réservations ne sont pas lisibles en anon (RLS PII),
-    // donc postgres_changes ne délivre rien ici. On combine un canal
-    // Broadcast (émis à la création d'une résa) + un poll court de secours.
-    const feed = (supabase as any)
-      .channel("driver-feed", { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "reservation" }, () => scheduleLoad(true))
-      .subscribe();
-    const reconcile = setInterval(() => scheduleLoad(), 10000);
-    const scheduledTimer = scheduleRef.current.timer;
-    return () => {
-      unsubBc();
-      clearInterval(reconcile);
-      supabase.removeChannel(feed);
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("focus", onVis);
-      window.removeEventListener("storage", onStorage);
-      if (scheduledTimer) clearTimeout(scheduledTimer);
-    };
-  }, [scheduleLoad, applyDelta]);
-
-  // Canal Realtime dédié aux réservations visibles — recréé quand la liste
-  // change (visibleKey). Filtre `reservation_id=in.(...)` côté serveur.
-  // Nom de canal dérivé du contenu réel (hash de visibleKey) et non de sa
-  // seule longueur : deux listes différentes de même taille ne doivent pas
-  // partager le même nom de canal (risque de conflit lors du démontage /
-  // remontage rapide de deux listes de même taille).
-  useEffect(() => {
-    if (visibleIds.length === 0) return;
-    const idFilter = `reservation_id=in.(${visibleIds.join(",")})`;
-    let hash = 0;
-    for (let i = 0; i < visibleKey.length; i++) {
-      hash = (hash * 31 + visibleKey.charCodeAt(i)) | 0;
-    }
-    const ch = (supabase as any)
-      .channel(`drv-courses-${visibleIds.length}-${hash}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "reservations",
-          filter: `id=in.(${visibleIds.join(",")})`,
-        },
-        () => scheduleLoad(),
-      )
-      // INSERT reservations (nouvelle course) → refresh liste complète
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "reservations" }, () => scheduleLoad())
-      // INSERT message client sur une résa visible → increment ciblé du badge
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "reservation_messages", filter: idFilter },
-        (payload: any) => {
-          const row = payload?.new;
-          if (row?.sender === "client" && row?.reservation_id) {
-            applyDelta(row.reservation_id, 1);
-          }
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(ch);
-    };
-  }, [visibleKey, visibleIds, scheduleLoad, applyDelta]);
-
-  if (loading)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
-      </div>
-    );
-
-  // Priorité d'affichage dans chaque section :
-  //   1. Cartes avec messages client non lus (unread_chauffeur > 0)
-  //   2. Cartes avec demande spéciale (message non vide)
-  //   3. Ordre naturel (pickup_datetime croissant)
-  const sortByPriority = (a: Resa, b: Resa) => {
-    const aUnread = unreadMap[a.id]?.unread_chauffeur ?? 0;
-    const bUnread = unreadMap[b.id]?.unread_chauffeur ?? 0;
-    if (aUnread > 0 !== bUnread > 0) return aUnread > 0 ? -1 : 1;
-    const aSpecial = !!(a.message && a.message.trim());
-    const bSpecial = !!(b.message && b.message.trim());
-    if (aSpecial !== bSpecial) return aSpecial ? -1 : 1;
-    return String(a.pickup_datetime ?? "").localeCompare(String(b.pickup_datetime ?? ""));
-  };
-
-  const base = onlyMine && !isAdmin ? courses.filter(mineOf) : courses;
-  const q = query.trim().toLowerCase();
-  const visible = base.filter((r) => {
-    if (q) {
-      const hay = [r.depart, r.destination, (r as any).arrivee, r.client_name, (r as any).client_phone]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
-    if (dateFilter) {
-      const d = String(r.pickup_datetime ?? "").slice(0, 10);
-      if (d !== dateFilter) return false;
-    }
-    if (statusFilter !== "all") {
-      if (statusFilter === "done") {
-        if (["pending", "accepted", "en_route", "arrived"].includes(r.status)) return false;
-      } else if (r.status !== statusFilter) return false;
-    }
-    return true;
-  });
-  const otherCount = courses.length - courses.filter(mineOf).length;
-  const filtersActive = !!q || !!dateFilter || statusFilter !== "all";
-
-  const nouvelles = visible.filter((r) => r.status === "pending").sort(sortByPriority);
-  const encours = visible
-    .filter((r) => r.status === "accepted" || r.status === "en_route" || r.status === "arrived")
-    .sort(sortByPriority);
-  const followups = visible
-    .filter((r) => !["pending", "accepted", "en_route", "arrived"].includes(r.status))
-    .sort(sortByPriority);
-
-  const chip = (active: boolean): React.CSSProperties => ({
-    padding: "7px 12px",
-    borderRadius: 999,
-    border: "1px solid " + (active ? "var(--background)" : "var(--border)"),
-    background: active ? "var(--background)" : "#FDFBF7",
-    color: active ? "var(--gold)" : "#334155",
-    fontSize: "calc(12px * var(--drv-fs, 1))",
-    fontWeight: 700,
-    cursor: "pointer",
-    minHeight: 36,
-    whiteSpace: "nowrap",
-  });
-
-  const filterBar = (
-    <div style={{ padding: "10px 0 2px" }}>
-      {!isAdmin && (
-        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-          {(
-            [
-              { key: true, label: `Mes courses (${courses.filter(mineOf).length})` },
-              { key: false, label: `Toutes (${courses.length})` },
-            ] as const
-          ).map((o) => (
-            <button
-              key={String(o.key)}
-              onClick={() => setOnlyMine(o.key)}
-              style={{ ...chip(onlyMine === o.key), flex: 1 }}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
-      )}
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="🔎 Client, départ, destination…"
-          style={{
-            flex: 1,
-            minWidth: 0,
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: "9px 12px",
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            minHeight: 40,
-          }}
-        />
-        <input
-          type="date"
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-          style={{
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: "9px 10px",
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            minHeight: 40,
-          }}
-        />
-      </div>
-      <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 4 }}>
-        {(
-          [
-            { k: "all", l: "Tous" },
-            { k: "pending", l: "En attente" },
-            { k: "accepted", l: "Acceptées" },
-            { k: "en_route", l: "En route" },
-            { k: "arrived", l: "Sur place" },
-            { k: "done", l: "Terminées / autres" },
-          ] as const
-        ).map((o) => (
-          <button key={o.k} onClick={() => setStatusFilter(o.k as any)} style={chip(statusFilter === o.k)}>
-            {o.l}
-          </button>
-        ))}
-        {filtersActive && (
-          <button
-            onClick={() => {
-              setQuery("");
-              setDateFilter("");
-              setStatusFilter("all");
-            }}
-            style={{ ...chip(false), borderColor: "#fecaca", color: "#b91c1c" }}
-          >
-            ✖ Réinitialiser
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
-  const renderCard = (r: Resa) => {
-    const assigned = (r as any).assigned_driver as string | undefined;
-    const other = assigned === "patricia" ? "alain" : "patricia";
-    return (
-      <div key={r.id}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 8,
-            margin: "8px 2px -4px",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "calc(11.5px * var(--drv-fs, 1))",
-              fontWeight: 800,
-              letterSpacing: 0.3,
-              padding: "3px 9px",
-              borderRadius: 999,
-              background: assigned === "patricia" ? "#fdf2f8" : "#eff6ff",
-              color: assigned === "patricia" ? "#9d174d" : "#1d4ed8",
-              border: "1px solid " + (assigned === "patricia" ? "#fbcfe8" : "#bfdbfe"),
-            }}
-          >
-            {assigned ? `👤 ${assigned === "patricia" ? "Patricia" : "Alain"}` : "👤 Non attribuée"}
-          </span>
-          {["pending", "accepted"].includes(r.status) && (
-            <button
-              onClick={() => reassign(r.id, other as "patricia" | "alain")}
-              style={{
-                background: "transparent",
-                border: "1px solid var(--border)",
-                borderRadius: 8,
-                padding: "4px 9px",
-                fontSize: "calc(11.5px * var(--drv-fs, 1))",
-                fontWeight: 700,
-                color: "#334155",
-                cursor: "pointer",
-              }}
-            >
-              ↔ Passer à {other === "patricia" ? "Patricia" : "Alain"}
-            </button>
-          )}
-        </div>
-        <CourseCard
-          resa={r}
-          onRefresh={load}
-          expanded={selected === r.id}
-          onToggle={() => setSelected((s) => (s === r.id ? null : r.id))}
-          unreadByChauffeur={unreadMap[r.id]?.unread_chauffeur ?? 0}
-          unreadByClient={unreadMap[r.id]?.unread_client ?? 0}
-        />
-      </div>
-    );
-  };
-
-  if (visible.length === 0)
-    return (
-      <>
-        {filterBar}
-        <div className="drv-empty">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucune course en attente</div>
-          <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", marginTop: 4 }}>
-            {onlyMine && otherCount > 0 ? `${otherCount} course(s) pour l'autre chauffeur` : "Tout est à jour ✓"}
           </div>
         </div>
-      </>
-    );
 
-  return (
-    <>
-      {filterBar}
-      {nouvelles.length > 0 && (
-        <>
-          <p className="drv-section">Nouvelles demandes</p>
-          {nouvelles.map(renderCard)}
-          <hr className="drv-divider" />
-        </>
-      )}
-      {encours.length > 0 && (
-        <>
-          <p className="drv-section">En cours</p>
-          {encours.map(renderCard)}
-        </>
-      )}
-      {followups.length > 0 && (
-        <>
-          {(nouvelles.length > 0 || encours.length > 0) && <hr className="drv-divider" />}
-          <p className="drv-section">💬 Messages clients (courses passées)</p>
-          {followups.map(renderCard)}
-        </>
-      )}
+        <IncomingRidePopup
+          token={token}
+          focusId={search.ride ?? null}
+          action={search.act ?? null}
+          onOpenRides={() => setTab("rides")}
+        />
+        <DriverBackgroundTasks token={token} />
+      </div>
     </>
   );
-}
-
-// ── Course Card avec itinéraires Google Maps ───────────────────────────────
-function CourseCard({
-  resa,
-  onRefresh,
-  expanded,
-  onToggle,
-  unreadByChauffeur = 0,
-  unreadByClient = 0,
-}: {
-  resa: Resa;
-  onRefresh: () => void;
-  expanded: boolean;
-  onToggle: () => void;
-  unreadByChauffeur?: number;
-  unreadByClient?: number;
-}) {
-  const [routes, setRoutes] = useState<RouteOption[]>([]);
-  const routeStorageKey = `drv-selected-route:${resa.id}`;
-  const { vehicle: cardVehicle } = useSelectedVehicle();
-  const [selectedRoute, setSelectedRoute] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
-    const raw = window.localStorage.getItem(routeStorageKey);
-    const n = raw == null ? NaN : Number(raw);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
-  });
-  const routeRestoredRef = useRef(false);
-  // Sync cross-onglets : quand un onglet change la sélection d'itinéraire,
-  // les autres onglets ouverts sur /driver s'alignent instantanément via
-  // l'événement `storage` (localStorage). Idem au retour de visibilité.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const readAndApply = () => {
-      const raw = window.localStorage.getItem(routeStorageKey);
-      const n = raw == null ? NaN : Number(raw);
-      if (Number.isFinite(n) && n >= 0) {
-        setSelectedRoute((prev) => (prev === n ? prev : n));
-      }
-    };
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === routeStorageKey) readAndApply();
-    };
-    const onVis = () => {
-      if (!document.hidden) readAndApply();
-    };
-    window.addEventListener("storage", onStorage);
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [routeStorageKey]);
-  const [loadingRoutes, setLoadingRoutes] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const notifyStatus = useServerFn(notifyReservationStatus);
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInst = useRef<any>(null);
-  const rendererRef = useRef<any>(null);
-  const actionLocks = useRef<Set<string>>(new Set());
-  // Le chat est toujours visible → considéré "lu" à l'affichage.
-  // On garde le compteur remonté par CoursesTab mais on le masque
-  // localement pendant que l'InlineDriverChat marque read_by_chauffeur=true.
-  const rawUnread = unreadByChauffeur;
-  const unreadCount = rawUnread;
-  const hasSpecialRequest = !!(resa.message && resa.message.trim());
-  const unreadContext = hasSpecialRequest ? "demande spéciale" : "conversation en cours";
-  const unreadTooltip =
-    unreadCount > 0
-      ? `${unreadCount} message${unreadCount > 1 ? "s" : ""} client non lu${unreadCount > 1 ? "s" : ""} · ${unreadContext}`
-      : "Aucun message non lu";
-
-  const claimAction = (key: string) => {
-    if (actionLocks.current.has(key)) return false;
-    actionLocks.current.add(key);
-    return true;
-  };
-
-  const releaseAction = (key: string) => {
-    actionLocks.current.delete(key);
-  };
-
-  // Charger les itinéraires quand on ouvre la carte
-  useEffect(() => {
-    if (!expanded || routes.length > 0) return;
-    setLoadingRoutes(true);
-
-    (async () => {
-      try {
-        const [geoA, geoB] = await Promise.all([geocodeAddress(resa.depart), geocodeAddress(resa.destination)]);
-        if (!geoA || !geoB) {
-          setLoadingRoutes(false);
-          return;
-        }
-
-        // Itinéraires OpenStreetMap (OSRM) : jusqu'à 3 alternatives.
-        const alts = await osrmRoutesClient([geoA.lng, geoA.lat], [geoB.lng, geoB.lat], true);
-        if (alts.length === 0) {
-          setLoadingRoutes(false);
-          return;
-        }
-        const factor = trafficFactor();
-
-        const opts: RouteOption[] = alts.slice(0, 3).map((route, i) => {
-          const distKm = route.distanceM / 1000;
-          const dureeS = Math.round(route.durationS * factor);
-          const dureeMin = Math.max(1, Math.round(dureeS / 60));
-          const coords = decodePolyline(route.geometry);
-          // Tarifs — calcul mixte jour/nuit avec la durée estimée du trajet
-          const pickupIso = resa.pickup_datetime ?? resa.date_heure ?? "";
-          const pickupMs = pickupIso ? new Date(pickupIso).getTime() : Date.now();
-          const stepsCount = Math.max(Math.round(dureeS / 60), 1);
-          const stepMs = (dureeS * 1000) / stepsCount;
-          const frac = distKm / stepsCount;
-          let jourKm = 0,
-            nuitKm = 0;
-          for (let st = 0; st < stepsCount; st++) {
-            const t = new Date(pickupMs + st * stepMs).toISOString();
-            if (estTarifJourParis(t)) jourKm += frac;
-            else nuitKm += frac;
-          }
-          const prix_estime = parseFloat(
-            (TARIFS.PRISE_EN_CHARGE + jourKm * TARIFS.TARIF_JOUR + nuitKm * TARIFS.TARIF_NUIT).toFixed(2),
-          );
-          const estJour = estTarifJourParis(pickupIso);
-          const tarifLabel = jourKm > 0 && nuitKm > 0 ? "Tarif mixte 🌗" : estJour ? "Tarif jour ☀️" : "Tarif nuit 🌙";
-
-          // Point de passage au milieu du tracé : permet de rouvrir le même
-          // itinéraire dans l'application de navigation du téléphone.
-          const mid = coords.length > 2 ? coords[Math.floor(coords.length / 2)] : null;
-          const waypointLatLng = mid ? { lat: mid[0], lng: mid[1] } : null;
-
-          return {
-            index: i,
-            summary: route.summary ? `Via ${route.summary}` : `Itinéraire ${i + 1}`,
-            distanceKm: parseFloat(distKm.toFixed(1)),
-            dureeMin,
-            prix_estime,
-            tarifLabel,
-            coords,
-            overview_polyline: route.geometry,
-            originLatLng: { lat: geoA.lat, lng: geoA.lng },
-            destLatLng: { lat: geoB.lat, lng: geoB.lng },
-            waypointLatLng,
-          };
-        });
-        setRoutes(opts);
-        // Restaure la sélection après chargement : match par distance/prix de
-        // la DB (source de vérité) sinon localStorage. Évite la remise à 0 au
-        // refresh signalée par le chauffeur.
-        if (!routeRestoredRef.current && opts.length > 0) {
-          routeRestoredRef.current = true;
-          let idx = -1;
-          if (resa.distance_km != null) {
-            // Match par distance la plus proche (pas de seuil strict) : Google
-            // Maps peut réordonner ou légèrement recalculer les alternatives
-            // au rechargement, un seuil fixe (0.15 km) pouvait rater le bon
-            // itinéraire et faire "reset" visuellement la sélection.
-            let bestIdx = -1;
-            let bestDiff = Infinity;
-            opts.forEach((o, i) => {
-              const diff = Math.abs(o.distanceKm - (resa.distance_km ?? 0));
-              if (diff < bestDiff) {
-                bestDiff = diff;
-                bestIdx = i;
-              }
-            });
-            idx = bestIdx;
-          }
-          if (idx < 0) {
-            const raw = typeof window !== "undefined" ? window.localStorage.getItem(routeStorageKey) : null;
-            const n = raw == null ? NaN : Number(raw);
-            if (Number.isFinite(n) && n >= 0 && n < opts.length) idx = n;
-          }
-          if (idx >= 0 && idx !== selectedRoute) setSelectedRoute(idx);
-        }
-        setLoadingRoutes(false);
-      } catch (e) {
-        console.error("[CourseCard] routes:", e);
-        setLoadingRoutes(false);
-      }
-    })();
-  }, [expanded, resa, routeStorageKey, routes.length, selectedRoute]);
-
-  // Afficher la route sélectionnée sur la carte
-  useEffect(() => {
-    if (!expanded || routes.length === 0) return;
-    (async () => {
-      try {
-        const api = await loadOsmMapEngineWhenVisible(mapRef.current!);
-        if (!mapInst.current) {
-          const created = await createOsmMap(mapRef.current!, { zoom: 13 });
-          mapInst.current = created.map;
-          await new Promise<void>((resolve) => {
-            if (mapInst.current.isStyleLoaded()) resolve();
-            else mapInst.current.once("load", () => resolve());
-          });
-        }
-        const chosen = routes[selectedRoute];
-        if (chosen && chosen.coords.length > 1) {
-          drawOsmRoute(mapInst.current, chosen.coords, { color: "#0f172a", width: 5 });
-          if (!rendererRef.current) {
-            rendererRef.current = {
-              start: addOsmMarker(api, mapInst.current, chosen.originLatLng, { color: "#16a34a", size: 18 }),
-              end: addOsmMarker(api, mapInst.current, chosen.destLatLng, { color: "#dc2626", size: 18 }),
-            };
-          } else {
-            rendererRef.current.start.setLngLat([chosen.originLatLng.lng, chosen.originLatLng.lat]);
-            rendererRef.current.end.setLngLat([chosen.destLatLng.lng, chosen.destLatLng.lat]);
-          }
-          fitOsmBounds(api, mapInst.current, [chosen.originLatLng, chosen.destLatLng], 40);
-        }
-      } catch {}
-    })();
-  }, [expanded, routes, selectedRoute]);
-
-  const statusLabel: Record<string, { label: string; cls: string }> = {
-    pending: { label: "En attente", cls: "drv-badge-blue" },
-    accepted: { label: "Acceptée", cls: "drv-badge-green" },
-    en_route: { label: "En route", cls: "drv-badge-amber" },
-    arrived: { label: "Arrivé", cls: "drv-badge-amber" },
-  };
-  const st = statusLabel[resa.status] ?? { label: resa.status, cls: "drv-badge-gray" };
-
-  const handleAccept = async () => {
-    const actionKey = `${resa.id}:accepted`;
-    if (!claimAction(actionKey)) return;
-    setBusy(true);
-    try {
-      const chosen = routes[selectedRoute];
-      const updates: any = { status: "accepted" };
-      if (chosen) {
-        updates.distance_km = chosen.distanceKm;
-        updates.prix_estime = chosen.prix_estime;
-      }
-      const upRes = await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: updates,
-          not_status: "accepted",
-        },
-      });
-      if (!upRes.changed) {
-        toast("Action déjà prise en compte");
-        onRefresh();
-        return;
-      }
-      broadcastSuiviUpdate(resa.id, "accepted");
-      try {
-        await notifyStatus({ data: { reservation_id: resa.id, status: "accepted" } });
-      } catch (pushErr) {
-        console.warn("[driver] client accepted push failed", pushErr);
-      }
-      toast.success("Course acceptée ✓");
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(false);
-      releaseAction(actionKey);
-    }
-  };
-
-  const handleRefuse = async () => {
-    if (!confirm("Refuser cette course ?")) return;
-    setBusy(true);
-    try {
-      await driverUpdateReservation({
-        data: { token: getDriverToken(), reservation_id: resa.id, patch: { status: "cancelled" } },
-      });
-      broadcastSuiviUpdate(resa.id, "cancelled");
-      toast("Course refusée");
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // ── Mettre à jour l'itinéraire d'une course déjà acceptée ──
-  const [itinSaving, setItinSaving] = useState(false);
-  const handleUpdateItineraire = async () => {
-    const chosen = routes[selectedRoute];
-    if (!chosen) {
-      toast.error("Sélectionne d'abord un itinéraire ci-dessus");
-      return;
-    }
-    setItinSaving(true);
-    try {
-      await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: { distance_km: chosen.distanceKm, prix_estime: chosen.prix_estime },
-        },
-      });
-      broadcastSuiviUpdate(resa.id, "route");
-      toast.success(`Itinéraire mis à jour — ${chosen.distanceKm} km · ${chosen.prix_estime.toFixed(2)} €`);
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setItinSaving(false);
-    }
-  };
-
-  // ── Prix réel compteur — saisi au moment de terminer la course ──
-  // Distinct du "prix personnalisé" ci-dessous (qui sert à notifier le
-  // client par SMS/WhatsApp/Email en cours de route) : ici on corrige juste
-  // le prix final affiché sur reservations.prix_estime, qui alimente déjà
-  // l'affichage suivi.tsx ET la facture (InvoiceBlock lit reservation.prix_estime).
-  // Le broadcastSuiviUpdate déclenche le refetch temps réel côté client.
-  const [finalPrixOpen, setFinalPrixOpen] = useState(false);
-  const [finalPrix, setFinalPrix] = useState(() => (resa.final_price != null ? String(resa.final_price) : ""));
-  const [finalPrixSaving, setFinalPrixSaving] = useState(false);
-  const handleSetFinalPrix = async () => {
-    const val = parseFloat((finalPrix || "").trim().replace(",", "."));
-    if (!finalPrix || isNaN(val) || val <= 0) {
-      toast.error("Prix invalide", {
-        description: "Entrez le montant affiché au compteur (ex : 18.50)",
-      });
-      return;
-    }
-    setFinalPrixSaving(true);
-    try {
-      await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: { prix_estime: val, final_price: val },
-        },
-      });
-      broadcastSuiviUpdate(resa.id, "price");
-      toast.success(`💶 Prix compteur enregistré — ${val.toFixed(2)} €`);
-      setFinalPrixOpen(false);
-      setFinalPrix("");
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setFinalPrixSaving(false);
-    }
-  };
-
-  // ── Prix custom — SMS / WhatsApp / Email ──
-  const [customPrix, setCustomPrix] = useState("");
-  const [customPrixOpen, setCustomPrixOpen] = useState(false);
-  const [customPrixSending, setCustomPrixSending] = useState(false);
-  const handleSendCustomPrix = async (canal: "sms" | "whatsapp" | "email") => {
-    const val = parseFloat((customPrix || "").trim().replace(",", "."));
-    if (!customPrix || isNaN(val) || val <= 0) {
-      toast.error("Prix invalide", { description: "Entrez un montant valide (ex: 18.50)" });
-      return;
-    }
-    const name = resa.client_name || "Client";
-    const phone = (resa.client_phone || "").replace(/\s/g, "");
-    const email = resa.client_email || resa.email || "";
-    const trajet = `${resa.depart} → ${resa.destination || "—"}`;
-    const trackUrl =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}`
-        : "";
-    const trackingLine = trackUrl ? `\nRetrouvez votre course ici : ${trackUrl}` : "";
-    const msg = `Bonjour ${name}, le prix de votre course Access Prestige Taxi (${trajet}) est de ${val.toFixed(2)} €. Merci.${trackingLine}`;
-
-    if (canal === "sms") {
-      if (!phone) {
-        toast.error("Pas de téléphone");
-        return;
-      }
-      window.open(`sms:${phone}?body=${encodeURIComponent(msg)}`, "_blank");
-    } else if (canal === "whatsapp") {
-      if (!phone) {
-        toast.error("Pas de téléphone");
-        return;
-      }
-      window.open(`https://wa.me/${phone.replace(/^0/, "33")}?text=${encodeURIComponent(msg)}`, "_blank");
-    } else {
-      if (!email) {
-        toast.error("Pas d'email");
-        return;
-      }
-      setCustomPrixSending(true);
-      try {
-        const res = await fetch("/api/admin/send-course-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "X-Driver-Token": getDriverToken() },
-          body: JSON.stringify({
-            templateName: "custom-price",
-            recipientEmail: email,
-            idempotencyKey: `custom-price-${resa.id}-${Date.now()}`,
-            templateData: {
-              nom: name,
-              depart: resa.depart,
-              arrivee: resa.destination || "—",
-              prix: `${val.toFixed(2)} €`,
-              distance_km: resa.distance_km ? `${resa.distance_km} km` : undefined,
-            },
-          }),
-        });
-        if (!res.ok) {
-          const errBody = await res.json().catch(() => ({}));
-          toast.error(errBody?.error || "Échec envoi email");
-        } else {
-          toast.success(`✉️ Email envoyé à ${email}`);
-        }
-      } catch (e: any) {
-        toast.error("Erreur réseau", { description: e?.message ?? "" });
-      } finally {
-        setCustomPrixSending(false);
-      }
-    }
-    await driverUpdateReservation({
-      data: { token: getDriverToken(), reservation_id: resa.id, patch: { prix_estime: val } },
-    });
-    broadcastSuiviUpdate(resa.id, "price");
-    onRefresh();
-  };
-
-  // ── Reprogrammer l'heure ──
-  const [newDatetime, setNewDatetime] = useState("");
-  const [changeHeureOpen, setChangeHeureOpen] = useState(false);
-  const [changeHeureSending, setChangeHeureSending] = useState(false);
-  const handleChangeHeure = async () => {
-    if (!newDatetime) return;
-    setChangeHeureSending(true);
-    try {
-      await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: { pickup_datetime: new Date(newDatetime).toISOString() },
-        },
-      });
-      broadcastSuiviUpdate(resa.id, "reschedule");
-      const email = resa.client_email || resa.email;
-      const name = resa.client_name || "Client";
-      if (email) {
-        try {
-          await fetch("/api/admin/send-course-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-Driver-Token": getDriverToken() },
-            body: JSON.stringify({
-              templateName: "reschedule",
-              recipientEmail: email,
-              idempotencyKey: `reschedule-${resa.id}-${Date.now()}`,
-              templateData: {
-                nom: name,
-                depart: resa.depart,
-                arrivee: resa.destination || "—",
-                old_datetime:
-                  formatDate(resa.pickup_datetime ?? resa.date_heure) +
-                  " " +
-                  formatHeure(resa.pickup_datetime ?? resa.date_heure),
-                new_datetime: formatDate(newDatetime) + " " + formatHeure(newDatetime),
-              },
-            }),
-          });
-          toast.success("🕐 Heure modifiée · ✉️ Email envoyé");
-        } catch {
-          toast.success("🕐 Heure modifiée · ⚠️ Email non envoyé");
-        }
-      } else {
-        toast.success("🕐 Heure modifiée");
-      }
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setChangeHeureSending(false);
-    }
-  };
-
-  // ── Terminer la course ──
-  const [completing, setCompleting] = useState(false);
-  const handleComplete = async () => {
-    const val = parseFloat((finalPrix || "").trim().replace(",", "."));
-    const hasVal = !!finalPrix && !isNaN(val) && val > 0;
-    if (!hasVal) {
-      if (!confirm("Aucun prix final saisi — terminer quand même la course sans tarif final ?")) return;
-    } else if (!confirm(`Marquer cette course comme terminée avec un tarif final de ${val.toFixed(2)} € ?`)) {
-      return;
-    }
-    const actionKey = `${resa.id}:completed`;
-    if (!claimAction(actionKey)) return;
-    setCompleting(true);
-    try {
-      const cRes = await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: hasVal ? { status: "completed", prix_estime: val, final_price: val } : { status: "completed" },
-          not_status: "completed",
-        },
-      });
-      if (!cRes.changed) {
-        toast("Action déjà prise en compte");
-        onRefresh();
-        return;
-      }
-      broadcastSuiviUpdate(resa.id, "completed");
-      if (hasVal) broadcastSuiviUpdate(resa.id, "price");
-      try {
-        await notifyStatus({ data: { reservation_id: resa.id, status: "completed" } });
-      } catch (pushErr) {
-        console.warn("[driver] client completed push failed", pushErr);
-      }
-      try {
-        const inv = await sendRideInvoice({
-          data: { token: getDriverToken(), reservation_id: resa.id },
-        });
-        if (inv?.sent) toast.success("📧 Facture envoyée au client");
-      } catch (invErr) {
-        console.warn("[driver] invoice email failed", invErr);
-      }
-      toast.success(hasVal ? `🏁 Course terminée — ${val.toFixed(2)} €` : "🏁 Course terminée");
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setCompleting(false);
-      releaseAction(actionKey);
-    }
-  };
-
-  // ── Progression de statut ──
-  const [progressing, setProgressing] = useState(false);
-  const handleProgressStatus = async (nextStatus: string, label: string) => {
-    const actionKey = `${resa.id}:${nextStatus}`;
-    if (!claimAction(actionKey)) return;
-    setProgressing(true);
-    try {
-      const pRes = await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: { status: nextStatus as any },
-          not_status: nextStatus,
-        },
-      });
-      if (!pRes.changed) {
-        toast("Action déjà prise en compte");
-        onRefresh();
-        return;
-      }
-      gaEvent("driver_course_status", { status: nextStatus, reservation_id: resa.id });
-      broadcastSuiviUpdate(resa.id, `status:${nextStatus}`);
-      try {
-        await notifyStatus({ data: { reservation_id: resa.id, status: nextStatus as any } });
-      } catch (pushErr) {
-        console.warn("[driver] client status push failed", pushErr);
-      }
-      toast.success(label);
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setProgressing(false);
-      releaseAction(actionKey);
-    }
-  };
-
-  // ── Annuler la course (disponible à tout moment, même après acceptation) ──
-  const [cancelling, setCancelling] = useState(false);
-  const handleCancel = async () => {
-    if (!confirm("Annuler cette course ? Le client sera prévenu.")) return;
-    const actionKey = `${resa.id}:cancelled`;
-    if (!claimAction(actionKey)) return;
-    setCancelling(true);
-    try {
-      const cRes = await driverUpdateReservation({
-        data: {
-          token: getDriverToken(),
-          reservation_id: resa.id,
-          patch: { status: "cancelled" },
-          not_status: "cancelled",
-        },
-      });
-      if (!cRes.changed) {
-        toast("Action déjà prise en compte");
-        onRefresh();
-        return;
-      }
-      gaEvent("driver_course_status", { status: "cancelled", reservation_id: resa.id });
-      broadcastSuiviUpdate(resa.id, "cancelled");
-      try {
-        await notifyStatus({ data: { reservation_id: resa.id, status: "cancelled" as any } });
-      } catch (pushErr) {
-        console.warn("[driver] client cancelled push failed", pushErr);
-      }
-      toast("Course annulée");
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setCancelling(false);
-      releaseAction(actionKey);
-    }
-  };
-
-  // ── Supprimer la course ──
-  const [deleting, setDeleting] = useState(false);
-  const handleDeleteResa = async () => {
-    if (!confirm("Supprimer définitivement cette course ? Action irréversible.")) return;
-    setDeleting(true);
-    try {
-      await driverDeleteReservation({ data: { token: getDriverToken(), reservation_id: resa.id } });
-      broadcastSuiviUpdate(resa.id, "deleted");
-      toast.success("Course supprimée");
-      onRefresh();
-    } catch (e: any) {
-      toast.error("Suppression impossible : " + (e.message ?? e));
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  return (
-    <SwipeToDeleteCard
-      onDelete={handleDeleteResa}
-      deleting={deleting}
-      ariaLabel="Supprimer cette course"
-      cardClassName={resa.status === "pending" ? "new" : undefined}
-    >
-      {/* En-tête */}
-      <div className="drv-row" style={{ cursor: "pointer" }} onClick={onToggle}>
-        <span className="drv-time">{formatHeure(resa.pickup_datetime ?? resa.date_heure)}</span>
-        <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
-      </div>
-      {resa.client_name && <div className="drv-name">{resa.client_name}</div>}
-      <div className="drv-route">
-        <span>📍 {resa.depart}</span>
-        <span>🏁 {resa.destination}</span>
-      </div>
-
-      {/* Véhicule sélectionné par le chauffeur */}
-      {cardVehicle && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginTop: 10,
-            padding: "7px 9px",
-            borderRadius: 10,
-            border: "1px solid #e0b866",
-            background: "#0b0b0b",
-            color: "#fff",
-          }}
-        >
-          <img
-            src={cardVehicle.photo}
-            alt={cardVehicle.name}
-            loading="lazy"
-            style={{ width: 46, height: 32, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
-          />
-          <div style={{ minWidth: 0 }}>
-            <strong style={{ display: "block", fontSize: "calc(12px * var(--drv-fs, 1))", color: "#e0b866" }}>
-              VÉHICULE
-            </strong>
-            <span
-              style={{
-                display: "block",
-                fontSize: "calc(12px * var(--drv-fs, 1))",
-                fontWeight: 700,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {cardVehicle.name}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Barre d'avancement rapide — progression des statuts sans ouvrir le détail */}
-      {["pending", "accepted", "en_route", "arrived"].includes(resa.status) &&
-        (() => {
-          const qb: React.CSSProperties = {
-            flex: "1 1 auto",
-            minWidth: 120,
-            borderRadius: 12,
-            padding: "11px 10px",
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            fontWeight: 800,
-            cursor: "pointer",
-            minHeight: 44,
-          };
-          return (
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
-              {resa.status === "pending" && (
-                <>
-                  <button
-                    onClick={handleAccept}
-                    disabled={busy}
-                    style={{
-                      ...qb,
-                      background: "var(--background)",
-                      border: "2px solid var(--background)",
-                      color: "var(--gold)",
-                    }}
-                  >
-                    {busy ? "…" : "✅ Accepter"}
-                  </button>
-                  <button
-                    onClick={handleRefuse}
-                    disabled={busy}
-                    style={{
-                      ...qb,
-                      background: "#FDFBF7",
-                      border: "2px solid #fecaca",
-                      color: "#b91c1c",
-                    }}
-                  >
-                    ✖ Refuser
-                  </button>
-                </>
-              )}
-              {resa.status === "accepted" && (
-                <button
-                  onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
-                  disabled={progressing}
-                  style={{
-                    ...qb,
-                    background: "#eff6ff",
-                    border: "2px solid #2563eb",
-                    color: "#1d4ed8",
-                  }}
-                >
-                  {progressing ? "…" : "🚕 Votre taxi arrive"}
-                </button>
-              )}
-              {(resa.status === "accepted" || resa.status === "en_route") && (
-                <button
-                  onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
-                  disabled={progressing}
-                  style={{
-                    ...qb,
-                    background: "#f5f3ff",
-                    border: "2px solid #7c3aed",
-                    color: "#6d28d9",
-                  }}
-                >
-                  {progressing ? "…" : "📍 Votre taxi est arrivé"}
-                </button>
-              )}
-              {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-                <button
-                  onClick={handleComplete}
-                  disabled={completing}
-                  style={{
-                    ...qb,
-                    background: "#f0fdf4",
-                    border: "2px solid #16a34a",
-                    color: "#15803d",
-                  }}
-                >
-                  {completing ? "…" : "✓ Terminée"}
-                </button>
-              )}
-              {/* Annulation disponible à TOUT moment (y compris en attente et
-                    après acceptation) tant que la course n'est ni terminée ni
-                    déjà annulée. Le client est prévenu en temps réel. */}
-              {(resa.status === "pending" ||
-                resa.status === "accepted" ||
-                resa.status === "en_route" ||
-                resa.status === "arrived") && (
-                <button
-                  onClick={handleCancel}
-                  disabled={cancelling}
-                  style={{
-                    ...qb,
-                    background: "#FDFBF7",
-                    border: "2px solid #fecaca",
-                    color: "#b91c1c",
-                  }}
-                >
-                  {cancelling ? "…" : "✖ Annuler la course"}
-                </button>
-              )}
-            </div>
-          );
-        })()}
-
-      {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-        <div
-          style={{
-            marginTop: 10,
-            marginBottom: 4,
-            padding: 12,
-            background: "#03070d",
-            border: "2px solid #c99b4a",
-            borderRadius: 12,
-          }}
-        >
-          <label
-            style={{
-              fontSize: "calc(12px * var(--drv-fs, 1))",
-              fontWeight: 700,
-              color: "#c99b4a",
-              display: "block",
-              marginBottom: 6,
-            }}
-          >
-            💶 Prix final au compteur
-          </label>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder="Ex : 24,50"
-              value={finalPrix}
-              onChange={(e) => setFinalPrix(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSetFinalPrix();
-              }}
-              style={{
-                flex: 1,
-                padding: "10px 12px",
-                borderRadius: 10,
-                border: "1px solid rgba(201,155,74,.45)",
-                background: "#0b1220",
-                fontSize: "calc(16px * var(--drv-fs, 1))",
-                fontWeight: 600,
-                color: "#FDFBF7",
-                outline: "none",
-              }}
-            />
-            <button
-              onClick={handleSetFinalPrix}
-              disabled={finalPrixSaving}
-              style={{
-                padding: "10px 16px",
-                borderRadius: 10,
-                border: "none",
-                background: "#c99b4a",
-                color: "#03070d",
-                fontWeight: 700,
-                fontSize: "calc(13px * var(--drv-fs, 1))",
-                cursor: finalPrixSaving ? "not-allowed" : "pointer",
-                opacity: finalPrixSaving ? 0.6 : 1,
-              }}
-            >
-              {finalPrixSaving ? "…" : "Valider"}
-            </button>
-          </div>
-          <div style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#FDFBF799", marginTop: 6 }}>
-            Facultatif ici : enregistré tout de suite si vous cliquez « Valider », sinon repris automatiquement au clic
-            sur « ✓ Terminée ».
-          </div>
-        </div>
-      )}
-
-      {(resa.status === "completed" || resa.status === "terminee") &&
-        (resa.final_price ?? resa.prix_estime) != null && (
-          <div
-            style={{
-              marginTop: 10,
-              marginBottom: 4,
-              padding: 12,
-              background: "#03070d",
-              border: "2px solid #c99b4a",
-              borderRadius: 12,
-            }}
-          >
-            <div
-              style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 700, color: "#c99b4a", marginBottom: 4 }}
-            >
-              💶 Tarif final (compteur)
-            </div>
-            <div style={{ fontSize: "calc(20px * var(--drv-fs, 1))", fontWeight: 800, color: "#FDFBF7" }}>
-              {Number(resa.final_price ?? resa.prix_estime).toFixed(2)} €
-            </div>
-          </div>
-        )}
-
-      {/* Demande spéciale client — toujours visible pour que Patricia la voie tout de suite */}
-      {resa.message && resa.message.trim().length > 0 && (
-        <div
-          style={{
-            marginTop: 10,
-            padding: "10px 12px",
-            background: "linear-gradient(180deg, #FDFBF78e1 0%, #FDFBF73c4 100%)",
-            border: "1px solid #f59e0b",
-            borderRadius: 12,
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            color: "#78350f",
-            lineHeight: 1.45,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 8,
-              marginBottom: 4,
-              fontSize: "calc(11px * var(--drv-fs, 1))",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              color: "#b45309",
-            }}
-          >
-            <span>✨ Demande spéciale</span>
-          </div>
-          <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{resa.message}</div>
-          {unreadByClient > 0 && (
-            <div
-              style={{
-                marginTop: 8,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "3px 8px",
-                borderRadius: 999,
-                background: "#fee2e2",
-                color: "#991b1b",
-                fontSize: "calc(11px * var(--drv-fs, 1))",
-                fontWeight: 700,
-              }}
-              title={`${unreadByClient} message(s) chauffeur non lu(s) par le client`}
-            >
-              ⏳ Réponse envoyée — non lue par le client ({unreadByClient})
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Chat client ↔ chauffeur — TOUJOURS visible, en haut de la carte,
-          reste affiché même quand "Voir détail" / "Itinéraire" est ouvert. */}
-      <div style={{ marginTop: 8 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 8,
-            background: "linear-gradient(180deg,#EDE6D4 0%,#E5DCC8 100%)",
-            border: "1px solid #334155",
-            borderRadius: "10px 10px 0 0",
-            color: "#E8C96D",
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            fontWeight: 700,
-            padding: "8px 12px",
-          }}
-        >
-          <span>💬 Chat avec {resa.client_name || "le client"}</span>
-          {unreadCount > 0 ? (
-            <span
-              title={unreadTooltip}
-              aria-label={unreadTooltip}
-              style={{
-                minWidth: 20,
-                height: 20,
-                padding: "0 6px",
-                borderRadius: 10,
-                background: "#ef4444",
-                color: "#FDFBF7",
-                fontSize: "calc(11px * var(--drv-fs, 1))",
-                fontWeight: 800,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {unreadCount}
-            </span>
-          ) : (
-            <span
-              style={{
-                fontSize: "calc(10px * var(--drv-fs, 1))",
-                color: "#E8C96D99",
-                fontWeight: 600,
-                letterSpacing: "0.02em",
-              }}
-            >
-              ✓ à jour
-            </span>
-          )}
-        </div>
-        <div
-          style={{
-            borderLeft: "1px solid #334155",
-            borderRight: "1px solid #334155",
-            borderBottom: "1px solid #334155",
-            borderRadius: "0 0 10px 10px",
-            padding: 8,
-            background: "#0b1220",
-          }}
-        >
-          <InlineDriverChat reservationId={resa.id} />
-        </div>
-      </div>
-
-      {/* Résumé km/prix — priorité à la route sélectionnée si chargée, sinon valeurs BDD */}
-
-      {(() => {
-        const previewPrix = (() => {
-          const v = parseFloat((customPrix || "").trim().replace(",", "."));
-          return !isNaN(v) && v > 0 ? v : null;
-        })();
-        const displayPrix = previewPrix ?? routes[selectedRoute]?.prix_estime ?? resa.prix_estime;
-        const displayKm = routes[selectedRoute]?.distanceKm ?? resa.distance_km;
-        if (!displayKm && displayPrix == null && routes.length === 0) return null;
-        return (
-          <div className="drv-meta">
-            {displayKm != null && <span>🛣 {displayKm} km</span>}
-            {displayPrix != null && (
-              <span style={previewPrix != null ? { color: "#b45309", fontWeight: 700 } : undefined}>
-                💶 {displayPrix.toFixed(2)} €{previewPrix != null ? " (perso)" : ""}
-              </span>
-            )}
-            {previewPrix == null && routes[selectedRoute]?.tarifLabel && (
-              <span
-                style={{
-                  color: routes[selectedRoute].tarifLabel.includes("nuit") ? "#1d4ed8" : "#15803d",
-                }}
-              >
-                {routes[selectedRoute].tarifLabel}
-              </span>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* Détail expandable */}
-      {expanded && (
-        <>
-          <hr className="drv-divider" />
-
-          {/* Carte Google Maps */}
-          <div className="drv-map" ref={mapRef} />
-
-          {/* Itinéraires */}
-          {loadingRoutes && (
-            <div
-              style={{
-                textAlign: "center",
-                fontSize: "calc(13px * var(--drv-fs, 1))",
-                color: "#64748b",
-                padding: "10px 0",
-              }}
-            >
-              Calcul des itinéraires…
-            </div>
-          )}
-
-          {routes.length > 0 && (
-            <>
-              <p className="drv-section">Choisir un itinéraire</p>
-              {routes.map((r, i) => (
-                <div
-                  key={i}
-                  className={`drv-route-opt${selectedRoute === i ? " selected" : ""}`}
-                  style={itinSaving ? { opacity: 0.5, pointerEvents: "none" } : undefined}
-                  onClick={async () => {
-                    // Verrou anti-double-tap : sans ça, deux itinéraires tapés
-                    // rapidement (fréquent sur mobile, écran qui bouge) partaient
-                    // en parallèle et pouvaient se résoudre dans le désordre,
-                    // laissant en base un prix/distance différent de celui
-                    // affiché en local (selectedRoute). On réutilise le même
-                    // verrou que le bouton "Mettre à jour l'itinéraire".
-                    if (itinSaving) return;
-                    setSelectedRoute(i);
-                    setItinSaving(true);
-                    try {
-                      window.localStorage.setItem(routeStorageKey, String(i));
-                    } catch {}
-                    try {
-                      await driverUpdateReservation({
-                        data: {
-                          token: getDriverToken(),
-                          reservation_id: resa.id,
-                          patch: { distance_km: r.distanceKm, prix_estime: r.prix_estime },
-                        },
-                      });
-                      broadcastSuiviUpdate(resa.id, "route");
-                      toast.success(`✓ ${r.distanceKm} km · ${r.prix_estime.toFixed(2)} €`);
-                      onRefresh();
-                    } catch (e: any) {
-                      toast.error("Erreur mise à jour itinéraire : " + (e.message ?? e));
-                    } finally {
-                      setItinSaving(false);
-                    }
-                  }}
-                >
-                  <div className="drv-route-opt-head">
-                    <span className="drv-route-label">
-                      {i === 0 ? "🏆 Recommandé" : i === 1 ? "🔀 Alternatif" : "⏱ Rapide"} — {r.summary}
-                    </span>
-                    <span className="drv-route-price">{r.prix_estime.toFixed(2)} €</span>
-                  </div>
-                  <div className="drv-route-meta">
-                    <span>🛣 {r.distanceKm} km</span>
-                    <span>⏱ {r.dureeMin} min</span>
-                    <span style={{ color: r.tarifLabel.includes("jour") ? "#15803d" : "#1d4ed8" }}>{r.tarifLabel}</span>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-
-          {/* Contact — tel / SMS / WhatsApp / Email, identique à l'admin */}
-          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") &&
-            (() => {
-              const phone = resa.client_phone;
-              const mail = resa.client_email || resa.email;
-              const trackUrl =
-                typeof window !== "undefined"
-                  ? `${window.location.origin}/reservation/${resa.id}${(resa as any).suivi_id ? `?k=${encodeURIComponent((resa as any).suivi_id)}` : ""}`
-                  : "";
-              const greet = `Bonjour ${resa.client_name || ""}, votre taxi Access Prestige Taxi.`;
-              const body = trackUrl ? `${greet}\nRetrouvez votre course ici : ${trackUrl}` : greet;
-              const mailBody = trackUrl
-                ? `Bonjour ${resa.client_name || ""},\n\nVoici le lien pour retrouver et suivre votre course en temps réel :\n${trackUrl}\n\nAccess Prestige Taxi`
-                : `Bonjour ${resa.client_name || ""},\n\nAccess Prestige Taxi`;
-              if (!phone && !mail) return null;
-              const contactBtn: React.CSSProperties = {
-                flex: "1 1 auto",
-                minWidth: 78,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                border: "1px solid #e2e8f0",
-                borderRadius: 12,
-                padding: "10px",
-                fontWeight: 700,
-                fontSize: "calc(12.5px * var(--drv-fs, 1))",
-                textDecoration: "none",
-                color: "#0f172a",
-              };
-              return (
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-                  {phone && (
-                    <>
-                      <a
-                        href={`tel:${phone}`}
-                        style={{
-                          ...contactBtn,
-                          background: "#eff6ff",
-                          borderColor: "#bfdbfe",
-                          color: "#0369a1",
-                        }}
-                      >
-                        📞 Appeler
-                      </a>
-                      <a
-                        href={`sms:${phone}?body=${encodeURIComponent(body)}`}
-                        style={{
-                          ...contactBtn,
-                          background: "#faf5ff",
-                          borderColor: "#e9d5ff",
-                          color: "#7e22ce",
-                        }}
-                      >
-                        💬 SMS
-                      </a>
-                      <a
-                        href={`https://wa.me/${phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}?text=${encodeURIComponent(body)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          ...contactBtn,
-                          background: "#f0fdf4",
-                          borderColor: "#bbf7d0",
-                          color: "#15803d",
-                        }}
-                      >
-                        🟢 WhatsApp
-                      </a>
-                    </>
-                  )}
-                  {mail && (
-                    <a
-                      href={`mailto:${mail}?subject=${encodeURIComponent("Votre course Access Prestige Taxi")}&body=${encodeURIComponent(mailBody)}`}
-                      style={{
-                        ...contactBtn,
-                        background: "#FDFBF7beb",
-                        borderColor: "#fde68a",
-                        color: "#92400e",
-                      }}
-                    >
-                      ✉️ Email
-                    </a>
-                  )}
-                </div>
-              );
-            })()}
-
-          {/* Gestion avancée — visible une fois la course acceptée */}
-          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-            <>
-              {/* Prix custom */}
-              <button
-                onClick={() => setCustomPrixOpen((o) => !o)}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: "#f8fafc",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 12,
-                  padding: "10px 14px",
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  fontWeight: 600,
-                  color: "#0f172a",
-                  cursor: "pointer",
-                  marginBottom: customPrixOpen ? 8 : 10,
-                }}
-              >
-                💶 {customPrixOpen ? "▲" : "▼"} Envoyer un prix personnalisé
-              </button>
-              {customPrixOpen && (
-                <div style={{ marginBottom: 12 }}>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Prix en € (ex : 18,50)"
-                    value={customPrix}
-                    onChange={(e) => setCustomPrix(e.target.value)}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = "#E8C96D";
-                      e.currentTarget.style.boxShadow = "0 0 0 3px rgba(232,201,109,0.25)";
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                    className="drv-custom-prix-input"
-                    style={{
-                      width: "100%",
-                      padding: "12px 14px",
-                      borderRadius: 10,
-                      border: "1px solid var(--border)",
-                      fontSize: "calc(16px * var(--drv-fs, 1))",
-                      marginBottom: 8,
-                      fontFamily: "'DM Sans', sans-serif",
-                      background: "#FDFBF7fff",
-                      color: "#0f172a",
-                      fontWeight: 600,
-                      outline: "none",
-                      transition: "border-color 120ms ease, box-shadow 120ms ease",
-                      WebkitAppearance: "none",
-                      appearance: "none",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    <button
-                      onClick={() => handleSendCustomPrix("sms")}
-                      disabled={customPrixSending}
-                      style={{
-                        flex: 1,
-                        minWidth: 70,
-                        background: "#faf5ff",
-                        border: "1px solid #e9d5ff",
-                        color: "#7e22ce",
-                        borderRadius: 10,
-                        padding: "8px",
-                        fontSize: "calc(12px * var(--drv-fs, 1))",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      💬 SMS
-                    </button>
-                    <button
-                      onClick={() => handleSendCustomPrix("whatsapp")}
-                      disabled={customPrixSending}
-                      style={{
-                        flex: 1,
-                        minWidth: 70,
-                        background: "#f0fdf4",
-                        border: "1px solid #bbf7d0",
-                        color: "#15803d",
-                        borderRadius: 10,
-                        padding: "8px",
-                        fontSize: "calc(12px * var(--drv-fs, 1))",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      🟢 WhatsApp
-                    </button>
-                    <button
-                      onClick={() => handleSendCustomPrix("email")}
-                      disabled={customPrixSending}
-                      style={{
-                        flex: 1,
-                        minWidth: 70,
-                        background: "#FDFBF7beb",
-                        border: "1px solid #fde68a",
-                        color: "#92400e",
-                        borderRadius: 10,
-                        padding: "8px",
-                        fontSize: "calc(12px * var(--drv-fs, 1))",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                      }}
-                    >
-                      {customPrixSending ? "…" : "✉️ Email"}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Reprogrammer l'heure */}
-              <button
-                onClick={() => setChangeHeureOpen((o) => !o)}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: "#f8fafc",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 12,
-                  padding: "10px 14px",
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  fontWeight: 600,
-                  color: "#0f172a",
-                  cursor: "pointer",
-                  marginBottom: changeHeureOpen ? 8 : 10,
-                }}
-              >
-                🕐 {changeHeureOpen ? "▲" : "▼"} Reprogrammer l'heure
-              </button>
-              {changeHeureOpen && (
-                <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
-                  <input
-                    type="datetime-local"
-                    value={newDatetime}
-                    onChange={(e) => setNewDatetime(e.target.value)}
-                    style={{
-                      flex: 1,
-                      padding: "10px 12px",
-                      borderRadius: 10,
-                      border: "1px solid #e2e8f0",
-                      fontSize: "calc(16px * var(--drv-fs, 1))",
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                  />
-                  <button
-                    onClick={handleChangeHeure}
-                    disabled={changeHeureSending || !newDatetime}
-                    className="drv-btn-primary"
-                    style={{ flex: "0 0 auto", padding: "10px 16px" }}
-                  >
-                    {changeHeureSending ? "…" : "OK"}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Actions */}
-          {resa.status === "pending" && (
-            <div className="drv-btns">
-              <button className="drv-btn-danger" onClick={handleRefuse} disabled={busy}>
-                Refuser
-              </button>
-              <button className="drv-btn-primary" onClick={handleAccept} disabled={busy}>
-                {busy ? "…" : "Accepter"}
-              </button>
-            </div>
-          )}
-          {resa.status === "accepted" && (
-            <>
-              {(() => {
-                // Utilise les coords géocodées si disponibles (plus précis que le texte brut)
-                const chosen = routes[selectedRoute];
-                const origCoord = chosen ? `${chosen.originLatLng.lat},${chosen.originLatLng.lng}` : resa.depart;
-                const destCoord = chosen ? `${chosen.destLatLng.lat},${chosen.destLatLng.lng}` : resa.destination;
-                // Waypoint milieu pour forcer le même itinéraire dans Maps
-                const wp = chosen?.waypointLatLng;
-                const waypointParam = wp ? `&waypoints=${wp.lat},${wp.lng}` : "";
-                const waypointCoord = wp ? `${wp.lat},${wp.lng}` : null;
-                // For web we percent-encode components; for native apps prefer encodeURI
-                // so commas in lat,lng are preserved (Google Maps expects `lat,lng`).
-                const originParam = encodeURIComponent(origCoord);
-                const destinationParam = encodeURIComponent(destCoord);
-                const originNative = encodeURI(origCoord);
-                const destinationNative = encodeURI(destCoord);
-                const googleMapsWeb = `https://www.google.com/maps/dir/?api=1&origin=${originParam}&destination=${destinationParam}${waypointParam}&travelmode=driving&dir_action=navigate`;
-                return (
-                  <div style={{ marginBottom: 10 }}>
-                    <button
-                      onClick={() => {
-                        const ua = navigator.userAgent;
-                        const isIOS = /iPad|iPhone|iPod/.test(ua);
-                        const isAndroid = /Android/.test(ua);
-                        if (isIOS) {
-                          // iOS : open Google Maps app with explicit origin + waypoint + start navigation
-                          const gmaps = waypointCoord
-                            ? `comgooglemaps://?saddr=${originNative}&daddr=${waypointCoord}+to:${destinationNative}&directionsmode=driving&dir_action=navigate`
-                            : `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&directionsmode=driving&dir_action=navigate`;
-                          window.location.href = gmaps;
-                          setTimeout(() => {
-                            window.location.href = googleMapsWeb;
-                          }, 1200);
-                        } else if (isAndroid) {
-                          const androidNavigation = `google.navigation:q=${destinationNative}&mode=d`;
-                          const gmapsAndroid = waypointCoord
-                            ? `comgooglemaps://?saddr=${originNative}&daddr=${destinationNative}&waypoints=${waypointCoord}&directionsmode=driving&dir_action=navigate`
-                            : androidNavigation;
-                          const intent = `intent://maps.google.com/maps?api=1&origin=${originNative}&destination=${destinationNative}${waypointCoord ? `&waypoints=${waypointCoord}` : ""}&travelmode=driving#Intent;scheme=https;package=com.google.android.apps.maps;S.browser_fallback_url=${encodeURIComponent(googleMapsWeb)};end`;
-                          window.location.href = gmapsAndroid;
-                          setTimeout(() => {
-                            window.location.href = intent;
-                          }, 1200);
-                          setTimeout(() => {
-                            window.location.href = androidNavigation;
-                          }, 2400);
-                          setTimeout(() => {
-                            window.open(googleMapsWeb, "_blank");
-                          }, 3600);
-                        } else {
-                          window.open(googleMapsWeb, "_blank");
-                        }
-                      }}
-                      style={{
-                        width: "100%",
-                        display: "block",
-                        textAlign: "center",
-                        background: "#0f172a",
-                        color: "#FDFBF7",
-                        border: "none",
-                        borderRadius: 12,
-                        padding: "13px 8px",
-                        fontSize: "calc(14px * var(--drv-fs, 1))",
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        fontFamily: "'DM Sans', sans-serif",
-                      }}
-                    >
-                      🗺 Lancer Google Maps
-                    </button>
-                  </div>
-                );
-              })()}
-            </>
-          )}
-
-          {resa.status === "accepted" && (
-            <button
-              onClick={() => handleProgressStatus("en_route", "🚖 Statut : chauffeur en route vers le client")}
-              disabled={progressing}
-              style={{
-                width: "100%",
-                background: "#eff6ff",
-                border: "2px solid #2563eb",
-                color: "#1d4ed8",
-                borderRadius: 12,
-                padding: "12px",
-                fontSize: "calc(14px * var(--drv-fs, 1))",
-                fontWeight: 800,
-                cursor: "pointer",
-                marginBottom: 10,
-              }}
-            >
-              {progressing ? "…" : "🚕 Votre taxi arrive"}
-            </button>
-          )}
-
-          {(resa.status === "accepted" || resa.status === "en_route") && (
-            <button
-              onClick={() => handleProgressStatus("arrived", "📍 Statut : arrivé devant chez le client")}
-              disabled={progressing}
-              style={{
-                width: "100%",
-                background: "#f5f3ff",
-                border: "2px solid #7c3aed",
-                color: "#6d28d9",
-                borderRadius: 12,
-                padding: "12px",
-                fontSize: "calc(14px * var(--drv-fs, 1))",
-                fontWeight: 800,
-                cursor: "pointer",
-                marginBottom: 10,
-              }}
-            >
-              {progressing ? "…" : "📍 Votre taxi est arrivé"}
-            </button>
-          )}
-
-          {(resa.status === "accepted" || resa.status === "en_route" || resa.status === "arrived") && (
-            <button
-              onClick={handleComplete}
-              disabled={completing}
-              style={{
-                width: "100%",
-                background: "#f0fdf4",
-                border: "2px solid #16a34a",
-                color: "#15803d",
-                borderRadius: 12,
-                padding: "12px",
-                fontSize: "calc(14px * var(--drv-fs, 1))",
-                fontWeight: 800,
-                cursor: "pointer",
-                marginBottom: 10,
-              }}
-            >
-              {completing ? "…" : "✓ Terminée"}
-            </button>
-          )}
-
-          {/* Supprimer définitivement */}
-          <button
-            onClick={handleDeleteResa}
-            disabled={deleting}
-            style={{
-              width: "100%",
-              marginTop: 4,
-              background: "none",
-              border: "none",
-              color: "#b91c1c",
-              fontSize: "calc(11.5px * var(--drv-fs, 1))",
-              fontWeight: 600,
-              cursor: "pointer",
-              padding: "6px 0",
-            }}
-          >
-            {deleting ? "Suppression…" : "🗑 Supprimer cette course"}
-          </button>
-        </>
-      )}
-
-      <button
-        onClick={onToggle}
-        style={{
-          width: "100%",
-          marginTop: 8,
-          background: "none",
-          border: "none",
-          color: "#94a3b8",
-          fontSize: "calc(12px * var(--drv-fs, 1))",
-          cursor: "pointer",
-          padding: "4px 0",
-        }}
-      >
-        {expanded ? "▲ Réduire" : "▼ Voir détails & itinéraires"}
-      </button>
-    </SwipeToDeleteCard>
-  );
-}
-
-// ── Onglet Planning ────────────────────────────────────────────────────────
-function PlanningTab() {
-  const [courses, setCourses] = useState<Resa[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const load = useCallback(async () => {
-    if (!getDriverToken()) {
-      setLoading(false);
-      return;
-    }
-    const res: any = await driverListReservations({
-      data: { token: getDriverToken(), scope: "planning" },
-    });
-    setCourses((res?.rows ?? []) as Resa[]);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    load();
-    const poll = setInterval(load, 8000);
-    const onVisible = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    const ch = (supabase as any)
-      .channel("driver-feed", { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "reservation" }, load)
-      .subscribe();
-    return () => {
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-      supabase.removeChannel(ch);
-    };
-  }, [load]);
-
-  if (loading)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
-      </div>
-    );
-
-  const dotColor: Record<string, string> = {
-    terminee: "#94a3b8",
-    completed: "#94a3b8",
-    pending: "#f59e0b",
-    accepted: "#22c55e",
-    en_route: "#3b82f6",
-    arrived: "#3b82f6",
-  };
-
-  return (
-    <>
-      <p className="drv-section">
-        Aujourd'hui — {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
-      </p>
-      {courses.length === 0 ? (
-        <div className="drv-empty">
-          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucune course aujourd'hui</div>
-        </div>
-      ) : (
-        courses.map((r) => (
-          <div key={r.id} className="drv-planning-slot">
-            <span className="drv-planning-time">{formatHeure(r.pickup_datetime ?? r.date_heure)}</span>
-            <div className="drv-planning-dot" style={{ background: dotColor[r.status] ?? "#94a3b8" }} />
-            <div
-              className={`drv-planning-card${["terminee", "completed"].includes(r.status) ? " done" : ""}`}
-              style={{ opacity: ["terminee", "completed"].includes(r.status) ? 0.5 : 1 }}
-            >
-              <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 600, color: "#0f172a" }}>
-                <div>📍 {r.depart}</div>
-                <div style={{ color: "#16a34a" }}>🏁 {r.destination}</div>
-              </div>
-              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
-                {r.distance_km ? `${r.distance_km} km · ` : ""}
-                {((r as any).final_price ?? r.prix_estime)
-                  ? `${Number((r as any).final_price ?? r.prix_estime).toFixed(2)} €`
-                  : ""}
-                {["terminee", "completed"].includes(r.status) ? " · Terminée" : ""}
-              </div>
-            </div>
-          </div>
-        ))
-      )}
-    </>
-  );
-}
-
-// ── Swipe-to-delete générique (réutilisé par Devis / Avis / Clients) ───────
-// Même logique que le swipe des courses (CoursesTab) mais factorisée pour
-// pouvoir être posée sur n'importe quelle carte : glisser vers la gauche
-// révèle le bouton 🗑 rouge, qui appelle `onDelete`.
-function SwipeToDeleteCard({
-  onDelete,
-  deleting,
-  ariaLabel,
-  cardClassName,
-  children,
-}: {
-  onDelete: () => void;
-  deleting?: boolean;
-  ariaLabel: string;
-  cardClassName?: string;
-  children: React.ReactNode;
-}) {
-  const [swipeX, setSwipeX] = useState(0);
-  const swipeStart = useRef<{ x: number; y: number; base: number } | null>(null);
-  const swipeLock = useRef<"none" | "x" | "y">("none");
-  const SWIPE_MAX = 88;
-
-  const onSwipeStart = (e: React.TouchEvent) => {
-    const t = e.touches[0];
-    if (!t) return;
-    swipeStart.current = { x: t.clientX, y: t.clientY, base: swipeX };
-    swipeLock.current = "none";
-  };
-  const onSwipeMove = (e: React.TouchEvent) => {
-    const s = swipeStart.current;
-    const t = e.touches[0];
-    if (!s || !t) return;
-    const dx = t.clientX - s.x;
-    const dy = t.clientY - s.y;
-    if (swipeLock.current === "none") {
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-      swipeLock.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
-    }
-    if (swipeLock.current !== "x") return;
-    const next = Math.min(0, Math.max(-SWIPE_MAX - 24, s.base + dx));
-    setSwipeX(next);
-  };
-  const onSwipeEnd = () => {
-    if (swipeLock.current === "x") setSwipeX(swipeX < -SWIPE_MAX / 2 ? -SWIPE_MAX : 0);
-    swipeStart.current = null;
-    swipeLock.current = "none";
-  };
-
-  // Referme le tiroir une fois la suppression lancée (évite un bouton
-  // "collé" ouvert sur une carte qui va disparaître de la liste).
-  useEffect(() => {
-    if (deleting) setSwipeX(0);
-  }, [deleting]);
-
-  return (
-    <div className="drv-swipe">
-      <button type="button" className="drv-swipe-action" aria-label={ariaLabel} onClick={onDelete} disabled={deleting}>
-        {deleting ? "…" : "🗑"}
-        <span>Suppr.</span>
-      </button>
-      <div
-        className={`drv-card drv-swipe-content${cardClassName ? ` ${cardClassName}` : ""}`}
-        style={{
-          transform: `translateX(${swipeX}px)`,
-          transition: swipeStart.current ? "none" : "transform .22s ease",
-        }}
-        onTouchStart={onSwipeStart}
-        onTouchMove={onSwipeMove}
-        onTouchEnd={onSwipeEnd}
-        onTouchCancel={onSwipeEnd}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// ── Onglet Avis ────────────────────────────────────────────────────────────
-/** Date/heure ISO -> valeur pour <input type="datetime-local"> (heure locale). */
-function toLocalInput(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 }
 
 /**
- * Sous chaque avis (nouveau ou ancien) : date affichée + champ date/heure + bouton
- * « Changer la date ». Pas de popup : l'enregistrement est direct.
+ * Tâches de fond, montées en permanence dès que le chauffeur est connecté (quel que soit
+ * l'onglet ouvert, tableau de bord compris) et branchées sur l'UNIQUE suivi GPS partagé :
+ *  - statut automatique (arrivé / terminée) d'après la position,
+ *  - pause automatique après un arrêt prolongé,
+ *  - alerte « Il est temps de partir » : heure de rdv − trajet réel − 15 min d'avance,
+ *    calculée dans les 3 h qui précèdent la prochaine course acceptée, une seule fois.
+ * Ces trois mécanismes ne tournent plus dans RidesTab / RideDetailPage (pas de doublons).
  */
-function AvisDateRow({ avis, busy, onSave }: { avis: Avis; busy: boolean; onSave: (value: string) => void }) {
-  const [value, setValue] = useState(() => toLocalInput(avis.created_at));
-  useEffect(() => {
-    setValue(toLocalInput(avis.created_at));
-  }, [avis.created_at]);
-  const invalid = !value || Number.isNaN(new Date(value).getTime());
-  const unchanged = value === toLocalInput(avis.created_at);
-  return (
-    <div style={{ marginTop: 10 }}>
-      <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 6 }}>
-        Date de l'avis :{" "}
-        {new Date(avis.created_at).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" })}
-      </div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <input
-          type="datetime-local"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          aria-label="Nouvelle date de l'avis"
-          style={{
-            flex: "1 1 190px",
-            minHeight: 42,
-            borderRadius: 10,
-            border: "1px solid #cbd5e1",
-            padding: "8px 10px",
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        />
-        <button
-          type="button"
-          className="drv-btn-secondary"
-          style={{ flex: "1 1 150px", minHeight: 42, borderRadius: 10, fontWeight: 700, cursor: "pointer" }}
-          disabled={busy || invalid || unchanged}
-          onClick={() => onSave(value)}
-        >
-          {busy ? "…" : "📅 Changer la date"}
-        </button>
-      </div>
-    </div>
-  );
-}
+function DriverBackgroundTasks({ token }: { token: string }) {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const gps = useLiveGps(token);
+  const coordsRef = useRef(gps.coords);
+  coordsRef.current = gps.coords;
+  const { paused, setPausedIds } = usePausedRides();
 
-function AvisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
-  const [pending, setPending] = useState<Avis[]>([]);
-  const [published, setPublished] = useState<Avis[]>([]);
-  const [flagged, setFlagged] = useState<Avis[]>([]);
-  const [busy, setBusy] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    try {
-      if (!getDriverToken()) {
-        return;
-      }
-      const response = await fetch(`/api/public/reviews?token=${encodeURIComponent(getDriverToken())}`);
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "chargement impossible");
-      setPending(result.pending ?? []);
-      setPublished(result.published ?? []);
-      setFlagged(result.flagged ?? []);
-      onBadgeChange((result.pending ?? []).length);
-    } catch (e: any) {
-      toast.error("Impossible de charger les avis : " + (e.message ?? e));
-    }
-  }, [onBadgeChange]);
-
-  useEffect(() => {
-    load();
-    const ch = (supabase as any)
-      .channel("driver-feed", { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "reservation" }, load)
-      .subscribe();
-    const poll = setInterval(load, 8000);
-    const onVisible = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    return () => {
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-      supabase.removeChannel(ch);
-    };
-  }, [load]);
-
-  const moderate = async (id: string, action: "approved" | "refused" | "flagged" | "pending") => {
-    setBusy(id);
-    try {
-      const response = await fetch("/api/public/reviews", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-driver-token": getDriverToken() },
-        body: JSON.stringify({ id, status: action }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "modération impossible");
-      toast.success(
-        action === "approved"
-          ? "Avis publié ✓"
-          : action === "flagged"
-            ? "Avis signalé et retiré du site"
-            : action === "pending"
-              ? "Avis remis en attente"
-              : "Avis refusé",
-      );
-      load();
-      broadcastDriverFeed("review-moderated");
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const removeAvis = async (id: string) => {
-    if (!confirm("Supprimer définitivement cet avis ?")) return;
-    setBusy(id);
-    try {
-      const response = await fetch("/api/public/reviews", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json", "x-driver-token": getDriverToken() },
-        body: JSON.stringify({ id }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "suppression impossible");
-      toast.success("Avis supprimé");
-      load();
-      broadcastDriverFeed("review-deleted");
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  // Change la date d'un avis (statut inchangé). Envoie created_at à l'API des avis.
-  const changeDate = async (a: Avis, status: "pending" | "approved" | "flagged", value: string) => {
-    const when = new Date(value);
-    if (Number.isNaN(when.getTime())) return;
-    setBusy(a.id);
-    try {
-      const response = await fetch("/api/public/reviews", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-driver-token": getDriverToken() },
-        body: JSON.stringify({ id: a.id, status, created_at: when.toISOString() }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "modification de la date impossible");
-      toast.success("Date de l'avis modifiée");
-      load();
-      broadcastDriverFeed("review-moderated");
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const avgNote =
-    published.length > 0 ? (published.reduce((s, a) => s + a.note, 0) / published.length).toFixed(1) : null;
-
-  return (
-    <>
-      {pending.length > 0 && (
-        <>
-          <p className="drv-section">À modérer ({pending.length})</p>
-          {pending.map((a) => (
-            <SwipeToDeleteCard
-              key={a.id}
-              onDelete={() => removeAvis(a.id)}
-              deleting={busy === a.id}
-              ariaLabel="Supprimer cet avis"
-              cardClassName="pending"
-            >
-              <div className="drv-row">
-                <span className="drv-name">{a.author_name || "Anonyme"}</span>
-                <span className="drv-badge-pill drv-badge-amber">En attente</span>
-              </div>
-              <div style={{ marginBottom: 6 }}>
-                <Stars n={a.note} />
-              </div>
-              <p
-                style={{
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  color: "#334155",
-                  margin: "0 0 12px",
-                  lineHeight: 1.5,
-                }}
-              >
-                "{a.commentaire}"
-              </p>
-              <div className="drv-btns">
-                <button className="drv-btn-danger" disabled={!!busy} onClick={() => moderate(a.id, "refused")}>
-                  {busy === a.id ? "…" : "Refuser"}
-                </button>
-                <button className="drv-btn-primary" disabled={!!busy} onClick={() => moderate(a.id, "approved")}>
-                  {busy === a.id ? "…" : "Publier sur le site"}
-                </button>
-                <button
-                  className="drv-btn-danger"
-                  disabled={!!busy}
-                  onClick={() => moderate(a.id, "flagged")}
-                  title="Signaler comme abusif"
-                >
-                  {busy === a.id ? "…" : "⚑ Signaler"}
-                </button>
-              </div>
-              <AvisDateRow avis={a} busy={busy === a.id} onSave={(v) => changeDate(a, "pending", v)} />
-            </SwipeToDeleteCard>
-          ))}
-          <hr className="drv-divider" />
-        </>
-      )}
-
-      {flagged.length > 0 && (
-        <>
-          <p className="drv-section">Avis signalés ({flagged.length})</p>
-          {flagged.map((a) => (
-            <SwipeToDeleteCard
-              key={a.id}
-              onDelete={() => removeAvis(a.id)}
-              deleting={busy === a.id}
-              ariaLabel="Supprimer cet avis"
-            >
-              <div className="drv-row">
-                <span className="drv-name">{a.author_name || "Anonyme"}</span>
-                <span className="drv-badge-pill drv-badge-amber">Signalé</span>
-              </div>
-              <div style={{ marginBottom: 6 }}>
-                <Stars n={a.note} />
-              </div>
-              <p
-                style={{
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  color: "#334155",
-                  margin: "0 0 12px",
-                  lineHeight: 1.5,
-                }}
-              >
-                "{a.commentaire}"
-              </p>
-              <div className="drv-btns">
-                <button className="drv-btn-danger" disabled={!!busy} onClick={() => removeAvis(a.id)}>
-                  {busy === a.id ? "…" : "Supprimer"}
-                </button>
-                <button className="drv-btn-primary" disabled={!!busy} onClick={() => moderate(a.id, "pending")}>
-                  {busy === a.id ? "…" : "Remettre en attente"}
-                </button>
-              </div>
-              <AvisDateRow avis={a} busy={busy === a.id} onSave={(v) => changeDate(a, "flagged", v)} />
-            </SwipeToDeleteCard>
-          ))}
-          <hr className="drv-divider" />
-        </>
-      )}
-
-      <p className="drv-section">Avis publiés</p>
-      {published.length === 0 ? (
-        <div className="drv-empty">
-          <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))" }}>Aucun avis publié</div>
-        </div>
-      ) : (
-        <>
-          {published.map((a) => (
-            <SwipeToDeleteCard
-              key={a.id}
-              onDelete={() => removeAvis(a.id)}
-              deleting={busy === a.id}
-              ariaLabel="Supprimer cet avis"
-            >
-              <div style={{ opacity: 0.75 }}>
-                <div className="drv-row">
-                  <span className="drv-name">{a.author_name || "Anonyme"}</span>
-                  <span className="drv-badge-pill drv-badge-green">Publié</span>
-                </div>
-                <div style={{ marginBottom: 4 }}>
-                  <Stars n={a.note} />
-                </div>
-                <p
-                  style={{
-                    fontSize: "calc(13px * var(--drv-fs, 1))",
-                    color: "#475569",
-                    margin: "0 0 8px",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  "{a.commentaire}"
-                </p>
-                <button
-                  onClick={() => removeAvis(a.id)}
-                  disabled={busy === a.id}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#b91c1c",
-                    fontSize: "calc(11.5px * var(--drv-fs, 1))",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    padding: 0,
-                  }}
-                >
-                  {busy === a.id ? "…" : "🗑 Supprimer"}
-                </button>
-                <button
-                  onClick={() => moderate(a.id, "flagged")}
-                  disabled={busy === a.id}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#b45309",
-                    fontSize: "calc(11.5px * var(--drv-fs, 1))",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    padding: 0,
-                    marginLeft: 12,
-                  }}
-                >
-                  {busy === a.id ? "…" : "⚑ Signaler"}
-                </button>
-                <AvisDateRow avis={a} busy={busy === a.id} onSave={(v) => changeDate(a, "approved", v)} />
-              </div>
-            </SwipeToDeleteCard>
-          ))}
-          {avgNote && (
-            <div
-              style={{
-                textAlign: "center",
-                marginTop: 20,
-                padding: "16px 0",
-                borderTop: "1px solid #f1f5f9",
-              }}
-            >
-              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#94a3b8", marginBottom: 4 }}>
-                Note moyenne publiée
-              </div>
-              <div style={{ fontSize: "calc(36px * var(--drv-fs, 1))", fontWeight: 800, color: "#0f172a" }}>
-                {avgNote}
-              </div>
-              <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", color: "#f59e0b" }}>★★★★★</div>
-            </div>
-          )}
-        </>
-      )}
-    </>
-  );
-}
-
-// ── Onglet Devis ─────────────────────────────────────────────────────────
-function DevisTab({ onBadgeChange }: { onBadgeChange: (n: number) => void }) {
-  const [items, setItems] = useState<Devis[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [drafts, setDrafts] = useState<Record<string, { reponse: string; prix: string }>>({});
-
-  const load = useCallback(async () => {
-    try {
-      if (!getDriverToken()) {
-        return;
-      }
-      const res: any = await listDriverDevis({ data: { token: getDriverToken() } });
-      setItems((res?.devis ?? []) as Devis[]);
-      onBadgeChange(res?.pending ?? 0);
-    } catch (e: any) {
-      toast.error("Impossible de charger les devis : " + (e.message ?? e));
-    } finally {
-      setLoading(false);
-    }
-  }, [onBadgeChange]);
-
-  useEffect(() => {
-    load();
-    const poll = setInterval(load, 8000);
-    const onVisible = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    return () => {
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-    };
-  }, [load]);
-
-  const defaultDraft = (d: Devis) => ({
-    reponse: d.reponse ?? "",
-    prix: d.prix_propose != null ? String(d.prix_propose) : "",
+  const { data } = useQuery({
+    queryKey: ["driver-rides", token],
+    queryFn: () => driverRides({ data: { as: getProfile(), token } }),
   });
-  const draftFor = (d: Devis) => drafts[d.id] ?? defaultDraft(d);
-  const setDraft = (d: Devis, patch: Partial<{ reponse: string; prix: string }>) => {
-    setDrafts((prev) => ({ ...prev, [d.id]: { ...(prev[d.id] ?? defaultDraft(d)), ...patch } }));
-  };
+  const me = data?.driver.slug;
+  const rides = useMemo(() => data?.rides ?? [], [data]);
 
-  const changeStatut = async (id: string, statut: "traite" | "accepte" | "refuse") => {
-    setBusy(id);
-    try {
-      await driverUpdateDevis({
-        data: { token: getDriverToken(), devis_id: id, patch: { statut } },
-      });
-      toast.success(
-        statut === "accepte" ? "Devis marqué accepté ✓" : statut === "refuse" ? "Devis refusé" : "Devis marqué traité",
-      );
-      load();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(null);
-    }
-  };
+  // --- Statut automatique + pause automatique ---
+  const setStatus = useMutation({
+    mutationFn: (v: { id: string; status: "arrived" | "completed" }) =>
+      driverSetStatus({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+      qc.invalidateQueries({ queryKey: ["driver-accounting", token] });
+    },
+    onError: (e) => toast.error((e as Error)?.message || "Changement de statut impossible"),
+  });
+  const mutateRef = useRef(setStatus.mutate);
+  mutateRef.current = setStatus.mutate;
+  // « En route » (in_progress) est MANUEL : jamais déclenché automatiquement.
+  const advance = useCallback((id: string, status: "in_progress" | "arrived" | "completed") => {
+    if (status === "in_progress") return;
+    mutateRef.current({ id, status });
+    toast.info(`Statut mis à jour : ${STATUS_META[status]?.label ?? status}`);
+  }, []);
+  const autoRides = useMemo(() => rides.filter((r) => !paused.includes(r.id)), [rides, paused]);
+  useAutoStatus(autoRides, me, gps.coords, advance);
+  useAutoPause(rides, gps.coords, paused, setPausedIds);
 
-  const sendReponse = async (d: Devis) => {
-    const draft = draftFor(d);
-    const prixTrim = draft.prix.trim();
-    const prix = prixTrim ? parseFloat(prixTrim.replace(",", ".")) : null;
-    if (prixTrim && (prix == null || isNaN(prix) || prix < 0)) {
-      toast.error("Prix proposé invalide");
-      return;
-    }
-    setBusy(d.id);
-    try {
-      await driverUpdateDevis({
-        data: {
-          token: getDriverToken(),
-          devis_id: d.id,
-          patch: { reponse: draft.reponse.trim(), prix_propose: prix, statut: "traite" },
-        },
-      });
-      toast.success("Réponse enregistrée ✓");
-      load();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(null);
-    }
-  };
+  // --- Alerte « Il est temps de partir » ---
+  // Course acceptée la plus proche dans le temps, assignée à ce chauffeur.
+  const nextConfirmed = useMemo(() => {
+    const now = Date.now();
+    return rides
+      .filter(
+        (r) =>
+          r.driver_slug != null &&
+          (r.driver_slug === me || r.driver_slug === "equipe" || me === "equipe") &&
+          ["accepted", "confirmed", "assigned"].includes(r.status) &&
+          r.tracking_id &&
+          r.depart &&
+          new Date(r.pickup_datetime).getTime() > now - 30 * 60_000,
+      )
+      .sort((a, b) => +new Date(a.pickup_datetime) - +new Date(b.pickup_datetime))[0];
+  }, [rides, me]);
 
-  const removeDevis = async (id: string) => {
-    if (!confirm("Supprimer définitivement ce devis ?")) return;
-    setBusy(id);
-    try {
-      await driverDeleteDevis({ data: { token: getDriverToken(), devis_id: id } });
-      toast.success("Devis supprimé");
-      load();
-    } catch (e: any) {
-      toast.error("Erreur : " + (e.message ?? e));
-    } finally {
-      setBusy(null);
-    }
-  };
+  const { data: pickupPoint } = useQuery({
+    queryKey: ["driver-next-pickup", nextConfirmed?.depart ?? null],
+    enabled: Boolean(nextConfirmed?.depart),
+    staleTime: Infinity,
+    queryFn: () => placesGeocode(nextConfirmed!.depart as string),
+  });
 
-  if (loading)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
-      </div>
-    );
+  const alerted = useRef<Set<string>>(new Set());
+  const inFlight = useRef(false);
 
-  const statutLabel: Record<string, { label: string; cls: string }> = {
-    recu: { label: "Reçu", cls: "drv-badge-blue" },
-    traite: { label: "Traité", cls: "drv-badge-amber" },
-    accepte: { label: "Accepté", cls: "drv-badge-green" },
-    refuse: { label: "Refusé", cls: "drv-badge-gray" },
-  };
+  const rideId = nextConfirmed?.id ?? null;
+  const trackingRef = (nextConfirmed?.tracking_id as string | null | undefined) ?? null;
+  const pickupIso = nextConfirmed?.pickup_datetime ?? null;
+  const pickupLat = pickupPoint?.lat ?? null;
+  const pickupLng = pickupPoint?.lng ?? null;
 
-  if (items.length === 0)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucune demande de devis</div>
-      </div>
-    );
+  useEffect(() => {
+    if (!rideId || !trackingRef || !pickupIso || pickupLat == null || pickupLng == null) return;
+    if (alerted.current.has(rideId)) return;
+    const pickupAt = new Date(pickupIso).getTime();
+    let stopped = false;
 
-  return (
-    <>
-      {items.map((d) => {
-        const st = statutLabel[d.statut] ?? { label: d.statut, cls: "drv-badge-gray" };
-        const isOpen = expandedId === d.id;
-        const draft = draftFor(d);
-        return (
-          <SwipeToDeleteCard
-            key={d.id}
-            onDelete={() => removeDevis(d.id)}
-            deleting={busy === d.id}
-            ariaLabel="Supprimer ce devis"
-          >
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => setExpandedId(isOpen ? null : d.id)}
-              role="button"
-              tabIndex={0}
-              aria-expanded={isOpen}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setExpandedId(isOpen ? null : d.id);
-                }
-              }}
-            >
-              <div className="drv-row">
-                <span className="drv-name">{d.nom}</span>
-                <span className={`drv-badge-pill ${st.cls}`}>{st.label}</span>
-              </div>
-              <div className="drv-route">
-                <span>📍 {d.depart}</span>
-                <span>🏁 {d.arrivee}</span>
-              </div>
-              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", marginTop: 4 }}>
-                {d.date_souhaitee ? `${d.date_souhaitee} ` : ""}
-                {d.heure_souhaitee ?? ""}
-                {d.aller_retour ? " · aller-retour" : ""}
-                {" · "}
-                {d.passagers} pers.{d.bagages ? ` · ${d.bagages} bagage(s)` : ""}
-              </div>
-              {(d.transport_sanitaire || d.fauteuil_roulant || d.transport_groupe || d.sieges_enfant) && (
-                <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#b45309", marginTop: 4 }}>
-                  {[
-                    d.transport_sanitaire && "Transport sanitaire",
-                    d.fauteuil_roulant && "Fauteuil roulant",
-                    d.transport_groupe && "Groupe",
-                    d.sieges_enfant && "Siège enfant",
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </div>
-              )}
-              {d.precisions && (
-                <p
-                  style={{
-                    fontSize: "calc(13px * var(--drv-fs, 1))",
-                    color: "#334155",
-                    margin: "8px 0 0",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {d.precisions}
-                </p>
-              )}
-              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#94a3b8", marginTop: 6 }}>
-                ✉️ {d.email}
-                {d.telephone ? ` · ☎ ${d.telephone}` : ""}
-              </div>
-              <button
-                type="button"
-                className="drv-btn-primary"
-                style={{ width: "100%", marginTop: 10 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setExpandedId(isOpen ? null : d.id);
-                }}
-              >
-                {isOpen ? "▲ Masquer le détail" : "👁 Voir / Répondre"}
-              </button>
-            </div>
+    const check = async () => {
+      if (stopped || inFlight.current || alerted.current.has(rideId)) return;
+      // Plus de 3 h avant le rdv : inutile de calculer.
+      if (pickupAt - Date.now() > 3 * 3600_000) return;
+      const pos = coordsRef.current;
+      if (!pos) return;
+      inFlight.current = true;
+      try {
+        const eta = await getDistanceAndDurationKm([pos.longitude, pos.latitude], [pickupLng, pickupLat]);
+        if (stopped || !eta) return;
+        const leaveAt = pickupAt - eta.dureeS * 1000 - 15 * 60_000;
+        if (Date.now() >= leaveAt && !alerted.current.has(rideId)) {
+          alerted.current.add(rideId);
+          toast.info(`Il est temps de partir — ${Math.round(eta.dureeS / 60)} min jusqu'au client`, {
+            duration: 60_000,
+            action: {
+              label: "Ouvrir le suivi",
+              onClick: () => {
+                void startLiveGps();
+                navigate({ to: "/suivi/$ref", params: { ref: trackingRef }, search: {} });
+              },
+            },
+          });
+        }
+      } catch {
+        /* réseau indisponible : on réessaie au prochain passage */
+      } finally {
+        inFlight.current = false;
+      }
+    };
 
-            {isOpen && (
-              <>
-                <hr className="drv-divider" />
-                <label style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 700, color: "#475569" }}>
-                  Prix proposé (€)
-                </label>
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={draft.prix}
-                  onChange={(e) => setDraft(d, { prix: e.target.value })}
-                  placeholder="Ex. 85"
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    marginBottom: 10,
-                    padding: "10px 12px",
-                    borderRadius: 10,
-                    border: "1px solid #e2e8f0",
-                    fontSize: "calc(14px * var(--drv-fs, 1))",
-                  }}
-                />
-                <label style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 700, color: "#475569" }}>
-                  Réponse au client
-                </label>
-                <textarea
-                  value={draft.reponse}
-                  onChange={(e) => setDraft(d, { reponse: e.target.value })}
-                  rows={3}
-                  placeholder="Votre réponse…"
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    marginBottom: 10,
-                    padding: "10px 12px",
-                    borderRadius: 10,
-                    border: "1px solid #e2e8f0",
-                    fontSize: "calc(14px * var(--drv-fs, 1))",
-                    fontFamily: "inherit",
-                    resize: "vertical",
-                  }}
-                />
-                <div className="drv-btns">
-                  <button className="drv-btn-danger" disabled={busy === d.id} onClick={() => removeDevis(d.id)}>
-                    {busy === d.id ? "…" : "Supprimer"}
-                  </button>
-                  <button className="drv-btn-primary" disabled={busy === d.id} onClick={() => sendReponse(d)}>
-                    {busy === d.id ? "…" : "Enregistrer la réponse"}
-                  </button>
-                </div>
-                <div className="drv-btns" style={{ marginTop: 8 }}>
-                  <button
-                    className="drv-btn-danger"
-                    disabled={busy === d.id}
-                    onClick={() => changeStatut(d.id, "refuse")}
-                  >
-                    ✖ Refuser
-                  </button>
-                  <button
-                    className="drv-btn-primary"
-                    disabled={busy === d.id}
-                    onClick={() => changeStatut(d.id, "accepte")}
-                  >
-                    ✓ Accepter
-                  </button>
-                </div>
-              </>
-            )}
-          </SwipeToDeleteCard>
-        );
-      })}
-    </>
-  );
+    void check();
+    const timer = window.setInterval(() => void check(), 60_000);
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+    };
+  }, [rideId, trackingRef, pickupIso, pickupLat, pickupLng, navigate, token]);
+
+  return null;
 }
 
-// ── Onglet Clients ──────────────────────────────────────────────────────────
-function ClientsTab() {
-  const [clients, setClients] = useState<ClientAgg[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
+const PAUSED_KEY = "nova-paused-rides";
 
-  const load = useCallback(async () => {
-    if (!getDriverToken()) {
-      setLoading(false);
-      return;
+/** Courses mises en pause : UN SEUL état partagé entre tous les écrans (et mémorisé sur
+ * l'appareil). Avant, chaque écran avait sa propre copie : une pause posée dans l'un
+ * n'était pas vue par les autres. */
+let pausedState: string[] | null = null;
+const EMPTY_PAUSED: string[] = [];
+const pausedListeners = new Set<() => void>();
+
+function getPausedSnapshot(): string[] {
+  if (typeof window === "undefined") return EMPTY_PAUSED;
+  if (pausedState === null) {
+    try {
+      pausedState = JSON.parse(localStorage.getItem(PAUSED_KEY) ?? "[]") as string[];
+    } catch {
+      pausedState = [];
     }
-    const res: any = await driverListReservations({
-      data: { token: getDriverToken(), scope: "clients" },
-    });
-    const data: any[] = res?.rows ?? [];
-    const clientsRows: any[] = res?.clients ?? [];
+  }
+  return pausedState;
+}
 
-    const normalize = (p: string) => p.replace(/[^0-9]/g, "").replace(/^0/, "33");
-    const idByPhone = new Map<string, string>();
-    for (const c of (clientsRows ?? []) as any[]) {
-      if (c.phone) idByPhone.set(normalize(c.phone), c.id);
-    }
+function subscribePaused(listener: () => void) {
+  pausedListeners.add(listener);
+  return () => {
+    pausedListeners.delete(listener);
+  };
+}
 
-    // Clé d'agrégation normalisée (comme idByPhone ci-dessus) : sans ça, un
-    // même client ayant réservé avec des formats différents ("0612345678",
-    // "+33612345678", avec espaces…) apparaissait comme plusieurs clients
-    // distincts, avec historique et total dépensé scindés entre les fiches.
-    const rows: any[] = data ?? [];
-    const byPhone = new Map<string, ClientAgg>();
-    for (const r of rows) {
-      const phone = r.client_phone;
-      if (!phone) continue;
-      const key = normalize(phone);
-      const existing = byPhone.get(key);
-      const isCompleted = ["terminee", "completed"].includes(r.status);
-      if (!existing) {
-        byPhone.set(key, {
-          id: idByPhone.get(normalize(phone)),
-          phone,
-          email: r.client_email ?? r.email ?? null,
-          name: r.client_name || "Client",
-          nbCourses: isCompleted ? 1 : 0,
-          totalDepense: isCompleted ? (r.prix_estime ?? 0) : 0,
-          derniereCourse: r.pickup_datetime ?? r.date_heure,
-          derniereDepart: r.depart ?? "",
-          derniereDestination: r.destination ?? "",
-        });
-      } else {
-        if (isCompleted) {
-          existing.nbCourses += 1;
-          existing.totalDepense += r.prix_estime ?? 0;
-        }
-        if ((r.pickup_datetime ?? r.date_heure) > existing.derniereCourse) {
-          existing.derniereCourse = r.pickup_datetime ?? r.date_heure;
-          existing.derniereDepart = r.depart ?? existing.derniereDepart;
-          existing.derniereDestination = r.destination ?? existing.derniereDestination;
-        }
-        if (!existing.name || existing.name === "Client") existing.name = r.client_name || existing.name;
-        if (!existing.email && (r.client_email || r.email)) existing.email = r.client_email ?? r.email;
-      }
-    }
+function setPausedIds(fn: (p: string[]) => string[]) {
+  const prev = getPausedSnapshot();
+  const next = fn(prev);
+  if (next.length === prev.length && next.every((id, i) => id === prev[i])) return;
+  pausedState = next;
+  try {
+    localStorage.setItem(PAUSED_KEY, JSON.stringify(next));
+  } catch {
+    /* stockage indisponible */
+  }
+  pausedListeners.forEach((l) => l());
+}
 
-    setClients(Array.from(byPhone.values()).sort((a, b) => b.derniereCourse.localeCompare(a.derniereCourse)));
-    setLoading(false);
+function usePausedRides() {
+  const paused = useSyncExternalStore(subscribePaused, getPausedSnapshot, () => EMPTY_PAUSED);
+  return { paused, setPausedIds };
+}
+
+function distanceM(a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }) {
+  const R = 6371000;
+  const rad = (x: number) => (x * Math.PI) / 180;
+  const dLat = rad(b.latitude - a.latitude);
+  const dLng = rad(b.longitude - a.longitude);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.latitude)) * Math.cos(rad(b.latitude)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+const AUTO_PAUSE_AFTER_MS = 5 * 60_000; // arrêt continu avant mise en pause
+const AUTO_PAUSE_RADIUS_M = 40; // en dessous : on considère le taxi à l'arrêt (bruit GPS)
+
+/**
+ * Pause AUTOMATIQUE : course démarrée + taxi immobile plus de 5 min → mise en pause.
+ * Reprise automatique dès que le taxi repart (seulement pour les pauses automatiques ;
+ * une pause manuelle reste en pause jusqu'à « Reprendre »).
+ */
+function useAutoPause(
+  rides: DriverRide[],
+  coords: { latitude: number; longitude: number } | null | undefined,
+  paused: string[],
+  setPausedIds: (fn: (p: string[]) => string[]) => void,
+) {
+  const anchor = useRef<{ latitude: number; longitude: number; since: number } | null>(null);
+  const autoPaused = useRef<Set<string>>(new Set());
+  const [tick, setTick] = useState(0);
+  const runningIds = useMemo(
+    () => rides.filter((r) => ["in_progress", "arrived", "en_route"].includes(r.status)).map((r) => r.id),
+    [rides],
+  );
+
+  useEffect(() => {
+    const t = setInterval(() => setTick((x) => x + 1), 30_000);
+    return () => clearInterval(t);
   }, []);
 
   useEffect(() => {
-    load();
-    const poll = setInterval(load, 8000);
-    const onVisible = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    window.addEventListener("focus", onVisible);
-    const ch = (supabase as any)
-      .channel("driver-feed-clients", { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "reservation" }, load)
-      .subscribe();
-    return () => {
-      clearInterval(poll);
-      document.removeEventListener("visibilitychange", onVisible);
-      window.removeEventListener("focus", onVisible);
-      supabase.removeChannel(ch);
-    };
-  }, [load]);
-
-  const [deletingPhone, setDeletingPhone] = useState<string | null>(null);
-  const removeClient = async (c: ClientAgg) => {
-    if (!confirm(`Supprimer ${c.name} et toutes ses courses ? Action irréversible.`)) return;
-    setDeletingPhone(c.phone);
-    try {
-      await driverDeleteClient({
-        data: { token: getDriverToken(), phone: c.phone, client_id: c.id ?? null },
-      });
-      toast.success("Client supprimé");
-      load();
-    } catch (e: any) {
-      toast.error("Suppression impossible : " + (e.message ?? e));
-    } finally {
-      setDeletingPhone(null);
+    if (!coords || runningIds.length === 0) {
+      anchor.current = null;
+      return;
     }
-  };
-
-  const formatE164 = (phone: string) => {
-    const normalized = phone.replace(/[^0-9]/g, "").replace(/^0/, "33");
-    return normalized.startsWith("33") ? `+${normalized}` : `+${normalized}`;
-  };
-
-  const makeVcardHref = (name: string, phone: string, email?: string | null) => {
-    const tel = formatE164(phone);
-    const safeName = name || "Client";
-    const lines = [`BEGIN:VCARD`, `VERSION:3.0`, `FN:${safeName}`, `TEL;TYPE=CELL:${tel}`];
-    if (email) lines.push(`EMAIL;TYPE=INTERNET:${email}`);
-    lines.push(`END:VCARD`);
-    const vcard = lines.join(`\n`);
-    return `data:text/vcard;charset=utf-8,${encodeURIComponent(vcard)}`;
-  };
-
-  if (loading)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
-      </div>
-    );
-
-  const filtered = query.trim()
-    ? clients.filter(
-        (c) =>
-          c.name.toLowerCase().includes(query.toLowerCase()) ||
-          c.phone.includes(query) ||
-          (c.email?.toLowerCase().includes(query.toLowerCase()) ?? false),
-      )
-    : clients;
-
-  return (
-    <>
-      <input
-        type="text"
-        placeholder="Rechercher un client…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px 14px",
-          borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          fontSize: "calc(16px * var(--drv-fs, 1))",
-          fontFamily: "'DM Sans', sans-serif",
-          marginBottom: 14,
-          outline: "none",
-        }}
-      />
-
-      {filtered.length === 0 ? (
-        <div className="drv-empty">
-          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))", fontWeight: 600 }}>Aucun client trouvé</div>
-        </div>
-      ) : (
-        filtered.map((c) => (
-          <SwipeToDeleteCard
-            key={c.phone}
-            onDelete={() => removeClient(c)}
-            deleting={deletingPhone === c.phone}
-            ariaLabel="Supprimer ce client"
-          >
-            <div className="drv-row">
-              <span className="drv-name">{c.name}</span>
-              <span className="drv-badge-pill drv-badge-gray">
-                {c.nbCourses} course{c.nbCourses > 1 ? "s" : ""}
-              </span>
-            </div>
-            <div className="drv-sub" style={{ marginBottom: 6 }}>
-              Dernière course : {formatDate(c.derniereCourse)}
-              <br />
-              <span>📍 {c.derniereDepart || "—"}</span>
-              <br />
-              <span>🏁 {c.derniereDestination || "—"}</span>
-            </div>
-            <div
-              className="drv-meta"
-              style={{ margin: "8px 0 12px", flexDirection: "column", display: "flex", gap: 6 }}
-            >
-              <span>📞 {c.phone}</span>
-              {c.email ? <span>✉ {c.email}</span> : null}
-              <span>💶 {c.totalDepense.toFixed(2)} € au total</span>
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <a
-                href={`tel:${c.phone}`}
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  background: "#f0fdf4",
-                  border: "1px solid #bbf7d0",
-                  borderRadius: 12,
-                  padding: "10px",
-                  color: "#15803d",
-                  fontWeight: 700,
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  textDecoration: "none",
-                }}
-              >
-                📞 Appeler
-              </a>
-              <a
-                href={`sms:${c.phone}`}
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  background: "#eff6ff",
-                  border: "1px solid #bfdbfe",
-                  borderRadius: 12,
-                  padding: "10px",
-                  color: "#1d4ed8",
-                  fontWeight: 700,
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  textDecoration: "none",
-                }}
-              >
-                💬 SMS
-              </a>
-              <a
-                href={`https://wa.me/${c.phone.replace(/[^0-9]/g, "").replace(/^0/, "33")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  background: "#f0fdf4",
-                  border: "1px solid #bbf7d0",
-                  borderRadius: 12,
-                  padding: "10px",
-                  color: "#15803d",
-                  fontWeight: 700,
-                  fontSize: "calc(13px * var(--drv-fs, 1))",
-                  textDecoration: "none",
-                }}
-              >
-                🟢 WhatsApp
-              </a>
-            </div>
-            <a
-              href={makeVcardHref(c.name, c.phone, c.email)}
-              download={`${c.name.replace(/[^a-zA-Z0-9]/g, "_") || "client"}.vcf`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                width: "100%",
-                background: "#eff6ff",
-                border: "1px solid #bfdbfe",
-                borderRadius: 12,
-                padding: "10px",
-                color: "#1e40af",
-                fontWeight: 700,
-                fontSize: "calc(13px * var(--drv-fs, 1))",
-                textDecoration: "none",
-                marginTop: 8,
-              }}
-            >
-              📇 Enregistrer
-            </a>
-            <button
-              onClick={() => removeClient(c)}
-              disabled={deletingPhone === c.phone}
-              style={{
-                width: "100%",
-                marginTop: 8,
-                background: "none",
-                border: "none",
-                color: "#b91c1c",
-                fontSize: "calc(11.5px * var(--drv-fs, 1))",
-                fontWeight: 600,
-                cursor: "pointer",
-                padding: "4px 0",
-              }}
-            >
-              {deletingPhone === c.phone ? "Suppression…" : "🗑 Supprimer ce client"}
-            </button>
-          </SwipeToDeleteCard>
-        ))
-      )}
-    </>
-  );
-}
-
-// (ChatTab et DriverChatConversation retirés : le chat "haut de page" n'est
-// plus affiché ; les échanges se font uniquement dans chaque carte de course.)
-
-// ── Analytics : ouvertures du lien de suivi ────────────────────────────────
-function TrackingAnalytics() {
-  const trackingAnalyticsFn = useServerFn(getTrackingAnalytics);
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<{
-    totalOuvertures: number;
-    coursesAvecSuivi: number;
-    totalCourses: number;
-    tauxOuverture: number;
-    parJour: { jour: string; count: number }[];
-    parSource: { source: string; count: number }[];
-    dernierEvents: {
-      reservation_id: string;
-      client_name: string | null;
-      created_at: string;
-      source: string | null;
-    }[];
-  } | null>(null);
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const since30j = new Date();
-      since30j.setDate(since30j.getDate() - 30);
-
-      const tok = getDriverToken();
-      if (!tok) {
-        setLoading(false);
-        return;
+    const now = Date.now();
+    const a = anchor.current;
+    if (!a || distanceM(a, coords) > AUTO_PAUSE_RADIUS_M) {
+      anchor.current = { latitude: coords.latitude, longitude: coords.longitude, since: now };
+      if (a && autoPaused.current.size > 0) {
+        const ids = [...autoPaused.current];
+        autoPaused.current.clear();
+        setPausedIds((p) => p.filter((x) => !ids.includes(x)));
+        toast.info("Course reprise automatiquement");
       }
-      const { events, totalCourses } = await trackingAnalyticsFn({
-        data: { token: tok, days: 30 },
-      });
-
-      const evts: any[] = events ?? [];
-
-      const uniqueResas = new Set(evts.map((e: any) => e.reservation_id));
-
-      const parJourMap = new Map<string, number>();
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        parJourMap.set(d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" }), 0);
-      }
-      const sept = new Date();
-      sept.setDate(sept.getDate() - 6);
-      sept.setHours(0, 0, 0, 0);
-      for (const e of evts) {
-        const d = new Date(e.created_at);
-        if (d >= sept) {
-          const k = d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" });
-          parJourMap.set(k, (parJourMap.get(k) ?? 0) + 1);
-        }
-      }
-      const parJour = Array.from(parJourMap.entries()).map(([jour, count]) => ({ jour, count }));
-
-      const parSourceMap = new Map<string, number>();
-      for (const e of evts) {
-        const src = e.source ?? "direct";
-        parSourceMap.set(src, (parSourceMap.get(src) ?? 0) + 1);
-      }
-      const parSource = Array.from(parSourceMap.entries())
-        .map(([source, count]) => ({ source, count }))
-        .sort((a, b) => b.count - a.count);
-
-      const dernierEvents = evts.slice(0, 5).map((e: any) => ({
-        reservation_id: e.reservation_id,
-        client_name: e.client_name ?? null,
-        created_at: e.created_at,
-        source: e.source ?? "direct",
-      }));
-
-      const tauxOuverture = totalCourses && totalCourses > 0 ? Math.round((uniqueResas.size / totalCourses) * 100) : 0;
-
-      setData({
-        totalOuvertures: evts.length,
-        coursesAvecSuivi: uniqueResas.size,
-        totalCourses,
-        tauxOuverture,
-        parJour,
-        parSource,
-        dernierEvents,
-      });
-    } catch (e) {
-      console.error("[TrackingAnalytics]", e);
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
-
-  const sourceEmoji: Record<string, string> = {
-    push: "🔔",
-    email: "✉️",
-    sms: "💬",
-    whatsapp: "🟢",
-    direct: "🔗",
-  };
-
-  const maxJour = data ? Math.max(...data.parJour.map((d) => d.count), 1) : 1;
-
-  return (
-    <div style={{ marginTop: 4, marginBottom: 4 }}>
-      <button
-        onClick={() => {
-          const next = !open;
-          setOpen(next);
-          if (next && !data) load();
-        }}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: open ? "#0f172a" : "#f8fafc",
-          border: `1px solid ${open ? "#0f172a" : "#e2e8f0"}`,
-          borderRadius: 14,
-          padding: "12px 16px",
-          fontSize: "calc(13px * var(--drv-fs, 1))",
-          fontWeight: 700,
-          color: open ? "#FDFBF7" : "#0f172a",
-          cursor: "pointer",
-          marginBottom: open ? 10 : 0,
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <span>📈 Analytics — Suivi client</span>
-        <span style={{ fontSize: "calc(11px * var(--drv-fs, 1))", fontWeight: 400, opacity: 0.7 }}>
-          30 derniers jours {open ? "▲" : "▼"}
-        </span>
-      </button>
-
-      {open && (
-        <div className="drv-card" style={{ borderRadius: 14, padding: 16 }}>
-          {loading ? (
-            <div
-              style={{
-                textAlign: "center",
-                fontSize: "calc(13px * var(--drv-fs, 1))",
-                color: "#64748b",
-                padding: "20px 0",
-              }}
-            >
-              Chargement…
-            </div>
-          ) : !data ? (
-            <div
-              style={{
-                textAlign: "center",
-                fontSize: "calc(13px * var(--drv-fs, 1))",
-                color: "#64748b",
-                padding: "20px 0",
-              }}
-            >
-              Aucune donnée
-            </div>
-          ) : (
-            <>
-              {/* KPIs */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gap: 8,
-                  marginBottom: 16,
-                }}
-              >
-                <div
-                  style={{
-                    background: "#f8fafc",
-                    borderRadius: 12,
-                    padding: "10px 8px",
-                    textAlign: "center",
-                  }}
-                >
-                  <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#0f172a" }}>
-                    {data.totalOuvertures}
-                  </div>
-                  <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
-                    Ouvertures
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: "#f0fdf4",
-                    borderRadius: 12,
-                    padding: "10px 8px",
-                    textAlign: "center",
-                  }}
-                >
-                  <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#15803d" }}>
-                    {data.tauxOuverture}%
-                  </div>
-                  <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
-                    Taux suivi
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: "#eff6ff",
-                    borderRadius: 12,
-                    padding: "10px 8px",
-                    textAlign: "center",
-                  }}
-                >
-                  <div style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#1d4ed8" }}>
-                    {data.coursesAvecSuivi}/{data.totalCourses}
-                  </div>
-                  <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
-                    Courses
-                  </div>
-                </div>
-              </div>
-
-              {/* Graphique 7 jours */}
-              <div
-                style={{
-                  fontSize: "calc(11px * var(--drv-fs, 1))",
-                  fontWeight: 700,
-                  color: "#94a3b8",
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  marginBottom: 8,
-                }}
-              >
-                7 derniers jours
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  gap: 4,
-                  height: 56,
-                  marginBottom: 4,
-                }}
-              >
-                {data.parJour.map((d, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "100%",
-                        borderRadius: "4px 4px 0 0",
-                        background: i === data.parJour.length - 1 ? "#0f172a" : "#bfdbfe",
-                        height: `${Math.max(4, Math.round((d.count / maxJour) * 44))}px`,
-                        transition: "height 0.3s ease",
-                        position: "relative",
-                      }}
-                    >
-                      {d.count > 0 && (
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: -16,
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            fontSize: "calc(9px * var(--drv-fs, 1))",
-                            fontWeight: 700,
-                            color: "#0f172a",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {d.count}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "flex", gap: 4, marginBottom: 14 }}>
-                {data.parJour.map((d, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: "calc(9px * var(--drv-fs, 1))",
-                      color: i === data.parJour.length - 1 ? "#0f172a" : "#94a3b8",
-                      fontWeight: i === data.parJour.length - 1 ? 700 : 400,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {d.jour}
-                  </div>
-                ))}
-              </div>
-
-              {/* Par source */}
-              {data.parSource.length > 0 && (
-                <>
-                  <div
-                    style={{
-                      fontSize: "calc(11px * var(--drv-fs, 1))",
-                      fontWeight: 700,
-                      color: "#94a3b8",
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      marginBottom: 8,
-                    }}
-                  >
-                    Provenance
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 }}>
-                    {data.parSource.map((s) => {
-                      const total = data.parSource.reduce((acc, x) => acc + x.count, 0);
-                      const pct = total > 0 ? Math.round((s.count / total) * 100) : 0;
-                      return (
-                        <div key={s.source} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span
-                            style={{
-                              width: 70,
-                              fontSize: "calc(12px * var(--drv-fs, 1))",
-                              color: "#334155",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 4,
-                            }}
-                          >
-                            {sourceEmoji[s.source] ?? "🔗"} {s.source}
-                          </span>
-                          <div
-                            style={{
-                              flex: 1,
-                              background: "#f1f5f9",
-                              borderRadius: 4,
-                              overflow: "hidden",
-                              height: 8,
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: `${pct}%`,
-                                height: "100%",
-                                background: "#0f172a",
-                                borderRadius: 4,
-                                transition: "width 0.4s ease",
-                              }}
-                            />
-                          </div>
-                          <span
-                            style={{
-                              fontSize: "calc(11px * var(--drv-fs, 1))",
-                              fontWeight: 700,
-                              color: "#0f172a",
-                              width: 32,
-                              textAlign: "right",
-                            }}
-                          >
-                            {s.count}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-
-              {/* Dernières ouvertures */}
-              {data.dernierEvents.length > 0 && (
-                <>
-                  <div
-                    style={{
-                      fontSize: "calc(11px * var(--drv-fs, 1))",
-                      fontWeight: 700,
-                      color: "#94a3b8",
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      marginBottom: 8,
-                    }}
-                  >
-                    Dernières ouvertures
-                  </div>
-                  {data.dernierEvents.map((e, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "6px 0",
-                        borderBottom: i < data.dernierEvents.length - 1 ? "1px solid #f1f5f9" : "none",
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", fontWeight: 600, color: "#0f172a" }}>
-                          {e.client_name ?? "Client"}
-                        </div>
-                        <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#94a3b8" }}>
-                          {sourceEmoji[e.source ?? "direct"] ?? "🔗"} {e.source ?? "direct"} · #
-                          {e.reservation_id.slice(0, 6)}
-                        </div>
-                      </div>
-                      <div style={{ fontSize: "calc(10px * var(--drv-fs, 1))", color: "#94a3b8", textAlign: "right" }}>
-                        {new Date(e.created_at).toLocaleString("fr-FR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-
-              {data.totalOuvertures === 0 && (
-                <div
-                  style={{
-                    textAlign: "center",
-                    padding: "16px 0",
-                    color: "#94a3b8",
-                    fontSize: "calc(12px * var(--drv-fs, 1))",
-                  }}
-                >
-                  Aucune ouverture enregistrée sur cette période.
-                  <br />
-                  <span style={{ fontSize: "calc(11px * var(--drv-fs, 1))" }}>
-                    Assure-toi que <code>suivi.$id.tsx</code> insère bien dans <code>tracking_events</code>.
-                  </span>
-                </div>
-              )}
-
-              <button
-                onClick={load}
-                disabled={loading}
-                style={{
-                  marginTop: 12,
-                  width: "100%",
-                  background: "#f1f5f9",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 10,
-                  padding: "8px",
-                  fontSize: "calc(12px * var(--drv-fs, 1))",
-                  fontWeight: 700,
-                  color: "#0f172a",
-                  cursor: "pointer",
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                🔄 Rafraîchir
-              </button>
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Visiteurs actifs en temps réel ───────────────────────────────────────────
-function VisitorCounter({
-  scope,
-  title,
-  emptyLabel,
-  singleLabel,
-  pluralLabel,
-  subtitle,
-  emoji,
-}: {
-  scope: "site" | "suivi";
-  title: string;
-  emptyLabel: string;
-  singleLabel: string;
-  pluralLabel: (n: number) => string;
-  subtitle: string;
-  emoji: string;
-}) {
-  const [count, setCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchCount = async () => {
-      // Le nettoyage des visiteurs périmés se fait côté serveur (rôle service),
-      // le client anonyme n'a aucun droit d'écriture sur active_visitors.
-
-      try {
-        if (!getDriverToken()) {
-          setCount(0);
-          return;
-        }
-        const res = await getActiveVisitorCount({ data: { token: getDriverToken(), scope } });
-        setCount(res?.count ?? 0);
-      } catch {
-        setCount(0);
+    if (now - a.since >= AUTO_PAUSE_AFTER_MS) {
+      const toPause = runningIds.filter((id) => !paused.includes(id));
+      anchor.current = { ...a, since: now };
+      if (toPause.length > 0) {
+        toPause.forEach((id) => autoPaused.current.add(id));
+        setPausedIds((p) => [...new Set([...p, ...toPause])]);
+        toast.info("Course mise en pause automatiquement (arrêt prolongé)");
       }
-    };
-
-    fetchCount();
-    const poll = setInterval(fetchCount, 15_000);
-
-    return () => {
-      clearInterval(poll);
-    };
-  }, [scope]);
-
-  const isActive = count !== null && count > 0;
-
-  return (
-    <div
-      className="drv-card"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "14px 16px",
-        marginBottom: 4,
-      }}
-    >
-      <span
-        className={isActive ? "drv-visitor-dot-active" : undefined}
-        style={{
-          width: 10,
-          height: 10,
-          borderRadius: "50%",
-          background: count === null ? "#94a3b8" : isActive ? "#22c55e" : "#e2e8f0",
-          flexShrink: 0,
-          display: "inline-block",
-        }}
-      />
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 700, color: "#0f172a" }}>
-          {count === null ? "…" : count === 0 ? emptyLabel : count === 1 ? singleLabel : pluralLabel(count)}
-        </div>
-        <div style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#94a3b8", marginTop: 1 }}>
-          {title} · {subtitle}
-        </div>
-      </div>
-      {isActive && <span style={{ fontSize: "calc(20px * var(--drv-fs, 1))" }}>{emoji}</span>}
-    </div>
-  );
-}
-
-function ActiveVisitors() {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <VisitorCounter
-        scope="site"
-        title="Site"
-        subtitle="visiteurs sur le site"
-        emptyLabel="Aucun visiteur sur le site"
-        singleLabel="1 visiteur sur le site"
-        pluralLabel={(n) => `${n} visiteurs sur le site`}
-        emoji="🌐"
-      />
-      <VisitorCounter
-        scope="suivi"
-        title="Suivi"
-        subtitle="pages /suivi actives"
-        emptyLabel="Personne sur une page suivi"
-        singleLabel="1 client consulte son suivi"
-        pluralLabel={(n) => `${n} clients consultent leur suivi`}
-        emoji="👁"
-      />
-    </div>
-  );
-}
-
-// ── Onglet Stats ────────────────────────────────────────────────────────────
-function SimulateurTab() {
-  // Alias connus pour l'aéroport : "aéroport de bordeaux" seul est souvent mal
-  // (ou pas) géocodé par Google, contrairement au nom officiel complet.
-  // On normalise ici avant l'appel à geocodeAddress, quelle que soit la variante tapée.
-  //
-  // IMPORTANT : on ne matche jamais les accents sur le texte brut. Selon le
-  // clavier/l'OS (iOS en particulier), un accent peut être saisi en forme
-  // Unicode décomposée (e + accent combinant) plutôt que précomposée (é) —
-  // une regex du type [ée] ne matche alors ni l'un ni l'autre de façon fiable.
-  // On désaccentue donc d'abord tout le texte (comme dans reserver.tsx), puis
-  // on matche sur des motifs ASCII purs.
-  const stripAccents = (value: string): string =>
-    value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
-
-  const normalizeAddress = (raw: string): string => {
-    const trimmed = raw.trim();
-    const n = stripAccents(trimmed);
-    if (/aeroport.*(bordeaux|merignac)|(bordeaux|merignac).*aeroport/.test(n)) {
-      return "Aéroport de Bordeaux-Mérignac, France";
     }
-    return trimmed;
-  };
+  }, [coords, runningIds, paused, setPausedIds, tick]);
+}
 
-  const [mode, setMode] = useState<"manuel" | "adresses">("manuel");
-  const [pickupLocal, setPickupLocal] = useState(() => {
-    const d = new Date();
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().slice(0, 16);
+function RidesTab({ token }: { token: string }) {
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: ["driver-rides", token],
+    queryFn: () => driverRides({ data: { as: getProfile(), token } }),
+    refetchInterval: 60_000,
   });
-  const [distanceKm, setDistanceKm] = useState("");
-  const [depart, setDepart] = useState("");
 
-  const [arrivee, setArrivee] = useState("");
-  const [loadingRoute, setLoadingRoute] = useState(false);
-  const [routeError, setRouteError] = useState<string | null>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  const [result, setResult] = useState<{
-    distanceKm: number;
-    jourKm: number;
-    nuitKm: number;
-    prixJour: number;
-    prixNuit: number;
-    priseEnCharge: number;
-    total: number;
-    label: string;
-  } | null>(null);
-
-  // Découpage jour/nuit basé sur une durée interne uniquement — la durée
-  // n'entre PAS dans le prix (tarif au km) et n'est jamais exposée dans l'UI
-  // ni envoyée dans une requête.
-  const computeBreakdown = (distKm: number, stepMinutes: number, pickupIso: string) => {
-    const dureeS = Math.max(stepMinutes, 1) * 60;
-    const pickupMs = parseAsParisTime(pickupIso).getTime();
-    const stepsCount = Math.max(Math.round(dureeS / 60), 1);
-    const stepMs = (dureeS * 1000) / stepsCount;
-    const frac = distKm / stepsCount;
-    let jourKm = 0;
-    let nuitKm = 0;
-    for (let s = 0; s < stepsCount; s++) {
-      const t = new Date(pickupMs + s * stepMs).toISOString();
-      if (estTarifJourParis(t)) jourKm += frac;
-      else nuitKm += frac;
-    }
-    const prixJour = jourKm * TARIFS.TARIF_JOUR;
-    const prixNuit = nuitKm * TARIFS.TARIF_NUIT;
-    const total = Math.round((TARIFS.PRISE_EN_CHARGE + prixJour + prixNuit) * 100) / 100;
-    const label = jourKm > 0.01 && nuitKm > 0.01 ? "Tarif mixte 🌗" : nuitKm > 0.01 ? "Tarif nuit 🌙" : "Tarif jour ☀️";
-    return {
-      distanceKm: distKm,
-      jourKm,
-      nuitKm,
-      prixJour,
-      prixNuit,
-      priseEnCharge: TARIFS.PRISE_EN_CHARGE,
-      total,
-      label,
-    };
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+    qc.invalidateQueries({ queryKey: ["driver-accounting", token] });
   };
 
-  const handleManualCompute = () => {
-    const d = parseFloat(distanceKm.replace(",", "."));
-    if (!d || d <= 0) {
-      toast.error("Distance invalide");
-      return;
-    }
-    // Durée masquée : on estime 2 min par km pour le calcul mixte jour/nuit.
-    const t = Math.max(Math.round(d * 2), 1);
-    setResult(computeBreakdown(d, t, pickupLocal));
-  };
+  const claim = useMutation({
+    mutationFn: (v: { id: string; claim: boolean }) => driverClaimRide({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: invalidate,
+  });
+  const transfer = useMutation({
+    mutationFn: (v: { id: string; to: string }) => driverTransferRide({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: (res) => {
+      toast.success(`Course passée à ${res.to}`);
+      invalidate();
+    },
+    onError: () => toast.error("Transfert impossible"),
+  });
+  const setStatus = useMutation({
+    mutationFn: (v: { id: string; status: "confirmed" | "in_progress" | "arrived" | "completed" | "cancelled" }) =>
+      driverSetStatus({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: invalidate,
+    onError: (e) => toast.error((e as Error)?.message || "Changement de statut impossible"),
+  });
+  // Acceptation : attribution + statut confirmé + envoi de la position.
+  // Ni le GPS ni la redirection vers /suivi ne se déclenchent plus ici : les
+  // deux se déclenchent automatiquement plus bas (effet dédié) dès que le
+  // chauffeur est à ≤15 min réelles (distance/circulation) du point de rdv.
+  const gps = useLiveGps(token);
+  const accept = useMutation({
+    mutationFn: async (v: { id: string; trackingId?: string | null; route?: RouteAlternative | null }) => {
+      const pos = await new Promise<GeolocationPosition | null>((resolve) => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          (p) => resolve(p),
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+        );
+      });
+      return driverAcceptRide({
+        data: {
+          // Sans « as », l'acceptation s'enregistre sur le compte partagé et la
+          // course reste affichée « non attribuée ».
+          as: getProfile(),
+          token,
+          id: v.id,
+          latitude: pos?.coords.latitude ?? null,
+          longitude: pos?.coords.longitude ?? null,
+          accuracy: pos?.coords.accuracy ?? null,
+          heading: pos?.coords.heading ?? null,
+          speed: pos?.coords.speed ?? null,
+          route: v.route ? { label: v.route.label, km: v.route.km, min: v.route.min, coords: v.route.coords } : null,
+        },
+      });
+    },
+    onSuccess: () => {
+      // Plus de redirection immédiate ici : le chauffeur reste sur son
+      // tableau de bord, il sera envoyé sur /suivi automatiquement à
+      // l'approche du point de rdv (≤15 min réelles).
+      toast.success("Course acceptée");
+      invalidate();
+    },
+    onError: () => toast.error("Impossible d'accepter la course"),
+  });
 
-  const handleAdressesCompute = async () => {
-    if (!depart.trim() || !arrivee.trim()) {
-      toast.error("Renseigne le départ et la destination");
-      return;
-    }
-    setLoadingRoute(true);
-    setRouteError(null);
-    try {
-      const [geoA, geoB] = await Promise.all([
-        geocodeAddress(normalizeAddress(depart)),
-        geocodeAddress(normalizeAddress(arrivee)),
-      ]);
-      if (!geoA || !geoB) {
-        setRouteError("Adresse introuvable");
-        setLoadingRoute(false);
-        return;
-      }
-      const route = await getDistanceAndDurationKm([geoA.lng, geoA.lat], [geoB.lng, geoB.lat]);
-      if (!route) {
-        setRouteError("Impossible de calculer l'itinéraire — vérifie les adresses.");
-        setLoadingRoute(false);
-        return;
-      }
-      // Arrondi à 1 décimale AVANT le calcul du prix, pour que l'affichage
-      // ("5.2 km × 2.16 €") corresponde exactement au prix calculé.
-      const distKm = Math.round(route.distanceKm * 10) / 10;
-      const stepMinutes = Math.max(Math.round(route.dureeS / 60), 1);
-      setResult(computeBreakdown(distKm, stepMinutes, pickupLocal));
-    } catch (e) {
-      console.error("[SimulateurTab] route:", e);
-      setRouteError("Impossible de calculer l'itinéraire — vérifie les adresses.");
-    } finally {
-      setLoadingRoute(false);
-    }
-  };
+  // Modification de l'itinéraire pendant la course (notifie le client).
+  const updateRoute = useMutation({
+    mutationFn: (v: { id: string; route: RouteAlternative }) =>
+      driverUpdateRideRoute({
+        data: {
+          as: getProfile(),
+          token,
+          id: v.id,
+          label: v.route.label,
+          km: v.route.km,
+          min: v.route.min,
+          coords: v.route.coords,
+        },
+      }),
+    onSuccess: (res) => {
+      toast.success(res.notified > 0 ? "Itinéraire mis à jour — client prévenu" : "Itinéraire mis à jour");
+      invalidate();
+    },
+    onError: () => toast.error("Mise à jour de l'itinéraire impossible"),
+  });
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 12px",
-    borderRadius: 10,
-    border: "1px solid #e2e8f0",
-    fontSize: "calc(16px * var(--drv-fs, 1))",
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#0f172a",
-    background: "#FDFBF7",
-    colorScheme: "light",
-  };
-  const labelStyle: React.CSSProperties = {
-    fontSize: "calc(12px * var(--drv-fs, 1))",
-    fontWeight: 700,
-    color: "#475569",
-    display: "block",
-    marginBottom: 6,
-  };
+  const overflow = useMutation({
+    mutationFn: (v: { id: string }) => driverOverflowRide({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: (res) => {
+      toast.success(
+        res.notified > 0 ? "Course proposée à l'équipe — chauffeur(s) prévenu(s)" : "Course mise en débordement",
+      );
+      invalidate();
+      qc.invalidateQueries({ queryKey: ["driver-overflow", token] });
+    },
+    onError: () => toast.error("Mise en débordement impossible"),
+  });
+  const reclaim = useMutation({
+    mutationFn: (v: { id: string }) => driverReclaimOverflowRide({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: () => {
+      toast.success("Course reprise");
+      invalidate();
+      qc.invalidateQueries({ queryKey: ["driver-overflow", token] });
+    },
+    onError: () => toast.error("Reprise impossible — la course a déjà démarré"),
+  });
+
+  const remove = useMutation({
+    mutationFn: (v: { id: string }) => driverDeleteRide({ data: { as: getProfile(), token, ...v } }),
+    onSuccess: () => {
+      toast.success("Course supprimée");
+      invalidate();
+    },
+    onError: () => toast.error("Suppression impossible"),
+  });
+
+  const rides = data?.rides ?? [];
+  const me = data?.driver.slug;
+  const drivers = data?.drivers ?? [];
+
+  // Courses mises en pause : statut automatique suspendu (et GPS coupé si pause manuelle).
+  const { paused, setPausedIds } = usePausedRides();
+
+  // Statut automatique, pause automatique et alerte de départ : voir DriverBackgroundTasks
+  // (montée en permanence, sur le suivi GPS partagé).
 
   return (
-    <>
-      <p className="drv-section">Simulateur de tarif</p>
-
-      <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-        <button
-          onClick={() => setMode("manuel")}
-          style={{
-            flex: 1,
-            padding: "10px",
-            minHeight: 44,
-            borderRadius: 10,
-            fontWeight: 700,
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            cursor: "pointer",
-            border: mode === "manuel" ? "2px solid #2563eb" : "1px solid #e2e8f0",
-            background: mode === "manuel" ? "#eff6ff" : "#FDFBF7",
-            color: mode === "manuel" ? "#1d4ed8" : "#475569",
-          }}
-        >
-          🧮 Km
-        </button>
-        <button
-          onClick={() => setMode("adresses")}
-          style={{
-            flex: 1,
-            padding: "10px",
-            minHeight: 44,
-            borderRadius: 10,
-            fontWeight: 700,
-            fontSize: "calc(13px * var(--drv-fs, 1))",
-            cursor: "pointer",
-            border: mode === "adresses" ? "2px solid #2563eb" : "1px solid #e2e8f0",
-            background: mode === "adresses" ? "#eff6ff" : "#FDFBF7",
-            color: mode === "adresses" ? "#1d4ed8" : "#475569",
-          }}
-        >
-          📍 Adresses
-        </button>
+    <div className="mt-8">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Courses (7 derniers jours et à venir)</h2>
+        <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching}>
+          <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} /> Actualiser
+        </Button>
       </div>
 
-      <div style={{ marginBottom: 12 }}>
-        <label style={labelStyle}>📅 Heure de prise en charge</label>
-        <input
-          type="datetime-local"
-          value={pickupLocal}
-          onChange={(e) => setPickupLocal(e.target.value)}
-          style={inputStyle}
-        />
-      </div>
+      {gps.active ? (
+        <div className="surface-card mt-5 flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+          <span>
+            <span className="mr-2 inline-block size-2 animate-pulse rounded-full bg-emerald-400 align-middle" />
+            Position partagée en direct
+            {gps.lastSentAt ? ` — mise à jour ${new Date(gps.lastSentAt).toLocaleTimeString("fr-FR")}` : ""}
+            {gps.error ? ` — ${gps.error}` : ""}
+          </span>
+          <Button size="sm" variant="outline" onClick={() => void gps.stop()}>
+            Arrêter le partage
+          </Button>
+        </div>
+      ) : null}
 
-      {mode === "manuel" ? (
-        <>
-          <div style={{ marginBottom: 12 }}>
-            <label style={labelStyle}>🛣 Distance (km)</label>
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder="Ex: 15.6"
-              value={distanceKm}
-              onChange={(e) => setDistanceKm(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-          <button
-            onClick={handleManualCompute}
-            style={{
-              width: "100%",
-              background: "#0b1224",
-              color: "#FDFBF7",
-              border: "none",
-              borderRadius: 12,
-              padding: "13px",
-              minHeight: 46,
-              fontSize: "calc(14px * var(--drv-fs, 1))",
-              fontWeight: 800,
-              cursor: "pointer",
-              marginBottom: 14,
-            }}
-          >
-            💶 Calculer le prix
-          </button>
-        </>
+      {rides.length === 0 ? (
+        <p className="surface-card mt-5 p-8 text-sm text-muted-foreground">Aucune course pour le moment.</p>
       ) : (
-        <>
-          <div style={{ marginBottom: 10 }}>
-            <label style={labelStyle}>📍 Départ</label>
-            <input
-              type="text"
-              placeholder="Ex: 37 Rue Charles Domercq, Bordeaux"
-              value={depart}
-              onChange={(e) => setDepart(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-          <div style={{ marginBottom: 12 }}>
-            <label style={labelStyle}>🏁 Destination</label>
-            <input
-              type="text"
-              placeholder="Ex: Aéroport Bordeaux-Mérignac"
-              value={arrivee}
-              onChange={(e) => setArrivee(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-          {/* Élément requis (même caché) pour déclencher le chargement de Google Maps */}
-          <div ref={mapRef} style={{ height: 1, overflow: "hidden" }} />
-          <button
-            onClick={handleAdressesCompute}
-            disabled={loadingRoute}
-            style={{
-              width: "100%",
-              background: "#0b1224",
-              color: "#FDFBF7",
-              border: "none",
-              borderRadius: 12,
-              padding: "13px",
-              minHeight: 46,
-              fontSize: "calc(14px * var(--drv-fs, 1))",
-              fontWeight: 800,
-              cursor: loadingRoute ? "default" : "pointer",
-              marginBottom: 14,
-              opacity: loadingRoute ? 0.7 : 1,
-            }}
-          >
-            {loadingRoute ? "…" : "🗺 Calculer l'itinéraire et le prix"}
-          </button>
-          {routeError && (
-            <div style={{ color: "#b91c1c", fontSize: "calc(13px * var(--drv-fs, 1))", marginBottom: 12 }}>
-              {routeError}
-            </div>
-          )}
-        </>
-      )}
-
-      {result && (
-        <div
-          style={{
-            border: "2px solid #0b1224",
-            borderRadius: 14,
-            padding: 16,
-            background: "#f8fafc",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 10,
-            }}
-          >
-            <span style={{ fontSize: "calc(13px * var(--drv-fs, 1))", color: "#64748b" }}>
-              🛣 {result.distanceKm.toFixed(1)} km
-            </span>
-
-            <span
-              className="drv-badge-pill"
-              style={{
-                background: result.label.includes("mixte")
-                  ? "#fdf4ff"
-                  : result.label.includes("nuit")
-                    ? "#eff6ff"
-                    : "#f0fdf4",
-                color: result.label.includes("mixte")
-                  ? "#a21caf"
-                  : result.label.includes("nuit")
-                    ? "#1d4ed8"
-                    : "#15803d",
-              }}
-            >
-              {result.label}
-            </span>
-          </div>
-
-          <div style={{ fontSize: "calc(13px * var(--drv-fs, 1))", color: "#475569", lineHeight: 1.9 }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Prise en charge</span>
-              <span>{result.priseEnCharge.toFixed(2)} €</span>
-            </div>
-            {result.jourKm > 0.01 && (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>
-                  Tarif jour ☀️ · {result.jourKm.toFixed(1)} km × {TARIFS.TARIF_JOUR.toFixed(2)} €
-                </span>
-                <span>{result.prixJour.toFixed(2)} €</span>
-              </div>
-            )}
-            {result.nuitKm > 0.01 && (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>
-                  Tarif nuit 🌙 · {result.nuitKm.toFixed(1)} km × {TARIFS.TARIF_NUIT.toFixed(2)} €
-                </span>
-                <span>{result.prixNuit.toFixed(2)} €</span>
-              </div>
-            )}
-          </div>
-
-          <hr className="drv-divider" style={{ margin: "10px 0" }} />
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: "calc(15px * var(--drv-fs, 1))", fontWeight: 800, color: "#0b1224" }}>
-              Total estimé
-            </span>
-            <span style={{ fontSize: "calc(22px * var(--drv-fs, 1))", fontWeight: 800, color: "#0b1224" }}>
-              {result.total.toFixed(2)} €
-            </span>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-const DRIVER_LABEL: Record<string, string> = {
-  patricia: "Patricia",
-  alain: "Alain",
-  non_attribuee: "Non attribuée",
-};
-
-function StatsTab() {
-  const getStats = useServerFn(getDriverStats);
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [days, setDays] = useState(30);
-
-  const load = useCallback(async () => {
-    try {
-      if (!getDriverToken()) {
-        return;
-      }
-      const res = await getStats({ data: { token: getDriverToken(), days } });
-      setData(res);
-    } catch {
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [getStats, days]);
-
-  useEffect(() => {
-    setLoading(true);
-    load();
-    const t = setInterval(load, 8000);
-    const ch = (supabase as any)
-      .channel("driver-feed", { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "reservation" }, () => load())
-      .subscribe();
-    const onVis = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      clearInterval(t);
-      supabase.removeChannel(ch);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [load]);
-
-  if (loading)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
-      </div>
-    );
-
-  if (!data)
-    return (
-      <div className="drv-empty">
-        <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Statistiques indisponibles</div>
-      </div>
-    );
-
-  const maxDay = Math.max(1, ...data.byDay.map((d: any) => d.count));
-  const fmtMin = (v: number | null) => (v == null ? "—" : v >= 60 ? `${Math.round(v / 6) / 10} h` : `${v} min`);
-
-  return (
-    <>
-      <div style={{ display: "flex", gap: 6, padding: "10px 0 2px", overflowX: "auto" }}>
-        {[7, 30, 90].map((d) => (
-          <button
-            key={d}
-            onClick={() => setDays(d)}
-            style={{
-              padding: "7px 14px",
-              borderRadius: 999,
-              border: "1px solid " + (days === d ? "var(--background)" : "var(--border)"),
-              background: days === d ? "var(--background)" : "#FDFBF7",
-              color: days === d ? "var(--gold)" : "#334155",
-              fontSize: "calc(12px * var(--drv-fs, 1))",
-              fontWeight: 700,
-              cursor: "pointer",
-              minHeight: 36,
-            }}
-          >
-            {d} jours
-          </button>
-        ))}
-        <span
-          style={{
-            marginLeft: "auto",
-            alignSelf: "center",
-            fontSize: "calc(11px * var(--drv-fs, 1))",
-            color: "#94a3b8",
-          }}
-        >
-          ⏱ temps réel
-        </span>
-      </div>
-
-      <p className="drv-section">Vue d'ensemble</p>
-      <div className="drv-stat-grid">
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Demandes</div>
-          <div className="drv-stat-val">{data.global.total}</div>
-          <div className="drv-stat-sub">{days} derniers jours</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Courses terminées</div>
-          <div className="drv-stat-val">{data.global.completed}</div>
-          <div className="drv-stat-sub">{data.global.km} km</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Revenus</div>
-          <div className="drv-stat-val">{data.global.revenue} €</div>
-          <div className="drv-stat-sub">courses terminées</div>
-        </div>
-        <div className="drv-stat">
-          <div className="drv-stat-lbl">Note moyenne</div>
-          <div className="drv-stat-val">{data.note > 0 ? data.note : "—"}</div>
-          <div className="drv-stat-sub" style={{ color: "#f59e0b" }}>
-            {data.note > 0 ? "★ sur 5" : "Pas encore d'avis"}
-          </div>
-        </div>
-      </div>
-
-      <p className="drv-section">Par chauffeur</p>
-      {data.drivers
-        .filter((d: any) => d.total > 0 || d.driver !== "non_attribuee")
-        .map((d: any) => (
-          <div className="drv-card" key={d.driver} style={{ marginBottom: 10 }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 8,
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "calc(12.5px * var(--drv-fs, 1))",
-                  fontWeight: 800,
-                  padding: "4px 10px",
-                  borderRadius: 999,
-                  background: d.driver === "patricia" ? "#fdf2f8" : d.driver === "alain" ? "#eff6ff" : "#f1f5f9",
-                  color: d.driver === "patricia" ? "#9d174d" : d.driver === "alain" ? "#1d4ed8" : "#475569",
+        <ul className="mt-5 grid gap-4 md:grid-cols-2">
+          {rides.map((r) => (
+            <SwipeRow key={r.id} onDelete={() => remove.mutate({ id: r.id })} label={`Course ${r.tracking_id ?? ""}`}>
+              <RideCard
+                ride={r}
+                mine={r.driver_slug != null && (r.driver_slug === me || r.driver_slug === "equipe" || me === "equipe")}
+                drivers={drivers}
+                transferring={transfer.isPending}
+                accepting={accept.isPending}
+                updatingRoute={updateRoute.isPending}
+                onAccept={(route) => accept.mutate({ id: r.id, trackingId: r.tracking_id, route })}
+                onUpdateRoute={(route) => updateRoute.mutate({ id: r.id, route })}
+                onClaim={(v) => claim.mutate({ id: r.id, claim: v })}
+                onTransfer={(to) => transfer.mutate({ id: r.id, to })}
+                onStatus={(s, real) => setStatus.mutate({ id: r.id, status: s, ...(real ?? {}) })}
+                overflowing={overflow.isPending || reclaim.isPending}
+                canReclaim={r.overflow_from_slug === me && r.status === "en_debordement"}
+                onOverflow={() => overflow.mutate({ id: r.id })}
+                onReclaim={() => reclaim.mutate({ id: r.id })}
+                paused={paused.includes(r.id)}
+                onStart={() => {
+                  void gps.start();
+                  setStatus.mutate({ id: r.id, status: "in_progress" });
+                  // « En route » ramène le taxi sur la page de suivi.
+                  if (r.tracking_id) {
+                    navigate({ to: "/suivi/$ref", params: { ref: r.tracking_id as string }, search: {} });
+                  }
                 }}
-              >
-                👤 {DRIVER_LABEL[d.driver]}
-              </span>
-              <span style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", fontWeight: 700 }}>
-                {d.total} demande(s)
-              </span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
-              {[
-                { l: "Taux d'acceptation", v: `${d.acceptanceRate}%` },
-                { l: "Terminées", v: String(d.completed) },
-                { l: "Délai d'acceptation", v: fmtMin(d.avgAcceptMinutes) },
-                { l: "Durée moyenne course", v: fmtMin(d.avgTripMinutes) },
-                { l: "En attente", v: String(d.pending) },
-                { l: "Revenus", v: `${d.revenue} €` },
-              ].map((c) => (
-                <div key={c.l} style={{ background: "#f8fafc", borderRadius: 10, padding: "8px 10px" }}>
-                  <div
-                    style={{
-                      fontSize: "calc(10.5px * var(--drv-fs, 1))",
-                      color: "#64748b",
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {c.l}
-                  </div>
-                  <div style={{ fontSize: "calc(16px * var(--drv-fs, 1))", fontWeight: 800, color: "#0f172a" }}>
-                    {c.v}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div
-              style={{
-                marginTop: 8,
-                height: 6,
-                background: "#e2e8f0",
-                borderRadius: 999,
-                overflow: "hidden",
-              }}
-            >
-              <div style={{ width: `${d.acceptanceRate}%`, height: "100%", background: "#16a34a" }} />
-            </div>
-          </div>
-        ))}
-
-      <p className="drv-section">7 derniers jours</p>
-      <div className="drv-card">
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 70, marginBottom: 6 }}>
-          {data.byDay.map((d: any) => (
-            <div
-              key={d.date}
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-              }}
-            >
-              <div
-                style={{
-                  textAlign: "center",
-                  fontSize: "calc(10.5px * var(--drv-fs, 1))",
-                  color: "#0f172a",
-                  fontWeight: 700,
+                onPause={() => {
+                  setPausedIds((p) => [...p.filter((x) => x !== r.id), r.id]);
+                  void gps.stop();
+                  toast.info("Course en pause");
                 }}
-              >
-                {d.count}
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  borderRadius: "4px 4px 0 0",
-                  background: "#0f172a",
-                  height: `${Math.max(6, (d.count / maxDay) * 52)}px`,
+                onResume={() => {
+                  setPausedIds((p) => p.filter((x) => x !== r.id));
+                  void gps.start();
+                  toast.success("Course reprise");
                 }}
               />
-            </div>
+            </SwipeRow>
           ))}
-        </div>
-        <div style={{ display: "flex", gap: 6 }}>
-          {data.byDay.map((d: any) => (
-            <div
-              key={d.date}
-              style={{ flex: 1, textAlign: "center", fontSize: "calc(10.5px * var(--drv-fs, 1))", color: "#94a3b8" }}
-            >
-              {new Date(d.date).toLocaleDateString("fr-FR", { weekday: "short" }).slice(0, 3)}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Visiteurs actifs */}
-      <p className="drv-section">En ce moment</p>
-      <ActiveVisitors />
-
-      {/* Analytics suivi */}
-      <TrackingAnalytics />
-    </>
-  );
-}
-
-// ── Onglet Historique : demandes, attributions et statuts horodatés ────────
-function HistoriqueTab({ driverId }: { driverId?: string }) {
-  const listEvents = useServerFn(listReservationEvents);
-  const [rows, setRows] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "patricia" | "alain">(
-    driverId === "patricia" || driverId === "alain" ? (driverId as any) : "all",
-  );
-
-  const load = useCallback(async () => {
-    try {
-      if (!getDriverToken()) {
-        return;
-      }
-      const res = await listEvents({
-        data: { token: getDriverToken(), limit: 120, driver: filter },
-      });
-      setRows((res as any)?.events ?? []);
-    } catch {
-      setRows([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [listEvents, filter]);
-
-  useEffect(() => {
-    setLoading(true);
-    load();
-    const t = setInterval(load, 8000);
-    const ch = (supabase as any)
-      .channel("driver-feed", { config: { broadcast: { self: false } } })
-      .on("broadcast", { event: "reservation" }, () => load())
-      .subscribe();
-    const onVis = () => {
-      if (!document.hidden) load();
-    };
-    document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("focus", onVis);
-    return () => {
-      clearInterval(t);
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("focus", onVis);
-      supabase.removeChannel(ch);
-    };
-  }, [load]);
-
-  const eventLabel = (e: any) => {
-    if (e.event_type === "created") return "🆕 Nouvelle demande";
-    if (e.event_type === "assigned")
-      return `↔ Attribuée à ${DRIVER_LABEL[e.to_value] ?? e.to_value ?? "—"}${e.from_value ? ` (avant : ${DRIVER_LABEL[e.from_value] ?? e.from_value})` : ""}`;
-    const map: Record<string, string> = {
-      accepted: "✅ Acceptée",
-      en_route: "🚖 En route",
-      arrived: "📍 Prise en charge",
-      completed: "🏁 Terminée",
-      terminee: "🏁 Terminée",
-      cancelled: "✖ Annulée / refusée",
-    };
-    return map[e.to_value] ?? `Statut : ${e.to_value}`;
-  };
-
-  return (
-    <>
-      <div style={{ display: "flex", gap: 6, padding: "10px 0 2px" }}>
-        {(
-          [
-            { k: "all", l: "Tout" },
-            { k: "patricia", l: "Patricia" },
-            { k: "alain", l: "Alain" },
-          ] as const
-        ).map((o) => (
-          <button
-            key={o.k}
-            onClick={() => setFilter(o.k as any)}
-            style={{
-              flex: 1,
-              padding: "8px 10px",
-              borderRadius: 999,
-              border: "1px solid " + (filter === o.k ? "var(--background)" : "var(--border)"),
-              background: filter === o.k ? "var(--background)" : "#FDFBF7",
-              color: filter === o.k ? "var(--gold)" : "#334155",
-              fontSize: "calc(12.5px * var(--drv-fs, 1))",
-              fontWeight: 700,
-              cursor: "pointer",
-              minHeight: 38,
-            }}
-          >
-            {o.l}
-          </button>
-        ))}
-      </div>
-
-      {loading ? (
-        <div className="drv-empty">
-          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Chargement…</div>
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="drv-empty">
-          <div style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>Aucun évènement pour le moment</div>
-        </div>
-      ) : (
-        <div className="drv-card">
-          {rows.map((e) => (
-            <div key={e.id} style={{ padding: "9px 0", borderBottom: "1px solid #f1f5f9" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <span style={{ fontSize: "calc(13px * var(--drv-fs, 1))", fontWeight: 700, color: "#0f172a" }}>
-                  {eventLabel(e)}
-                </span>
-                <span style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#94a3b8", whiteSpace: "nowrap" }}>
-                  {new Date(e.created_at).toLocaleString("fr-FR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-              <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b", marginTop: 2 }}>
-                {e.client_name ? `${e.client_name} · ` : ""}
-                {e.depart ?? "—"} → {e.destination ?? "—"}
-              </div>
-              {e.driver && (
-                <span
-                  style={{
-                    display: "inline-block",
-                    marginTop: 4,
-                    fontSize: "calc(11px * var(--drv-fs, 1))",
-                    fontWeight: 700,
-                    padding: "2px 8px",
-                    borderRadius: 999,
-                    background: e.driver === "patricia" ? "#fdf2f8" : "#eff6ff",
-                    color: e.driver === "patricia" ? "#9d174d" : "#1d4ed8",
-                  }}
-                >
-                  👤 {DRIVER_LABEL[e.driver] ?? e.driver}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
+        </ul>
       )}
-    </>
+    </div>
   );
 }
 
-// ── Onglet Appareils (notifications push par chauffeur) ────────────────────
-const DRIVER_LABELS: Record<string, string> = {
-  patricia: "Patricia",
-  alain: "Alain",
-  admin: "Administration",
+type RideStatus = "confirmed" | "in_progress" | "arrived" | "completed" | "cancelled";
+
+const STATUS_META: Record<string, { label: string; cls: string }> = {
+  pending: { label: "En attente", cls: "drv-badge-gray" },
+  confirmed: { label: "Acceptée", cls: "drv-badge-blue" },
+  accepted: { label: "Acceptée", cls: "drv-badge-blue" },
+  assigned: { label: "Attribuée", cls: "drv-badge-blue" },
+  en_route: { label: "En route", cls: "drv-badge-amber" },
+  in_progress: { label: "En route", cls: "drv-badge-amber" },
+  arrived: { label: "Arrivé", cls: "drv-badge-green" },
+  completed: { label: "Terminée", cls: "drv-badge-green" },
+  cancelled: { label: "Annulée", cls: "drv-badge-red" },
+  en_debordement: { label: "En débordement", cls: "drv-badge-amber" },
 };
 
-function fmtDate(v: string | null): string {
-  if (!v) return "—";
-  const d = new Date(v);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("fr-FR", {
+function StatusBadge({ status }: { status: string }) {
+  const meta = STATUS_META[status] ?? { label: status, cls: "drv-badge-gray" };
+  return <span className={`drv-badge-pill ${meta.cls}`}>{meta.label}</span>;
+}
+
+function waLink(phone: string) {
+  const raw = phone.replace(/[^0-9+]/g, "");
+  // Numéro déjà international (+33... ou 0033...) : on ne touche pas au
+  // préfixe — l'ancienne version remplaçait systématiquement le premier "0",
+  // ce qui doublait l'indicatif d'un numéro "0033..." (donnait "+330033...").
+  let digits: string;
+  if (raw.startsWith("+")) digits = raw.slice(1);
+  else if (raw.startsWith("00")) digits = raw.slice(2);
+  else if (raw.startsWith("0")) digits = `33${raw.slice(1)}`;
+  else digits = raw;
+  return `https://wa.me/${digits}`;
+}
+
+/** Lien "sms:" natif (pas d'API externe) — ouvre directement l'appli SMS du téléphone
+ * avec le numéro et le message pré-remplis. iOS exige "&" avant "body=" alors qu'Android
+ * (et la plupart des navigateurs desktop) attendent "?" ; sans cette distinction le corps
+ * du message n'est tout simplement pas repris sur l'un des deux systèmes. */
+function smsLink(phone: string, body: string) {
+  const clean = phone.replace(/\s/g, "");
+  const sep = isIOS() ? "&" : "?";
+  return `sms:${clean}${sep}body=${encodeURIComponent(body)}`;
+}
+
+/** Message SMS pré-rédigé envoyé au client : rappel de l'heure de prise en charge
+ * et lien de suivi en direct du chauffeur. */
+function buildRideSmsMessage({
+  nom,
+  pickup,
+  trackingId,
+}: {
+  nom?: string | null;
+  pickup: Date;
+  trackingId?: string | null;
+}) {
+  const prenom = (nom ?? "").trim().split(/\s+/)[0] || "";
+  const heure = pickup.toLocaleString("fr-FR", {
     day: "2-digit",
     month: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
   });
+  const lien = trackingId ? `${window.location.origin}/suivi/${trackingId}` : "";
+  return [
+    `Bonjour${prenom ? " " + prenom : ""}, votre course est confirmée pour le ${heure}.`,
+    lien ? `Suivez votre chauffeur en direct : ${lien}` : null,
+    "Merci de votre confiance.",
+    "L'équipe Nova Prestige Ride",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
-function DashboardTeamMapRow({ driverId, gps }: { driverId?: string; gps: DriverGpsTracking }) {
-  const [open, setOpen] = useState(false);
+/** iOS (Safari/Chrome/Firefox y tournent tous sur WebKit) a besoin d'un traitement différent
+ * d'Android : l'attribut "download" y fait télécharger le fichier dans Fichiers au lieu
+ * d'ouvrir l'écran natif "Ajouter aux contacts". */
+function isIOS() {
+  if (typeof navigator === "undefined") return false;
   return (
-    <>
-      <button type="button" className="drv-dash-row" onClick={() => setOpen((v) => !v)}>
-        <span className="drv-dash-ico" style={{ background: "#0ea5e9" }}>
-          <IconGps />
-        </span>
-        <span className="drv-dash-txt">
-          <strong>Carte équipe</strong>
-          <span>Position d'Alain et Patricia</span>
-        </span>
-        <span className="drv-dash-plus">{open ? "−" : "＋"}</span>
-      </button>
-      {open && (
-        <div className="drv-dash-map">
-          <TeamMapCard driverId={driverId} gps={gps} />
-        </div>
-      )}
-    </>
+    /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
   );
 }
 
-function AppareilsTab() {
-  const listFn = useServerFn(listDriverDevices);
-  const revokeFn = useServerFn(revokeDriverDevice);
-  const logFn = useServerFn(driverPushLog);
+/** Nom sûr pour un contact enregistré sur le téléphone. Sans ça, tout client
+ * sans nom renseigné (réservation reçue sans nom) était enregistré sous le
+ * même nom générique « Client » — le carnet d'adresses d'iPhone/Android
+ * reconnaît alors un contact « Client » déjà existant et propose de le
+ * mettre à jour au lieu d'en créer un nouveau : le numéro du dernier client
+ * enregistré écrase celui du précédent sous cette même fiche, d'où des
+ * numéros qui semblent « mélangés » entre deux courses. On distingue donc
+ * chaque client sans nom par les 4 derniers chiffres de son numéro. */
+function safeContactName(nom: string, telephone: string) {
+  const trimmed = (nom || "").replace(/[\r\n]/g, " ").trim();
+  if (trimmed) return trimmed;
+  const digits = telephone.replace(/\D/g, "");
+  return digits.length >= 4 ? `Client ${digits.slice(-4)}` : "Client";
+}
 
-  const [devices, setDevices] = useState<any[]>([]);
-  const [log, setLog] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>({ total: 0, sent: 0, failed: 0, email: 0 });
-  const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<string | null>(null);
-  const [perm, setPerm] = useState<string>("default");
+function buildVcard(nom: string, telephone: string) {
+  const safeName = safeContactName(nom, telephone);
+  const cleanPhone = telephone.replace(/\s/g, "");
+  return [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `N:${safeName};;;;`,
+    `FN:${safeName}`,
+    `TEL;TYPE=CELL:${cleanPhone}`,
+    "END:VCARD",
+    "",
+  ].join("\r\n");
+}
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const token = getDriverToken();
-      const [d, l]: any[] = await Promise.all([listFn({ data: { token } }), logFn({ data: { token, limit: 60 } })]);
-      setDevices(d?.devices ?? []);
-      setLog(l?.entries ?? []);
-      setStats(l?.stats ?? { total: 0, sent: 0, failed: 0, email: 0 });
-    } catch (e: any) {
-      toast.error("Chargement des appareils impossible");
-    } finally {
-      setLoading(false);
-    }
-  }, [listFn, logFn]);
+function vcardFilename(nom: string, telephone: string) {
+  return `${safeContactName(nom, telephone).replace(/\s+/g, "_")}.vcf`;
+}
+
+/** Enregistre un client dans les contacts du téléphone : ouverture directe du blob sur iOS
+ * (Safari affiche alors "Ajouter aux contacts"), téléchargement nommé sur Android/desktop
+ * (à ouvrir ensuite avec l'appli Contacts). */
+function saveContactVcard(nom: string, telephone: string) {
+  if (!telephone) return;
+  const blob = new Blob([buildVcard(nom, telephone)], { type: "text/vcard;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  if (isIOS()) {
+    window.location.href = url;
+  } else {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = vcardFilename(nom, telephone);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+}
+
+/** Navigation externe : OpenStreetMap (même socle cartographique que le site). */
+function navLink(address: string | null) {
+  if (!address) return null;
+  return `https://www.openstreetmap.org/search?query=${encodeURIComponent(address)}`;
+}
+
+type GeoPoint = { lat: number; lng: number };
+
+/** Point d'arrivée d'un itinéraire (dernier point du tracé) : coordonnées GPS exactes de la destination.
+ * Le tracé est en [lng, lat] (GeoJSON) ; on détecte quand même une inversion (France : lat 41–51, lng −5–10). */
+function routeEndPoint(route: RouteAlternative | null | undefined): GeoPoint | null {
+  const last = route?.coords?.[route.coords.length - 1];
+  if (!last) return null;
+  const [a, b] = last;
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+  return Math.abs(a) > 20 && Math.abs(b) <= 20 ? { lat: a, lng: b } : { lat: b, lng: a };
+}
+
+/** Navigation Google Maps (l'appli s'ouvre directement sur mobile) : coordonnées GPS si connues, sinon l'adresse. */
+function navLinkGoogle(address: string, pt?: GeoPoint | null) {
+  const dest = pt ? `${pt.lat},${pt.lng}` : encodeURIComponent(address);
+  return `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`;
+}
+
+/** Navigation Waze : coordonnées GPS si connues, sinon l'adresse. */
+function navLinkWaze(address: string, pt?: GeoPoint | null) {
+  const target = pt ? `ll=${pt.lat},${pt.lng}` : `q=${encodeURIComponent(address)}`;
+  return `https://waze.com/ul?${target}&navigate=yes`;
+}
+
+/** Navigation vers une position GPS partagée, sur OpenStreetMap. */
+function navLinkCoords(lat: number, lng: number) {
+  return `https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=;${lat}%2C${lng}#map=15/${lat}/${lng}`;
+}
+
+function RideCard({
+  ride,
+  mine,
+  drivers,
+  transferring,
+  accepting,
+  updatingRoute,
+  onAccept,
+  onUpdateRoute,
+  onClaim,
+  onTransfer,
+  onStatus,
+  overflowing,
+  canReclaim,
+  onOverflow,
+  onReclaim,
+  paused,
+  onStart,
+  onPause,
+  onResume,
+}: {
+  ride: DriverRide;
+  mine: boolean;
+  drivers: { slug: string; name: string }[];
+  transferring: boolean;
+  accepting: boolean;
+  updatingRoute: boolean;
+  onAccept: (route: RouteAlternative | null) => void;
+  onUpdateRoute: (route: RouteAlternative) => void;
+  onClaim: (v: boolean) => void;
+  onTransfer: (to: string) => void;
+  onStatus: (s: RideStatus, real?: { realDistanceKm: number | null; realPrice: number | null }) => void;
+  overflowing: boolean;
+  canReclaim: boolean;
+  onOverflow: () => void;
+  onReclaim: () => void;
+  paused: boolean;
+  onStart: () => void;
+  onPause: () => void;
+  onResume: () => void;
+}) {
+  const when = useMemo(() => new Date(ride.pickup_datetime).toLocaleString("fr-FR"), [ride.pickup_datetime]);
+  const assigned = drivers.find((d) => d.slug === ride.driver_slug) ?? null;
+  const other = drivers.find((d) => d.slug !== ride.driver_slug) ?? null;
+  // Une course peut être passée à l'autre chauffeur seulement une fois prise.
+  const canTransfer = assigned && other && !["completed", "cancelled"].includes(ride.status);
+  const destination = ride.arrivee ?? ride.destination;
+  const done = ["completed", "cancelled"].includes(ride.status);
+
+  // Itinéraires alternatifs OSRM / OpenStreetMap (3 max) pour la course.
+  const [routes, setRoutes] = useState<RouteAlternative[] | null>(null);
+  const [routesError, setRoutesError] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<number>(0);
+
+  // Prix recalculé pour l'itinéraire actuellement sélectionné (km/min propres à
+  // chaque alternative) — évite d'afficher le prix figé de la course d'origine.
+  const priceFor = useCallback(
+    (r: RouteAlternative) => detaillerPrix(r.km, ride.pickup_datetime, r.min).total,
+    [ride.pickup_datetime],
+  );
+  const chosenRoute = routes?.find((r) => r.id === chosen) ?? null;
+  const displayedPrice = chosenRoute
+    ? priceFor(chosenRoute)
+    : ride.prix_estime != null
+      ? Number(ride.prix_estime)
+      : null;
+  // Coordonnées GPS de la destination (fin de l'itinéraire choisi) pour Google Maps / Waze.
+  const destPoint = useMemo(() => routeEndPoint(chosenRoute ?? routes?.[0]), [chosenRoute, routes]);
 
   useEffect(() => {
-    load();
-    if (typeof window !== "undefined" && "Notification" in window) setPerm(Notification.permission);
-  }, [load]);
-
-  const revoke = async (id: string, label: string) => {
-    if (!window.confirm(`Désinscrire l'appareil « ${label} » des notifications ?`)) return;
-    setBusy(id);
-    try {
-      await revokeFn({ data: { token: getDriverToken(), device_id: id } });
-      toast.success("Appareil désinscrit");
-      setDevices((prev) => prev.filter((d) => d.id !== id));
-    } catch {
-      toast.error("Révocation impossible");
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const groups = React.useMemo(() => {
-    const map = new Map<string, any[]>();
-    for (const d of devices) {
-      const key = d.driver_id || "inconnu";
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(d);
-    }
-    return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  }, [devices]);
-
-  if (loading) return <div style={{ padding: 16, color: "#64748b" }}>Chargement…</div>;
+    if (done || !ride.depart || !destination) return;
+    let cancelled = false;
+    setRoutesError(null);
+    getRouteAlternatives(ride.depart, destination)
+      .then((r) => {
+        if (cancelled) return;
+        setRoutes(r);
+        setChosen(r[0]?.id ?? 0);
+      })
+      .catch(() => {
+        if (!cancelled) setRoutesError("Itinéraires indisponibles pour le moment.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ride.depart, destination, done]);
 
   return (
-    <div style={{ display: "grid", gap: 16 }}>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <span style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#64748b" }}>
-          Permission navigateur :{" "}
-          <b>{perm === "granted" ? "accordée" : perm === "denied" ? "refusée" : "non demandée"}</b>
+    <div className="surface-card p-6">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs tracking-widest text-gold">{ride.tracking_id ?? "—"}</span>
+        <StatusBadge status={ride.status} />
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <span className="rounded-full border border-border px-3 py-1 text-[11px] font-semibold">
+          {assigned ? `👤 ${assigned.name}${mine ? " (vous)" : ""}` : "👤 Non attribuée"}
         </span>
-        <button
-          onClick={load}
+        {canTransfer ? (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={transferring}
+            onClick={() => onTransfer(other!.slug)}
+            title="Passer la course à l'autre chauffeur"
+          >
+            <ArrowLeftRight className="size-4" aria-hidden /> Passer à {other!.name}
+          </Button>
+        ) : null}
+      </div>
+
+      <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+        <CalendarClock className="size-4 text-gold" aria-hidden /> {when}
+      </p>
+      <p className="mt-3 flex items-start gap-2 text-sm">
+        <MapPin className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+        {ride.depart} → {destination}
+      </p>
+      <p className="mt-3 flex items-center gap-4 text-sm">
+        {ride.telephone ? (
+          <a href={`tel:${ride.telephone}`} className="inline-flex items-center gap-2 text-gold">
+            <Phone className="size-4" aria-hidden /> {ride.nom ?? ride.telephone}
+          </a>
+        ) : (
+          <span className="text-muted-foreground">{ride.nom ?? "Client"}</span>
+        )}
+        {displayedPrice != null ? <span className="ms-auto font-semibold">{eur(displayedPrice)}</span> : null}
+      </p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {ride.telephone ? (
+          <Button size="sm" variant="outline" asChild>
+            <a href={`tel:${ride.telephone}`}>
+              <Phone className="size-4" aria-hidden /> Appeler
+            </a>
+          </Button>
+        ) : null}
+        {ride.telephone ? (
+          <Button size="sm" variant="outline" asChild>
+            <a href={waLink(ride.telephone)} target="_blank" rel="noreferrer">
+              WhatsApp
+            </a>
+          </Button>
+        ) : null}
+        {ride.telephone ? (
+          <Button size="sm" variant="outline" asChild>
+            <a
+              href={smsLink(
+                ride.telephone,
+                buildRideSmsMessage({
+                  nom: ride.nom,
+                  pickup: new Date(ride.pickup_datetime),
+                  trackingId: ride.tracking_id,
+                }),
+              )}
+            >
+              <MessageSquarePlus className="size-4" aria-hidden /> SMS
+            </a>
+          </Button>
+        ) : null}
+        {navLink(destination) ? (
+          <>
+            <Button size="sm" variant="outline" asChild>
+              <a href={navLinkGoogle(destination!, destPoint)} target="_blank" rel="noreferrer">
+                🧭 Google Maps
+              </a>
+            </Button>
+            <Button size="sm" variant="outline" asChild>
+              <a href={navLinkWaze(destination!, destPoint)} target="_blank" rel="noreferrer">
+                Waze
+              </a>
+            </Button>
+            <Button size="sm" variant="outline" asChild>
+              <a
+                href={destPoint ? navLinkCoords(destPoint.lat, destPoint.lng) : navLink(destination)!}
+                target="_blank"
+                rel="noreferrer"
+              >
+                OpenStreetMap
+              </a>
+            </Button>
+          </>
+        ) : null}
+        {ride.client_lat != null && ride.client_lng != null ? (
+          <Button size="sm" variant="gold" asChild title="Position partagée par le client">
+            <a href={navLinkCoords(ride.client_lat, ride.client_lng)} target="_blank" rel="noreferrer">
+              📍 Position client
+            </a>
+          </Button>
+        ) : null}
+      </div>
+
+      {!done ? (
+        <div className="mt-4 rounded-xl border border-border/70 p-3">
+          <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Itinéraires proposés</p>
+          {routesError ? (
+            <p className="mt-2 text-xs text-amber-300">{routesError}</p>
+          ) : !routes ? (
+            <p className="mt-2 text-xs text-muted-foreground">Calcul des itinéraires…</p>
+          ) : routes.length === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">Aucun itinéraire trouvé.</p>
+          ) : (
+            <div className="mt-2 grid gap-2">
+              {routes.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => setChosen(r.id)}
+                  className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-xs ${
+                    chosen === r.id ? "border-gold/60 bg-gold/10 text-gold" : "border-border text-muted-foreground"
+                  }`}
+                >
+                  <span className="font-medium">{r.label}</span>
+                  <span>
+                    {r.km} km · {r.min} min · {eur(priceFor(r))}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+          {mine &&
+          chosenRoute &&
+          ["accepted", "confirmed", "assigned", "en_route", "in_progress", "arrived"].includes(ride.status) ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-3"
+              disabled={updatingRoute}
+              onClick={() => onUpdateRoute(chosenRoute)}
+            >
+              {updatingRoute ? "Mise à jour…" : "Appliquer cet itinéraire (client prévenu)"}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {["confirmed", "in_progress", "arrived"].includes(ride.status) ? (
+        <div className="drv-real-box">
+          <p className="drv-real-title">Statut automatique</p>
+          <p className="drv-real-hint">
+            {ride.status === "confirmed"
+              ? "Appuyez sur « En route » quand vous partez vers le client (manuel). La suite est automatique."
+              : ride.status === "in_progress"
+                ? "Passage en « Arrivé » à l'approche du point de prise en charge."
+                : "Course clôturée automatiquement à l'arrivée à destination."}
+          </p>
+        </div>
+      ) : null}
+
+      {ride.status === "completed" ? (
+        <div className="drv-real-box">
+          <p className="drv-real-title">Course réalisée</p>
+          <p className="drv-real-done">
+            {ride.distance_reelle_km != null ? `${Number(ride.distance_reelle_km).toFixed(1)} km` : "— km"}
+            {" · "}
+            {ride.duree_reelle_s != null ? `${Math.round(ride.duree_reelle_s / 60)} min` : "— min"}
+            {" · "}
+            {ride.prix_final != null ? eur(Number(ride.prix_final)) : "—"}
+          </p>
+        </div>
+      ) : null}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {mine &&
+        !done &&
+        ["accepted", "confirmed", "assigned", "en_route", "in_progress", "arrived"].includes(ride.status) ? (
+          <>
+            {paused ? (
+              <p className="w-full rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                Course en pause — position non partagée, statut automatique suspendu.
+              </p>
+            ) : null}
+            {!["in_progress", "arrived", "en_route"].includes(ride.status) ? (
+              <Button
+                size="sm"
+                variant="gold"
+                onClick={() => onStart()}
+                title="Active le GPS, passe la course « En route » et ouvre la page de suivi"
+              >
+                En route
+              </Button>
+            ) : paused ? (
+              <Button size="sm" variant="gold" onClick={() => onResume()}>
+                Reprendre
+              </Button>
+            ) : (
+              <Button size="sm" variant="outline" onClick={() => onPause()}>
+                Mettre en pause
+              </Button>
+            )}
+            <Button
+              size="sm"
+              variant="gold"
+              onClick={() => {
+                if (window.confirm("Clôturer la course ? Le client verra qu'elle est terminée.")) onStatus("completed");
+              }}
+              title="Clôturer la course — actualise aussitôt la page de suivi du client"
+            >
+              Course terminée
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={overflowing}
+              onClick={() => onOverflow()}
+              title="Libérer la course : elle passe en débordement pour l'autre chauffeur"
+            >
+              {overflowing ? "…" : "Libérer"}
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => {
+                if (window.confirm("Annuler cette course ?")) onStatus("cancelled");
+              }}
+            >
+              Annuler
+            </Button>
+          </>
+        ) : (
+          <>
+            {ride.status === "pending" || ride.status === "en_debordement" ? (
+              <Button
+                size="sm"
+                variant="gold"
+                disabled={accepting}
+                onClick={() => onAccept(routes?.find((r) => r.id === chosen) ?? null)}
+              >
+                {accepting ? "Acceptation…" : "Accepter la course"}
+              </Button>
+            ) : null}
+            {!assigned && ride.status !== "pending" && ride.status !== "en_debordement" ? (
+              <Button size="sm" variant="gold" onClick={() => onClaim(true)}>
+                Prendre
+              </Button>
+            ) : null}
+            {canReclaim ? (
+              <Button size="sm" variant="gold" disabled={overflowing} onClick={() => onReclaim()}>
+                Reprendre la course
+              </Button>
+            ) : null}
+            {!["completed", "cancelled"].includes(ride.status) ? (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => {
+                  if (window.confirm("Annuler cette course ?")) onStatus("cancelled");
+                }}
+              >
+                Annuler
+              </Button>
+            ) : null}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function currentMonth() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function AccountingTab({ token }: { token: string }) {
+  const qc = useQueryClient();
+  const [month, setMonth] = useState(currentMonth());
+  const [showSettings, setShowSettings] = useState(false);
+
+  const key = ["driver-accounting", token, month] as const;
+  const { data, isLoading } = useQuery({
+    queryKey: key,
+    queryFn: () => driverMonthAccounting({ data: { as: getProfile(), token, month } }),
+  });
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["driver-accounting", token] });
+
+  const kpis = [
+    {
+      label: "Chiffre d'affaires du mois",
+      value: data?.revenue ?? 0,
+      hint: `${data?.rides ?? 0} course(s)`,
+    },
+    {
+      label: "URSSAF à provisionner",
+      value: data?.urssaf ?? 0,
+      hint: `${(data?.urssafRate ?? 0).toString().replace(".", ",")} % du CA`,
+    },
+    { label: "Reste net", value: data?.net ?? 0, hint: "CA − URSSAF" },
+  ];
+
+  return (
+    <div className="mt-8 space-y-10">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold">Comptabilité</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Calcul automatique de l'URSSAF et du reste net.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            type="month"
+            value={month}
+            onChange={(e) => setMonth(e.target.value || currentMonth())}
+            className="w-[11rem]"
+            aria-label="Mois"
+          />
+          <Button variant="ghost" size="sm" onClick={() => setShowSettings((v) => !v)}>
+            <Settings2 className="size-4" aria-hidden /> Taux
+          </Button>
+        </div>
+      </div>
+
+      {showSettings ? (
+        // Le formulaire n'est monté qu'une fois les vrais taux chargés : ses champs
+        // sont initialisés une seule fois, sinon on enregistrerait les valeurs par
+        // défaut à la place des taux réels. La clé le réinitialise si les taux changent.
+        data ? (
+          <SettingsForm
+            key={`${data.urssafRate}-${data.driverShareRate}`}
+            token={token}
+            urssafRate={data.urssafRate}
+            driverShareRate={data.driverShareRate}
+            onSaved={invalidate}
+          />
+        ) : (
+          <div className="surface-card p-6 text-sm text-muted-foreground">Chargement des taux…</div>
+        )
+      ) : null}
+
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {kpis.map((k) => (
+          <li key={k.label} className="surface-card p-6">
+            <p className="text-xs text-muted-foreground">{k.label}</p>
+            <p className="mt-2 text-2xl font-semibold">{isLoading ? "…" : eur(k.value)}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{k.hint}</p>
+          </li>
+        ))}
+      </ul>
+
+      {(data?.drivers ?? []).length > 1 ? (
+        <section>
+          <h3 className="text-base font-semibold">Répartition entre les chauffeurs — {monthLabel(month)}</h3>
+          <div className="surface-card mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                  <th className="px-5 py-3 font-medium">Chauffeur</th>
+                  <th className="px-5 py-3 font-medium">Courses</th>
+                  <th className="px-5 py-3 font-medium">Chiffre d'affaires</th>
+                  <th className="px-5 py-3 font-medium">Part reversée</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(data?.drivers ?? []).map((d) => (
+                  <tr key={d.slug} className="border-b border-border/60 last:border-0">
+                    <td className="px-5 py-3">{d.name}</td>
+                    <td className="px-5 py-3">{d.rides}</td>
+                    <td className="px-5 py-3 font-medium">{eur(d.revenue)}</td>
+                    <td className="px-5 py-3">{eur(d.share)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+
+      <section>
+        <h3 className="text-base font-semibold">Historique sur 12 mois</h3>
+        <div className="surface-card mt-4 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                <th className="px-5 py-3 font-medium">Mois</th>
+                <th className="px-5 py-3 font-medium">Courses</th>
+                <th className="px-5 py-3 font-medium">Chiffre d'affaires</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(data?.months ?? []).map((m) => (
+                <tr key={m.month} className="border-b border-border/60 last:border-0">
+                  <td className="px-5 py-3">{monthLabel(m.month)}</td>
+                  <td className="px-5 py-3">{m.rides}</td>
+                  <td className="px-5 py-3 font-medium">{eur(m.revenue)}</td>
+                </tr>
+              ))}
+              {(data?.months ?? []).length === 0 ? (
+                <tr>
+                  <td className="px-5 py-6 text-muted-foreground" colSpan={3}>
+                    Aucune course enregistrée.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function SettingsForm({
+  token,
+  urssafRate,
+  driverShareRate,
+  onSaved,
+}: {
+  token: string;
+  urssafRate: number;
+  driverShareRate: number;
+  onSaved: () => void;
+}) {
+  const [urssaf, setUrssaf] = useState(String(urssafRate));
+  const [share, setShare] = useState(String(driverShareRate));
+
+  const save = useMutation({
+    mutationFn: () =>
+      driverUpdateAccountingSettings({
+        data: {
+          token,
+          urssaf_rate: Number(urssaf.replace(",", ".")) || 0,
+          driver_share_rate: Number(share.replace(",", ".")) || 0,
+        },
+      }),
+    onSuccess: () => {
+      toast.success("Taux mis à jour");
+      onSaved();
+    },
+    onError: () => toast.error("Enregistrement impossible"),
+  });
+
+  return (
+    <form
+      className="surface-card grid gap-4 p-6 sm:grid-cols-3 sm:items-end"
+      onSubmit={(e) => {
+        e.preventDefault();
+        save.mutate();
+      }}
+    >
+      <label className="text-sm">
+        <span className="text-xs text-muted-foreground">Taux URSSAF (%)</span>
+        <Input className="mt-2" value={urssaf} onChange={(e) => setUrssaf(e.target.value)} inputMode="decimal" />
+      </label>
+      <label className="text-sm">
+        <span className="text-xs text-muted-foreground">Part reversée au chauffeur (%)</span>
+        <Input className="mt-2" value={share} onChange={(e) => setShare(e.target.value)} inputMode="decimal" />
+      </label>
+      <Button type="submit" variant="gold" disabled={save.isPending}>
+        Enregistrer
+      </Button>
+    </form>
+  );
+}
+
+/** Onglet « Courses en débordement disponibles » : chacun peut récupérer une course laissée par l'autre. */
+function OverflowTab({ token }: { token: string }) {
+  const qc = useQueryClient();
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: ["driver-overflow", token],
+    queryFn: () => driverOverflowRides({ data: { as: getProfile(), token } }),
+    refetchInterval: 30_000,
+  });
+
+  const take = useMutation({
+    mutationFn: (id: string) => driverTakeOverflowRide({ data: { as: getProfile(), token, id } }),
+    onSuccess: () => {
+      toast.success("Course récupérée — elle est dans votre planning");
+      qc.invalidateQueries({ queryKey: ["driver-overflow", token] });
+      qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+    },
+    onError: () => toast.error("Course déjà reprise par un autre chauffeur"),
+  });
+
+  const rides = data?.rides ?? [];
+
+  return (
+    <div className="mt-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Courses en débordement</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Courses qu'un chauffeur ne peut pas assurer : le premier qui accepte la récupère.
+          </p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching}>
+          <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} /> Actualiser
+        </Button>
+      </div>
+
+      {rides.length === 0 ? (
+        <p className="surface-card mt-5 p-8 text-sm text-muted-foreground">Aucune course en débordement.</p>
+      ) : (
+        <ul className="mt-5 grid gap-4 md:grid-cols-2">
+          {rides.map((r) => (
+            <li key={r.id} className="surface-card p-6">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs tracking-widest text-gold">{r.tracking_id ?? "—"}</span>
+                <StatusBadge status={r.status} />
+              </div>
+              <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                <CalendarClock className="size-4 text-gold" aria-hidden />
+                {new Date(r.pickup_datetime).toLocaleString("fr-FR")}
+              </p>
+              <p className="mt-3 flex items-start gap-2 text-sm">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-gold" aria-hidden />
+                {r.depart} → {r.arrivee ?? r.destination}
+              </p>
+              <p className="mt-3 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">{r.nom ?? "Client"}</span>
+                {r.prix_estime != null ? <span className="font-semibold">{eur(Number(r.prix_estime))}</span> : null}
+              </p>
+              <div className="mt-4">
+                <Button size="sm" variant="gold" disabled={take.isPending} onClick={() => take.mutate(r.id)}>
+                  Accepter cette course
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Fenêtre « Accepter / Refuser » : dès qu'une course arrive (nouvelle réservation
+ * non attribuée ou course laissée par l'autre chauffeur), elle s'affiche par-dessus
+ * l'écran, sans avoir à chercher dans les onglets.
+ */
+/** Délai d'affichage du popup : à 0 s il se ferme (le débordement automatique est géré côté serveur, cron). */
+const ACCEPT_DEADLINE_S = 60;
+
+function IncomingRidePopup({
+  token,
+  focusId,
+  action,
+  onOpenRides,
+}: {
+  token: string;
+  focusId: string | null;
+  action: string | null;
+  onOpenRides: () => void;
+}) {
+  const qc = useQueryClient();
+  const unavailQuery = useQuery({
+    queryKey: ["driver-unavail", token],
+    queryFn: () => driverUnavailList({ data: { token } }),
+    staleTime: 60_000,
+  });
+  const [refused, setRefused] = useState<string[]>([]);
+  // Réservations venues du site : personne n'est encore désigné. Le chauffeur
+  // choisit ici à qui la course est attribuée (par défaut le profil actif).
+  const [profiles, setProfiles] = useState<DriverProfileEntry[]>(() => cachedDriverProfiles());
+  const [assignTo, setAssignTo] = useState<string | undefined>(() => getProfile());
+  useEffect(() => {
+    let cancelled = false;
+    void fetchDriverProfiles()
+      .then((list) => {
+        if (cancelled || list.length === 0) return;
+        setProfiles(list);
+        setAssignTo((cur) => cur ?? list[0]?.slug);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const { data } = useQuery({
+    queryKey: ["driver-rides", token],
+    queryFn: () => driverRides({ data: { as: getProfile(), token } }),
+    refetchInterval: 15_000,
+  });
+  const { data: overflow } = useQuery({
+    queryKey: ["driver-overflow", token],
+    queryFn: () => driverOverflowRides({ data: { as: getProfile(), token } }),
+    refetchInterval: 15_000,
+  });
+
+  const me = data?.driver.slug;
+  const candidates = useMemo(() => {
+    const all = [...(data?.rides ?? []), ...(overflow?.rides ?? [])];
+    const seen = new Set<string>();
+    return all.filter((r) => {
+      if (seen.has(r.id) || refused.includes(r.id)) return false;
+      seen.add(r.id);
+      if (new Date(r.pickup_datetime).getTime() < Date.now() - 3600_000) return false;
+      const free = r.status === "pending" && !r.driver_slug;
+      const spill = r.status === "en_debordement" && r.overflow_from_slug !== me;
+      return free || spill;
+    });
+  }, [data, overflow, refused, me]);
+
+  const ride = candidates.find((r) => r.id === focusId) ?? candidates[0] ?? null;
+  const destination = ride?.arrivee ?? ride?.destination ?? null;
+
+  // --- Itinéraires (3 alternatives) ---
+  const [routes, setRoutes] = useState<RouteAlternative[] | null>(null);
+  const [routesError, setRoutesError] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<number>(0);
+
+  const priceFor = useCallback(
+    (r: RouteAlternative) => (ride ? detaillerPrix(r.km, ride.pickup_datetime, r.min).total : null),
+    [ride?.pickup_datetime],
+  );
+  const chosenRoute = routes?.find((r) => r.id === chosen) ?? null;
+  const displayedPrice = chosenRoute
+    ? priceFor(chosenRoute)
+    : ride?.prix_estime != null
+      ? Number(ride.prix_estime)
+      : null;
+
+  useEffect(() => {
+    if (!ride?.depart || !destination) return;
+    let cancelled = false;
+    setRoutes(null);
+    setRoutesError(null);
+    getRouteAlternatives(ride.depart, destination)
+      .then((r) => {
+        if (cancelled) return;
+        setRoutes(r);
+        setChosen(r[0]?.id ?? 0);
+      })
+      .catch(() => {
+        if (!cancelled) setRoutesError("Itinéraires indisponibles.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ride?.id, ride?.depart, destination]);
+
+  const accept = useMutation({
+    mutationFn: async (r: DriverRide) => {
+      const who = assignTo ?? getProfile();
+      if (r.status === "en_debordement") return driverTakeOverflowRide({ data: { as: who, token, id: r.id } });
+      const pos = await new Promise<GeolocationPosition | null>((resolve) => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          (p) => resolve(p),
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+        );
+      });
+      const r2 = routes?.find((x) => x.id === chosen) ?? null;
+      return driverAcceptRide({
+        data: {
+          // Course attribuée au chauffeur choisi dans le popup (par défaut le profil actif).
+          as: who,
+          token,
+          id: r.id,
+          latitude: pos?.coords.latitude ?? null,
+          longitude: pos?.coords.longitude ?? null,
+          accuracy: pos?.coords.accuracy ?? null,
+          heading: pos?.coords.heading ?? null,
+          speed: pos?.coords.speed ?? null,
+          route: r2 ? { label: r2.label, km: r2.km, min: r2.min, coords: r2.coords } : null,
+        },
+      });
+    },
+    onSuccess: () => {
+      // Idem : plus de redirection immédiate, elle se fera automatiquement
+      // à l'approche du point de rdv (≤15 min réelles).
+      toast.success("Course acceptée");
+      qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+      qc.invalidateQueries({ queryKey: ["driver-overflow", token] });
+      onOpenRides();
+    },
+    onError: () => toast.error("Course déjà prise"),
+  });
+
+  const rideId = ride?.id ?? null;
+  const rideStatus = ride?.status ?? null;
+
+  // Refs : gardent `decline` stable (le minuteur n'est plus recréé à chaque rendu).
+  const profilesRef = useRef(profiles);
+  profilesRef.current = profiles;
+  const declining = useRef<Set<string>>(new Set());
+
+  /**
+   * Refus d'une course (manuel ou temps écoulé) → elle part en débordement pour l'équipe.
+   * Garde-fous contre les courses concurrentes entre les deux chauffeurs :
+   *  1. Le popup se ferme tout de suite en local, mais la course n'est envoyée en débordement
+   *     qu'après une revérification FRAÎCHE : si elle a été acceptée ou déjà mise en
+   *     débordement par l'autre chauffeur entre-temps, on ne touche à rien.
+   *  2. Sur temps écoulé, les appareils sont décalés selon le rang du profil (3 s par rang) :
+   *     le premier passe, le suivant voit alors la course déjà en débordement et s'abstient.
+   *  3. Une course déjà en débordement n'est jamais renvoyée en débordement.
+   *  4. Un temps écoulé sans réseau ne met JAMAIS la course en débordement.
+   */
+  const decline = useCallback(
+    async (id: string, status: string | null, auto: boolean) => {
+      if (declining.current.has(id)) return;
+      declining.current.add(id);
+      setRefused((v) => (v.includes(id) ? v : [...v, id]));
+      try {
+        if (status === "en_debordement") {
+          toast.message(auto ? "Temps écoulé" : "Course refusée");
+          return;
+        }
+        if (auto) {
+          const rank = Math.max(
+            0,
+            profilesRef.current.findIndex((p) => p.slug === getProfile()),
+          );
+          if (rank > 0) await new Promise((r) => setTimeout(r, rank * 3000));
+        }
+        const fresh = await qc
+          .fetchQuery({
+            queryKey: ["driver-rides", token],
+            queryFn: () => driverRides({ data: { as: getProfile(), token } }),
+            staleTime: 0,
+          })
+          .catch(() => null);
+        if (fresh) {
+          const current = fresh.rides.find((r) => r.id === id);
+          if (!current || current.status !== "pending" || current.driver_slug) {
+            toast.message("Course déjà prise en charge par l'équipe");
+            return;
+          }
+        } else if (auto) {
+          toast.message("Temps écoulé");
+          return;
+        }
+        try {
+          await driverOverflowRide({ data: { as: getProfile(), token, id } });
+          toast.message(auto ? "Temps écoulé — course proposée à l'équipe" : "Course refusée");
+        } catch (e) {
+          if (e instanceof Error && e.message.includes("ride_unavailable")) {
+            toast.message("Course déjà prise en charge par l'équipe");
+          } else {
+            toast.error("Impossible de proposer la course à l'équipe");
+          }
+        }
+        qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+        qc.invalidateQueries({ queryKey: ["driver-overflow", token] });
+      } finally {
+        declining.current.delete(id);
+      }
+    },
+    [qc, token],
+  );
+
+  // Deadline calculée à partir d'un instant fixe (le premier instant où ce popup a vu
+  // la course), et non plus depuis le montage du composant : rouvrir l'app depuis la
+  // notification (tap, 40 s plus tard par ex.) affiche le temps réellement restant.
+  // Dès que le backend expose offered_at/assigned_at, on bascule sur cette valeur
+  // serveur — la source de vérité pour le débordement reste de toute façon le job
+  // planifié côté serveur (voir note plus bas), le popup n'étant que l'UI.
+  const firstSeenRef = useRef<Map<string, number>>(new Map());
+  const deadline = useMemo(() => {
+    if (!ride) return null;
+    const serverRide = ride as unknown as { offered_at?: string; assigned_at?: string };
+    // Une course qui passe en débordement repart sur une NOUVELLE fenêtre de 60 s pour l'autre
+    // chauffeur : on ne réutilise ni la date d'offre d'origine ni l'ancien instant « vu la
+    // première fois » (sinon son popup se fermait aussitôt, avant qu'il puisse répondre).
+    const serverBase = ride.status === "en_debordement" ? undefined : (serverRide.offered_at ?? serverRide.assigned_at);
+    if (serverBase) return new Date(serverBase).getTime() + ACCEPT_DEADLINE_S * 1000;
+    const key = `${ride.id}:${ride.status}`;
+    if (!firstSeenRef.current.has(key)) firstSeenRef.current.set(key, Date.now());
+    return (firstSeenRef.current.get(key) ?? Date.now()) + ACCEPT_DEADLINE_S * 1000;
+  }, [ride]);
+
+  const [left, setLeft] = useState(ACCEPT_DEADLINE_S);
+
+  useEffect(() => {
+    if (!rideId || !deadline) return;
+    // `timer` doit être déclaré avant `tick` (avec `let`, pas `const` défini
+    // plus bas) : `tick()` est appelée immédiatement, avant que l'intervalle
+    // ne soit créé, et peut donc referencer un délai déjà écoulé (ex. app
+    // rouverte depuis une notification reçue 40 s plus tôt) — dans ce cas
+    // `window.clearInterval(timer)` était appelé sur une variable `const`
+    // pas encore initialisée, ce qui plantait le composant (ReferenceError).
+    let timer: number | undefined;
+    const tick = () => {
+      const remaining = Math.ceil((deadline - Date.now()) / 1000);
+      setLeft(remaining > 0 ? remaining : 0);
+      if (remaining <= 0) {
+        if (timer != null) window.clearInterval(timer);
+        // Temps écoulé : on ferme seulement le popup en local. Le passage en
+        // débordement est géré côté serveur (cron automations : 10 min sans
+        // chauffeur ou départ dans moins de 60 min).
+        setRefused((v) => (v.includes(rideId) ? v : [...v, rideId]));
+      }
+    };
+    tick();
+    timer = Number(window.setInterval(tick, 1000));
+    return () => {
+      if (timer != null) window.clearInterval(timer);
+    };
+  }, [rideId, rideStatus, deadline]);
+
+  // Tap sur la notification : ouvre le popup sur la bonne course, mais ne valide
+  // plus rien tout seul pour "accept" — le chauffeur doit choisir un itinéraire
+  // et taper "Accepter" lui-même. Seul "refuse" reste automatique.
+  const handledAction = useRef<string | null>(null);
+  useEffect(() => {
+    if (!ride || !action || !focusId || ride.id !== focusId) return;
+    if (handledAction.current === `${focusId}:${action}`) return;
+    handledAction.current = `${focusId}:${action}`;
+    if (action === "refuse") void decline(ride.id, ride.status, false);
+    if (typeof window !== "undefined") window.history.replaceState(null, "", "/driver");
+  }, [ride, action, focusId, decline]);
+
+  if (!ride) return null;
+
+  const absentNow = unavailQuery.data?.absentNow ?? [];
+  return (
+    <div className="drv-popup-backdrop" role="dialog" aria-modal="true" aria-label="Nouvelle course">
+      <div className="drv-popup">
+        <p className="drv-popup-kicker">
+          {ride.status === "en_debordement" ? "Course en débordement" : "Nouvelle course"}
+          <span style={{ float: "right", fontVariantNumeric: "tabular-nums" }}>{left} s</span>
+        </p>
+        <div
+          aria-hidden
           style={{
-            marginLeft: "auto",
-            background: "#0f172a",
-            color: "#FDFBF7",
-            border: "none",
-            borderRadius: 8,
-            padding: "6px 12px",
-            fontSize: "calc(12px * var(--drv-fs, 1))",
-            fontWeight: 700,
-            cursor: "pointer",
+            height: 4,
+            borderRadius: 999,
+            background: "rgba(255,255,255,.15)",
+            overflow: "hidden",
+            marginBottom: 10,
           }}
         >
-          🔄 Rafraîchir
+          <div
+            style={{
+              height: "100%",
+              width: `${(left / ACCEPT_DEADLINE_S) * 100}%`,
+              background: left > 15 ? "#e8b84b" : "#ef4444",
+              transition: "width 1s linear",
+            }}
+          />
+        </div>
+        <p className="drv-popup-when">{new Date(ride.pickup_datetime).toLocaleString("fr-FR")}</p>
+        <p className="drv-popup-route">
+          <span>↑ {ride.depart}</span>
+          <span>↓ {destination}</span>
+        </p>
+        <p className="drv-popup-meta">
+          <span>{ride.nom ?? "Client"}</span>
+          {displayedPrice != null ? <b>{eur(displayedPrice)}</b> : null}
+        </p>
+
+        <div className="mt-3" style={{ borderTop: "1px solid rgba(246,240,229,.12)", paddingTop: 10 }}>
+          <p
+            style={{
+              fontSize: 11,
+              textTransform: "uppercase",
+              letterSpacing: ".08em",
+              color: "rgba(246,240,229,.55)",
+            }}
+          >
+            Itinéraire
+          </p>
+          {routesError ? (
+            <p style={{ fontSize: 12, color: "#e0b866" }}>{routesError}</p>
+          ) : !routes ? (
+            <p style={{ fontSize: 12, opacity: 0.7 }}>Calcul…</p>
+          ) : (
+            <div style={{ display: "grid", gap: 6, marginTop: 6 }}>
+              {routes.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => setChosen(r.id)}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "8px 10px",
+                    borderRadius: 8,
+                    fontSize: 12,
+                    textAlign: "left",
+                    border: chosen === r.id ? "1px solid #c99b4a" : "1px solid rgba(246,240,229,.15)",
+                    background: chosen === r.id ? "rgba(201,155,74,.12)" : "transparent",
+                    color: chosen === r.id ? "#e0b866" : "#f6f0e5",
+                  }}
+                >
+                  <span>{r.label}</span>
+                  <span>
+                    {r.km} km · {r.min} min · {eur(priceFor(r) ?? 0)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {profiles.length > 1 ? (
+          <div className="mt-3" style={{ borderTop: "1px solid rgba(246,240,229,.12)", paddingTop: 10 }}>
+            <p
+              style={{
+                fontSize: 11,
+                textTransform: "uppercase",
+                letterSpacing: ".08em",
+                color: "rgba(246,240,229,.55)",
+              }}
+            >
+              Chauffeur assigné
+            </p>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
+              {profiles.map((p) => (
+                <button
+                  key={p.slug}
+                  type="button"
+                  disabled={absentNow.includes(p.slug)}
+                  title={absentNow.includes(p.slug) ? "Absent (planning)" : undefined}
+                  onClick={() => setAssignTo(p.slug)}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 999,
+                    fontSize: 12,
+                    border: assignTo === p.slug ? "1px solid #c99b4a" : "1px solid rgba(246,240,229,.15)",
+                    background: assignTo === p.slug ? "rgba(201,155,74,.12)" : "transparent",
+                    color: assignTo === p.slug ? "#e0b866" : "#f6f0e5",
+                  }}
+                >
+                  {p.name}
+                  {absentNow.includes(p.slug) ? " · absent" : ""}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="drv-popup-actions">
+          <button type="button" className="drv-popup-refuse" onClick={() => void decline(ride.id, ride.status, false)}>
+            Refuser
+          </button>
+          <button
+            type="button"
+            className="drv-popup-accept"
+            disabled={accept.isPending}
+            onClick={() => accept.mutate(ride)}
+          >
+            {accept.isPending ? "…" : "Accepter"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Tableau de bord chauffeur (style maquette flotte) : statut, disponibilité,
+ * course en cours, calendrier, messages et carte de l'équipe, en une seule
+ * page tactile.
+ */
+/** Lit la version active du service worker FCM via postMessage (même méthode que firebase.ts). */
+function readSwVersion(reg: ServiceWorkerRegistration): Promise<string | null> {
+  return new Promise((resolve) => {
+    const active = reg.active;
+    if (!active) {
+      resolve(null);
+      return;
+    }
+    const channel = new MessageChannel();
+    const timeout = setTimeout(() => resolve(null), 2000);
+    channel.port1.onmessage = (ev) => {
+      clearTimeout(timeout);
+      resolve((ev.data as { version?: string })?.version ?? null);
+    };
+    active.postMessage({ type: "FCM_SW_VERSION" }, [channel.port2]);
+  });
+}
+
+type NotifDiag = {
+  permission: string;
+  standalone: boolean;
+  configured: boolean;
+  registeredToken: boolean;
+  tokenSuffix: string | null;
+  tokenAgeDays: number | null;
+  failureReason: string | null;
+  failureDetail: string | null;
+  swCount: number;
+  swVersion: string | null;
+  swScopes: string[];
+};
+
+function rideExtra(r: DriverRide, keys: string[]): string | null {
+  const o = r as unknown as Record<string, unknown>;
+  for (const k of keys) {
+    const v = o[k];
+    if ((typeof v === "string" && v.trim()) || typeof v === "number") return String(v).trim();
+  }
+  return null;
+}
+
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ padding: "10px 0", borderBottom: "1px solid rgba(246,240,229,.08)" }}>
+      <div
+        style={{ fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "#c99b4a", fontWeight: 800 }}
+      >
+        {label}
+      </div>
+      <div style={{ marginTop: 4, fontSize: 14, wordBreak: "break-word" }}>{children}</div>
+    </div>
+  );
+}
+
+/** Détail d'UNE course (ouvert depuis « Prochaines courses ») : coordonnées client + 3 boutons. */
+function RideDetailPage({
+  ride,
+  mine,
+  token,
+  driverName,
+  onClose,
+  onChanged,
+}: {
+  ride: DriverRide;
+  mine: boolean;
+  me: string | undefined;
+  token: string;
+  driverName: string | null;
+  onClose: () => void;
+  onChanged: () => void;
+}) {
+  const navigate = useNavigate();
+  const gps = useLiveGps(token);
+  const { paused, setPausedIds } = usePausedRides();
+  const isPaused = paused.includes(ride.id);
+  const destination = ride.arrivee ?? ride.destination;
+  const email = rideExtra(ride, ["email", "client_email", "mail"]);
+  const passagers = rideExtra(ride, ["passagers"]);
+  const bagages = rideExtra(ride, ["bagages"]);
+  const started = ["in_progress", "arrived", "en_route"].includes(ride.status);
+  const canAct =
+    mine && ["accepted", "confirmed", "assigned", "en_route", "in_progress", "arrived"].includes(ride.status);
+
+  const setStatus = useMutation({
+    mutationFn: (status: "in_progress" | "arrived" | "completed") =>
+      driverSetStatus({ data: { as: getProfile(), token, id: ride.id, status } }),
+    onSuccess: (_d, status) => {
+      if (status === "completed") toast.success("Course terminée");
+      onChanged();
+    },
+    onError: (e) => toast.error((e as Error)?.message || "Changement de statut impossible"),
+  });
+
+  const cancel = useMutation({
+    mutationFn: () => driverSetStatus({ data: { as: getProfile(), token, id: ride.id, status: "cancelled" } }),
+    onSuccess: () => {
+      toast.success("Course annulée");
+      onChanged();
+      onClose();
+    },
+    onError: (e) => toast.error((e as Error)?.message || "Annulation impossible"),
+  });
+  const cancellable = !["completed", "cancelled"].includes(ride.status);
+
+  // Arrivée / fin / pause automatiques : gérées par DriverBackgroundTasks (« En route »
+  // reste manuel : uniquement par le bouton).
+
+  const onEnRoute = () => {
+    void gps.start();
+    setPausedIds((p) => p.filter((x) => x !== ride.id));
+    if (!started) setStatus.mutate("in_progress");
+    if (ride.tracking_id) {
+      navigate({ to: "/suivi/$ref", params: { ref: ride.tracking_id as string }, search: {} });
+    } else {
+      toast.error("Lien de suivi indisponible pour cette course");
+    }
+  };
+  const onPause = () => {
+    setPausedIds((p) => [...p.filter((x) => x !== ride.id), ride.id]);
+    void gps.stop();
+    toast.info("Course en pause");
+  };
+  const onResume = () => {
+    setPausedIds((p) => p.filter((x) => x !== ride.id));
+    void gps.start();
+    toast.success("Course reprise");
+  };
+
+  const btn: React.CSSProperties = { flex: "1 1 0", minWidth: 0, padding: "12px 6px", fontSize: 12.5 };
+
+  return (
+    <div className="drv-rides-page" style={{ zIndex: 90 }}>
+      <div className="drv-rides-head">
+        <button type="button" className="drv-rides-back" onClick={onClose} aria-label="Retour">
+          <ArrowLeft />
+        </button>
+        <h2>Détail de la course</h2>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs tracking-widest text-gold">{ride.tracking_id ?? "—"}</span>
+        <StatusBadge status={ride.status} />
+      </div>
+
+      <DetailRow label="Client">{ride.nom ?? "Client"}</DetailRow>
+      <DetailRow label="Téléphone">
+        {ride.telephone ? (
+          <a href={`tel:${ride.telephone.replace(/\s/g, "")}`} className="text-gold">
+            {ride.telephone}
+          </a>
+        ) : (
+          "—"
+        )}
+      </DetailRow>
+      <DetailRow label="E-mail">
+        {email ? (
+          <a href={`mailto:${email}`} className="text-gold">
+            {email}
+          </a>
+        ) : (
+          "—"
+        )}
+      </DetailRow>
+      <DetailRow label="Prise en charge">
+        {new Date(ride.pickup_datetime).toLocaleString("fr-FR", {
+          weekday: "long",
+          day: "2-digit",
+          month: "long",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </DetailRow>
+      <DetailRow label="Départ">{ride.depart ?? "—"}</DetailRow>
+      <DetailRow label="Arrivée">{destination ?? "—"}</DetailRow>
+      {passagers || bagages ? (
+        <DetailRow label="Passagers / bagages">
+          {passagers ?? "—"} / {bagages ?? "—"}
+        </DetailRow>
+      ) : null}
+      {ride.prix_estime != null ? <DetailRow label="Prix estimé">{eur(Number(ride.prix_estime))}</DetailRow> : null}
+      <DetailRow label="Chauffeur">{driverName ?? "Non attribuée"}</DetailRow>
+
+      {ride.telephone ? (
+        <div className="drv-rides-actions" style={{ marginTop: 14 }}>
+          <a className="drv-rides-btn" href={`tel:${ride.telephone.replace(/\s/g, "")}`}>
+            <Phone size={14} aria-hidden /> Appeler
+          </a>
+          <a
+            className="drv-rides-btn drv-rides-btn-sms"
+            href={smsLink(
+              ride.telephone,
+              buildRideSmsMessage({
+                nom: ride.nom,
+                pickup: new Date(ride.pickup_datetime),
+                trackingId: ride.tracking_id,
+              }),
+            )}
+          >
+            <MessageSquarePlus size={14} aria-hidden /> SMS
+          </a>
+          <a className="drv-rides-btn" href={waLink(ride.telephone)} target="_blank" rel="noreferrer">
+            WhatsApp
+          </a>
+        </div>
+      ) : null}
+
+      {canAct ? (
+        <>
+          {isPaused ? (
+            <p className="mt-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+              Course en pause — statut automatique suspendu.
+            </p>
+          ) : null}
+          <div className="drv-rides-actions" style={{ marginTop: 16 }}>
+            <button
+              type="button"
+              className="drv-rides-btn"
+              style={{
+                ...btn,
+                background: "linear-gradient(180deg,#e0b866,#c99b4a)",
+                color: "#0a1118",
+                border: 0,
+                fontWeight: 800,
+              }}
+              onClick={onEnRoute}
+              disabled={setStatus.isPending}
+            >
+              En route
+            </button>
+            <button
+              type="button"
+              className="drv-rides-btn drv-rides-btn-spill"
+              style={btn}
+              onClick={isPaused ? onResume : onPause}
+              disabled={!started}
+            >
+              {isPaused ? "Reprendre" : "Mettre en pause"}
+            </button>
+            <button
+              type="button"
+              className="drv-rides-btn drv-rides-btn-done"
+              style={btn}
+              onClick={() => {
+                if (window.confirm("Clôturer la course ? Le client verra qu'elle est terminée."))
+                  setStatus.mutate("completed");
+              }}
+              disabled={setStatus.isPending}
+            >
+              Course terminée
+            </button>
+          </div>
+          <p className="drv-real-hint" style={{ marginTop: 8 }}>
+            « En route » est manuel. Pause (arrêt de plus de 5 min) et fin de course (arrivée à destination) se
+            déclenchent automatiquement ; les boutons restent disponibles en secours.
+          </p>
+        </>
+      ) : null}
+
+      {cancellable ? (
+        <div className="drv-rides-actions" style={{ marginTop: 12 }}>
+          <button
+            type="button"
+            className="drv-rides-btn drv-rides-btn-cancel"
+            style={{ padding: "12px 6px", fontSize: 12.5 }}
+            disabled={cancel.isPending}
+            onClick={() => {
+              if (window.confirm("Annuler cette course ? Vous ne pouvez pas l'assurer.")) cancel.mutate();
+            }}
+          >
+            {cancel.isPending ? "Annulation…" : "Annuler la course"}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function CompletedRidesTab({ token }: { token: string }) {
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState<DriverRide[]>([]);
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const qc = useQueryClient();
+  const { data, isPending, isError, isFetching } = useQuery({
+    queryKey: ["driver-completed-rides", token, page],
+    queryFn: () => driverCompletedRides({ data: { as: getProfile(), token, page } }),
+  });
+
+  useEffect(() => {
+    if (!data) return;
+    setRows((previous) =>
+      page === 0
+        ? data.rides
+        : [...previous.filter((ride) => !data.rides.some((next) => next.id === ride.id)), ...data.rides],
+    );
+  }, [data, page]);
+
+  const detail = rows.find((ride) => ride.id === detailId);
+  return (
+    <div>
+      <h2 className="mt-6 text-2xl font-semibold">Courses terminées</h2>
+      {isPending && rows.length === 0 ? <p className="drv-rides-sec-empty">Chargement des courses…</p> : null}
+      {isError ? <p className="drv-rides-sec-empty">Impossible de charger les courses terminées.</p> : null}
+      {!isPending && !isError && rows.length === 0 ? (
+        <p className="drv-rides-sec-empty">Aucune course terminée.</p>
+      ) : null}
+      <div className="drv-rides-sec">
+        {rows.map((ride) => (
+          <Button
+            key={ride.id}
+            type="button"
+            variant="outline"
+            className="drv-rides-item flex h-auto w-full flex-col items-start gap-1 text-left"
+            onClick={() => setDetailId(ride.id)}
+          >
+            <span className="w-full truncate text-sm font-semibold">
+              {ride.nom ?? "Client"} · {ride.tracking_id ?? "—"}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {new Date(ride.pickup_datetime).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" })}
+            </span>
+            <span className="w-full truncate text-xs">
+              {ride.depart} → {ride.arrivee ?? ride.destination}
+            </span>
+            <span className="text-xs text-muted-foreground">{ride.driver_slug ?? "Non attribuée"}</span>
+          </Button>
+        ))}
+      </div>
+      {data?.hasMore ? (
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-4 w-full"
+          disabled={isFetching}
+          onClick={() => setPage((current) => current + 1)}
+        >
+          Voir plus de courses
+        </Button>
+      ) : null}
+      {detail ? (
+        <RideDetailPage
+          key={detail.id}
+          ride={detail}
+          mine={false}
+          me={getProfile()}
+          token={token}
+          driverName={detail.driver_slug}
+          onClose={() => setDetailId(null)}
+          onChanged={() => {
+            qc.invalidateQueries({ queryKey: ["driver-completed-rides", token] });
+            qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function DashboardTab({ token, unread, onGo }: { token: string; unread: number; onGo: (t: Tab) => void }) {
+  const qc = useQueryClient();
+  const [mapOpen, setMapOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMode, setChatMode] = useState<"clients" | "drivers">("clients");
+  const [manualOpen, setManualOpen] = useState(false);
+  const [ridesOpen, setRidesOpen] = useState(false);
+  const [ridesMode, setRidesMode] = useState<"upcoming" | "completed">("upcoming");
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const [clientsOpen, setClientsOpen] = useState(false);
+  const [clientsMode, setClientsMode] = useState<"cards" | "calls">("cards");
+  const [financeOpen, setFinanceOpen] = useState(false);
+  const [financeMode, setFinanceMode] = useState<"accounting" | "stats">("accounting");
+  const [diagMode, setDiagMode] = useState<"debug" | "sound" | "backups">("debug");
+  const [planningOpen, setPlanningOpen] = useState(false);
+  const [planningMode, setPlanningMode] = useState<"calendar" | "absences">("calendar");
+  const [notifDebugOpen, setNotifDebugOpen] = useState(false);
+  const [diag, setDiag] = useState<NotifDiag | null>(null);
+  const notifPush = usePushNotifications({ audience: "chauffeur" });
+
+  const refreshDiag = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const permission = "Notification" in window ? Notification.permission : "n/a";
+    const standalone = Boolean(
+      window.matchMedia?.("(display-mode: standalone)").matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true,
+    );
+    const cachedToken = window.localStorage.getItem("fcm_token");
+    const registeredToken = Boolean(window.localStorage.getItem("npr_push_registered:v1:chauffeur"));
+    const lastRefresh = parseInt(window.localStorage.getItem("fcm_token_last_refresh") ?? "0", 10);
+    const tokenAgeDays = cachedToken && lastRefresh ? Math.floor((Date.now() - lastRefresh) / 86400000) : null;
+    const failure = getLastFcmFailure();
+    setDiag({
+      permission,
+      standalone,
+      configured: isFirebaseConfigured(),
+      registeredToken,
+      tokenSuffix: cachedToken ? cachedToken.slice(-8) : null,
+      tokenAgeDays,
+      failureReason: failure?.reason ?? null,
+      failureDetail: failure?.detail ?? null,
+      swCount: 0,
+      swVersion: null,
+      swScopes: [],
+    });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then(async (regs) => {
+        const fcmReg = regs.find((r) =>
+          [r.active, r.installing, r.waiting].some((w) => w?.scriptURL.includes("/firebase-messaging-sw.js")),
+        );
+        const swVersion = fcmReg ? await readSwVersion(fcmReg) : null;
+        setDiag((d) =>
+          d
+            ? {
+                ...d,
+                swCount: regs.length,
+                swVersion,
+                swScopes: regs.map((r) => `${r.scope} → ${r.active?.scriptURL.split("/").pop() ?? "inactif"}`),
+              }
+            : d,
+        );
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (notifDebugOpen) refreshDiag();
+  }, [notifDebugOpen, refreshDiag]);
+
+  const ridesQuery = useQuery({
+    queryKey: ["driver-rides", token],
+    queryFn: () => driverRides({ data: { as: getProfile(), token } }),
+    refetchInterval: 30_000,
+  });
+  const gpsQuery = useQuery({
+    queryKey: ["driver-gps", token],
+    queryFn: () => driverGpsState({ data: { as: getProfile(), token } }),
+    refetchInterval: 20_000,
+  });
+
+  const me = ridesQuery.data?.driver.slug;
+  const rides = ridesQuery.data?.rides ?? [];
+  const drivers = ridesQuery.data?.drivers ?? [];
+
+  // Badge « non lus » du chat d'équipe : les messages des autres arrivés après la
+  // dernière ouverture du chat (repère gardé localement, par profil).
+  const teamChatQuery = useQuery({
+    queryKey: ["driver-team-chat", token],
+    queryFn: () => driverTeamChat({ data: { as: getProfile(), token } }),
+    refetchInterval: 15_000,
+  });
+  const chatSeenKey = `nova_team_chat_seen_${me ?? getProfile() ?? ""}`;
+  const [chatSeen, setChatSeen] = useState<number | null | undefined>(undefined);
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(chatSeenKey);
+      setChatSeen(v ? Number(v) : null);
+    } catch {
+      setChatSeen(null);
+    }
+  }, [chatSeenKey]);
+  const chatRows = teamChatQuery.data ?? [];
+  const lastChatAt = chatRows.length ? new Date(chatRows[chatRows.length - 1]!.created_at).getTime() : null;
+  const markChatSeen = useCallback(() => {
+    if (lastChatAt == null) return;
+    setChatSeen(lastChatAt);
+    try {
+      localStorage.setItem(chatSeenKey, String(lastChatAt));
+    } catch {
+      /* stockage indisponible */
+    }
+  }, [lastChatAt, chatSeenKey]);
+  useEffect(() => {
+    // Ouvert : tout est lu. Premier lancement : pas de badge sur l'historique existant.
+    if ((chatOpen && chatMode === "drivers") || chatSeen === null) markChatSeen();
+  }, [chatOpen, chatMode, chatSeen, markChatSeen]);
+  const chatUnread =
+    chatSeen == null
+      ? 0
+      : chatRows.filter((m) => m.sender_slug !== (me ?? getProfile()) && new Date(m.created_at).getTime() > chatSeen)
+          .length;
+  const names = useMemo(() => Object.fromEntries(drivers.map((d) => [d.slug, d.name])), [drivers]);
+
+  const invalidateRides = () => {
+    qc.invalidateQueries({ queryKey: ["driver-rides", token] });
+    qc.invalidateQueries({ queryKey: ["driver-accounting", token] });
+    qc.invalidateQueries({ queryKey: ["driver-overflow", token] });
+    qc.invalidateQueries({ queryKey: ["driver-completed-rides", token] });
+  };
+  // Depuis la page « Prochaines courses » : clôturer une course acceptée (même non démarrée)
+  // ou la passer en débordement pour l'équipe.
+  const completeRide = useMutation({
+    mutationFn: (id: string) => driverSetStatus({ data: { as: getProfile(), token, id, status: "completed" } }),
+    onSuccess: () => {
+      toast.success("Course terminée");
+      invalidateRides();
+    },
+    onError: () => toast.error("Clôture impossible"),
+  });
+  const spillRide = useMutation({
+    mutationFn: (id: string) => driverOverflowRide({ data: { as: getProfile(), token, id } }),
+    onSuccess: (res) => {
+      toast.success(res.notified > 0 ? "Course proposée à l'équipe" : "Course mise en débordement");
+      invalidateRides();
+    },
+    onError: () => toast.error("Mise en débordement impossible"),
+  });
+  // Annulation : le chauffeur ne peut pas assurer la course.
+  const cancelRide = useMutation({
+    mutationFn: (id: string) => driverSetStatus({ data: { as: getProfile(), token, id, status: "cancelled" } }),
+    onSuccess: () => {
+      toast.success("Course annulée");
+      invalidateRides();
+    },
+    onError: (e) => toast.error((e as Error)?.message || "Annulation impossible"),
+  });
+  const [timeEdit, setTimeEdit] = useState<{ id: string; value: string } | null>(null);
+  const rescheduleRide = useMutation({
+    mutationFn: (v: { id: string; value: string }) =>
+      driverRescheduleRide({
+        data: { as: getProfile(), token, id: v.id, pickup_datetime: new Date(v.value).toISOString() },
+      }),
+    onSuccess: () => {
+      toast.success("Horaire modifié, client prévenu");
+      setTimeEdit(null);
+      invalidateRides();
+    },
+    onError: () => toast.error("Modification de l'horaire impossible"),
+  });
+  const deleteRide = useMutation({
+    mutationFn: (id: string) => driverDeleteRide({ data: { as: getProfile(), token, id } }),
+    onSuccess: () => {
+      toast.success("Course supprimée");
+      invalidateRides();
+    },
+    onError: () => toast.error("Suppression impossible"),
+  });
+
+  // « En course » = course réellement démarrée (en route / arrivé). Une course simplement
+  // acceptée (« confirmed ») reste « Prochaine course » jusqu'à son départ, même si elle est
+  // prévue dans plusieurs jours.
+  // Compte partagé : une course attribuée au profil commun « equipe » (ou à l'autre
+  // profil quand on est connecté en « equipe ») compte aussi pour le chauffeur affiché,
+  // sinon les compteurs affichent 0 alors que les courses sont bien listées.
+  const isMine = useCallback(
+    (slug: string | null) => slug != null && (slug === me || slug === "equipe" || me === "equipe"),
+    [me],
+  );
+
+  const active = rides.find((r) => isMine(r.driver_slug) && ["en_route", "in_progress", "arrived"].includes(r.status));
+  const todayCount = rides.filter(
+    (r) =>
+      isMine(r.driver_slug) &&
+      new Date(r.pickup_datetime).toDateString() === new Date().toDateString() &&
+      r.status !== "cancelled",
+  ).length;
+  const openRideCount = rides.filter(
+    (r) =>
+      (isMine(r.driver_slug) && !["completed", "cancelled", "refused"].includes(r.status)) ||
+      (!r.driver_slug && r.status === "pending") ||
+      (r.status === "en_debordement" && r.overflow_from_slug === me),
+  ).length;
+
+  // Sections de la page « Prochaines courses » : en attente / acceptées / en cours.
+  const pendingRides = rides
+    .filter(
+      (r) =>
+        (isMine(r.driver_slug) && ["pending", "en_debordement"].includes(r.status)) ||
+        // Courses du site pas encore attribuées, et courses que j'ai moi-même mises en débordement
+        // (driver_slug vide) : sinon elles n'apparaissaient nulle part sur cette page.
+        (!r.driver_slug && r.status === "pending") ||
+        (r.status === "en_debordement" && r.overflow_from_slug === me),
+    )
+    .sort((a, b) => +new Date(a.pickup_datetime) - +new Date(b.pickup_datetime));
+  const acceptedRides = rides
+    .filter((r) => isMine(r.driver_slug) && ["accepted", "confirmed", "assigned"].includes(r.status))
+    .sort((a, b) => +new Date(a.pickup_datetime) - +new Date(b.pickup_datetime));
+  const inProgressRides = rides
+    .filter((r) => isMine(r.driver_slug) && ["en_route", "in_progress", "arrived"].includes(r.status))
+    .sort((a, b) => +new Date(a.pickup_datetime) - +new Date(b.pickup_datetime));
+
+  const recentCalls = useMemo(
+    () =>
+      rides
+        .filter((r) => (isMine(r.driver_slug) || !r.driver_slug) && r.telephone && r.status !== "cancelled")
+        .sort((a, b) => +new Date(b.pickup_datetime) - +new Date(a.pickup_datetime))
+        .slice(0, 8),
+    [rides, isMine],
+  );
+
+  const myGps = (gpsQuery.data?.rows ?? []).find((g) => g.id === me);
+  const online = Boolean(myGps?.is_active);
+
+  const setAvailability = useMutation({
+    mutationFn: async (next: boolean) => {
+      // Arrêt : passe par le suivi partagé, qui coupe aussi le battement de cœur en cours
+      // (sinon la position continuerait d'être renvoyée juste après l'arrêt).
+      if (!next) return stopLiveGps();
+      const pos = await new Promise<GeolocationPosition | null>((resolve) => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          (p) => resolve(p),
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 },
+        );
+      });
+      if (!pos) throw new Error("no_position");
+      return driverGpsPush({
+        data: {
+          as: getProfile(),
+          token,
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: pos.coords.accuracy ?? null,
+          heading: pos.coords.heading ?? null,
+          speed: pos.coords.speed ?? null,
+        },
+      });
+    },
+    onSuccess: (_d, next) => {
+      toast.success(next ? "Vous êtes disponible" : "Vous n'êtes plus disponible");
+      qc.invalidateQueries({ queryKey: ["driver-gps", token] });
+    },
+    onError: () => {
+      toast.error("Position indisponible — autorisez la localisation");
+    },
+  });
+
+  const teamRows = (gpsQuery.data?.rows ?? []).map((g) => ({
+    id: g.id,
+    latitude: g.latitude,
+    longitude: g.longitude,
+    is_active: g.is_active,
+  }));
+
+  return (
+    <div>
+      <h2 className="mt-6 text-2xl font-semibold">Tableau de bord</h2>
+
+      {/* Icônes carrées, ordre fixe, grille responsive (2 col. très petit mobile → 5 col. desktop). */}
+      <div className="drv-dash-grid">
+        <button type="button" className="drv-tile" onClick={() => setManualOpen(true)}>
+          <span className="drv-tile-ico" style={{ background: "#f97316" }}>
+            <MessageSquarePlus />
+          </span>
+          <span className="drv-tile-label">Formulaire résa</span>
+        </button>
+
+        <button
+          type="button"
+          className="drv-tile"
+          onClick={() => {
+            setRidesOpen(true);
+          }}
+        >
+          <span className="drv-tile-ico" style={{ background: active ? "#e11d48" : "#3f3f46" }}>
+            <IconCar />
+          </span>
+          <span className="drv-tile-label">Prochaines courses</span>
+          {openRideCount > 0 ? <span className="drv-tile-badge">{openRideCount}</span> : null}
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => onGo("overflow")}>
+          <span className="drv-tile-ico" style={{ background: "#f59e0b" }}>
+            <IconSwap />
+          </span>
+          <span className="drv-tile-label">Débordement</span>
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => setClientsOpen(true)}>
+          <span className="drv-tile-ico" style={{ background: "#0d9488" }}>
+            <Contact />
+          </span>
+          <span className="drv-tile-label">Clients</span>
+          {recentCalls.length > 0 ? <span className="drv-tile-badge">{recentCalls.length}</span> : null}
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => setChatOpen(true)}>
+          <span className="drv-tile-ico" style={{ background: "#db2777" }}>
+            <IconMessage />
+          </span>
+          <span className="drv-tile-label">Chat</span>
+          {unread + chatUnread > 0 ? <span className="drv-tile-badge">{unread + chatUnread}</span> : null}
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => setPlanningOpen(true)}>
+          <span className="drv-tile-ico" style={{ background: "#2563eb" }}>
+            <IconCalendar />
+          </span>
+          <span className="drv-tile-label">Calendrier</span>
+          {todayCount > 0 ? <span className="drv-tile-badge">{todayCount}</span> : null}
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => setFinanceOpen(true)}>
+          <span className="drv-tile-ico" style={{ background: "#8b5cf6" }}>
+            <IconCalc />
+          </span>
+          <span className="drv-tile-label">Compta &amp; stats</span>
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => setMapOpen((v) => !v)}>
+          <span className="drv-tile-ico" style={{ background: "#0ea5e9" }}>
+            <IconMapPin />
+          </span>
+          <span className="drv-tile-label">Carte équipe</span>
+          {teamRows.some((r) => r.is_active) ? <span className="drv-tile-dot" /> : null}
+        </button>
+
+        <button
+          type="button"
+          className="drv-tile"
+          disabled={setAvailability.isPending}
+          onClick={() => setAvailability.mutate(!online)}
+        >
+          <span className="drv-tile-ico" style={{ background: online ? "#16a34a" : "#3f3f46" }}>
+            <IconMapPin />
+          </span>
+          <span className="drv-tile-label">{online ? "Disponible" : "Indisponible"}</span>
+          {online ? <span className="drv-tile-dot" /> : null}
+        </button>
+
+        <button type="button" className="drv-tile" onClick={() => setNotifDebugOpen(true)}>
+          <span className="drv-tile-ico" style={{ background: "#64748b" }}>
+            <Settings2 size={18} />
+          </span>
+          <span className="drv-tile-label">Diagnostic &amp; sauvegardes</span>
         </button>
       </div>
 
-      {groups.length === 0 && (
-        <div style={{ color: "#64748b", fontSize: "calc(14px * var(--drv-fs, 1))" }}>
-          Aucun appareil inscrit pour le moment.
-        </div>
-      )}
+      {manualOpen ? (
+        <ManualBookingDialog
+          token={token}
+          drivers={drivers}
+          onClose={() => setManualOpen(false)}
+          onCreated={() => qc.invalidateQueries({ queryKey: ["driver-rides", token] })}
+        />
+      ) : null}
 
-      {groups.map(([driver, list]) => (
-        <div key={driver} style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
-          <div
-            style={{
-              background: "var(--background)",
-              color: "var(--gold)",
-              padding: "10px 14px",
-              fontWeight: 800,
-              fontSize: "calc(14px * var(--drv-fs, 1))",
-            }}
-          >
-            {DRIVER_LABELS[driver] ?? "Chauffeur inconnu"} — {list.length} appareil
-            {list.length > 1 ? "s" : ""}
-          </div>
-          <div style={{ display: "grid" }}>
-            {list.map((d) => (
-              <div key={d.id} style={{ padding: 12, borderTop: "1px solid #f1f5f9", display: "grid", gap: 4 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                  <b style={{ fontSize: "calc(14px * var(--drv-fs, 1))" }}>{d.platform}</b>
-                  <span
-                    style={{
-                      fontSize: "calc(11px * var(--drv-fs, 1))",
-                      fontWeight: 700,
-                      padding: "2px 8px",
-                      borderRadius: 999,
-                      background: d.active ? "#dcfce7" : "#fee2e2",
-                      color: d.active ? "#166534" : "#991b1b",
-                    }}
-                  >
-                    {d.active ? "actif" : "inactif"}
-                  </span>
-                  <code style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#64748b" }}>
-                    …{d.fcm_suffix ?? "—"}
-                  </code>
-                  <button
-                    onClick={() => revoke(d.id, `${DRIVER_LABELS[driver] ?? driver} · ${d.platform}`)}
-                    disabled={busy === d.id}
-                    style={{
-                      marginLeft: "auto",
-                      background: "#dc2626",
-                      color: "#FDFBF7",
-                      border: "none",
-                      borderRadius: 8,
-                      padding: "5px 10px",
-                      fontSize: "calc(12px * var(--drv-fs, 1))",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {busy === d.id ? "…" : "Désinscrire"}
-                  </button>
-                </div>
-                <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#475569" }}>
-                  Dernière activité : {fmtDate(d.last_seen_at)} · Inscrit le {fmtDate(d.created_at)}
-                </div>
-                <div style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: "#475569" }}>
-                  Dernier envoi : {fmtDate(d.last_sent_at)}
-                  {d.last_sent_title ? ` — ${d.last_sent_title}` : ""}
-                </div>
-                <div
-                  style={{ fontSize: "calc(12px * var(--drv-fs, 1))", color: d.last_error_at ? "#b91c1c" : "#94a3b8" }}
-                >
-                  Dernière erreur :{" "}
-                  {d.last_error_at
-                    ? `${fmtDate(d.last_error_at)} — ${d.last_error_code ?? "erreur"}${d.last_error_status ? ` (HTTP ${d.last_error_status})` : ""}`
-                    : "aucune"}
-                </div>
-                {d.user_agent && (
-                  <div style={{ fontSize: "calc(11px * var(--drv-fs, 1))", color: "#94a3b8", wordBreak: "break-all" }}>
-                    {d.user_agent}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-
-      <div style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
-        <div
-          style={{
-            background: "#f8fafc",
-            padding: "10px 14px",
-            fontWeight: 800,
-            fontSize: "calc(14px * var(--drv-fs, 1))",
-          }}
+      {notifDebugOpen ? (
+        <FullPage
+          title="Diagnostic & sauvegardes"
+          onClose={() => setNotifDebugOpen(false)}
+          tabs={
+            <SubTabs
+              value={diagMode}
+              onChange={setDiagMode}
+              options={[
+                { key: "debug", label: "Diagnostic" },
+                { key: "sound", label: "Test son" },
+                { key: "backups", label: "Sauvegardes" },
+              ]}
+            />
+          }
         >
-          Journal des notifications — {stats.sent} envoyées · {stats.failed} en échec · {stats.email} repli e-mail
-        </div>
-        <div style={{ maxHeight: 320, overflowY: "auto" }}>
-          {log.length === 0 && (
-            <div style={{ padding: 12, color: "#64748b", fontSize: "calc(13px * var(--drv-fs, 1))" }}>
-              Aucun envoi enregistré.
+          {diagMode === "backups" ? (
+            <BackupsPage embedded token={token} onClose={() => setNotifDebugOpen(false)} />
+          ) : diagMode === "sound" ? (
+            <SoundDebugPage embedded onClose={() => setDiagMode("debug")} />
+          ) : (
+            <div className="drv-dash-map" style={{ padding: 12, display: "grid", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                <strong style={{ fontSize: 13 }}>Diagnostic notifications / son</strong>
+                <Button variant="ghost" size="sm" onClick={refreshDiag}>
+                  <RefreshCw className="size-4" /> Rafraîchir
+                </Button>
+              </div>
+
+              {diag ? (
+                <div style={{ display: "grid", gap: 4, fontSize: 12.5 }}>
+                  <DiagRow label="Permission navigateur" value={diag.permission} ok={diag.permission === "granted"} />
+                  <DiagRow
+                    label="App installée (standalone)"
+                    value={diag.standalone ? "oui" : "non"}
+                    ok={diag.standalone}
+                  />
+                  <DiagRow
+                    label="Config Firebase (clé VAPID incluse)"
+                    value={diag.configured ? "ok" : "incomplète"}
+                    ok={diag.configured}
+                  />
+                  <DiagRow
+                    label="Abonnement chauffeur enregistré (serveur)"
+                    value={diag.registeredToken ? "oui" : "non"}
+                    ok={diag.registeredToken}
+                  />
+                  <DiagRow
+                    label="Jeton FCM en cache"
+                    value={diag.tokenSuffix ? `…${diag.tokenSuffix} (${diag.tokenAgeDays ?? "?"}j)` : "aucun"}
+                    ok={Boolean(diag.tokenSuffix)}
+                  />
+                  <DiagRow
+                    label="Service worker(s) enregistré(s)"
+                    value={diag.swCount > 0 ? String(diag.swCount) : "aucun"}
+                    ok={diag.swCount > 0}
+                  />
+                  <DiagRow
+                    label="Version du SW actif (firebase-messaging-sw.js)"
+                    value={diag.swVersion ?? "introuvable / pas encore répondu"}
+                    ok={Boolean(diag.swVersion?.includes("push5-sound"))}
+                  />
+                  {diag.swScopes.length > 0 ? (
+                    <p style={{ margin: "2px 0 0", opacity: 0.6, fontSize: 11 }}>{diag.swScopes.join(" · ")}</p>
+                  ) : null}
+                  <DiagRow
+                    label="Dernière erreur FCM connue"
+                    value={
+                      diag.failureReason
+                        ? `${diag.failureReason}${diag.failureDetail ? " — " + diag.failureDetail : ""}`
+                        : "aucune"
+                    }
+                    ok={!diag.failureReason}
+                  />
+                  <DiagRow
+                    label="Statut du hook (usePushNotifications)"
+                    value={notifPush.status}
+                    ok={notifPush.status === "granted"}
+                  />
+                  {notifPush.lastError ? (
+                    <p style={{ margin: "2px 0 0", color: "#f87171", fontSize: 11.5 }}>{notifPush.lastError}</p>
+                  ) : null}
+                </div>
+              ) : (
+                <p style={{ fontSize: 12.5, opacity: 0.7, margin: 0 }}>Chargement du diagnostic…</p>
+              )}
+
+              <div className="drv-btns" style={{ marginTop: 4 }}>
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    await notifPush.subscribe();
+                    refreshDiag();
+                  }}
+                >
+                  Réactiver / renouveler l'abonnement
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    void notifPush.testNotification();
+                    toast.info("Notif de test envoyée — regarde si elle arrive, avec son");
+                  }}
+                >
+                  Envoyer une notif de test
+                </Button>
+              </div>
             </div>
           )}
-          {log.map((e) => (
-            <div
-              key={e.id}
-              style={{
-                padding: "8px 12px",
-                borderTop: "1px solid #f1f5f9",
-                fontSize: "calc(12px * var(--drv-fs, 1))",
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-              }}
-            >
-              <span style={{ color: "#94a3b8", minWidth: 96 }}>{fmtDate(e.created_at)}</span>
-              <span
-                style={{
-                  fontWeight: 700,
-                  color: e.status === "sent" ? "#166534" : e.status === "fallback_email" ? "#92400e" : "#b91c1c",
+        </FullPage>
+      ) : null}
+
+      {chatOpen ? (
+        <FullPage
+          title="Chat"
+          onClose={() => setChatOpen(false)}
+          tabs={
+            <SubTabs
+              value={chatMode}
+              onChange={setChatMode}
+              options={[
+                { key: "clients", label: "Clients", badge: unread },
+                { key: "drivers", label: "Chauffeurs", badge: chatUnread },
+              ]}
+            />
+          }
+        >
+          {chatMode === "clients" ? (
+            <MessagesTab token={token} />
+          ) : (
+            <TeamChat token={token} names={names} me={me ?? getProfile() ?? ""} />
+          )}
+        </FullPage>
+      ) : null}
+
+      {mapOpen ? (
+        <FullPage title="Carte équipe" onClose={() => setMapOpen(false)}>
+          <div className="drv-dash-map">
+            <TeamMap rows={teamRows} names={names} />
+          </div>
+        </FullPage>
+      ) : null}
+
+      {clientsOpen ? (
+        <FullPage
+          title="Clients"
+          onClose={() => setClientsOpen(false)}
+          tabs={
+            <SubTabs
+              value={clientsMode}
+              onChange={setClientsMode}
+              options={[
+                { key: "cards", label: "Fiches clients" },
+                { key: "calls", label: "Appels", badge: recentCalls.length },
+              ]}
+            />
+          }
+        >
+          {clientsMode === "cards" ? (
+            <ClientCardsPage embedded token={token} onClose={() => setClientsOpen(false)} />
+          ) : (
+            <>
+              {recentCalls.length === 0 ? (
+                <p className="drv-rides-sec-empty">Les numéros apparaîtront dès votre prochaine course.</p>
+              ) : (
+                recentCalls.map((r) => (
+                  <SwipeRow
+                    key={r.id}
+                    as="div"
+                    onDelete={() => deleteRide.mutate(r.id)}
+                    label={`Course ${r.tracking_id ?? ""}`}
+                  >
+                    <div className="drv-call-row">
+                      <a
+                        href={`tel:${(r.telephone ?? "").replace(/\s/g, "")}`}
+                        className="drv-call-ico"
+                        aria-label="Appeler"
+                        title="Appeler"
+                      >
+                        <Phone size={16} />
+                      </a>
+                      <a
+                        href={smsLink(
+                          r.telephone ?? "",
+                          buildRideSmsMessage({
+                            nom: r.nom,
+                            pickup: new Date(r.pickup_datetime),
+                            trackingId: r.tracking_id,
+                          }),
+                        )}
+                        className="drv-call-ico drv-call-ico-sms"
+                        aria-label="Envoyer un SMS"
+                        title="Envoyer un SMS"
+                      >
+                        <MessageSquarePlus size={16} />
+                      </a>
+                      <button
+                        type="button"
+                        className="drv-call-txt"
+                        title="Enregistrer dans les contacts"
+                        onClick={() => saveContactVcard(r.nom ?? "Client", r.telephone ?? "")}
+                      >
+                        <strong>{r.nom ?? "Client"}</strong>
+                        <span>
+                          {r.telephone} · {new Date(r.pickup_datetime).toLocaleString("fr-FR")}
+                        </span>
+                      </button>
+                    </div>
+                  </SwipeRow>
+                ))
+              )}
+            </>
+          )}
+        </FullPage>
+      ) : null}
+      {financeOpen ? (
+        <FullPage
+          title="Compta & stats"
+          onClose={() => setFinanceOpen(false)}
+          tabs={
+            <SubTabs
+              value={financeMode}
+              onChange={setFinanceMode}
+              options={[
+                { key: "accounting", label: "Compta" },
+                { key: "stats", label: "Stats équipe" },
+              ]}
+            />
+          }
+        >
+          {financeMode === "accounting" ? (
+            <AccountingTab token={token} />
+          ) : (
+            <StatsPage embedded token={token} onClose={() => setFinanceOpen(false)} />
+          )}
+        </FullPage>
+      ) : null}
+      {planningOpen ? (
+        <FullPage
+          title="Calendrier"
+          onClose={() => setPlanningOpen(false)}
+          tabs={
+            <SubTabs
+              value={planningMode}
+              onChange={setPlanningMode}
+              options={[
+                { key: "calendar", label: "Calendrier" },
+                { key: "absences", label: "Absences" },
+              ]}
+            />
+          }
+        >
+          {planningMode === "calendar" ? (
+            <PlanningTab token={token} />
+          ) : (
+            <PlanningPage embedded token={token} onClose={() => setPlanningOpen(false)} />
+          )}
+        </FullPage>
+      ) : null}
+
+      {ridesOpen ? (
+        <div id="drv-panel-rides" className="drv-rides-page">
+          <div className="drv-rides-stick">
+            <div className="drv-rides-head">
+              <button type="button" className="drv-rides-back" onClick={() => setRidesOpen(false)} aria-label="Retour">
+                <ArrowLeft />
+              </button>
+              <h2>Courses</h2>
+            </div>
+            <SubTabs
+              value={ridesMode}
+              onChange={setRidesMode}
+              options={[
+                { key: "upcoming", label: "Prochaines", badge: openRideCount },
+                { key: "completed", label: "Terminées" },
+              ]}
+            />
+          </div>
+          {ridesMode === "completed" ? (
+            <CompletedRidesTab token={token} />
+          ) : (
+            [
+              { title: "Courses en attente", list: pendingRides, actions: false },
+              { title: "Courses acceptées", list: acceptedRides, actions: true },
+              { title: "Courses en cours", list: inProgressRides, actions: true },
+            ].map((sec) => (
+              <section key={sec.title} className="drv-rides-sec">
+                <p className="drv-rides-sec-title">
+                  {sec.title}
+                  <span className="drv-rides-sec-count">{sec.list.length}</span>
+                </p>
+                {sec.list.length === 0 ? (
+                  <p className="drv-rides-sec-empty">Aucune course.</p>
+                ) : (
+                  sec.list.map((r) => (
+                    <SwipeRow
+                      key={r.id}
+                      as="div"
+                      onDelete={() => deleteRide.mutate(r.id)}
+                      label={`Course ${r.tracking_id ?? ""}`}
+                    >
+                      <div className="drv-rides-item" onClick={() => setDetailId(r.id)}>
+                        <p className="m-0 truncate text-sm font-semibold">{r.nom ?? "Client"}</p>
+                        <p className="m-0 truncate text-xs text-muted-foreground">
+                          {new Date(r.pickup_datetime).toLocaleString("fr-FR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                        <p className="m-0 truncate text-xs text-muted-foreground">
+                          {r.depart} → {r.arrivee ?? r.destination}
+                        </p>
+                        <p className="m-0 truncate text-xs font-medium">
+                          {r.driver_slug ? (names[r.driver_slug] ?? r.driver_slug) : "Non attribuée"}
+                        </p>
+                        {r.telephone ? (
+                          <div className="drv-rides-actions" onClick={(e) => e.stopPropagation()}>
+                            <a
+                              className="drv-rides-btn drv-rides-btn-sms"
+                              href={smsLink(
+                                r.telephone,
+                                buildRideSmsMessage({
+                                  nom: r.nom,
+                                  pickup: new Date(r.pickup_datetime),
+                                  trackingId: r.tracking_id,
+                                }),
+                              )}
+                            >
+                              <MessageSquarePlus size={14} aria-hidden /> SMS
+                            </a>
+                          </div>
+                        ) : null}
+                        <div className="drv-rides-actions" onClick={(e) => e.stopPropagation()}>
+                          {timeEdit?.id === r.id ? (
+                            <>
+                              <input
+                                type="datetime-local"
+                                value={timeEdit.value}
+                                onChange={(e) => setTimeEdit({ id: r.id, value: e.target.value })}
+                                className="rounded-md border border-border bg-background px-2 py-1 text-xs"
+                                aria-label="Nouvel horaire"
+                              />
+                              <button
+                                type="button"
+                                className="drv-rides-btn drv-rides-btn-done"
+                                disabled={!timeEdit.value || rescheduleRide.isPending}
+                                onClick={() => rescheduleRide.mutate(timeEdit)}
+                              >
+                                Valider
+                              </button>
+                              <button type="button" className="drv-rides-btn" onClick={() => setTimeEdit(null)}>
+                                Annuler
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              type="button"
+                              className="drv-rides-btn"
+                              onClick={() => {
+                                const d = new Date(r.pickup_datetime);
+                                const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+                                  .toISOString()
+                                  .slice(0, 16);
+                                setTimeEdit({ id: r.id, value: local });
+                              }}
+                            >
+                              <CalendarClock size={14} aria-hidden /> Modifier l'horaire
+                            </button>
+                          )}
+                        </div>
+                        {sec.actions ? (
+                          <div className="drv-rides-actions">
+                            <button
+                              type="button"
+                              className="drv-rides-btn drv-rides-btn-done"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (window.confirm("Clôturer la course ? Le client verra qu'elle est terminée.")) {
+                                  completeRide.mutate(r.id);
+                                }
+                              }}
+                              disabled={completeRide.isPending || spillRide.isPending || cancelRide.isPending}
+                            >
+                              Course terminée
+                            </button>
+                            <button
+                              type="button"
+                              className="drv-rides-btn drv-rides-btn-spill"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (window.confirm("Proposer cette course à l'équipe (débordement) ?")) {
+                                  spillRide.mutate(r.id);
+                                }
+                              }}
+                              disabled={completeRide.isPending || spillRide.isPending || cancelRide.isPending}
+                            >
+                              Débordement
+                            </button>
+                          </div>
+                        ) : null}
+                        <div className="drv-rides-actions" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className="drv-rides-btn drv-rides-btn-cancel"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (window.confirm("Annuler cette course ? Vous ne pouvez pas l'assurer.")) {
+                                cancelRide.mutate(r.id);
+                              }
+                            }}
+                            disabled={completeRide.isPending || spillRide.isPending || cancelRide.isPending}
+                          >
+                            Annuler la course
+                          </button>
+                        </div>
+                      </div>
+                    </SwipeRow>
+                  ))
+                )}
+              </section>
+            ))
+          )}
+        </div>
+      ) : null}
+
+      {(() => {
+        const detail = detailId ? rides.find((r) => r.id === detailId) : null;
+        if (!detail) return null;
+        return (
+          <RideDetailPage
+            key={detail.id}
+            ride={detail}
+            mine={isMine(detail.driver_slug)}
+            me={me}
+            token={token}
+            driverName={detail.driver_slug ? (names[detail.driver_slug] ?? detail.driver_slug) : null}
+            onClose={() => setDetailId(null)}
+            onChanged={invalidateRides}
+          />
+        );
+      })()}
+    </div>
+  );
+}
+
+/** Autocomplétion d'adresse (Nominatim/OpenStreetMap), biaisée sur la région bordelaise. */
+type AddrSuggestion = { label: string; lat: number; lon: number };
+
+function AddressAutocomplete({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  const [suggestions, setSuggestions] = useState<AddrSuggestion[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Libellé choisi dans la liste : la valeur qui en découle ne relance pas de recherche.
+  const pickedRef = useRef<string | null>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  // La liste de suggestions est en position absolue et recouvre les champs situés
+  // dessous (date / heure) : le premier tap tombait sur la liste au lieu du champ.
+  // On la ferme dès le début de n'importe quel appui hors du composant.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (wrapRef.current && e.target instanceof Node && !wrapRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onDown, true);
+    return () => document.removeEventListener("pointerdown", onDown, true);
+  }, [open]);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const q = value.trim();
+    if (pickedRef.current !== null && pickedRef.current === value) {
+      setSuggestions([]);
+      setLoading(false);
+      return;
+    }
+    if (q.length < 3) {
+      setSuggestions([]);
+      setLoading(false);
+      return;
+    }
+    // Chaque frappe annule la requête précédente : une réponse lente ne peut plus
+    // écraser une réponse plus récente.
+    const controller = new AbortController();
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          format: "jsonv2",
+          q,
+          addressdetails: "0",
+          limit: "6",
+          countrycodes: "fr",
+          "accept-language": "fr",
+          viewbox: "-1.2,45.3,0.3,44.2", // biais large région bordelaise
+          bounded: "0",
+        });
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+        const rows = (await res.json()) as Array<{ display_name: string; lat: string; lon: string }>;
+        if (controller.signal.aborted) return;
+        setSuggestions(rows.map((r) => ({ label: r.display_name, lat: Number(r.lat), lon: Number(r.lon) })));
+      } catch {
+        if (controller.signal.aborted) return;
+        setSuggestions([]);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, 350);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      controller.abort();
+    };
+  }, [value]);
+
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+    };
+  }, []);
+
+  return (
+    <div className="drv-addr-wrap" ref={wrapRef}>
+      <Input
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => {
+          pickedRef.current = null;
+          onChange(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => {
+          blurTimeoutRef.current = setTimeout(() => setOpen(false), 80);
+        }}
+      />
+      {open && value.trim().length >= 3 ? (
+        <div className="drv-addr-list">
+          {loading ? (
+            <div className="drv-addr-empty">Recherche…</div>
+          ) : suggestions.length === 0 ? (
+            <div className="drv-addr-empty">Aucune adresse trouvée</div>
+          ) : (
+            suggestions.map((s, i) => (
+              <div
+                key={`${s.lat}-${s.lon}-${i}`}
+                className="drv-addr-item"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  pickedRef.current = s.label;
+                  onChange(s.label);
+                  setSuggestions([]);
+                  setOpen(false);
                 }}
               >
-                {e.status}
-              </span>
-              <span style={{ color: "#475569" }}>{e.audience}</span>
-              <span style={{ color: "#0f172a", flex: 1, minWidth: 140 }}>{e.title ?? e.tag ?? "—"}</span>
-              {e.error_code && <span style={{ color: "#b91c1c" }}>{e.error_code}</span>}
-            </div>
-          ))}
+                {s.label}
+              </div>
+            ))
+          )}
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Page plein écran (même gabarit que « Prochaines courses ») : évite d'ouvrir un panneau tout en bas de la grille. */
+/** Petit sélecteur à onglets pour les pages fusionnées (ex. Chat : Clients / Chauffeurs). */
+function SubTabs<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { key: T; label: string; badge?: number }[];
+}) {
+  return (
+    <div style={{ display: "flex", gap: 6, padding: "4px 0 12px" }} role="tablist">
+      {options.map((o) => {
+        const on = o.key === value;
+        return (
+          <button
+            key={o.key}
+            type="button"
+            role="tab"
+            aria-selected={on}
+            onClick={() => onChange(o.key)}
+            style={{
+              flex: 1,
+              padding: "9px 10px",
+              borderRadius: 10,
+              fontSize: 13.5,
+              fontWeight: 600,
+              border: "1px solid rgba(255,255,255,0.14)",
+              background: on ? "#e11d48" : "transparent",
+              color: on ? "#fff" : "inherit",
+              opacity: on ? 1 : 0.75,
+            }}
+          >
+            {o.label}
+            {o.badge && o.badge > 0 ? ` (${o.badge})` : ""}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function FullPage({
+  title,
+  onClose,
+  tabs,
+  children,
+}: {
+  title: string;
+  onClose: () => void;
+  tabs?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="drv-rides-page">
+      <div className="drv-rides-stick">
+        <div className="drv-rides-head">
+          <button type="button" className="drv-rides-back" onClick={onClose} aria-label="Retour">
+            <ArrowLeft />
+          </button>
+          <h2>{title}</h2>
+        </div>
+        {tabs}
       </div>
+      {children}
+    </div>
+  );
+}
+
+/** Ouvre le sélecteur natif date/heure dès le premier appui (sinon il faut toucher deux fois). */
+function openNativePicker(e: React.MouseEvent<HTMLInputElement>) {
+  try {
+    e.currentTarget.showPicker?.();
+  } catch {
+    /* showPicker indisponible ou refusé : le comportement natif reste actif */
+  }
+}
+
+/** Saisie d'une réservation reçue en direct par le chauffeur (SMS/e-mail/WhatsApp/appel). */
+function ManualBookingDialog({
+  token,
+  drivers,
+  onClose,
+  onCreated,
+}: {
+  token: string;
+  drivers: { slug: string; name: string }[];
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const [nom, setNom] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [email, setEmail] = useState("");
+  const [depart, setDepart] = useState("");
+  const [arrivee, setArrivee] = useState("");
+  // Par défaut : dans une heure, arrondi au quart d'heure suivant.
+  const defaultWhen = useMemo(() => {
+    const d = new Date(Date.now() + 60 * 60_000);
+    d.setMinutes(Math.ceil(d.getMinutes() / 15) * 15, 0, 0);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return {
+      date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+      heure: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+    };
+  }, []);
+  const [date, setDate] = useState(defaultWhen.date);
+  const [heure, setHeure] = useState(defaultWhen.heure);
+  const [passagers, setPassagers] = useState("1");
+  const [bagages, setBagages] = useState("0");
+  const [prix, setPrix] = useState("");
+  const [source, setSource] = useState<"sms" | "email" | "whatsapp" | "telephone" | "autre">("sms");
+  const [prisePar, setPrisePar] = useState<string>("");
+  const [obs1, setObs1] = useState("");
+  const [obs2, setObs2] = useState("");
+
+  const create = useMutation({
+    mutationFn: () =>
+      driverCreateManualReservation({
+        data: {
+          as: getProfile(),
+          token,
+          nom: nom.trim().slice(0, 100),
+          telephone: telephone.trim().length >= 4 ? telephone.trim().slice(0, 30) : undefined,
+          email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ? email.trim() : undefined,
+          depart: depart.trim().slice(0, 200),
+          arrivee: arrivee.trim().slice(0, 200),
+          pickup_datetime: new Date(`${date}T${heure}:00`).toISOString(),
+          passagers: Math.min(9, Math.max(1, Math.round(Number(passagers)) || 1)),
+          bagages: Math.min(9, Math.max(0, Math.round(Number(bagages)) || 0)),
+          prix_estime: (() => {
+            const n = Number(prix.replace(",", ".").replace(/[^\d.]/g, ""));
+            return prix.trim() && Number.isFinite(n) ? Math.min(5000, n) : undefined;
+          })(),
+          source,
+          prise_par: prisePar || undefined,
+          observation1: obs1.trim().slice(0, 1000) || undefined,
+          observation2: obs2.trim().slice(0, 1000) || undefined,
+        },
+      }),
+    onSuccess: (res) => {
+      toast.success(`Réservation créée — suivi : /suivi/${res.tracking_id}`);
+      onCreated();
+      // Validation de la résa = redirection directe vers l'appli SMS native (Android
+      // ou iPhone) avec le bon numéro et le message pré-rempli (resa + lien de suivi +
+      // heure) : il ne reste plus qu'à appuyer sur "Envoyer" dans l'appli Messages.
+      const phone = telephone.trim();
+      if (phone) {
+        const info = {
+          trackingId: res.tracking_id as string,
+          telephone: phone,
+          nom: nom.trim(),
+          pickup: new Date(`${date}T${heure}:00`),
+        };
+        window.location.href = smsLink(info.telephone, buildRideSmsMessage(info));
+      }
+      onClose();
+    },
+    onError: () => toast.error("Impossible de créer la réservation"),
+  });
+
+  const pickupMs = date && heure ? new Date(`${date}T${heure}:00`).getTime() : NaN;
+  // Une course dans le passé est presque toujours une erreur de saisie (tolérance 5 min).
+  const isPast = Number.isFinite(pickupMs) && pickupMs < Date.now() - 5 * 60_000;
+  const canSubmit = Boolean(nom.trim() && depart.trim() && arrivee.trim() && date && heure) && !isPast;
+
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      {/* Tout le formulaire (observations comprises) + les boutons dans un seul bloc défilant :
+          sur mobile, rien ne peut passer « après » le bouton ni rester hors écran. */}
+      <DialogContent style={{ maxHeight: "92dvh", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <DialogHeader>
+          <DialogTitle>Nouvelle réservation</DialogTitle>
+          <DialogDescription>Client reçu en direct (hors site) — SMS, e-mail, WhatsApp ou appel.</DialogDescription>
+        </DialogHeader>
+
+        <div style={{ display: "grid", gap: 10 }}>
+          <Input placeholder="Nom du client" value={nom} onChange={(e) => setNom(e.target.value)} maxLength={100} />
+          <Input placeholder="Téléphone (optionnel)" value={telephone} onChange={(e) => setTelephone(e.target.value)} />
+          <Input placeholder="E-mail (optionnel)" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <AddressAutocomplete placeholder="Adresse de départ" value={depart} onChange={setDepart} />
+          <AddressAutocomplete placeholder="Adresse d'arrivée" value={arrivee} onChange={setArrivee} />
+          <Textarea
+            placeholder="Observation 1 (optionnel)"
+            rows={2}
+            value={obs1}
+            onChange={(e) => setObs1(e.target.value)}
+            maxLength={1000}
+          />
+          <Textarea
+            placeholder="Observation 2 (optionnel)"
+            rows={2}
+            value={obs2}
+            onChange={(e) => setObs2(e.target.value)}
+            maxLength={1000}
+          />
+          <div style={{ display: "flex", gap: 8 }}>
+            <Input
+              type="date"
+              value={date}
+              min={defaultWhen.date}
+              onChange={(e) => setDate(e.target.value)}
+              onClick={openNativePicker}
+            />
+            <Input type="time" value={heure} onChange={(e) => setHeure(e.target.value)} onClick={openNativePicker} />
+          </div>
+          {isPast ? (
+            <p style={{ margin: 0, fontSize: 12, color: "#f87171" }}>
+              Cette date est déjà passée : corrigez la date ou l'heure pour enregistrer.
+            </p>
+          ) : null}
+          <div style={{ display: "flex", gap: 8 }}>
+            <Input
+              type="number"
+              min={1}
+              max={9}
+              placeholder="Passagers"
+              value={passagers}
+              onChange={(e) => setPassagers(e.target.value)}
+            />
+            <Input
+              type="number"
+              min={0}
+              max={9}
+              placeholder="Bagages"
+              value={bagages}
+              onChange={(e) => setBagages(e.target.value)}
+            />
+            <Input
+              type="number"
+              min={0}
+              placeholder="Prix € (optionnel)"
+              value={prix}
+              onChange={(e) => setPrix(e.target.value)}
+            />
+          </div>
+          <select
+            value={source}
+            onChange={(e) => setSource(e.target.value as typeof source)}
+            style={{
+              borderRadius: 10,
+              padding: "10px 12px",
+              background: "rgba(0,0,0,.25)",
+              color: "inherit",
+              border: "1px solid rgba(246,240,229,.2)",
+              fontSize: 14,
+            }}
+          >
+            <option value="sms">Reçue par SMS</option>
+            <option value="email">Reçue par e-mail</option>
+            <option value="whatsapp">Reçue par WhatsApp</option>
+            <option value="telephone">Reçue par téléphone</option>
+            <option value="autre">Autre</option>
+          </select>
+          <select
+            value={prisePar}
+            onChange={(e) => setPrisePar(e.target.value)}
+            style={{
+              borderRadius: 10,
+              padding: "10px 12px",
+              background: "rgba(0,0,0,.25)",
+              color: "inherit",
+              border: "1px solid rgba(246,240,229,.2)",
+              fontSize: 14,
+            }}
+          >
+            <option value="">Réservation prise par…</option>
+            {drivers.map((d) => (
+              <option key={d.slug} value={d.slug}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+          {/* Boutons en dernier, dans le formulaire (ordre fixe : Annuler puis Créer). */}
+          <div style={{ display: "flex", flexDirection: "row", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
+            <Button variant="outline" onClick={onClose}>
+              Annuler
+            </Button>
+            <Button disabled={!canSubmit || create.isPending} onClick={() => create.mutate()}>
+              {create.isPending ? "Création…" : "Créer la réservation"}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Discussion interne entre les chauffeurs (remplace la radio de la maquette). */
+function TeamChat({ token, names, me }: { token: string; names: Record<string, string>; me: string }) {
+  const qc = useQueryClient();
+  const [text, setText] = useState("");
+  const chat = useQuery({
+    queryKey: ["driver-team-chat", token],
+    queryFn: () => driverTeamChat({ data: { as: getProfile(), token } }),
+    refetchInterval: 15_000,
+  });
+  // Chat interne en direct entre chauffeurs.
+  useReservationsRealtime({
+    queryKeys: [["driver-team-chat", token]],
+    tables: ["driver_chat"],
+    channel: "driver-team-chat",
+  });
+  const send = useMutation({
+    mutationFn: (content: string) => driverTeamChatSend({ data: { as: getProfile(), token, content } }),
+    onSuccess: () => {
+      setText("");
+      qc.invalidateQueries({ queryKey: ["driver-team-chat", token] });
+    },
+    onError: () => toast.error("Message non envoyé"),
+  });
+
+  const rows = chat.data ?? [];
+
+  // Défile vers le dernier message à l'ouverture et à chaque nouveau message.
+  const listRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [rows.length, rows[rows.length - 1]?.id]);
+
+  return (
+    <div className="drv-dash-map" style={{ padding: 12 }}>
+      <div
+        ref={listRef}
+        style={{ display: "grid", gap: 8, maxHeight: "calc(100dvh - 220px)", minHeight: 160, overflowY: "auto" }}
+      >
+        {rows.length === 0 ? (
+          <p style={{ fontSize: 13, opacity: 0.7, margin: 0 }}>Aucun message pour le moment.</p>
+        ) : (
+          rows.map((m) => (
+            <div
+              key={m.id}
+              style={{
+                justifySelf: m.sender_slug === me ? "end" : "start",
+                maxWidth: "85%",
+                background: m.sender_slug === me ? "#e0b866" : "#3f3f46",
+                color: m.sender_slug === me ? "#1c1917" : "#f6f0e5",
+                borderRadius: 12,
+                padding: "8px 10px",
+                fontSize: 13,
+              }}
+            >
+              <strong style={{ display: "block", fontSize: 11, opacity: 0.8 }}>
+                {names[m.sender_slug] ?? m.sender_slug} ·{" "}
+                {new Date(m.created_at).toLocaleTimeString("fr-FR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </strong>
+              {m.content}
+            </div>
+          ))
+        )}
+      </div>
+      <form
+        style={{ display: "flex", gap: 8, marginTop: 10 }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const v = text.trim();
+          if (v) send.mutate(v);
+        }}
+      >
+        <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Votre message…" maxLength={1000} />
+        <Button type="submit" disabled={send.isPending || text.trim().length === 0}>
+          {send.isPending ? "…" : "Envoyer"}
+        </Button>
+      </form>
     </div>
   );
 }
