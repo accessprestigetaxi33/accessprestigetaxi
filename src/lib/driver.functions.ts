@@ -209,9 +209,16 @@ export const driverAutoEnter = createServerFn({ method: "POST" }).handler(
       throw new Error("lookup_failed");
     }
     if (!existing) {
+      // La colonne `token` (jeton permanent du compte) est obligatoire en base :
+      // on en génère un aléatoire, jamais utilisé pour l'accès (sessions uniquement).
+      const bytes = new Uint8Array(32);
+      crypto.getRandomValues(bytes);
+      const accountToken = Array.from(bytes)
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
       const { error } = await db
         .from("driver_accounts")
-        .insert({ slug: SHARED_SLUG, name: SHARED_NAME, active: true } as never);
+        .insert({ slug: SHARED_SLUG, name: SHARED_NAME, active: true, token: accountToken } as never);
       if (error) {
         console.error("[driver] shared account create failed", error);
         throw new Error("lookup_failed");

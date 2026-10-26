@@ -670,6 +670,7 @@ function DriverApp() {
   const search = useSearch({ from: "/driver" });
   const [token, setToken] = useState<string | null>(null);
   const [entering, setEntering] = useState(false);
+  const [enterError, setEnterError] = useState(false);
   const [tab, setTab] = useState<Tab>("dashboard");
   const qc = useQueryClient();
   // Horloge de l'en-tête : mise à jour automatique (toutes les 30 s).
