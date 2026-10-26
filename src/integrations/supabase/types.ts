@@ -1413,7 +1413,103 @@ export type Database = {
         }
         Relationships: []
       }
+          driver_accounts: {
+                  Row: {
+                    "active": boolean,"created_at": string,"email": string | null,"id": string,"last_seen_at": string | null,"name": string,"password_hash": string | null,"phone": string | null,"slug": string,"token": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"created_at"?: string,"email"?: string | null,"id"?: string,"last_seen_at"?: string | null,"name": string,"password_hash"?: string | null,"phone"?: string | null,"slug": string,"token": string
+                  }
+                  Update: {
+                    "active"?: boolean,"created_at"?: string,"email"?: string | null,"id"?: string,"last_seen_at"?: string | null,"name"?: string,"password_hash"?: string | null,"phone"?: string | null,"slug"?: string,"token"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+      driver_sessions: {
+                  Row: {
+                    "created_at": string,"expires_at": string,"id": string,"last_used_at": string,"slug": string,"token_hash": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"expires_at"?: string,"id"?: string,"last_used_at"?: string,"slug": string,"token_hash": string
+                  }
+                  Update: {
+                    "created_at"?: string,"expires_at"?: string,"id"?: string,"last_used_at"?: string,"slug"?: string,"token_hash"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "driver_sessions_slug_fkey"
+      columns: ["slug"]
+isOneToOne: false
+      referencedRelation: "driver_accounts"
+      referencedColumns: ["slug"]
     }
+                  ]
+                }
+      driver_expenses: {
+                  Row: {
+                    "amount": number,"category": string,"created_at": string,"distance_km": number | null,"driver_slug": string,"expense_date": string,"id": string,"label": string,"liters": number | null,"odometer_km": number | null,"receipt_path": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount"?: number,"category"?: string,"created_at"?: string,"distance_km"?: number | null,"driver_slug": string,"expense_date"?: string,"id"?: string,"label": string,"liters"?: number | null,"odometer_km"?: number | null,"receipt_path"?: string | null
+                  }
+                  Update: {
+                    "amount"?: number,"category"?: string,"created_at"?: string,"distance_km"?: number | null,"driver_slug"?: string,"expense_date"?: string,"id"?: string,"label"?: string,"liters"?: number | null,"odometer_km"?: number | null,"receipt_path"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+      accounting_settings: {
+                  Row: {
+                    "driver_share_rate": number,"id": number,"updated_at": string,"urssaf_rate": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "driver_share_rate"?: number,"id"?: number,"updated_at"?: string,"urssaf_rate"?: number
+                  }
+                  Update: {
+                    "driver_share_rate"?: number,"id"?: number,"updated_at"?: string,"urssaf_rate"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+      driver_chat: {
+                  Row: {
+                    "content": string,"created_at": string,"id": string,"sender_slug": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "content": string,"created_at"?: string,"id"?: string,"sender_slug": string
+                  }
+                  Update: {
+                    "content"?: string,"created_at"?: string,"id"?: string,"sender_slug"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+      driver_unavailability: {
+                  Row: {
+                    "created_at": string,"driver_slug": string,"ends_at": string,"id": string,"reason": string | null,"starts_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"driver_slug": string,"ends_at": string,"id"?: string,"reason"?: string | null,"starts_at": string
+                  }
+                  Update: {
+                    "created_at"?: string,"driver_slug"?: string,"ends_at"?: string,"id"?: string,"reason"?: string | null,"starts_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+}
     Views: {
       [_ in never]: never
     }
