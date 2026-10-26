@@ -6,7 +6,7 @@
 // SECURITY : ce module est server-only (suffixe .server.ts). Ne jamais l'importer
 // depuis un composant ; dans un *.functions.ts, l'importer DANS le handler.
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database } from "@/integrations/supabase/types-external";
 
 function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith("sb_publishable_") || value.startsWith("sb_secret_");

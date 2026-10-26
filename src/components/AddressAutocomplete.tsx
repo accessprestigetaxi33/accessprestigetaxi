@@ -43,6 +43,19 @@ const CANONICAL: GeocodeSuggestion[] = [
 const fold = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+/**
+ * Numéro de rue tapé mais absent de la suggestion (OSM ne connaît pas tous
+ * les numéros, surtout en zone rurale) : on conserve le texte tapé pour ne
+ * pas perdre le numéro dans la réservation. Les coordonnées de la suggestion
+ * restent utilisées pour l'itinéraire.
+ */
+function keepHouseNumber(typed: string, label: string): string {
+  const t = typed.trim();
+  const num = t.match(/^\d{1,4}(?:\s?(?:bis|ter|quater))?/i)?.[0];
+  if (num && !fold(label).includes(fold(num.trim()))) return t;
+  return label;
+}
+
 export function AddressAutocomplete({
   value,
   onChange,
@@ -112,21 +125,25 @@ export function AddressAutocomplete({
       setOpen(false);
       inputRef.current?.blur();
       if (typeof item.lat === "number" && typeof item.lng === "number") {
-        onChange(item.label, { label: item.label, lat: item.lat, lng: item.lng });
+        const label = keepHouseNumber(value, item.label);
+        onChange(label, { label, lat: item.lat, lng: item.lng });
         return;
       }
       // Coordonnées résolues à la sélection (place_id → détails).
-      onChange(item.label);
+      onChange(keepHouseNumber(value, item.label));
       if (!item.placeId) return;
       setLoading(true);
       try {
         const d = await placeDetails(item.placeId, lang);
-        if (d) onChange(d.label || item.label, { label: d.label || item.label, lat: d.lat, lng: d.lng });
+        if (d) {
+          const label = keepHouseNumber(value, d.label || item.label);
+          onChange(label, { label, lat: d.lat, lng: d.lng });
+        }
       } finally {
         setLoading(false);
       }
     },
-    [onChange, lang],
+    [onChange, lang, value],
   );
 
 
