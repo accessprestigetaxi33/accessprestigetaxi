@@ -6,5 +6,5 @@
 - [x] Porter les modules serveur Nova (driver.functions, driver-ops, driver-extra, driver-accounting, ops.server, driver-session) en pointant sur le backend externe (@/lib/nova-supabase.server)
 - [x] Porter les composants (driver/tabs, ClientCardsPage, OpsPages, SoundDebugPage, TeamMap) + hooks (useLiveGps, useAutoStatus, useReservationsRealtime) + lib leaflet/osrm/places/quote.functions/driverProfile/driver-shell-css
 - [x] Remplacer src/routes/driver.tsx par la version Nova adaptée (logo Access Taxi PBR, tarifs du projet, noms)
-- [ ] NE PAS toucher : config notifications push (usePushNotifications, push.functions, firebase)
-- [ ] Vérifier le build + test navigateur de /driver (connexion Alain)
+- [x] NE PAS toucher : config notifications push (usePushNotifications, push.functions, firebase)
+- [x] Vérifier le build + test navigateur de /driver (connexion Alain)
