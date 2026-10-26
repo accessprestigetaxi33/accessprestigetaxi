@@ -331,7 +331,7 @@ export function MessagesTab({ token }: { token: string }) {
             }}
           >
             <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Votre message…" />
-            <Button type="submit" variant="gold" disabled={send.isPending}>
+            <Button type="submit" variant="default" disabled={send.isPending}>
               Envoyer
             </Button>
           </form>
@@ -491,7 +491,7 @@ export function AvisTab({ token }: { token: string }) {
             </div>
             {a.commentaire ? <p className="mt-1 opacity-80">{a.commentaire}</p> : null}
             <div className="mt-2 flex flex-wrap gap-2">
-              <Button size="sm" variant="gold" onClick={() => setStatus.mutate({ id: a.id, status: "approved" })}>
+              <Button size="sm" variant="default" onClick={() => setStatus.mutate({ id: a.id, status: "approved" })}>
                 Publier
               </Button>
               <Button size="sm" variant="outline" onClick={() => setStatus.mutate({ id: a.id, status: "rejected" })}>
@@ -618,7 +618,7 @@ export function SimulatorTab() {
         <Input value={depart} onChange={(e) => setDepart(e.target.value)} placeholder="Départ" />
         <Input value={arrivee} onChange={(e) => setArrivee(e.target.value)} placeholder="Destination" />
         <Input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} />
-        <Button type="submit" variant="gold" disabled={quote.isPending}>
+        <Button type="submit" variant="default" disabled={quote.isPending}>
           {quote.isPending ? "Calcul…" : "Calculer"}
         </Button>
       </form>
@@ -685,7 +685,7 @@ export function GpsTab({ token }: { token: string }) {
   return (
     <Card title="Position GPS">
       <div className="flex flex-wrap gap-2">
-        <Button variant="gold" onClick={() => setSharing(true)} disabled={sharing}>
+        <Button variant="default" onClick={() => setSharing(true)} disabled={sharing}>
           Partager ma position
         </Button>
         <Button
@@ -766,7 +766,7 @@ export function DevicesTab({ token }: { token: string }) {
   return (
     <div className="grid gap-4">
       <Card title={`Appareils recevant les notifications (${devices.length})`}>
-        <Button variant="gold" onClick={() => test.mutate(undefined)} disabled={test.isPending}>
+        <Button variant="default" onClick={() => test.mutate(undefined)} disabled={test.isPending}>
           Envoyer une notification de test à tous
         </Button>
         <ul className="mt-4 grid gap-2 text-sm">
