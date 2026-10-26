@@ -697,7 +697,7 @@ function DriverApp() {
       return;
     }
     setEntering(true);
-    driverAutoEnter({ data: {} })
+    driverAutoEnter({ data: undefined })
       .then((res) => {
         localStorage.setItem(STORAGE_KEY, res.token);
         setToken(res.token);
