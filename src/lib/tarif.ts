@@ -185,6 +185,9 @@ export type DetailPrix = {
   kmNuit: number;
   prixJour: number;
   prixNuit: number;
+  /** Part en % du kilométrage facturé au tarif jour / nuit. */
+  pctJour: number;
+  pctNuit: number;
   total: number;
   /** "jour" | "nuit" | "mixte" — régime tarifaire dominant sur la course. */
   regime: "jour" | "nuit" | "mixte";
@@ -231,6 +234,7 @@ export function detaillerPrix(distanceKm: number, pickupIso: string, dureeMinOve
 
   const prixJour = kmJour * TARIF_JOUR;
   const prixNuit = kmNuit * TARIF_NUIT;
+  const pctJour = dist > 0 ? Math.round((kmJour / dist) * 100) : departJour ? 100 : 0;
   const regime: DetailPrix["regime"] = kmJour > 0.01 && kmNuit > 0.01 ? "mixte" : kmNuit > 0.01 ? "nuit" : "jour";
 
   return {
@@ -243,6 +247,8 @@ export function detaillerPrix(distanceKm: number, pickupIso: string, dureeMinOve
     kmNuit: arrondir(kmNuit),
     prixJour: arrondir(prixJour),
     prixNuit: arrondir(prixNuit),
+    pctJour,
+    pctNuit: 100 - pctJour,
     total: arrondir(PRISE_EN_CHARGE + prixJour + prixNuit),
     regime,
     departJour,

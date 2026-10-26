@@ -276,3 +276,145 @@ export function setupForegroundNotifications(): () => void {
     });
   });
 }
+
+/** Vrai si la configuration Firebase Web minimale est présente. */
+export function isFirebaseConfigured(): boolean {
+  return Boolean(
+    firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId && FCM_VAPID_KEY,
+  );
+}
+
+type WebkitAudioWindow = Window &
+  typeof globalThis & {
+    webkitAudioContext?: typeof AudioContext;
+  };
+
+let notificationAudioContext: AudioContext | null = null;
+let notificationAudioEl: HTMLAudioElement | null = null;
+let audioElPrimed = false;
+
+// Son d'alerte généré en WAV (2 séries de 3 bips). Un vrai fichier audio joué
+// par un élément <audio> est plus fiable sur iPhone que l'audio "synthétisé" :
+// une fois débloqué par un toucher, il peut être rejoué sans nouveau geste.
+function buildAlertWavUrl(): string {
+  const rate = 22_050;
+  const notes = [880, 1_100, 1_320, 0, 880, 1_100, 1_320];
+  const noteLen = Math.floor(rate * 0.18);
+  const samples = new Int16Array(noteLen * notes.length);
+  notes.forEach((freq, n) => {
+    for (let i = 0; i < noteLen; i++) {
+      const env = Math.min(1, i / 200, (noteLen - i) / 400);
+      const v = freq ? Math.sign(Math.sin((2 * Math.PI * freq * i) / rate)) * 0.45 * Math.max(0, env) : 0;
+      samples[n * noteLen + i] = Math.round(v * 32_767);
+    }
+  });
+  const buf = new ArrayBuffer(44 + samples.length * 2);
+  const dv = new DataView(buf);
+  const w = (o: number, s: string) => [...s].forEach((c, i) => dv.setUint8(o + i, c.charCodeAt(0)));
+  w(0, "RIFF");
+  dv.setUint32(4, 36 + samples.length * 2, true);
+  w(8, "WAVEfmt ");
+  dv.setUint32(16, 16, true);
+  dv.setUint16(20, 1, true);
+  dv.setUint16(22, 1, true);
+  dv.setUint32(24, rate, true);
+  dv.setUint32(28, rate * 2, true);
+  dv.setUint16(32, 2, true);
+  dv.setUint16(34, 16, true);
+  w(36, "data");
+  dv.setUint32(40, samples.length * 2, true);
+  new Int16Array(buf, 44).set(samples);
+  return URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
+}
+
+function getNotificationAudioEl(): HTMLAudioElement | null {
+  if (typeof window === "undefined" || typeof Audio === "undefined") return null;
+  if (!notificationAudioEl) {
+    notificationAudioEl = new Audio(buildAlertWavUrl());
+    notificationAudioEl.preload = "auto";
+    notificationAudioEl.setAttribute("playsinline", "");
+  }
+  return notificationAudioEl;
+}
+
+/** À appeler sur un geste utilisateur : débloque le son pour la suite. */
+export function primeNotificationAudio(): void {
+  try {
+    // iOS 17+ : lire comme un média => le son passe même en mode silencieux.
+    const nav = navigator as Navigator & { audioSession?: { type: string } };
+    if (nav.audioSession) nav.audioSession.type = "playback";
+  } catch {
+    /* ignore */
+  }
+  const el = getNotificationAudioEl();
+  if (el && !audioElPrimed) {
+    el.muted = true;
+    void el
+      .play()
+      .then(() => {
+        el.pause();
+        el.currentTime = 0;
+        el.muted = false;
+        audioElPrimed = true;
+      })
+      .catch(() => {
+        el.muted = false;
+      });
+  }
+  const context = getNotificationAudioContext();
+  if (context && context.state !== "running") void context.resume().catch(() => {});
+}
+
+function getNotificationAudioContext(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  const AudioContextConstructor = window.AudioContext ?? (window as WebkitAudioWindow).webkitAudioContext;
+  if (!AudioContextConstructor) return null;
+  notificationAudioContext ??= new AudioContextConstructor();
+  return notificationAudioContext;
+}
+
+async function playSynthBeeps(): Promise<void> {
+  const context = getNotificationAudioContext();
+  if (!context) return;
+  // iOS met le contexte en "interrupted" après un passage en arrière-plan.
+  if (context.state !== "running") await context.resume();
+
+  const t0 = context.currentTime + 0.02;
+  const notes = [880, 1_100, 1_320, 880, 1_100, 1_320];
+  notes.forEach((freq, i) => {
+    const start = t0 + i * 0.18 + (i >= 3 ? 0.35 : 0);
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(freq, start);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.5, start + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(start);
+    oscillator.stop(start + 0.17);
+  });
+}
+
+export async function playForegroundNotificationSound(): Promise<void> {
+  // Vibration aussi quand l'app est ouverte (Android ; ignoré sur iOS).
+  try {
+    navigator.vibrate?.([300, 150, 300, 150, 300]);
+  } catch {
+    /* ignore */
+  }
+  const el = getNotificationAudioEl();
+  if (el) {
+    try {
+      el.currentTime = 0;
+      el.muted = false;
+      el.volume = 1;
+      await el.play();
+      return;
+    } catch {
+      /* repli sur les bips synthétisés */
+    }
+  }
+  await playSynthBeeps();
+}

@@ -575,6 +575,183 @@ export type Database = {
           },
         ]
       }
+      accounting_settings: {
+        Row: {
+          driver_share_rate: number
+          id: number
+          updated_at: string
+          urssaf_rate: number
+        }
+        Insert: {
+          driver_share_rate?: number
+          id?: number
+          updated_at?: string
+          urssaf_rate?: number
+        }
+        Update: {
+          driver_share_rate?: number
+          id?: number
+          updated_at?: string
+          urssaf_rate?: number
+        }
+        Relationships: []
+      }
+      driver_accounts: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string | null
+          id: string
+          last_seen_at: string | null
+          name: string
+          password_hash: string | null
+          phone: string | null
+          slug: string
+          token: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_seen_at?: string | null
+          name: string
+          password_hash?: string | null
+          phone?: string | null
+          slug: string
+          token: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_seen_at?: string | null
+          name?: string
+          password_hash?: string | null
+          phone?: string | null
+          slug?: string
+          token?: string
+        }
+        Relationships: []
+      }
+      driver_chat: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          sender_slug: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          sender_slug: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          sender_slug?: string
+        }
+        Relationships: []
+      }
+      driver_expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          distance_km: number | null
+          driver_slug: string
+          expense_date: string
+          id: string
+          label: string
+          liters: number | null
+          odometer_km: number | null
+          receipt_path: string | null
+        }
+        Insert: {
+          amount?: number
+          category?: string
+          created_at?: string
+          distance_km?: number | null
+          driver_slug: string
+          expense_date?: string
+          id?: string
+          label: string
+          liters?: number | null
+          odometer_km?: number | null
+          receipt_path?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          distance_km?: number | null
+          driver_slug?: string
+          expense_date?: string
+          id?: string
+          label?: string
+          liters?: number | null
+          odometer_km?: number | null
+          receipt_path?: string | null
+        }
+        Relationships: []
+      }
+      driver_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          last_used_at: string
+          slug: string
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_used_at?: string
+          slug: string
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          last_used_at?: string
+          slug?: string
+          token_hash?: string
+        }
+        Relationships: []
+      }
+      driver_unavailability: {
+        Row: {
+          created_at: string
+          driver_slug: string
+          ends_at: string
+          id: string
+          reason: string | null
+          starts_at: string
+        }
+        Insert: {
+          created_at?: string
+          driver_slug: string
+          ends_at: string
+          id?: string
+          reason?: string | null
+          starts_at: string
+        }
+        Update: {
+          created_at?: string
+          driver_slug?: string
+          ends_at?: string
+          id?: string
+          reason?: string | null
+          starts_at?: string
+        }
+        Relationships: []
+      }
       driver_gps: {
         Row: {
           accuracy: number | null
@@ -1144,6 +1321,18 @@ export type Database = {
           client_phone: string | null
           client_request_id: string | null
           created_at: string
+          client_lat: number | null
+          client_lng: number | null
+          client_pos_at: string | null
+          completed_at: string | null
+          distance_reelle_km: number | null
+          driver_slug: string | null
+          duree_reelle_s: number | null
+          overflow_at: string | null
+          overflow_from_slug: string | null
+          overflow_taken_at: string | null
+          prix_final: number | null
+          started_at: string | null
           date_course: string | null
           date_heure: string | null
           depart: string
@@ -1189,6 +1378,18 @@ export type Database = {
           client_phone?: string | null
           client_request_id?: string | null
           created_at?: string
+          client_lat?: number | null
+          client_lng?: number | null
+          client_pos_at?: string | null
+          completed_at?: string | null
+          distance_reelle_km?: number | null
+          driver_slug?: string | null
+          duree_reelle_s?: number | null
+          overflow_at?: string | null
+          overflow_from_slug?: string | null
+          overflow_taken_at?: string | null
+          prix_final?: number | null
+          started_at?: string | null
           date_course?: string | null
           date_heure?: string | null
           depart: string
@@ -1234,6 +1435,18 @@ export type Database = {
           client_phone?: string | null
           client_request_id?: string | null
           created_at?: string
+          client_lat?: number | null
+          client_lng?: number | null
+          client_pos_at?: string | null
+          completed_at?: string | null
+          distance_reelle_km?: number | null
+          driver_slug?: string | null
+          duree_reelle_s?: number | null
+          overflow_at?: string | null
+          overflow_from_slug?: string | null
+          overflow_taken_at?: string | null
+          prix_final?: number | null
+          started_at?: string | null
           date_course?: string | null
           date_heure?: string | null
           depart?: string
