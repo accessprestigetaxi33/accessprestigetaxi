@@ -247,7 +247,7 @@ export const driverShellCss = `
       padding:0 0 16px;
     }
     .drv-tabs::before {
-      content:'NOVA PRESTIGE RIDE'; display:block; padding:18px 18px 14px;
+      content:'ACCESS TAXI PBR'; display:block; padding:18px 18px 14px;
       font-family:Georgia,serif; font-weight:800; color:#e0b866; font-size:12px;
       letter-spacing:.1em; border-bottom:1px solid rgba(201,155,74,.25); margin-bottom:6px;
     }
