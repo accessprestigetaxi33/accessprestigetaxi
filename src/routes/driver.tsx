@@ -8,8 +8,6 @@ import {
   ArrowLeftRight,
   CalendarClock,
   Contact,
-  Eye,
-  EyeOff,
   MapPin,
   MessageSquarePlus,
   Phone,
@@ -50,8 +48,7 @@ import {
   driverClaimRide,
   driverCreateManualReservation,
   driverLogin,
-  driverLogout,
-  driverPasswordLogin,
+  driverAutoEnter,
   driverRides,
   driverCompletedRides,
   driverDeleteRide,
@@ -68,10 +65,8 @@ import { driverMonthAccounting, driverUpdateAccountingSettings } from "@/lib/dri
 import {
   getProfile,
   setProfile,
-  profileName,
   fetchDriverProfiles,
   cachedDriverProfiles,
-  type DriverProfile,
   type DriverProfileEntry,
 } from "@/lib/driverProfile";
 
@@ -819,12 +814,7 @@ function WhoIsDrivingPrompt({
 function DriverApp() {
   const search = useSearch({ from: "/driver" });
   const [token, setToken] = useState<string | null>(null);
-  // Liste des profils (nombre illimité) : cache local pour un affichage
-  // instantané, mise à jour dès que le serveur répond.
-  const [profiles, setProfiles] = useState<DriverProfileEntry[]>(() => cachedDriverProfiles());
-  const [profile, setProfileState] = useState<DriverProfile | undefined>(
-    () => getProfile() ?? cachedDriverProfiles()[0]?.slug,
-  );
+  const [entering, setEntering] = useState(false);
   const [tab, setTab] = useState<Tab>("dashboard");
   const qc = useQueryClient();
   // Horloge de l'en-tête : mise à jour automatique (toutes les 30 s).
@@ -834,41 +824,36 @@ function DriverApp() {
     return () => window.clearInterval(t);
   }, []);
 
-  // Accès uniquement par jeton de session obtenu après connexion : plus aucun
-  // accès par lien magique (?t=), le paramètre éventuel est ignoré et effacé.
+  // Espace commun sans mot de passe ni choix de prénom : un seul profil
+  // partagé « equipe » pour toute l'équipe, sur tous les appareils.
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-    if (stored) setToken(stored);
-    // Simple par défaut : le premier profil tant que rien n'est enregistré,
-    // pas d'écran de choix imposé — le nom se change directement dans l'en-tête.
-    setProfileState(getProfile() ?? cachedDriverProfiles()[0]?.slug);
+    setProfile("equipe");
     if (search.t) window.history.replaceState(null, "", "/driver");
   }, [search.t]);
+
+  // Ouverture automatique de la session : au premier accès (ou si le jeton
+  // a été perdu ou révoqué), le serveur ouvre une session sur le compte
+  // commun — aucun écran de connexion, aucun choix de prénom.
+  useEffect(() => {
+    if (token || entering) return;
+    const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+    if (stored) {
+      setToken(stored);
+      return;
+    }
+    setEntering(true);
+    driverAutoEnter({ data: {} })
+      .then((res) => {
+        localStorage.setItem(STORAGE_KEY, res.token);
+        setToken(res.token);
+      })
+      .catch(() => setEntering(false));
+  }, [token, entering]);
 
   // Notification de message client : ouvre directement l'onglet Messages.
   useEffect(() => {
     if (search.tab === "messages") setTab("messages");
   }, [search.tab]);
-
-  // Liste des profils toujours à jour : ajouter/retirer un chauffeur en base
-  // se répercute sans changement de code ni redéploiement.
-  useEffect(() => {
-    let cancelled = false;
-    void fetchDriverProfiles().then((list) => {
-      if (cancelled || list.length === 0) return;
-      setProfiles(list);
-      setProfileState((cur) => cur ?? list[0]?.slug);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const chooseProfile = (p: DriverProfile) => {
-    setProfile(p);
-    setProfileState(p);
-    qc.invalidateQueries();
-  };
 
   const session = useQuery({
     queryKey: ["driver-login", token],
@@ -941,24 +926,15 @@ function DriverApp() {
     };
   }, [token, qc]);
 
-  const logout = () => {
-    const current = token;
-    localStorage.removeItem(STORAGE_KEY);
-    setToken(null);
-    qc.clear();
-    // Le jeton est aussi détruit côté serveur : il devient inutilisable.
-    if (current) void driverLogout({ data: { as: getProfile(), token: current } }).catch(() => {});
-  };
-
-  // Jeton invalide ou expiré : l'effet ci-dessus nettoie, on redemande la connexion.
+  // Ouverture de la session en cours (premier accès ou jeton révoqué) :
+  // écran d'attente simple, sans mot de passe.
   if (!token || authFailed) {
     return (
-      <DriverLoginForm
-        onLoggedIn={(t) => {
-          localStorage.setItem(STORAGE_KEY, t);
-          setToken(t);
-        }}
-      />
+      <Section className="max-w-md">
+        <p className="eyebrow">Access Taxi PBR</p>
+        <h1 className="mt-3 text-2xl font-semibold">Espace chauffeur</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Ouverture de l'espace chauffeur…</p>
+      </Section>
     );
   }
 
@@ -966,36 +942,15 @@ function DriverApp() {
     <>
       <style>{driverShellCss}</style>
       <style>{NOVA_SHELL_EXTRA}</style>
-      <WhoIsDrivingPrompt
-        profiles={profiles}
-        current={profile}
-        onChoose={(p) => {
-          if (p !== profile) chooseProfile(p);
-        }}
-      />
       <div className="drv-root">
         <header className="drv-header">
           <div className="drv-brand-mark" aria-label="Access Taxi PBR">
             <img src={NOVA_LOGO} alt="Access Taxi PBR" />
           </div>
           <div className="drv-header-title">
-            <strong>Bonjour {profiles.map((p) => p.name).join(" et ") || "l'équipe"}</strong>
-            <span>Espace chauffeur · {profileName(profile, profiles)}</span>
+            <strong>Espace chauffeur</strong>
+            <span>Access Taxi PBR</span>
           </div>
-          <select
-            className="drv-header-who"
-            aria-label="Changer de chauffeur"
-            value={profile ?? ""}
-            onChange={(e) => chooseProfile(e.target.value)}
-            title="Changer de chauffeur"
-            style={{ cursor: "pointer" }}
-          >
-            {profiles.map((p) => (
-              <option key={p.slug} value={p.slug}>
-                {p.name}
-              </option>
-            ))}
-          </select>
           <span className="drv-header-datetime">
             <strong>
               {now.toLocaleDateString("fr-FR", {
@@ -1011,20 +966,6 @@ function DriverApp() {
             <IconHome />
             <span className="drv-header-back-label">Retour au site</span>
           </Link>
-          <button type="button" className="drv-header-bell" aria-label="Quitter" onClick={logout}>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ width: 16, height: 16 }}
-            >
-              <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-              <line x1="12" y1="2" x2="12" y2="12" />
-            </svg>
-          </button>
         </header>
 
         <div className="drv-main">
@@ -3919,7 +3860,7 @@ function DashboardTab({ token, unread, onGo }: { token: string; unread: number; 
   );
 }
 
-/** Autocomplétion d'adresse (Nominatim/OpenStreetMap), biaisée sur la région bordelaise. */
+/** Autocomplétion d'adresse (Nominatim/OpenStreetMap), biaisée sur la Charente-Maritime. */
 type AddrSuggestion = { label: string; lat: number; lon: number };
 
 function AddressAutocomplete({
@@ -3980,7 +3921,7 @@ function AddressAutocomplete({
           limit: "6",
           countrycodes: "fr",
           "accept-language": "fr",
-          viewbox: "-1.2,45.3,0.3,44.2", // biais large région bordelaise
+          viewbox: "-1.6,46.4,0.4,45.0", // biais large Charente-Maritime (Marennes, Oléron, La Rochelle, Royan)
           bounded: "0",
         });
         const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
@@ -4037,8 +3978,14 @@ function AddressAutocomplete({
                 className="drv-addr-item"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
-                  pickedRef.current = s.label;
-                  onChange(s.label);
+                  // Numéro de rue tapé mais absent de la suggestion (Nominatim
+                  // renvoie souvent la rue sans le numéro) : on conserve le
+                  // texte tapé pour ne pas perdre le numéro dans la résa.
+                  const typed = value.trim();
+                  const num = typed.match(/^\d{1,4}(?:\s?(?:bis|ter|quater))?/i)?.[0];
+                  const label = num && !s.label.toLowerCase().includes(num.trim().toLowerCase()) ? typed : s.label;
+                  pickedRef.current = label;
+                  onChange(label);
                   setSuggestions([]);
                   setOpen(false);
                 }}
