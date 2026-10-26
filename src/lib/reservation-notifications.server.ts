@@ -333,3 +333,69 @@ export async function logReservationEvent(
     destination: destination ?? undefined,
   });
 }
+
+/**
+ * Notifie le client quand un chauffeur accepte sa course (push + e-mail de
+ * suivi). Utilisé par l'espace chauffeur (driver.functions.ts).
+ */
+export async function notifyRideConfirmed(reservationId: string): Promise<void> {
+  try {
+    const { supabaseAdmin } = await import("@/lib/nova-supabase.server");
+    const { data: r } = await supabaseAdmin
+      .from("reservations")
+      .select(
+        "id, nom, client_name, email, client_email, pickup_datetime, depart, arrivee, destination, suivi_id, tracking_id, client_account_id, lang",
+      )
+      .eq("id", reservationId)
+      .maybeSingle();
+    if (!r) return;
+
+    const ref = r.suivi_id ?? r.tracking_id ?? r.id;
+    const suiviPath = `/suivi/${ref}`;
+    const clientName = r.client_name || r.nom || "";
+
+    try {
+      const { sendPushToAudience } = await import("@/lib/push.server");
+      await sendPushToAudience(
+        "client",
+        {
+          title: "Course confirmée",
+          body: "Votre chauffeur Access Taxi PBR arrive. Suivez-le en direct.",
+          url: `${SITE_URL}${suiviPath}`,
+          icon: "/favicon.png",
+          tag: `reservation-${ref}`,
+          data: {
+            url: suiviPath,
+            reservation_id: r.id,
+            audience: "client",
+            status: "confirmed",
+          },
+        },
+        {
+          reservationId: r.id,
+          ...(r.client_account_id ? { accountId: r.client_account_id } : {}),
+          dedupTtlMinutes: 24 * 60,
+        },
+      );
+    } catch (e) {
+      console.warn("[push] notifyRideConfirmed push failed", e);
+    }
+
+    const email = r.email || r.client_email;
+    if (email) {
+      await sendClientTrackingEmail({
+        reservationId: r.id,
+        email,
+        stage: "accepted",
+        lang: r.lang,
+        clientName,
+        depart: r.depart,
+        arrivee: r.arrivee ?? r.destination,
+        pickupDatetime: r.pickup_datetime,
+        trackingId: ref,
+      });
+    }
+  } catch (e) {
+    console.error("[notify] notifyRideConfirmed failed", e);
+  }
+}
