@@ -38,7 +38,7 @@ export type QuoteResult =
 
 const MINIMUM = 12;
 
-const UA = "nova-taxi-bordeaux/1.0 (https://novataxi.fr)";
+const UA = "access-taxi-pbr/1.0 (https://www.accessprestigetaxi.fr)";
 
 /** Géocodage OSM : Photon (précis sur les POI) avec repli Nominatim. */
 async function geocode(q: string): Promise<[number, number] | null> {
