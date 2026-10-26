@@ -6,7 +6,7 @@
 // La sécurité repose sur les policies RLS de la base, jamais sur le secret de
 // cette clé. La clé de service (secrète) n'apparaît QUE côté serveur.
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database } from "@/integrations/supabase/types-external";
 import { brokeredPreviewStorage } from "@/integrations/supabase/previewAuthStorage";
 
 export const NOVA_SUPABASE_URL =
