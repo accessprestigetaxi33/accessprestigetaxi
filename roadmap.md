@@ -1,10 +1,13 @@
-# Feuille de route — Espace chauffeur identique à Nova Taxi Prestige
+# Feuille de route — Espace chauffeur
 
-- [x] Inventaire des dépendances de la page chauffeur Nova Taxi
-- [x] Base externe : créer les tables manquantes (driver_accounts, driver_sessions, driver_expenses, accounting_settings, driver_chat, driver_unavailability) + colonnes reservations (driver_slug, overflow_*, started_at, completed_at, distance_reelle_km, duree_reelle_s, prix_final) + fonction verify_driver_password + buckets storage receipts/backups
-- [x] Base externe : créer les comptes Alain et Patricia (jetons = codes existants)
-- [x] Porter les modules serveur Nova (driver.functions, driver-ops, driver-extra, driver-accounting, ops.server, driver-session) en pointant sur le backend externe (@/lib/nova-supabase.server)
-- [x] Porter les composants (driver/tabs, ClientCardsPage, OpsPages, SoundDebugPage, TeamMap) + hooks (useLiveGps, useAutoStatus, useReservationsRealtime) + lib leaflet/osrm/places/quote.functions/driverProfile/driver-shell-css
-- [x] Remplacer src/routes/driver.tsx par la version Nova adaptée (logo Access Taxi PBR, tarifs du projet, noms)
-- [x] NE PAS toucher : config notifications push (usePushNotifications, push.functions, firebase)
-- [x] Vérifier le build + test navigateur de /driver (connexion Alain)
+## Terminé
+- [x] Port complet de l'espace chauffeur Nova Taxi Prestige (7 onglets, même ordre) sur la base externe
+- [x] Base externe : tables chauffeur + colonnes reservations + verify_driver_password + buckets receipts/backups
+- [x] Comptes Alain / Patricia / admin créés (codes existants comme mots de passe initiaux)
+- [x] Build OK + test navigateur /driver
+
+## En cours (demande du 26/10)
+- [ ] Espace chauffeur unique sans mot de passe ni choix de prénom : ouverture automatique sur le compte partagé « equipe » (driverAutoEnter), suppression de l'écran de connexion, du dialogue « Bonjour Alain ? » et du sélecteur de prénom
+- [ ] Texte plus gros sur mobile dans tout l'espace chauffeur (bloc CSS final dans driver-shell-css.ts)
+- [ ] Formulaire de résa : corriger la perte des numéros de rue (viewbox Nominatim biaisée Bordeaux → Charente-Maritime + conserver le numéro tapé si la suggestion ne le contient pas)
+- [ ] Vérifier build + test navigateur (ouverture directe /driver sur mobile, création résa avec numéro de rue)
