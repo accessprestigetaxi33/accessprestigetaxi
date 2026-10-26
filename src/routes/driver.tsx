@@ -691,7 +691,11 @@ function DriverLoginForm({ onLoggedIn }: { onLoggedIn: (token: string) => void }
       return code !== "invalid_credentials" && failureCount < 2;
     },
     retryDelay: 800,
-    onSuccess: (res) => onLoggedIn(res.token),
+    onSuccess: (res) => {
+      // Le profil actif suit le compte connecté (Alain reste Alain, etc.).
+      if (res.slug && res.slug !== "admin") setProfile(res.slug as DriverProfile);
+      onLoggedIn(res.token);
+    },
     onError: (error) => {
       const code = error instanceof Error ? error.message : "";
       setError(

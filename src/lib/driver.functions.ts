@@ -162,7 +162,7 @@ export const driverLogin = createServerFn({ method: "POST" })
  */
 export const driverPasswordLogin = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => EmailPasswordSchema.parse(input))
-  .handler(async ({ data }): Promise<{ token: string; name: string }> => {
+  .handler(async ({ data }): Promise<{ token: string; name: string; slug: string }> => {
     const db = await admin();
     const { data: rows, error } = await (
       db.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>
@@ -179,12 +179,12 @@ export const driverPasswordLogin = createServerFn({ method: "POST" })
     await db.from("driver_accounts").update({ last_seen_at: new Date().toISOString() }).eq("slug", row.slug);
     // Jeton de session (sans expiration, valable jusqu'à déconnexion), distinct du jeton permanent du compte.
     const token = await createSession(row.slug);
-    return { token, name: row.name };
+    return { token, name: row.name, slug: row.slug };
   });
 
 /**
  * Liste des profils chauffeur actifs (noms uniquement, aucun jeton exposé).
- * Exclut le compte de connexion partagé "equipe" : seuls les profils
+ * Exclut le compte de secours "admin" : seuls les profils
  * attribuables à une vraie personne apparaissent, en nombre illimité —
  * ajouter un profil ne demande qu'une ligne dans driver_accounts.
  */
@@ -195,7 +195,7 @@ export const driverAccounts = createServerFn({ method: "GET" }).handler(
       .from("driver_accounts")
       .select("slug, name, active")
       .eq("active", true)
-      .neq("slug", "equipe")
+      .neq("slug", "admin")
       .order("slug");
     if (error) {
       console.error("[driver] accounts failed", error);
@@ -222,7 +222,7 @@ export const driverRides = createServerFn({ method: "POST" })
         .gte("pickup_datetime", since)
         .order("pickup_datetime", { ascending: true })
         .limit(100),
-      db.from("driver_accounts").select("slug, name").eq("active", true).neq("slug", "equipe").order("slug"),
+      db.from("driver_accounts").select("slug, name").eq("active", true).neq("slug", "admin").order("slug"),
     ]);
     if (error) throw new Error("list_failed");
     return {
