@@ -1179,60 +1179,18 @@ export type Database = {
           tracking_id: string | null
           updated_at: string | null
         
-          assigned_driver: string | null
-          bagages: number
-          client_account_id: string | null
-          client_email: string | null
           client_lat: number | null
           client_lng: number | null
-          client_name: string | null
-          client_phone: string | null
           client_pos_at: string | null
-          client_request_id: string | null
           completed_at: string | null
-          created_at: string
-          date_course: string | null
-          date_heure: string | null
-          depart: string
-          destination: string | null
-          distance_km: number | null
           distance_reelle_km: number | null
           driver_slug: string | null
-          duree_recomputed_at: string | null
           duree_reelle_s: number | null
-          duree_s: number | null
-          email: string | null
-          final_price: number | null
-          gps_validated_at: string | null
-          heure_course: string | null
-          id: string
-          invoice_sent_at: string | null
-          lang: string | null
-          message: string | null
-          nb_passagers: number | null
-          nom: string
           overflow_at: string | null
           overflow_from_slug: string | null
           overflow_taken_at: string | null
-          paiement: string | null
-          passagers: number
-          phone_cancel_requested_at: string | null
-          pickup_datetime: string
-          prix_estime: number | null
           prix_final: number | null
-          refus_motif: string | null
-          reminder_j1_sent_at: string | null
-          route_coords: Json | null
-          route_label: string | null
-          service_type: string
-          source: string | null
           started_at: string | null
-          status: string
-          suivi_id: string | null
-          tarif_jour: boolean | null
-          telephone: string
-          tracking_id: string | null
-          updated_at: string | null
 }
         Insert: {
           arrivee: string
@@ -1279,60 +1237,18 @@ export type Database = {
           tracking_id?: string | null
           updated_at?: string | null
         
-          assigned_driver?: string | null
-          bagages?: number
-          client_account_id?: string | null
-          client_email?: string | null
           client_lat?: number | null
           client_lng?: number | null
-          client_name?: string | null
-          client_phone?: string | null
           client_pos_at?: string | null
-          client_request_id?: string | null
           completed_at?: string | null
-          created_at?: string
-          date_course?: string | null
-          date_heure?: string | null
-          depart: string
-          destination?: string | null
-          distance_km?: number | null
           distance_reelle_km?: number | null
           driver_slug?: string | null
-          duree_recomputed_at?: string | null
           duree_reelle_s?: number | null
-          duree_s?: number | null
-          email?: string | null
-          final_price?: number | null
-          gps_validated_at?: string | null
-          heure_course?: string | null
-          id?: string
-          invoice_sent_at?: string | null
-          lang?: string | null
-          message?: string | null
-          nb_passagers?: number | null
-          nom: string
           overflow_at?: string | null
           overflow_from_slug?: string | null
           overflow_taken_at?: string | null
-          paiement?: string | null
-          passagers?: number
-          phone_cancel_requested_at?: string | null
-          pickup_datetime: string
-          prix_estime?: number | null
           prix_final?: number | null
-          refus_motif?: string | null
-          reminder_j1_sent_at?: string | null
-          route_coords?: Json | null
-          route_label?: string | null
-          service_type?: string
-          source?: string | null
           started_at?: string | null
-          status?: string
-          suivi_id?: string | null
-          tarif_jour?: boolean | null
-          telephone: string
-          tracking_id?: string | null
-          updated_at?: string | null
 }
         Update: {
           arrivee?: string
@@ -1379,60 +1295,18 @@ export type Database = {
           tracking_id?: string | null
           updated_at?: string | null
         
-          assigned_driver?: string | null
-          bagages?: number
-          client_account_id?: string | null
-          client_email?: string | null
           client_lat?: number | null
           client_lng?: number | null
-          client_name?: string | null
-          client_phone?: string | null
           client_pos_at?: string | null
-          client_request_id?: string | null
           completed_at?: string | null
-          created_at?: string
-          date_course?: string | null
-          date_heure?: string | null
-          depart?: string
-          destination?: string | null
-          distance_km?: number | null
           distance_reelle_km?: number | null
           driver_slug?: string | null
-          duree_recomputed_at?: string | null
           duree_reelle_s?: number | null
-          duree_s?: number | null
-          email?: string | null
-          final_price?: number | null
-          gps_validated_at?: string | null
-          heure_course?: string | null
-          id?: string
-          invoice_sent_at?: string | null
-          lang?: string | null
-          message?: string | null
-          nb_passagers?: number | null
-          nom?: string
           overflow_at?: string | null
           overflow_from_slug?: string | null
           overflow_taken_at?: string | null
-          paiement?: string | null
-          passagers?: number
-          phone_cancel_requested_at?: string | null
-          pickup_datetime?: string
-          prix_estime?: number | null
           prix_final?: number | null
-          refus_motif?: string | null
-          reminder_j1_sent_at?: string | null
-          route_coords?: Json | null
-          route_label?: string | null
-          service_type?: string
-          source?: string | null
           started_at?: string | null
-          status?: string
-          suivi_id?: string | null
-          tarif_jour?: boolean | null
-          telephone?: string
-          tracking_id?: string | null
-          updated_at?: string | null
 }
         Relationships: [
           {
