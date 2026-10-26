@@ -43,7 +43,7 @@ export function SoundDebugPage({ onClose, embedded = false }: { onClose: () => v
       if (delay) add(true, `Notification dans ${delay / 1000} s — fermez ou réduisez l'application maintenant.`);
       window.setTimeout(() => {
         void reg
-          .showNotification("Test son Nova Taxi", {
+          .showNotification("Test son Access Taxi", {
             body: "Avez-vous entendu un son ?",
             icon: "/favicon.png",
             badge: "/favicon.png",
@@ -105,14 +105,14 @@ export function SoundDebugPage({ onClose, embedded = false }: { onClose: () => v
           <p className="font-medium">Si la notification s'affiche sans son</p>
           {os !== "iphone" ? (
             <p className="text-xs text-muted-foreground">
-              <b>Android :</b> Paramètres → Applications → Chrome (ou Nova Taxi) → Notifications → catégorie du site
-              novataxi.fr → choisir « Alerte / Émettre un son » (pas « Silencieux »). Vérifiez aussi le volume «
+              <b>Android :</b> Paramètres → Applications → Chrome (ou Access Taxi) → Notifications → catégorie du site
+              accessprestigetaxi.fr → choisir « Alerte / Émettre un son » (pas « Silencieux »). Vérifiez aussi le volume «
               Notifications » et que « Ne pas déranger » est coupé.
             </p>
           ) : null}
           {os !== "android" ? (
             <p className="text-xs text-muted-foreground">
-              <b>iPhone :</b> Réglages → Notifications → Nova Taxi → « Sons » activé. Le bouton Silence sur le côté et
+              <b>iPhone :</b> Réglages → Notifications → Access Taxi → « Sons » activé. Le bouton Silence sur le côté et
               les modes Concentration coupent le son. L'app doit être installée sur l'écran d'accueil.
             </p>
           ) : null}

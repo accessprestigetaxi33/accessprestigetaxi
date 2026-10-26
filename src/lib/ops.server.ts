@@ -13,9 +13,10 @@ const BACKUP_TABLES = [
   "driver_expenses",
   "driver_unavailability",
   "accounting_settings",
-  "contact_messages",
+  "driver_chat",
   "client_accounts",
-  "blog_posts",
+  "devis",
+  "reservation_messages",
 ] as const;
 const KEEP = 8;
 
@@ -34,7 +35,7 @@ export async function runBackup(): Promise<{ path: string; rows: number }> {
     dump[t] = all;
     rows += all.length;
   }
-  const path = `nova-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+  const path = `apt-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
   const body = JSON.stringify({ created_at: new Date().toISOString(), tables: dump });
   const { error } = await db.storage
     .from("backups")
@@ -96,23 +97,23 @@ function esc(s: string) {
 }
 
 export async function sendNewsletter(subject: string, body: string): Promise<number> {
-  const key = process.env["RESEND_DIRECT_API_KEY"];
+  const key = process.env["RESEND_API_KEY"];
   if (!key) throw new Error("resend_missing");
   const recipients = await newsletterRecipients();
   let sent = 0;
   for (const to of recipients) {
     const sig = await unsubscribeSig(to);
-    const unsub = `https://www.novataxi.fr/api/public/newsletter-unsubscribe?e=${encodeURIComponent(to)}&s=${sig}`;
+    const unsub = `https://www.accessprestigetaxi.fr/api/public/newsletter-unsubscribe?e=${encodeURIComponent(to)}&s=${sig}`;
     const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#111">
-<h2 style="color:#b8913a">Nova Taxi Bordeaux</h2>
+<h2 style="color:#b8913a">Access Taxi PBR</h2>
 ${esc(body).split(/\n{2,}/).map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`).join("")}
-<p>Réservation : <a href="https://www.novataxi.fr/reserver">novataxi.fr</a> · 07 66 59 62 97</p>
+<p>Réservation : <a href="https://www.accessprestigetaxi.fr/reserver">accessprestigetaxi.fr</a> · 06 03 44 48 63</p>
 <p style="font-size:12px;color:#777">Vous recevez cet e-mail car vous l'avez accepté lors d'une réservation. <a href="${unsub}">Se désinscrire</a></p></div>`;
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Nova Taxi Bordeaux <contact@novataxi.fr>",
+        from: "Access Taxi PBR <contact@accessprestigetaxi.fr>",
         to: [to],
         subject,
         html,

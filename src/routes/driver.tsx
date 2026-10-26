@@ -2844,7 +2844,7 @@ function RideDetailPage({
     setPausedIds((p) => p.filter((x) => x !== ride.id));
     if (!started) setStatus.mutate("in_progress");
     if (ride.tracking_id) {
-      navigate({ to: "/suivi/$ref", params: { ref: ride.tracking_id as string }, search: {} });
+      navigate({ to: "/suivi/$id", params: { id: ride.tracking_id as string }, search: {} });
     } else {
       toast.error("Lien de suivi indisponible pour cette course");
     }

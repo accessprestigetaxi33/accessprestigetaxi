@@ -3,7 +3,7 @@ import type * as LeafletNS from "leaflet";
 import { addTiles, dotIcon, loadLeaflet, type L as LType } from "@/lib/leaflet";
 
 /**
- * Carte équipe — Leaflet + OpenStreetMap : positions Adam / Ayoub,
+ * Carte équipe — Leaflet + OpenStreetMap : positions Alain / Patricia,
  * marqueurs colorés, mise à jour en direct.
  */
 export type TeamPoint = {
@@ -14,11 +14,9 @@ export type TeamPoint = {
 };
 
 const TEAM_COLORS: Record<string, string> = {
-  "nova-d1": "#2563eb",
-  "nova-d2": "#db2777",
-  d1: "#2563eb",
-  d2: "#db2777",
-  equipe: "#c99b4a",
+  alain: "#2563eb",
+  patricia: "#db2777",
+  admin: "#c99b4a",
 };
 
 
