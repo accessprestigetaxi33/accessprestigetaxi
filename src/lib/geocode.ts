@@ -88,3 +88,6 @@ export function getCurrentPosition(
     );
   });
 }
+
+/** Alias de compatibilité (espace chauffeur Nova). */
+export type GeoCoord = Coord;
