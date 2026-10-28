@@ -3255,6 +3255,14 @@ function DashboardTab({ token, unread, onGo }: { token: string; unread: number; 
           <span className="drv-tile-label">Compta &amp; stats</span>
         </button>
 
+        <button type="button" className="drv-tile" onClick={() => onGo("avis")}>
+          <span className="drv-tile-ico" style={{ background: "#eab308" }}>
+            <IconStar />
+          </span>
+          <span className="drv-tile-label">Avis</span>
+        </button>
+
+
         <button type="button" className="drv-tile" onClick={() => setMapOpen((v) => !v)}>
           <span className="drv-tile-ico" style={{ background: "#0ea5e9" }}>
             <IconMapPin />
