@@ -404,7 +404,7 @@ export const driverAvisSetStatus = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     TokenSchema.extend({
       id: z.string().uuid(),
-      status: z.enum(["approved", "pending", "rejected"]),
+      status: z.enum(["approved", "pending", "refused"]),
     }).parse(input),
   )
   .handler(async ({ data }) => {
@@ -422,6 +422,21 @@ export const driverAvisDelete = createServerFn({ method: "POST" })
     const db = await admin();
     const { error } = await db.from("avis").delete().eq("id", data.id);
     if (error) throw new Error("delete_failed");
+    return { ok: true as const };
+  });
+
+export const driverAvisSetDate = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    TokenSchema.extend({ id: z.string().uuid(), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    await resolveDriver(data.token, data.as);
+    const db = await admin();
+    const { error } = await db
+      .from("avis")
+      .update({ created_at: `${data.date}T12:00:00+00:00` })
+      .eq("id", data.id);
+    if (error) throw new Error("update_failed");
     return { ok: true as const };
   });
 

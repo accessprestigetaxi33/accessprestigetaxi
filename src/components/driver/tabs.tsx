@@ -16,6 +16,7 @@ import {
   driverAvisDelete,
   driverAvisList,
   driverAvisSetStatus,
+  driverAvisSetDate,
   driverClientHistory,
   driverClients,
   driverDeviceDelete,
@@ -457,11 +458,10 @@ export function ClientsTab({ token }: { token: string }) {
 
 export function AvisTab({ token }: { token: string }) {
   const qc = useQueryClient();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["driver-avis", token],
     queryFn: () => driverAvisList({ data: { as: getProfile(), token } }),
   });
-  // Nouvel avis client affiché sans recharger.
   useReservationsRealtime({
     queryKeys: [["driver-avis", token]],
     tables: ["avis"],
@@ -469,44 +469,65 @@ export function AvisTab({ token }: { token: string }) {
   });
   const invalidate = () => qc.invalidateQueries({ queryKey: ["driver-avis", token] });
   const setStatus = useMutation({
-    mutationFn: (v: { id: string; status: "approved" | "rejected" | "pending" }) =>
+    mutationFn: (v: { id: string; status: "approved" | "refused" | "pending" }) =>
       driverAvisSetStatus({ data: { as: getProfile(), token, ...v } }),
     onSuccess: invalidate,
   });
-  const remove = useMutation({
-    mutationFn: (id: string) => driverAvisDelete({ data: { as: getProfile(), token, id } }),
+  const setDate = useMutation({
+    mutationFn: (v: { id: string; date: string }) => driverAvisSetDate({ data: { as: getProfile(), token, ...v } }),
     onSuccess: invalidate,
   });
+  const [editing, setEditing] = useState<string | null>(null);
+  const [dateVal, setDateVal] = useState("");
   const list = data?.avis ?? [];
+  const label: Record<string, string> = { pending: "En attente", approved: "Accepté", refused: "Refusé", rejected: "Refusé" };
   return (
     <Card title={`Avis (${list.length})`}>
-      <ul className="grid gap-3 text-sm">
+      {isLoading ? <p>Chargement…</p> : null}
+      <ul className="grid gap-3" style={{ fontSize: 16 }}>
         {list.map((a) => (
           <li key={a.id} className="rounded-lg border border-white/10 p-3">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <strong>
                 {a.author_name} · {"★".repeat(a.note)}
               </strong>
-              <span className="opacity-70">{a.status}</span>
+              <span className="opacity-80">{label[a.status] ?? a.status}</span>
             </div>
-            {a.commentaire ? <p className="mt-1 opacity-80">{a.commentaire}</p> : null}
+            <div className="opacity-70">{new Date(a.created_at).toLocaleDateString("fr-FR")}</div>
+            {a.commentaire ? <p className="mt-1 opacity-90">{a.commentaire}</p> : null}
             <div className="mt-2 flex flex-wrap gap-2">
-              <Button size="sm" variant="default" onClick={() => setStatus.mutate({ id: a.id, status: "approved" })}>
-                Publier
+              <Button variant="default" disabled={a.status === "approved"} onClick={() => setStatus.mutate({ id: a.id, status: "approved" })}>
+                Accepter
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setStatus.mutate({ id: a.id, status: "rejected" })}>
-                Masquer
+              <Button variant="destructive" disabled={a.status === "refused"} onClick={() => setStatus.mutate({ id: a.id, status: "refused" })}>
+                Refuser
               </Button>
               <Button
-                size="sm"
-                variant="destructive"
+                variant="outline"
                 onClick={() => {
-                  if (window.confirm("Supprimer cet avis ?")) remove.mutate(a.id);
+                  setEditing(editing === a.id ? null : a.id);
+                  setDateVal(a.created_at.slice(0, 10));
                 }}
               >
-                Supprimer
+                Modifier date
               </Button>
             </div>
+            {editing === a.id ? (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <input
+                  type="date"
+                  value={dateVal}
+                  onChange={(e) => setDateVal(e.target.value)}
+                  className="rounded-md border border-white/20 bg-transparent px-2 py-2"
+                />
+                <Button
+                  disabled={!dateVal || setDate.isPending}
+                  onClick={() => setDate.mutate({ id: a.id, date: dateVal }, { onSuccess: () => setEditing(null) })}
+                >
+                  Enregistrer
+                </Button>
+              </div>
+            ) : null}
           </li>
         ))}
       </ul>

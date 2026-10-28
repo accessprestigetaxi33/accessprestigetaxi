@@ -27,7 +27,7 @@ import { SoundDebugPage } from "@/components/driver/SoundDebugPage";
 import { StatsPage, PlanningPage, BackupsPage } from "@/components/driver/OpsPages";
 import { driverUnavailList } from "@/lib/driver-ops.functions";
 import { driverShellCss } from "@/lib/driver-shell-css";
-import { MessagesTab, PlanningTab } from "@/components/driver/tabs";
+import { AvisTab, MessagesTab, PlanningTab } from "@/components/driver/tabs";
 import {
   driverThreads,
   driverGpsState,
@@ -588,7 +588,7 @@ const IconCalc = () => (
   </svg>
 );
 
-type Tab = "dashboard" | "rides" | "completed" | "overflow" | "planning" | "messages" | "accounting";
+type Tab = "dashboard" | "rides" | "completed" | "overflow" | "planning" | "messages" | "avis" | "accounting";
 
 const IconGeneric = (d: string) => () => (
   <svg
@@ -612,6 +612,7 @@ const IconMapPin = IconGeneric(
   "M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
 );
 const IconCheck = IconGeneric("M20 6 9 17l-5-5");
+const IconStar = IconGeneric("M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z");
 
 // Espace chauffeur simplifié : uniquement le strict nécessaire.
 const TABS: { key: Tab; label: string; short: string; icon: () => React.ReactElement }[] = [
@@ -621,6 +622,7 @@ const TABS: { key: Tab; label: string; short: string; icon: () => React.ReactEle
   { key: "overflow", label: "DÉBORDEMENT", short: "Débord.", icon: IconSwap },
   { key: "planning", label: "PLANNING", short: "Planning", icon: IconCalendar },
   { key: "messages", label: "MESSAGES", short: "Messages", icon: IconMessage },
+  { key: "avis", label: "AVIS", short: "Avis", icon: IconStar },
   { key: "accounting", label: "COMPTABILITÉ", short: "Compta", icon: IconCalc },
 ];
 
@@ -878,6 +880,7 @@ function DriverApp() {
               {tab === "overflow" ? <OverflowTab token={token} /> : null}
               {tab === "planning" ? <PlanningTab token={token} /> : null}
               {tab === "messages" ? <MessagesTab token={token} /> : null}
+              {tab === "avis" ? <AvisTab token={token} /> : null}
               {tab === "accounting" ? <AccountingTab token={token} /> : null}
             </div>
           </div>
