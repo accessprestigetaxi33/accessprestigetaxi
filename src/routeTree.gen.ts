@@ -21,6 +21,7 @@ import { Route as DriverRouteImport } from './routes/driver'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as PageIndisponibleRouteImport } from './routes/page-indisponible'
 import { Route as QrGeneratorRouteImport } from './routes/qr-generator'
 import { Route as ReservationRouteImport } from './routes/reservation'
 import { Route as ReserverRouteImport } from './routes/reserver'
@@ -129,6 +130,11 @@ const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PageIndisponibleRoute = PageIndisponibleRouteImport.update({
+  id: '/page-indisponible',
+  path: '/page-indisponible',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QrGeneratorRoute = QrGeneratorRouteImport.update({
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
+  '/page-indisponible': typeof PageIndisponibleRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
@@ -458,6 +465,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
+  '/page-indisponible': typeof PageIndisponibleRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
@@ -522,6 +530,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/notifications': typeof NotificationsRoute
+  '/page-indisponible': typeof PageIndisponibleRoute
   '/qr-generator': typeof QrGeneratorRoute
   '/reservation': typeof ReservationRouteWithChildren
   '/reserver': typeof ReserverRoute
@@ -587,6 +596,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/mentions-legales'
     | '/notifications'
+    | '/page-indisponible'
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
@@ -650,6 +660,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/mentions-legales'
     | '/notifications'
+    | '/page-indisponible'
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
@@ -713,6 +724,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/mentions-legales'
     | '/notifications'
+    | '/page-indisponible'
     | '/qr-generator'
     | '/reservation'
     | '/reserver'
@@ -777,6 +789,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   NotificationsRoute: typeof NotificationsRoute
+  PageIndisponibleRoute: typeof PageIndisponibleRoute
   QrGeneratorRoute: typeof QrGeneratorRoute
   ReservationRoute: typeof ReservationRouteWithChildren
   ReserverRoute: typeof ReserverRoute
@@ -909,6 +922,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/page-indisponible': {
+      id: '/page-indisponible'
+      path: '/page-indisponible'
+      fullPath: '/page-indisponible'
+      preLoaderRoute: typeof PageIndisponibleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/qr-generator': {
@@ -1303,6 +1323,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   NotificationsRoute: NotificationsRoute,
+  PageIndisponibleRoute: PageIndisponibleRoute,
   QrGeneratorRoute: QrGeneratorRoute,
   ReservationRoute: ReservationRouteWithChildren,
   ReserverRoute: ReserverRoute,

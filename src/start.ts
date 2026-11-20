@@ -22,8 +22,8 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   }
 });
 
-// Pages retirées : 410 Gone + noindex pour qu'elles disparaissent de Google.
-// Les anciens articles de blog inexistants (404) passent aussi en 410.
+// Pages retirées : redirection 301 vers /page-indisponible (noindex).
+// Les anciens articles de blog inexistants (404) sont aussi redirigés.
 const removedPagesMiddleware = createMiddleware().server(async ({ next, request }) => {
   const { pathname } = new URL(request.url);
   if (request.method === "GET" || request.method === "HEAD") {
