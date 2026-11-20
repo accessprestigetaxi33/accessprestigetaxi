@@ -872,14 +872,8 @@ function Index() {
           <ul className="mt-4 flex flex-wrap gap-2">
             {[
               { label: "Marennes", to: "/taxi-marennes" as const },
-              { label: "Île d'Oléron", to: "/taxi-oleron" as const },
-              {
-                label: "Bourcefranc-le-Chapus",
-                to: "/taxi/$ville" as const,
-                ville: "bourcefranc-le-chapus",
-              },
-              { label: "Rochefort", to: "/taxi/$ville" as const, ville: "rochefort" },
-              { label: "La Rochelle", to: "/taxi/$ville" as const, ville: "la-rochelle" },
+              { label: "Brouage", to: "/taxi/$ville" as const, ville: "brouage" },
+              { label: "Cire-d'Aunis", to: "/taxi/$ville" as const, ville: "cire-d-aunis" },
             ].map((city) =>
               "ville" in city ? (
                 <li key={city.label}>
