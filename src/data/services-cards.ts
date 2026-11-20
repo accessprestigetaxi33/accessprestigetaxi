@@ -40,7 +40,7 @@ export const SERVICE_CARDS_FR: ServiceCard[] = [
     points: [
       "Suivi automatique du vol ou du train : l'heure s'ajuste au réel",
       "Accueil pancarte et aide aux bagages",
-      "Au départ de Marennes-Hiers-Brouage",
+      "Au départ de Marennes-Hiers-Brouage et Ciré-d'Aunis",
     ],
   },
   {
@@ -105,7 +105,7 @@ export const SERVICE_CARDS_EN: ServiceCard[] = [
     points: [
       "Automatic flight and train tracking: pickup time follows the real arrival",
       "Name-board welcome and luggage assistance",
-      "From Marennes-Hiers-Brouage",
+      "From Marennes-Hiers-Brouage and Ciré-d'Aunis",
     ],
   },
   {

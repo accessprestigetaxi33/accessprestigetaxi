@@ -5,7 +5,7 @@
 - Nom : Access Taxi PBR (anciennement Access Prestige Taxi)
 - Basée en Charente-Maritime, à Marennes-Hiers-Brouage (17320)
 - Communes desservies : Marennes-Hiers-Brouage, Brouage, Ciré-d'Aunis
-- Services : transport privé, chauffeur privé, transport médical conventionné (CPAM), transferts gares et aéroports au départ de Marennes-Hiers-Brouage
+- Services : transport privé, chauffeur privé, transport médical conventionné (CPAM), transferts gares et aéroports au départ de Marennes-Hiers-Brouage et Ciré-d'Aunis
 - Horaires : 5 jours sur 7, de 8h à 20h ; réservation en ligne 24h/24
 - Téléphone : 06 03 44 48 63 (Alain), 06 50 26 00 15 (Patricia)
 - E-mail : accesstaxiap@gmail.com

@@ -9,12 +9,12 @@ import { businessRef, localBusinessNode } from "@/lib/business";
 import ogReserverFr from "@/assets/apt-og-reserver-fr.jpg.asset.json";
 import ogReserverEn from "@/assets/apt-og-reserver-en.jpg.asset.json";
 
-const RESERVER_TITLE_FR = "Réserver un taxi à Marennes-Hiers-Brouage";
+const RESERVER_TITLE_FR = "Réserver un taxi à Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const RESERVER_DESC_FR =
-  "Réservez votre taxi à Marennes-Hiers-Brouage en 60 secondes : adresse, heure, passagers. Tarif calculé en direct, confirmation immédiate et suivi en temps réel.";
-const RESERVER_TITLE_EN = "Book a taxi in Marennes-Hiers-Brouage";
+  "Réservez votre taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis en 60 secondes : adresse, heure, passagers. Tarif calculé en direct, confirmation immédiate et suivi en temps réel.";
+const RESERVER_TITLE_EN = "Book a taxi in Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const RESERVER_DESC_EN =
-  "Book your taxi in Marennes-Hiers-Brouage in 60 seconds: address, time, passengers. Live fare calculation, instant confirmation and real-time tracking.";
+  "Book your taxi in Marennes-Hiers-Brouage and Ciré-d'Aunis in 60 seconds: address, time, passengers. Live fare calculation, instant confirmation and real-time tracking.";
 const RESERVER_URL = `${SITE_URL}/reserver`;
 
 const OG_IMAGE_FR = ogImageUrl(ogReserverFr.url);
@@ -22,9 +22,9 @@ const OG_IMAGE_EN = ogImageUrl(ogReserverEn.url);
 const OG_IMAGE_W = "1200";
 const OG_IMAGE_H = "630";
 const OG_ALT_FR =
-  "Access Prestige Taxi — réservez votre taxi à Marennes-Hiers-Brouage, BMW iX1 et Audi Q6 électriques 5 places, van Mercedes 8 places";
+  "Access Prestige Taxi — réservez votre taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis, BMW iX1 et Audi Q6 électriques 5 places, van Mercedes 8 places";
 const OG_ALT_EN =
-  "Access Prestige Taxi — book your taxi in Marennes-Hiers-Brouage, 5-seat electric BMW iX1 and Audi Q6, 8-seat Mercedes van";
+  "Access Prestige Taxi — book your taxi in Marennes-Hiers-Brouage and Ciré-d'Aunis, 5-seat electric BMW iX1 and Audi Q6, 8-seat Mercedes van";
 
 const RESERVER_SOCIAL_FR = {
   title: RESERVER_TITLE_FR,
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/reserver")({
 
     return {
       meta: [
-        keywordsMeta(["réserver taxi Marennes", "réservation taxi Marennes-Hiers-Brouage", "taxi Marennes en ligne"], { core: false }),
+        keywordsMeta(["réserver taxi Marennes", "réservation taxi Marennes-Hiers-Brouage", "taxi Marennes en ligne", "taxi Ciré-d'Aunis"], { core: false }),
         { title },
         { name: "description", content: desc },
         { property: "og:site_name", content: "Access Prestige Taxi" },
@@ -93,9 +93,9 @@ export const Route = createFileRoute("/reserver")({
               {
                 ...localBusinessNode(),
                 description:
-                  "Access Taxi PBR, taxi et chauffeur privé à Marennes-Hiers-Brouage (17320) : transport privé, chauffeur privé et transport médical conventionné, 5j/7 de 8h à 20h.",
-                knowsAbout: ["Taxi Marennes-Hiers-Brouage", "Transport médical conventionné", "Chauffeur privé"],
-                areaServed: [{ "@type": "City", name: "Marennes-Hiers-Brouage" }],
+                  "Access Taxi PBR, taxi et chauffeur privé à Marennes-Hiers-Brouage (17320) et Ciré-d'Aunis : transport privé, chauffeur privé et transport médical conventionné, 5j/7 de 8h à 20h.",
+                knowsAbout: ["Taxi Marennes-Hiers-Brouage", "Taxi Ciré-d'Aunis", "Transport médical conventionné", "Chauffeur privé"],
+                areaServed: [{ "@type": "City", name: "Marennes-Hiers-Brouage" }, { "@type": "City", name: "Ciré-d'Aunis" }],
               },
               {
                 "@type": "WebPage",
@@ -137,7 +137,7 @@ export const Route = createFileRoute("/reserver")({
             url: RESERVER_URL,
             description: RESERVER_DESC_FR,
             alternateName: RESERVER_TITLE_EN,
-            areaServed: [{ "@type": "City", name: "Marennes-Hiers-Brouage" }],
+            areaServed: [{ "@type": "City", name: "Marennes-Hiers-Brouage" }, { "@type": "City", name: "Ciré-d'Aunis" }],
             availableLanguage: ["fr", "en"],
             provider: businessRef,
             potentialAction: {
@@ -189,7 +189,7 @@ export const Route = createFileRoute("/reserver")({
                 name: "Y a-t-il une limite de distance ?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Non. Nous assurons toutes distances, y compris les longs trajets au départ de Marennes-Hiers-Brouage.",
+                  text: "Non. Nous assurons toutes distances, y compris les longs trajets au départ de Marennes-Hiers-Brouage et Ciré-d'Aunis.",
                 },
               },
               {

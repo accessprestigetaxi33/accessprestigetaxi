@@ -9,7 +9,7 @@ import { DRIVERS } from "@/data/drivers";
 const SITE = "https://www.accessprestigetaxi.fr";
 const TITLE = "Sécurité taxi Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const DESC =
-  "Taxi agréé basé en Charente-Maritime, à Marennes-Hiers-Brouage : chauffeurs agréés, véhicules assurés tous risques, suivi de course en temps réel. Toutes nos garanties de sécurité.";
+  "Taxi agréé basé en Charente-Maritime, à Marennes-Hiers-Brouage et Ciré-d'Aunis : chauffeurs agréés, véhicules assurés tous risques, suivi de course en temps réel. Toutes nos garanties de sécurité.";
 
 export const Route = createFileRoute("/securite")({
   head: ({ match }) => ({
@@ -36,7 +36,7 @@ const COPY = {
     eyebrow: "Garanties",
     h1: "Sécurité & mentions légales",
     lead:
-      "Cette page est tenue à jour par Patricia et Alain, chauffeurs d'Access Prestige Taxi. Elle décrit concrètement les garanties appliquées à chaque course, au départ de Marennes-Hiers-Brouage.",
+      "Cette page est tenue à jour par Patricia et Alain, chauffeurs d'Access Prestige Taxi. Elle décrit concrètement les garanties appliquées à chaque course, à Marennes-Hiers-Brouage et Ciré-d'Aunis.",
     pillars: [
       {
         icon: BadgeCheck,
@@ -86,7 +86,7 @@ const COPY = {
     eyebrow: "Guarantees",
     h1: "Safety & legal information",
     lead:
-      "This page is maintained by Patricia and Alain, the two Access Prestige Taxi drivers. It sets out the guarantees applied to every ride from Marennes-Hiers-Brouage.",
+      "This page is maintained by Patricia and Alain, the two Access Prestige Taxi drivers. It sets out the guarantees applied to every ride in Marennes-Hiers-Brouage and Ciré-d'Aunis.",
     pillars: [
       {
         icon: BadgeCheck,

@@ -209,7 +209,7 @@ const fr: Dict = {
   // Services page
   "services.eyebrow": "Nos prestations",
   "services.title": "Un service taxi pour chaque besoin",
-  "services.intro": "Basée en Charente-Maritime, au départ de Marennes-Hiers-Brouage : deux chauffeurs, un service haut de gamme.",
+  "services.intro": "Basée en Charente-Maritime, à Marennes-Hiers-Brouage et Ciré-d'Aunis : deux chauffeurs, un service haut de gamme.",
   "services.cta": "Réserver",
   "services.b1": "Prestations toutes distances",
   "services.b2": "Véhicules 5 et 8 places",
@@ -1354,7 +1354,7 @@ const en: Dict = {
 
   "services.eyebrow": "Our services",
   "services.title": "A taxi service for every need",
-  "services.intro": "Based in Charente-Maritime, from Marennes-Hiers-Brouage: two drivers, one premium service.",
+  "services.intro": "Based in Charente-Maritime, in Marennes-Hiers-Brouage and Ciré-d'Aunis: two drivers, one premium service.",
   "services.cta": "Book",
   "services.b1": "All-distance services",
   "services.b2": "5 and 8-seat vehicles",

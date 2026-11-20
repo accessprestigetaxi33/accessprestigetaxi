@@ -4,7 +4,7 @@ export const Route = createFileRoute("/page-indisponible")({
   head: () => ({
     meta: [
       { title: "Page indisponible — Access Taxi PBR" },
-      { name: "description", content: "Cette page n'est plus disponible. Access Taxi PBR, votre taxi à Marennes-Hiers-Brouage." },
+      { name: "description", content: "Cette page n'est plus disponible. Access Taxi PBR, votre taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis." },
       { name: "robots", content: "noindex, follow" },
       { property: "og:title", content: "Page indisponible — Access Taxi PBR" },
       { property: "og:description", content: "Cette page n'est plus disponible." },
@@ -24,7 +24,7 @@ function PageIndisponible() {
         </span>
         <h1 className="mt-4 font-display text-3xl text-foreground">Cette page n'existe plus</h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Access Taxi PBR, votre taxi et chauffeur privé à Marennes-Hiers-Brouage.
+          Access Taxi PBR, votre taxi et chauffeur privé à Marennes-Hiers-Brouage et Ciré-d'Aunis.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link to="/" className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground">

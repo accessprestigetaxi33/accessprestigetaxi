@@ -8,12 +8,12 @@ import { DRIVERS } from "@/data/drivers";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/taxi-marennes`;
-const TITLE_FR = "Taxi Marennes, chauffeur privé ☎ 06 03 44 48 63 | Access Taxi PBR";
+const TITLE_FR = "Taxi Marennes & Ciré-d'Aunis ☎ 06 03 44 48 63 | Access Taxi PBR";
 const DESC_FR =
-  "Access Taxi PBR, taxi Marennes : transport privé, chauffeur privé, transport médical conventionné. 06 03 44 48 63, 5j/7 8h-20h. Marennes-Hiers-Brouage, Cire-d'Aunis.";
+  "Access Taxi PBR, taxi Marennes : transport privé, chauffeur privé, transport médical conventionné. 06 03 44 48 63, 5j/7 8h-20h. Marennes-Hiers-Brouage, Ciré-d'Aunis.";
 const TITLE_EN = "Taxi Marennes ☎ +33 6 03 44 48 63 · 5 days, 8am-8pm";
 const DESC_EN =
-  "Taxi in Marennes: book on +33 6 03 44 48 63 or online, 5 days a week 8am-8pm. Marennes-Hiers-Brouage, Cire-d'Aunis.";
+  "Taxi in Marennes: book on +33 6 03 44 48 63 or online, 5 days a week 8am-8pm. Marennes-Hiers-Brouage, Ciré-d'Aunis.";
 
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
@@ -26,8 +26,9 @@ export const Route = createFileRoute("/taxi-marennes")({
         "tarif taxi Marennes",
         "réserver taxi Marennes",
         "taxi Marennes Brouage",
-        "taxi Marennes Cire-d'Aunis",
+        "taxi Marennes Ciré-d'Aunis",
         "taxi Marennes 17320",
+        "taxi Ciré-d'Aunis",
         "chauffeur privé Marennes",
         "transport privé Marennes",
         "transport médical conventionné Marennes",
@@ -55,7 +56,7 @@ const COPY = {
   fr: {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi à Marennes",
-    lead: "Votre chauffeur privé basé à Marennes, joignable 5j/7 de 8h à 20h au 06 03 44 48 63, au service de Marennes-Hiers-Brouage et Cire-d'Aunis.",
+    lead: "Votre chauffeur privé basé à Marennes, joignable 5j/7 de 8h à 20h au 06 03 44 48 63, au service de Marennes-Hiers-Brouage et Ciré-d'Aunis.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -75,7 +76,7 @@ const COPY = {
     priceNote:
       "* Tarifs officiels taxi. L'estimation ne prend pas en compte bouchons et incidents : seul le compteur fait foi.",
     zoneT: "Zone d'intervention",
-    zoneLead: "Nous intervenons au départ de Marennes :",
+    zoneLead: "Nous intervenons à Marennes-Hiers-Brouage et Ciré-d'Aunis :",
     zones: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"],
     fleetT: "Nos véhicules",
     fleet: [
@@ -91,7 +92,7 @@ const COPY = {
   en: {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi in Marennes",
-    lead: "Your private driver based in Marennes, reachable 5 days a week, 8am-8pm, on +33 6 03 44 48 63, serving Marennes-Hiers-Brouage and Cire-d'Aunis.",
+    lead: "Your private driver based in Marennes, reachable 5 days a week, 8am-8pm, on +33 6 03 44 48 63, serving Marennes-Hiers-Brouage and Ciré-d'Aunis.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",
@@ -106,7 +107,7 @@ const COPY = {
     ],
     priceNote: "* Official taxi fares. Estimates exclude traffic jams and incidents: only the taximeter is binding.",
     zoneT: "Service area",
-    zoneLead: "We drive from Marennes:",
+    zoneLead: "We drive in Marennes-Hiers-Brouage and Ciré-d'Aunis:",
     zones: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"],
     fleetT: "Our vehicles",
     fleet: [

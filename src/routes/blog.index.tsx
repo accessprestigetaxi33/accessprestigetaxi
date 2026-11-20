@@ -65,7 +65,7 @@ const COPY = {
     count: (n: number) => `${n} adresse${n > 1 ? "s" : ""}`,
     ctaTitle: "On vous y emmène",
     ctaText:
-      "Prise en charge à Marennes-Hiers-Brouage, trajet à la demande en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
+      "Prise en charge à Marennes-Hiers-Brouage et Ciré-d'Aunis, trajet à la demande en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
     ctaBtn: "Réserver ma course",
   },
   en: {
@@ -88,7 +88,7 @@ const COPY = {
     book: "Book",
     count: (n: number) => `${n} place${n > 1 ? "s" : ""}`,
     ctaTitle: "We'll take you there",
-    ctaText: "Pick-up in Marennes-Hiers-Brouage, on-demand rides in an electric BMW iX1, Audi Q6 e-tron or 8-seat Mercedes van.",
+    ctaText: "Pick-up in Marennes-Hiers-Brouage and Ciré-d'Aunis, on-demand rides in an electric BMW iX1, Audi Q6 e-tron or 8-seat Mercedes van.",
     ctaBtn: "Book a ride",
   },
 } as const;

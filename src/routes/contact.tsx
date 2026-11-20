@@ -61,7 +61,7 @@ const COPY = {
     zoneTitle: "Zone d'intervention",
     zoneMain: "Marennes-Hiers-Brouage · Ciré-d'Aunis",
     zoneSub: "Basée en Charente-Maritime (17)",
-    zoneLong: "Prise en charge au départ de Marennes-Hiers-Brouage, toutes distances.",
+    zoneLong: "Prise en charge à Marennes-Hiers-Brouage et Ciré-d'Aunis, toutes distances.",
     cmuTitle: "Transport sanitaire conventionné",
     cmuText:
       "Consultations, hospitalisations, dialyses, chimiothérapies : prise en charge conventionnée sur prescription médicale.",
@@ -75,7 +75,7 @@ const COPY = {
     zoneTitle: "Service area",
     zoneMain: "Marennes-Hiers-Brouage · Ciré-d'Aunis",
     zoneSub: "Based in Charente-Maritime (17)",
-    zoneLong: "Pick-up from Marennes-Hiers-Brouage, any distance.",
+    zoneLong: "Pick-up in Marennes-Hiers-Brouage and Ciré-d'Aunis, any distance.",
     cmuTitle: "Approved medical transport",
     cmuText:
       "Appointments, hospital stays, dialysis, chemotherapy: covered medical transport with a doctor's prescription.",

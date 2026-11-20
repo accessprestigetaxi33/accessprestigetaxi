@@ -96,15 +96,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         {
           name: "description",
           content:
-            "Taxi basé en Charente-Maritime, à Marennes-Hiers-Brouage : BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, transport sanitaire et toutes distances.",
+            "Taxi basé en Charente-Maritime, à Marennes-Hiers-Brouage et Ciré-d'Aunis : BMW iX1 et Audi Q6 e-tron électriques 5 places, van Mercedes 8 places, transport sanitaire et toutes distances.",
         },
         { name: "author", content: "Access Prestige Taxi" },
         { name: "google-site-verification", content: "Frgz5GIuRTvkgvIxzuUiKebiXzrFSsALSRZTnGckmDA" },
         { property: "og:site_name", content: "Access Prestige Taxi" },
-        { property: "og:title", content: "Access Taxi PBR — taxi basé en Charente-Maritime, à Marennes-Hiers-Brouage" },
+        { property: "og:title", content: "Access Taxi PBR — taxi basé en Charente-Maritime, à Marennes-Hiers-Brouage et Ciré-d'Aunis" },
         {
           property: "og:description",
-          content: "L'excellence à chaque trajet — taxi 100 % électrique basé en Charente-Maritime, à Marennes-Hiers-Brouage.",
+          content: "L'excellence à chaque trajet — taxi 100 % électrique basé en Charente-Maritime, à Marennes-Hiers-Brouage et Ciré-d'Aunis.",
         },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },

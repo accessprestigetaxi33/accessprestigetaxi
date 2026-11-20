@@ -169,7 +169,7 @@ const COPY = {
         details: [
           "SUV 100 % électrique, silencieux et sans émissions, idéal pour vos trajets en ville comme sur route.",
           "5 places confortables, climatisation, sièges en cuir et espace bagages adapté aux valises.",
-          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels au départ de Marennes-Hiers-Brouage.",
+          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels à Marennes-Hiers-Brouage et Ciré-d'Aunis.",
         ],
       },
       {
@@ -241,7 +241,7 @@ const COPY = {
         details: [
           "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
           "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
-          "Perfect for station transfers, airport runs and business appointments from Marennes-Hiers-Brouage.",
+          "Perfect for station transfers, airport runs and business appointments in Marennes-Hiers-Brouage and Ciré-d'Aunis.",
         ],
       },
       {
@@ -252,7 +252,7 @@ const COPY = {
         details: [
           "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
           "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
-          "Perfect for station transfers, airport runs and business appointments from Marennes-Hiers-Brouage.",
+          "Perfect for station transfers, airport runs and business appointments in Marennes-Hiers-Brouage and Ciré-d'Aunis.",
         ],
       },
       {
@@ -314,18 +314,18 @@ const COPY = {
 } as const;
 
 const HOME_SOCIAL_FR = {
-  title: "Access Taxi PBR — Taxi & chauffeur privé à Marennes",
+  title: "Access Taxi PBR — Taxi & chauffeur privé à Marennes & Ciré-d'Aunis",
   description:
-    "Access Taxi PBR, votre taxi et chauffeur privé à Marennes-Hiers-Brouage : transport privé et transport médical conventionné, 5j/7 de 8h à 20h.",
+    "Access Taxi PBR, votre taxi et chauffeur privé à Marennes-Hiers-Brouage et Ciré-d'Aunis : transport privé et transport médical conventionné, 5j/7 de 8h à 20h.",
   image: ogImageUrl(ogHomeFr.url),
   alt: "Access Taxi PBR — taxi à Marennes-Hiers-Brouage",
   url: ogPageUrl("/", "fr"),
 };
 
 const HOME_SOCIAL_EN = {
-  title: "Access Taxi PBR — Taxi & private driver in Marennes",
+  title: "Access Taxi PBR — Taxi & private driver in Marennes & Ciré-d'Aunis",
   description:
-    "Access Taxi PBR, your taxi and private driver in Marennes-Hiers-Brouage: private transport and approved medical transport, 5 days a week, 8am-8pm.",
+    "Access Taxi PBR, your taxi and private driver in Marennes-Hiers-Brouage and Ciré-d'Aunis: private transport and approved medical transport, 5 days a week, 8am-8pm.",
   image: ogImageUrl(ogHomeEn.url),
   alt: "Access Taxi PBR — taxi in Marennes-Hiers-Brouage",
   url: ogPageUrl("/", "en"),
@@ -357,14 +357,14 @@ export const Route = createFileRoute("/")({
         ]),
         {
           title: isEn
-            ? "Taxi & Private Driver Marennes-Hiers-Brouage | Access Taxi PBR"
-            : "Taxi Marennes, chauffeur privé & transport médical | Access Taxi PBR",
+            ? "Taxi & Private Driver Marennes-Hiers-Brouage & Ciré-d'Aunis | Access Taxi PBR"
+            : "Taxi Marennes & Ciré-d'Aunis, chauffeur privé, transport médical | Access Taxi PBR",
         },
         {
           name: "description",
           content: isEn
-            ? "Access Taxi PBR, your taxi and private driver in Marennes-Hiers-Brouage: private transport and approved medical transport, 5 days a week, 8am-8pm."
-            : "Access Taxi PBR, votre taxi et chauffeur privé à Marennes-Hiers-Brouage : transport privé et transport médical conventionné, 5j/7 de 8h à 20h.",
+            ? "Access Taxi PBR, your taxi and private driver in Marennes-Hiers-Brouage and Ciré-d'Aunis: private transport and approved medical transport, 5 days a week, 8am-8pm."
+            : "Access Taxi PBR, votre taxi et chauffeur privé à Marennes-Hiers-Brouage et Ciré-d'Aunis : transport privé et transport médical conventionné, 5j/7 de 8h à 20h.",
         },
 
         { property: "og:site_name", content: "Access Taxi PBR" },
@@ -397,7 +397,7 @@ export const Route = createFileRoute("/")({
             name: "Access Taxi PBR",
             alternateName: [
               "Access Prestige Taxi",
-              "Access Taxi PBR — chauffeur privé et transport médical conventionné à Marennes",
+              "Access Taxi PBR — chauffeur privé et transport médical conventionné à Marennes et Ciré-d'Aunis",
             ],
             description:
               "Taxi, transport privé, chauffeur privé et transport médical conventionné à Marennes-Hiers-Brouage, Brouage et Ciré-d'Aunis.",
@@ -855,8 +855,8 @@ function Index() {
             <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#e0b866]" aria-hidden="true" />
             <span>
               {lang === "en"
-                ? "Our taxi is based in Marennes-Hiers-Brouage: we pick up our clients from Marennes."
-                : "Notre taxi est stationné à Marennes-Hiers-Brouage : nous prenons nos clients en charge au départ de Marennes."}
+                ? "Our taxi is based in Marennes-Hiers-Brouage: we pick up our clients in Marennes-Hiers-Brouage and Ciré-d'Aunis."
+                : "Notre taxi est stationné à Marennes-Hiers-Brouage : nous prenons nos clients en charge à Marennes-Hiers-Brouage et à Ciré-d'Aunis."}
             </span>
           </p>
         </div>
@@ -878,7 +878,7 @@ function Index() {
           <ul className="mt-4 flex flex-wrap gap-2">
             {[
               { label: "Marennes-Hiers-Brouage", to: "/taxi-marennes" as const },
-              { label: "Cire-d'Aunis", to: "/taxi/$ville" as const, ville: "cire-d-aunis" },
+              { label: "Ciré-d'Aunis", to: "/taxi/$ville" as const, ville: "cire-d-aunis" },
             ].map((city) =>
               "ville" in city ? (
                 <li key={city.label}>
@@ -918,8 +918,8 @@ function Index() {
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
                 {lang === "en"
-                  ? "Based in Charente-Maritime, in Marennes-Hiers-Brouage: premium transport and covered medical transport. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                  : "Basée en Charente-Maritime, à Marennes-Hiers-Brouage : transport de haut de gamme et transport médical conventionné. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+                  ? "Based in Charente-Maritime, in Marennes-Hiers-Brouage, serving Ciré-d'Aunis: premium transport and covered medical transport. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                  : "Basée en Charente-Maritime, à Marennes-Hiers-Brouage, au service de Ciré-d'Aunis : transport de haut de gamme et transport médical conventionné. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
               </p>
             </div>
             <div className="grid grid-cols-3 gap-3 border-t border-[#e0b866]/40 pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">

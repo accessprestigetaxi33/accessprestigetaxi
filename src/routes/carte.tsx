@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.webp";
 
 const CARTE_URL = "https://www.accessprestigetaxi.fr/carte";
-const CARTE_TITLE = "Taxi Marennes-Hiers-Brouage — contact rapide";
+const CARTE_TITLE = "Taxi Marennes-Hiers-Brouage & Ciré-d'Aunis — contact rapide";
 const CARTE_DESC =
   "Appeler, WhatsApp, SMS, email, réservation en ligne : joignez en un clic votre taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis, basé en Charente-Maritime.";
 
