@@ -57,8 +57,8 @@ export const Route = createFileRoute("/blog/$slug")({
     const isEn = (match.search as { lang?: string } | undefined)?.lang === "en";
     const name = isEn ? (e.nameEn ?? e.name) : e.name;
     const title = isEn
-      ? `${name}, ${e.city} — Charente-Maritime guide | Access Prestige Taxi`
-      : `${name}, ${e.city} — Guide Charente-Maritime | Access Prestige Taxi`;
+      ? `${name}, ${e.city} — guide | Access Taxi PBR`
+      : `${name}, ${e.city} — guide | Access Taxi PBR`;
     const desc = (isEn ? e.en.teaser : e.fr.teaser).slice(0, 155);
     const url = `${SITE}/blog/${e.slug}`;
     return {

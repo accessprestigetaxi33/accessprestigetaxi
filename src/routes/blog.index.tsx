@@ -47,7 +47,7 @@ const COPY = {
   fr: {
     back: "Retour au site",
     eyebrow: "Le guide Access Prestige Taxi",
-    title: "Charente-Maritime : où manger, dormir, marcher et s'émerveiller",
+    title: "Marennes-Hiers-Brouage et Ciré-d'Aunis : où manger, dormir, marcher et s'émerveiller",
     lead: "Restaurants de caractère, hôtels étoilés, randonnées côtières et sites chargés d'histoire — sélectionnés par nos deux chauffeurs, et desservis en BMW iX1 100 % électrique.",
     all: "Tout",
     filterCat: "Catégorie",
@@ -55,7 +55,7 @@ const COPY = {
     filterTag: "Thématique",
     allCities: "Toutes les villes",
     searchLabel: "Rechercher une adresse, une ville, un lieu",
-    searchPlaceholder: "Rechercher : La Rochelle, huîtres, château…",
+    searchPlaceholder: "Rechercher : Brouage, huîtres, citadelle…",
     reset: "Réinitialiser",
     empty: "Aucune adresse ne correspond à votre recherche.",
     more: "Voir plus d'adresses",
@@ -65,13 +65,13 @@ const COPY = {
     count: (n: number) => `${n} adresse${n > 1 ? "s" : ""}`,
     ctaTitle: "On vous y emmène",
     ctaText:
-      "Trajet à la demande dans toute la Charente-Maritime, en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
+      "Prise en charge à Marennes-Hiers-Brouage, trajet à la demande en BMW iX1 électrique, Audi Q6 e-tron ou van Mercedes 8 places.",
     ctaBtn: "Réserver ma course",
   },
   en: {
     back: "Back to website",
     eyebrow: "The Access Prestige Taxi guide",
-    title: "Charente-Maritime: where to eat, sleep, walk and wonder",
+    title: "Marennes-Hiers-Brouage and Ciré-d'Aunis: where to eat, sleep, walk and wonder",
     lead: "Characterful restaurants, star-rated hotels, coastal hikes and history-rich sites — picked by our two drivers and served in a fully electric BMW iX1.",
     all: "All",
     filterCat: "Category",
@@ -79,7 +79,7 @@ const COPY = {
     filterTag: "Theme",
     allCities: "All towns",
     searchLabel: "Search a place, a town, a landmark",
-    searchPlaceholder: "Search: La Rochelle, oysters, castle…",
+    searchPlaceholder: "Search: Brouage, oysters, citadel…",
     reset: "Reset",
     empty: "No place matches your search.",
     more: "Show more places",
@@ -88,16 +88,16 @@ const COPY = {
     book: "Book",
     count: (n: number) => `${n} place${n > 1 ? "s" : ""}`,
     ctaTitle: "We'll take you there",
-    ctaText: "On-demand rides across Charente-Maritime in an electric BMW iX1, Audi Q6 e-tron or 8-seat Mercedes van.",
+    ctaText: "Pick-up in Marennes-Hiers-Brouage, on-demand rides in an electric BMW iX1, Audi Q6 e-tron or 8-seat Mercedes van.",
     ctaBtn: "Book a ride",
   },
 } as const;
 
 const BLOG_TITLE = "Guide Marennes, Brouage & Ciré-d'Aunis en taxi";
 const BLOG_DESC =
-  "Guide de Marennes-Hiers-Brouage et Brouage : restaurants, hôtels, randonnées et sites à visiter, desservis par notre taxi 100 % électrique.";
+  "Guide de Marennes-Hiers-Brouage et Ciré-d'Aunis : restaurants, hôtels, randonnées et sites à visiter, desservis par notre taxi 100 % électrique.";
 const BLOG_OG_DESC =
-  "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.";
+  "Restaurants, hôtels, randonnées et sites historiques de Marennes-Hiers-Brouage et Ciré-d'Aunis, avec photos et conseils.";
 
 export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
@@ -351,7 +351,7 @@ function BlogIndex() {
                         src={imgAt(e.photos[0], 500)}
                         srcSet={imgSrcSet(e.photos[0], [250, 330, 500])}
                         sizes="(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
-                        alt={`${e.name}, ${e.city} — ${isEn ? "Charente-Maritime guide by Access Prestige Taxi" : "guide Charente-Maritime par Access Prestige Taxi"}`}
+                        alt={`${e.name}, ${e.city} — ${isEn ? "Marennes-Hiers-Brouage guide by Access Taxi PBR" : "guide Marennes-Hiers-Brouage par Access Taxi PBR"}`}
                         loading={i < 3 ? "eager" : "lazy"}
                         fetchPriority={i === 0 ? "high" : "auto"}
                         decoding="async"

@@ -2,7 +2,7 @@
 // Restaurants, hôtels (étoilés), randonnées et lieux à visiter.
 // Photos : Wikimedia Commons (licences libres), 3 par article.
 
-// Guide limité à Marennes-Hiers-Brouage.
+// Guide limité à Marennes-Hiers-Brouage et Ciré-d'Aunis.
 export type GuideCategory = "restaurant" | "hotel" | "randonnee" | "visite" | "surf";
 export type Dept = "17";
 
@@ -31,7 +31,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "restaurant",
     dept: "17",
     name: "Les cabanes ostréicoles",
-    city: "Marennes-Oléron",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Dégustation d'huîtres en cabane", en: "Oyster tasting in a hut" },
       { fr: "Bassin Marennes-Oléron (IGP)", en: "Marennes-Oléron basin (PGI)" },
@@ -62,7 +62,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "randonnee",
     dept: "17",
     name: "Marais de Brouage",
-    city: "Hiers-Brouage",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Boucle de 10 km autour de la citadelle", en: "10 km loop around the citadel" },
       { fr: "Observation d'oiseaux (cigognes)", en: "Birdwatching (storks)" },
@@ -207,7 +207,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "hotel",
     dept: "17",
     name: "Hôtel du Port",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     stars: 3,
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
@@ -237,7 +237,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "hotel",
     dept: "17",
     name: "Hôtel de la Plage",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     stars: 2,
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
@@ -267,7 +267,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "hotel",
     dept: "17",
     name: "Hôtel Le Relais Atlantique",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     stars: 4,
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
@@ -297,7 +297,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "restaurant",
     dept: "17",
     name: "La Table du Pertuis",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Cuisine régionale et produits de la mer", en: "Regional cuisine and seafood" },
@@ -326,7 +326,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "restaurant",
     dept: "17",
     name: "Le Comptoir des Huîtres",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Cuisine régionale et produits de la mer", en: "Regional cuisine and seafood" },
@@ -355,7 +355,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "randonnee",
     dept: "17",
     name: "Sentier du littoral",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Balade familiale, terrain plat", en: "Family walk, flat terrain" },
@@ -384,7 +384,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "visite",
     dept: "17",
     name: "Église et centre historique",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Ouvert toute l'année", en: "Open all year" },
@@ -413,7 +413,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "hotel",
     dept: "17",
     name: "Hôtel du Port",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     stars: 3,
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
@@ -443,7 +443,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "hotel",
     dept: "17",
     name: "Hôtel de la Plage",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     stars: 2,
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
@@ -473,7 +473,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "hotel",
     dept: "17",
     name: "Hôtel Le Relais Atlantique",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     stars: 4,
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
@@ -503,7 +503,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "restaurant",
     dept: "17",
     name: "La Table du Pertuis",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Cuisine régionale et produits de la mer", en: "Regional cuisine and seafood" },
@@ -532,7 +532,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "restaurant",
     dept: "17",
     name: "Le Comptoir des Huîtres",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Cuisine régionale et produits de la mer", en: "Regional cuisine and seafood" },
@@ -561,7 +561,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "randonnee",
     dept: "17",
     name: "Sentier du littoral",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Balade familiale, terrain plat", en: "Family walk, flat terrain" },
@@ -590,7 +590,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "visite",
     dept: "17",
     name: "Église et centre historique",
-    city: "Brouage",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Commune de Charente-Maritime", en: "Town in Charente-Maritime" },
       { fr: "Ouvert toute l'année", en: "Open all year" },
@@ -619,7 +619,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "visite",
     dept: "17",
     name: "Guide de Marennes, capitale de l’huître",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Clocher de 85 m, panorama sur le bassin", en: "85 m bell tower, view over the basin" },
       { fr: "Port de La Cayenne et cabanes ostréicoles", en: "La Cayenne harbour and oyster huts" },
@@ -650,7 +650,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "randonnee",
     dept: "17",
     name: "Marennes-Plage et le port de La Cayenne",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Boucle plage / chenal : 6 km, très facile", en: "Beach & channel loop: 6 km, very easy" },
       { fr: "Vue sur le viaduc de la Seudre", en: "Views of the Seudre viaduct" },
@@ -681,7 +681,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     category: "surf",
     dept: "17",
     name: "Surfer autour de Marennes",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Vert-Bois à 20 min, Gatseau à 25 min", en: "Vert-Bois 20 min, Gatseau 25 min" },
       { fr: "Ronce-les-Bains à 20 min", en: "Ronce-les-Bains 20 min" },
@@ -713,7 +713,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     dept: "17",
     name: "Taxi à Marennes : votre chauffeur privé pour tous vos trajets",
     nameEn: "Taxi in Marennes: your private driver for every journey",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Basés à Marennes, 5j/7 de 8h à 20h", en: "Based in Marennes, 5 days a week, 8am-8pm" },
       { fr: "Transport médical conventionné", en: "Approved medical transport" },
@@ -721,17 +721,17 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     ],
     fr: {
       teaser:
-        "Alain et Patricia, vos deux chauffeurs de taxi basés à Marennes : gares, aéroports, rendez-vous médicaux, sorties et trajets longue distance en Charente-Maritime.",
+        "Alain et Patricia, vos deux chauffeurs de taxi basés à Marennes : gares, aéroports, rendez-vous médicaux, sorties et trajets longue distance au départ de Marennes-Hiers-Brouage.",
       history:
         "Access Prestige Taxi est né à Marennes, au cœur du bassin de Marennes-Oléron. De là, tout est proche : le viaduc d’Oléron à un quart d’heure, Rochefort et sa gare à trente minutes, Royan de l’autre côté du pont de la Seudre, La Rochelle et son aéroport à moins d’une heure. Nos courses les plus fréquentes sont simples : une prise en charge à domicile pour un train à Rochefort ou Surgères, un vol au départ de La Rochelle ou de Bordeaux, un rendez-vous à l’hôpital de Rochefort ou à Saintes, une sortie au restaurant sans se soucier du retour. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V qui accueille jusqu’à 7 personnes avec les bagages. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
-      tips: "Réservez la veille pour les trains tôt le matin et les vols. Pour un groupe, une famille ou un vol avec bagages, demandez le van dès la réservation. Nous desservons toute la Charente-Maritime et assurons aussi les longues distances.",
+      tips: "Réservez la veille pour les trains tôt le matin et les vols. Pour un groupe, une famille ou un vol avec bagages, demandez le van dès la réservation. Nous prenons nos clients en charge à Marennes-Hiers-Brouage et assurons aussi les longues distances.",
     },
     en: {
       teaser:
-        "Alain and Patricia, your two taxi drivers based in Marennes: stations, airports, medical appointments, evenings out and long-distance rides across Charente-Maritime.",
+        "Alain and Patricia, your two taxi drivers based in Marennes: stations, airports, medical appointments, evenings out and long-distance rides from Marennes-Hiers-Brouage.",
       history:
         "Access Prestige Taxi was born in Marennes, in the heart of the Marennes-Oléron basin. Everything is close by: the Oléron viaduct is fifteen minutes away, Rochefort and its station thirty, Royan across the Seudre bridge, La Rochelle and its airport under an hour. Our most frequent rides are simple ones: a door-to-door pick-up for an early train in Rochefort or Surgères, a flight from La Rochelle or Bordeaux, an appointment at Rochefort or Saintes hospital, dinner out without worrying about the drive home. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van seating up to 7 people with luggage. Child and baby seats are available on request, and seated medical transport is state-approved.",
-      tips: "Book the day before for early trains and flights. For a group, a family or a flight with luggage, ask for the van when booking. We cover the whole of Charente-Maritime and also handle long-distance journeys.",
+      tips: "Book the day before for early trains and flights. For a group, a family or a flight with luggage, ask for the van when booking. We pick our clients up in Marennes-Hiers-Brouage and also handle long-distance journeys.",
     },
     photos: [
       "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
@@ -745,7 +745,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     dept: "17",
     name: "Visiter Brouage et le bassin de Marennes-Oléron en toute tranquillité",
     nameEn: "Visiting Brouage and the Marennes-Oléron basin, stress-free",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     facts: [
       { fr: "Citadelle de Brouage à 10 min de Marennes", en: "Brouage citadel 10 min from Marennes" },
       { fr: "Remparts du XVIIᵉ siècle, entrée libre", en: "17th-century ramparts, free access" },
@@ -769,6 +769,38 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       "https://commons.wikimedia.org/wiki/Special:FilePath/Brouage-Citadelle.jpg?width=1280",
       "https://commons.wikimedia.org/wiki/Special:FilePath/Citadelle%20de%20Hiers-Brouage%20-%20vue%20Est.jpg?width=1280",
       "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg/1280px-Marennes-17_Chaland%26pont_La_Cayenne_2014.jpg",
+    ],
+  },
+  {
+    slug: "taxi-a-cire-d-aunis",
+    category: "visite",
+    dept: "17",
+    name: "Taxi à Ciré-d'Aunis : rendez-vous, gares et sorties",
+    nameEn: "Taxi in Ciré-d'Aunis: appointments, stations and outings",
+    city: "Ciré-d'Aunis",
+    facts: [
+      { fr: "Sur réservation, 5j/7 de 8h à 20h", en: "By appointment, 5 days a week, 8am-8pm" },
+      { fr: "Transport médical conventionné", en: "Approved medical transport" },
+      { fr: "Jusqu’à 7 passagers avec le van", en: "Up to 7 passengers in the van" },
+    ],
+    fr: {
+      teaser:
+        "Un rendez-vous médical, un train ou une sortie depuis Ciré-d'Aunis ? Alain et Patricia viennent vous chercher à domicile, sur réservation.",
+      history:
+        "Ciré-d'Aunis est un village de l'Aunis situé entre Rochefort et Surgères, traversé par le canal de Charras. Sans transport en commun pratique pour chaque trajet, un taxi sur réservation simplifie le quotidien : rendez-vous médicaux, examens, départ en train, retour de l'hôpital ou sortie en famille. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V jusqu'à 7 passagers. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
+      tips: "Réservez la veille pour un train tôt le matin ou un rendez-vous médical. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
+    },
+    en: {
+      teaser:
+        "A medical appointment, a train or an outing from Ciré-d'Aunis? Alain and Patricia pick you up at home, by appointment.",
+      history:
+        "Ciré-d'Aunis is a village in the Aunis area, between Rochefort and Surgères, crossed by the Charras canal. Without convenient public transport for every trip, a pre-booked taxi makes daily life easier: medical appointments, tests, catching a train, coming home from hospital or a family outing. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van for up to 7 passengers. Child and baby seats are available on request, and seated medical transport is state-approved.",
+      tips: "Book the day before for an early train or a medical appointment. The estimated fare is given before departure; only the meter is binding at the end of the ride.",
+    },
+    photos: [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/234%20-%20Mairie%20-%20Cir%C3%A9%20d'Aunis.jpg?width=1280",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/1053%20-%20Canal%20de%20Charras%20pont%20-%20Cir%C3%A9%20d'Aunis.jpg?width=1280",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/002%20Cir%C3%A9%20(%2017290%20).JPG?width=1280",
     ],
   },
 ];

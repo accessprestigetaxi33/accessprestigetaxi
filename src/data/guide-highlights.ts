@@ -18,7 +18,7 @@ export const GUIDE_HIGHLIGHTS: GuideHighlight[] = [
   {
     slug: "taxi-a-marennes-chauffeur-prive",
     name: "Taxi à Marennes : votre chauffeur privé",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     photo:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
     fr: "Rendez-vous médicaux, sorties, trajets du quotidien : Alain et Patricia vous conduisent depuis Marennes-Hiers-Brouage.",
@@ -27,7 +27,7 @@ export const GUIDE_HIGHLIGHTS: GuideHighlight[] = [
   {
     slug: "visiter-brouage-et-le-bassin-de-marennes-oleron",
     name: "Visiter Brouage et le bassin de Marennes-Oléron",
-    city: "Marennes",
+    city: "Marennes-Hiers-Brouage",
     photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Brouage-Citadelle.jpg?width=1280",
     fr: "Citadelle, marais et cabanes ostréicoles : une demi-journée de découverte, sans chercher de place de parking.",
     en: "Citadel, marshes and oyster huts: a half-day of discovery, with no parking to look for.",
