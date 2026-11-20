@@ -1,6 +1,7 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import { goneResponse, isRemovedPage } from "./lib/removed-pages";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
@@ -21,6 +22,21 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   }
 });
 
+// Pages retirées : 410 Gone + noindex pour qu'elles disparaissent de Google.
+// Les anciens articles de blog inexistants (404) passent aussi en 410.
+const removedPagesMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const { pathname } = new URL(request.url);
+  if (request.method === "GET" || request.method === "HEAD") {
+    if (isRemovedPage(pathname)) return goneResponse();
+  }
+  const result = await next();
+  const status = (result as { response?: Response }).response?.status ?? (result as unknown as Response).status;
+  if (pathname.startsWith("/blog/") && status === 404) {
+    return goneResponse();
+  }
+  return result;
+});
+
 // Start installs this automatically when src/start.ts is absent; defining the
 // file opts out, so re-add it explicitly to keep server functions protected
 // from cross-site requests.
@@ -30,5 +46,5 @@ const csrfMiddleware = createCsrfMiddleware({
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, removedPagesMiddleware, csrfMiddleware],
 }));
