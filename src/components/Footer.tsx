@@ -36,10 +36,11 @@ const SOCIALS = [
 
 const COPY = {
   fr: {
-    tagline: "Votre service de taxi premium à Marennes, Brouage et Cire-d'Aunis. Confort, ponctualité et discrétion.",
+    tagline:
+      "Votre service de taxi premium à Marennes-Hiers-Brouage et Cire-d'Aunis. Confort, ponctualité et discrétion.",
     highlights: [
       { Icon: Clock, text: "Service 7j/7 – 24h/24" },
-      { Icon: MapPin, text: "Marennes, Brouage et Cire-d'Aunis" },
+      { Icon: MapPin, text: "Marennes-Hiers-Brouage et Cire-d'Aunis" },
       { Icon: ShieldCheck, text: "Chauffeurs professionnels et véhicules haut de gamme" },
     ],
     navTitle: "Navigation",
@@ -54,8 +55,7 @@ const COPY = {
     ],
     zonesTitle: "Nos zones",
     zones: [
-      { to: "/taxi-marennes" as const, label: "Taxi Marennes" },
-      { to: "/taxi/$ville" as const, params: { ville: "brouage" }, label: "Taxi Brouage" },
+      { to: "/taxi-marennes" as const, label: "Taxi Marennes-Hiers-Brouage" },
       { to: "/taxi/$ville" as const, params: { ville: "cire-d-aunis" }, label: "Taxi Cire-d'Aunis" },
     ],
     servicesTitle: "Nos services",
@@ -68,7 +68,7 @@ const COPY = {
     contactTitle: "Contact",
     phoneNote: "Appel direct",
     emailNote: "Réponse rapide",
-    zone: "Marennes · Brouage · Cire-d'Aunis",
+    zone: "Marennes-Hiers-Brouage · Cire-d'Aunis",
     country: "Charente-Maritime",
     whatsapp: "Nous écrire sur WhatsApp",
     features: [
@@ -84,10 +84,11 @@ const COPY = {
     ],
   },
   en: {
-    tagline: "Your premium taxi service in Marennes, Brouage and Cire-d'Aunis. Comfort, punctuality and discretion.",
+    tagline:
+      "Your premium taxi service in Marennes-Hiers-Brouage and Cire-d'Aunis. Comfort, punctuality and discretion.",
     highlights: [
       { Icon: Clock, text: "Available 7 days a week, 24/7" },
-      { Icon: MapPin, text: "Marennes, Brouage and Cire-d'Aunis" },
+      { Icon: MapPin, text: "Marennes-Hiers-Brouage and Cire-d'Aunis" },
       { Icon: ShieldCheck, text: "Professional drivers and premium vehicles" },
     ],
     navTitle: "Navigation",
@@ -102,8 +103,7 @@ const COPY = {
     ],
     zonesTitle: "Our areas",
     zones: [
-      { to: "/taxi-marennes" as const, label: "Taxi Marennes" },
-      { to: "/taxi/$ville" as const, params: { ville: "brouage" }, label: "Taxi Brouage" },
+      { to: "/taxi-marennes" as const, label: "Taxi Marennes-Hiers-Brouage" },
       { to: "/taxi/$ville" as const, params: { ville: "cire-d-aunis" }, label: "Taxi Cire-d'Aunis" },
     ],
     servicesTitle: "Our services",
@@ -116,7 +116,7 @@ const COPY = {
     contactTitle: "Contact",
     phoneNote: "Call us directly",
     emailNote: "Quick reply",
-    zone: "Marennes · Brouage · Cire-d'Aunis",
+    zone: "Marennes-Hiers-Brouage · Cire-d'Aunis",
     country: "Charente-Maritime",
     whatsapp: "Message us on WhatsApp",
     features: [
