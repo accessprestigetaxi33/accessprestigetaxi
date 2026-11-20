@@ -2,7 +2,7 @@
 //
 // PERFORMANCE : le module `guide-charente.ts` pèse ~700 Ko une fois compilé.
 // L'importer depuis la home obligeait chaque visiteur à télécharger tout le
-// guide avant l'interactivité. On ne garde donc ici que les 3 cartes mises en
+// guide avant l'interactivité. On ne garde donc ici que les cartes mises en
 // avant. Si vous changez ces articles, mettez à jour les slugs ci-dessous —
 // ils doivent exister dans guide-charente.ts.
 export type GuideHighlight = {
@@ -21,16 +21,8 @@ export const GUIDE_HIGHLIGHTS: GuideHighlight[] = [
     city: "Marennes",
     photo:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
-    fr: "Gares, aéroports, rendez-vous médicaux, sorties : Alain et Patricia vous conduisent depuis Marennes dans toute la Charente-Maritime, en France et en Europe.",
-    en: "Stations, airports, medical appointments, evenings out: Alain and Patricia drive you from Marennes across Charente-Maritime, France and Europe.",
-  },
-  {
-    slug: "rejoindre-l-ile-d-oleron-en-taxi",
-    name: "Rejoindre l’île d’Oléron en taxi",
-    city: "Oléron",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Pont%20d%27Ol%C3%A9ron.jpg?width=1280",
-    fr: "Depuis Marennes, Rochefort ou La Rochelle : durées indicatives, points de dépose et pourquoi le taxi reste le plus simple sur l’île.",
-    en: "From Marennes, Rochefort or La Rochelle: indicative times, drop-off points and why a taxi is simplest on the island.",
+    fr: "Rendez-vous médicaux, sorties, trajets du quotidien : Alain et Patricia vous conduisent depuis Marennes-Hiers-Brouage.",
+    en: "Medical appointments, evenings out, everyday trips: Alain and Patricia drive you from Marennes-Hiers-Brouage.",
   },
   {
     slug: "visiter-brouage-et-le-bassin-de-marennes-oleron",
