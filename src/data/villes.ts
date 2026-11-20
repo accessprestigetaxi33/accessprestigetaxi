@@ -133,12 +133,7 @@ export const VILLES: Ville[] = [
     "postal": "17290",
     "lat": 46.0569,
     "lng": -0.9325,
-    "around": [
-      "Ardillières",
-      "Ballon",
-      "Landrais",
-      "Breuil-Magné"
-    ],
+    "around": [],
     "fr": {
       "metaTitle": "Taxi Ciré-d'Aunis ☎ 06 03 44 48 63 · 5j/7 8h-20h",
       "metaDescription": "Taxi à Ciré-d'Aunis : appelez le 06 03 44 48 63 ou réservez en ligne, 5j/7 de 8h à 20h. Gares, aéroports, transport médical conventionné, van 7 places.",
@@ -164,7 +159,7 @@ export const VILLES: Ville[] = [
         "Transport médical conventionné, fauteuil roulant possible",
         "Van Mercedes Classe V jusqu'à 7 passagers",
         "Sièges bébé et rehausseurs sans supplément",
-        "Communes desservies : Ardillières, Ballon, Landrais, Breuil-Magné"
+        "Prise en charge au départ de Marennes-Hiers-Brouage"
       ],
       "faq": [
         {
@@ -206,7 +201,7 @@ export const VILLES: Ville[] = [
         "Approved medical transport, wheelchair possible",
         "Mercedes V-Class van for up to 7 passengers",
         "Baby and booster seats at no extra cost",
-        "Areas served: Ardillières, Ballon, Landrais, Breuil-Magné"
+        "Pick-up from Marennes-Hiers-Brouage"
       ],
       "faq": [
         {
