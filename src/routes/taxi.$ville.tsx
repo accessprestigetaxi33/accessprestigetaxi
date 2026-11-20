@@ -1,6 +1,6 @@
 import { socialImageMeta } from "@/lib/og";
 import { keywordsMeta } from "@/lib/seo-keywords";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { seoLinks } from "@/lib/seo-hreflang";
 import { ArrowRight, Check, Clock, Euro, HelpCircle, MapPin, Phone } from "lucide-react";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -14,7 +14,7 @@ const SITE = "https://www.accessprestigetaxi.fr";
 export const Route = createFileRoute("/taxi/$ville")({
   loader: ({ params }) => {
     const ville = getVille(params.ville);
-    if (!ville) throw notFound();
+    if (!ville) throw redirect({ to: "/taxi-marennes", statusCode: 301 });
     return { slug: ville.slug };
   },
   head: ({ params, match }) => {
@@ -52,8 +52,8 @@ export const Route = createFileRoute("/taxi/$ville")({
   notFoundComponent: () => (
     <div className="mx-auto max-w-2xl px-5 py-20 text-center">
       <h1 className="font-display text-2xl font-semibold">Ville introuvable</h1>
-      <Link to="/destinations" className="mt-4 inline-block text-primary underline">
-        Voir nos destinations
+      <Link to="/taxi-marennes" className="mt-4 inline-block text-primary underline">
+        Taxi à Marennes
       </Link>
     </div>
   ),
@@ -75,9 +75,7 @@ const UI = {
     pricesT: "Tarifs",
     prices: "Prise en charge 2,70 € · 2,28 €/km en journée · 3,22 €/km la nuit, le dimanche et les jours fériés. Devis gratuit.",
     priceNote: "* Tarif indicatif hors bouchons et incidents : seul le compteur du taxi fait foi.",
-    island: "Voir la page Taxi île d'Oléron",
     marennes: "Voir la page Taxi Marennes",
-    dept: "Voir la page Taxi Charente-Maritime",
     faqLink: "Tarifs, compteur et réservation : consultez notre FAQ",
   },
   en: {
@@ -94,9 +92,7 @@ const UI = {
     pricesT: "Fares",
     prices: "€2.70 pick-up · €2.28/km daytime · €3.22/km at night, on Sundays and public holidays. Free quote.",
     priceNote: "* Indicative fare, excluding traffic and incidents: only the taximeter is binding.",
-    island: "See the Taxi Oléron island page",
     marennes: "See the Taxi Marennes page",
-    dept: "See the Taxi Charente-Maritime page",
     faqLink: "Fares, meter and booking: read our FAQ",
   },
 } as const;
@@ -278,13 +274,6 @@ function VillePage() {
       />
 
       <section className="mt-10 space-y-2">
-        {ville.island ? (
-          <p className="text-sm">
-            <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
-              {u.island}
-            </Link>
-          </p>
-        ) : null}
         {ville.marennes ? (
           <p className="text-sm">
             <Link to="/taxi-marennes" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
@@ -292,11 +281,6 @@ function VillePage() {
             </Link>
           </p>
         ) : null}
-        <p className="text-sm">
-          <Link to="/taxi-charente-maritime" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
-            {u.dept}
-          </Link>
-        </p>
         <p className="text-sm">
           <Link to="/faq" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
             {u.faqLink}

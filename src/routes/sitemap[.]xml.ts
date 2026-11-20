@@ -4,7 +4,6 @@ import type {} from "@tanstack/react-start";
 const BASE_URL = "https://www.accessprestigetaxi.fr";
 
 import { GUIDE_ENTRIES } from "@/data/guide-charente";
-import { DESTINATIONS } from "@/data/destinations";
 import { VILLES } from "@/data/villes";
 
 interface SitemapEntry {
@@ -28,8 +27,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/services", changefreq: "monthly", priority: "0.9" },
           { path: "/taxi-marennes", changefreq: "monthly", priority: "0.9" },
-          { path: "/taxi-oleron", changefreq: "monthly", priority: "0.9" },
-          { path: "/taxi-charente-maritime", changefreq: "monthly", priority: "0.9" },
 
           { path: "/faq", changefreq: "monthly", priority: "0.8" },
           { path: "/blog", changefreq: "weekly", priority: "0.9" },
@@ -39,14 +36,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.7",
           })),
           { path: "/reserver", changefreq: "monthly", priority: "0.9" },
-          // Pages destinations SEO (Charente-Maritime)
-          { path: "/destinations", changefreq: "monthly", priority: "0.9" },
-          ...DESTINATIONS.map((d) => ({
-            path: `/destinations/${d.slug}`,
-            changefreq: "monthly" as const,
-            priority: "0.8",
-          })),
-          // Pages locales par ville (Charente-Maritime)
+          // Pages locales : Hiers-Brouage et Ciré-d'Aunis
           ...VILLES.map((v) => ({
             path: `/taxi/${v.slug}`,
             changefreq: "monthly" as const,

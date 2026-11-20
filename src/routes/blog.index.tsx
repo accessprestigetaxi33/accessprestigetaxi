@@ -93,9 +93,9 @@ const COPY = {
   },
 } as const;
 
-const BLOG_TITLE = "Guide Marennes, Oléron & Charente-Maritime en taxi";
+const BLOG_TITLE = "Guide Marennes, Brouage & Ciré-d'Aunis en taxi";
 const BLOG_DESC =
-  "Guide de Marennes, de l'île d'Oléron et de la Charente-Maritime : restaurants, hôtels, randonnées et sites à visiter, desservis par notre taxi 100 % électrique.";
+  "Guide de Marennes-Hiers-Brouage et Brouage : restaurants, hôtels, randonnées et sites à visiter, desservis par notre taxi 100 % électrique.";
 const BLOG_OG_DESC =
   "Restaurants, hôtels étoilés, randonnées et sites historiques de Charente-Maritime, avec photos et conseils.";
 
@@ -103,7 +103,7 @@ export const Route = createFileRoute("/blog/")({
   component: BlogIndex,
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["visiter Marennes en taxi", "excursion île d'Oléron taxi", "tourisme Charente-Maritime taxi"]),
+      keywordsMeta(["visiter Marennes en taxi", "visiter Brouage en taxi", "taxi Ciré-d'Aunis"]),
       { title: BLOG_TITLE },
       { name: "description", content: BLOG_DESC },
       { property: "og:title", content: BLOG_TITLE },

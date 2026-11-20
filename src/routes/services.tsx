@@ -11,12 +11,12 @@ const SERVICES_URL = absoluteUrl("/services");
 
 const META = {
   fr: {
-    title: "Prestations taxi Marennes, Oléron & Charente-Maritime",
-    desc: "Taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime : transport santé conventionné, transferts toutes gares et tous aéroports, mise à disposition avec chauffeur, transport de groupe 8 places et trajets toutes distances, en véhicules électriques.",
+    title: "Prestations taxi Marennes, Brouage & Ciré-d'Aunis",
+    desc: "Taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis : transport santé conventionné, transferts toutes gares et tous aéroports, mise à disposition avec chauffeur, transport de groupe 8 places et trajets toutes distances, en véhicules électriques.",
   },
   en: {
-    title: "Taxi services in Marennes, Oléron & Charente-Maritime",
-    desc: "Taxi in Marennes, Oléron island and Charente-Maritime: covered medical transport (wheelchair accessible), transfers to every station and airport, chauffeur hire, 8-seat group transport and all-distance journeys, with electric vehicles.",
+    title: "Taxi services in Marennes, Brouage & Ciré-d'Aunis",
+    desc: "Taxi in Marennes-Hiers-Brouage and Ciré-d'Aunis: covered medical transport (wheelchair accessible), transfers to every station and airport, chauffeur hire, 8-seat group transport and all-distance journeys, with electric vehicles.",
   },
 } as const;
 
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/services")({
     const pageUrl = ogPageUrl("/services", lang);
     return {
       meta: [
-        keywordsMeta(["taxi conventionné Marennes", "transport médical île d'Oléron", "taxi 8 places Charente-Maritime", "transfert aéroport Charente-Maritime"]),
+        keywordsMeta(["taxi conventionné Marennes", "transport médical Brouage", "taxi 8 places Marennes", "taxi Ciré-d'Aunis"]),
         { title: m.title },
         { name: "description", content: m.desc },
         { property: "og:title", content: m.title },

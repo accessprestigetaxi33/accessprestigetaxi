@@ -344,31 +344,27 @@ export const Route = createFileRoute("/")({
         keywordsMeta([
           "taxi Marennes",
           "taxi Marennes-Hiers-Brouage",
-          "taxi île d'Oléron",
-          "taxi Charente-Maritime",
-          "taxi Rochefort",
-          "taxi La Rochelle",
-          "taxi Royan",
-          "taxi conventionné Charente-Maritime",
-          "taxi aéroport La Rochelle",
-          "taxi gare Rochefort",
+          "taxi Brouage",
+          "taxi Hiers-Brouage",
+          "taxi Ciré-d'Aunis",
+          "taxi conventionné Marennes",
           "transport privé Marennes",
           "chauffeur privé Marennes",
-          "chauffeur privé Charente-Maritime",
+          "chauffeur privé Brouage",
           "transport médical conventionné Marennes",
-          "transport médical conventionné Charente-Maritime",
+          "transport médical conventionné Ciré-d'Aunis",
           "Access Taxi PBR",
         ]),
         {
           title: isEn
-            ? "Taxi & Private Driver Marennes, Charente-Maritime | Access Taxi PBR"
+            ? "Taxi & Private Driver Marennes, Brouage, Ciré-d'Aunis | Access Taxi PBR"
             : "Taxi Marennes, chauffeur privé & transport médical | Access Taxi PBR",
         },
         {
           name: "description",
           content: isEn
-            ? "Access Taxi PBR, taxi and private driver in Marennes, Charente-Maritime: private transport, covered medical transport, airports and stations, Oléron. 5 days a week, 8am-8pm."
-            : "Access Taxi PBR, taxi et chauffeur privé à Marennes (Charente-Maritime) : transport privé, transport médical conventionné, gares, aéroports, Oléron. 5j/7, 8h-20h.",
+            ? "Access Taxi PBR, taxi and private driver in Marennes-Hiers-Brouage and Ciré-d'Aunis: private transport, covered medical transport, stations and airports. 5 days a week, 8am-8pm."
+            : "Access Taxi PBR, taxi et chauffeur privé à Marennes-Hiers-Brouage et Ciré-d'Aunis : transport privé, transport médical conventionné, gares, aéroports. 5j/7, 8h-20h.",
         },
 
         { property: "og:site_name", content: "Access Taxi PBR" },
@@ -404,7 +400,7 @@ export const Route = createFileRoute("/")({
               "Access Taxi PBR — chauffeur privé et transport médical conventionné à Marennes",
             ],
             description:
-              "Taxi, transport privé, chauffeur privé et transport médical conventionné à Marennes-Hiers-Brouage et dans toute la Charente-Maritime.",
+              "Taxi, transport privé, chauffeur privé et transport médical conventionné à Marennes-Hiers-Brouage, Brouage et Ciré-d'Aunis.",
             knowsAbout: [
               "Transport privé",
               "Chauffeur privé",
@@ -427,15 +423,9 @@ export const Route = createFileRoute("/")({
             },
 
             areaServed: [
-              { "@type": "AdministrativeArea", name: "Charente-Maritime" },
               { "@type": "City", name: "Marennes-Hiers-Brouage" },
-              { "@type": "Place", name: "Île d'Oléron" },
-              { "@type": "City", name: "Bourcefranc-le-Chapus" },
-              { "@type": "City", name: "La Rochelle" },
-              { "@type": "City", name: "Rochefort" },
-              { "@type": "City", name: "Saintes" },
-              { "@type": "City", name: "Royan" },
-              { "@type": "City", name: "Saint-Jean-d'Angély" },
+              { "@type": "Place", name: "Brouage" },
+              { "@type": "City", name: "Ciré-d'Aunis" },
             ],
 
             knowsLanguage: ["fr", "en"],
@@ -809,7 +799,7 @@ function Index() {
       {/* 1. HERO — logo sur bandeau sombre puis visuel Access' Taxi avec boutons par-dessus */}
       <section className="relative isolate overflow-hidden bg-black">
         <h1 className="sr-only">
-          Taxi Marennes · Oléron · Charente-Maritime — Access Taxi PBR, chauffeur privé, transport privé et
+          Taxi Marennes-Hiers-Brouage · Brouage · Ciré-d'Aunis — Access Taxi PBR, chauffeur privé, transport privé et
           professionnel, transport médical conventionné, mise à disposition
         </h1>
         <div className="flex w-full flex-col items-center justify-center bg-black px-4 py-2 sm:py-6">
@@ -866,8 +856,8 @@ function Index() {
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-white/85 sm:text-base">
             {lang === "en"
-              ? "Based in Marennes, we drive you daily across Charente-Maritime and beyond, for all distances."
-              : "Basés à Marennes, nous vous conduisons chaque jour partout en Charente-Maritime et au-delà, toutes distances."}
+              ? "Based in Marennes, we drive you daily in Marennes-Hiers-Brouage and Ciré-d'Aunis, and to stations and airports for longer trips."
+              : "Basés à Marennes, nous vous conduisons chaque jour à Marennes-Hiers-Brouage et Ciré-d'Aunis, ainsi que vers les gares et aéroports pour vos longs trajets."}
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {[
@@ -896,12 +886,6 @@ function Index() {
               ),
             )}
           </ul>
-          <Link
-            to="/taxi-charente-maritime"
-            className="mt-4 inline-block text-sm font-semibold text-[#e0b866] underline underline-offset-4 hover:opacity-90"
-          >
-            {lang === "en" ? "See all areas we cover" : "Voir toutes nos zones desservies"}
-          </Link>
         </div>
       </section>
 

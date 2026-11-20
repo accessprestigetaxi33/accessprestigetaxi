@@ -289,13 +289,6 @@ function BlogArticle() {
               {c.homeLink}
             </Link>
           </p>
-          {entry.slug.includes("oleron") && (
-            <p className="mt-2 text-[15px] leading-relaxed text-white/70">
-              <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
-                {isEn ? "Taxi on Oléron island: hours, fares and booking" : "Taxi île d'Oléron : horaires, tarifs et réservation"}
-              </Link>
-            </p>
-          )}
 
 
 

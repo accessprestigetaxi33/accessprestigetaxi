@@ -8,21 +8,21 @@ import { DRIVERS } from "@/data/drivers";
 import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 
 const URL = `${SITE}/faq`;
-const TITLE_FR = "FAQ taxi : tarifs, compteur, Oléron | Access Prestige Taxi";
+const TITLE_FR = "FAQ taxi Marennes : tarifs, compteur, réservation | Access Taxi PBR";
 const DESC_FR =
-  "Questions fréquentes sur nos taxis en Charente-Maritime : tarifs officiels, fonctionnement du compteur, trajets vers l'île d'Oléron, réservation et paiement.";
-const TITLE_EN = "Taxi FAQ: fares, meter, Oléron | Access Prestige Taxi";
+  "Questions fréquentes sur nos taxis à Marennes-Hiers-Brouage et Ciré-d'Aunis : tarifs officiels, fonctionnement du compteur, réservation et paiement.";
+const TITLE_EN = "Taxi FAQ Marennes: fares, meter, booking | Access Taxi PBR";
 const DESC_EN =
-  "Frequently asked questions about our taxis in Charente-Maritime: official fares, how the meter works, trips to Oléron island, booking and payment.";
+  "Frequently asked questions about our taxis in Marennes-Hiers-Brouage and Ciré-d'Aunis: official fares, how the meter works, booking and payment.";
 
 export const Route = createFileRoute("/faq")({
   head: ({ match }) => ({
     meta: [
       keywordsMeta([
-        "tarif taxi Charente-Maritime",
+        "tarif taxi Brouage",
         "prix taxi Marennes",
         "compteur taxi",
-        "taxi île d'Oléron prix",
+        "taxi Ciré-d'Aunis prix",
         "réserver un taxi Marennes",
         "questions fréquentes taxi",
       ]),
@@ -62,7 +62,7 @@ const COPY: Record<"fr" | "en", {
     eyebrow: "Questions fréquentes",
     h1: "FAQ taxi en Charente-Maritime",
     lead:
-      "Tarifs, compteur, trajets vers l'île d'Oléron, réservation et paiement : les réponses d'Alain et Patricia, vos chauffeurs basés à Marennes.",
+      "Tarifs, compteur, réservation et paiement : les réponses d'Alain et Patricia, vos chauffeurs basés à Marennes.",
     ctaT: "Une question sans réponse ?",
     ctaP: "Appelez-nous ou réservez en ligne en moins d'une minute, 24h/24.",
     book: "Réserver ma course",
@@ -112,27 +112,6 @@ const COPY: Record<"fr" | "en", {
         ],
       },
       {
-        title: "Trajets vers l'île d'Oléron",
-        items: [
-          {
-            q: "Desservez-vous toute l'île d'Oléron ?",
-            a: "Oui : Le Château-d'Oléron, Dolus, Saint-Pierre, Saint-Trojan-les-Bains, Saint-Georges, Saint-Denis et la pointe de Chassiron, au départ de Marennes comme des gares et aéroports de la région.",
-          },
-          {
-            q: "Combien de temps faut-il pour rejoindre Oléron ?",
-            a: "Comptez environ 15 minutes depuis Marennes jusqu'au Château-d'Oléron par le viaduc, 45 minutes depuis Rochefort et environ 1 h 15 depuis La Rochelle, hors trafic estival.",
-          },
-          {
-            q: "Le passage du viaduc est-il payant ?",
-            a: "Non, le viaduc reliant Bourcefranc-le-Chapus à l'île d'Oléron est gratuit : aucun péage n'est ajouté à votre course.",
-          },
-          {
-            q: "Peut-on réserver un taxi pour la journée sur l'île ?",
-            a: "Oui, nous proposons la mise à disposition avec chauffeur : visites, plages, marchés et restaurants, avec un véhicule qui vous attend entre chaque étape.",
-          },
-        ],
-      },
-      {
         title: "Réservation",
         items: [
           {
@@ -163,7 +142,7 @@ const COPY: Record<"fr" | "en", {
     eyebrow: "Frequently asked questions",
     h1: "Taxi FAQ in Charente-Maritime",
     lead:
-      "Fares, the meter, trips to Oléron island, booking and payment: answers from Alain and Patricia, your drivers based in Marennes.",
+      "Fares, the meter, booking and payment: answers from Alain and Patricia, your drivers based in Marennes.",
     ctaT: "Still have a question?",
     ctaP: "Call us or book online in under a minute, 24/7.",
     book: "Book my ride",
@@ -213,27 +192,6 @@ const COPY: Record<"fr" | "en", {
         ],
       },
       {
-        title: "Trips to Oléron island",
-        items: [
-          {
-            q: "Do you serve the whole of Oléron island?",
-            a: "Yes: Le Château-d'Oléron, Dolus, Saint-Pierre, Saint-Trojan-les-Bains, Saint-Georges, Saint-Denis and Chassiron point, from Marennes as well as from regional stations and airports.",
-          },
-          {
-            q: "How long does it take to reach Oléron?",
-            a: "Around 15 minutes from Marennes to Le Château-d'Oléron over the viaduct, 45 minutes from Rochefort and about 1h15 from La Rochelle, outside summer traffic.",
-          },
-          {
-            q: "Is there a toll on the viaduct?",
-            a: "No, the viaduct linking Bourcefranc-le-Chapus to Oléron island is free: no toll is added to your fare.",
-          },
-          {
-            q: "Can I book a taxi for a full day on the island?",
-            a: "Yes, we offer hourly hire with a driver: sightseeing, beaches, markets and restaurants, with the car waiting for you between stops.",
-          },
-        ],
-      },
-      {
         title: "Booking",
         items: [
           {
@@ -264,8 +222,6 @@ const COPY: Record<"fr" | "en", {
 
 const RELATED = [
   { to: "/taxi-marennes" as const, fr: "Taxi à Marennes", en: "Taxi in Marennes" },
-  { to: "/taxi-oleron" as const, fr: "Taxi île d'Oléron", en: "Taxi on Oléron island" },
-  { to: "/taxi-charente-maritime" as const, fr: "Taxi Charente-Maritime", en: "Taxi in Charente-Maritime" },
   { to: "/devis" as const, fr: "Demander un devis", en: "Request a quote" },
 ];
 

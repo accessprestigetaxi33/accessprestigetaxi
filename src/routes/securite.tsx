@@ -201,7 +201,7 @@ function SecuritePage() {
           <Link to="/confidentialite" className="inline-flex items-center gap-2 text-primary underline">
             <ShieldCheck className="h-4 w-4" /> {c.privacyLink}
           </Link>
-          <Link to="/destinations" className="inline-flex items-center gap-2 text-primary underline">
+          <Link to="/taxi-marennes" className="inline-flex items-center gap-2 text-primary underline">
             <MapPin className="h-4 w-4" /> {c.destinationsLink}
           </Link>
         </div>

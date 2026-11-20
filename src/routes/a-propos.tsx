@@ -6,15 +6,15 @@ import { ArrowLeft, Award, MapPin, Clock, Heart } from "lucide-react";
 import { useT, useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
-const ABOUT_TITLE = "À propos — taxi Marennes, Oléron & Charente-Maritime";
+const ABOUT_TITLE = "À propos — taxi Marennes, Brouage & Ciré-d'Aunis";
 const ABOUT_DESC =
-  "Patricia et Alain, vos deux chauffeurs de taxi basés à Marennes : service premium électrique sur l'île d'Oléron et dans toute la Charente-Maritime.";
+  "Patricia et Alain, vos deux chauffeurs de taxi basés à Marennes : service premium électrique à Marennes-Hiers-Brouage et Ciré-d'Aunis.";
 const ABOUT_URL = "https://www.accessprestigetaxi.fr/a-propos";
 
 export const Route = createFileRoute("/a-propos")({
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["chauffeur taxi Marennes", "taxi privé île d'Oléron", "société de taxi Charente-Maritime"]),
+      keywordsMeta(["chauffeur taxi Marennes", "taxi Brouage", "taxi Ciré-d'Aunis"]),
       { title: ABOUT_TITLE },
       { name: "description", content: ABOUT_DESC },
       { property: "og:title", content: ABOUT_TITLE },
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/a-propos")({
           slogan: "L'excellence à chaque trajet",
           url: ABOUT_URL,
           telephone: DRIVERS.map((d) => d.intl),
-          areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+          areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
         }),
       },
     ],
