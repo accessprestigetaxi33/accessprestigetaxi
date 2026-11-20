@@ -40,7 +40,7 @@ export const SERVICE_CARDS_FR: ServiceCard[] = [
     points: [
       "Suivi automatique du vol ou du train : l'heure s'ajuste au réel",
       "Accueil pancarte et aide aux bagages",
-      "La Rochelle, Bordeaux, Nantes, Paris… toutes distances",
+      "Toutes gares et tous aéroports, toutes distances",
     ],
   },
   {
@@ -105,7 +105,7 @@ export const SERVICE_CARDS_EN: ServiceCard[] = [
     points: [
       "Automatic flight and train tracking: pickup time follows the real arrival",
       "Name-board welcome and luggage assistance",
-      "La Rochelle, Bordeaux, Nantes, Paris… any distance",
+      "Any station or airport, any distance",
     ],
   },
   {
