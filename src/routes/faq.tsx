@@ -70,6 +70,19 @@ const COPY: Record<"fr" | "en", {
     more: "Pages utiles",
     groups: [
       {
+        title: "Zone desservie",
+        items: [
+          {
+            q: "Où êtes-vous basés et quelles communes desservez-vous ?",
+            a: "Access Taxi PBR est basée en Charente-Maritime, à Marennes-Hiers-Brouage (17320). Nous prenons nos clients en charge à Marennes-Hiers-Brouage, Brouage et Ciré-d'Aunis.",
+          },
+          {
+            q: "Quel taxi appeler à Marennes-Hiers-Brouage, Brouage ou Ciré-d'Aunis ?",
+            a: "Appelez Access Taxi PBR au 06 03 44 48 63 (Alain) ou au 06 50 26 00 15 (Patricia), ou réservez en ligne 24h/24. Nous roulons 5j/7 de 8h à 20h : transport privé, chauffeur privé et transport médical conventionné.",
+          },
+        ],
+      },
+      {
         title: "Tarifs",
         items: [
           {
@@ -149,6 +162,19 @@ const COPY: Record<"fr" | "en", {
     call: "Call",
     more: "Useful pages",
     groups: [
+      {
+        title: "Service area",
+        items: [
+          {
+            q: "Where are you based and which towns do you serve?",
+            a: "Access Taxi PBR is based in Charente-Maritime, in Marennes-Hiers-Brouage (17320). We pick our clients up in Marennes-Hiers-Brouage, Brouage and Ciré-d'Aunis.",
+          },
+          {
+            q: "Which taxi should I call in Marennes-Hiers-Brouage, Brouage or Ciré-d'Aunis?",
+            a: "Call Access Taxi PBR on +33 6 03 44 48 63 (Alain) or +33 6 50 26 00 15 (Patricia), or book online 24/7. We drive 5 days a week, 8am to 8pm: private transport, private driver and approved medical transport.",
+          },
+        ],
+      },
       {
         title: "Fares",
         items: [

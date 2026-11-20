@@ -76,7 +76,7 @@ const COPY = {
       "* Tarifs officiels taxi. L'estimation ne prend pas en compte bouchons et incidents : seul le compteur fait foi.",
     zoneT: "Zone d'intervention",
     zoneLead: "Nous intervenons au départ de Marennes :",
-    zones: ["Marennes-Hiers-Brouage", "Cire-d'Aunis"],
+    zones: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"],
     fleetT: "Nos véhicules",
     fleet: [
       "BMW iX1 100 % électrique (Patricia) — 4 passagers",
@@ -107,7 +107,7 @@ const COPY = {
     priceNote: "* Official taxi fares. Estimates exclude traffic jams and incidents: only the taximeter is binding.",
     zoneT: "Service area",
     zoneLead: "We drive from Marennes:",
-    zones: ["Marennes-Hiers-Brouage", "Cire-d'Aunis"],
+    zones: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"],
     fleetT: "Our vehicles",
     fleet: [
       "Fully electric BMW iX1 (Patricia) — 4 passengers",
@@ -170,7 +170,7 @@ function TaxiMarennesPage() {
           sameAs: [`${SITE}/`, `${SITE}/faq`],
           currenciesAccepted: "EUR",
           paymentAccepted: "Espèces, Carte bancaire, Virement, Tiers payant",
-          geo: { "@type": "GeoCoordinates", latitude: 45.8231, longitude: -1.1055 },
+          geo: { "@type": "GeoCoordinates", latitude: 45.8226, longitude: -1.1059 },
           openingHoursSpecification: [
             {
               "@type": "OpeningHoursSpecification",
@@ -180,7 +180,7 @@ function TaxiMarennesPage() {
             },
           ],
         },
-        areaServed: ["Marennes-Hiers-Brouage", "Cire-d'Aunis"].map((name) => ({ "@type": "City", name })),
+        areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
         openingHoursSpecification: [
           {
             "@type": "OpeningHoursSpecification",

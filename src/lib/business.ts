@@ -40,6 +40,9 @@ export function localBusinessNode() {
     "@id": BUSINESS_ID,
     name: BUSINESS_NAME,
     alternateName: "Access Taxi PBR — Marennes-Hiers-Brouage",
+    description:
+      "Access Taxi PBR, taxi et chauffeur privé basé en Charente-Maritime, à Marennes-Hiers-Brouage (17320). Prise en charge à Marennes-Hiers-Brouage, Brouage et Ciré-d'Aunis : transport privé, chauffeur privé et transport médical conventionné, 5j/7 de 8h à 20h.",
+    knowsAbout: ["Taxi Marennes-Hiers-Brouage", "Taxi Brouage", "Taxi Ciré-d'Aunis", "Transport médical conventionné", "Chauffeur privé"],
     url: `${SITE_URL}/`,
     image: SOCIAL_IMAGE,
     logo: `${SITE_URL}/favicon.png`,
