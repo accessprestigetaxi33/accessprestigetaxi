@@ -10,10 +10,10 @@ import { LocalBusinessCard } from "@/components/LocalBusinessCard";
 const URL = `${SITE}/taxi-marennes`;
 const TITLE_FR = "Taxi Marennes, chauffeur privé ☎ 06 03 44 48 63 | Access Taxi PBR";
 const DESC_FR =
-  "Access Taxi PBR, taxi Marennes : transport privé, chauffeur privé, transport médical conventionné. 06 03 44 48 63, 5j/7 8h-20h. Oléron, Rochefort, La Rochelle.";
+  "Access Taxi PBR, taxi Marennes : transport privé, chauffeur privé, transport médical conventionné. 06 03 44 48 63, 5j/7 8h-20h. Marennes, Brouage, Cire-d'Aunis.";
 const TITLE_EN = "Taxi Marennes ☎ +33 6 03 44 48 63 · 5 days, 8am-8pm";
 const DESC_EN =
-  "Taxi in Marennes: book on +33 6 03 44 48 63 or online, 5 days a week 8am-8pm. Oléron island, Brouage, Rochefort, La Rochelle, stations and airports.";
+  "Taxi in Marennes: book on +33 6 03 44 48 63 or online, 5 days a week 8am-8pm. Marennes, Brouage, Cire-d'Aunis.";
 
 export const Route = createFileRoute("/taxi-marennes")({
   head: ({ match }) => ({
@@ -24,13 +24,10 @@ export const Route = createFileRoute("/taxi-marennes")({
         "taxi Marennes téléphone",
         "numéro taxi Marennes",
         "tarif taxi Marennes",
-        "taxi Marennes Oléron",
         "réserver taxi Marennes",
-        "taxi Marennes Rochefort",
-        "taxi Marennes La Rochelle",
         "taxi Marennes Brouage",
+        "taxi Marennes Cire-d'Aunis",
         "taxi Marennes 17320",
-        "chauffeur privé Charente-Maritime",
         "chauffeur privé Marennes",
         "transport privé Marennes",
         "transport médical conventionné Marennes",
@@ -58,8 +55,7 @@ const COPY = {
   fr: {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi à Marennes",
-    lead:
-      "Votre chauffeur privé basé à Marennes, joignable 5j/7 de 8h à 20h au 06 03 44 48 63, au service de toute la Charente-Maritime : île d'Oléron, Bourcefranc-le-Chapus, Rochefort, La Rochelle et toutes distances.",
+    lead: "Votre chauffeur privé basé à Marennes, joignable 5j/7 de 8h à 20h au 06 03 44 48 63, au service de Marennes, Brouage et Cire-d'Aunis.",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -67,7 +63,6 @@ const COPY = {
     hours: [
       "5 jours sur 7, de 8h à 20h",
       "Réservation en ligne 24h/24",
-      "Trajets longue distance sur rendez-vous",
       "Transport médical conventionné sur réservation",
     ],
     pricesT: "Tarifs",
@@ -80,16 +75,8 @@ const COPY = {
     priceNote:
       "* Tarifs officiels taxi. L'estimation ne prend pas en compte bouchons et incidents : seul le compteur fait foi.",
     zoneT: "Zone d'intervention",
-    zoneLead: "Nous intervenons au départ de Marennes vers toute la Charente-Maritime :",
-    zones: [
-      "Marennes-Hiers-Brouage",
-      "Île d'Oléron (Le Château, Saint-Pierre, Saint-Trojan, Dolus…)",
-      "Bourcefranc-le-Chapus",
-      "Rochefort",
-      "La Rochelle",
-      "Royan, Saintes, Saujon",
-      "Gares et aéroports : La Rochelle, Bordeaux, Nantes, Poitiers",
-    ],
+    zoneLead: "Nous intervenons au départ de Marennes :",
+    zones: ["Marennes", "Brouage", "Cire-d'Aunis"],
     fleetT: "Nos véhicules",
     fleet: [
       "BMW iX1 100 % électrique (Patricia) — 4 passagers",
@@ -99,23 +86,17 @@ const COPY = {
     ],
     ctaT: "Réservez votre taxi à Marennes",
     ctaP: "En ligne en moins d'une minute, ou par téléphone auprès de l'un de nos deux chauffeurs.",
-    guides: "Nos guides Marennes & Oléron",
+    guides: "Nos guides Marennes & Brouage",
   },
   en: {
     eyebrow: "Marennes · Charente-Maritime",
     h1: "Taxi in Marennes",
-    lead:
-      "Your private driver based in Marennes, reachable 5 days a week, 8am-8pm, on +33 6 03 44 48 63, serving the whole Charente-Maritime area: Oléron island, Bourcefranc-le-Chapus, Rochefort, La Rochelle and any distance.",
+    lead: "Your private driver based in Marennes, reachable 5 days a week, 8am-8pm, on +33 6 03 44 48 63, serving Marennes, Brouage and Cire-d'Aunis.",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",
     hoursT: "Opening hours",
-    hours: [
-      "5 days a week, 8am to 8pm",
-      "Online booking 24/7",
-      "Long-distance trips by appointment",
-      "Approved medical transport on booking",
-    ],
+    hours: ["5 days a week, 8am to 8pm", "Online booking 24/7", "Approved medical transport on booking"],
     pricesT: "Fares",
     prices: [
       "Pick-up charge: €2.70",
@@ -123,19 +104,10 @@ const COPY = {
       "Night, Sunday and public holidays: €3.22/km",
       "Free quote and price confirmed before departure",
     ],
-    priceNote:
-      "* Official taxi fares. Estimates exclude traffic jams and incidents: only the taximeter is binding.",
+    priceNote: "* Official taxi fares. Estimates exclude traffic jams and incidents: only the taximeter is binding.",
     zoneT: "Service area",
-    zoneLead: "We drive from Marennes across the whole Charente-Maritime:",
-    zones: [
-      "Marennes-Hiers-Brouage",
-      "Oléron island (Le Château, Saint-Pierre, Saint-Trojan, Dolus…)",
-      "Bourcefranc-le-Chapus",
-      "Rochefort",
-      "La Rochelle",
-      "Royan, Saintes, Saujon",
-      "Stations and airports: La Rochelle, Bordeaux, Nantes, Poitiers",
-    ],
+    zoneLead: "We drive from Marennes:",
+    zones: ["Marennes", "Brouage", "Cire-d'Aunis"],
     fleetT: "Our vehicles",
     fleet: [
       "Fully electric BMW iX1 (Patricia) — 4 passengers",
@@ -145,14 +117,21 @@ const COPY = {
     ],
     ctaT: "Book your taxi in Marennes",
     ctaP: "Online in under a minute, or by phone with one of our two drivers.",
-    guides: "Our Marennes & Oléron guides",
+    guides: "Our Marennes & Brouage guides",
   },
 } as const;
 
 const GUIDE_LINKS = [
-  { slug: "taxi-a-marennes-chauffeur-prive", fr: "Taxi à Marennes : votre chauffeur privé", en: "Taxi in Marennes: your private driver" },
-  { slug: "rejoindre-l-ile-d-oleron-en-taxi", fr: "Rejoindre l'île d'Oléron en taxi", en: "Reaching Oléron island by taxi" },
-  { slug: "visiter-brouage-et-le-bassin-de-marennes-oleron", fr: "Visiter Brouage et le bassin de Marennes-Oléron", en: "Visiting Brouage and the Marennes-Oléron basin" },
+  {
+    slug: "taxi-a-marennes-chauffeur-prive",
+    fr: "Taxi à Marennes : votre chauffeur privé",
+    en: "Taxi in Marennes: your private driver",
+  },
+  {
+    slug: "visiter-brouage-et-le-bassin-de-marennes-oleron",
+    fr: "Visiter Brouage et le bassin de Marennes-Oléron",
+    en: "Visiting Brouage and the Marennes-Oléron basin",
+  },
 ] as const;
 
 function TaxiMarennesPage() {
@@ -201,14 +180,7 @@ function TaxiMarennesPage() {
             },
           ],
         },
-        areaServed: [
-          "Marennes",
-          "Île d'Oléron",
-          "Bourcefranc-le-Chapus",
-          "Rochefort",
-          "La Rochelle",
-          "Charente-Maritime",
-        ].map((name) => ({ "@type": "City", name })),
+        areaServed: ["Marennes", "Brouage", "Cire-d'Aunis"].map((name) => ({ "@type": "City", name })),
         openingHoursSpecification: [
           {
             "@type": "OpeningHoursSpecification",
@@ -221,9 +193,8 @@ function TaxiMarennesPage() {
           "@type": "OfferCatalog",
           name: isEn ? "Taxi services in Marennes" : "Prestations taxi à Marennes",
           itemListElement: [
-            "Trajets locaux et toutes distances",
+            "Trajets locaux",
             "Transport médical conventionné",
-            "Transferts gares et aéroports",
             "Transport de groupe (jusqu'à 7 passagers)",
           ].map((name) => ({
             "@type": "Offer",
@@ -370,16 +341,6 @@ function TaxiMarennesPage() {
           ))}
         </ul>
         <p className="mt-4 text-sm">
-          <Link to="/taxi-oleron" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
-            {isEn ? "Looking for a taxi on Oléron island?" : "Vous cherchez un taxi sur l'île d'Oléron ?"}
-          </Link>
-        </p>
-        <p className="mt-2 text-sm">
-          <Link to="/taxi-charente-maritime" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
-            {isEn ? "Taxi across Charente-Maritime" : "Taxi dans toute la Charente-Maritime"}
-          </Link>
-        </p>
-        <p className="mt-2 text-sm">
           <Link to="/faq" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
             {isEn ? "Fares, meter and booking: read our FAQ" : "Tarifs, compteur et réservation : consultez notre FAQ"}
           </Link>
