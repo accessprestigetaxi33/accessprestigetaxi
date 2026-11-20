@@ -18,12 +18,12 @@ const COPY = {
     practical: "En bref",
     nearby: "À découvrir aussi",
     ctaTitle: "Trajet en taxi 100 % électrique",
-    ctaText: "Nos deux chauffeurs vous conduisent partout depuis la Charente-Maritime, en BMW iX1 ou Audi Q6 e-tron 5 places, ou en van Mercedes 8 places.",
+    ctaText: "Nos deux chauffeurs, basés en Charente-Maritime, vous prennent en charge à Marennes-Hiers-Brouage en BMW iX1 ou Audi Q6 e-tron 5 places, ou en van Mercedes 8 places.",
     book: "Réserver ma course",
     bookHere: "Réserver un taxi vers",
     call: "Appeler un chauffeur",
     stars: "étoiles",
-    homeLink: "Taxi à Marennes et en Charente-Maritime : découvrir notre service",
+    homeLink: "Taxi à Marennes-Hiers-Brouage : découvrir notre service",
     readEn: "Read in English",
   },
   en: {
@@ -34,12 +34,12 @@ const COPY = {
     practical: "At a glance",
     nearby: "Also worth a look",
     ctaTitle: "Ride in a fully electric taxi",
-    ctaText: "Our two drivers take you anywhere from Charente-Maritime in a 5-seat BMW iX1 or Audi Q6 e-tron, or an 8-seat Mercedes van.",
+    ctaText: "Our two drivers, based in Charente-Maritime, pick you up in Marennes-Hiers-Brouage in a 5-seat BMW iX1 or Audi Q6 e-tron, or an 8-seat Mercedes van.",
     book: "Book a ride",
     bookHere: "Book a taxi to",
     call: "Call a driver",
     stars: "stars",
-    homeLink: "Taxi in Marennes and Charente-Maritime: discover our service",
+    homeLink: "Taxi in Marennes-Hiers-Brouage: discover our service",
     readEn: "Lire en français",
   },
 } as const;
@@ -283,7 +283,7 @@ function BlogArticle() {
           <h2 className="mt-10 font-display text-xl font-semibold text-foreground sm:text-2xl">{c.tips}</h2>
           <p className="mt-3 text-[15px] leading-relaxed text-white/55 sm:text-base">{txt.tips}</p>
 
-          {/* LIEN INTERNE — pages dédiées Taxi Marennes / Taxi Oléron */}
+          {/* LIEN INTERNE — page dédiée Taxi Marennes */}
           <p className="mt-4 text-[15px] leading-relaxed text-white/70">
             <Link to="/taxi-marennes" className="font-semibold text-primary underline underline-offset-4 hover:opacity-90">
               {c.homeLink}

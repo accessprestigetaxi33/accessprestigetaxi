@@ -60,7 +60,7 @@ const COPY: Record<"fr" | "en", {
 }> = {
   fr: {
     eyebrow: "Questions fréquentes",
-    h1: "FAQ taxi en Charente-Maritime",
+    h1: "FAQ taxi Marennes-Hiers-Brouage & Ciré-d'Aunis",
     lead:
       "Tarifs, compteur, réservation et paiement : les réponses d'Alain et Patricia, vos chauffeurs basés à Marennes.",
     ctaT: "Une question sans réponse ?",
@@ -73,7 +73,7 @@ const COPY: Record<"fr" | "en", {
         title: "Tarifs",
         items: [
           {
-            q: "Quels sont vos tarifs de taxi en Charente-Maritime ?",
+            q: "Quels sont vos tarifs de taxi à Marennes-Hiers-Brouage ?",
             a: "Nous appliquons les tarifs taxi officiels du département : prise en charge 2,70 €, tarif journée 2,28 €/km, tarif nuit, dimanche et jours fériés 3,22 €/km. Le prix estimé vous est annoncé avant le départ et le devis est gratuit.",
           },
           {
@@ -140,7 +140,7 @@ const COPY: Record<"fr" | "en", {
   },
   en: {
     eyebrow: "Frequently asked questions",
-    h1: "Taxi FAQ in Charente-Maritime",
+    h1: "Taxi FAQ — Marennes-Hiers-Brouage & Ciré-d'Aunis",
     lead:
       "Fares, the meter, booking and payment: answers from Alain and Patricia, your drivers based in Marennes.",
     ctaT: "Still have a question?",
@@ -153,7 +153,7 @@ const COPY: Record<"fr" | "en", {
         title: "Fares",
         items: [
           {
-            q: "What are your taxi fares in Charente-Maritime?",
+            q: "What are your taxi fares in Marennes-Hiers-Brouage?",
             a: "We apply the official county taxi fares: €2.70 pick-up charge, €2.28/km daytime rate, €3.22/km at night, on Sundays and public holidays. The estimated price is confirmed before departure and quotes are free.",
           },
           {

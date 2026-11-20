@@ -21,16 +21,16 @@ export const SOCIAL_IMAGE_HEIGHT = "768";
  */
 export const BUSINESS_ADDRESS = {
   "@type": "PostalAddress",
-  addressLocality: "Saintes",
-  postalCode: "17100",
+  addressLocality: "Marennes-Hiers-Brouage",
+  postalCode: "17320",
   addressRegion: "Charente-Maritime",
   addressCountry: "FR",
 } as const;
 
 export const BUSINESS_GEO = {
   "@type": "GeoCoordinates",
-  latitude: 45.7460,
-  longitude: -0.6337,
+  latitude: 45.8226,
+  longitude: -1.1059,
 } as const;
 
 /** Nœud LocalBusiness complet, réutilisable ou référençable par @id. */
@@ -39,7 +39,7 @@ export function localBusinessNode() {
     "@type": ["LocalBusiness", "TaxiService"],
     "@id": BUSINESS_ID,
     name: BUSINESS_NAME,
-    alternateName: "Access Prestige Taxi — Charente-Maritime",
+    alternateName: "Access Taxi PBR — Marennes-Hiers-Brouage",
     url: `${SITE_URL}/`,
     image: SOCIAL_IMAGE,
     logo: `${SITE_URL}/favicon.png`,
@@ -51,10 +51,7 @@ export function localBusinessNode() {
     address: BUSINESS_ADDRESS,
     geo: BUSINESS_GEO,
     hasMap: `https://www.google.com/maps/search/?api=1&query=${BUSINESS_GEO.latitude},${BUSINESS_GEO.longitude}`,
-    areaServed: [
-      { "@type": "AdministrativeArea", name: "Charente-Maritime" },
-      { "@type": "Country", name: "France" },
-    ],
+    areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
     availableLanguage: ["fr", "en"],
     contactPoint: DRIVERS.map((d) => ({
       "@type": "ContactPoint",

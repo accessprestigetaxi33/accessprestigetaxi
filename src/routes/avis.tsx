@@ -25,16 +25,16 @@ interface PublicAvis {
 
 // ── Visuels de partage ──────────────────────────────────────────────────────
 const AVIS_SOCIAL_FR = {
-  title: "Avis clients — taxi Marennes, Oléron & Charente-Maritime",
+  title: "Avis clients — taxi Marennes-Hiers-Brouage & Ciré-d'Aunis",
   description:
-    "Avis vérifiés de nos clients à Marennes, sur l'île d'Oléron et en Charente-Maritime : transferts aéroport, transport médical conventionné et mises à disposition en Charente-Maritime.",
+    "Avis vérifiés de nos clients à Marennes-Hiers-Brouage et Ciré-d'Aunis : Access Taxi PBR, taxi basé en Charente-Maritime — transferts gare et aéroport, transport médical conventionné et mises à disposition.",
   image: ogImageUrl(ogHomeFr.url),
   url: ogPageUrl("/avis", "fr"),
 };
 const AVIS_SOCIAL_EN = {
-  title: "Reviews — taxi in Marennes, Oléron & Charente-Maritime",
+  title: "Reviews — taxi in Marennes-Hiers-Brouage & Ciré-d'Aunis",
   description:
-    "Verified reviews from our clients in Marennes, Oléron island and Charente-Maritime: airport transfers, covered medical transport and chauffeur services in Charente-Maritime.",
+    "Verified reviews from our clients in Marennes-Hiers-Brouage and Ciré-d'Aunis: Access Taxi PBR, a taxi based in Charente-Maritime — station and airport transfers, covered medical transport and chauffeur services.",
   image: ogImageUrl(ogHomeEn.url),
   url: ogPageUrl("/avis", "en"),
 };
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/avis")({
     const social = isEn ? AVIS_SOCIAL_EN : AVIS_SOCIAL_FR;
     return {
       meta: [
-        keywordsMeta(["avis taxi Marennes", "avis taxi île d'Oléron", "meilleur taxi Charente-Maritime"]),
+        keywordsMeta(["avis taxi Marennes", "avis taxi Brouage", "avis taxi Ciré-d'Aunis"]),
         { title: social.title },
         { name: "description", content: social.description },
         { name: "robots", content: "index, follow" },

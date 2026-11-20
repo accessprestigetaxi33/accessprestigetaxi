@@ -209,7 +209,7 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
               value={depart}
               onChange={(e) => setDepart(e.target.value)}
               maxLength={180}
-              placeholder="La Rochelle, gare SNCF"
+              placeholder="Marennes, centre-ville"
               className={`${inputCls} pr-10`}
             />
             <MapPin className="pointer-events-none absolute right-3 top-3.5 h-4 w-4 text-primary" />
@@ -222,7 +222,7 @@ export function QuoteEstimator({ onQuote }: { onQuote?: (p: EstimatePayload) => 
               value={arrivee}
               onChange={(e) => setArrivee(e.target.value)}
               maxLength={180}
-              placeholder="Royan, Pontaillac"
+              placeholder="Citadelle de Brouage"
               className={`${inputCls} pr-10`}
             />
             <MapPin className="pointer-events-none absolute right-3 top-3.5 h-4 w-4 text-primary" />

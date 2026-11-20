@@ -319,13 +319,12 @@ function ClientDashboard() {
 
   // Le trajet à afficher dans le bandeau "PROCHAINE COURSE" : course active
   // en priorité, sinon la prochaine réservée. Sans course réelle, on retombe
-  // sur le libellé d'exemple de la maquette (La Rochelle → Aéroport de
-  // Bordeaux) plutôt que sur un tiret vide.
+  // sur le libellé d'exemple de la maquette (Marennes → Brouage) plutôt que sur un tiret vide.
   const heroRide = (activeRide || nextRide) as any;
-  const heroDepMain = heroRide ? heroRide.depart || "—" : "La Rochelle";
-  const heroDepSub = heroRide ? heroRide.depart_detail || heroRide.adresse_depart || "" : "Quai Louis Prunier, 17000";
-  const heroArrMain = heroRide ? heroRide.arrivee || heroRide.destination || "—" : "Aéroport de Bordeaux (BOD)";
-  const heroArrSub = heroRide ? heroRide.arrivee_detail || heroRide.adresse_arrivee || "" : "33700 Mérignac";
+  const heroDepMain = heroRide ? heroRide.depart || "—" : "Marennes";
+  const heroDepSub = heroRide ? heroRide.depart_detail || heroRide.adresse_depart || "" : "Centre-ville, 17320 Marennes-Hiers-Brouage";
+  const heroArrMain = heroRide ? heroRide.arrivee || heroRide.destination || "—" : "Citadelle de Brouage";
+  const heroArrSub = heroRide ? heroRide.arrivee_detail || heroRide.adresse_arrivee || "" : "17320 Marennes-Hiers-Brouage";
   // Titre du bandeau : "Course en cours" si une course est déjà active, sinon
   // "Prochaine course" (y compris pour l'aperçu d'exemple sans course réelle).
   const heroTitle = activeRide ? c.activeRide : c.nextRide;

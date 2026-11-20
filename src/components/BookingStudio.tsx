@@ -141,7 +141,7 @@ const T = {
     err_email: "Adresse e-mail invalide.",
     err_past: "Choisissez une heure au moins 20 minutes après maintenant.",
     trust1: "Chauffeurs professionnels · 20 ans d'expérience",
-    trust2: "Toutes distances · Charente-Maritime et au-delà",
+    trust2: "Basée en Charente-Maritime · toutes distances",
     trust3: "Confirmation immédiate + suivi en temps réel",
 
     vehicle_step: "Véhicule souhaité",
@@ -266,7 +266,7 @@ const T = {
     err_email: "Invalid email address.",
     err_past: "Pick a time at least 20 minutes from now.",
     trust1: "Professional drivers · 20 years of experience",
-    trust2: "Any distance · Charente-Maritime and beyond",
+    trust2: "Based in Charente-Maritime · any distance",
     trust3: "Instant confirmation + live tracking",
 
     vehicle_step: "Vehicle",
@@ -507,12 +507,11 @@ type QuoteState = {
 };
 
 const QUICK_DESTINATIONS = [
-  "Gare de La Rochelle",
-  "Aéroport La Rochelle-Île de Ré (LRH)",
-  "Gare de Rochefort",
-  "Gare de Saintes",
-  "Gare de Royan",
-  "Zoo de La Palmyre",
+  "Marennes centre",
+  "Port de La Cayenne, Marennes",
+  "Marennes-Plage",
+  "Citadelle de Brouage",
+  "Ciré-d'Aunis",
 ];
 
 /**

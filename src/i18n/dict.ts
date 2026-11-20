@@ -28,7 +28,7 @@ const fr: Dict = {
   // Common / nav / header
   "nav.home": "Accueil",
   "nav.services": "Services",
-  "nav.blog": "Guide Charente-Maritime",
+  "nav.blog": "Guide local",
   "nav.tarifs": "Tarifs",
   "nav.about": "À propos",
   "nav.contact": "Contact",
@@ -209,7 +209,7 @@ const fr: Dict = {
   // Services page
   "services.eyebrow": "Nos prestations",
   "services.title": "Un service taxi pour chaque besoin",
-  "services.intro": "En Charente-Maritime et partout en France : deux chauffeurs, un service haut de gamme.",
+  "services.intro": "Basée en Charente-Maritime, au départ de Marennes-Hiers-Brouage : deux chauffeurs, un service haut de gamme.",
   "services.cta": "Réserver",
   "services.b1": "Prestations toutes distances",
   "services.b2": "Véhicules 5 et 8 places",
@@ -291,9 +291,9 @@ const fr: Dict = {
     "Carte professionnelle de taxi, formation continue et parfaite connaissance de la Charente-Maritime.",
   "about.b2.t": "Disponible sur réservation",
   "about.b2.d": "Service disponible sur réservation selon vos besoins.",
-  "about.b3.t": "Charente-Maritime",
+  "about.b3.t": "Basée en Charente-Maritime",
   "about.b3.d":
-    "Tout le département, toutes les gares, tous les aéroports et prestations toutes distances.",
+    "Prise en charge à Marennes-Hiers-Brouage et Ciré-d'Aunis, vers toutes les gares et tous les aéroports.",
   "about.b4.t": "Conventionné CPAM",
   "about.b4.d": "Transport assis professionnalisé pris en charge par l'Assurance Maladie.",
   "about.cta": "Réserver une course",
@@ -1195,7 +1195,7 @@ const fr: Dict = {
 const en: Dict = {
   "nav.home": "Home",
   "nav.services": "Services",
-  "nav.blog": "Charente-Maritime guide",
+  "nav.blog": "Local guide",
   "nav.tarifs": "Pricing",
   "nav.about": "About",
   "nav.contact": "Contact",
@@ -1354,7 +1354,7 @@ const en: Dict = {
 
   "services.eyebrow": "Our services",
   "services.title": "A taxi service for every need",
-  "services.intro": "Across Charente-Maritime and France: two drivers, one premium service.",
+  "services.intro": "Based in Charente-Maritime, from Marennes-Hiers-Brouage: two drivers, one premium service.",
   "services.cta": "Book",
   "services.b1": "All-distance services",
   "services.b2": "5 and 8-seat vehicles",
@@ -1430,8 +1430,8 @@ const en: Dict = {
   "about.b1.d": "Official taxi card, ongoing training and deep knowledge of Charente-Maritime.",
   "about.b2.t": "Available on booking",
   "about.b2.d": "Service available by booking according to your needs.",
-  "about.b3.t": "Charente-Maritime",
-  "about.b3.d": "The whole area, all stations, all airports and all-distance services.",
+  "about.b3.t": "Based in Charente-Maritime",
+  "about.b3.d": "Pick-up in Marennes-Hiers-Brouage and Ciré-d'Aunis, to every station and airport.",
   "about.b4.t": "CPAM medical transport",
   "about.b4.d": "Seated professional transport covered by the French health insurance.",
   "about.cta": "Book a ride",

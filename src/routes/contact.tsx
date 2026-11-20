@@ -10,15 +10,15 @@ import heroLogoAsset from "@/assets/apt-logo-lockup.webp.asset.json";
 const heroLogo = heroLogoAsset.url;
 
 const CONTACT_EMAIL = "accesstaxiap@gmail.com";
-const CONTACT_TITLE = "Contact taxi Marennes, Oléron & Charente-Maritime";
+const CONTACT_TITLE = "Contact taxi Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const CONTACT_DESC =
-  "Contactez votre taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime : 06 03 44 48 63, accesstaxiap@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances, Charente-Maritime.";
+  "Contactez votre taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis, basé en Charente-Maritime : 06 03 44 48 63, accesstaxiap@gmail.com. Transport sanitaire avec fauteuil roulant, toutes distances.";
 const CONTACT_URL = "https://www.accessprestigetaxi.fr/contact";
 
 export const Route = createFileRoute("/contact")({
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["numéro taxi Marennes", "téléphone taxi île d'Oléron", "contact taxi Charente-Maritime"]),
+      keywordsMeta(["numéro taxi Marennes", "téléphone taxi Brouage", "contact taxi Ciré-d'Aunis"]),
       { title: CONTACT_TITLE },
       { name: "description", content: CONTACT_DESC },
       { property: "og:title", content: CONTACT_TITLE },
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/contact")({
           url: CONTACT_URL,
           telephone: DRIVERS.map((d) => d.intl),
           email: CONTACT_EMAIL,
-          areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+          areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
           knowsAbout: ["Transport sanitaire avec fauteuil roulant", "Prestations toutes distances"],
         }),
       },
@@ -59,9 +59,9 @@ const COPY = {
     whatsappHeadline: "Discutons sur WhatsApp",
     whatsappSub: "Messagerie instantanée",
     zoneTitle: "Zone d'intervention",
-    zoneMain: "Charente-Maritime",
-    zoneSub: "Tout le département (17) et au-delà",
-    zoneLong: "Toutes distances : France et Europe, pour tous types de prestations.",
+    zoneMain: "Marennes-Hiers-Brouage · Ciré-d'Aunis",
+    zoneSub: "Basée en Charente-Maritime (17)",
+    zoneLong: "Prise en charge au départ de Marennes-Hiers-Brouage, toutes distances.",
     cmuTitle: "Transport sanitaire conventionné",
     cmuText:
       "Consultations, hospitalisations, dialyses, chimiothérapies : prise en charge conventionnée sur prescription médicale.",
@@ -73,9 +73,9 @@ const COPY = {
     whatsappHeadline: "Chat with us on WhatsApp",
     whatsappSub: "Instant messaging",
     zoneTitle: "Service area",
-    zoneMain: "Charente-Maritime",
-    zoneSub: "The whole area (17) and beyond",
-    zoneLong: "All distances: anywhere in France and Europe, for every type of journey.",
+    zoneMain: "Marennes-Hiers-Brouage · Ciré-d'Aunis",
+    zoneSub: "Based in Charente-Maritime (17)",
+    zoneLong: "Pick-up from Marennes-Hiers-Brouage, any distance.",
     cmuTitle: "Approved medical transport",
     cmuText:
       "Appointments, hospital stays, dialysis, chemotherapy: covered medical transport with a doctor's prescription.",

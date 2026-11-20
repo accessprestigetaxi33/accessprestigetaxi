@@ -11,9 +11,9 @@ import { QuoteEstimator } from "@/components/QuoteEstimator";
 
 const SITE = "https://www.accessprestigetaxi.fr";
 const URL_DEVIS = `${SITE}/devis`;
-const TITLE = "Devis taxi Marennes, île d'Oléron & Charente-Maritime";
+const TITLE = "Devis taxi Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const DESC =
-  "Demandez un devis taxi gratuit à Marennes, sur l'île d'Oléron et en Charente-Maritime : trajet, date, véhicule électrique ou van 8 places, transport sanitaire conventionné et transport de groupe. Réponse rapide.";
+  "Demandez un devis taxi gratuit à Marennes-Hiers-Brouage et Ciré-d'Aunis, avec un taxi basé en Charente-Maritime : trajet, date, véhicule électrique ou van 8 places, transport sanitaire conventionné et transport de groupe. Réponse rapide.";
 const EMAIL = "accesstaxiap@gmail.com";
 
 export const Route = createFileRoute("/devis")({
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/devis")({
   }),
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["devis taxi Marennes", "prix taxi île d'Oléron", "tarif taxi Charente-Maritime"]),
+      keywordsMeta(["devis taxi Marennes", "prix taxi Brouage", "tarif taxi Ciré-d'Aunis"]),
       { title: TITLE },
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/devis")({
             url: SITE,
             email: EMAIL,
             telephone: DRIVERS.map((d) => d.intl),
-            areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+            areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
             makesOffer: [
               { "@type": "Offer", name: "Transport sanitaire conventionné" },
               { "@type": "Offer", name: "Transport de groupe 8 places" },

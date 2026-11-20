@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/public/contact/vcf")({
           status: 200,
           headers: {
             "Content-Type": "text/vcard; charset=utf-8",
-            "Content-Disposition": 'inline; filename="taxi-city-bordeaux.vcf"',
+            "Content-Disposition": 'inline; filename="access-taxi-pbr.vcf"',
             "Cache-Control": "public, no-cache, must-revalidate, max-age=0",
             ETag: VCARD_ETAG,
             "Last-Modified": VCARD_LAST_MODIFIED,

@@ -95,7 +95,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     facts: [
       { fr: "Monument & patrimoine", en: "Landmarks & heritage" },
       { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
-      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+      { fr: "Prise en charge au départ de Marennes", en: "Pick-up from Marennes" },
     ],
     fr: {
       teaser: "Citadelle de Brouage, halle aux vivres, clocher de Marennes et cité de l'huître.",
@@ -124,7 +124,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     facts: [
       { fr: "Balade nature", en: "Nature walk" },
       { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
-      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+      { fr: "Prise en charge au départ de Marennes", en: "Pick-up from Marennes" },
     ],
     fr: {
       teaser: "Boucle des marais de Brouage : 12 km plats entre claires, canaux et hérons.",
@@ -153,7 +153,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     facts: [
       { fr: "Tables & spécialités", en: "Tables & specialities" },
       { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
-      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+      { fr: "Prise en charge au départ de Marennes", en: "Pick-up from Marennes" },
     ],
     fr: {
       teaser: "Huîtres fines et spéciales de claire, éclade de moules, sur les cabanes du chenal.",
@@ -182,7 +182,7 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     facts: [
       { fr: "Hôtels & classement", en: "Hotels & star ratings" },
       { fr: "Secteur : Bassin de Marennes", en: "Area: Bassin de Marennes" },
-      { fr: "≈ 65 km de La Rochelle", en: "≈ 65 km from La Rochelle" },
+      { fr: "Prise en charge au départ de Marennes", en: "Pick-up from Marennes" },
     ],
     fr: {
       teaser: "Hôtels 2 et 3 étoiles à Marennes, chambres d'hôtes dans les fermes du marais.",
@@ -629,14 +629,14 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       teaser:
         "Notre ville. Entre marais, claires et chenaux, Marennes donne son nom à l’huître la plus connue de France — et c’est d’ici que partent nos courses.",
       history:
-        "Marennes s’est construite sur le sel avant de vivre de l’huître. Quand les marais salants ont cessé d’être rentables au XIXᵉ siècle, les paludiers ont transformé leurs bassins en claires : ces bassins peu profonds où l’huître s’affine lentement et prend ce reflet vert dû à la navicule bleue. Le clocher gothique de Saint-Pierre-de-Sales, haut de 85 mètres, servait d’amer aux marins du pertuis de Maumusson ; on y monte encore pour embrasser d’un regard l’île d’Oléron, le viaduc et les kilomètres de chenaux. Au port de La Cayenne, les chalands et les cabanes colorées travaillent au rythme des marées, comme au premier jour.",
+        "Marennes s’est construite sur le sel avant de vivre de l’huître. Quand les marais salants ont cessé d’être rentables au XIXᵉ siècle, les paludiers ont transformé leurs bassins en claires : ces bassins peu profonds où l’huître s’affine lentement et prend ce reflet vert dû à la navicule bleue. Le clocher gothique de Saint-Pierre-de-Sales, haut de 85 mètres, servait d’amer aux marins du pertuis de Maumusson ; on y monte encore pour embrasser d’un regard le bassin, les marais et les kilomètres de chenaux. Au port de La Cayenne, les chalands et les cabanes colorées travaillent au rythme des marées, comme au premier jour.",
       tips: "Le marché couvert le mardi et le vendredi matin, les dégustations en cabane l’après-midi. Prise en charge immédiate depuis Marennes : nous sommes basés ici, 5j/7 de 8h à 20h.",
     },
     en: {
       teaser:
         "Our home town. Between marshes, claires and channels, Marennes gives its name to France’s best-known oyster — and every ride of ours starts here.",
       history:
-        "Marennes was built on salt before it lived on oysters. When the salt pans stopped paying in the 19th century, salt workers turned their basins into claires: shallow ponds where oysters refine slowly and take on the green sheen of the blue navicula. The 85-metre Gothic tower of Saint-Pierre-de-Sales was a landmark for sailors of the Maumusson strait; you can still climb it for a sweep over Oléron, the viaduct and miles of channels. At La Cayenne harbour, flat-bottomed boats and colourful huts still work to the rhythm of the tides.",
+        "Marennes was built on salt before it lived on oysters. When the salt pans stopped paying in the 19th century, salt workers turned their basins into claires: shallow ponds where oysters refine slowly and take on the green sheen of the blue navicula. The 85-metre Gothic tower of Saint-Pierre-de-Sales was a landmark for sailors of the Maumusson strait; you can still climb it for a sweep over the basin, the marshes and miles of channels. At La Cayenne harbour, flat-bottomed boats and colourful huts still work to the rhythm of the tides.",
       tips: "Covered market on Tuesday and Friday mornings, hut tastings in the afternoon. Immediate pick-up in Marennes: we are based here, 5 days a week, 8am to 8pm.",
     },
     photos: [
@@ -677,37 +677,6 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
     ],
   },
   {
-    slug: "surf-autour-de-marennes",
-    category: "surf",
-    dept: "17",
-    name: "Surfer autour de Marennes",
-    city: "Marennes-Hiers-Brouage",
-    facts: [
-      { fr: "Vert-Bois à 20 min, Gatseau à 25 min", en: "Vert-Bois 20 min, Gatseau 25 min" },
-      { fr: "Ronce-les-Bains à 20 min", en: "Ronce-les-Bains 20 min" },
-      { fr: "Transport de planches dans le van", en: "Boards carried in the van" },
-    ],
-    fr: {
-      teaser:
-        "Marennes n’a pas de vague, mais elle est au centre du triangle : Vert-Bois, Gatseau et Ronce sont tous à moins de 30 minutes.",
-      history:
-        "Le bassin de Marennes-Oléron est abrité : la Seudre et les chenaux sont plats, réservés au kayak et au paddle. Les vagues, elles, sont sur la façade atlantique, à quelques kilomètres seulement — la côte ouest d’Oléron, ouverte plein océan, et la Côte Sauvage d’Arvert, de l’autre côté du pont de la Seudre. Cette position centrale a fait de Marennes le camp de base naturel des surfeurs de la région depuis les années 1970 : on dort au calme dans les terres et on choisit son spot le matin selon la houle et le vent.",
-      tips: "Houle d’ouest et vent d’est le matin : Vert-Bois. Grosse houle : repli sur Gatseau, plus abrité. Le van Mercedes prend les planches et jusqu’à 7 personnes, aller-retour dans la journée.",
-    },
-    en: {
-      teaser:
-        "Marennes has no waves of its own, but it sits at the centre of the triangle: Vert-Bois, Gatseau and Ronce are all under 30 minutes away.",
-      history:
-        "The Marennes-Oléron basin is sheltered: the Seudre and its channels are flat, best for kayaking and paddleboarding. The waves are on the Atlantic side, only a few kilometres away — Oléron's ocean-facing west coast, and the Arvert Wild Coast across the Seudre bridge. That central position has made Marennes the natural base camp for local surfers since the 1970s: sleep inland in the quiet, pick your spot in the morning according to swell and wind.",
-      tips: "West swell with morning offshore: Vert-Bois. Big swell: fall back on the more sheltered Gatseau. The Mercedes van takes boards and up to 7 people, there and back in the day.",
-    },
-    photos: [
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Vert_bois_-_2016a.jpg/1280px-Vert_bois_-_2016a.jpg",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Plage_de_Gatseau.JPG/1280px-Plage_de_Gatseau.JPG",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Ronce-les-Bains.JPG/1280px-Ronce-les-Bains.JPG",
-    ],
-  },
-  {
     slug: "taxi-a-marennes-chauffeur-prive",
     category: "visite",
     dept: "17",
@@ -723,14 +692,14 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       teaser:
         "Alain et Patricia, vos deux chauffeurs de taxi basés à Marennes : gares, aéroports, rendez-vous médicaux, sorties et trajets longue distance au départ de Marennes-Hiers-Brouage.",
       history:
-        "Access Prestige Taxi est né à Marennes, au cœur du bassin de Marennes-Oléron. De là, tout est proche : le viaduc d’Oléron à un quart d’heure, Rochefort et sa gare à trente minutes, Royan de l’autre côté du pont de la Seudre, La Rochelle et son aéroport à moins d’une heure. Nos courses les plus fréquentes sont simples : une prise en charge à domicile pour un train à Rochefort ou Surgères, un vol au départ de La Rochelle ou de Bordeaux, un rendez-vous à l’hôpital de Rochefort ou à Saintes, une sortie au restaurant sans se soucier du retour. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V qui accueille jusqu’à 7 personnes avec les bagages. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
+        "Access Prestige Taxi est né à Marennes, au cœur du bassin de Marennes-Oléron. Notre entreprise est basée en Charente-Maritime, et c’est à Marennes-Hiers-Brouage que nous prenons nos clients en charge. Nos courses les plus fréquentes sont simples : une prise en charge à domicile pour prendre un train ou un avion, un rendez-vous médical, une visite de la citadelle de Brouage, une sortie au restaurant sans se soucier du retour. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V qui accueille jusqu’à 7 personnes avec les bagages. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
       tips: "Réservez la veille pour les trains tôt le matin et les vols. Pour un groupe, une famille ou un vol avec bagages, demandez le van dès la réservation. Nous prenons nos clients en charge à Marennes-Hiers-Brouage et assurons aussi les longues distances.",
     },
     en: {
       teaser:
         "Alain and Patricia, your two taxi drivers based in Marennes: stations, airports, medical appointments, evenings out and long-distance rides from Marennes-Hiers-Brouage.",
       history:
-        "Access Prestige Taxi was born in Marennes, in the heart of the Marennes-Oléron basin. Everything is close by: the Oléron viaduct is fifteen minutes away, Rochefort and its station thirty, Royan across the Seudre bridge, La Rochelle and its airport under an hour. Our most frequent rides are simple ones: a door-to-door pick-up for an early train in Rochefort or Surgères, a flight from La Rochelle or Bordeaux, an appointment at Rochefort or Saintes hospital, dinner out without worrying about the drive home. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van seating up to 7 people with luggage. Child and baby seats are available on request, and seated medical transport is state-approved.",
+        "Access Prestige Taxi was born in Marennes, in the heart of the Marennes-Oléron basin. Our business is based in Charente-Maritime, and we pick our clients up in Marennes-Hiers-Brouage. Our most frequent rides are simple ones: a door-to-door pick-up for a train or a flight, a medical appointment, a visit to the Brouage citadel, dinner out without worrying about the drive home. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van seating up to 7 people with luggage. Child and baby seats are available on request, and seated medical transport is state-approved.",
       tips: "Book the day before for early trains and flights. For a group, a family or a flight with luggage, ask for the van when booking. We pick our clients up in Marennes-Hiers-Brouage and also handle long-distance journeys.",
     },
     photos: [
@@ -755,14 +724,14 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       teaser:
         "Une demi-journée entre la citadelle de Brouage, les marais et les cabanes ostréicoles du bassin de Marennes-Oléron, sans chercher de place de parking.",
       history:
-        "Brouage fut un port de mer et la capitale européenne du sel avant que ses marais ne s’envasent et ne l’éloignent de l’océan. Ville natale de Samuel de Champlain, fondateur de Québec, elle a été fortifiée au XVIIᵉ siècle et conserve un rempart quasi complet, ses portes, ses poudrières et sa halle aux vivres, aujourd’hui posés au milieu des prés salés. Autour, le bassin de Marennes-Oléron vit toujours de l’huître : les claires, ces bassins peu profonds hérités des salines, affinent les fines et les spéciales dont la couleur verte vient d’une algue microscopique. Les chenaux de La Cayenne et du Château-d’Oléron alignent les cabanes de bois colorées où l’on déguste sur le pouce, face aux parcs découverts à marée basse.",
+        "Brouage fut un port de mer et la capitale européenne du sel avant que ses marais ne s’envasent et ne l’éloignent de l’océan. Ville natale de Samuel de Champlain, fondateur de Québec, elle a été fortifiée au XVIIᵉ siècle et conserve un rempart quasi complet, ses portes, ses poudrières et sa halle aux vivres, aujourd’hui posés au milieu des prés salés. Autour, le bassin de Marennes-Oléron vit toujours de l’huître : les claires, ces bassins peu profonds hérités des salines, affinent les fines et les spéciales dont la couleur verte vient d’une algue microscopique. Les chenaux de La Cayenne alignent les cabanes de bois colorées où l’on déguste sur le pouce, face aux parcs découverts à marée basse.",
       tips: "Parcours suggéré : remparts de Brouage en fin de matinée, déjeuner d’huîtres dans une cabane de La Cayenne, puis marais et viaduc de la Seudre en fin d’après-midi pour la lumière. Nous vous déposons à chaque étape et restons joignables entre deux.",
     },
     en: {
       teaser:
         "Half a day between the Brouage citadel, the marshes and the oyster huts of the Marennes-Oléron basin — with no parking to look for.",
       history:
-        "Brouage was a seaport and Europe's salt capital before its marshes silted up and left it inland. Birthplace of Samuel de Champlain, founder of Quebec, it was fortified in the 17th century and still has an almost complete rampart, its gates, powder magazines and provisions hall, now set among salt meadows. Around it, the Marennes-Oléron basin still lives on oysters: the claires, shallow ponds inherited from the salt pans, refine the fines and spéciales whose green tint comes from a microscopic alga. The channels of La Cayenne and Le Château-d'Oléron are lined with colourful wooden huts where you can taste on the spot, facing beds uncovered at low tide.",
+        "Brouage was a seaport and Europe's salt capital before its marshes silted up and left it inland. Birthplace of Samuel de Champlain, founder of Quebec, it was fortified in the 17th century and still has an almost complete rampart, its gates, powder magazines and provisions hall, now set among salt meadows. Around it, the Marennes-Oléron basin still lives on oysters: the claires, shallow ponds inherited from the salt pans, refine the fines and spéciales whose green tint comes from a microscopic alga. The channels of La Cayenne are lined with colourful wooden huts where you can taste on the spot, facing beds uncovered at low tide.",
       tips: "Suggested route: the Brouage ramparts late morning, an oyster lunch in a hut at La Cayenne, then the marshes and the Seudre viaduct late afternoon for the light. We drop you at each stop and stay reachable in between.",
     },
     photos: [
@@ -787,14 +756,14 @@ export const GUIDE_ENTRIES: GuideEntry[] = [
       teaser:
         "Un rendez-vous médical, un train ou une sortie depuis Ciré-d'Aunis ? Alain et Patricia viennent vous chercher à domicile, sur réservation.",
       history:
-        "Ciré-d'Aunis est un village de l'Aunis situé entre Rochefort et Surgères, traversé par le canal de Charras. Sans transport en commun pratique pour chaque trajet, un taxi sur réservation simplifie le quotidien : rendez-vous médicaux, examens, départ en train, retour de l'hôpital ou sortie en famille. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V jusqu'à 7 passagers. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
+        "Ciré-d'Aunis est un village de l'Aunis traversé par le canal de Charras. Sans transport en commun pratique pour chaque trajet, un taxi sur réservation simplifie le quotidien : rendez-vous médicaux, examens, départ en train, retour de l'hôpital ou sortie en famille. Patricia conduit une BMW iX1 100 % électrique, Alain une Audi Q6 e-tron et un van Mercedes Classe V jusqu'à 7 passagers. Sièges enfant et siège bébé sont disponibles sur simple demande, et le transport sanitaire assis est conventionné.",
       tips: "Réservez la veille pour un train tôt le matin ou un rendez-vous médical. Le prix estimé vous est annoncé avant le départ ; seul le compteur fait foi en fin de course.",
     },
     en: {
       teaser:
         "A medical appointment, a train or an outing from Ciré-d'Aunis? Alain and Patricia pick you up at home, by appointment.",
       history:
-        "Ciré-d'Aunis is a village in the Aunis area, between Rochefort and Surgères, crossed by the Charras canal. Without convenient public transport for every trip, a pre-booked taxi makes daily life easier: medical appointments, tests, catching a train, coming home from hospital or a family outing. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van for up to 7 passengers. Child and baby seats are available on request, and seated medical transport is state-approved.",
+        "Ciré-d'Aunis is a village in the Aunis area, crossed by the Charras canal. Without convenient public transport for every trip, a pre-booked taxi makes daily life easier: medical appointments, tests, catching a train, coming home from hospital or a family outing. Patricia drives a fully electric BMW iX1, Alain an Audi Q6 e-tron and a Mercedes V-Class van for up to 7 passengers. Child and baby seats are available on request, and seated medical transport is state-approved.",
       tips: "Book the day before for an early train or a medical appointment. The estimated fare is given before departure; only the meter is binding at the end of the ride.",
     },
     photos: [
@@ -810,7 +779,6 @@ export const GUIDE_CATEGORIES: { key: GuideCategory; fr: string; en: string }[] 
   { key: "hotel", fr: "Hôtels", en: "Hotels" },
   { key: "randonnee", fr: "Randonnées", en: "Hikes" },
   { key: "visite", fr: "À visiter", en: "To visit" },
-  { key: "surf", fr: "Spots de surf", en: "Surf spots" },
 ];
 
 export const DEPTS: { key: Dept; fr: string; en: string }[] = [
@@ -842,7 +810,6 @@ export const GUIDE_TAGS: { key: GuideTag; fr: string; en: string }[] = [
   { key: "velo", fr: "Vélo", en: "Cycling" },
   { key: "panorama", fr: "Panorama", en: "Panoramic view" },
   { key: "gastronomie", fr: "Gastronomie", en: "Fine dining" },
-  { key: "surf", fr: "Surf", en: "Surf" },
 ];
 
 const TAG_RULES: { key: GuideTag; re: RegExp }[] = [
@@ -857,7 +824,6 @@ const TAG_RULES: { key: GuideTag; re: RegExp }[] = [
   { key: "velo", re: /v[ée]lo|cycl|v[ée]lodyss[ée]e|piste/i },
   { key: "panorama", re: /panorama|point de vue|vue sur|belv[ée]d[èe]re|falaise/i },
   { key: "gastronomie", re: /michelin|étoil|gastronomi|chef\b|table\b/i },
-  { key: "surf", re: /surf|houle|beach-break|vague/i },
 ];
 
 /** Tags calculés à partir du texte FR + des infos pratiques de la fiche. */

@@ -20,7 +20,7 @@ export type Ville = {
   lng: number;
   /** Communes desservies autour de la ville (maillage local). */
   around: string[];
-  /** Commune de l'île d'Oléron (maillage vers la page /taxi-oleron). */
+  /** Ancien marqueur de commune insulaire (non utilisé, conservé pour compatibilité). */
   island?: boolean;
   /** Commune du bassin de Marennes (maillage vers la page /taxi-marennes). */
   marennes?: boolean;
@@ -38,9 +38,7 @@ export const VILLES: Ville[] = [
     "marennes": true,
     "around": [
       "Marennes",
-      "Saint-Sornin",
-      "Saint-Just-Luzac",
-      "Moëze"
+      "Brouage"
     ],
     "fr": {
       "metaTitle": "Taxi Hiers-Brouage ☎ 06 03 44 48 63 · 5j/7 8h-20h",
@@ -58,7 +56,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Transferts, santé et groupes",
-          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+          "p": "Toutes gares et tous aéroports au départ de Marennes-Hiers-Brouage, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
         }
       ],
       "bullets": [
@@ -67,7 +65,7 @@ export const VILLES: Ville[] = [
         "Transport médical conventionné, fauteuil roulant possible",
         "Van Mercedes Classe V jusqu'à 7 passagers",
         "Sièges bébé et rehausseurs sans supplément",
-        "Communes desservies : Marennes, Saint-Sornin, Saint-Just-Luzac, Moëze"
+        "Communes desservies : Marennes-Hiers-Brouage, Brouage"
       ],
       "faq": [
         {
@@ -100,7 +98,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Transfers, healthcare and groups",
-          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+          "p": "Every station and airport, from Marennes-Hiers-Brouage, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
         }
       ],
       "bullets": [
@@ -109,7 +107,7 @@ export const VILLES: Ville[] = [
         "Approved medical transport, wheelchair possible",
         "Mercedes V-Class van for up to 7 passengers",
         "Baby and booster seats at no extra cost",
-        "Areas served: Marennes, Saint-Sornin, Saint-Just-Luzac, Moëze"
+        "Areas served: Marennes-Hiers-Brouage, Brouage"
       ],
       "faq": [
         {
@@ -150,7 +148,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Transferts, santé et groupes",
-          "p": "Gares de Rochefort, Surgères et La Rochelle, aéroports de La Rochelle, Bordeaux et Nantes, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
+          "p": "Toutes gares et tous aéroports au départ de Marennes-Hiers-Brouage, transport médical conventionné avec tiers payant, transferts de groupe jusqu'à 7 personnes et mises à disposition à la journée."
         }
       ],
       "bullets": [
@@ -192,7 +190,7 @@ export const VILLES: Ville[] = [
         },
         {
           "h": "Transfers, healthcare and groups",
-          "p": "Rochefort, Surgères and La Rochelle stations, La Rochelle, Bordeaux and Nantes airports, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
+          "p": "Every station and airport, from Marennes-Hiers-Brouage, approved medical transport with direct billing, group transfers for up to 7 people and full-day hire."
         }
       ],
       "bullets": [

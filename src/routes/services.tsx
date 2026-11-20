@@ -107,7 +107,7 @@ export const Route = createFileRoute("/services")({
                 name: "Access Prestige Taxi",
                 url: "https://www.accessprestigetaxi.fr",
                 email: "accesstaxiap@gmail.com",
-                areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+                areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
                 hasOfferCatalog: {
                   "@type": "OfferCatalog",
                   name: "Prestations Access Prestige Taxi",
@@ -118,7 +118,7 @@ export const Route = createFileRoute("/services")({
                       name: svc.name,
                       description: svc.description,
                       serviceType: svc.name,
-                      areaServed: { "@type": "AdministrativeArea", name: "Charente-Maritime" },
+                      areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
                       provider: { "@id": "https://www.accessprestigetaxi.fr/#business" },
                     },
                   })),

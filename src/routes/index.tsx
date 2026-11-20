@@ -169,7 +169,7 @@ const COPY = {
         details: [
           "SUV 100 % électrique, silencieux et sans émissions, idéal pour vos trajets en ville comme sur route.",
           "5 places confortables, climatisation, sièges en cuir et espace bagages adapté aux valises.",
-          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels en Charente-Maritime.",
+          "Parfait pour les transferts gare, aéroport et rendez-vous professionnels au départ de Marennes-Hiers-Brouage.",
         ],
       },
       {
@@ -180,7 +180,7 @@ const COPY = {
         details: [
           "Van premium 8 places, la solution idéale pour les groupes, familles et transferts d'équipe.",
           "Large espace pour les bagages, adapté aux transferts aéroport et gare pour plusieurs passagers.",
-          "Également disponible pour les mariages, événements et sorties en groupe en Charente-Maritime.",
+          "Également disponible pour les mariages, événements et sorties en groupe à Marennes-Hiers-Brouage et Ciré-d'Aunis.",
         ],
       },
     ],
@@ -217,7 +217,7 @@ const COPY = {
         d: "À l'heure convenue, où que vous soyez.",
         details: [
           "Suivi en temps réel de l'arrivée de votre chauffeur sur la carte, comme pour un VTC.",
-          "Prise en charge à domicile, en gare, à l'aéroport ou à toute adresse en Charente-Maritime.",
+          "Prise en charge à domicile, en gare, à l'aéroport ou à toute adresse de Marennes-Hiers-Brouage et Ciré-d'Aunis.",
           "Véhicule haut de gamme, propre et parfaitement entretenu, pour un trajet confortable jusqu'à destination.",
         ],
       },
@@ -241,7 +241,7 @@ const COPY = {
         details: [
           "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
           "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
-          "Perfect for station transfers, airport runs and business appointments across Charente-Maritime.",
+          "Perfect for station transfers, airport runs and business appointments from Marennes-Hiers-Brouage.",
         ],
       },
       {
@@ -252,7 +252,7 @@ const COPY = {
         details: [
           "A fully electric SUV, quiet and emission-free, ideal for city rides and longer journeys alike.",
           "5 comfortable seats, air conditioning, leather trim and luggage space suited to suitcases.",
-          "Perfect for station transfers, airport runs and business appointments across Charente-Maritime.",
+          "Perfect for station transfers, airport runs and business appointments from Marennes-Hiers-Brouage.",
         ],
       },
       {
@@ -263,7 +263,7 @@ const COPY = {
         details: [
           "A premium 8-seat van, the ideal solution for groups, families and team transfers.",
           "Generous luggage space, well suited to airport and station transfers for several passengers.",
-          "Also available for weddings, events and group outings across Charente-Maritime.",
+          "Also available for weddings, events and group outings in Marennes-Hiers-Brouage and Ciré-d'Aunis.",
         ],
       },
     ],
@@ -300,7 +300,7 @@ const COPY = {
         d: "At the agreed time, wherever you are.",
         details: [
           "Real-time tracking of your driver's arrival on the map, just like a private-hire app.",
-          "Pickup at home, the station, the airport, or any address across Charente-Maritime.",
+          "Pickup at home, the station, the airport, or any address in Marennes-Hiers-Brouage and Ciré-d'Aunis.",
           "A premium, clean and perfectly maintained vehicle for a comfortable ride to your destination.",
         ],
       },
@@ -752,17 +752,13 @@ function CompactPhotoCard({
 }
 
 const GUIDE_IMAGES_BY_CITY: Record<string, { src: string; alt: string }> = {
-  "la rochelle": {
-    src: "https://upload.wikimedia.org/wikipedia/commons/3/30/La_Rochelle_Vieux-Port.JPG",
-    alt: "Vieux-Port de La Rochelle, Charente-Maritime",
+  "marennes-hiers-brouage": {
+    src: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Marennes-17_Clocher_-porche_2013.jpg/1280px-Marennes-17_Clocher_-porche_2013.jpg",
+    alt: "Clocher de Marennes-Hiers-Brouage",
   },
-  rochefort: {
-    src: "https://upload.wikimedia.org/wikipedia/commons/3/3b/253_-_La_Corderie_Royale_-_Rochefort.jpg",
-    alt: "Corderie Royale de Rochefort, Charente-Maritime",
-  },
-  royan: {
-    src: "https://upload.wikimedia.org/wikipedia/commons/1/18/Port_Royan.jpg",
-    alt: "Port de Royan, Charente-Maritime",
+  "cire-d'aunis": {
+    src: "https://commons.wikimedia.org/wiki/Special:FilePath/234%20-%20Mairie%20-%20Cir%C3%A9%20d'Aunis.jpg?width=1280",
+    alt: "Mairie de Ciré-d'Aunis",
   },
 };
 
@@ -922,8 +918,8 @@ function Index() {
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
                 {lang === "en"
-                  ? "Premium transport and covered medical transport in Charente-Maritime. Personalised care, premium vehicles and a service designed down to the smallest detail."
-                  : "Transport de haut de gamme et transport médical conventionné en Charente-Maritime. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
+                  ? "Based in Charente-Maritime, in Marennes-Hiers-Brouage: premium transport and covered medical transport. Personalised care, premium vehicles and a service designed down to the smallest detail."
+                  : "Basée en Charente-Maritime, à Marennes-Hiers-Brouage : transport de haut de gamme et transport médical conventionné. Une prise en charge personnalisée, des véhicules premium et un service pensé dans les moindres détails."}
               </p>
             </div>
             <div className="grid grid-cols-3 gap-3 border-t border-[#e0b866]/40 pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">

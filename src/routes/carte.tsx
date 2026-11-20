@@ -6,14 +6,14 @@ import { useEffect, useState } from "react";
 import logoSrc from "@/assets/tcb-logo-badge.webp";
 
 const CARTE_URL = "https://www.accessprestigetaxi.fr/carte";
-const CARTE_TITLE = "Taxi Marennes & île d'Oléron — contact rapide";
+const CARTE_TITLE = "Taxi Marennes-Hiers-Brouage — contact rapide";
 const CARTE_DESC =
-  "Appeler, WhatsApp, SMS, email, réservation en ligne : joignez votre taxi à Marennes, sur l'île d'Oléron et en Charente-Maritime en un clic.";
+  "Appeler, WhatsApp, SMS, email, réservation en ligne : joignez en un clic votre taxi à Marennes-Hiers-Brouage et Ciré-d'Aunis, basé en Charente-Maritime.";
 
 export const Route = createFileRoute("/carte")({
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["appeler taxi Marennes", "taxi Oléron rapide", "taxi Charente-Maritime immédiat"]),
+      keywordsMeta(["appeler taxi Marennes", "taxi Brouage rapide", "taxi Ciré-d'Aunis"]),
       { title: CARTE_TITLE },
       { name: "description", content: CARTE_DESC },
       { property: "og:title", content: CARTE_TITLE },

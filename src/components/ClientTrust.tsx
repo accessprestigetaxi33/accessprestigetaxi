@@ -110,7 +110,7 @@ export function ClientTrust({ children }: { children?: ReactNode }) {
           "@context": "https://schema.org",
           "@type": "TaxiService",
           name: "Access Prestige Taxi",
-          areaServed: ["Charente-Maritime"],
+          areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"],
           aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: average.toFixed(1),

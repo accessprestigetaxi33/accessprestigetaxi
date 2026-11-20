@@ -8,7 +8,7 @@ import { DRIVERS } from "@/data/drivers";
 
 const ABOUT_TITLE = "À propos — taxi Marennes, Brouage & Ciré-d'Aunis";
 const ABOUT_DESC =
-  "Patricia et Alain, vos deux chauffeurs de taxi basés à Marennes : service premium électrique à Marennes-Hiers-Brouage et Ciré-d'Aunis.";
+  "Patricia et Alain, vos deux chauffeurs de taxi. Entreprise basée en Charente-Maritime, à Marennes : service premium électrique à Marennes-Hiers-Brouage et Ciré-d'Aunis.";
 const ABOUT_URL = "https://www.accessprestigetaxi.fr/a-propos";
 
 export const Route = createFileRoute("/a-propos")({
@@ -83,7 +83,10 @@ function AboutPage() {
               <b className="text-[#e8bd5d]">Access Prestige Taxi</b>, c'est l'histoire de deux chauffeurs passionnés :{" "}
               <b className="text-[#e8bd5d]">Patricia et Alain.</b>
             </p>
-            <p>Basés en Charente-Maritime, nous mettons tout notre savoir-faire au service de vos déplacements.</p>
+            <p>
+              Basée en Charente-Maritime, à Marennes-Hiers-Brouage, notre entreprise met tout son savoir-faire au service de vos
+              déplacements à Marennes-Hiers-Brouage et Ciré-d'Aunis.
+            </p>
             <p>Ponctualité, discrétion et confort sont les valeurs qui nous guident au quotidien.</p>
           </div>
           <h2 className="mt-4 text-center font-display text-[22px]">Nos engagements</h2>

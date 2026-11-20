@@ -1,14 +1,13 @@
 /**
  * Mots-clés SEO partagés : les trois requêtes cibles du site
- * (« taxi Marennes », « taxi île d'Oléron », « taxi Charente-Maritime »)
+ * (« taxi Marennes », « taxi Brouage », « taxi Ciré-d'Aunis »)
  * plus des variantes propres à chaque page.
  */
 export const CORE_KEYWORDS = [
   "taxi Marennes",
-  "taxi île d'Oléron",
-  "taxi Charente-Maritime",
   "taxi Marennes-Hiers-Brouage",
-  "taxi Oléron",
+  "taxi Brouage",
+  "taxi Ciré-d'Aunis",
   "chauffeur privé Marennes",
 ] as const;
 

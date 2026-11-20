@@ -62,7 +62,7 @@ export const Route = createFileRoute("/taxi/$ville")({
 
 const UI = {
   fr: {
-    eyebrow: "Charente-Maritime",
+    eyebrow: "Basée en Charente-Maritime",
     book: "Réserver ma course",
     quote: "Demander un devis",
     call: "Appeler",
@@ -79,7 +79,7 @@ const UI = {
     faqLink: "Tarifs, compteur et réservation : consultez notre FAQ",
   },
   en: {
-    eyebrow: "Charente-Maritime",
+    eyebrow: "Based in Charente-Maritime",
     book: "Book my ride",
     quote: "Request a quote",
     call: "Call",

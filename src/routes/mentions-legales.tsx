@@ -40,7 +40,7 @@ const COPY = {
     ),
     publisherItems: [
       <><strong>Access Taxi PBR</strong> — Patricia & Alain, artisans taxi indépendants</>,
-      <>Zone d'activité&nbsp;: Charente-Maritime (17), France</>,
+      <>Entreprise basée en Charente-Maritime (17), France — prise en charge à Marennes-Hiers-Brouage et Ciré-d'Aunis</>,
       <>Téléphone&nbsp;: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
         <a href="tel:+33603444863" className="text-primary hover:underline">06 03 44 48 63</a> (Alain)</>,
       <>Email&nbsp;: <a href="mailto:accesstaxiap@gmail.com" className="text-primary hover:underline">accesstaxiap@gmail.com</a></>,
@@ -76,7 +76,7 @@ const COPY = {
     ),
     publisherItems: [
       <><strong>Access Taxi PBR</strong> — Patricia & Alain, independent licensed taxi drivers</>,
-      <>Service area: Charente-Maritime (17), France</>,
+      <>Business based in Charente-Maritime (17), France — pick-up in Marennes-Hiers-Brouage and Ciré-d'Aunis</>,
       <>Phone: <a href="tel:+33650260015" className="text-primary hover:underline">06 50 26 00 15</a> (Patricia) ·{" "}
         <a href="tel:+33603444863" className="text-primary hover:underline">06 03 44 48 63</a> (Alain)</>,
       <>Email: <a href="mailto:accesstaxiap@gmail.com" className="text-primary hover:underline">accesstaxiap@gmail.com</a></>,

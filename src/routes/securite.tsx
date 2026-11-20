@@ -7,14 +7,14 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { DRIVERS } from "@/data/drivers";
 
 const SITE = "https://www.accessprestigetaxi.fr";
-const TITLE = "Sécurité taxi Marennes, Oléron & Charente-Maritime";
+const TITLE = "Sécurité taxi Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const DESC =
-  "Taxi agréé à Marennes et sur l'île d'Oléron : chauffeurs agréés, véhicules assurés tous risques, suivi de course en temps réel : toutes nos garanties de sécurité et nos mentions légales en Charente-Maritime.";
+  "Taxi agréé basé en Charente-Maritime, à Marennes-Hiers-Brouage : chauffeurs agréés, véhicules assurés tous risques, suivi de course en temps réel. Toutes nos garanties de sécurité.";
 
 export const Route = createFileRoute("/securite")({
   head: ({ match }) => ({
     meta: [
-      keywordsMeta(["taxi agréé Marennes", "sécurité taxi île d'Oléron", "taxi assuré Charente-Maritime"]),
+      keywordsMeta(["taxi agréé Marennes", "sécurité taxi Brouage", "taxi assuré Ciré-d'Aunis"]),
       { title: TITLE },
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
@@ -36,7 +36,7 @@ const COPY = {
     eyebrow: "Garanties",
     h1: "Sécurité & mentions légales",
     lead:
-      "Cette page est tenue à jour par Patricia et Alain, chauffeurs d'Access Prestige Taxi. Elle décrit concrètement les garanties appliquées à chaque course en Charente-Maritime.",
+      "Cette page est tenue à jour par Patricia et Alain, chauffeurs d'Access Prestige Taxi. Elle décrit concrètement les garanties appliquées à chaque course, au départ de Marennes-Hiers-Brouage.",
     pillars: [
       {
         icon: BadgeCheck,
@@ -71,7 +71,7 @@ const COPY = {
     legalTitle: "Mentions légales",
     legalRows: [
       ["Service", "Access Prestige Taxi — taxi de tourisme, deux chauffeurs indépendants"],
-      ["Zone", "Charente-Maritime (17), longue distance toute France"],
+      ["Zone", "Basée en Charente-Maritime (17) — Marennes-Hiers-Brouage et Ciré-d'Aunis"],
       ["Contact", "accesstaxiap@gmail.com"],
       ["Tarifs", "Tarifs préfectoraux affichés au compteur, estimation ferme communiquée avant la course"],
       ["Réclamation", "Par e-mail ou téléphone, réponse sous 48 h ouvrées"],
@@ -86,7 +86,7 @@ const COPY = {
     eyebrow: "Guarantees",
     h1: "Safety & legal information",
     lead:
-      "This page is maintained by Patricia and Alain, the two Access Prestige Taxi drivers. It sets out the guarantees applied to every ride in Charente-Maritime.",
+      "This page is maintained by Patricia and Alain, the two Access Prestige Taxi drivers. It sets out the guarantees applied to every ride from Marennes-Hiers-Brouage.",
     pillars: [
       {
         icon: BadgeCheck,
@@ -121,7 +121,7 @@ const COPY = {
     legalTitle: "Legal information",
     legalRows: [
       ["Service", "Access Prestige Taxi — licensed taxi, two independent drivers"],
-      ["Area", "Charente-Maritime (17), long distance nationwide"],
+      ["Area", "Based in Charente-Maritime (17) — Marennes-Hiers-Brouage and Ciré-d'Aunis"],
       ["Contact", "accesstaxiap@gmail.com"],
       ["Fares", "Prefecture-regulated meter fares; a firm estimate is given before the ride"],
       ["Complaints", "By email or phone, answered within 48 working hours"],

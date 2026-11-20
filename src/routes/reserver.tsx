@@ -9,12 +9,12 @@ import { businessRef, localBusinessNode } from "@/lib/business";
 import ogReserverFr from "@/assets/apt-og-reserver-fr.jpg.asset.json";
 import ogReserverEn from "@/assets/apt-og-reserver-en.jpg.asset.json";
 
-const RESERVER_TITLE_FR = "Réserver un taxi à Marennes, Oléron & Charente-Maritime";
+const RESERVER_TITLE_FR = "Réserver un taxi à Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const RESERVER_DESC_FR =
-  "Réservez votre taxi à Marennes, sur l'île d'Oléron ou partout en Charente-Maritime en 60 secondes : adresse, heure, passagers. Tarif calculé en direct, confirmation immédiate et suivi en temps réel.";
-const RESERVER_TITLE_EN = "Book a taxi in Marennes, Oléron & Charente-Maritime";
+  "Réservez votre taxi à Marennes-Hiers-Brouage ou Ciré-d'Aunis en 60 secondes, avec un taxi basé en Charente-Maritime : adresse, heure, passagers. Tarif calculé en direct, confirmation immédiate et suivi en temps réel.";
+const RESERVER_TITLE_EN = "Book a taxi in Marennes-Hiers-Brouage & Ciré-d'Aunis";
 const RESERVER_DESC_EN =
-  "Book your taxi in Marennes, on Oléron island or anywhere in Charente-Maritime in 60 seconds: address, time, passengers. Live fare calculation, instant confirmation and real-time tracking.";
+  "Book your taxi in Marennes-Hiers-Brouage or Ciré-d'Aunis in 60 seconds, with a taxi based in Charente-Maritime: address, time, passengers. Live fare calculation, instant confirmation and real-time tracking.";
 const RESERVER_URL = `${SITE_URL}/reserver`;
 
 const OG_IMAGE_FR = ogImageUrl(ogReserverFr.url);
@@ -22,9 +22,9 @@ const OG_IMAGE_EN = ogImageUrl(ogReserverEn.url);
 const OG_IMAGE_W = "1200";
 const OG_IMAGE_H = "630";
 const OG_ALT_FR =
-  "Access Prestige Taxi — réservez votre taxi en Charente-Maritime, BMW iX1 et Audi Q6 électriques 5 places, van Mercedes 8 places";
+  "Access Prestige Taxi — réservez votre taxi basé en Charente-Maritime, à Marennes-Hiers-Brouage, BMW iX1 et Audi Q6 électriques 5 places, van Mercedes 8 places";
 const OG_ALT_EN =
-  "Access Prestige Taxi — book your taxi in Charente-Maritime, 5-seat electric BMW iX1 and Audi Q6, 8-seat Mercedes van";
+  "Access Prestige Taxi — book your taxi based in Charente-Maritime, in Marennes-Hiers-Brouage, 5-seat electric BMW iX1 and Audi Q6, 8-seat Mercedes van";
 
 const RESERVER_SOCIAL_FR = {
   title: RESERVER_TITLE_FR,
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/reserver")({
 
     return {
       meta: [
-        keywordsMeta(["réserver taxi Marennes", "réservation taxi île d'Oléron", "taxi en ligne Charente-Maritime"]),
+        keywordsMeta(["réserver taxi Marennes", "réservation taxi Brouage", "taxi Ciré-d'Aunis en ligne"]),
         { title },
         { name: "description", content: desc },
         { property: "og:site_name", content: "Access Prestige Taxi" },
@@ -131,10 +131,7 @@ export const Route = createFileRoute("/reserver")({
             url: RESERVER_URL,
             description: RESERVER_DESC_FR,
             alternateName: RESERVER_TITLE_EN,
-            areaServed: [
-              { "@type": "AdministrativeArea", name: "Charente-Maritime" },
-              { "@type": "Country", name: "France" },
-            ],
+            areaServed: ["Marennes-Hiers-Brouage", "Brouage", "Ciré-d'Aunis"].map((name) => ({ "@type": "City", name })),
             availableLanguage: ["fr", "en"],
             provider: businessRef,
             potentialAction: {
