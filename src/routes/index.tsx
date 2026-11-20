@@ -871,8 +871,7 @@ function Index() {
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {[
-              { label: "Marennes", to: "/taxi-marennes" as const },
-              { label: "Brouage", to: "/taxi/$ville" as const, ville: "brouage" },
+              { label: "Marennes-Hiers-Brouage", to: "/taxi-marennes" as const },
               { label: "Cire-d'Aunis", to: "/taxi/$ville" as const, ville: "cire-d-aunis" },
             ].map((city) =>
               "ville" in city ? (
