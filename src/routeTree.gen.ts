@@ -26,6 +26,7 @@ import { Route as ReservationRouteImport } from './routes/reservation'
 import { Route as ReserverRouteImport } from './routes/reserver'
 import { Route as SecuriteRouteImport } from './routes/securite'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SitemapRemovedDotxmlRouteImport } from './routes/sitemap-removed[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TaxiCharenteMaritimeRouteImport } from './routes/taxi-charente-maritime'
 import { Route as TaxiMarennesRouteImport } from './routes/taxi-marennes'
@@ -153,6 +154,11 @@ const SecuriteRoute = SecuriteRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapRemovedDotxmlRoute = SitemapRemovedDotxmlRouteImport.update({
+  id: '/sitemap-removed.xml',
+  path: '/sitemap-removed.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -394,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/reserver': typeof ReserverRoute
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
+  '/sitemap-removed.xml': typeof SitemapRemovedDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/taxi-charente-maritime': typeof TaxiCharenteMaritimeRoute
   '/taxi-marennes': typeof TaxiMarennesRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/reserver': typeof ReserverRoute
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
+  '/sitemap-removed.xml': typeof SitemapRemovedDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/taxi-charente-maritime': typeof TaxiCharenteMaritimeRoute
   '/taxi-marennes': typeof TaxiMarennesRoute
@@ -519,6 +527,7 @@ export interface FileRoutesById {
   '/reserver': typeof ReserverRoute
   '/securite': typeof SecuriteRoute
   '/services': typeof ServicesRoute
+  '/sitemap-removed.xml': typeof SitemapRemovedDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/taxi-charente-maritime': typeof TaxiCharenteMaritimeRoute
   '/taxi-marennes': typeof TaxiMarennesRoute
@@ -583,6 +592,7 @@ export interface FileRouteTypes {
     | '/reserver'
     | '/securite'
     | '/services'
+    | '/sitemap-removed.xml'
     | '/sitemap.xml'
     | '/taxi-charente-maritime'
     | '/taxi-marennes'
@@ -645,6 +655,7 @@ export interface FileRouteTypes {
     | '/reserver'
     | '/securite'
     | '/services'
+    | '/sitemap-removed.xml'
     | '/sitemap.xml'
     | '/taxi-charente-maritime'
     | '/taxi-marennes'
@@ -707,6 +718,7 @@ export interface FileRouteTypes {
     | '/reserver'
     | '/securite'
     | '/services'
+    | '/sitemap-removed.xml'
     | '/sitemap.xml'
     | '/taxi-charente-maritime'
     | '/taxi-marennes'
@@ -770,6 +782,7 @@ export interface RootRouteChildren {
   ReserverRoute: typeof ReserverRoute
   SecuriteRoute: typeof SecuriteRoute
   ServicesRoute: typeof ServicesRoute
+  SitemapRemovedDotxmlRoute: typeof SitemapRemovedDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxiCharenteMaritimeRoute: typeof TaxiCharenteMaritimeRoute
   TaxiMarennesRoute: typeof TaxiMarennesRoute
@@ -931,6 +944,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-removed.xml': {
+      id: '/sitemap-removed.xml'
+      path: '/sitemap-removed.xml'
+      fullPath: '/sitemap-removed.xml'
+      preLoaderRoute: typeof SitemapRemovedDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -1288,6 +1308,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReserverRoute: ReserverRoute,
   SecuriteRoute: SecuriteRoute,
   ServicesRoute: ServicesRoute,
+  SitemapRemovedDotxmlRoute: SitemapRemovedDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxiCharenteMaritimeRoute: TaxiCharenteMaritimeRoute,
   TaxiMarennesRoute: TaxiMarennesRoute,
