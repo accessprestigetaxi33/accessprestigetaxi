@@ -141,7 +141,7 @@ const T = {
     err_email: "Adresse e-mail invalide.",
     err_past: "Choisissez une heure au moins 20 minutes après maintenant.",
     trust1: "Chauffeurs professionnels · 20 ans d'expérience",
-    trust2: "Basée en Charente-Maritime · toutes distances",
+    trust2: "Au départ de Marennes-Hiers-Brouage · toutes distances",
     trust3: "Confirmation immédiate + suivi en temps réel",
 
     vehicle_step: "Véhicule souhaité",
@@ -266,7 +266,7 @@ const T = {
     err_email: "Invalid email address.",
     err_past: "Pick a time at least 20 minutes from now.",
     trust1: "Professional drivers · 20 years of experience",
-    trust2: "Based in Charente-Maritime · any distance",
+    trust2: "From Marennes-Hiers-Brouage · any distance",
     trust3: "Instant confirmation + live tracking",
 
     vehicle_step: "Vehicle",
@@ -510,8 +510,7 @@ const QUICK_DESTINATIONS = [
   "Marennes centre",
   "Port de La Cayenne, Marennes",
   "Marennes-Plage",
-  "Citadelle de Brouage",
-  "Ciré-d'Aunis",
+  "Citadelle de Brouage, Marennes-Hiers-Brouage",
 ];
 
 /**

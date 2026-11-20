@@ -12,8 +12,8 @@ export const CORE_KEYWORDS = [
 ] as const;
 
 /** Renvoie une balise <meta name="keywords"> combinant les mots-clés cœur et ceux de la page. */
-export function keywordsMeta(extra: readonly string[] = []) {
-  const all = [...CORE_KEYWORDS, ...extra];
+export function keywordsMeta(extra: readonly string[] = [], opts: { core?: boolean } = {}) {
+  const all = opts.core === false ? [...extra] : [...CORE_KEYWORDS, ...extra];
   const seen = new Set<string>();
   const list = all.filter((k) => {
     const key = k.toLowerCase();
